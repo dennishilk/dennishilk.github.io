@@ -1,1 +1,13 @@
-# dennishilk.github.io
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="google-site-verification" content="bo1J0uPP0cnvHa6vepnUEp_kaTbpMvV7H8bMJHKw-KA">
+  <title>Dennis Hilk – Official GitHub Page</title>
+</head>
+<body>
+  <h1>Dennis Hilk</h1>
+  <p>Linux Developer & Creator of Nebunix OS</p>
+  <p>Visit my main GitHub profile: <a href="https://github.com/dennishilk/">github.com/dennishilk</a></p>
+</body>
+</html>
