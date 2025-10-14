@@ -1,1 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
 
+:root {
+  --bg: #050505;
+  --fg: #e6edf3;
+  --accent: #00b4ff;
+  --card-bg: rgba(20, 20, 25, 0.7);
+  --border: #2f2f2f;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: hidden;
+  text-align: center;
+}
+
+/* Star Canvas */
+#stars {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, #06070a, #000);
+}
+
+/* Header */
+header {
+  padding: 6rem 1rem 3rem;
+}
+.avatar {
+  width: 130px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 15px var(--accent);
+  margin-bottom: 1rem;
+}
+header h1 {
+  color: var(--accent);
+  font-size: 2rem;
+}
+header h1 span {
+  color: var(--fg);
+}
+header p {
+  margin: 0.5rem 0 1.5rem;
+  color: #c9d1d9;
+}
+.buttons a {
+  display: inline-block;
+  margin: 0.3rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: #000;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.buttons a:hover {
+  background: #33ccff;
+}
+
+/* Projects */
+.projects {
+  padding: 2rem 1rem;
+}
+.projects h2 {
+  color: var(--accent);
+  margin-bottom: 2rem;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--fg);
+  transition: transform 0.2s, border 0.3s;
+}
+.card:hover {
+  border: 1px solid var(--accent);
+  transform: translateY(-6px);
+}
+
+/* About */
+.about {
+  padding: 3rem 1rem;
+  background: rgba(10,10,15,0.6);
+}
+.about h2 {
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+.about p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: #c9d1d9;
+}
+
+/* Footer */
+footer {
+  padding: 2rem 1rem;
+  border-top: 1px solid var(--border);
+  color: #8b949e;
+}
+footer .nebby {
+  width: 90px;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+.socials a {
+  color: var(--accent);
+  margin: 0 0.5rem;
+  font-size: 1.5rem;
+  transition: color 0.3s;
+}
+.socials a:hover {
+  color: #33ccff;
+}
