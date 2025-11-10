@@ -126,3 +126,16 @@ footer .nebby {
 .socials a:hover {
   color: #33ccff;
 }
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 10px 0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.card:hover img {
+  transform: scale(1.02);
+}
