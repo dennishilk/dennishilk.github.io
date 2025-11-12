@@ -18,7 +18,7 @@ body{
   text-align:center;
 }
 
-/* Star Background */
+/* Background */
 #stars{
   position:fixed;
   top:0;left:0;
@@ -52,22 +52,24 @@ header h1{
 }
 header .prompt{color:var(--prompt);margin-right:0.5em;}
 
-/* Smooth Blink Cursor */
+/* True terminal blink (like zsh / powerlevel10k / Kitty) */
 .cursor{
   display:inline-block;
   color:var(--accent);
   margin-left:4px;
   font-weight:bold;
-  animation:blinkCursor 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation:blinkCursor 0.8s steps(1,start) infinite;
   position:relative;
   top:1px;
-  text-shadow:0 0 8px rgba(0,180,255,0.6);
+  text-shadow:0 0 6px rgba(0,180,255,0.4);
 }
 @keyframes blinkCursor{
-  0%,90%{opacity:1;}
-  100%{opacity:0;}
+  0%{opacity:1;}
+  50%{opacity:0;}
+  100%{opacity:1;}
 }
 
+/* Description */
 header p{
   margin:0.8rem 0 1.8rem;
   color:#c9d1d9;
@@ -158,10 +160,10 @@ footer{
   color:var(--accent);
   margin-left:3px;
   font-weight:bold;
-  animation:blinkCursor 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation:blinkCursor 0.8s steps(1,start) infinite;
   position:relative;
   top:1px;
-  text-shadow:0 0 8px rgba(0,180,255,0.6);
+  text-shadow:0 0 6px rgba(0,180,255,0.4);
 }
 
 .nebby:hover{
