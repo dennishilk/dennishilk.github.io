@@ -18,7 +18,7 @@ body{
   text-align:center;
 }
 
-/* Background */
+/* Star background */
 #stars{
   position:fixed;
   top:0;left:0;
@@ -44,7 +44,7 @@ header{padding:6rem 1rem 3rem;}
   50%{box-shadow:0 0 45px rgba(0,220,255,0.9),0 0 90px rgba(0,200,255,0.5);}
 }
 
-/* Terminal Header */
+/* Header Title */
 header h1{
   color:var(--accent);
   font-size:2.2rem;
@@ -52,7 +52,7 @@ header h1{
 }
 header .prompt{color:var(--prompt);margin-right:0.5em;}
 
-/* True terminal blink (like zsh / powerlevel10k / Kitty) */
+/* Cursor animation (true terminal blink) */
 .cursor{
   display:inline-block;
   color:var(--accent);
@@ -69,7 +69,6 @@ header .prompt{color:var(--prompt);margin-right:0.5em;}
   100%{opacity:1;}
 }
 
-/* Description */
 header p{
   margin:0.8rem 0 1.8rem;
   color:#c9d1d9;
@@ -92,7 +91,7 @@ header p{
   box-shadow:0 0 20px rgba(0,180,255,0.7);
 }
 
-/* Project Cards */
+/* Projects */
 .projects{padding:2rem 1rem 3rem;}
 .projects h2{
   color:var(--accent);
@@ -189,3 +188,34 @@ footer{
   color:#33ccff;
   text-shadow:0 0 10px rgba(0,180,255,0.6);
 }
+
+/* Impressum + Datenschutz Pages */
+.impressum{
+  max-width:700px;
+  margin:3rem auto;
+  text-align:left;
+  color:#c9d1d9;
+  background:rgba(10,10,15,0.7);
+  padding:2rem;
+  border-radius:12px;
+  border:1px solid var(--border);
+  box-shadow:0 0 25px rgba(0,180,255,0.2);
+}
+.impressum a{color:var(--accent);text-decoration:none;}
+.impressum a:hover{text-decoration:underline;}
+.backlink{
+  display:inline-block;
+  margin-top:1rem;
+  color:var(--accent);
+  font-weight:bold;
+  text-decoration:none;
+}
+.backlink:hover{
+  color:#33ccff;
+  text-shadow:0 0 6px rgba(0,180,255,0.6);
+}
+footer p a{
+  color:var(--accent);
+  text-decoration:none;
+}
+footer p a:hover{text-decoration:underline;}
