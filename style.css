@@ -33,14 +33,16 @@ header {
 }
 
 .avatar {
-  width: 200px; /* größerer Avatar */
+  width: 200px;
   border-radius: 50%;
   border: 2px solid var(--accent);
-  box-shadow: 0 0 20px var(--accent);
+  box-shadow: 0 0 25px var(--accent);
   margin-bottom: 1.5rem;
   opacity: 0;
   transform: translateY(10px) scale(1);
-  animation: fadeInAvatar 1.2s ease forwards, floatAvatar 4s ease-in-out infinite;
+  animation: fadeInAvatar 1.2s ease forwards,
+             floatAvatar 4s ease-in-out infinite,
+             auraPulse 5s ease-in-out infinite;
 }
 
 /* Avatar Animationen */
@@ -61,6 +63,18 @@ header {
   }
   50% {
     transform: translateY(-6px) scale(1.02);
+  }
+}
+
+/* Sanfter blauer Aura-Puls */
+@keyframes auraPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0,180,255,0.6),
+                0 0 40px rgba(0,180,255,0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(0,180,255,0.9),
+                0 0 70px rgba(0,180,255,0.5);
   }
 }
 
@@ -146,7 +160,8 @@ footer .nebby {
   opacity: 0.9;
   margin-bottom: 0.5rem;
   filter: drop-shadow(0 0 12px rgba(0,180,255,0.5));
-  animation: fadeInNebby 1.5s ease forwards, floatNebby 5s ease-in-out infinite;
+  animation: fadeInNebby 1.5s ease forwards,
+             floatNebby 5s ease-in-out infinite;
   transform: translateY(0);
   opacity: 0;
 }
