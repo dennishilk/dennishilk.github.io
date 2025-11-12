@@ -115,7 +115,7 @@
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + Stable Counter Script ──────── -->
+   <!-- ── Nebby Animation + Perfekt stabiler Zeitbasierter Counter ──────── -->
   <script>
     // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
@@ -124,35 +124,45 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🧮 
+    // 🧮 Bombenfester Zeitbasierter Counter (max ~67/Tag)
     const el = document.getElementById("count");
+
     const startDate = new Date("2025-01-01T00:00:00Z");
     const startValue = 26120;
     const avgRatePerDay = 67;
     const secondsPerDay = 86400;
 
-    let lastCount = 0;
-    const drift = Math.random() * 0.5 + 0.75; // 
+    // persistente, einmalige Zufallsdrift für alle Aufrufe des Besuchers
+    let persistentDrift = localStorage.getItem("driftFactor");
+    if (!persistentDrift) {
+      persistentDrift = (Math.random() * 0.04 + 0.98).toFixed(4); // zwischen 0.98–1.02
+      localStorage.setItem("driftFactor", persistentDrift);
+    } else {
+      persistentDrift = parseFloat(persistentDrift);
+    }
+
+    let lastShown = parseInt(localStorage.getItem("lastCounterValue")) || 0;
 
     function getSimulatedCount() {
       const now = new Date();
       const secondsPassed = (now - startDate) / 1000;
-      const count = startValue + (secondsPassed / secondsPerDay) * avgRatePerDay * drift;
-      const current = Math.floor(count);
+      const rawCount = startValue + (secondsPassed / secondsPerDay) * avgRatePerDay * persistentDrift;
 
-      // Niemals rückwärts
-      if (current < lastCount) return lastCount;
-      lastCount = current;
-      return current;
+      const count = Math.floor(rawCount);
+
+      // Niemals rückwärts zählen
+      const safeCount = count < lastShown ? lastShown : count;
+      lastShown = safeCount;
+      localStorage.setItem("lastCounterValue", safeCount);
+
+      return safeCount;
     }
 
     function updateCounter() {
       el.textContent = getSimulatedCount().toLocaleString("en-US");
     }
 
-    // Anzeige initial + alle 10 Minuten
+    // Initial + alle 10 Minuten aktualisieren
     updateCounter();
     setInterval(updateCounter, 600000);
   </script>
-</body>
-</html>
