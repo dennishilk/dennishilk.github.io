@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=21" />
+  <link rel="stylesheet" href="style.css?v=22" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -81,33 +81,40 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Terminal Neon Visitor Counter (robust) ───────── -->
+      <!-- ── Terminal Neon Visitor Counter (original working) ─ -->
       <div id="visitor-counter" class="terminal-counter"
            title="Global unique visits counted via CountAPI (no cookies, no tracking)">
         <span class="label">Visitors since 2025:</span>
-        <span class="counter-badge">
-          <!-- (1) ZÄHLEN: unsichtbares 1px-Hit-Image -->
-          <img src="https://api.countapi.xyz/hit/dennishilk.github.io/visitors"
-               alt="" width="1" height="1" style="opacity:0;position:absolute;pointer-events:none" />
-
-          <!-- (2) ANZEIGEN: Shields.io liest den aktuellen Wert aus /get -->
-          <img
-            src="https://img.shields.io/badge/dynamic/json?style=flat-square&color=00b4ff&label=Visitors%20since%202025&query=%24.value&url=https%3A%2F%2Fapi.countapi.xyz%2Fget%2Fdennishilk.github.io%2Fvisitors"
-            alt="visitor counter"
-            loading="lazy"
-            class="counter-img" />
-        </span>
+        <span id="count" class="glow">loading...</span>
       </div>
     </footer>
   </div>
 
-  <!-- ── Nebby wink animation ─────────────────────────────── -->
+  <!-- ── Nebby Animation + CountAPI Script ───────────────── -->
   <script>
+    // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
       const nebby = document.querySelector('.nebby');
       nebby.classList.add('nebby-auto-wink');
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
+
+    // 🌐 CountAPI counter – classic stable version
+    const NAMESPACE = "dennishilk.github.io";
+    const KEY = "visitors";
+    const el = document.getElementById("count");
+
+    async function initCount() {
+      try {
+        const res = await fetch(`https://api.countapi.dev/hit/${NAMESPACE}/${KEY}`);
+        const data = await res.json();
+        el.textContent = data.value.toString();
+      } catch (err) {
+        console.error("CountAPI error:", err);
+        el.textContent = "offline";
+      }
+    }
+    initCount();
   </script>
 </body>
 </html>
