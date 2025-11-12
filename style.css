@@ -4,7 +4,7 @@
   --bg: #050505;
   --fg: #e6edf3;
   --accent: #00b4ff;
-  --card-bg: rgba(20, 20, 25, 0.7);
+  --card-bg: rgba(20, 20, 25, 0.75);
   --border: #2f2f2f;
 }
 
@@ -33,84 +33,122 @@ header {
 }
 
 .avatar {
-  width: 200px;
+  width: 250px;
   border-radius: 50%;
   border: 2px solid var(--accent);
-  box-shadow: 0 0 25px var(--accent);
-  margin-bottom: 1.5rem;
+  box-shadow: 0 0 35px var(--accent);
+  margin-bottom: 1.8rem;
   opacity: 0;
-  transform: translateY(10px) scale(1);
+  transform: translateY(20px) scale(1);
   animation: fadeInAvatar 1.2s ease forwards,
              floatAvatar 4s ease-in-out infinite,
              auraPulse 5s ease-in-out infinite;
 }
 
-/* Avatar Animationen */
 @keyframes fadeInAvatar {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  0%   { opacity: 0; transform: translateY(30px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes floatAvatar {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-6px) scale(1.02);
-  }
+  0%,100% { transform: translateY(0) scale(1); }
+  50%     { transform: translateY(-8px) scale(1.03); }
 }
-
-/* Sanfter blauer Aura-Puls */
 @keyframes auraPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0,180,255,0.6),
-                0 0 40px rgba(0,180,255,0.3);
+  0%,100% {
+    box-shadow: 0 0 25px rgba(0,180,255,0.6),
+                0 0 60px rgba(0,180,255,0.3);
   }
   50% {
-    box-shadow: 0 0 35px rgba(0,180,255,0.9),
-                0 0 70px rgba(0,180,255,0.5);
+    box-shadow: 0 0 45px rgba(0,220,255,0.9),
+                0 0 90px rgba(0,200,255,0.5);
   }
 }
 
 header h1 {
   color: var(--accent);
-  font-size: 2rem;
+  font-size: 2.2rem;
+  text-shadow: 0 0 15px rgba(0,180,255,0.5);
 }
 header h1 span {
   color: var(--fg);
 }
 header p {
-  margin: 0.5rem 0 1.5rem;
+  margin: 0.8rem 0 1.8rem;
   color: #c9d1d9;
+  font-size: 1rem;
 }
 .buttons a {
   display: inline-block;
   margin: 0.3rem;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   background: var(--accent);
   color: #000;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
-  transition: background 0.3s;
+  box-shadow: 0 0 10px rgba(0,180,255,0.4);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 .buttons a:hover {
   background: #33ccff;
+  box-shadow: 0 0 20px rgba(0,180,255,0.7);
 }
 
-/* ── Projects ──────────────────────────────────────────────── */
+/* ── Glitch Effect ─────────────────────────────────────────── */
+.glitch {
+  position: relative;
+  color: var(--accent);
+  font-size: 2.2rem;
+  text-shadow: 0 0 10px rgba(0,180,255,0.6);
+  animation: glitch 2s linear infinite;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  color: var(--accent);
+  clip: rect(0, 0, 0, 0);
+}
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 #ff00c1;
+  animation: glitchTop 2s infinite linear alternate-reverse;
+}
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #00fff9;
+  animation: glitchBottom 2s infinite linear alternate-reverse;
+}
+@keyframes glitch {
+  0%,100% { text-shadow: 0 0 5px var(--accent), 0 0 20px var(--accent); }
+  50% { text-shadow: 0 0 2px #fff, 0 0 8px var(--accent); }
+}
+@keyframes glitchTop {
+  0% { clip: rect(0, 9999px, 0, 0); }
+  10% { clip: rect(10px, 9999px, 30px, 0); }
+  20% { clip: rect(20px, 9999px, 10px, 0); }
+  30% { clip: rect(40px, 9999px, 60px, 0); }
+  100% { clip: rect(0, 9999px, 0, 0); }
+}
+@keyframes glitchBottom {
+  0% { clip: rect(50px, 9999px, 80px, 0); }
+  20% { clip: rect(10px, 9999px, 60px, 0); }
+  40% { clip: rect(70px, 9999px, 100px, 0); }
+  100% { clip: rect(50px, 9999px, 80px, 0); }
+}
+
+/* ── Cards ────────────────────────────────────────────────── */
 .projects {
-  padding: 2rem 1rem;
+  padding: 2rem 1rem 3rem;
 }
 .projects h2 {
   color: var(--accent);
   margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(0,180,255,0.4);
 }
 .cards {
   display: grid;
@@ -125,76 +163,91 @@ header p {
   padding: 1rem;
   text-decoration: none;
   color: var(--fg);
-  transition: transform 0.2s, border 0.3s, box-shadow 0.3s;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: transform 0.25s ease, border 0.3s, box-shadow 0.3s, opacity 0.3s;
+  animation: cardFadeIn 1s ease forwards;
+}
+.card:nth-child(1){animation-delay:0.2s;}
+.card:nth-child(2){animation-delay:0.4s;}
+.card:nth-child(3){animation-delay:0.6s;}
+.card:nth-child(4){animation-delay:0.8s;}
+.card:nth-child(5){animation-delay:1.0s;}
+.card:nth-child(6){animation-delay:1.2s;}
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 .card:hover {
   border: 1px solid var(--accent);
-  transform: translateY(-6px);
-  box-shadow: 0 0 10px rgba(0,180,255,0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 0 25px rgba(0,180,255,0.4);
 }
 
-/* ── About ─────────────────────────────────────────────────── */
-.about {
-  padding: 3rem 1rem;
-  background: rgba(10,10,15,0.6);
-}
-.about h2 {
-  color: var(--accent);
-  margin-bottom: 1.5rem;
-}
-.about p {
-  max-width: 700px;
-  margin: 0 auto;
-  color: #c9d1d9;
-}
-
-/* ── Footer ────────────────────────────────────────────────── */
+/* ── Footer & Nebby ───────────────────────────────────────── */
 footer {
   padding: 2rem 1rem;
   border-top: 1px solid var(--border);
   color: #8b949e;
 }
 
-footer .nebby {
-  width: 100px;
-  opacity: 0.9;
-  margin-bottom: 0.5rem;
-  filter: drop-shadow(0 0 12px rgba(0,180,255,0.5));
-  animation: fadeInNebby 1.5s ease forwards,
-             floatNebby 5s ease-in-out infinite;
-  transform: translateY(0);
+.nebby-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.nebby {
+  width: 110px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.nebby-terminal {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 20, 40, 0.9);
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  padding: 6px 10px;
+  white-space: nowrap;
   opacity: 0;
+  pointer-events: none;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px rgba(0,180,255,0.5);
+  transition: opacity 0.3s ease;
 }
-
-/* Nebby Animationen */
-@keyframes fadeInNebby {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.nebby:hover {
+  transform: rotate(-6deg) scale(1.05);
+  animation: nebbyWink 0.4s ease-in-out 2;
 }
-@keyframes floatNebby {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+.nebby-wrapper:hover .nebby-terminal {
+  opacity: 1;
+  animation: typingText 1.2s steps(22) 1 forwards;
+}
+@keyframes nebbyWink {
+  0% { transform: rotate(0deg) scale(1.05); }
+  25% { transform: rotate(-10deg) scale(1.05); }
+  50% { transform: rotate(10deg) scale(1.05); }
+  75% { transform: rotate(-10deg) scale(1.05); }
+  100% { transform: rotate(0deg) scale(1.05); }
+}
+@keyframes typingText {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.nebby-auto-wink {
+  animation: nebbyWink 0.5s ease-in-out 3;
 }
 
 .socials a {
   color: var(--accent);
   margin: 0 0.5rem;
   font-size: 1.5rem;
-  transition: color 0.3s;
+  transition: color 0.3s, text-shadow 0.3s;
 }
 .socials a:hover {
   color: #33ccff;
-}
-
-.card img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin: 10px 0;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
-}
-.card:hover img {
-  transform: scale(1.02);
+  text-shadow: 0 0 10px rgba(0,180,255,0.6);
 }
