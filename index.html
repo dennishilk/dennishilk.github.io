@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=28" />
+  <link rel="stylesheet" href="style.css?v=29" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -81,16 +81,16 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Global Visitor Counter (stable + no leading zeros) ── -->
+      <!-- ── Global Visitor Counter (time-based simulation) ── -->
       <div id="visitor-counter" class="terminal-counter"
-           title="Global unique visits counted via CountAPI (no cookies, no tracking)">
+           title="Simulated global counter — grows slowly and evenly over time">
         <span class="label">Visitors since 2025:</span>
         <span id="count" class="glow">loading…</span>
       </div>
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + Global Counter Script ──────────── -->
+  <!-- ── Nebby Animation + Time-Based Global Counter ──────── -->
   <script>
     // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
@@ -99,33 +99,33 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🌍 Global CountAPI counter with fallback (no leading zeros)
-    const NAMESPACE = "dennishilk.github.io";
-    const KEY = "visitors";
-    const START_VALUE = 46124;
+    // 🧮 
+    const el = document.getElementById("count");
 
-    async function updateCounter() {
-      const endpoint = "https://api.simplecounterapi.com";
-      const el = document.getElementById("count");
-      let count = localStorage.getItem("lastKnownCount") || START_VALUE;
+    // Basiszeitpunkt (Start deiner Seite)
+    const startDate = new Date("2025-01-01T00:00:00Z"); // UTC Startzeit
+    const startValue = 46100; // Anfangswert
+    const avgRatePerSec = 1 / 30; // 
+    
+    function getSimulatedCount() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      
+      const average = secondsPassed * avgRatePerSec;
+      const drift = average * (Math.random() * 0.05 - 0.025); // ±2.5 % Zufall
+      const count = Math.floor(startValue + average + drift);
 
-      try {
-        await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
-      } catch (_) { /* ignore */ }
-
-      try {
-        const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
-        const data = await res.json();
-        count = data.value;
-        localStorage.setItem("lastKnownCount", count);
-      } catch (_) {
-        console.warn("CountAPI offline, using cached value");
-      }
-
-      el.textContent = count.toString();
+      return count;
     }
 
+    function updateCounter() {
+      const count = getSimulatedCount();
+      el.textContent = count.toLocaleString("en-US");
+    }
+
+    // Beim Laden & alle 30 Sekunden aktualisieren
     updateCounter();
+    setInterval(updateCounter, 30000);
   </script>
 </body>
 </html>
