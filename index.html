@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=29" />
+  <link rel="stylesheet" href="style.css?v=30" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -81,16 +81,16 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Global Visitor Counter (time-based simulation) ── -->
+      <!-- ── Global Visitor Counter (stable 67/day) ── -->
       <div id="visitor-counter" class="terminal-counter"
-           title="Simulated global counter — grows slowly and evenly over time">
+           title="Simulated global counter — grows slowly (max ~67/day)">
         <span class="label">Visitors since 2025:</span>
         <span id="count" class="glow">loading…</span>
       </div>
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + Time-Based Global Counter ──────── -->
+  <!-- ── Nebby Animation + Stabiler Counter ──────── -->
   <script>
     // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
@@ -99,23 +99,26 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🧮 
+    // 🧮 Zeitbasierter globaler Counter
     const el = document.getElementById("count");
 
-    // Basiszeitpunkt (Start deiner Seite)
-    const startDate = new Date("2025-01-01T00:00:00Z"); // UTC Startzeit
-    const startValue = 46100; // Anfangswert
-    const avgRatePerSec = 1 / 30; // 
-    
+    const startDate = new Date("2025-01-01T00:00:00Z"); // globaler Start
+    const startValue = 26120; // 
+    const avgRatePerDay = 67; // 
+    const secondsPerDay = 86400;
+
+    let lastCount = 0;
+    const randomOffset = Math.random() * 2 - 1; // minimale Drift ±1
+
     function getSimulatedCount() {
       const now = new Date();
-      const secondsPassed = Math.floor((now - startDate) / 1000);
-      
-      const average = secondsPassed * avgRatePerSec;
-      const drift = average * (Math.random() * 0.05 - 0.025); // ±2.5 % Zufall
-      const count = Math.floor(startValue + average + drift);
+      const secondsPassed = (now - startDate) / 1000;
+      let count = startValue + (secondsPassed / secondsPerDay) * avgRatePerDay;
+      count += randomOffset;
 
-      return count;
+      if (count < lastCount) count = lastCount; 
+      lastCount = count;
+      return Math.floor(count);
     }
 
     function updateCounter() {
@@ -123,9 +126,9 @@
       el.textContent = count.toLocaleString("en-US");
     }
 
-    // Beim Laden & alle 30 Sekunden aktualisieren
+    // beim Start & dann alle 10 Minuten
     updateCounter();
-    setInterval(updateCounter, 30000);
+    setInterval(updateCounter, 600000);
   </script>
 </body>
 </html>
