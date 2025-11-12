@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Linux News – Dennis Hilk</title>
+
+  <!-- 🐧 Favicon & Styles -->
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=22">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -14,15 +16,18 @@
   <canvas id="stars"></canvas>
 
   <div class="content">
+    <!-- ── Header ───────────────────────────── -->
     <header>
       <img src="avatar.png" alt="Dennis Hilk Avatar" class="avatar">
       <h1><span class="prompt">root@nebunix:~$</span> Linux News<span class="cursor">|</span></h1>
       <p>Latest Linux updates automatically fetched from Phoronix & OMG!Ubuntu</p>
+
       <div class="buttons">
         <a href="index.html"><i class="fas fa-arrow-left"></i> Back</a>
       </div>
     </header>
 
+    <!-- ── News Section ─────────────────────── -->
     <section class="projects">
       <h2>Fresh from the Penguin World 🐧</h2>
       <div id="loading-line">
@@ -31,6 +36,7 @@
       <div id="news-list" class="cards news-feed"></div>
     </section>
 
+    <!-- ── Footer ───────────────────────────── -->
     <footer>
       <div class="nebby-terminal-line">
         <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" />
@@ -41,20 +47,6 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
     </footer>
-  </div>
-
-  <!-- ── Terminal Popup ───────────────────────────── -->
-  <div id="terminal-popup" class="terminal-hidden">
-    <div class="terminal-window">
-      <div class="terminal-header">
-        <span class="red"></span><span class="yellow"></span><span class="green"></span>
-        <span class="term-title">/var/news/article.txt</span>
-        <button id="close-term">❌</button>
-      </div>
-      <div id="terminal-content" class="terminal-content">
-        <p>Loading article...</p>
-      </div>
-    </div>
   </div>
 
   <script>
@@ -68,56 +60,40 @@
 
       for (const url of feeds) {
         try {
-          const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
-          const data = await res.json();
+          const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
+          const data = await response.json();
 
-          data.items.slice(0, 4).forEach(item => {
-            const card = document.createElement("div");
-            card.className = "card news-card";
+          data.items.slice(0, 5).forEach(item => {
+            const date = new Date(item.pubDate);
+            const formattedDate = date.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric"
+            });
+
+            const card = document.createElement("a");
+            card.href = item.link;
+            card.target = "_blank";
+            card.className = "card";
+
             card.innerHTML = `
+              <i class="fa-solid fa-terminal fa-2x"></i>
               <h3>${item.title}</h3>
               <p>${item.description ? item.description.replace(/<[^>]*>/g, '').substring(0, 160) + '…' : ''}</p>
-              <span class="source-badge">${new URL(item.link).hostname.replace('www.','')}</span>
+              <div class="news-meta">
+                <span class="source-badge">${new URL(item.link).hostname.replace('www.','')}</span>
+                <span class="news-date">${formattedDate}</span>
+              </div>
             `;
-            card.addEventListener("click", () => openTerminal(item.title, item.link));
             list.appendChild(card);
           });
-        } catch (err) {
-          console.error("Feed Error:", err);
+        } catch (e) {
+          console.error("Feed Error", e);
         }
       }
+
       loading.style.display = "none";
     }
-
-    // ── Terminal Popup Logic ─────────────────────────
-    const popup = document.getElementById("terminal-popup");
-    const content = document.getElementById("terminal-content");
-    const closeBtn = document.getElementById("close-term");
-
-    async function typePrompt(text, element, delay = 70) {
-      element.innerHTML = "";
-      for (let i = 0; i < text.length; i++) {
-        element.innerHTML += text[i];
-        await new Promise(r => setTimeout(r, delay));
-      }
-    }
-
-    async function openTerminal(title, link) {
-      popup.classList.remove("terminal-hidden");
-      content.innerHTML = `<p class="prompt" id="typePrompt"></p>`;
-
-      const promptEl = document.getElementById("typePrompt");
-      await typePrompt("user@nebunix:~$ cat article.txt_", promptEl, 60);
-
-      setTimeout(() => {
-        content.innerHTML += `
-          <p><span class="accent">${title}</span></p>
-          <p><a href="${link}" target="_blank" class="term-link">[ Read full article on source → ]</a></p>
-        `;
-      }, 400);
-    }
-
-    closeBtn.addEventListener("click", () => popup.classList.add("terminal-hidden"));
 
     loadNews();
   </script>
