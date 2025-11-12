@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
 
-/* ── Farben & Basisvariablen ─────────────────────────── */
 :root {
   --bg: #050505;
   --fg: #e6edf3;
@@ -21,9 +20,11 @@ body {
   font-family: 'JetBrains Mono', monospace;
   overflow-x: hidden;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-/* ── Hintergrund / Sterne ─────────────────────────────── */
 #stars {
   position: fixed;
   top: 0;
@@ -34,20 +35,23 @@ body {
   background: radial-gradient(circle at 50% 50%, #06070a, #000);
 }
 
-/* ── Header ──────────────────────────────────────────── */
+.content {
+  flex: 1;
+}
+
+/* ── Header ─────────────────────────────── */
 header {
   padding: 6rem 1rem 3rem;
 }
 
 .avatar {
-  width: 160px;
+  width: 150px;
   border-radius: 50%;
   border: 2px solid var(--accent);
-  box-shadow: 0 0 20px var(--accent);
+  box-shadow: 0 0 15px var(--accent);
   margin-bottom: 1rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s;
 }
-
 .avatar:hover {
   transform: scale(1.05);
 }
@@ -55,32 +59,23 @@ header {
 header h1 {
   color: var(--accent);
   font-size: 2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
-header h1 span {
-  color: var(--fg);
+header p {
+  color: #c9d1d9;
+  margin-bottom: 1.5rem;
 }
 
 .prompt {
   color: #00b4ff;
-  margin-right: 0.5rem;
 }
-
 .cursor {
   color: var(--accent);
   animation: blink 1s step-start infinite;
 }
-
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-header p {
-  margin: 0.5rem 0 1.5rem;
-  color: #c9d1d9;
+  50% { opacity: 0; }
 }
 
 .buttons a {
@@ -94,26 +89,20 @@ header p {
   font-weight: bold;
   transition: background 0.3s;
 }
-
 .buttons a:hover {
   background: #33ccff;
 }
 
-/* ── Projekt- und News-Karten ────────────────────────── */
+/* ── Cards (Projects + News) ─────────────────────────────── */
 .projects {
   padding: 2rem 1rem;
 }
 
-.projects h2 {
-  color: var(--accent);
-  margin-bottom: 2rem;
-}
-
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
-  padding: 0 1rem;
+  padding: 1rem;
 }
 
 .card {
@@ -121,39 +110,26 @@ header p {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1rem;
-  text-decoration: none;
   color: var(--fg);
+  text-decoration: none;
   transition: transform 0.2s, border 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card:hover {
-  border: 1px solid var(--accent);
-  transform: translateY(-6px);
-}
-
-/* ── News Cards (neue Seite) ─────────────────────────── */
-.news-feed {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem;
-}
-
-.news-card {
-  display: block;
-  text-decoration: none;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--fg);
-  transition: transform 0.2s, border 0.3s;
-  padding: 1rem;
-  position: relative;
-}
-
-.news-card:hover {
   transform: translateY(-5px);
   border-color: var(--accent);
+}
+
+/* ── NEWS – verbesserte Darstellung ─────────────────────────── */
+.news-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
 }
 
 .news-card h3 {
@@ -166,72 +142,33 @@ header p {
   color: #c9d1d9;
   font-size: 0.9rem;
   line-height: 1.4;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.8rem;
 }
 
 .source-badge {
-  position: absolute;
-  bottom: 10px;
-  right: 15px;
+  align-self: flex-end;
   background: var(--accent);
   color: #000;
   border-radius: 8px;
-  padding: 2px 8px;
+  padding: 3px 8px;
   font-size: 0.75rem;
   font-weight: bold;
 }
 
-/* ── About / Textblöcke ──────────────────────────────── */
-.about {
-  padding: 3rem 1rem;
-  background: rgba(10, 10, 15, 0.6);
-}
-
-.about h2 {
-  color: var(--accent);
-  margin-bottom: 1.5rem;
-}
-
-.about p {
-  max-width: 700px;
-  margin: 0 auto;
-  color: #c9d1d9;
-}
-
-/* ── Footer ──────────────────────────────────────────── */
+/* ── Footer ─────────────────────────────── */
 footer {
   padding: 2rem 1rem;
   border-top: 1px solid var(--border);
   color: #8b949e;
-  margin-top: 3rem;
 }
 
 footer .nebby {
   width: 90px;
   opacity: 0.85;
   margin-bottom: 0.5rem;
-  transition: transform 0.3s ease;
-}
-
-footer .nebby:hover {
-  transform: rotate(10deg);
-}
-
-.nebby-auto-wink {
-  animation: wink 1.5s ease-in-out infinite;
-}
-
-@keyframes wink {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(8deg);
-  }
 }
 
 footer .coffee-text {
-  display: inline-block;
   color: var(--fg);
   font-size: 0.9rem;
 }
@@ -239,7 +176,6 @@ footer .coffee-text {
 #visitor-counter {
   margin-top: 1rem;
   color: var(--accent);
-  font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
 }
 
@@ -248,36 +184,7 @@ footer .coffee-text {
   text-shadow: 0 0 10px #00b4ff;
 }
 
-/* ── Loading Animation in News ───────────────────────── */
-#loading-line {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  font-size: 1rem;
-  color: var(--accent);
-}
-
-/* ── Responsive Anpassungen ─────────────────────────── */
-@media (max-width: 600px) {
-  header {
-    padding: 4rem 1rem 2rem;
-  }
-  .avatar {
-    width: 120px;
-  }
-  .buttons a {
-    display: block;
-    margin: 0.5rem auto;
-    width: 80%;
-  }
-  .projects h2 {
-    font-size: 1.3rem;
-  }
-  footer {
-    font-size: 0.85rem;
-  }
-}
-
-/* ── Scrollbar (dezent) ─────────────────────────────── */
+/* ── Scrollbar ───────────────────────────── */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -290,4 +197,19 @@ footer .coffee-text {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
+}
+
+/* ── Responsive ───────────────────────────── */
+@media (max-width: 600px) {
+  header {
+    padding: 4rem 1rem 2rem;
+  }
+  .avatar {
+    width: 120px;
+  }
+  .buttons a {
+    display: block;
+    width: 80%;
+    margin: 0.5rem auto;
+  }
 }
