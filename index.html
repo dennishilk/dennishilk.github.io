@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=18" />
+  <link rel="stylesheet" href="style.css?v=19" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -98,10 +98,17 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🌐 Global Visitor Counter (CountAPI with fallback)
+    // 🌐 Global Visitor Counter using /hit (auto-create + increment)
     const NAMESPACE = "dennishilk.github.io";
     const KEY = "visitors";
-    const START_VALUE = 46104;
+    const START_VALUE = 46104; // optional seed; nur nötig, wenn wir manuell setzen
+
+    async function setSeedIfWanted(endpoint) {
+      // Nur nutzen, wenn du explizit auf einen Startwert setzen willst.
+      try {
+        await fetch(`${endpoint}/set/${NAMESPACE}/${KEY}?value=${START_VALUE}`, { cache: "no-store" });
+      } catch (_) {}
+    }
 
     async function initCount() {
       const endpoints = [
@@ -110,22 +117,31 @@
       ];
       const el = document.getElementById("count");
 
-      for (const endpoint of endpoints) {
+      for (const ep of endpoints) {
         try {
-          // Create counter if it doesn't exist
-          await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
-
-          // Increment counter
-          const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
+          // /hit legt an (falls nicht vorhanden) UND inkrementiert in einem Schritt
+          const res = await fetch(`${ep}/hit/${NAMESPACE}/${KEY}`, { cache: "no-store" });
+          if (!res.ok) throw new Error("HTTP " + res.status);
           const data = await res.json();
           el.textContent = data.value.toString();
-          return; // success, stop trying
+          return; // Erfolg -> abbrechen
         } catch (e) {
-          console.warn("CountAPI failed at", endpoint, e);
+          console.warn("CountAPI failed at", ep, e);
         }
       }
 
-      el.textContent = "offline";
+      // Fallback: versuche einmalig Seed zu setzen auf dev und danach erneut hit
+      try {
+        await setSeedIfWanted("https://api.countapi.dev");
+        const res = await fetch(`https://api.countapi.dev/hit/${NAMESPACE}/${KEY}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById("count").textContent = data.value.toString();
+          return;
+        }
+      } catch (_) {}
+
+      document.getElementById("count").textContent = "offline";
     }
 
     initCount();
