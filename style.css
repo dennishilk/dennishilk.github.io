@@ -178,18 +178,13 @@ footer{
 }
 .nebby-auto-wink{animation:nebbyWink 0.5s ease-in-out 3;}
 
-.socials a{
+footer p a{
   color:var(--accent);
-  margin:0 0.5rem;
-  font-size:1.5rem;
-  transition:color 0.3s,text-shadow 0.3s;
+  text-decoration:none;
 }
-.socials a:hover{
-  color:#33ccff;
-  text-shadow:0 0 10px rgba(0,180,255,0.6);
-}
+footer p a:hover{text-decoration:underline;}
 
-/* Impressum + Datenschutz Pages */
+/* Impressum + Datenschutz */
 .impressum{
   max-width:700px;
   margin:3rem auto;
@@ -214,8 +209,36 @@ footer{
   color:#33ccff;
   text-shadow:0 0 6px rgba(0,180,255,0.6);
 }
-footer p a{
-  color:var(--accent);
-  text-decoration:none;
+
+/* Linux News Section */
+.news-feed {
+  list-style: none;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
 }
-footer p a:hover{text-decoration:underline;}
+.news-item {
+  background: rgba(20,20,25,0.7);
+  border: 1px solid #2f2f2f;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 0.8rem 0;
+  text-align: left;
+  transition: transform 0.2s, border 0.3s;
+}
+.news-item:hover {
+  border: 1px solid var(--accent);
+  transform: translateY(-4px);
+}
+.news-item a {
+  color: var(--accent);
+  font-weight: bold;
+  text-decoration: none;
+}
+.news-item a:hover {
+  text-decoration: underline;
+}
+.news-item .source {
+  color: #888;
+  font-size: 0.9rem;
+}
