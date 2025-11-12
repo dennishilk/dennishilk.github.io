@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=17" />
+  <link rel="stylesheet" href="style.css?v=18" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -81,8 +81,8 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Terminal Neon Visitor Counter ─────────────────── -->
-      <div id="visitor-counter" class="terminal-counter">
+      <!-- ── Terminal Neon Visitor Counter with Tooltip ────── -->
+      <div id="visitor-counter" class="terminal-counter" title="Global unique visits counted via CountAPI (no cookies, no tracking)">
         <span class="label">Visitors since 2025:</span>
         <span id="count" class="glow">loading...</span>
       </div>
@@ -98,32 +98,36 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🌐 Global Visitor Counter (CountAPI – fixed version)
+    // 🌐 Global Visitor Counter (CountAPI with fallback)
     const NAMESPACE = "dennishilk.github.io";
     const KEY = "visitors";
     const START_VALUE = 46104;
 
     async function initCount() {
-      const endpoint = `https://api.countapi.xyz`;
+      const endpoints = [
+        "https://api.countapi.dev",
+        "https://api.countapi.xyz"
+      ];
       const el = document.getElementById("count");
 
-      try {
-        // Create counter if it doesn’t exist yet
-        await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
-      } catch (e) {
-        console.log("Counter exists:", e);
+      for (const endpoint of endpoints) {
+        try {
+          // Create counter if it doesn't exist
+          await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
+
+          // Increment counter
+          const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
+          const data = await res.json();
+          el.textContent = data.value.toString();
+          return; // success, stop trying
+        } catch (e) {
+          console.warn("CountAPI failed at", endpoint, e);
+        }
       }
 
-      try {
-        // Increment global counter
-        const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
-        const data = await res.json();
-        el.textContent = data.value.toString();
-      } catch (e) {
-        console.error("CountAPI error:", e);
-        el.textContent = "offline";
-      }
+      el.textContent = "offline";
     }
+
     initCount();
   </script>
 </body>
