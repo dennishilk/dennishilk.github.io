@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="bo1J0uPP0cnvHa6vepnUEp_kaTbpMvV7H8bMJHKw-KA" />
   <title>Dennis Hilk</title>
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -67,9 +67,9 @@
 
     <!-- ── Footer ─────────────────────────────────────────── -->
     <footer>
-      <div class="nebby-wrapper">
+      <div class="nebby-terminal-line">
         <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" />
-        <div class="nebby-terminal">> sudo apt install coffee</div>
+        <span class="coffee-text">&gt; sudo apt install coffee<span class="cursor">|</span></span>
       </div>
 
       <p>© 2025 Dennis Hilk — <a href="https://github.com/dennishilk" target="_blank">GitHub Profile</a></p>
@@ -85,16 +85,8 @@
   <script>
     window.addEventListener('load', () => {
       const nebby = document.querySelector('.nebby');
-      const terminal = document.querySelector('.nebby-terminal');
-
       nebby.classList.add('nebby-auto-wink');
-      terminal.style.opacity = '1';
-      terminal.style.animation = 'typingText 1.4s steps(22) 1 forwards';
-
-      setTimeout(() => {
-        nebby.classList.remove('nebby-auto-wink');
-        terminal.style.opacity = '0';
-      }, 3500);
+      setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
   </script>
 </body>
