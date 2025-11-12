@@ -104,7 +104,7 @@
       if (!count) count = Math.floor(Math.random() * 900) + 100; // start around 000100–001000
       count++;
       localStorage.setItem("visitorCount", count);
-      el.textContent = count.toString().padStart(6, '0');
+      el.textContent = count.toString();
     }
     updateCounter();
   </script>
