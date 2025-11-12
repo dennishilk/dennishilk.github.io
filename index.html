@@ -80,15 +80,13 @@
         <a href="/impressum.html">Impressum</a> und
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
+
+      <!-- ── Global Visitor Counter (CountAPI) ─────────────── -->
+      <div id="visitor-counter">Visitors since 2025: <span id="count">loading...</span></div>
     </footer>
   </div>
 
- <!-- ── Retro Visitor Counter ─────────────────────────── -->
-      <div id="visitor-counter">Visitors since 2025: <span id="count">...</span></div>
-    </footer>
-  </div>
-
-  <!-- ── Nebby Animation + Visitor Counter ───────────────── -->
+  <!-- ── Nebby Animation + CountAPI Script ───────────────── -->
   <script>
     // Nebby wink animation
     window.addEventListener('load', () => {
@@ -97,16 +95,33 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // Local visitor counter (retro style)
-    function updateCounter() {
-      const el = document.getElementById("count");
-      let count = localStorage.getItem("visitorCount");
-      if (!count) count = Math.floor(Math.random() * 900) + 100; // start around 000100–001000
-      count++;
-      localStorage.setItem("visitorCount", count);
-      el.textContent = count.toString();
+    // 🌐 Global Visitor Counter (CountAPI)
+    const NAMESPACE = "dennishilk.github.io";
+    const KEY = "visitors";
+    const START_VALUE = 46104; // Initial value
+
+    async function initCount() {
+      const endpoint = `https://api.countapi.xyz`;
+      const countElement = document.getElementById("count");
+
+      try {
+        // Ensure the counter exists with a start value
+        await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}&update_lowerbound=50000`);
+      } catch (err) {
+        console.warn("Counter may already exist:", err);
+      }
+
+      // Increment global counter
+      try {
+        const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
+        const data = await res.json();
+        countElement.textContent = data.value.toString();
+      } catch (err) {
+        console.error("CountAPI error:", err);
+        countElement.textContent = "error";
+      }
     }
-    updateCounter();
+    initCount();
   </script>
 </body>
 </html>
