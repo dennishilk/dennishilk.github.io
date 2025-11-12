@@ -51,6 +51,20 @@ header h1{
   text-shadow:0 0 12px rgba(0,180,255,0.4);
 }
 header .prompt{color:var(--prompt);margin-right:0.5em;}
+.cursor{
+  display:inline-block;
+  color:var(--accent);
+  margin-left:4px;
+  font-weight:bold;
+  animation:blinkCursor 1s steps(2,start) infinite;
+  position:relative;
+  top:1px;
+}
+@keyframes blinkCursor{
+  0%,100%{opacity:0;}
+  50%{opacity:1;}
+}
+
 header p{margin:0.8rem 0 1.8rem;color:#c9d1d9;font-size:1rem;}
 .buttons a{
   display:inline-block;
@@ -117,16 +131,16 @@ footer{padding:2rem 1rem;border-top:1px solid var(--border);color:#8b949e;}
   opacity:0.9;
   text-shadow:0 0 6px rgba(0,180,255,0.6);
 }
-.cursor{
+.coffee-text .cursor{
   display:inline-block;
-  width:6px;
-  background:var(--accent);
-  margin-left:2px;
-  animation:blinkCursor 1s infinite;
+  color:var(--accent);
+  margin-left:3px;
+  font-weight:bold;
+  animation:blinkCursor 1s steps(2,start) infinite;
+  position:relative;
+  top:1px;
 }
-@keyframes blinkCursor{0%,100%{opacity:0;}50%{opacity:1;}}
 
-/* Nebby Animation */
 .nebby:hover{transform:rotate(-6deg) scale(1.05);animation:nebbyWink 0.4s ease-in-out 2;}
 @keyframes nebbyWink{
   0%{transform:rotate(0deg) scale(1.05);}
