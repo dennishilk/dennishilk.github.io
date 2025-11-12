@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Linux News – Dennis Hilk</title>
-
-  <!-- 🐧 Favicon + Styles -->
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=17">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -16,104 +14,89 @@
   <canvas id="stars"></canvas>
 
   <div class="content">
-    <!-- ── Header ─────────────────────────────────────── -->
+    <!-- ── Header ───────────────────────────── -->
     <header>
       <img src="avatar.png" alt="Dennis Hilk Avatar" class="avatar">
       <h1><span class="prompt">root@nebunix:~$</span> Linux News<span class="cursor">|</span></h1>
-      <p>Latest Linux updates automatically fetched from Phoronix, Kernel.org & OMG!Ubuntu</p>
-
+      <p>Latest Linux updates automatically fetched from Phoronix & OMG!Ubuntu</p>
       <div class="buttons">
         <a href="index.html"><i class="fas fa-arrow-left"></i> Back</a>
-        <a href="#" id="reload-btn"><i class="fas fa-sync-alt"></i> Reload</a>
       </div>
     </header>
 
-    <!-- ── News Section ───────────────────────────────── -->
+    <!-- ── News Section ─────────────────────── -->
     <section class="projects">
       <h2>Fresh from the Penguin World 🐧</h2>
-
       <div id="loading-line">
         <span class="prompt">user@linux:~$</span> Fetching latest Linux News<span class="cursor">|</span>
       </div>
-
       <div id="news-list" class="cards news-feed"></div>
     </section>
 
-    <!-- ── Footer ─────────────────────────────────────── -->
+    <!-- ── Footer ───────────────────────────── -->
     <footer>
       <div class="nebby-terminal-line">
-        <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" />
+        <img src="nebby.png" alt="Nebby the Space Penguin Mascot" class="nebby" />
         <span class="coffee-text">&gt; tail -f /var/news/linux<span class="cursor">|</span></span>
       </div>
-
       <p>© 2025 Dennis Hilk —
         <a href="/impressum.html">Impressum</a> und
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
-
       <div id="visitor-counter">Visitors since 2025: <span id="count">...</span></div>
     </footer>
   </div>
 
-  <!-- ── Scripts ──────────────────────────────────────── -->
   <script>
     async function loadNews() {
+      // Nur Phoronix & OMG!Ubuntu
       const feeds = [
         "https://www.phoronix.com/rss.php",
-        "https://www.kernel.org/feeds/kdist.xml",
         "https://www.omgubuntu.co.uk/feed"
       ];
       const list = document.getElementById("news-list");
       const loading = document.getElementById("loading-line");
-      list.innerHTML = "";
-      loading.style.display = "block";
 
       for (const url of feeds) {
         try {
-          const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
-          const data = await response.json();
-          data.items.slice(0, 3).forEach(item => {
-            const imgSrc =
-              item.enclosure && item.enclosure.link
-                ? item.enclosure.link
-                : (item.thumbnail ? item.thumbnail : "fallback.png"); // optional fallback
+          const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
+          const data = await res.json();
 
+          data.items.slice(0, 3).forEach(item => {
             const card = document.createElement("a");
             card.href = item.link;
             card.target = "_blank";
             card.className = "card news-card";
+
+            // Bildquelle bestimmen oder Tux-Fallback
+            const imgSrc = item.enclosure && item.enclosure.link
+              ? item.enclosure.link
+              : "https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg";
+
             card.innerHTML = `
-              <img src="${imgSrc}" alt="News thumbnail">
+              <img src="${imgSrc}" alt="News Image">
               <h3>${item.title}</h3>
-              <p>${item.description ? item.description.substring(0, 150).replace(/<[^>]+>/g, '') + '…' : ''}</p>
-              <span class="source-badge">${new URL(item.link).hostname.replace('www.', '')}</span>
+              <p>${item.description ? item.description.replace(/<[^>]*>/g, '').substring(0, 140) + '…' : ''}</p>
+              <span class="source-badge">${new URL(item.link).hostname.replace('www.','')}</span>
             `;
             list.appendChild(card);
           });
-        } catch (e) {
-          console.error("Feed Error", e);
+        } catch (err) {
+          console.error("Feed Error:", err);
         }
       }
-
       loading.style.display = "none";
     }
-
-    // Reload button
-    document.getElementById("reload-btn").addEventListener("click", (e) => {
-      e.preventDefault();
-      loadNews();
-    });
-
     loadNews();
 
-    // local visitor counter (demo)
+    // Lokaler Retro-Counter (wie Startseite)
     function updateCounter() {
       const el = document.getElementById("count");
       let count = localStorage.getItem("visitorCount");
       if (!count) count = Math.floor(Math.random() * 900) + 100;
       count++;
       localStorage.setItem("visitorCount", count);
-      el.textContent = count.toString().padStart(6, "0");
+      el.textContent = count.toString().padStart(6, '0');
     }
     updateCounter();
   </script>
