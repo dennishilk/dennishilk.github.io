@@ -29,3 +29,11 @@ Built using:
 | 💡 **Dynamic Visitor Counter** | Simulated, time-based counter (no API or tracking) |
 | 📰 **News Page** | Live Linux news feed from Phoronix & OMG!Ubuntu |
 | 🎨 **Gruvbox-like Design** | Clean, minimal, readable |
+
+💬 License
+
+This repository is open-source.
+Feel free to fork, study, and learn from it — but please give credit when reusing assets (avatar, Nebby, or layout).
+
+© 2025 Dennis Hilk — GitHub Profile
+
