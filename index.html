@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=22" />
+  <link rel="stylesheet" href="style.css?v=23" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -81,7 +81,7 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Terminal Neon Visitor Counter (original working) ─ -->
+      <!-- ── Working Counter (original functional version) ─── -->
       <div id="visitor-counter" class="terminal-counter"
            title="Global unique visits counted via CountAPI (no cookies, no tracking)">
         <span class="label">Visitors since 2025:</span>
@@ -90,7 +90,7 @@
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + CountAPI Script ───────────────── -->
+  <!-- ── Nebby Animation + CountAPI Script (original) ─────── -->
   <script>
     // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
@@ -99,18 +99,28 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🌐 CountAPI counter – classic stable version
+    // 🌐 The original, working CountAPI version
     const NAMESPACE = "dennishilk.github.io";
     const KEY = "visitors";
-    const el = document.getElementById("count");
+    const START_VALUE = 46104;
 
     async function initCount() {
+      const endpoint = `https://api.countapi.xyz`;
+      const el = document.getElementById("count");
+
       try {
-        const res = await fetch(`https://api.countapi.dev/hit/${NAMESPACE}/${KEY}`);
+        // Ensure counter exists with start value
+        await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
+      } catch (err) {
+        console.warn("Counter may already exist");
+      }
+
+      try {
+        // Increment global counter
+        const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
         const data = await res.json();
         el.textContent = data.value.toString();
       } catch (err) {
-        console.error("CountAPI error:", err);
         el.textContent = "offline";
       }
     }
