@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux News – Dennis Hilk</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css?v=11">
+  <script defer src="stars.js"></script>
+</head>
+
+<body>
+  <canvas id="stars"></canvas>
+
+  <div class="content">
+    <header>
+      <img src="avatar.png" alt="Dennis Hilk Avatar" class="avatar">
+      <h1><span class="prompt">root@nebunix:~$</span> Linux News<span class="cursor">|</span></h1>
+      <p>Latest Linux updates automatically fetched from Phoronix, Kernel.org & OMG!Ubuntu</p>
+      <div class="buttons">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Back</a>
+      </div>
+    </header>
+
+    <section class="projects">
+      <h2>Fresh from the Penguin World 🐧</h2>
+      <ul id="news-list" class="news-feed"></ul>
+    </section>
+
+    <footer>
+      <div class="nebby-terminal-line">
+        <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" />
+        <span class="coffee-text">&gt; tail -f /var/news/linux<span class="cursor">|</span></span>
+      </div>
+      <p>© 2025 Dennis Hilk —
+        <a href="/impressum.html">Impressum</a> und
+        <a href="/datenschutzerklaerung.html">Datenschutz</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    async function loadNews() {
+      const feeds = [
+        "https://www.phoronix.com/rss.php",
+        "https://www.kernel.org/feeds/kdist.xml",
+        "https://www.omgubuntu.co.uk/feed"
+      ];
+      const list = document.getElementById("news-list");
+
+      for (const url of feeds) {
+        try {
+          const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
+          const data = await response.json();
+          data.items.slice(0, 3).forEach(item => {
+            const li = document.createElement("li");
+            li.className = "news-item";
+            li.innerHTML = `
+              <a href="${item.link}" target="_blank">${item.title}</a>
+              <span class="source"> — ${new URL(item.link).hostname.replace('www.','')}</span>
+            `;
+            list.appendChild(li);
+          });
+        } catch (e) {
+          console.error("Feed Error", e);
+        }
+      }
+    }
+    loadNews();
+  </script>
+</body>
+</html>
