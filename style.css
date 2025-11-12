@@ -18,7 +18,7 @@ body {
   text-align: center;
 }
 
-/* ── Star Canvas ───────────────────────────────────────────── */
+/* Star Canvas */
 #stars {
   position: fixed;
   top: 0; left: 0;
@@ -27,10 +27,8 @@ body {
   background: radial-gradient(circle at 50% 50%, #06070a, #000);
 }
 
-/* ── Header ────────────────────────────────────────────────── */
-header {
-  padding: 6rem 1rem 3rem;
-}
+/* Header */
+header { padding: 6rem 1rem 3rem; }
 
 .avatar {
   width: 250px;
@@ -44,7 +42,6 @@ header {
              floatAvatar 4s ease-in-out infinite,
              auraPulse 5s ease-in-out infinite;
 }
-
 @keyframes fadeInAvatar {
   0%   { opacity: 0; transform: translateY(30px) scale(0.9); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -54,29 +51,35 @@ header {
   50%     { transform: translateY(-8px) scale(1.03); }
 }
 @keyframes auraPulse {
-  0%,100% {
-    box-shadow: 0 0 25px rgba(0,180,255,0.6),
-                0 0 60px rgba(0,180,255,0.3);
-  }
-  50% {
-    box-shadow: 0 0 45px rgba(0,220,255,0.9),
-                0 0 90px rgba(0,200,255,0.5);
-  }
+  0%,100% { box-shadow: 0 0 25px rgba(0,180,255,0.6), 0 0 60px rgba(0,180,255,0.3); }
+  50%     { box-shadow: 0 0 45px rgba(0,220,255,0.9), 0 0 90px rgba(0,200,255,0.5); }
 }
 
+/* Terminal-Typing Header */
 header h1 {
+  display: inline-block;
+  overflow: hidden;
+  border-right: .15em solid var(--accent);
+  white-space: nowrap;
+  letter-spacing: .05em;
   color: var(--accent);
-  font-size: 2.2rem;
+  font-size: 2.3rem;
   text-shadow: 0 0 15px rgba(0,180,255,0.5);
+  animation:
+    typingName 2.8s steps(22, end) 0.4s 1 normal both,
+    blinkCursor .8s step-end infinite;
 }
-header h1 span {
-  color: var(--fg);
+header h1 .prompt {
+  color: #00ff80;
+  margin-right: .5em;
 }
-header p {
-  margin: 0.8rem 0 1.8rem;
-  color: #c9d1d9;
-  font-size: 1rem;
+@keyframes typingName { from { width: 0; } to { width: 100%; } }
+@keyframes blinkCursor {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--accent); }
 }
+
+header p { margin: 0.8rem 0 1.8rem; color: #c9d1d9; font-size: 1rem; }
 .buttons a {
   display: inline-block;
   margin: 0.3rem;
@@ -94,57 +97,8 @@ header p {
   box-shadow: 0 0 20px rgba(0,180,255,0.7);
 }
 
-/* ── Glitch Effect ─────────────────────────────────────────── */
-.glitch {
-  position: relative;
-  color: var(--accent);
-  font-size: 2.2rem;
-  text-shadow: 0 0 10px rgba(0,180,255,0.6);
-  animation: glitch 2s linear infinite;
-}
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  color: var(--accent);
-  clip: rect(0, 0, 0, 0);
-}
-.glitch::before {
-  left: 2px;
-  text-shadow: -2px 0 #ff00c1;
-  animation: glitchTop 2s infinite linear alternate-reverse;
-}
-.glitch::after {
-  left: -2px;
-  text-shadow: -2px 0 #00fff9;
-  animation: glitchBottom 2s infinite linear alternate-reverse;
-}
-@keyframes glitch {
-  0%,100% { text-shadow: 0 0 5px var(--accent), 0 0 20px var(--accent); }
-  50% { text-shadow: 0 0 2px #fff, 0 0 8px var(--accent); }
-}
-@keyframes glitchTop {
-  0% { clip: rect(0, 9999px, 0, 0); }
-  10% { clip: rect(10px, 9999px, 30px, 0); }
-  20% { clip: rect(20px, 9999px, 10px, 0); }
-  30% { clip: rect(40px, 9999px, 60px, 0); }
-  100% { clip: rect(0, 9999px, 0, 0); }
-}
-@keyframes glitchBottom {
-  0% { clip: rect(50px, 9999px, 80px, 0); }
-  20% { clip: rect(10px, 9999px, 60px, 0); }
-  40% { clip: rect(70px, 9999px, 100px, 0); }
-  100% { clip: rect(50px, 9999px, 80px, 0); }
-}
-
-/* ── Cards ────────────────────────────────────────────────── */
-.projects {
-  padding: 2rem 1rem 3rem;
-}
+/* Cards */
+.projects { padding: 2rem 1rem 3rem; }
 .projects h2 {
   color: var(--accent);
   margin-bottom: 2rem;
@@ -174,27 +128,17 @@ header p {
 .card:nth-child(4){animation-delay:0.8s;}
 .card:nth-child(5){animation-delay:1.0s;}
 .card:nth-child(6){animation-delay:1.2s;}
-@keyframes cardFadeIn {
-  from { opacity: 0; transform: translateY(30px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
+@keyframes cardFadeIn { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .card:hover {
   border: 1px solid var(--accent);
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 0 25px rgba(0,180,255,0.4);
 }
 
-/* ── Footer & Nebby ───────────────────────────────────────── */
-footer {
-  padding: 2rem 1rem;
-  border-top: 1px solid var(--border);
-  color: #8b949e;
-}
+/* Footer & Nebby */
+footer { padding: 2rem 1rem; border-top: 1px solid var(--border); color: #8b949e; }
 
-.nebby-wrapper {
-  position: relative;
-  display: inline-block;
-}
+.nebby-wrapper { position: relative; display: inline-block; }
 .nebby {
   width: 110px;
   cursor: pointer;
@@ -205,17 +149,14 @@ footer {
   bottom: 120%;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 20, 40, 0.9);
+  background: transparent;
   color: var(--accent);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem;
-  border-radius: 6px;
-  padding: 6px 10px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  border: 1px solid var(--accent);
-  box-shadow: 0 0 8px rgba(0,180,255,0.5);
+  text-shadow: 0 0 6px rgba(0,180,255,0.6);
   transition: opacity 0.3s ease;
 }
 .nebby:hover {
@@ -233,13 +174,8 @@ footer {
   75% { transform: rotate(-10deg) scale(1.05); }
   100% { transform: rotate(0deg) scale(1.05); }
 }
-@keyframes typingText {
-  from { width: 0; }
-  to { width: 100%; }
-}
-.nebby-auto-wink {
-  animation: nebbyWink 0.5s ease-in-out 3;
-}
+@keyframes typingText { from { width: 0; } to { width: 100%; } }
+.nebby-auto-wink { animation: nebbyWink 0.5s ease-in-out 3; }
 
 .socials a {
   color: var(--accent);
@@ -247,7 +183,4 @@ footer {
   font-size: 1.5rem;
   transition: color 0.3s, text-shadow 0.3s;
 }
-.socials a:hover {
-  color: #33ccff;
-  text-shadow: 0 0 10px rgba(0,180,255,0.6);
-}
+.socials a:hover { color: #33ccff; text-shadow: 0 0 10px rgba(0,180,255,0.6); }
