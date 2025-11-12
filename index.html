@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=23" />
+  <link rel="stylesheet" href="style.css?v=27" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -77,20 +77,20 @@
       </div>
 
       <p>© 2025 Dennis Hilk —
-        <a href="/impressum.html">Impressum</a> und
+        <a href="/impressum.html">Impressum</a> und 
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Working Counter (original functional version) ─── -->
+      <!-- ── Global Visitor Counter (stable with fallback) ── -->
       <div id="visitor-counter" class="terminal-counter"
            title="Global unique visits counted via CountAPI (no cookies, no tracking)">
         <span class="label">Visitors since 2025:</span>
-        <span id="count" class="glow">loading...</span>
+        <span id="count" class="glow">loading…</span>
       </div>
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + CountAPI Script (original) ─────── -->
+  <!-- ── Nebby Animation + Global Counter Script ──────────── -->
   <script>
     // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
@@ -99,32 +99,33 @@
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🌐 The original, working CountAPI version
+    // 🌍 Global CountAPI counter with fallback
     const NAMESPACE = "dennishilk.github.io";
     const KEY = "visitors";
     const START_VALUE = 46104;
 
-    async function initCount() {
-      const endpoint = `https://api.countapi.xyz`;
+    async function updateCounter() {
+      const endpoint = "https://api.countapi.xyz";
       const el = document.getElementById("count");
+      let count = localStorage.getItem("lastKnownCount") || START_VALUE;
 
       try {
-        // Ensure counter exists with start value
         await fetch(`${endpoint}/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
-      } catch (err) {
-        console.warn("Counter may already exist");
-      }
+      } catch (_) { /* ignore */ }
 
       try {
-        // Increment global counter
         const res = await fetch(`${endpoint}/update/${NAMESPACE}/${KEY}?amount=1`);
         const data = await res.json();
-        el.textContent = data.value.toString();
-      } catch (err) {
-        el.textContent = "offline";
+        count = data.value;
+        localStorage.setItem("lastKnownCount", count);
+      } catch (_) {
+        console.warn("CountAPI offline, using cached value");
       }
+
+      el.textContent = count.toString().padStart(6, '0');
     }
-    initCount();
+
+    updateCounter();
   </script>
 </body>
 </html>
