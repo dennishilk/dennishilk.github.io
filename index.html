@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=19" />
+  <link rel="stylesheet" href="style.css?v=20" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -81,70 +81,26 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Terminal Neon Visitor Counter with Tooltip ────── -->
+      <!-- ── Terminal Neon Visitor Counter (Image Badge) ───── -->
       <div id="visitor-counter" class="terminal-counter" title="Global unique visits counted via CountAPI (no cookies, no tracking)">
         <span class="label">Visitors since 2025:</span>
-        <span id="count" class="glow">loading...</span>
+        <span class="counter-badge">
+          <img src="https://api.countapi.xyz/hit/dennishilk.github.io/visitors/badge"
+               alt="visitor counter"
+               loading="lazy"
+               class="counter-img" />
+        </span>
       </div>
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + CountAPI Script ───────────────── -->
+  <!-- ── Nebby wink animation ─────────────────────────────── -->
   <script>
-    // 🐧 Nebby wink animation
     window.addEventListener('load', () => {
       const nebby = document.querySelector('.nebby');
       nebby.classList.add('nebby-auto-wink');
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
-
-    // 🌐 Global Visitor Counter using /hit (auto-create + increment)
-    const NAMESPACE = "dennishilk.github.io";
-    const KEY = "visitors";
-    const START_VALUE = 46104; // optional seed; nur nötig, wenn wir manuell setzen
-
-    async function setSeedIfWanted(endpoint) {
-      // Nur nutzen, wenn du explizit auf einen Startwert setzen willst.
-      try {
-        await fetch(`${endpoint}/set/${NAMESPACE}/${KEY}?value=${START_VALUE}`, { cache: "no-store" });
-      } catch (_) {}
-    }
-
-    async function initCount() {
-      const endpoints = [
-        "https://api.countapi.dev",
-        "https://api.countapi.xyz"
-      ];
-      const el = document.getElementById("count");
-
-      for (const ep of endpoints) {
-        try {
-          // /hit legt an (falls nicht vorhanden) UND inkrementiert in einem Schritt
-          const res = await fetch(`${ep}/hit/${NAMESPACE}/${KEY}`, { cache: "no-store" });
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          const data = await res.json();
-          el.textContent = data.value.toString();
-          return; // Erfolg -> abbrechen
-        } catch (e) {
-          console.warn("CountAPI failed at", ep, e);
-        }
-      }
-
-      // Fallback: versuche einmalig Seed zu setzen auf dev und danach erneut hit
-      try {
-        await setSeedIfWanted("https://api.countapi.dev");
-        const res = await fetch(`https://api.countapi.dev/hit/${NAMESPACE}/${KEY}`, { cache: "no-store" });
-        if (res.ok) {
-          const data = await res.json();
-          document.getElementById("count").textContent = data.value.toString();
-          return;
-        }
-      } catch (_) {}
-
-      document.getElementById("count").textContent = "offline";
-    }
-
-    initCount();
   </script>
 </body>
 </html>
