@@ -18,7 +18,7 @@ body{
   text-align:center;
 }
 
-/* Star background */
+/* ── Star background ───────────────────────────────────── */
 #stars{
   position:fixed;
   top:0;left:0;
@@ -27,7 +27,7 @@ body{
   background:radial-gradient(circle at 50% 50%,#06070a,#000);
 }
 
-/* Header */
+/* ── Header ────────────────────────────────────────────── */
 header{padding:6rem 1rem 3rem;}
 .avatar{
   width:250px;
@@ -44,7 +44,7 @@ header{padding:6rem 1rem 3rem;}
   50%{box-shadow:0 0 45px rgba(0,220,255,0.9),0 0 90px rgba(0,200,255,0.5);}
 }
 
-/* Header Title */
+/* ── Header Title & Cursor ─────────────────────────────── */
 header h1{
   color:var(--accent);
   font-size:2.2rem;
@@ -52,7 +52,6 @@ header h1{
 }
 header .prompt{color:var(--prompt);margin-right:0.5em;}
 
-/* Cursor animation (true terminal blink) */
 .cursor{
   display:inline-block;
   color:var(--accent);
@@ -69,6 +68,7 @@ header .prompt{color:var(--prompt);margin-right:0.5em;}
   100%{opacity:1;}
 }
 
+/* ── Header Subtext & Buttons ──────────────────────────── */
 header p{
   margin:0.8rem 0 1.8rem;
   color:#c9d1d9;
@@ -91,7 +91,7 @@ header p{
   box-shadow:0 0 20px rgba(0,180,255,0.7);
 }
 
-/* Projects */
+/* ── Projects ─────────────────────────────────────────── */
 .projects{padding:2rem 1rem 3rem;}
 .projects h2{
   color:var(--accent);
@@ -128,7 +128,7 @@ header p{
   box-shadow:0 0 25px rgba(0,180,255,0.4);
 }
 
-/* Footer & Nebby */
+/* ── Footer & Nebby ───────────────────────────────────── */
 footer{
   padding:2rem 1rem;
   border-top:1px solid var(--border);
@@ -184,7 +184,7 @@ footer p a{
 }
 footer p a:hover{text-decoration:underline;}
 
-/* Impressum + Datenschutz */
+/* ── Impressum + Datenschutz ───────────────────────────── */
 .impressum{
   max-width:700px;
   margin:3rem auto;
@@ -210,7 +210,7 @@ footer p a:hover{text-decoration:underline;}
   text-shadow:0 0 6px rgba(0,180,255,0.6);
 }
 
-/* Linux News Section */
+/* ── Linux News Section ───────────────────────────────── */
 .news-feed {
   list-style: none;
   max-width: 800px;
@@ -241,4 +241,30 @@ footer p a:hover{text-decoration:underline;}
 .news-item .source {
   color: #888;
   font-size: 0.9rem;
+}
+
+/* ── Loading Animation (Terminal Style) ───────────────── */
+#loading-line {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  margin-top: 1rem;
+  animation: fadeIn 1s ease forwards;
+  text-shadow: 0 0 8px rgba(0,180,255,0.6);
+}
+#loading-line .prompt {
+  color: var(--prompt);
+  margin-right: 0.5em;
+}
+#loading-line .cursor {
+  animation: blinkCursor 0.8s steps(1, start) infinite;
+}
+
+/* ── Visitor Counter (Retro Style) ─────────────────────── */
+#visitor-counter {
+  margin-top: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  font-size: 0.95rem;
+  text-shadow: 0 0 6px rgba(0,180,255,0.4);
+  opacity: 0.9;
 }
