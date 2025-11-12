@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Linux News – Dennis Hilk</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=13">
   <script defer src="stars.js"></script>
 </head>
 
@@ -24,6 +24,13 @@
 
     <section class="projects">
       <h2>Fresh from the Penguin World 🐧</h2>
+
+      <!-- ── Loading Animation ───────────────────────── -->
+      <div id="loading-line">
+        <span class="prompt">user@linux:~$</span> Fetching latest Linux News<span class="cursor">|</span>
+      </div>
+
+      <!-- ── News Container ─────────────────────────── -->
       <ul id="news-list" class="news-feed"></ul>
     </section>
 
@@ -36,9 +43,11 @@
         <a href="/impressum.html">Impressum</a> und
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
+      <div id="visitor-counter">Visitors since 2025: <span id="count">...</span></div>
     </footer>
   </div>
 
+  <!-- ── JavaScript: Feeds + Visitor Counter ─────────────── -->
   <script>
     async function loadNews() {
       const feeds = [
@@ -47,6 +56,7 @@
         "https://www.omgubuntu.co.uk/feed"
       ];
       const list = document.getElementById("news-list");
+      const loading = document.getElementById("loading-line");
 
       for (const url of feeds) {
         try {
@@ -65,8 +75,22 @@
           console.error("Feed Error", e);
         }
       }
+
+      // Hide loading text after content loads
+      loading.style.display = "none";
     }
     loadNews();
+
+    // LocalStorage-based Visitor Counter (no tracking)
+    function updateCounter() {
+      const el = document.getElementById("count");
+      let count = localStorage.getItem("visitorCount");
+      if (!count) count = Math.floor(Math.random() * 900) + 100; // start with pseudo-random oldschool number
+      count++;
+      localStorage.setItem("visitorCount", count);
+      el.textContent = count.toString().padStart(6, '0');
+    }
+    updateCounter();
   </script>
 </body>
 </html>
