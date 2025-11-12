@@ -83,13 +83,30 @@
     </footer>
   </div>
 
-  <!-- ── Nebby Animation ─────────────────────────────────── -->
+ <!-- ── Retro Visitor Counter ─────────────────────────── -->
+      <div id="visitor-counter">Visitors since 2025: <span id="count">...</span></div>
+    </footer>
+  </div>
+
+  <!-- ── Nebby Animation + Visitor Counter ───────────────── -->
   <script>
+    // Nebby wink animation
     window.addEventListener('load', () => {
       const nebby = document.querySelector('.nebby');
       nebby.classList.add('nebby-auto-wink');
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
+
+    // Local visitor counter (retro style)
+    function updateCounter() {
+      const el = document.getElementById("count");
+      let count = localStorage.getItem("visitorCount");
+      if (!count) count = Math.floor(Math.random() * 900) + 100; // start around 000100–001000
+      count++;
+      localStorage.setItem("visitorCount", count);
+      el.textContent = count.toString().padStart(6, '0');
+    }
+    updateCounter();
   </script>
 </body>
 </html>
