@@ -9,6 +9,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
   background: var(--bg);
   color: var(--fg);
@@ -17,7 +18,7 @@ body {
   text-align: center;
 }
 
-/* Star Canvas */
+/* ── Star Canvas ───────────────────────────────────────────── */
 #stars {
   position: fixed;
   top: 0; left: 0;
@@ -26,17 +27,43 @@ body {
   background: radial-gradient(circle at 50% 50%, #06070a, #000);
 }
 
-/* Header */
+/* ── Header ────────────────────────────────────────────────── */
 header {
   padding: 6rem 1rem 3rem;
 }
+
 .avatar {
-  width: 130px;
+  width: 200px; /* größerer Avatar */
   border-radius: 50%;
   border: 2px solid var(--accent);
-  box-shadow: 0 0 15px var(--accent);
-  margin-bottom: 1rem;
+  box-shadow: 0 0 20px var(--accent);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(10px) scale(1);
+  animation: fadeInAvatar 1.2s ease forwards, floatAvatar 4s ease-in-out infinite;
 }
+
+/* Avatar Animationen */
+@keyframes fadeInAvatar {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floatAvatar {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.02);
+  }
+}
+
 header h1 {
   color: var(--accent);
   font-size: 2rem;
@@ -63,7 +90,7 @@ header p {
   background: #33ccff;
 }
 
-/* Projects */
+/* ── Projects ──────────────────────────────────────────────── */
 .projects {
   padding: 2rem 1rem;
 }
@@ -84,14 +111,15 @@ header p {
   padding: 1rem;
   text-decoration: none;
   color: var(--fg);
-  transition: transform 0.2s, border 0.3s;
+  transition: transform 0.2s, border 0.3s, box-shadow 0.3s;
 }
 .card:hover {
   border: 1px solid var(--accent);
   transform: translateY(-6px);
+  box-shadow: 0 0 10px rgba(0,180,255,0.4);
 }
 
-/* About */
+/* ── About ─────────────────────────────────────────────────── */
 .about {
   padding: 3rem 1rem;
   background: rgba(10,10,15,0.6);
@@ -106,17 +134,33 @@ header p {
   color: #c9d1d9;
 }
 
-/* Footer */
+/* ── Footer ────────────────────────────────────────────────── */
 footer {
   padding: 2rem 1rem;
   border-top: 1px solid var(--border);
   color: #8b949e;
 }
+
 footer .nebby {
-  width: 90px;
-  opacity: 0.8;
+  width: 100px;
+  opacity: 0.9;
   margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 12px rgba(0,180,255,0.5));
+  animation: fadeInNebby 1.5s ease forwards, floatNebby 5s ease-in-out infinite;
+  transform: translateY(0);
+  opacity: 0;
 }
+
+/* Nebby Animationen */
+@keyframes fadeInNebby {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes floatNebby {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
 .socials a {
   color: var(--accent);
   margin: 0 0.5rem;
@@ -126,6 +170,7 @@ footer .nebby {
 .socials a:hover {
   color: #33ccff;
 }
+
 .card img {
   display: block;
   width: 100%;
@@ -135,7 +180,6 @@ footer .nebby {
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
   transition: transform 0.2s ease;
 }
-
 .card:hover img {
   transform: scale(1.02);
 }
