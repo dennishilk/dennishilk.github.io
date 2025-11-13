@@ -70,6 +70,39 @@
     #visitor-counter:hover .glow {
       color: #33ccff;
     }
+
+    /* BUY ME A TEA BUTTON */
+    .support-box {
+      margin-top: 1.6rem;
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+    .tea-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(0, 180, 255, 0.12);
+      color: #00b4ff;
+      padding: 0.7rem 1.3rem;
+      border: 1px solid rgba(0, 180, 255, 0.4);
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: 0.25s ease;
+      text-shadow: 0 0 6px rgba(0, 180, 255, 0.5);
+    }
+    .tea-button:hover {
+      background: rgba(0, 180, 255, 0.22);
+      border-color: #00c3ff;
+      color: #33ccff;
+      transform: translateY(-2px);
+      box-shadow: 0 0 12px rgba(0, 180, 255, 0.4);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -87,6 +120,14 @@
         <a href="https://github.com/dennishilk" target="_blank"><i class="fab fa-github"></i> GitHub</a>
         <a href="https://youtube.com/dennishilk" target="_blank"><i class="fas fa-globe"></i> YouTube</a>
         <a href="news.html"><i class="fas fa-newspaper"></i> News</a>
+      </div>
+
+      <!-- ❤️ Buy Me an East Frisian Tea -->
+      <div class="support-box">
+        <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
+          <i class="fa-solid fa-mug-hot"></i>
+          Buy me an East Frisian tea
+        </a>
       </div>
     </header>
 
