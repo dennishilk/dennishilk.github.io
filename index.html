@@ -2,15 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
+  <!-- Responsive -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Verification -->
   <meta name="google-site-verification" content="bo1J0uPP0cnvHa6vepnUEp_kaTbpMvV7H8bMJHKw-KA" />
-  <title>Dennis Hilk</title>
+
+  <!-- 🔒 Enforce HTTPS redirect -->
+  <script>
+    if (location.protocol !== "https:") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+
+  <!-- SEO Title -->
+  <title>Dennis Hilk – Linux Developer, Nebunix OS & Project Maxwell</title>
+
+  <!-- Meta Description (SEO Boost) -->
+  <meta name="description" content="Official homepage of Dennis Hilk – Linux developer, creator of Project Maxwell, Nebunix OS, SPDIF Fix, Penguin Power Plant and more. Open-source projects, tools and tutorials.">
+
+  <!-- OpenGraph (Discord / Reddit / FB Previews) -->
+  <meta property="og:title" content="Dennis Hilk – Linux Developer & Creator of Project Maxwell">
+  <meta property="og:description" content="Explore Linux tools, OS projects, NixOS configs, SPDIF fixes, Nebunix OS, and more.">
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta property="og:url" content="https://dennishilk.com">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dennis Hilk – Linux Developer">
+  <meta name="twitter:description" content="Creator of Project Maxwell, Nebunix OS and other open-source tools.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
 
   <!-- 🐧 Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
 
+  <!-- Optional performance: preload font -->
+  <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+
   <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=32" />
+  <link rel="stylesheet" href="style.css?v=33" />
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 
@@ -45,9 +77,9 @@
   <canvas id="stars"></canvas>
 
   <div class="content">
-    <!-- ── Header ─────────────────────────────────────────── -->
+    <!-- Header -->
     <header>
-      <img src="avatar.png" alt="Dennis Hilk – Linux Developer Avatar" class="avatar">
+      <img src="avatar.png" alt="Dennis Hilk – Linux Developer Avatar" class="avatar" loading="lazy">
       <h1><span class="prompt">root@nebunix:~$</span> Dennis Hilk<span class="cursor">|</span></h1>
       <p>Open-Source Developer • Linux Enthusiast • Creator of Project Maxwell & other geeky things</p>
 
@@ -58,12 +90,11 @@
       </div>
     </header>
 
-    <!-- ── Projects ────────────────────────────────────────── -->
     <section class="projects">
       <h2>Featured Linux Projects</h2>
       <div class="cards">
 
-        <!-- ⭐ PROJECT MAXWELL — jetzt ganz oben ⭐ -->
+        <!-- ⭐ PROJECT MAXWELL FIRST -->
         <a href="https://github.com/dennishilk/Project-Maxwell" class="card" target="_blank">
           <i class="fa-solid fa-bolt fa-2x"></i>
           <h3>Project Maxwell</h3>
@@ -72,7 +103,6 @@
           </p>
         </a>
 
-        <!-- Restliche Reihenfolge bleibt -->
         <a href="https://github.com/dennishilk/nixos" class="card" target="_blank">
           <i class="fa-brands fa-linux fa-2x"></i>
           <h3>NixOS Configuration</h3>
@@ -106,10 +136,10 @@
       </div>
     </section>
 
-    <!-- ── Footer ─────────────────────────────────────────── -->
+    <!-- Footer -->
     <footer>
       <div class="nebby-terminal-line">
-        <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" />
+        <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" loading="lazy" />
         <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor">|</span></span>
       </div>
 
@@ -118,7 +148,7 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- ── Visitor Counter ── -->
+      <!-- Visitor Counter -->
       <div id="visitor-counter" title="Simulated global counter — grows slowly (max ~67/day)">
         <span class="label">Visitors since 2025:</span>
         <span id="count" class="glow">loading…</span>
@@ -126,18 +156,17 @@
     </footer>
   </div>
 
-  <!-- ── Nebby Animation + Counter ──────── -->
+  <!-- Scripts -->
   <script>
-    // 🐧 Nebby wink animation
+    // Nebby wink animation
     window.addEventListener('load', () => {
       const nebby = document.querySelector('.nebby');
       nebby.classList.add('nebby-auto-wink');
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
 
-    // 🧮 Stable time-based visitor counter
+    // Visitor counter
     const el = document.getElementById("count");
-
     const startDate = new Date("2025-01-01T00:00:00Z");
     const startValue = 26120;
     const avgRatePerDay = 67;
