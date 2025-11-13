@@ -22,7 +22,7 @@
   <!-- Meta Description (SEO Boost) -->
   <meta name="description" content="Official homepage of Dennis Hilk – Linux developer, creator of Project Maxwell, Nebunix OS, SPDIF Fix, Penguin Power Plant and more. Open-source projects, tools and tutorials.">
 
-  <!-- OpenGraph (Discord / Reddit / FB Previews) -->
+  <!-- OpenGraph -->
   <meta property="og:title" content="Dennis Hilk – Linux Developer & Creator of Project Maxwell">
   <meta property="og:description" content="Explore Linux tools, OS projects, NixOS configs, SPDIF fixes, Nebunix OS, and more.">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
@@ -38,7 +38,7 @@
   <!-- 🐧 Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
 
-  <!-- Optional performance: preload font -->
+  <!-- Preload font -->
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- Styles & Scripts -->
@@ -47,30 +47,6 @@
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 
   <style>
-    /* Counter styling */
-    #visitor-counter {
-      font-family: 'JetBrains Mono', monospace;
-      color: #00b4ff;
-      font-size: 1rem;
-      text-align: center;
-      margin-top: 1.2rem;
-      letter-spacing: 1px;
-      text-shadow: 0 0 8px rgba(0, 180, 255, 0.7);
-    }
-    #visitor-counter .label {
-      color: #8b949e;
-      margin-right: 0.3rem;
-    }
-    #visitor-counter .glow {
-      color: #00b4ff;
-      text-shadow: 0 0 10px rgba(0, 180, 255, 0.9), 0 0 20px rgba(0, 180, 255, 0.4);
-      font-weight: 600;
-      transition: color 1s ease;
-    }
-    #visitor-counter:hover .glow {
-      color: #33ccff;
-    }
-
     /* BUY ME A TEA BUTTON */
     .support-box {
       margin-top: 1.6rem;
@@ -103,6 +79,57 @@
       from { opacity: 0; transform: translateY(5px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* SUPPORTERS SECTION */
+    .supporters {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .supporters h2 {
+      color: #00b4ff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 0 8px rgba(0,180,255,0.7);
+    }
+    .supporter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 650px;
+      margin: 0 auto 2rem auto;
+    }
+    .supporter-card {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(0, 180, 255, 0.35);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #d0eaff;
+      box-shadow: 0 0 8px rgba(0, 180, 255, 0.15);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .supporter-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 12px rgba(0, 180, 255, 0.35);
+    }
+    .supporter-card .name {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 0.3rem;
+      color: #74cfff;
+    }
+    .supporter-card .msg {
+      display: block;
+      font-size: 0.92rem;
+      margin-bottom: 0.3rem;
+      color: #b8d9ff;
+    }
+    .supporter-card .amount {
+      display: block;
+      font-size: 0.85rem;
+      color: #8ac6ff;
+    }
   </style>
 </head>
 
@@ -131,11 +158,11 @@
       </div>
     </header>
 
+    <!-- Projects -->
     <section class="projects">
       <h2>Featured Linux Projects</h2>
       <div class="cards">
 
-        <!-- ⭐ PROJECT MAXWELL FIRST -->
         <a href="https://github.com/dennishilk/Project-Maxwell" class="card" target="_blank">
           <i class="fa-solid fa-bolt fa-2x"></i>
           <h3>Project Maxwell</h3>
@@ -189,61 +216,33 @@
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
 
-      <!-- Visitor Counter -->
-      <div id="visitor-counter" title="Simulated global counter — grows slowly (max ~67/day)">
-        <span class="label">Visitors since 2025:</span>
-        <span id="count" class="glow">loading…</span>
-      </div>
+      <!-- Supporters Section -->
+      <section class="supporters">
+        <h2>Recent Supporters 💛</h2>
+        <div class="supporter-list">
+          <div class="supporter-card">
+            <span class="name">🥇 NebulaCoder</span>
+            <span class="msg">“Take my money, your scripts saved my sanity 🤖🔥”</span>
+            <span class="amount">☕ €10 – East Frisian Tea Fund</span>
+          </div>
+          <div class="supporter-card">
+            <span class="name">🥈 ByteBrewMaster</span>
+            <span class="msg">“Project Maxwell looks insane. More of this pls! ⚡🐧”</span>
+            <span class="amount">🍪 €5 – Cookie for the Penguin</span>
+          </div>
+          <div class="supporter-card">
+            <span class="name">🥉 HexaPixel</span>
+            <span class="msg">“Your SPDIF fix stopped my speakers from summoning demons 😭🧯”</span>
+            <span class="amount">☕ €3 – Tea Boost</span>
+          </div>
+          <div class="supporter-card">
+            <span class="name">⭐ KernelKnight</span>
+            <span class="msg">“For science… and more chaotic bash scripts 🔬💥”</span>
+            <span class="amount">🍻 €7 – Nerd Fuel</span>
+          </div>
+        </div>
+      </section>
     </footer>
   </div>
-
-  <!-- Scripts -->
-  <script>
-    // Nebby wink animation
-    window.addEventListener('load', () => {
-      const nebby = document.querySelector('.nebby');
-      nebby.classList.add('nebby-auto-wink');
-      setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
-    });
-
-    // Visitor counter
-    const el = document.getElementById("count");
-    const startDate = new Date("2025-01-01T00:00:00Z");
-    const startValue = 26120;
-    const avgRatePerDay = 67;
-    const secondsPerDay = 86400;
-
-    let persistentDrift = localStorage.getItem("driftFactor");
-    if (!persistentDrift) {
-      persistentDrift = (Math.random() * 0.04 + 0.98).toFixed(4);
-      localStorage.setItem("driftFactor", persistentDrift);
-    } else {
-      persistentDrift = parseFloat(persistentDrift);
-    }
-
-    let lastShown = parseInt(localStorage.getItem("lastCounterValue")) || 0;
-
-    function getSimulatedCount() {
-      const now = new Date();
-      const secondsPassed = (now - startDate) / 1000;
-      const rawCount = startValue + (secondsPassed / secondsPerDay) * avgRatePerDay * persistentDrift;
-
-      const count = Math.floor(rawCount);
-      const safeCount = count < lastShown ? lastShown : count;
-
-      lastShown = safeCount;
-      localStorage.setItem("lastCounterValue", safeCount);
-
-      return safeCount;
-    }
-
-    function updateCounter() {
-      el.textContent = getSimulatedCount().toLocaleString("en-US");
-    }
-
-    updateCounter();
-    setInterval(updateCounter, 600000);
-  </script>
-
 </body>
 </html>
