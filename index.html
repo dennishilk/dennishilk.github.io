@@ -66,7 +66,7 @@
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="style.css?v=36">
+  <link rel="stylesheet" href="style.css?v=40">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -75,6 +75,7 @@
   <canvas id="stars"></canvas>
 
   <div class="content">
+    
     <!-- HEADER -->
     <header>
       <img src="avatar.png" alt="Dennis Hilk – Linux Developer Avatar" class="avatar" loading="lazy">
@@ -89,11 +90,10 @@
         <a href="news.html"><i class="fas fa-newspaper"></i> News</a>
       </div>
 
-      <div class="support-box">
-        <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
-          <i class="fa-solid fa-mug-hot"></i> Buy me an East Frisian tea
-        </a>
-      </div>
+      <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
+        <i class="fa-solid fa-mug-hot"></i> Buy me an East Frisian tea
+      </a>
+
     </header>
 
     <!-- PROJECTS -->
@@ -143,25 +143,23 @@
 
     <!-- FOOTER -->
     <footer>
+
       <div class="nebby-terminal-line">
         <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" loading="lazy" />
         <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor">|</span></span>
       </div>
 
-      <p class="footer-seo">
-        Open-source Linux tools, NixOS scripts and utilities by Dennis Hilk.
-      </p>
+      <div id="visitor-counter">
+        <span class="label">Visitors:</span>
+        <span class="glow" id="visitor-count">loading…</span>
+      </div>
 
-      <p>
-        <div id="visitor-counter">
-          <span class="label">Visitors:</span>
-          <span class="glow" id="visitor-count">loading…</span>
-        </div>
-
+      <p style="margin-top: 2rem;">
         © 2025 Dennis Hilk —
         <a href="/impressum.html">Impressum</a> · 
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
+
     </footer>
   </div>
 
@@ -171,6 +169,9 @@
       const nebby = document.querySelector('.nebby');
       nebby.classList.add('nebby-auto-wink');
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
+
+      const teaBtn = document.querySelector(".tea-button");
+      if (teaBtn) teaBtn.classList.add("show");
     });
   </script>
 
@@ -191,9 +192,10 @@
       function animate(ts) {
         if (!startTime) startTime = ts;
         const progress = Math.min((ts - startTime) / duration, 1);
-        const current = Math.floor(start + (end - start) * progress);
 
+        const current = Math.floor(start + (end - start) * progress);
         el.textContent = current.toLocaleString();
+
         if (progress < 1) requestAnimationFrame(animate);
       }
 
