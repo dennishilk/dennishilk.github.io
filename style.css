@@ -292,3 +292,35 @@ a:hover { color: var(--accent); }
   font-weight: 600;
 }
 
+/* GitHub Badge */
+.github-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 180, 255, 0.08);
+  color: #00b4ff;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(0, 180, 255, 0.4);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: 0.45s ease;
+}
+.github-badge.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.github-badge:hover {
+  background: rgba(0, 180, 255, 0.18);
+  border-color: #33ccff;
+  color: #33ccff;
+  box-shadow: 0 0 12px rgba(0,180,255,0.45);
+  transform: translateY(-2px);
+}
+.github-badge i {
+  color: #00b4ff;
+}
+
