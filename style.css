@@ -46,16 +46,21 @@ h1 {
 .prompt { color: var(--accent); }
 .name { color: var(--accent); }
 
-/* Cursor */
+/* ─ Cursor (einheitlich für Header & Footer) ─ */
 .cursor {
   display: inline-block;
-  width: 8px;
+  width: 9px;
   height: 1em;
-  background: var(--accent);
-  margin-left: 3px;
+  margin-left: 6px;
+  background-color: var(--accent);
+  transform: translateY(2px); /* gleiche Ausrichtung wie bei Nebby */
   animation: blink 1s steps(1) infinite;
 }
-@keyframes blink { 50% { opacity: 0; } }
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
 
 /* Social Buttons */
 .button-group {
