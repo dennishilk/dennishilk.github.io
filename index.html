@@ -66,7 +66,7 @@
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="style.css?v=35">
+  <link rel="stylesheet" href="style.css?v=36">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -102,42 +102,36 @@
 
       <div class="cards">
 
-        <!-- 1 – Project Maxwell -->
         <a href="https://github.com/dennishilk/Project-Maxwell" target="_blank" class="card">
           <i class="fa-solid fa-bolt fa-2x"></i>
           <h3>Project Maxwell</h3>
           <p>A modern Linux Mint–based OS tailored for Windows switchers. Clean, fast, stable. Coming soon.</p>
         </a>
 
-        <!-- 2 – NixOS Toolkit -->
         <a href="https://github.com/dennishilk/NixOS-Toolkit" target="_blank" class="card">
           <i class="fa-solid fa-gears fa-2x"></i>
           <h3>NixOS Toolkit</h3>
           <p>Maintenance automation, AES-256 backups, restore system, generation pinning & more.</p>
         </a>
 
-        <!-- 3 – SPDIF Fix -->
         <a href="https://github.com/dennishilk/spdif-fix" target="_blank" class="card">
           <i class="fa-solid fa-headphones fa-2x"></i>
           <h3>SPDIF Audio Fix</h3>
           <p>Fixes digital SPDIF audio delay on Linux using ALSA & PulseAudio tweaks.</p>
         </a>
 
-        <!-- 4 – Skynet Shredder -->
         <a href="https://github.com/dennishilk/skynet-shredder" target="_blank" class="card">
           <i class="fa-solid fa-skull fa-2x"></i>
           <h3>Skynet Shredder</h3>
           <p>Secure file eraser for Linux – multi-pass deletion, T-800 level precision.</p>
         </a>
 
-        <!-- 5 – NVIDIA Installer -->
         <a href="https://github.com/dennishilk/nvidia-driver" target="_blank" class="card">
           <i class="fa-solid fa-microchip fa-2x"></i>
           <h3>NVIDIA Driver Installer</h3>
           <p>Automatic NVIDIA installer for Debian with real-time tweaks.</p>
         </a>
 
-        <!-- 6 – Penguin Power Plant -->
         <a href="https://github.com/dennishilk/Penguin-Power-Plant" target="_blank" class="card">
           <i class="fa-solid fa-gamepad fa-2x"></i>
           <h3>Penguin Power Plant</h3>
@@ -147,29 +141,23 @@
       </div>
     </section>
 
-        <!-- FOOTER -->
+    <!-- FOOTER -->
     <footer>
       <div class="nebby-terminal-line">
         <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" loading="lazy" />
         <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor">|</span></span>
       </div>
 
-      <!-- Visitor Counter -->
-      <div id="visitor-counter">
-        <span class="label">Visitors:</span>
-        <span class="glow" id="visitor-count">loading…</span>
-      </div>
-
-      <!-- GitHub Badge -->
-      <a href="https://github.com/dennishilk" target="_blank" class="github-badge">
-        <i class="fab fa-github"></i> Follow on GitHub
-      </a>
-
       <p class="footer-seo">
         Open-source Linux tools, NixOS scripts and utilities by Dennis Hilk.
       </p>
 
       <p>
+        <div id="visitor-counter">
+          <span class="label">Visitors:</span>
+          <span class="glow" id="visitor-count">loading…</span>
+        </div>
+
         © 2025 Dennis Hilk —
         <a href="/impressum.html">Impressum</a> · 
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
@@ -186,28 +174,26 @@
     });
   </script>
 
-  <!-- Visitor Counter + GitHub Badge Animations -->
+  <!-- Visitor Counter -->
   <script>
-  // --- Visitor Counter (Cloudflare Worker) ---
   async function updateVisitorCounter() {
     const el = document.getElementById("visitor-count");
     try {
       const res = await fetch("https://visitor-counter.hilk-dennis.workers.dev/");
       const data = await res.json();
 
-      const start = 42000;     // Startzahl
-      const end = data.count;  // Live-Zahl vom Worker
-      const duration = 900;    // Animation
+      const start = 42000;
+      const end = data.count;
+      const duration = 900;
 
       let startTime = null;
 
       function animate(ts) {
         if (!startTime) startTime = ts;
         const progress = Math.min((ts - startTime) / duration, 1);
-
         const current = Math.floor(start + (end - start) * progress);
-        el.textContent = current.toLocaleString();
 
+        el.textContent = current.toLocaleString();
         if (progress < 1) requestAnimationFrame(animate);
       }
 
@@ -219,12 +205,6 @@
   }
 
   updateVisitorCounter();
-
-  // --- GitHub Badge Animation ---
-  window.addEventListener("load", () => {
-    const badge = document.querySelector(".github-badge");
-    if (badge) badge.classList.add("show");
-  });
   </script>
 
 </body>
