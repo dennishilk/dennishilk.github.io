@@ -9,10 +9,10 @@
   <!-- Google Verification -->
   <meta name="google-site-verification" content="bo1J0uPP0cnvHa6vepnUEp_kaTbpMvV7H8bMJHKw-KA" />
 
-  <!-- Canonical URL (SEO) -->
+  <!-- Canonical URL -->
   <link rel="canonical" href="https://dennishilk.github.io/">
 
-  <!-- 🔒 Enforce HTTPS -->
+  <!-- 🔒 Enforce HTTPS redirect -->
   <script>
     if (location.protocol !== "https:") {
       location.replace("https://" + location.hostname + location.pathname + location.search);
@@ -22,26 +22,26 @@
   <!-- ⭐ SEO Title -->
   <title>Dennis Hilk – Linux Developer | NixOS Toolkit, Nebunix OS, Project Maxwell & Open-Source Tools</title>
 
-  <!-- ⭐ SEO Meta Description -->
-  <meta name="description" content="Linux developer Dennis Hilk – creator of NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix and open-source Linux tools for NixOS, Debian, Arch, XFCE and more.">
+  <!-- ⭐ SEO Description -->
+  <meta name="description" content="Linux developer Dennis Hilk – creator of NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix, and multiple open-source tools for NixOS, Debian, Arch, XFCE and more.">
 
   <!-- SEO Keywords -->
-  <meta name="keywords" content="Linux, NixOS, Nebunix OS, Debian, Arch Linux, NixOS Toolkit, Open-Source, Bash Scripts, Linux Developer, Project Maxwell, SPDIF Fix, XFCE, System Tools">
+  <meta name="keywords" content="Linux, NixOS, Debian, Arch Linux, Bash Tools, NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix, Linux Scripts, XFCE, Linux Developer, Open Source">
 
   <!-- OpenGraph -->
   <meta property="og:title" content="Dennis Hilk – Linux Developer & Creator of NixOS Toolkit">
-  <meta property="og:description" content="Explore open-source Linux tools including NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix and more.">
+  <meta property="og:description" content="Explore open-source Linux utilities including NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix and more.">
   <meta property="og:image" content="https://dennishilk.github.io/avatar.png">
-  <meta property="og:url" content="https://dennishilk.github.io/">
+  <meta property="og:url" content="https://dennishilk.github.io">
   <meta property="og:type" content="website">
 
-  <!-- Twitter -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Dennis Hilk – Linux Developer & Open-Source Creator">
-  <meta name="twitter:description" content="Creator of NixOS Toolkit, Nebunix OS, Project Maxwell and SPDIF Fix.">
+  <meta name="twitter:title" content="Dennis Hilk – Linux Developer">
+  <meta name="twitter:description" content="Creator of NixOS Toolkit, Nebunix OS, Project Maxwell & various Linux tools.">
   <meta name="twitter:image" content="https://dennishilk.github.io/avatar.png">
 
-  <!-- JSON-LD Person -->
+  <!-- JSON-LD Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -50,23 +50,11 @@
     "image": "https://dennishilk.github.io/avatar.png",
     "url": "https://dennishilk.github.io/",
     "jobTitle": "Linux Developer",
-    "description": "Creator of NixOS Toolkit, Nebunix OS, Project Maxwell and other Linux tools.",
-    "knowsAbout": ["Linux","NixOS","Debian","Arch","Bash","Open-Source","XFCE","System Optimization"],
+    "description": "Creator of NixOS Toolkit, Nebunix OS, Project Maxwell and SPDIF Fix.",
     "sameAs": [
       "https://github.com/dennishilk",
       "https://youtube.com/dennishilk"
     ]
-  }
-  </script>
-
-  <!-- JSON-LD Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Nebunix OS",
-    "url": "https://dennishilk.github.io/",
-    "logo": "https://dennishilk.github.io/avatar.png"
   }
   </script>
 
@@ -77,26 +65,23 @@
   <!-- Preload font -->
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
 
-  <!-- CSS + Scripts -->
-  <link rel="stylesheet" href="style.css?v=35" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=35">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
-
 </head>
 
 <body>
-
-  <!-- 🌗 THEME TOGGLE -->
-  <button class="theme-toggle" id="themeToggle">☀ Light</button>
-
   <canvas id="stars"></canvas>
 
   <div class="content">
-    <!-- Header -->
+    <!-- HEADER -->
     <header>
       <img src="avatar.png" alt="Dennis Hilk – Linux Developer Avatar" class="avatar" loading="lazy">
+
       <h1><span class="prompt">root@nebunix:~$</span> Dennis Hilk<span class="cursor">|</span></h1>
-      <p>Open-Source Developer • Linux Enthusiast • Creator of Project Maxwell & other geeky things</p>
+
+      <p>Open-Source Developer • Linux Enthusiast • Creator of Project Maxwell & other geeky tools</p>
 
       <div class="buttons">
         <a href="https://github.com/dennishilk" target="_blank"><i class="fab fa-github"></i> GitHub</a>
@@ -106,99 +91,88 @@
 
       <div class="support-box">
         <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
-          <i class="fa-solid fa-mug-hot"></i>
-          Buy me an East Frisian tea
+          <i class="fa-solid fa-mug-hot"></i> Buy me an East Frisian tea
         </a>
       </div>
     </header>
 
+    <!-- PROJECTS -->
     <section class="projects">
       <h2>Featured Linux Projects</h2>
+
       <div class="cards">
 
-        <a href="https://github.com/dennishilk/Project-Maxwell" class="card" target="_blank">
+        <!-- 1 – Project Maxwell -->
+        <a href="https://github.com/dennishilk/Project-Maxwell" target="_blank" class="card">
           <i class="fa-solid fa-bolt fa-2x"></i>
           <h3>Project Maxwell</h3>
-          <p>A modern Linux OS optimized for Windows switchers. Fast, clean & beginner-friendly.</p>
+          <p>A modern Linux Mint–based OS tailored for Windows switchers. Clean, fast, stable. Coming soon.</p>
         </a>
 
-        <a href="https://github.com/dennishilk/NixOS-Toolkit" class="card" target="_blank">
+        <!-- 2 – NixOS Toolkit -->
+        <a href="https://github.com/dennishilk/NixOS-Toolkit" target="_blank" class="card">
           <i class="fa-solid fa-gears fa-2x"></i>
           <h3>NixOS Toolkit</h3>
-          <p>Maintenance, AES-256 backups, restore automation & system pinning.</p>
+          <p>Maintenance automation, AES-256 backups, restore system, generation pinning & more.</p>
         </a>
 
-        <a href="https://github.com/dennishilk/spdif-fix" class="card" target="_blank">
+        <!-- 3 – SPDIF Fix -->
+        <a href="https://github.com/dennishilk/spdif-fix" target="_blank" class="card">
           <i class="fa-solid fa-headphones fa-2x"></i>
           <h3>SPDIF Audio Fix</h3>
-          <p>Eliminates digital audio delay on Linux. ALSA/PulseAudio based.</p>
+          <p>Fixes digital SPDIF audio delay on Linux using ALSA & PulseAudio tweaks.</p>
         </a>
 
-        <a href="https://github.com/dennishilk/skynet-shredder" class="card" target="_blank">
+        <!-- 4 – Skynet Shredder -->
+        <a href="https://github.com/dennishilk/skynet-shredder" target="_blank" class="card">
           <i class="fa-solid fa-skull fa-2x"></i>
           <h3>Skynet Shredder</h3>
-          <p>Secure file eraser for Linux – multi-pass, T-800 inspired.</p>
+          <p>Secure file eraser for Linux – multi-pass deletion, T-800 level precision.</p>
         </a>
 
-        <a href="https://github.com/dennishilk/nvidia-driver" class="card" target="_blank">
+        <!-- 5 – NVIDIA Installer -->
+        <a href="https://github.com/dennishilk/nvidia-driver" target="_blank" class="card">
           <i class="fa-solid fa-microchip fa-2x"></i>
           <h3>NVIDIA Driver Installer</h3>
-          <p>Automatic NVIDIA installer for Debian.</p>
+          <p>Automatic NVIDIA installer for Debian with real-time tweaks.</p>
         </a>
 
-        <a href="https://github.com/dennishilk/Penguin-Power-Plant" class="card" target="_blank">
+        <!-- 6 – Penguin Power Plant -->
+        <a href="https://github.com/dennishilk/Penguin-Power-Plant" target="_blank" class="card">
           <i class="fa-solid fa-gamepad fa-2x"></i>
           <h3>Penguin Power Plant</h3>
-          <p>Gamified Linux learning platform with achievements & quizzes.</p>
+          <p>Gamified Linux learning platform with achievements, quizzes, and digital certificates.</p>
         </a>
 
       </div>
     </section>
 
+    <!-- FOOTER -->
     <footer>
       <div class="nebby-terminal-line">
-        <img src="nebby.png" alt="Nebby – Space Penguin Mascot" class="nebby" loading="lazy" />
+        <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" loading="lazy" />
         <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor">|</span></span>
       </div>
 
       <p class="footer-seo">
-        Open-source Linux tools, NixOS scripts and system utilities by Dennis Hilk.
+        Open-source Linux tools, NixOS scripts and utilities by Dennis Hilk.
       </p>
 
-      <p>© 2025 Dennis Hilk —
-        <a href="/impressum.html">Impressum</a> und 
+      <p>
+        © 2025 Dennis Hilk —
+        <a href="/impressum.html">Impressum</a> · 
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
       </p>
     </footer>
   </div>
 
-  <!-- 🌗 Dark/Light Mode Script -->
   <script>
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      document.body.classList.add("light-mode");
-    }
-
-    const toggleBtn = document.getElementById("themeToggle");
-    function updateText() {
-      toggleBtn.textContent = document.body.classList.contains("light-mode")
-        ? "🌙 Dark"
-        : "☀ Light";
-    }
-    updateText();
-
-    toggleBtn.addEventListener("click", () => {
-      document.body.classList.toggle("light-mode");
-
-      if (document.body.classList.contains("light-mode")) {
-        localStorage.setItem("theme", "light");
-      } else {
-        localStorage.setItem("theme", "dark");
-      }
-
-      updateText();
+    // Nebby wink animation
+    window.addEventListener('load', () => {
+      const nebby = document.querySelector('.nebby');
+      nebby.classList.add('nebby-auto-wink');
+      setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
   </script>
-
 </body>
 </html>
