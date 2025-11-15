@@ -268,3 +268,49 @@ a:hover { color: var(--accent); }
   font-size: 0.85rem;
   color: #8ac6ff;
 }
+
+/* ─────────────────────────────────────────────── */
+/*               LIGHT MODE THEME                  */
+/* ─────────────────────────────────────────────── */
+body.light-mode {
+  --bg: #f4f7fb;
+  --fg: #1a1a1a;
+  --accent: #0066cc;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --border: #c8d1dc;
+}
+
+body.light-mode #stars {
+  background: radial-gradient(circle at 50% 50%, #e9eef5, #cdd5e0);
+}
+
+body.light-mode footer,
+body.light-mode .card:hover {
+  box-shadow: none;
+}
+
+/* ─────────────────────────────────────────────── */
+/*                 DARKMODE TOGGLE                 */
+/* ─────────────────────────────────────────────── */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 8px rgba(0,0,0,0.15);
+  transition: background 0.3s, transform 0.2s;
+  z-index: 50;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
