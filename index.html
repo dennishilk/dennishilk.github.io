@@ -147,23 +147,29 @@
       </div>
     </section>
 
-    <!-- FOOTER -->
+        <!-- FOOTER -->
     <footer>
       <div class="nebby-terminal-line">
         <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" loading="lazy" />
         <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor">|</span></span>
       </div>
 
+      <!-- Visitor Counter -->
+      <div id="visitor-counter">
+        <span class="label">Visitors:</span>
+        <span class="glow" id="visitor-count">loading…</span>
+      </div>
+
+      <!-- GitHub Badge -->
+      <a href="https://github.com/dennishilk" target="_blank" class="github-badge">
+        <i class="fab fa-github"></i> Follow on GitHub
+      </a>
+
       <p class="footer-seo">
         Open-source Linux tools, NixOS scripts and utilities by Dennis Hilk.
       </p>
 
       <p>
-        <div id="visitor-counter">
-  <span class="label">Visitors:</span>
-  <span class="glow" id="visitor-count">loading…</span>
-</div>
-
         © 2025 Dennis Hilk —
         <a href="/impressum.html">Impressum</a> · 
         <a href="/datenschutzerklaerung.html">Datenschutz</a>
@@ -171,54 +177,55 @@
     </footer>
   </div>
 
+  <!-- Nebby wink animation -->
   <script>
-    // Nebby wink animation
     window.addEventListener('load', () => {
       const nebby = document.querySelector('.nebby');
       nebby.classList.add('nebby-auto-wink');
       setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
     });
   </script>
+
+  <!-- Visitor Counter + GitHub Badge Animations -->
   <script>
-// --- Visitor Counter (Cloudflare Worker) ---
-async function updateVisitorCounter() {
-  const el = document.getElementById("visitor-count");
-  try {
-    const res = await fetch("https://visitor-counter.hilk-dennis.workers.dev/");
-    const data = await res.json();
+  // --- Visitor Counter (Cloudflare Worker) ---
+  async function updateVisitorCounter() {
+    const el = document.getElementById("visitor-count");
+    try {
+      const res = await fetch("https://visitor-counter.hilk-dennis.workers.dev/");
+      const data = await res.json();
 
-    const start = 42000;     // Deine Wunsch-Startzahl
-    const end = data.count;  // Live-Zahl vom Worker
-    const duration = 900;    // Animation (ms)
+      const start = 42000;     // Startzahl
+      const end = data.count;  // Live-Zahl vom Worker
+      const duration = 900;    // Animation
 
-    let startTime = null;
+      let startTime = null;
 
-    function animate(ts) {
-      if (!startTime) startTime = ts;
-      const progress = Math.min((ts - startTime) / duration, 1);
+      function animate(ts) {
+        if (!startTime) startTime = ts;
+        const progress = Math.min((ts - startTime) / duration, 1);
 
-      const current = Math.floor(start + (end - start) * progress);
-      el.textContent = current.toLocaleString();
+        const current = Math.floor(start + (end - start) * progress);
+        el.textContent = current.toLocaleString();
 
-      if (progress < 1) requestAnimationFrame(animate);
+        if (progress < 1) requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+
+    } catch (e) {
+      el.textContent = "offline";
     }
-
-    requestAnimationFrame(animate);
-
-  } catch (e) {
-    el.textContent = "offline";
   }
-}
 
-updateVisitorCounter();
+  updateVisitorCounter();
 
-
-// --- GitHub Badge Animation ---
-window.addEventListener("load", () => {
-  const badge = document.querySelector(".github-badge");
-  if (badge) badge.classList.add("show");
-});
-</script>
+  // --- GitHub Badge Animation ---
+  window.addEventListener("load", () => {
+    const badge = document.querySelector(".github-badge");
+    if (badge) badge.classList.add("show");
+  });
+  </script>
 
 </body>
 </html>
