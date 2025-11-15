@@ -12,36 +12,29 @@
   <!-- Canonical URL -->
   <link rel="canonical" href="https://dennishilk.github.io/">
 
-  <!-- 🔒 Enforce HTTPS redirect -->
+  <!-- HTTPS Redirect -->
   <script>
     if (location.protocol !== "https:") {
       location.replace("https://" + location.hostname + location.pathname + location.search);
     }
   </script>
 
-  <!-- ⭐ SEO Title -->
-  <title>Dennis Hilk – Linux Developer | NixOS Toolkit, Nebunix OS, Project Maxwell & Open-Source Tools</title>
+  <title>Dennis Hilk – Linux Developer | NixOS Toolkit, Nebunix OS, Project Maxwell & Open Source</title>
 
-  <!-- ⭐ SEO Description -->
-  <meta name="description" content="Linux developer Dennis Hilk – creator of NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix, and multiple open-source tools for NixOS, Debian, Arch, XFCE and more.">
-
-  <!-- SEO Keywords -->
+  <meta name="description" content="Linux developer Dennis Hilk – creator of NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix, and open-source tools for NixOS, Debian, Arch, XFCE and more.">
   <meta name="keywords" content="Linux, NixOS, Debian, Arch Linux, Bash Tools, NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix, Linux Scripts, XFCE, Linux Developer, Open Source">
 
   <!-- OpenGraph -->
-  <meta property="og:title" content="Dennis Hilk – Linux Developer & Creator of NixOS Toolkit">
-  <meta property="og:description" content="Explore open-source Linux utilities including NixOS Toolkit, Nebunix OS, Project Maxwell, SPDIF Fix and more.">
+  <meta property="og:title" content="Dennis Hilk – Linux Developer">
+  <meta property="og:description" content="Open-source Linux utilities including NixOS Toolkit, Nebunix OS, Project Maxwell and more.">
   <meta property="og:image" content="https://dennishilk.github.io/avatar.png">
   <meta property="og:url" content="https://dennishilk.github.io">
   <meta property="og:type" content="website">
 
-  <!-- Twitter Card -->
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Dennis Hilk – Linux Developer">
-  <meta name="twitter:description" content="Creator of NixOS Toolkit, Nebunix OS, Project Maxwell & various Linux tools.">
-  <meta name="twitter:image" content="https://dennishilk.github.io/avatar.png">
 
-  <!-- JSON-LD Schema -->
+  <!-- Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -50,7 +43,6 @@
     "image": "https://dennishilk.github.io/avatar.png",
     "url": "https://dennishilk.github.io/",
     "jobTitle": "Linux Developer",
-    "description": "Creator of NixOS Toolkit, Nebunix OS, Project Maxwell and SPDIF Fix.",
     "sameAs": [
       "https://github.com/dennishilk",
       "https://youtube.com/dennishilk"
@@ -58,32 +50,36 @@
   }
   </script>
 
-  <!-- Favicons -->
+  <!-- Assets -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="avatar.png">
-
-  <!-- Preload font -->
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
 
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css?v=40">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-  <canvas id="stars"></canvas>
 
-  <div class="content">
-    
-    <!-- HEADER -->
-    <header>
-      <img src="avatar.png" alt="Dennis Hilk – Linux Developer Avatar" class="avatar" loading="lazy">
+<canvas id="stars"></canvas>
 
-      <h1><span class="prompt">root@nebunix:~$</span> Dennis Hilk<span class="cursor"></span></h1>
+<div class="content">
 
-      <p>Open-Source Developer • Linux Enthusiast • Creator of Project Maxwell & other geeky tools</p>
+  <!-- HEADER -->
+  <header>
+    <img src="avatar.png" alt="Dennis Hilk Avatar" class="avatar">
 
+    <h1>
+      <span class="prompt">root@nebunix:~$</span>
+      <span class="name">Dennis Hilk</span>
+      <span class="cursor"></span>
+    </h1>
+
+    <p>Open-Source Developer • Linux Enthusiast • Creator of Project Maxwell & other geeky tools</p>
+
+    <!-- Button Group -->
+    <div class="button-group">
       <div class="buttons">
         <a href="https://github.com/dennishilk" target="_blank"><i class="fab fa-github"></i> GitHub</a>
         <a href="https://youtube.com/dennishilk" target="_blank"><i class="fas fa-globe"></i> YouTube</a>
@@ -93,121 +89,107 @@
       <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
         <i class="fa-solid fa-mug-hot"></i> Buy me an East Frisian tea
       </a>
+    </div>
+  </header>
 
-    </header>
+  <!-- PROJECTS -->
+  <section class="projects">
+    <h2>Featured Linux Projects</h2>
 
-    <!-- PROJECTS -->
-    <section class="projects">
-      <h2>Featured Linux Projects</h2>
+    <div class="cards">
+      <a href="https://github.com/dennishilk/Project-Maxwell" class="card">
+        <i class="fa-solid fa-bolt fa-2x"></i>
+        <h3>Project Maxwell</h3>
+        <p>Linux Mint–based OS tailored for Windows switchers.</p>
+      </a>
 
-      <div class="cards">
+      <a href="https://github.com/dennishilk/NixOS-Toolkit" class="card">
+        <i class="fa-solid fa-gears fa-2x"></i>
+        <h3>NixOS Toolkit</h3>
+        <p>Automation, AES-256 backups, restore system & more.</p>
+      </a>
 
-        <a href="https://github.com/dennishilk/Project-Maxwell" target="_blank" class="card">
-          <i class="fa-solid fa-bolt fa-2x"></i>
-          <h3>Project Maxwell</h3>
-          <p>A modern Linux Mint–based OS tailored for Windows switchers. Clean, fast, stable. Coming soon.</p>
-        </a>
+      <a href="https://github.com/dennishilk/spdif-fix" class="card">
+        <i class="fa-solid fa-headphones fa-2x"></i>
+        <h3>SPDIF Audio Fix</h3>
+        <p>Fixes digital SPDIF audio delay using ALSA tweaks.</p>
+      </a>
 
-        <a href="https://github.com/dennishilk/NixOS-Toolkit" target="_blank" class="card">
-          <i class="fa-solid fa-gears fa-2x"></i>
-          <h3>NixOS Toolkit</h3>
-          <p>Maintenance automation, AES-256 backups, restore system, generation pinning & more.</p>
-        </a>
+      <a href="https://github.com/dennishilk/skynet-shredder" class="card">
+        <i class="fa-solid fa-skull fa-2x"></i>
+        <h3>Skynet Shredder</h3>
+        <p>Secure multi-pass file eraser for Linux.</p>
+      </a>
 
-        <a href="https://github.com/dennishilk/spdif-fix" target="_blank" class="card">
-          <i class="fa-solid fa-headphones fa-2x"></i>
-          <h3>SPDIF Audio Fix</h3>
-          <p>Fixes digital SPDIF audio delay on Linux using ALSA & PulseAudio tweaks.</p>
-        </a>
+      <a href="https://github.com/dennishilk/nvidia-driver" class="card">
+        <i class="fa-solid fa-microchip fa-2x"></i>
+        <h3>NVIDIA Installer</h3>
+        <p>Automatic NVIDIA installer for Debian.</p>
+      </a>
 
-        <a href="https://github.com/dennishilk/skynet-shredder" target="_blank" class="card">
-          <i class="fa-solid fa-skull fa-2x"></i>
-          <h3>Skynet Shredder</h3>
-          <p>Secure file eraser for Linux – multi-pass deletion, T-800 level precision.</p>
-        </a>
+      <a href="https://github.com/dennishilk/Penguin-Power-Plant" class="card">
+        <i class="fa-solid fa-gamepad fa-2x"></i>
+        <h3>Penguin Power Plant</h3>
+        <p>Gamified Linux learning platform.</p>
+      </a>
+    </div>
+  </section>
 
-        <a href="https://github.com/dennishilk/nvidia-driver" target="_blank" class="card">
-          <i class="fa-solid fa-microchip fa-2x"></i>
-          <h3>NVIDIA Driver Installer</h3>
-          <p>Automatic NVIDIA installer for Debian with real-time tweaks.</p>
-        </a>
+  <!-- FOOTER -->
+  <footer>
+    <div class="nebby-terminal-line">
+      <img src="nebby.png" class="nebby">
+      <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor"></span></span>
+    </div>
 
-        <a href="https://github.com/dennishilk/Penguin-Power-Plant" target="_blank" class="card">
-          <i class="fa-solid fa-gamepad fa-2x"></i>
-          <h3>Penguin Power Plant</h3>
-          <p>Gamified Linux learning platform with achievements, quizzes, and digital certificates.</p>
-        </a>
+    <p class="footer-seo">
+      Open-source Linux tools, NixOS scripts and utilities by Dennis Hilk.
+    </p>
 
-      </div>
-    </section>
+    <div id="visitor-counter">
+      <span class="label">Visitors:</span>
+      <span class="glow" id="visitor-count">loading…</span>
+    </div>
 
-    <!-- FOOTER -->
-    <footer>
+    <p class="footer-links">
+      © 2025 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a>
+    </p>
+  </footer>
 
-      <div class="nebby-terminal-line">
-        <img src="nebby.png" alt="Nebby – the Space Penguin Mascot" class="nebby" loading="lazy" />
-        <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor">|</span></span>
-      </div>
+</div>
 
-      <div id="visitor-counter">
-        <span class="label">Visitors:</span>
-        <span class="glow" id="visitor-count">loading…</span>
-      </div>
 
-      <p style="margin-top: 2rem;">
-        © 2025 Dennis Hilk —
-        <a href="/impressum.html">Impressum</a> · 
-        <a href="/datenschutzerklaerung.html">Datenschutz</a>
-      </p>
+<!-- JS -->
+<script>
+// Visitor Counter
+async function updateVisitorCounter() {
+  const el = document.getElementById("visitor-count");
+  try {
+    const res = await fetch("https://visitor-counter.hilk-dennis.workers.dev/");
+    const data = await res.json();
 
-    </footer>
-  </div>
+    const start = 42000;
+    const end = data.count;
+    const duration = 900;
 
-  <!-- Nebby wink animation -->
-  <script>
-    window.addEventListener('load', () => {
-      const nebby = document.querySelector('.nebby');
-      nebby.classList.add('nebby-auto-wink');
-      setTimeout(() => nebby.classList.remove('nebby-auto-wink'), 2500);
+    let startTime = null;
+    function animate(ts) {
+      if (!startTime) startTime = ts;
+      const progress = Math.min((ts - startTime) / duration, 1);
+      const current = Math.floor(start + (end - start) * progress);
 
-      const teaBtn = document.querySelector(".tea-button");
-      if (teaBtn) teaBtn.classList.add("show");
-    });
-  </script>
-
-  <!-- Visitor Counter -->
-  <script>
-  async function updateVisitorCounter() {
-    const el = document.getElementById("visitor-count");
-    try {
-      const res = await fetch("https://visitor-counter.hilk-dennis.workers.dev/");
-      const data = await res.json();
-
-      const start = 42000;
-      const end = data.count;
-      const duration = 900;
-
-      let startTime = null;
-
-      function animate(ts) {
-        if (!startTime) startTime = ts;
-        const progress = Math.min((ts - startTime) / duration, 1);
-
-        const current = Math.floor(start + (end - start) * progress);
-        el.textContent = current.toLocaleString();
-
-        if (progress < 1) requestAnimationFrame(animate);
-      }
-
-      requestAnimationFrame(animate);
-
-    } catch (e) {
-      el.textContent = "offline";
+      el.textContent = current.toLocaleString();
+      if (progress < 1) requestAnimationFrame(animate);
     }
+    requestAnimationFrame(animate);
+  } catch {
+    el.textContent = "offline";
   }
-
-  updateVisitorCounter();
-  </script>
+}
+updateVisitorCounter();
+</script>
 
 </body>
 </html>
