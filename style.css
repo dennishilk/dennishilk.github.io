@@ -1,13 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
 
-/* ───────────────────────────────────────────── */
-/*                COLOR THEME                    */
-/* ───────────────────────────────────────────── */
+/* Theme */
 :root {
   --bg: #050505;
   --fg: #e6edf3;
   --accent: #00b4ff;
-  --card-bg: rgba(20, 20, 25, 0.7);
+  --card-bg: rgba(20,20,25,0.7);
   --border: #2f2f2f;
 }
 
@@ -17,26 +15,21 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: 'JetBrains Mono', monospace;
-  overflow-x: hidden;
   text-align: center;
+  overflow-x: hidden;
 }
 
-/* ───────────────────────────────────────────── */
-/*         STARFIELD BACKGROUND CANVAS           */
-/* ───────────────────────────────────────────── */
+/* Starfield */
 #stars {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: -1;
-  background: radial-gradient(circle at 50% 50%, #06070a, #000);
+  background: radial-gradient(circle, #06070a, #000);
 }
 
-/* ───────────────────────────────────────────── */
-/*                    HEADER                     */
-/* ───────────────────────────────────────────── */
+/* Header */
 header { padding: 6rem 1rem 3rem; }
-
 .avatar {
   width: 160px;
   border-radius: 50%;
@@ -45,16 +38,33 @@ header { padding: 6rem 1rem 3rem; }
   margin-bottom: 1rem;
 }
 
-header h1 {
-  color: var(--accent);
+h1 {
+  color: var(--fg);
   font-size: 2rem;
+  margin-bottom: 1rem;
 }
+.prompt { color: var(--accent); }
+.name { color: var(--accent); }
 
-header h1 span { color: var(--fg); }
+/* Cursor */
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: var(--accent);
+  margin-left: 3px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
 
-header p {
-  margin: 0.5rem 0 1.5rem;
-  color: #c9d1d9;
+/* Social Buttons */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.9rem;
+  margin-bottom: 2.5rem;
 }
 
 .buttons a {
@@ -66,61 +76,43 @@ header p {
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
-  transition: background 0.3s, transform 0.1s;
+  transition: 0.2s;
 }
-
 .buttons a:hover {
-  background: #33ccff;
   transform: translateY(-2px);
+  background: #33ccff;
 }
 
-/* ───────────────────────────────────────────── */
-/*              BUY ME A TEA BUTTON              */
-/* ───────────────────────────────────────────── */
+/* Tea Button */
 .tea-button {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  background: rgba(0, 180, 255, 0.12);
+  background: rgba(0,180,255,0.12);
   color: var(--accent);
-  padding: 0.7rem 1.3rem;
-  border: 1px solid rgba(0, 180, 255, 0.4);
+  padding: 0.75rem 1.4rem;
+  border: 1px solid rgba(0,180,255,0.4);
   border-radius: 10px;
-  font-size: 0.95rem;
   text-decoration: none;
-  transition: 0.25s ease;
-  text-shadow: 0 0 6px rgba(0, 180, 255, 0.5);
-  opacity: 0;
-  transform: translateY(6px);
+  transition: 0.3s ease;
+  font-size: 0.95rem;
+  text-shadow: 0 0 6px rgba(0,180,255,0.5);
 }
-
-.tea-button.show {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
 .tea-button:hover {
-  background: rgba(0, 180, 255, 0.22);
-  border-color: #00c3ff;
+  background: rgba(0,180,255,0.22);
+  border-color: #33ccff;
   color: #33ccff;
   transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(0, 180, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0,180,255,0.45);
 }
 
-/* ───────────────────────────────────────────── */
-/*                 PROJECTS SECTION              */
-/* ───────────────────────────────────────────── */
+/* Projects */
 .projects { padding: 2rem 1rem; }
-
-.projects h2 {
-  color: var(--accent);
-  margin-bottom: 2rem;
-}
+.projects h2 { color: var(--accent); margin-bottom: 2rem; }
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
   gap: 1.5rem;
   padding: 0 1rem;
 }
@@ -128,110 +120,50 @@ header p {
 .card {
   background: var(--card-bg);
   border: 1px solid var(--border);
+  padding: 1.3rem;
   border-radius: 12px;
-  padding: 1.2rem;
+  transition: 0.25s;
   text-decoration: none;
   color: var(--fg);
-  transition: transform 0.2s, border 0.3s, box-shadow 0.3s;
 }
-
 .card:hover {
-  border: 1px solid var(--accent);
-  transform: translateY(-6px);
+  border-color: var(--accent);
   box-shadow: 0 0 12px var(--accent);
+  transform: translateY(-6px);
 }
+.card h3 { color: var(--accent); margin-bottom: 0.6rem; }
+.card p { color: #c9d1d9; }
 
-.card h3 {
-  color: var(--accent);
-  margin-bottom: 0.6rem;
-}
-
-.card p {
-  color: #c9d1d9;
-  font-size: 0.9rem;
-  margin-bottom: 0.7rem;
-}
-
-/* ───────────────────────────────────────────── */
-/*                     FOOTER                    */
-/* ───────────────────────────────────────────── */
+/* Footer */
 footer {
   padding: 2rem 1rem 3rem;
   border-top: 1px solid var(--border);
-  color: #8b949e;
 }
-
-footer .nebby {
-  width: 90px;
-  opacity: 0.8;
-  margin-bottom: 0.5rem;
-}
-
+.nebby { width: 90px; opacity: .85; }
 .nebby-terminal-line {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
 }
+.coffee-text { color: var(--accent); }
 
-.coffee-text {
-  color: var(--accent);
-  font-size: 0.9rem;
-}
-
-/* ───────────────────────────────────────────── */
-/*               VISITOR COUNTER                 */
-/* ───────────────────────────────────────────── */
+/* Visitor Counter */
 #visitor-counter {
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--accent);
-  font-size: 1rem;
-  text-align: center;
   margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(0, 180, 255, 0.7);
-}
-
-#visitor-counter .label { color: #8b949e; margin-right: 0.3rem; }
-
-#visitor-count {
+  margin-bottom: 1.2rem;
   color: var(--accent);
-  font-weight: 600;
-  text-shadow: 0 0 10px rgba(0, 180, 255, 0.9),
-               0 0 20px rgba(0, 180, 255, 0.4);
 }
+#visitor-counter .label { color: #8b949e; }
+#visitor-count { text-shadow: 0 0 12px var(--accent); }
 
-/* ───────────────────────────────────────────── */
-/*                 CURSOR BLINK                  */
-/* ───────────────────────────────────────────── */
-.cursor {
-  display: inline-block;
-  width: 8px;
-  background-color: var(--accent);
-  margin-left: 4px;
-  animation: blink 1s steps(1) infinite;
-}
+/* Footer links */
+.footer-links a { color: var(--accent); text-decoration: none; }
+.footer-links a:hover { text-decoration: underline; }
 
-@keyframes blink { 50% { opacity: 0; } }
-
-/* ───────────────────────────────────────────── */
-/*                SCROLLBAR STYLE                */
-/* ───────────────────────────────────────────── */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #0a0a0a; }
-::-webkit-scrollbar-thumb {
-  background-color: var(--accent);
-  border-radius: 10px;
-}
-
-/* ───────────────────────────────────────────── */
-/*                RESPONSIVE MODE                */
-/* ───────────────────────────────────────────── */
+/* Responsive */
 @media (max-width: 600px) {
   header { padding: 4rem 1rem 2rem; }
   .avatar { width: 120px; }
-  .projects h2 { font-size: 1.4rem; }
-  .buttons a { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
-  .card { padding: 1rem; }
+  .buttons a { font-size: .85rem; }
 }
