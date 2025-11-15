@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://dennishilk.github.io/404.html" />
+
+  <title>404 – Seite nicht gefunden | Dennis Hilk</title>
+
+  <meta name="description" content="Die angeforderte Seite konnte nicht gefunden werden. Zurück zur Startseite von Dennis Hilk – Linux Developer und Open-Source Creator.">
+  <meta name="robots" content="noindex, follow">
+
+  <!-- OG -->
+  <meta property="og:title" content="404 – Seite nicht gefunden">
+  <meta property="og:description" content="Die angeforderte Seite existiert nicht. Zurück zur Startseite.">
+  <meta property="og:image" content="https://dennishilk.github.io/avatar.png">
+  <meta property="og:url" content="https://dennishilk.github.io/404.html">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="404 – Seite nicht gefunden">
+  <meta name="twitter:description" content="Diese Seite existiert nicht. Zurück zur Startseite.">
+  <meta name="twitter:image" content="https://dennishilk.github.io/avatar.png">
+
+  <!-- Styles & Scripts -->
+  <link rel="stylesheet" href="style.css?v=1">
+  <script defer src="stars.js"></script>
+
+  <style>
+    .error-box {
+      max-width: 700px;
+      margin: 4rem auto;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .error-box img {
+      width: 140px;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(0,180,255,0.4));
+    }
+    .error-title {
+      font-size: 2.2rem;
+      color: #00b4ff;
+      text-shadow: 0 0 12px rgba(0,180,255,0.5);
+      margin-bottom: 1rem;
+    }
+    .error-text {
+      font-size: 1.1rem;
+      color: #b9c4ce;
+      margin-bottom: 2rem;
+    }
+    .back-button {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      background: rgba(0,180,255,0.12);
+      color: #00b4ff;
+      font-size: 1rem;
+      border: 1px solid rgba(0,180,255,0.4);
+      transition: 0.25s ease;
+      text-decoration: none;
+    }
+    .back-button:hover {
+      background: rgba(0,180,255,0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 0 12px rgba(0,180,255,0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="stars"></canvas>
+
+  <div class="content">
+    <div class="error-box">
+
+      <!-- Nebby Mascot -->
+      <img src="nebby.png" alt="Nebby – Space Penguin Mascot">
+
+      <h1 class="error-title"><span class="prompt">404:</span> Seite nicht gefunden</h1>
+
+      <p class="error-text">
+        Die angeforderte Seite existiert leider nicht.<br>
+        Vielleicht wurde sie verschoben oder nie erstellt.<br><br>
+        <span class="prompt">user@nebunix:~$</span> <span class="cursor">|</span>
+      </p>
+
+      <a href="/" class="back-button">← Zurück zur Startseite</a>
+    </div>
+  </div>
+</body>
+</html>
