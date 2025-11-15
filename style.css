@@ -11,11 +11,7 @@
   --border: #2f2f2f;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   background: var(--bg);
@@ -39,9 +35,7 @@ body {
 /* ───────────────────────────────────────────── */
 /*                    HEADER                     */
 /* ───────────────────────────────────────────── */
-header {
-  padding: 6rem 1rem 3rem;
-}
+header { padding: 6rem 1rem 3rem; }
 
 .avatar {
   width: 160px;
@@ -56,9 +50,7 @@ header h1 {
   font-size: 2rem;
 }
 
-header h1 span {
-  color: var(--fg);
-}
+header h1 span { color: var(--fg); }
 
 header p {
   margin: 0.5rem 0 1.5rem;
@@ -83,11 +75,43 @@ header p {
 }
 
 /* ───────────────────────────────────────────── */
+/*              BUY ME A TEA BUTTON              */
+/* ───────────────────────────────────────────── */
+.tea-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(0, 180, 255, 0.12);
+  color: var(--accent);
+  padding: 0.7rem 1.3rem;
+  border: 1px solid rgba(0, 180, 255, 0.4);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: 0.25s ease;
+  text-shadow: 0 0 6px rgba(0, 180, 255, 0.5);
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.tea-button.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.tea-button:hover {
+  background: rgba(0, 180, 255, 0.22);
+  border-color: #00c3ff;
+  color: #33ccff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(0, 180, 255, 0.4);
+}
+
+/* ───────────────────────────────────────────── */
 /*                 PROJECTS SECTION              */
 /* ───────────────────────────────────────────── */
-.projects {
-  padding: 2rem 1rem;
-}
+.projects { padding: 2rem 1rem; }
 
 .projects h2 {
   color: var(--accent);
@@ -109,7 +133,6 @@ header p {
   text-decoration: none;
   color: var(--fg);
   transition: transform 0.2s, border 0.3s, box-shadow 0.3s;
-  cursor: pointer;
 }
 
 .card:hover {
@@ -127,7 +150,6 @@ header p {
   color: #c9d1d9;
   font-size: 0.9rem;
   margin-bottom: 0.7rem;
-  line-height: 1.4;
 }
 
 /* ───────────────────────────────────────────── */
@@ -166,57 +188,18 @@ footer .nebby {
   font-size: 1rem;
   text-align: center;
   margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(0, 180, 255, 0.7);
 }
 
-#visitor-counter .label {
-  color: #8b949e;
-  margin-right: 0.3rem;
-}
+#visitor-counter .label { color: #8b949e; margin-right: 0.3rem; }
 
 #visitor-count {
   color: var(--accent);
   font-weight: 600;
   text-shadow: 0 0 10px rgba(0, 180, 255, 0.9),
                0 0 20px rgba(0, 180, 255, 0.4);
-}
-
-/* ───────────────────────────────────────────── */
-/*                 GITHUB BADGE                  */
-/* ───────────────────────────────────────────── */
-.github-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0, 180, 255, 0.08);
-  color: var(--accent);
-  padding: 0.45rem 0.9rem;
-  border: 1px solid rgba(0, 180, 255, 0.4);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-decoration: none;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: 0.45s ease;
-  margin-top: 1rem;
-}
-
-.github-badge.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.github-badge:hover {
-  background: rgba(0, 180, 255, 0.18);
-  border-color: #33ccff;
-  color: #33ccff;
-  box-shadow: 0 0 12px rgba(0,180,255,0.45);
-  transform: translateY(-2px);
-}
-
-.github-badge i {
-  color: var(--accent);
 }
 
 /* ───────────────────────────────────────────── */
@@ -230,21 +213,13 @@ footer .nebby {
   animation: blink 1s steps(1) infinite;
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
-}
+@keyframes blink { 50% { opacity: 0; } }
 
 /* ───────────────────────────────────────────── */
 /*                SCROLLBAR STYLE                */
 /* ───────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
 ::-webkit-scrollbar-thumb {
   background-color: var(--accent);
   border-radius: 10px;
@@ -254,83 +229,9 @@ footer .nebby {
 /*                RESPONSIVE MODE                */
 /* ───────────────────────────────────────────── */
 @media (max-width: 600px) {
-  header {
-    padding: 4rem 1rem 2rem;
-  }
-  .avatar {
-    width: 120px;
-  }
-  .projects h2 {
-    font-size: 1.4rem;
-  }
-  .buttons a {
-    padding: 0.5rem 0.9rem;
-    font-size: 0.85rem;
-  }
-  .card {
-    padding: 1rem;
-  }
+  header { padding: 4rem 1rem 2rem; }
+  .avatar { width: 120px; }
+  .projects h2 { font-size: 1.4rem; }
+  .buttons a { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
+  .card { padding: 1rem; }
 }
-
-/* ───────────────────────────────────────────── */
-/*             SUPPORTERS SECTION                */
-/* ───────────────────────────────────────────── */
-.supporters {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.supporters h2 {
-  color: var(--accent);
-  font-size: 1.6rem;
-  margin-bottom: 1.2rem;
-  text-shadow: 0 0 8px rgba(0,180,255,0.7);
-}
-
-.supporter-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 650px;
-  margin: 0 auto 2rem auto;
-}
-
-.supporter-card {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(0, 180, 255, 0.35);
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  color: #d0eaff;
-  box-shadow: 0 0 8px rgba(0, 180, 255, 0.15);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.supporter-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 12px rgba(0, 180, 255, 0.35);
-}
-
-.supporter-card .name {
-  display: block;
-  font-size: 1.05rem;
-  margin-bottom: 0.3rem;
-  color: #74cfff;
-}
-
-.supporter-card .msg {
-  display: block;
-  font-size: 0.92rem;
-  margin-bottom: 0.3rem;
-  color: #b8d9ff;
-}
-
-.supporter-card .amount {
-  display: block;
-  font-size: 0.85rem;
-  color: #8ac6ff;
-}
-/* Extra spacing under visitor counter */
-footer #visitor-counter {
-  margin-bottom: 1.2rem;
-}
-
