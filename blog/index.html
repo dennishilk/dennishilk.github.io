@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="canonical" href="https://dennishilk.github.io/blog/">
 
   <title>Blog – Dennis Hilk</title>
 
-  <meta name="description" content="Technical notes from real Linux systems. Window managers, gaming, hardware, automation and lessons learned.">
-  <meta name="keywords" content="Linux, XMonad, NixOS, Debian, Linux Gaming, OBS, NVENC, Hardware, Automation">
+  <meta name="description" content="Notes from real Linux systems. Built, broken, fixed, and lived with.">
+  <meta name="keywords" content="Linux, XMonad, NixOS, OBS, NVENC, system philosophy">
 
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
@@ -16,6 +17,7 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/style.css?v=41">
 
+  <!-- Same background system as main page -->
   <script defer src="/stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -37,15 +39,17 @@
 
     <div class="button-group">
       <div class="buttons">
-        <a href="/" class="btn"><i class="fas fa-arrow-left"></i> Home</a>
-        <a href="https://github.com/dennishilk" target="_blank">
+        <a href="/" class="btn">
+          <i class="fas fa-arrow-left"></i> Home
+        </a>
+        <a href="https://github.com/dennishilk" target="_blank" class="btn">
           <i class="fab fa-github"></i> GitHub
         </a>
       </div>
     </div>
   </header>
 
-  <!-- CLUSTERS -->
+  <!-- CLUSTERS (DESCRIPTIVE ONLY) -->
   <section class="projects">
     <h2>Clusters</h2>
 
@@ -53,50 +57,73 @@
 
       <div class="card">
         <h3>What Actually Works</h3>
-        <p>Systems, tools, and decisions that survived real usage.</p>
+        <p>
+          Systems, tools, and decisions that survived real usage.
+          No hype cycles — only setups that kept working after weeks and months.
+        </p>
       </div>
 
       <div class="card">
         <h3>Window Managers in the Real World</h3>
-        <p>Beyond screenshots and dotfile worship.</p>
+        <p>
+          Beyond screenshots and dotfile worship.
+          What stayed, what broke, and what quietly did its job.
+        </p>
       </div>
 
       <div class="card">
         <h3>Linux Gaming & OBS — No Marketing Edition</h3>
-        <p>How gaming and recording actually behave.</p>
+        <p>
+          How gaming and recording actually behave.
+          NVIDIA, NVENC, OBS — without promises or slides.
+        </p>
       </div>
 
       <div class="card">
         <h3>Hardware Notes</h3>
-        <p>Hardware as part of the system, not an afterthought.</p>
+        <p>
+          Hardware as part of the system, not an afterthought.
+          Why some components disappear from thought — and others never do.
+        </p>
       </div>
 
       <div class="card">
         <h3>Tools, Automation & Small Leverage</h3>
-        <p>Small tools that remove repeated mental effort.</p>
+        <p>
+          Small tools that remove repeated mental effort.
+          Built because something was annoying more than once.
+        </p>
       </div>
 
-      <!-- NOTES / FAILS -->
       <div class="card">
         <h3>Notes, Fails & System Philosophy</h3>
         <p>
           Reflections on paths taken and paths abandoned.
           Lessons extracted from systems that were actually used.
         </p>
+      </div>
 
-        <div class="post-link">
-          <a href="/blog/posts/why-i-rolled-back-a-perfect-setup.html">
-            Why I Rolled Back a “Perfect” Setup
-          </a>
-          <span class="post-meta">January 2026</span>
-        </div>
+    </div>
+  </section>
 
-        <div class="post-link">
-          <a href="/blog/posts/when-tinkering-becomes-noise.html">
-            When Tinkering Becomes Noise
-          </a>
-          <span class="post-meta">January 2026</span>
-        </div>
+  <!-- POSTS -->
+  <section class="projects">
+    <h2>Notes, Fails & System Philosophy</h2>
+
+    <div class="cards">
+
+      <div class="card">
+        <a href="/blog/posts/why-i-rolled-back-a-perfect-setup.html">
+          Why I Rolled Back a “Perfect” Setup
+        </a>
+        <p class="post-meta">January 2026</p>
+      </div>
+
+      <div class="card">
+        <a href="/blog/posts/when-tinkering-becomes-noise.html">
+          When Tinkering Becomes Noise
+        </a>
+        <p class="post-meta">January 2026</p>
       </div>
 
     </div>
