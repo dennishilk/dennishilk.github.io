@@ -1,116 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Blog – Dennis Hilk</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/blog/">
 
-  <!-- Reuse main site styling -->
-  <link rel="stylesheet" href="/style.css">
+  <title>Blog – Dennis Hilk</title>
+
+  <meta name="description" content="Technical notes from real Linux systems. Window managers, gaming, hardware, automation and lessons learned.">
+  <meta name="keywords" content="Linux, XMonad, NixOS, Debian, Linux Gaming, OBS, NVENC, Hardware, Automation">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=41">
+
+  <!-- SAME background system -->
+  <script defer src="/stars.js"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
 
-  <!-- Background canvas (same vibe as homepage) -->
-  <canvas id="star-canvas"></canvas>
+<canvas id="stars"></canvas>
 
-  <main class="container">
+<div class="content">
 
-    <!-- Header / Intro -->
-    <section class="hero">
-      <h1>Blog</h1>
-      <p class="subtitle">
-        Notes from real systems.<br>
-        Built, broken, fixed, and lived with.
-      </p>
+  <!-- HEADER -->
+  <header>
+    <h1>
+      <span class="prompt">root@nebunix:~$</span>
+      <span class="name">Blog</span>
+    </h1>
 
+    <p>Notes from real systems. Built, broken, fixed, and lived with.</p>
+
+    <div class="button-group">
       <div class="buttons">
-        <a href="/" class="btn">← Home</a>
-        <a href="https://github.com/dennishilk" class="btn">GitHub</a>
+        <a href="/" class="btn"><i class="fas fa-arrow-left"></i> Home</a>
+        <a href="https://github.com/dennishilk" target="_blank">
+          <i class="fab fa-github"></i> GitHub
+        </a>
       </div>
-    </section>
+    </div>
+  </header>
 
-    <!-- Clusters -->
-    <section class="projects">
-      <h2>Clusters</h2>
+  <!-- CLUSTERS -->
+  <section class="projects">
+    <h2>Clusters</h2>
 
-      <div class="project-grid">
+    <div class="cards">
 
-        <!-- Cluster 1 -->
-        <div class="project-card">
-          <h3>What Actually Works</h3>
-          <p>
-            Systems, tools, and decisions that survived real usage.
-            No hype cycles — only setups that kept working after weeks and months.
-          </p>
-          <span class="tag">foundations</span>
-        </div>
-
-        <!-- Cluster 2 -->
-        <div class="project-card">
-          <h3>Window Managers in the Real World</h3>
-          <p>
-            Beyond screenshots and dotfile worship.
-            What stayed, what broke, and what quietly did its job.
-          </p>
-          <span class="tag">xmonad · dwm · reality</span>
-        </div>
-
-        <!-- Cluster 3 -->
-        <div class="project-card">
-          <h3>Linux Gaming & OBS — No Marketing Edition</h3>
-          <p>
-            Gaming and recording workflows as they actually behave.
-            NVIDIA, NVENC, OBS — without promises or slides.
-          </p>
-          <span class="tag">gaming · obs</span>
-        </div>
-
-        <!-- Cluster 4 -->
-        <div class="project-card">
-          <h3>Hardware Notes</h3>
-          <p>
-            Hardware as part of the system, not an afterthought.
-            Why some components disappear from thought — and others never do.
-          </p>
-          <span class="tag">hardware</span>
-        </div>
-
-        <!-- Cluster 5 -->
-        <div class="project-card">
-          <h3>Tools, Automation & Small Leverage</h3>
-          <p>
-            Small scripts and boring tools that remove repeated mental effort.
-            Built because something was annoying more than once.
-          </p>
-          <span class="tag">tools · automation</span>
-        </div>
-
-        <!-- Cluster 6 -->
-        <div class="project-card">
-          <h3>Notes, Fails & System Philosophy</h3>
-          <p>
-            Reflections on paths taken and paths abandoned.
-            Lessons extracted from systems that were actually used.
-          </p>
-          <span class="tag">philosophy</span>
-        </div>
-
+      <div class="card">
+        <h3>What Actually Works</h3>
+        <p>
+          Systems, tools, and decisions that survived real usage.
+          No hype cycles — only setups that kept working after weeks and months.
+        </p>
       </div>
-    </section>
 
-    <footer class="footer">
-      <p>
-        © 2026 Dennis Hilk ·
-        <a href="/impressum.html">Impressum</a> ·
-        <a href="/datenschutz.html">Datenschutz</a>
-      </p>
-    </footer>
+      <div class="card">
+        <h3>Window Managers in the Real World</h3>
+        <p>
+          Beyond screenshots and dotfile worship.
+          What stayed, what broke, and what quietly did its job.
+        </p>
+      </div>
 
-  </main>
+      <div class="card">
+        <h3>Linux Gaming & OBS — No Marketing Edition</h3>
+        <p>
+          Gaming and recording workflows as they actually behave.
+          NVIDIA, NVENC, OBS — without promises or slides.
+        </p>
+      </div>
 
-  <!-- Reuse existing JS -->
-  <script src="/script.js"></script>
+      <div class="card">
+        <h3>Hardware Notes</h3>
+        <p>
+          Hardware as part of the system, not an afterthought.
+          Why some components disappear from thought — and others never do.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Tools, Automation & Small Leverage</h3>
+        <p>
+          Small scripts and boring tools that remove repeated mental effort.
+          Built because something was annoying more than once.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Notes, Fails & System Philosophy</h3>
+        <p>
+          Reflections on paths taken and paths abandoned.
+          Lessons extracted from systems that were actually used.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-links">
+      © 2026 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a>
+    </p>
+  </footer>
+
+</div>
 
 </body>
 </html>
