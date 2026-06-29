@@ -247,7 +247,8 @@ function normalizeInternetHistory(history) {
   }
 
   Object.entries(history.history || history.observers_history || history.observers || history.data || {}).forEach(([id, points]) => {
-    addPoints(id, points);
+    const pointList = Array.isArray(points) ? points : points?.points || points?.history || points?.data || points?.values || [];
+    addPoints(id, pointList);
   });
 
   return byId;
@@ -272,21 +273,24 @@ function firstFiniteMetricValue(source, keys) {
 }
 
 function normalizeObserverHistoryPoints(points) {
-  return (Array.isArray(points) ? points : [])
-    .map((point, index) => ({
-      date: point.date || point.last_seen || point.last_update || point.timestamp || point.observed_at || `Point ${index + 1}`,
-      value: firstFiniteMetricValue(point, [
-        "value",
-        "primary_metric.value",
-        "metric_value",
-        "uptime",
-        "availability",
-        "latency_ms",
-        "response_time_ms",
-        "status_code",
-      ]),
-    }))
-    .filter((point) => Number.isFinite(point.value));
+  return (Array.isArray(points) ? points : []).map((point, index) => ({
+    date: point.date || point.last_seen || point.last_seen_date || point.last_update || point.timestamp || point.observed_at || `Point ${index + 1}`,
+    value: firstFiniteMetricValue(point, [
+      "value",
+      "primary_metric.value",
+      "primary_metric_value",
+      "metric_value",
+      "uptime",
+      "availability",
+      "latency_ms",
+      "response_time_ms",
+      "status_code",
+    ]),
+  }));
+}
+
+function numericHistoryPoints(points) {
+  return points.filter((point) => Number.isFinite(point.value));
 }
 
 function getObserverId(observer) {
@@ -310,10 +314,18 @@ function normalizeStatusClass(value) {
 function getPrimaryMetric(observer) {
   const metric = observer.primary_metric || observer.primaryMetric;
   if (metric && typeof metric === "object") {
-    const label = metric.label || metric.name || metric.key || "primary metric";
+    const label = metric.label || metric.name || metric.key || observer.primary_metric_name || "primary metric";
     const value = metric.display_value ?? metric.formatted ?? metric.value;
     const unit = metric.unit && metric.display_value === undefined && metric.formatted === undefined ? ` ${metric.unit}` : "";
     return { label, value: value ?? null, unit };
+  }
+
+  if (observer.primary_metric_name || observer.primary_metric_value !== undefined) {
+    return {
+      label: observer.primary_metric_name || "primary metric",
+      value: observer.primary_metric_value ?? null,
+      unit: "",
+    };
   }
 
   const directMetrics = [
@@ -361,11 +373,18 @@ function normalizeSecondaryMetrics(observer) {
 }
 
 function formatMetricValue(metric) {
-  return `${metric.value ?? "—"}${metric.value == null || metric.value === "—" ? "" : metric.unit || ""}`;
+  const value = metric?.value;
+  if (value === null || value === undefined) {
+    return "—";
+  }
+  if (typeof value === "number") {
+    return `${formatNumber(value)}${metric.unit || ""}`;
+  }
+  return `${String(value)}${value === "—" ? "" : metric.unit || ""}`;
 }
 
 function getLastUpdate(observer, data) {
-  return observer.last_update || observer.last_seen || observer.timestamp || observer.observed_at || data?.last_update || data?.generated_at;
+  return observer.last_seen_date || observer.last_update || observer.last_seen || observer.timestamp || observer.observed_at || data?.last_seen_date || data?.last_update || data?.generated_at;
 }
 
 function formatDate(value) {
@@ -427,7 +446,7 @@ function renderMiniSparkline(points, label) {
   wrap.className = "mini-sparkline";
 
   if (!points.length) {
-    wrap.textContent = "No historical trend available.";
+    wrap.textContent = "No numeric trend available.";
     return wrap;
   }
 
@@ -519,6 +538,7 @@ function renderInternetObservers(data, history) {
     const primaryMetric = getPrimaryMetric(observer);
     const secondaryMetrics = normalizeSecondaryMetrics(observer);
     const points = historyById.get(id) || historyById.get(titleText) || [];
+    const numericPoints = numericHistoryPoints(points);
     const lastUpdate = formatDate(getLastUpdate(observer, data));
     const detailsId = `internet-observer-details-${index}`;
 
@@ -568,7 +588,11 @@ function renderInternetObservers(data, history) {
     lastSeen.className = "internet-last-seen";
     lastSeen.textContent = `Last update: ${lastUpdate}`;
 
-    toggle.append(header, metric, secondarySummary, lastSeen, renderMiniSparkline(points, titleText));
+    const historyCount = document.createElement("p");
+    historyCount.className = "internet-last-seen";
+    historyCount.textContent = `History points: ${formatNumber(points.length)}`;
+
+    toggle.append(header, metric, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText));
 
     const details = document.createElement("div");
     details.className = "internet-card-details";
@@ -580,7 +604,8 @@ function renderInternetObservers(data, history) {
     [
       ["observer id", id],
       ["last update", lastUpdate],
-      ["history point count", formatNumber(points.length)],
+      ["history points", formatNumber(points.length)],
+      ["numeric trend points", formatNumber(numericPoints.length)],
     ].forEach(([label, value]) => {
       const term = document.createElement("dt");
       term.textContent = label;
@@ -637,6 +662,14 @@ function renderCategories(categories) {
   });
 }
 
+function formatTopTerm(term) {
+  if (term && typeof term === "object") {
+    const label = term.term ?? term.label ?? term.name ?? term.value ?? "—";
+    return term.count === null || term.count === undefined ? String(label) : `${label} × ${formatNumber(Number(term.count))}`;
+  }
+  return String(term ?? "—");
+}
+
 function renderMediaLists(media = {}) {
   const terms = document.getElementById("media-top-terms");
   if (!terms) {
@@ -645,7 +678,7 @@ function renderMediaLists(media = {}) {
   terms.textContent = "";
   (media.top_terms || []).forEach((term) => {
     const item = document.createElement("li");
-    item.textContent = term;
+    item.textContent = formatTopTerm(term);
     terms.appendChild(item);
   });
 
