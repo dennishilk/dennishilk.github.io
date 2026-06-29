@@ -87,12 +87,12 @@
           <strong id="observer-degraded">—</strong>
         </article>
         <article class="status-item">
-          <span class="metric-label">dashboard version</span>
-          <strong id="observer-version">—</strong>
-        </article>
-        <article class="status-item">
           <span class="metric-label">last update</span>
           <strong id="observer-last-update">—</strong>
+        </article>
+        <article class="status-item">
+          <span class="metric-label">dashboard version</span>
+          <strong id="observer-version">—</strong>
         </article>
         <article id="observer-days-card" class="status-item" hidden>
           <span class="metric-label">days observed</span>
@@ -100,16 +100,28 @@
         </article>
       </div>
 
-      <section class="observer-section">
-        <h2>Observer categories</h2>
-        <div id="observer-categories" class="cards observer-cards"></div>
+      <section class="observer-section server-heartbeat" aria-labelledby="server-heartbeat-title">
+        <div class="section-heading-row">
+          <h2 id="server-heartbeat-title">Server Heartbeat</h2>
+          <span id="heartbeat-status-badge" class="status-badge unavailable">unavailable</span>
+        </div>
+        <p id="heartbeat-message" class="observer-limitation" aria-live="polite">Server heartbeat not available yet.</p>
+        <div class="metric-grid heartbeat-metrics">
+          <article class="metric-card heartbeat-status-card">
+            <span class="metric-label">status</span>
+            <strong id="heartbeat-status">unavailable</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">latest heartbeat UTC</span>
+            <strong id="heartbeat-timestamp">—</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">relative age</span>
+            <strong id="heartbeat-age">—</strong>
+          </article>
+        </div>
       </section>
 
-      <section class="observer-section internet-observer" aria-labelledby="internet-observer-title">
-        <h2 id="internet-observer-title">Internet Observers</h2>
-        <p id="internet-observer-status" class="observer-limitation" aria-live="polite">Loading Internet observer data…</p>
-        <div id="internet-observer-cards" class="internet-observer-grid" aria-label="Internet observer cards"></div>
-      </section>
 
       <section class="observer-section media-observer" aria-labelledby="media-observer-title">
         <h2 id="media-observer-title">Germany Media Language Observer</h2>
@@ -181,6 +193,22 @@
             <dl id="media-category-counts" class="count-list"></dl>
           </article>
         </div>
+      </section>
+
+      <section class="observer-section internet-observer" aria-labelledby="internet-observer-title">
+        <h2 id="internet-observer-title">Internet Observers</h2>
+        <p id="internet-observer-status" class="observer-limitation" aria-live="polite">Loading Internet observer data…</p>
+        <div id="internet-observer-cards" class="internet-observer-grid" aria-label="Internet observer cards"></div>
+      </section>
+
+      <section class="observer-section planned-observer compact-planned" aria-labelledby="society-planned-title">
+        <h2 id="society-planned-title">Society Observers</h2>
+        <p class="observer-limitation">Coming soon: fuel, electricity, food, housing, Deutsche Bahn, and Deutsche Post observer exports.</p>
+      </section>
+
+      <section class="observer-section planned-observer compact-planned" aria-labelledby="environment-planned-title">
+        <h2 id="environment-planned-title">Environment Observers</h2>
+        <p class="observer-limitation">Coming soon: weather, climate, and natural disaster observer exports.</p>
       </section>
     </section>
   </main>

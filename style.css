@@ -652,3 +652,59 @@ footer {
 .planned-cards .observer-category {
   min-height: 150px;
 }
+
+.section-heading-row {
+  align-items: center;
+  display: flex;
+  gap: 0.8rem;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
+.section-heading-row h2 {
+  margin-bottom: 0;
+}
+
+.server-heartbeat {
+  border-color: rgba(0,180,255,0.58);
+  box-shadow: 0 0 22px rgba(0,180,255,0.08), inset 0 0 22px rgba(0,180,255,0.035);
+}
+
+.server-heartbeat.heartbeat-ok {
+  border-color: rgba(58, 255, 179, 0.48);
+}
+
+.server-heartbeat.heartbeat-warning {
+  border-color: rgba(255, 214, 102, 0.68);
+  box-shadow: 0 0 22px rgba(255, 214, 102, 0.08), inset 0 0 22px rgba(255, 214, 102, 0.035);
+}
+
+.server-heartbeat.heartbeat-error {
+  border-color: rgba(255, 107, 107, 0.7);
+  box-shadow: 0 0 22px rgba(255, 107, 107, 0.08), inset 0 0 22px rgba(255, 107, 107, 0.035);
+}
+
+.heartbeat-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin-bottom: 0;
+  margin-top: 1rem;
+}
+
+.heartbeat-metrics .metric-card strong {
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.compact-planned {
+  border-style: dashed;
+  opacity: 0.9;
+  padding: 1rem 1.2rem;
+}
+
+.compact-planned h2 {
+  font-size: 1.05rem;
+}
+
+.compact-planned p {
+  margin-bottom: 0;
+}
