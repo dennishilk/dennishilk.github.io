@@ -319,8 +319,12 @@ function getObserverId(observer) {
   return String(observer.id || observer.observer_id || observer.name || observer.slug || observer.display_name || observer.observer || "internet-observer");
 }
 
+function normalizeStatusValue(value) {
+  return String(value || "unknown").toLowerCase().replace(/[^a-z0-9-]/g, "-");
+}
+
 function normalizeStatusClass(value) {
-  const status = String(value || "unknown").toLowerCase().replace(/[^a-z0-9-]/g, "-");
+  const status = normalizeStatusValue(value);
   if (["ok", "active", "available", "online", "healthy", "published"].includes(status)) {
     return "ok";
   }
@@ -331,6 +335,51 @@ function normalizeStatusClass(value) {
     return "unavailable";
   }
   return status;
+}
+
+function formatInternetStatusLabel(value) {
+  const status = normalizeStatusValue(value);
+  if (status === "ok" || status === "published") {
+    return "OK";
+  }
+  if (status === "partial") {
+    return "PARTIAL";
+  }
+  if (status === "unavailable" || status === "error") {
+    return "UNAVAILABLE";
+  }
+  return String(value || "unknown").toUpperCase();
+}
+
+function hasUnavailableInternetSignal(observer) {
+  return [observer.data_status, observer.status].some((value) => {
+    const status = normalizeStatusValue(value);
+    return status === "unavailable" || status === "error";
+  });
+}
+
+function prepareInternetPrimaryMetric(metric, observer) {
+  const label = String(metric.label || "");
+  const value = metric.value;
+  const normalizedValue = normalizeStatusValue(value);
+
+  if (label === "data_status" && normalizedValue === "error") {
+    return { ...metric, label: "current signal", value: "unavailable" };
+  }
+
+  if (normalizedValue === "error") {
+    return { ...metric, value: "unavailable" };
+  }
+
+  if (label === "data_status" && ["ok", "partial", "unavailable"].includes(normalizedValue)) {
+    return { ...metric, label: "current signal", value: formatInternetStatusLabel(value) };
+  }
+
+  if (hasUnavailableInternetSignal(observer) && (value === null || value === undefined || value === "")) {
+    return { ...metric, value: "no current signal" };
+  }
+
+  return metric;
 }
 
 function getPrimaryMetric(observer) {
@@ -468,7 +517,7 @@ function renderMiniSparkline(points, label) {
   wrap.className = "mini-sparkline";
 
   if (!points.length) {
-    wrap.textContent = "No numeric trend available.";
+    wrap.textContent = "No numeric trend yet.";
     return wrap;
   }
 
@@ -557,7 +606,7 @@ function renderInternetObservers(data, history) {
   observers.forEach((observer, index) => {
     const id = getObserverId(observer);
     const titleText = observer.display_name || observer.name || observer.observer || id || "Internet Observer";
-    const primaryMetric = getPrimaryMetric(observer);
+    const primaryMetric = prepareInternetPrimaryMetric(getPrimaryMetric(observer), observer);
     const secondaryMetrics = normalizeSecondaryMetrics(observer);
     const points = historyById.get(id) || historyById.get(titleText) || [];
     const numericPoints = numericHistoryPoints(points);
@@ -566,6 +615,9 @@ function renderInternetObservers(data, history) {
 
     const card = document.createElement("article");
     card.className = "internet-observer-card";
+    if (hasUnavailableInternetSignal(observer)) {
+      card.classList.add("signal-unavailable");
+    }
 
     const toggle = document.createElement("button");
     toggle.className = "internet-card-toggle";
@@ -587,7 +639,7 @@ function renderInternetObservers(data, history) {
     [observerStatus, dataStatus].forEach((badgeText) => {
       const badge = document.createElement("span");
       badge.className = `status-badge ${normalizeStatusClass(badgeText)}`;
-      badge.textContent = badgeText;
+      badge.textContent = formatInternetStatusLabel(badgeText);
       badges.appendChild(badge);
     });
 
@@ -604,6 +656,11 @@ function renderInternetObservers(data, history) {
 
     metric.append(metricLabel, metricValue);
 
+    const signalNote = document.createElement("p");
+    signalNote.className = "internet-signal-note";
+    signalNote.textContent = "Observer ran, but no usable signal was available in the latest export.";
+    signalNote.hidden = !hasUnavailableInternetSignal(observer);
+
     const secondarySummary = renderMetricList(secondaryMetrics.slice(0, 4), "internet-secondary-metrics compact");
 
     const lastSeen = document.createElement("p");
@@ -614,7 +671,7 @@ function renderInternetObservers(data, history) {
     historyCount.className = "internet-last-seen";
     historyCount.textContent = `History points: ${formatNumber(points.length)}`;
 
-    toggle.append(header, metric, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText));
+    toggle.append(header, metric, signalNote, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText));
 
     const details = document.createElement("div");
     details.className = "internet-card-details";
