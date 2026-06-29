@@ -110,39 +110,86 @@ function normalizeCollection(data) {
 }
 
 function normalizeInternetHistory(history) {
-  const rawObservers = normalizeCollection(history);
   const byId = new Map();
 
-  if (rawObservers.length) {
-    rawObservers.forEach((observer) => {
-      const id = getObserverId(observer);
-      byId.set(id, normalizeObserverHistoryPoints(observer.history || observer.points || observer.data || []));
-    });
+  if (!history) {
     return byId;
   }
 
-  Object.entries(history?.history || history?.observers_history || {}).forEach(([id, points]) => {
-    byId.set(id, normalizeObserverHistoryPoints(points));
+  const addPoints = (id, points) => {
+    if (!id) {
+      return;
+    }
+    byId.set(String(id), normalizeObserverHistoryPoints(points));
+  };
+
+  const rawObservers = normalizeCollection(history);
+  if (rawObservers.length) {
+    rawObservers.forEach((observer) => {
+      const id = getObserverId(observer);
+      addPoints(id, observer.history || observer.points || observer.data || observer.values || []);
+    });
+  }
+
+  Object.entries(history.history || history.observers_history || history.observers || history.data || {}).forEach(([id, points]) => {
+    addPoints(id, points);
   });
 
   return byId;
 }
 
+function getNestedValue(source, path) {
+  return String(path)
+    .split(".")
+    .reduce((value, key) => (value && value[key] !== undefined ? value[key] : undefined), source);
+}
+
+function firstFiniteMetricValue(source, keys) {
+  for (const key of keys) {
+    const rawValue = getNestedValue(source, key);
+    const value = Number(rawValue);
+    if (Number.isFinite(value)) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
 function normalizeObserverHistoryPoints(points) {
   return (Array.isArray(points) ? points : [])
     .map((point, index) => ({
-      date: point.date || point.last_seen || point.last_update || point.timestamp || `Point ${index + 1}`,
-      value: Number(point.value ?? point.primary_metric?.value ?? point.metric_value ?? point.uptime ?? point.latency_ms ?? point.response_time_ms ?? point.status_code),
+      date: point.date || point.last_seen || point.last_update || point.timestamp || point.observed_at || `Point ${index + 1}`,
+      value: firstFiniteMetricValue(point, [
+        "value",
+        "primary_metric.value",
+        "metric_value",
+        "uptime",
+        "availability",
+        "latency_ms",
+        "response_time_ms",
+        "status_code",
+      ]),
     }))
     .filter((point) => Number.isFinite(point.value));
 }
 
 function getObserverId(observer) {
-  return String(observer.id || observer.name || observer.slug || observer.display_name || observer.observer || "internet-observer");
+  return String(observer.id || observer.observer_id || observer.name || observer.slug || observer.display_name || observer.observer || "internet-observer");
 }
 
-function getObserverStatus(observer) {
-  return observer.data_status || observer.status || observer.health || "unknown";
+function normalizeStatusClass(value) {
+  const status = String(value || "unknown").toLowerCase().replace(/[^a-z0-9-]/g, "-");
+  if (["ok", "active", "available", "online", "healthy", "published"].includes(status)) {
+    return "ok";
+  }
+  if (["partial", "degraded", "warning", "stale", "limited"].includes(status)) {
+    return "partial";
+  }
+  if (["unavailable", "missing", "error", "offline", "failed"].includes(status)) {
+    return "unavailable";
+  }
+  return status;
 }
 
 function getPrimaryMetric(observer) {
@@ -150,7 +197,7 @@ function getPrimaryMetric(observer) {
   if (metric && typeof metric === "object") {
     const label = metric.label || metric.name || metric.key || "primary metric";
     const value = metric.display_value ?? metric.formatted ?? metric.value;
-    const unit = metric.unit ? ` ${metric.unit}` : "";
+    const unit = metric.unit && metric.display_value === undefined && metric.formatted === undefined ? ` ${metric.unit}` : "";
     return { label, value: value ?? null, unit };
   }
 
@@ -170,6 +217,42 @@ function getPrimaryMetric(observer) {
   return { label: "primary metric", value: null, unit: "" };
 }
 
+function normalizeSecondaryMetrics(observer) {
+  const source = observer.secondary_metrics || observer.secondaryMetrics || observer.metrics || [];
+
+  if (Array.isArray(source)) {
+    return source.map((metric, index) => {
+      if (metric && typeof metric === "object") {
+        return {
+          label: metric.label || metric.name || metric.key || `metric ${index + 1}`,
+          value: metric.display_value ?? metric.formatted ?? metric.value ?? "—",
+          unit: metric.unit && metric.display_value === undefined && metric.formatted === undefined ? ` ${metric.unit}` : "",
+        };
+      }
+      return { label: `metric ${index + 1}`, value: metric ?? "—", unit: "" };
+    });
+  }
+
+  return Object.entries(source || {}).map(([label, value]) => {
+    if (value && typeof value === "object") {
+      return {
+        label: value.label || value.name || label,
+        value: value.display_value ?? value.formatted ?? value.value ?? "—",
+        unit: value.unit && value.display_value === undefined && value.formatted === undefined ? ` ${value.unit}` : "",
+      };
+    }
+    return { label, value: value ?? "—", unit: "" };
+  });
+}
+
+function formatMetricValue(metric) {
+  return `${metric.value ?? "—"}${metric.value == null || metric.value === "—" ? "" : metric.unit || ""}`;
+}
+
+function getLastUpdate(observer, data) {
+  return observer.last_update || observer.last_seen || observer.timestamp || observer.observed_at || data?.last_update || data?.generated_at;
+}
+
 function formatDate(value) {
   if (!value) {
     return "—";
@@ -178,7 +261,6 @@ function formatDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10);
 }
-
 
 function getDashboardVersion(summary) {
   return summary.dashboard_version || summary.version || summary.schema_version || "static";
@@ -230,7 +312,7 @@ function renderMiniSparkline(points, label) {
   wrap.className = "mini-sparkline";
 
   if (!points.length) {
-    wrap.textContent = "No history yet";
+    wrap.textContent = "No historical trend available.";
     return wrap;
   }
 
@@ -258,8 +340,42 @@ function renderMiniSparkline(points, label) {
   polyline.setAttribute("class", "sparkline-line");
   svg.appendChild(polyline);
 
+  if (points.length === 1) {
+    const [cx, cy] = coordinates[0].split(",");
+    const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    marker.setAttribute("cx", cx);
+    marker.setAttribute("cy", cy);
+    marker.setAttribute("r", "3.5");
+    marker.setAttribute("class", "sparkline-point");
+    svg.appendChild(marker);
+  }
+
   wrap.appendChild(svg);
   return wrap;
+}
+
+function renderMetricList(metrics, className = "internet-secondary-metrics") {
+  const list = document.createElement("dl");
+  list.className = className;
+
+  if (!metrics.length) {
+    const term = document.createElement("dt");
+    term.textContent = "secondary metrics";
+    const description = document.createElement("dd");
+    description.textContent = "—";
+    list.append(term, description);
+    return list;
+  }
+
+  metrics.forEach((metric) => {
+    const term = document.createElement("dt");
+    term.textContent = metric.label;
+    const description = document.createElement("dd");
+    description.textContent = formatMetricValue(metric);
+    list.append(term, description);
+  });
+
+  return list;
 }
 
 function renderInternetObservers(data, history) {
@@ -270,29 +386,35 @@ function renderInternetObservers(data, history) {
   }
   container.textContent = "";
 
-  const observers = normalizeCollection(data);
+  const observers = normalizeCollection(data)
+    .slice()
+    .sort((a, b) => Number(a.dashboard_priority ?? a.priority ?? 9999) - Number(b.dashboard_priority ?? b.priority ?? 9999));
   const historyById = history ? normalizeInternetHistory(history) : new Map();
 
-  if (!data) {
+  if (!data || !observers.length) {
     status.innerHTML = `<strong>No Internet observer data published yet.</strong><br>The first observation will appear after the initial daily run.`;
     return;
   }
 
-  if (!observers.length) {
-    status.innerHTML = `<strong>No Internet observer data published yet.</strong><br>The first observation will appear after the initial daily run.`;
-    return;
-  }
+  status.textContent = history ? "" : "Current cards loaded. Historical trend file is not available yet.";
 
-  status.textContent = history ? "" : "Current cards loaded. History will appear after more daily runs.";
-
-  observers.forEach((observer) => {
+  observers.forEach((observer, index) => {
     const id = getObserverId(observer);
-    const titleText = observer.display_name || observer.name || observer.observer || "Internet Observer";
+    const titleText = observer.display_name || observer.name || observer.observer || id || "Internet Observer";
     const primaryMetric = getPrimaryMetric(observer);
+    const secondaryMetrics = normalizeSecondaryMetrics(observer);
     const points = historyById.get(id) || historyById.get(titleText) || [];
+    const lastUpdate = formatDate(getLastUpdate(observer, data));
+    const detailsId = `internet-observer-details-${index}`;
 
     const card = document.createElement("article");
     card.className = "internet-observer-card";
+
+    const toggle = document.createElement("button");
+    toggle.className = "internet-card-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", detailsId);
 
     const header = document.createElement("div");
     header.className = "internet-card-header";
@@ -307,7 +429,7 @@ function renderInternetObservers(data, history) {
 
     [observerStatus, dataStatus].forEach((badgeText) => {
       const badge = document.createElement("span");
-      badge.className = `status-badge ${badgeText.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
+      badge.className = `status-badge ${normalizeStatusClass(badgeText)}`;
       badge.textContent = badgeText;
       badges.appendChild(badge);
     });
@@ -321,15 +443,49 @@ function renderInternetObservers(data, history) {
     metricLabel.textContent = primaryMetric.label;
 
     const metricValue = document.createElement("strong");
-    metricValue.textContent = `${primaryMetric.value ?? "—"}${primaryMetric.value == null ? "" : primaryMetric.unit}`;
+    metricValue.textContent = formatMetricValue(primaryMetric);
 
     metric.append(metricLabel, metricValue);
 
+    const secondarySummary = renderMetricList(secondaryMetrics.slice(0, 4), "internet-secondary-metrics compact");
+
     const lastSeen = document.createElement("p");
     lastSeen.className = "internet-last-seen";
-    lastSeen.textContent = `Last seen: ${formatDate(observer.last_seen || observer.last_update || observer.timestamp || data?.last_update)}`;
+    lastSeen.textContent = `Last update: ${lastUpdate}`;
 
-    card.append(header, metric, lastSeen, renderMiniSparkline(points, titleText));
+    toggle.append(header, metric, secondarySummary, lastSeen, renderMiniSparkline(points, titleText));
+
+    const details = document.createElement("div");
+    details.className = "internet-card-details";
+    details.id = detailsId;
+    details.hidden = true;
+
+    const meta = document.createElement("dl");
+    meta.className = "internet-detail-list";
+    [
+      ["observer id", id],
+      ["last update", lastUpdate],
+      ["history point count", formatNumber(points.length)],
+    ].forEach(([label, value]) => {
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const description = document.createElement("dd");
+      description.textContent = value;
+      meta.append(term, description);
+    });
+
+    const secondaryTitle = document.createElement("h4");
+    secondaryTitle.textContent = "Secondary metrics";
+    details.append(meta, secondaryTitle, renderMetricList(secondaryMetrics, "internet-secondary-metrics details"));
+
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      details.hidden = expanded;
+      card.classList.toggle("expanded", !expanded);
+    });
+
+    card.append(toggle, details);
     container.appendChild(card);
   });
 }
