@@ -1,16 +1,25 @@
-const SUMMARY_URL = "world-observer/latest/summary.json";
-const MEDIA_URL = "world-observer/latest/media-language-germany.json";
+const SUMMARY_URLS = ["/world-observer/latest/summary.json", "world-observer/latest/summary.json"];
+const MEDIA_URLS = [
+  "/world-observer/dashboard/media.json",
+  "/world-observer/latest/media-language-germany.json",
+  "dashboard/media.json",
+  "latest/media-language-germany.json",
+  "world-observer/latest/media-language-germany.json",
+];
 const MEDIA_HISTORY_URLS = [
-  "world-observer/dashboard/history/media-language-germany.json",
+  "/world-observer/dashboard/history/media-language-germany.json",
   "dashboard/history/media-language-germany.json",
+  "world-observer/dashboard/history/media-language-germany.json",
 ];
 const INTERNET_URLS = [
-  "world-observer/dashboard/internet.json",
+  "/world-observer/dashboard/internet.json",
   "dashboard/internet.json",
+  "world-observer/dashboard/internet.json",
 ];
 const INTERNET_HISTORY_URLS = [
-  "world-observer/dashboard/history/internet-observers.json",
+  "/world-observer/dashboard/history/internet-observers.json",
   "dashboard/history/internet-observers.json",
+  "world-observer/dashboard/history/internet-observers.json",
 ];
 
 async function loadJson(url) {
@@ -203,6 +212,9 @@ function renderMiniSparkline(points, label) {
 function renderInternetObservers(data, history) {
   const container = document.getElementById("internet-observer-cards");
   const status = document.getElementById("internet-observer-status");
+  if (!container || !status) {
+    return;
+  }
   container.textContent = "";
 
   const observers = normalizeCollection(data);
@@ -271,6 +283,9 @@ function renderInternetObservers(data, history) {
 
 function renderCategories(categories) {
   const container = document.getElementById("observer-categories");
+  if (!container) {
+    return;
+  }
   container.textContent = "";
 
   categories.filter((category) => category.name?.toLowerCase() !== "internet").forEach((category) => {
@@ -295,8 +310,11 @@ function renderCategories(categories) {
   });
 }
 
-function renderMediaLists(media) {
+function renderMediaLists(media = {}) {
   const terms = document.getElementById("media-top-terms");
+  if (!terms) {
+    return;
+  }
   terms.textContent = "";
   (media.top_terms || []).forEach((term) => {
     const item = document.createElement("li");
@@ -305,6 +323,9 @@ function renderMediaLists(media) {
   });
 
   const counts = document.getElementById("media-category-counts");
+  if (!counts) {
+    return;
+  }
   counts.textContent = "";
   Object.entries(media.category_counts || {}).forEach(([category, value]) => {
     const term = document.createElement("dt");
@@ -319,6 +340,9 @@ function renderMediaLists(media) {
 
 function renderSparkline(points) {
   const container = document.getElementById("media-trend-sparkline");
+  if (!container) {
+    return;
+  }
   container.textContent = "";
 
   if (!points.length) {
@@ -366,6 +390,9 @@ function renderSparkline(points) {
 
 function renderMediaTrend(history) {
   const status = document.getElementById("media-trend-status");
+  if (!status) {
+    return;
+  }
 
   if (!history) {
     setText("media-trend-points", "—");
@@ -397,7 +424,7 @@ function renderMediaTrend(history) {
   renderSparkline(points);
 }
 
-function renderDashboard(summary, media, mediaHistory, internet, internetHistory) {
+function renderDashboard(summary = {}, media = {}, mediaHistory, internet, internetHistory) {
   setText("observer-last-update", summary.last_update);
   setText("observer-total", formatNumber(summary.total_observers));
   setText("observer-missing", formatNumber(summary.missing_observers));
@@ -414,22 +441,103 @@ function renderDashboard(summary, media, mediaHistory, internet, internetHistory
   renderMediaTrend(mediaHistory);
 }
 
-function showFallback() {
-  document.getElementById("observer-dashboard").hidden = true;
-  document.getElementById("observer-fallback").hidden = false;
+function showFallback(message = "World Observer data not available yet.") {
+  const dashboard = document.getElementById("observer-dashboard");
+  const fallback = document.getElementById("observer-fallback");
+  if (dashboard) {
+    dashboard.hidden = true;
+  }
+  if (fallback) {
+    fallback.textContent = message;
+    fallback.hidden = false;
+  }
+}
+
+function showDashboard() {
+  const dashboard = document.getElementById("observer-dashboard");
+  if (dashboard) {
+    dashboard.hidden = false;
+  }
+}
+
+function renderPlannedCards(id, items) {
+  const container = document.getElementById(id);
+  if (!container) {
+    return;
+  }
+  container.textContent = "";
+  items.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "card observer-category planned";
+    const title = document.createElement("h3");
+    title.textContent = item;
+    const status = document.createElement("p");
+    status.innerHTML = "<strong>Status:</strong> planned";
+    const description = document.createElement("p");
+    description.textContent = "Observer card planned. Data will appear here once a public export is available.";
+    card.append(title, status, description);
+    container.appendChild(card);
+  });
 }
 
 async function initWorldObserver() {
+  const page = document.body.dataset.observerPage || "overview";
+
   try {
+    if (page === "society") {
+      renderPlannedCards("society-planned-cards", ["Fuel", "Electricity", "Food", "Housing", "Deutsche Bahn", "Deutsche Post"]);
+      showDashboard();
+      return;
+    }
+
+    if (page === "environment") {
+      renderPlannedCards("environment-planned-cards", ["Weather", "Climate", "Natural disasters"]);
+      showDashboard();
+      return;
+    }
+
+    if (page === "internet") {
+      const [internet, internetHistory] = await Promise.all([
+        loadOptionalJson(INTERNET_URLS),
+        loadOptionalJson(INTERNET_HISTORY_URLS),
+      ]);
+      renderInternetObservers(internet, internetHistory);
+      showDashboard();
+      return;
+    }
+
+    if (page === "media") {
+      const [media, mediaHistory] = await Promise.all([
+        loadOptionalJson(MEDIA_URLS),
+        loadOptionalJson(MEDIA_HISTORY_URLS),
+      ]);
+      if (!media) {
+        showFallback("Media observer data not available yet.");
+        return;
+      }
+      setText("media-fear-overall", formatIndex(media.fear_index_overall));
+      setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
+      setText("media-private-fear", formatIndex(media.private_media?.fear_index));
+      setText("media-headline-count", formatNumber(media.headline_count));
+      renderMediaLists(media);
+      renderMediaTrend(mediaHistory);
+      showDashboard();
+      return;
+    }
+
     const [summary, media, mediaHistory, internet, internetHistory] = await Promise.all([
-      loadJson(SUMMARY_URL),
-      loadJson(MEDIA_URL),
+      loadOptionalJson(SUMMARY_URLS),
+      loadOptionalJson(MEDIA_URLS),
       loadOptionalJson(MEDIA_HISTORY_URLS),
       loadOptionalJson(INTERNET_URLS),
       loadOptionalJson(INTERNET_HISTORY_URLS),
     ]);
-    renderDashboard(summary, media, mediaHistory, internet, internetHistory);
-    document.getElementById("observer-dashboard").hidden = false;
+    if (!summary) {
+      showFallback();
+      return;
+    }
+    renderDashboard(summary, media || {}, mediaHistory, internet, internetHistory);
+    showDashboard();
   } catch (error) {
     console.warn(error);
     showFallback();

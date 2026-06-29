@@ -508,3 +508,31 @@ footer {
   height: 46px;
   width: 100%;
 }
+
+.observer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  max-width: 900px;
+}
+
+.observer-nav a {
+  border: 1px solid rgba(0,180,255,0.45);
+  border-radius: 999px;
+  color: var(--accent);
+  padding: 0.45rem 0.8rem;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.observer-nav a:hover {
+  background: rgba(0,180,255,0.16);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.planned-cards .observer-category {
+  min-height: 150px;
+}

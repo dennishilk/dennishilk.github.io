@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/world-observer/society.html">
+
+  <script>
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+
+  <title>Society Observers – World Observer</title>
+  <meta name="description" content="Society Observers planned World Observer category page.">
+  <meta property="og:title" content="Society Observers – World Observer">
+  <meta property="og:description" content="Observational dashboard preview. No causal or manipulation claims.">
+  <meta property="og:url" content="https://dennishilk.github.io/world-observer/society.html">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=42">
+  <script defer src="/stars.js"></script>
+  <script defer src="/world-observer.js"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+</head>
+<body data-observer-page="society">
+
+<canvas id="stars"></canvas>
+
+<div class="content world-observer-page">
+  <header class="dashboard-header">
+    <h1>
+      <span class="prompt">root@nebunix:~$</span>
+      <span class="name">Society Observers</span>
+    </h1>
+    <p>Planned static observer cards for Fuel, Electricity, Food, Housing, Deutsche Bahn, and Deutsche Post.</p>
+
+    <div class="button-group">
+      <div class="buttons">
+        <a href="/">Home</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/news.html"><i class="fas fa-newspaper"></i> News</a>
+      </div>
+    </div>
+    <nav class="observer-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a>
+      <a href="/world-observer/internet.html">Internet</a>
+      <a href="/world-observer/media.html">Media</a>
+      <a href="/world-observer/society.html">Society</a>
+      <a href="/world-observer/environment.html">Environment</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="observer-notice" aria-label="World Observer data policy">
+      <h2>Important context</h2>
+      <p>World Observer shows observational data only. It does not make causal claims, does not claim manipulation, and should not be read as proof of intent.</p>
+    </section>
+
+    <section id="observer-fallback" class="observer-fallback" hidden>World Observer data not available yet.</section>
+    <section id="observer-dashboard" class="observer-dashboard" hidden>
+      <section class="observer-section" aria-labelledby="society-planned-title">
+        <h2 id="society-planned-title">Planned cards</h2>
+        <p class="observer-limitation">These cards are placeholders until public, non-tracking data exports are available.</p>
+        <div id="society-planned-cards" class="cards observer-cards planned-cards"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <div class="nebby-terminal-line">
+      <img src="/nebby.png" class="nebby" alt="Nebby mascot">
+      <span class="coffee-text">&gt; cat world-observer/society.html<span class="cursor"></span></span>
+    </div>
+
+    <p class="footer-links">
+      © 2026 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a>
+    </p>
+  </footer>
+</div>
+
+</body>
+</html>
