@@ -172,3 +172,154 @@ footer {
   .avatar { width: 120px; }
   .buttons a { font-size: .85rem; }
 }
+
+/* World Observer dashboard */
+.world-observer-page main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+
+.dashboard-header {
+  padding-bottom: 1.5rem;
+}
+
+.observer-notice,
+.observer-fallback,
+.observer-section,
+.metric-card,
+.detail-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.observer-notice {
+  padding: 1.4rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  box-shadow: 0 0 18px rgba(0,180,255,0.08);
+}
+
+.observer-notice h2,
+.observer-section h2,
+.detail-card h3 {
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+
+.observer-notice p,
+.observer-limitation,
+.observer-meta,
+.detail-card,
+.observer-category p {
+  color: #c9d1d9;
+  line-height: 1.6;
+}
+
+.observer-fallback {
+  color: var(--accent);
+  padding: 2rem;
+  margin: 2rem 0;
+  font-weight: bold;
+}
+
+.observer-meta {
+  margin: 0.6rem 0 1rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  padding: 1.3rem;
+  text-align: left;
+}
+
+.metric-label {
+  display: block;
+  color: #8b949e;
+  font-size: 0.88rem;
+  margin-bottom: 0.65rem;
+}
+
+.metric-card strong {
+  color: var(--accent);
+  font-size: 2rem;
+  text-shadow: 0 0 10px rgba(0,180,255,0.45);
+}
+
+.observer-section {
+  padding: 1.4rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.observer-cards {
+  padding: 0;
+}
+
+.observer-category {
+  display: block;
+}
+
+.observer-category.active {
+  border-color: rgba(0,180,255,0.65);
+}
+
+.observer-category.planned {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.observer-count {
+  margin-top: 0.75rem;
+  color: var(--accent) !important;
+}
+
+.media-metrics {
+  margin-top: 1rem;
+}
+
+.observer-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.detail-card {
+  padding: 1.2rem;
+}
+
+.term-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.term-list li {
+  border: 1px solid rgba(0,180,255,0.45);
+  border-radius: 999px;
+  color: var(--accent);
+  padding: 0.35rem 0.65rem;
+}
+
+.count-list {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem 1rem;
+}
+
+.count-list dt {
+  color: #c9d1d9;
+}
+
+.count-list dd {
+  color: var(--accent);
+  font-weight: bold;
+}
