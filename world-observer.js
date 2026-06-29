@@ -4,6 +4,14 @@ const MEDIA_HISTORY_URLS = [
   "world-observer/dashboard/history/media-language-germany.json",
   "dashboard/history/media-language-germany.json",
 ];
+const INTERNET_URLS = [
+  "world-observer/dashboard/internet.json",
+  "dashboard/internet.json",
+];
+const INTERNET_HISTORY_URLS = [
+  "world-observer/dashboard/history/internet-observers.json",
+  "dashboard/history/internet-observers.json",
+];
 
 async function loadJson(url) {
   const response = await fetch(url, { cache: "no-store" });
@@ -77,11 +85,183 @@ function normalizeHistoryPoints(history) {
     .filter((point) => Number.isFinite(point.fearIndex));
 }
 
+function normalizeCollection(data) {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  return data?.observers || data?.internet_observers || data?.items || data?.data || [];
+}
+
+function normalizeInternetHistory(history) {
+  const rawObservers = normalizeCollection(history);
+  const byId = new Map();
+
+  if (rawObservers.length) {
+    rawObservers.forEach((observer) => {
+      const id = getObserverId(observer);
+      byId.set(id, normalizeObserverHistoryPoints(observer.history || observer.points || observer.data || []));
+    });
+    return byId;
+  }
+
+  Object.entries(history?.history || history?.observers_history || {}).forEach(([id, points]) => {
+    byId.set(id, normalizeObserverHistoryPoints(points));
+  });
+
+  return byId;
+}
+
+function normalizeObserverHistoryPoints(points) {
+  return (Array.isArray(points) ? points : [])
+    .map((point, index) => ({
+      date: point.date || point.last_seen || point.last_update || point.timestamp || `Point ${index + 1}`,
+      value: Number(point.value ?? point.primary_metric?.value ?? point.metric_value ?? point.uptime ?? point.latency_ms ?? point.response_time_ms ?? point.status_code),
+    }))
+    .filter((point) => Number.isFinite(point.value));
+}
+
+function getObserverId(observer) {
+  return String(observer.id || observer.name || observer.slug || observer.display_name || observer.observer || "internet-observer");
+}
+
+function getObserverStatus(observer) {
+  return observer.data_status || observer.status || observer.health || "unknown";
+}
+
+function getPrimaryMetric(observer) {
+  const metric = observer.primary_metric || observer.primaryMetric;
+  if (metric && typeof metric === "object") {
+    const label = metric.label || metric.name || metric.key || "primary metric";
+    const value = metric.display_value ?? metric.formatted ?? metric.value;
+    const unit = metric.unit ? ` ${metric.unit}` : "";
+    return { label, value: value ?? null, unit };
+  }
+
+  const directMetrics = [
+    ["uptime", "uptime"],
+    ["availability", "availability"],
+    ["latency_ms", "latency_ms"],
+    ["response_time_ms", "response_time_ms"],
+    ["status_code", "status_code"],
+  ];
+  const match = directMetrics.find(([key]) => observer[key] !== undefined && observer[key] !== null);
+
+  if (match) {
+    return { label: match[1], value: observer[match[0]], unit: "" };
+  }
+
+  return { label: "primary metric", value: null, unit: "" };
+}
+
+function formatDate(value) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10);
+}
+
+function renderMiniSparkline(points, label) {
+  const wrap = document.createElement("div");
+  wrap.className = "mini-sparkline";
+
+  if (!points.length) {
+    wrap.textContent = "No history yet";
+    return wrap;
+  }
+
+  const width = 160;
+  const height = 42;
+  const padding = 4;
+  const values = points.map((point) => point.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const lastIndex = Math.max(points.length - 1, 1);
+  const coordinates = points.map((point, index) => {
+    const x = padding + (index / lastIndex) * (width - padding * 2);
+    const y = height - padding - ((point.value - min) / range) * (height - padding * 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", `${label} sparkline with ${points.length} history points`);
+
+  const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+  polyline.setAttribute("points", coordinates.join(" "));
+  polyline.setAttribute("class", "sparkline-line");
+  svg.appendChild(polyline);
+
+  wrap.appendChild(svg);
+  return wrap;
+}
+
+function renderInternetObservers(data, history) {
+  const container = document.getElementById("internet-observer-cards");
+  const status = document.getElementById("internet-observer-status");
+  container.textContent = "";
+
+  const observers = normalizeCollection(data);
+  const historyById = history ? normalizeInternetHistory(history) : new Map();
+
+  if (!observers.length) {
+    status.textContent = "Internet observer data is not available yet.";
+    return;
+  }
+
+  status.textContent = history ? "" : "Current cards loaded. Internet observer history is not available yet.";
+
+  observers.forEach((observer) => {
+    const id = getObserverId(observer);
+    const titleText = observer.display_name || observer.name || observer.observer || "Internet Observer";
+    const primaryMetric = getPrimaryMetric(observer);
+    const points = historyById.get(id) || historyById.get(titleText) || [];
+
+    const card = document.createElement("article");
+    card.className = "internet-observer-card";
+
+    const header = document.createElement("div");
+    header.className = "internet-card-header";
+
+    const title = document.createElement("h3");
+    title.textContent = titleText;
+
+    const observerStatus = String(getObserverStatus(observer));
+    const badge = document.createElement("span");
+    badge.className = `status-badge ${observerStatus.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
+    badge.textContent = observerStatus;
+
+    header.append(title, badge);
+
+    const metric = document.createElement("p");
+    metric.className = "internet-primary-metric";
+
+    const metricLabel = document.createElement("span");
+    metricLabel.textContent = primaryMetric.label;
+
+    const metricValue = document.createElement("strong");
+    metricValue.textContent = `${primaryMetric.value ?? "—"}${primaryMetric.value == null ? "" : primaryMetric.unit}`;
+
+    metric.append(metricLabel, metricValue);
+
+    const lastSeen = document.createElement("p");
+    lastSeen.className = "internet-last-seen";
+    lastSeen.textContent = `Last seen: ${formatDate(observer.last_seen || observer.last_update || observer.timestamp || data?.last_update)}`;
+
+    card.append(header, metric, lastSeen, renderMiniSparkline(points, titleText));
+    container.appendChild(card);
+  });
+}
+
 function renderCategories(categories) {
   const container = document.getElementById("observer-categories");
   container.textContent = "";
 
-  categories.forEach((category) => {
+  categories.filter((category) => category.name?.toLowerCase() !== "internet").forEach((category) => {
     const card = document.createElement("article");
     card.className = `card observer-category ${category.status || "unknown"}`;
 
@@ -205,13 +385,14 @@ function renderMediaTrend(history) {
   renderSparkline(points);
 }
 
-function renderDashboard(summary, media, mediaHistory) {
+function renderDashboard(summary, media, mediaHistory, internet, internetHistory) {
   setText("observer-last-update", summary.last_update);
   setText("observer-total", formatNumber(summary.total_observers));
   setText("observer-missing", formatNumber(summary.missing_observers));
   setText("observer-degraded", formatNumber(summary.degraded_observers));
 
   renderCategories(summary.categories || []);
+  renderInternetObservers(internet, internetHistory);
 
   setText("media-fear-overall", formatIndex(media.fear_index_overall));
   setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
@@ -228,12 +409,14 @@ function showFallback() {
 
 async function initWorldObserver() {
   try {
-    const [summary, media, mediaHistory] = await Promise.all([
+    const [summary, media, mediaHistory, internet, internetHistory] = await Promise.all([
       loadJson(SUMMARY_URL),
       loadJson(MEDIA_URL),
       loadOptionalJson(MEDIA_HISTORY_URLS),
+      loadOptionalJson(INTERNET_URLS),
+      loadOptionalJson(INTERNET_HISTORY_URLS),
     ]);
-    renderDashboard(summary, media, mediaHistory);
+    renderDashboard(summary, media, mediaHistory, internet, internetHistory);
     document.getElementById("observer-dashboard").hidden = false;
   } catch (error) {
     console.warn(error);
