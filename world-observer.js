@@ -208,12 +208,17 @@ function renderInternetObservers(data, history) {
   const observers = normalizeCollection(data);
   const historyById = history ? normalizeInternetHistory(history) : new Map();
 
-  if (!observers.length) {
-    status.textContent = "Internet observer data is not available yet.";
+  if (!data) {
+    status.innerHTML = `<strong>No Internet observer data published yet.</strong><br>The first observation will appear after the initial daily run.`;
     return;
   }
 
-  status.textContent = history ? "" : "Current cards loaded. Internet observer history is not available yet.";
+  if (!observers.length) {
+    status.innerHTML = `<strong>No Internet observer data published yet.</strong><br>The first observation will appear after the initial daily run.`;
+    return;
+  }
+
+  status.textContent = history ? "" : "Current cards loaded. History will appear after more daily runs.";
 
   observers.forEach((observer) => {
     const id = getObserverId(observer);
@@ -230,12 +235,19 @@ function renderInternetObservers(data, history) {
     const title = document.createElement("h3");
     title.textContent = titleText;
 
-    const observerStatus = String(getObserverStatus(observer));
-    const badge = document.createElement("span");
-    badge.className = `status-badge ${observerStatus.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
-    badge.textContent = observerStatus;
+    const observerStatus = String(observer.status || observer.health || "unknown");
+    const dataStatus = String(observer.data_status || "published");
+    const badges = document.createElement("div");
+    badges.className = "internet-card-badges";
 
-    header.append(title, badge);
+    [observerStatus, dataStatus].forEach((badgeText) => {
+      const badge = document.createElement("span");
+      badge.className = `status-badge ${badgeText.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
+      badge.textContent = badgeText;
+      badges.appendChild(badge);
+    });
+
+    header.append(title, badges);
 
     const metric = document.createElement("p");
     metric.className = "internet-primary-metric";
