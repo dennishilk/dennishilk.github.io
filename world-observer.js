@@ -64,7 +64,11 @@ function formatDateTimeUtc(value) {
   }
 
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString().replace(".000Z", "Z");
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toISOString().slice(0, 16).replace("T", " ") + " UTC";
 }
 
 function formatRelativeAge(timestamp, now = new Date()) {
@@ -75,19 +79,59 @@ function formatRelativeAge(timestamp, now = new Date()) {
 
   const seconds = Math.max(0, Math.round((now.getTime() - date.getTime()) / 1000));
   const units = [
-    ["day", 86400],
-    ["hour", 3600],
-    ["minute", 60],
+    ["d", 86400],
+    ["h", 3600],
+    ["min", 60],
   ];
 
   for (const [unit, unitSeconds] of units) {
     const value = Math.floor(seconds / unitSeconds);
     if (value >= 1) {
-      return `${value} ${unit}${value === 1 ? "" : "s"} ago`;
+      return `${value} ${unit} ago`;
     }
   }
 
   return "just now";
+}
+
+function getHeartbeatFreshness(timestamp, now = new Date()) {
+  const date = new Date(timestamp);
+  if (!timestamp || Number.isNaN(date.getTime())) {
+    return { status: "offline", state: "error", badgeClass: "unavailable" };
+  }
+
+  const ageMs = now.getTime() - date.getTime();
+  const hourMs = 60 * 60 * 1000;
+
+  if (ageMs > 24 * hourMs) {
+    return { status: "offline", state: "error", badgeClass: "unavailable" };
+  }
+
+  if (ageMs > 12 * hourMs) {
+    return { status: "old", state: "warning", badgeClass: "partial" };
+  }
+
+  if (ageMs > 3 * hourMs) {
+    return { status: "delayed", state: "warning", badgeClass: "partial" };
+  }
+
+  return { status: "alive", state: "ok", badgeClass: "ok" };
+}
+
+function normalizeHeartbeatFreshness(status) {
+  const normalized = String(status || "").toLowerCase();
+  return ["alive", "delayed", "old", "offline"].includes(normalized) ? normalized : null;
+}
+
+function chooseHeartbeatFreshness(heartbeat, timestamp, now = new Date()) {
+  const computed = getHeartbeatFreshness(timestamp, now);
+  const exported = normalizeHeartbeatFreshness(heartbeat?.freshness_status);
+
+  if (exported && exported === computed.status) {
+    return { ...computed, status: exported };
+  }
+
+  return computed;
 }
 
 function getHeartbeatTimestamp(heartbeat) {
@@ -124,7 +168,7 @@ async function loadLatestHeartbeat() {
 }
 
 function renderHeartbeatUnavailable() {
-  setText("heartbeat-status", "unavailable");
+  setText("heartbeat-status", "offline");
   setText("heartbeat-timestamp", "—");
   setText("heartbeat-age", "—");
   const message = document.getElementById("heartbeat-message");
@@ -134,7 +178,7 @@ function renderHeartbeatUnavailable() {
     message.textContent = "Server heartbeat not available yet.";
   }
   if (badge) {
-    badge.textContent = "unavailable";
+    badge.textContent = "OFFLINE";
     badge.className = "status-badge unavailable";
   }
   if (card) {
@@ -145,21 +189,14 @@ function renderHeartbeatUnavailable() {
 
 function renderHeartbeatStatus(result, now = new Date()) {
   const timestamp = result?.timestamp;
-  const status = String(result?.heartbeat?.status || "unavailable").toLowerCase();
+  const freshness = chooseHeartbeatFreshness(result?.heartbeat, timestamp, now);
   const date = new Date(timestamp);
   if (!timestamp || Number.isNaN(date.getTime())) {
     renderHeartbeatUnavailable();
     return;
   }
 
-  const ageMs = now.getTime() - date.getTime();
-  const isAlive = status === "alive";
-  const isError = !isAlive || ageMs > 24 * 60 * 60 * 1000;
-  const isWarning = isAlive && ageMs > 2 * 60 * 60 * 1000;
-  const state = isError ? "error" : isWarning ? "warning" : "ok";
-  const badgeClass = isError ? "unavailable" : isWarning ? "partial" : "ok";
-
-  setText("heartbeat-status", status);
+  setText("heartbeat-status", freshness.status);
   setText("heartbeat-timestamp", formatDateTimeUtc(timestamp));
   setText("heartbeat-age", formatRelativeAge(timestamp, now));
 
@@ -171,12 +208,12 @@ function renderHeartbeatStatus(result, now = new Date()) {
     message.textContent = `Latest heartbeat from ${sourceLabel}: ${result.filename || "heartbeat.json"}`;
   }
   if (badge) {
-    badge.textContent = isError ? status : isWarning ? "old" : "alive";
-    badge.className = `status-badge ${badgeClass}`;
+    badge.textContent = freshness.status.toUpperCase();
+    badge.className = `status-badge ${freshness.badgeClass}`;
   }
   if (card) {
     card.classList.remove("heartbeat-ok", "heartbeat-warning", "heartbeat-error");
-    card.classList.add(`heartbeat-${state}`);
+    card.classList.add(`heartbeat-${freshness.state}`);
   }
 }
 
