@@ -37,6 +37,7 @@
       <span class="prompt">root@nebunix:~$</span>
       <span class="name">World Observer</span>
     </h1>
+    <p class="observer-hero">Observe. Don't speculate.</p>
     <p>Static observation dashboard preview for public, non-tracking data exports.</p>
 
     <div class="button-group">
@@ -72,22 +73,30 @@
     </section>
 
     <section id="observer-dashboard" class="observer-dashboard" hidden>
-      <div class="observer-meta">
-        <span>Last update: <strong id="observer-last-update">—</strong></span>
-      </div>
-
-      <div class="metric-grid" aria-label="World Observer status metrics">
-        <article class="metric-card">
-          <span class="metric-label">Total observers</span>
+      <div class="status-strip" aria-label="World Observer status metrics">
+        <article class="status-item">
+          <span class="metric-label">observers total</span>
           <strong id="observer-total">—</strong>
         </article>
-        <article class="metric-card">
-          <span class="metric-label">Missing observers</span>
+        <article class="status-item">
+          <span class="metric-label">missing</span>
           <strong id="observer-missing">—</strong>
         </article>
-        <article class="metric-card">
-          <span class="metric-label">Degraded observers</span>
+        <article class="status-item">
+          <span class="metric-label">degraded</span>
           <strong id="observer-degraded">—</strong>
+        </article>
+        <article class="status-item">
+          <span class="metric-label">dashboard version</span>
+          <strong id="observer-version">—</strong>
+        </article>
+        <article class="status-item">
+          <span class="metric-label">last update</span>
+          <strong id="observer-last-update">—</strong>
+        </article>
+        <article id="observer-days-card" class="status-item" hidden>
+          <span class="metric-label">days observed</span>
+          <strong id="observer-days-observed">—</strong>
         </article>
       </div>
 

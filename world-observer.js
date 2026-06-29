@@ -22,6 +22,13 @@ const INTERNET_HISTORY_URLS = [
   "world-observer/dashboard/history/internet-observers.json",
 ];
 
+const CATEGORY_LINKS = {
+  internet: "/world-observer/internet.html",
+  media: "/world-observer/media.html",
+  society: "/world-observer/society.html",
+  environment: "/world-observer/environment.html",
+};
+
 async function loadJson(url) {
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) {
@@ -172,6 +179,52 @@ function formatDate(value) {
   return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10);
 }
 
+
+function getDashboardVersion(summary) {
+  return summary.dashboard_version || summary.version || summary.schema_version || "static";
+}
+
+function collectHistoryDates(history, pointNormalizer) {
+  if (!history) {
+    return [];
+  }
+
+  return pointNormalizer(history)
+    .map((point) => formatDate(point.date))
+    .filter((date) => date && date !== "—");
+}
+
+function countObservedDays(mediaHistory, internetHistory) {
+  const days = new Set(collectHistoryDates(mediaHistory, normalizeHistoryPoints));
+
+  if (internetHistory) {
+    normalizeInternetHistory(internetHistory).forEach((points) => {
+      points.forEach((point) => {
+        const day = formatDate(point.date);
+        if (day && day !== "—") {
+          days.add(day);
+        }
+      });
+    });
+  }
+
+  return days.size;
+}
+
+function renderObservedDays(mediaHistory, internetHistory) {
+  const card = document.getElementById("observer-days-card");
+  const count = countObservedDays(mediaHistory, internetHistory);
+
+  if (!card) {
+    return;
+  }
+
+  card.hidden = count === 0;
+  if (count > 0) {
+    setText("observer-days-observed", formatNumber(count));
+  }
+}
+
 function renderMiniSparkline(points, label) {
   const wrap = document.createElement("div");
   wrap.className = "mini-sparkline";
@@ -288,9 +341,12 @@ function renderCategories(categories) {
   }
   container.textContent = "";
 
-  categories.filter((category) => category.name?.toLowerCase() !== "internet").forEach((category) => {
-    const card = document.createElement("article");
+  categories.forEach((category) => {
+    const key = category.name?.toLowerCase();
+    const card = document.createElement("a");
     card.className = `card observer-category ${category.status || "unknown"}`;
+    card.href = CATEGORY_LINKS[key] || "/world-observer.html";
+    card.setAttribute("aria-label", `Open ${category.name || "observer"} observer category`);
 
     const title = document.createElement("h3");
     title.textContent = category.name;
@@ -429,6 +485,8 @@ function renderDashboard(summary = {}, media = {}, mediaHistory, internet, inter
   setText("observer-total", formatNumber(summary.total_observers));
   setText("observer-missing", formatNumber(summary.missing_observers));
   setText("observer-degraded", formatNumber(summary.degraded_observers));
+  setText("observer-version", getDashboardVersion(summary));
+  renderObservedDays(mediaHistory, internetHistory);
 
   renderCategories(summary.categories || []);
   renderInternetObservers(internet, internetHistory);

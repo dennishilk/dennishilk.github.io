@@ -184,6 +184,15 @@ footer {
   padding-bottom: 1.5rem;
 }
 
+.observer-hero {
+  color: var(--accent);
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0.9rem auto 0.35rem;
+  text-shadow: 0 0 14px rgba(0,180,255,0.42);
+}
+
 .observer-notice,
 .observer-fallback,
 .observer-section,
@@ -228,16 +237,30 @@ footer {
   margin: 0.6rem 0 1rem;
 }
 
-.metric-grid {
+.metric-grid,
+.status-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.metric-card {
+.status-strip {
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 0.7rem;
+}
+
+.metric-card,
+.status-item {
   padding: 1.3rem;
   text-align: left;
+}
+
+.status-item {
+  background: rgba(13, 17, 23, 0.78);
+  border: 1px solid rgba(0,180,255,0.28);
+  border-radius: 12px;
+  padding: 0.85rem;
 }
 
 .metric-label {
@@ -247,10 +270,16 @@ footer {
   margin-bottom: 0.65rem;
 }
 
-.metric-card strong {
+.metric-card strong,
+.status-item strong {
   color: var(--accent);
   font-size: 2rem;
   text-shadow: 0 0 10px rgba(0,180,255,0.45);
+}
+
+.status-item strong {
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
 }
 
 .observer-section {
@@ -267,7 +296,16 @@ footer {
 
 .observer-category {
   display: block;
-  padding: 0.85rem;
+  padding: 0.75rem;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+}
+
+.observer-category:hover,
+.observer-category:focus-visible {
+  background: rgba(0,180,255,0.08);
+  border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
 .observer-category h3 {
@@ -276,8 +314,9 @@ footer {
 }
 
 .observer-category p {
-  font-size: 0.82rem;
-  line-height: 1.45;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  margin: 0.28rem 0;
 }
 
 .observer-category.active {
