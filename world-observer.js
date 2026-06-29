@@ -21,6 +21,11 @@ const INTERNET_HISTORY_URLS = [
   "dashboard/history/internet-observers.json",
   "world-observer/dashboard/history/internet-observers.json",
 ];
+const HEARTBEAT_URLS = [
+  "/world-observer/dashboard/heartbeat.json",
+  "dashboard/heartbeat.json",
+  "world-observer/dashboard/heartbeat.json",
+];
 const HEARTBEAT_CONTENTS_URL = "https://api.github.com/repos/dennishilk/world-observer/contents/state/heartbeat";
 
 const CATEGORY_LINKS = {
@@ -86,10 +91,15 @@ function formatRelativeAge(timestamp, now = new Date()) {
 }
 
 function getHeartbeatTimestamp(heartbeat) {
-  return heartbeat?.timestamp || heartbeat?.heartbeat_at || heartbeat?.generated_at || heartbeat?.last_update || heartbeat?.time || null;
+  return heartbeat?.latest_heartbeat_utc || heartbeat?.timestamp || heartbeat?.heartbeat_at || heartbeat?.generated_at || heartbeat?.last_update || heartbeat?.time || null;
 }
 
-async function loadLatestHeartbeat() {
+async function loadHeartbeatFromDashboardExport() {
+  const heartbeat = await loadOptionalJson(HEARTBEAT_URLS);
+  return heartbeat ? { filename: "dashboard/heartbeat.json", heartbeat, timestamp: getHeartbeatTimestamp(heartbeat), source: "dashboard" } : null;
+}
+
+async function loadHeartbeatFromGithubApi() {
   const contents = await loadJson(HEARTBEAT_CONTENTS_URL);
   const files = (Array.isArray(contents) ? contents : [])
     .filter((item) => item.type === "file" && item.name?.endsWith(".json"))
@@ -101,7 +111,16 @@ async function loadLatestHeartbeat() {
 
   const newest = files[0];
   const heartbeat = newest.download_url ? await loadJson(newest.download_url) : null;
-  return { filename: newest.name, heartbeat: heartbeat || {}, timestamp: getHeartbeatTimestamp(heartbeat) || newest.name.replace(/\.json$/i, "") };
+  return { filename: newest.name, heartbeat: heartbeat || {}, timestamp: getHeartbeatTimestamp(heartbeat) || newest.name.replace(/\.json$/i, ""), source: "github" };
+}
+
+async function loadLatestHeartbeat() {
+  const dashboardHeartbeat = await loadHeartbeatFromDashboardExport();
+  if (dashboardHeartbeat) {
+    return dashboardHeartbeat;
+  }
+
+  return loadHeartbeatFromGithubApi();
 }
 
 function renderHeartbeatUnavailable() {
@@ -126,6 +145,7 @@ function renderHeartbeatUnavailable() {
 
 function renderHeartbeatStatus(result, now = new Date()) {
   const timestamp = result?.timestamp;
+  const status = String(result?.heartbeat?.status || "unavailable").toLowerCase();
   const date = new Date(timestamp);
   if (!timestamp || Number.isNaN(date.getTime())) {
     renderHeartbeatUnavailable();
@@ -133,12 +153,13 @@ function renderHeartbeatStatus(result, now = new Date()) {
   }
 
   const ageMs = now.getTime() - date.getTime();
-  const isError = ageMs > 24 * 60 * 60 * 1000;
-  const isWarning = ageMs > 2 * 60 * 60 * 1000;
+  const isAlive = status === "alive";
+  const isError = !isAlive || ageMs > 24 * 60 * 60 * 1000;
+  const isWarning = isAlive && ageMs > 2 * 60 * 60 * 1000;
   const state = isError ? "error" : isWarning ? "warning" : "ok";
   const badgeClass = isError ? "unavailable" : isWarning ? "partial" : "ok";
 
-  setText("heartbeat-status", "alive");
+  setText("heartbeat-status", status);
   setText("heartbeat-timestamp", formatDateTimeUtc(timestamp));
   setText("heartbeat-age", formatRelativeAge(timestamp, now));
 
@@ -146,10 +167,11 @@ function renderHeartbeatStatus(result, now = new Date()) {
   const badge = document.getElementById("heartbeat-status-badge");
   const card = document.querySelector(".server-heartbeat");
   if (message) {
-    message.textContent = `Latest heartbeat file: ${result.filename || "heartbeat.json"}`;
+    const sourceLabel = result.source === "github" ? "GitHub API fallback" : "dashboard export";
+    message.textContent = `Latest heartbeat from ${sourceLabel}: ${result.filename || "heartbeat.json"}`;
   }
   if (badge) {
-    badge.textContent = isError ? "stale" : isWarning ? "old" : "alive";
+    badge.textContent = isError ? status : isWarning ? "old" : "alive";
     badge.className = `status-badge ${badgeClass}`;
   }
   if (card) {
