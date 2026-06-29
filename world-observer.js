@@ -21,6 +21,7 @@ const INTERNET_HISTORY_URLS = [
   "dashboard/history/internet-observers.json",
   "world-observer/dashboard/history/internet-observers.json",
 ];
+const HEARTBEAT_CONTENTS_URL = "https://api.github.com/repos/dennishilk/world-observer/contents/state/heartbeat";
 
 const CATEGORY_LINKS = {
   internet: "/world-observer/internet.html",
@@ -50,6 +51,120 @@ async function loadOptionalJson(urls) {
 
   console.warn("Optional World Observer data not available", errors);
   return null;
+}
+
+function formatDateTimeUtc(value) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString().replace(".000Z", "Z");
+}
+
+function formatRelativeAge(timestamp, now = new Date()) {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  const seconds = Math.max(0, Math.round((now.getTime() - date.getTime()) / 1000));
+  const units = [
+    ["day", 86400],
+    ["hour", 3600],
+    ["minute", 60],
+  ];
+
+  for (const [unit, unitSeconds] of units) {
+    const value = Math.floor(seconds / unitSeconds);
+    if (value >= 1) {
+      return `${value} ${unit}${value === 1 ? "" : "s"} ago`;
+    }
+  }
+
+  return "just now";
+}
+
+function getHeartbeatTimestamp(heartbeat) {
+  return heartbeat?.timestamp || heartbeat?.heartbeat_at || heartbeat?.generated_at || heartbeat?.last_update || heartbeat?.time || null;
+}
+
+async function loadLatestHeartbeat() {
+  const contents = await loadJson(HEARTBEAT_CONTENTS_URL);
+  const files = (Array.isArray(contents) ? contents : [])
+    .filter((item) => item.type === "file" && item.name?.endsWith(".json"))
+    .sort((a, b) => String(b.name).localeCompare(String(a.name)));
+
+  if (!files.length) {
+    return null;
+  }
+
+  const newest = files[0];
+  const heartbeat = newest.download_url ? await loadJson(newest.download_url) : null;
+  return { filename: newest.name, heartbeat: heartbeat || {}, timestamp: getHeartbeatTimestamp(heartbeat) || newest.name.replace(/\.json$/i, "") };
+}
+
+function renderHeartbeatUnavailable() {
+  setText("heartbeat-status", "unavailable");
+  setText("heartbeat-timestamp", "—");
+  setText("heartbeat-age", "—");
+  const message = document.getElementById("heartbeat-message");
+  const badge = document.getElementById("heartbeat-status-badge");
+  const card = document.querySelector(".server-heartbeat");
+  if (message) {
+    message.textContent = "Server heartbeat not available yet.";
+  }
+  if (badge) {
+    badge.textContent = "unavailable";
+    badge.className = "status-badge unavailable";
+  }
+  if (card) {
+    card.classList.remove("heartbeat-ok", "heartbeat-warning");
+    card.classList.add("heartbeat-error");
+  }
+}
+
+function renderHeartbeatStatus(result, now = new Date()) {
+  const timestamp = result?.timestamp;
+  const date = new Date(timestamp);
+  if (!timestamp || Number.isNaN(date.getTime())) {
+    renderHeartbeatUnavailable();
+    return;
+  }
+
+  const ageMs = now.getTime() - date.getTime();
+  const isError = ageMs > 24 * 60 * 60 * 1000;
+  const isWarning = ageMs > 2 * 60 * 60 * 1000;
+  const state = isError ? "error" : isWarning ? "warning" : "ok";
+  const badgeClass = isError ? "unavailable" : isWarning ? "partial" : "ok";
+
+  setText("heartbeat-status", "alive");
+  setText("heartbeat-timestamp", formatDateTimeUtc(timestamp));
+  setText("heartbeat-age", formatRelativeAge(timestamp, now));
+
+  const message = document.getElementById("heartbeat-message");
+  const badge = document.getElementById("heartbeat-status-badge");
+  const card = document.querySelector(".server-heartbeat");
+  if (message) {
+    message.textContent = `Latest heartbeat file: ${result.filename || "heartbeat.json"}`;
+  }
+  if (badge) {
+    badge.textContent = isError ? "stale" : isWarning ? "old" : "alive";
+    badge.className = `status-badge ${badgeClass}`;
+  }
+  if (card) {
+    card.classList.remove("heartbeat-ok", "heartbeat-warning", "heartbeat-error");
+    card.classList.add(`heartbeat-${state}`);
+  }
+}
+
+async function renderServerHeartbeat() {
+  try {
+    renderHeartbeatStatus(await loadLatestHeartbeat());
+  } catch (error) {
+    console.warn("Server heartbeat not available", error);
+    renderHeartbeatUnavailable();
+  }
 }
 
 function setText(id, value) {
@@ -643,8 +758,8 @@ function renderDashboard(summary = {}, media = {}, mediaHistory, internet, inter
   setText("observer-degraded", formatNumber(summary.degraded_observers));
   setText("observer-version", getDashboardVersion(summary));
   renderObservedDays(mediaHistory, internetHistory);
+  renderServerHeartbeat();
 
-  renderCategories(summary.categories || []);
   renderInternetObservers(internet, internetHistory);
 
   setText("media-fear-overall", formatIndex(media.fear_index_overall));
