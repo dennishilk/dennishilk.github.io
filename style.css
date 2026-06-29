@@ -442,7 +442,34 @@ footer {
   border-radius: 12px;
   box-shadow: inset 0 0 18px rgba(0,180,255,0.06);
   min-height: 220px;
+  overflow: hidden;
+}
+
+.internet-observer-card.expanded {
+  border-color: rgba(0,180,255,0.72);
+  box-shadow: 0 0 20px rgba(0,180,255,0.14), inset 0 0 18px rgba(0,180,255,0.08);
+}
+
+.internet-card-toggle {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  font: inherit;
   padding: 1rem;
+  text-align: left;
+  width: 100%;
+}
+
+.internet-card-toggle:hover,
+.internet-card-toggle:focus-visible {
+  background: rgba(0,180,255,0.07);
+  outline: none;
+}
+
+.internet-card-toggle:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .internet-card-header {
@@ -488,12 +515,14 @@ footer {
   color: #7fffd4;
 }
 
+.status-badge.partial,
 .status-badge.degraded,
 .status-badge.warning {
   border-color: rgba(255, 214, 102, 0.65);
   color: #ffd666;
 }
 
+.status-badge.unavailable,
 .status-badge.missing,
 .status-badge.error,
 .status-badge.offline {
@@ -529,6 +558,54 @@ footer {
   color: #c9d1d9;
   line-height: 1.45;
   margin: 0 0 0.8rem;
+}
+
+.internet-secondary-metrics,
+.internet-detail-list {
+  display: grid;
+  gap: 0.35rem 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: 0 0 0.85rem;
+}
+
+.internet-secondary-metrics dt,
+.internet-detail-list dt {
+  color: #8b949e;
+  font-size: 0.78rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.internet-secondary-metrics dd,
+.internet-detail-list dd {
+  color: #dbeafe;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.internet-secondary-metrics.compact dd {
+  color: var(--accent);
+}
+
+.internet-card-details {
+  border-top: 1px solid rgba(0,180,255,0.24);
+  padding: 0.9rem 1rem 1rem;
+}
+
+.internet-card-details h4 {
+  color: var(--accent);
+  font-size: 0.86rem;
+  margin: 0 0 0.65rem;
+  text-transform: uppercase;
+}
+
+.internet-secondary-metrics.details {
+  margin-bottom: 0;
 }
 
 .mini-sparkline {
