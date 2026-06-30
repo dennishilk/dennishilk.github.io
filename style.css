@@ -565,7 +565,10 @@ footer {
 
 .internet-primary-metric span {
   display: block;
+  line-height: 1.35;
   margin-bottom: 0.3rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .internet-observer-card.signal-unavailable .internet-primary-metric strong {
@@ -601,10 +604,10 @@ footer {
 .internet-detail-list dt {
   color: #8b949e;
   font-size: 0.78rem;
+  line-height: 1.3;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .internet-secondary-metrics dd,
@@ -612,7 +615,9 @@ footer {
   color: #dbeafe;
   font-size: 0.78rem;
   font-weight: 700;
+  line-height: 1.3;
   margin: 0;
+  min-width: 0;
   overflow-wrap: anywhere;
   text-align: right;
 }
