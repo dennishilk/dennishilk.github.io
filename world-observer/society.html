@@ -77,7 +77,7 @@
           <h2 id="fuel-observer-title">Germany Fuel Observer</h2>
           <button class="observer-info-button" type="button" aria-expanded="false" aria-controls="fuel-index-info" data-info-toggle="fuel-index-info">i</button>
         </div>
-        <p class="observer-limitation">Germany-only fuel price observer preview. Values are placeholder UI data until public exports are available.</p>
+        <p class="observer-limitation">Germany-only fuel price observer using exported public dashboard data.</p>
         <div id="fuel-index-info" class="media-index-info" hidden>
           <h3>What is this observer?</h3>
           <p>The Fuel Observer displays descriptive fuel price indicators for the selected fuel type.</p>
@@ -86,10 +86,9 @@
         <div class="observer-selector fuel-type-selector" aria-labelledby="fuel-type-label">
           <span id="fuel-type-label" class="observer-selector-label">Fuel type</span>
           <div id="fuel-type-selector" class="observer-selector-options" role="radiogroup" aria-labelledby="fuel-type-label">
-            <button type="button" class="observer-selector-button" role="radio" aria-checked="true" data-fuel-type="benzin">Benzin</button>
+            <button type="button" class="observer-selector-button" role="radio" aria-checked="true" data-fuel-type="benzin">Super E5</button>
             <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="diesel">Diesel</button>
-            <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super-e10">Super E10</button>
-            <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super-plus">Super Plus</button>
+            <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super_e10">Super E10</button>
           </div>
         </div>
         <div id="fuel-metric-grid" class="metric-grid media-metrics"></div>
