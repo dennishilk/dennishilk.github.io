@@ -777,7 +777,7 @@ function renderInternetObservers(data, history) {
       signalNote.textContent = "Observer ran, but no usable signal was available in the latest export.";
       signalNote.hidden = !hasUnavailableInternetSignal(observer);
 
-      const secondarySummary = renderMetricList(secondaryMetrics.slice(0, 4), "internet-secondary-metrics compact");
+      const secondarySummary = renderMetricList(secondaryMetrics.slice(0, 3), "internet-secondary-metrics compact");
 
       const lastSeen = document.createElement("p");
       lastSeen.className = "internet-last-seen";
