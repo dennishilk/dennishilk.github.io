@@ -226,6 +226,50 @@ function setText(id, value) {
   }
 }
 
+function setupMediaInfoToggle() {
+  document.querySelectorAll("[data-info-toggle]").forEach((button) => {
+    const panel = document.getElementById(button.dataset.infoToggle);
+    if (!panel) {
+      return;
+    }
+
+    button.addEventListener("click", () => {
+      const isExpanded = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!isExpanded));
+      panel.hidden = isExpanded;
+    });
+  });
+}
+
+function clampMediaIndex(value) {
+  if (!Number.isFinite(value)) {
+    return null;
+  }
+  return Math.min(10, Math.max(0, value));
+}
+
+function renderMediaIndexScale(value) {
+  const marker = document.getElementById("media-index-marker");
+  const label = document.getElementById("media-index-marker-label");
+  const scale = document.getElementById("media-index-scale");
+  if (!marker || !label || !scale) {
+    return;
+  }
+
+  const indexValue = clampMediaIndex(Number(value));
+  if (indexValue === null) {
+    marker.style.left = "0%";
+    label.textContent = "— Today";
+    scale.setAttribute("aria-label", "Media Language Index scale: value unavailable");
+    return;
+  }
+
+  const percentage = (indexValue / 10) * 100;
+  marker.style.left = `${percentage}%`;
+  label.textContent = `${indexValue.toFixed(2)} Today`;
+  scale.setAttribute("aria-label", `Media Language Index scale: ${indexValue.toFixed(2)} today on a 0 to 10 scale`);
+}
+
 function formatNumber(value) {
   return Number.isFinite(value) ? value.toLocaleString() : "—";
 }
@@ -1239,6 +1283,7 @@ function renderDashboard(summary = {}, media = {}, mediaHistory, internet, inter
 
     renderOptional("media overview", () => {
       setText("media-fear-overall", formatIndex(media.fear_index_overall));
+      renderMediaIndexScale(media.fear_index_overall);
       setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
       setText("media-private-fear", formatIndex(media.private_media?.fear_index));
       setText("media-headline-count", formatNumber(media.headline_count));
@@ -1326,6 +1371,7 @@ async function initWorldObserver() {
         return;
       }
       setText("media-fear-overall", formatIndex(media.fear_index_overall));
+      renderMediaIndexScale(media.fear_index_overall);
       setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
       setText("media-private-fear", formatIndex(media.private_media?.fear_index));
       setText("media-headline-count", formatNumber(media.headline_count));
@@ -1356,4 +1402,5 @@ async function initWorldObserver() {
   }
 }
 
+setupMediaInfoToggle();
 initWorldObserver();

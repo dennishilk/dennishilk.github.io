@@ -64,7 +64,7 @@
         does not claim manipulation, and should not be read as proof of intent.
       </p>
       <p>
-        The media language observer currently tracks Germany-only public media language indicators.
+        Dashboard values are descriptive public-data indicators and should be read with their observer-specific context.
       </p>
     </section>
 
@@ -124,14 +124,22 @@
 
 
       <section class="observer-section media-observer" aria-labelledby="media-observer-title">
-        <h2 id="media-observer-title">Germany Media Language Observer</h2>
+        <div class="observer-title-row">
+          <h2 id="media-observer-title">Germany Media Language Observer</h2>
+          <button class="observer-info-button" type="button" aria-expanded="false" aria-controls="media-index-info" data-info-toggle="media-index-info">i</button>
+        </div>
         <p class="observer-limitation">
           Germany-only public media language indicators. Values are observational indicators, not causal or manipulation claims.
         </p>
+        <div id="media-index-info" class="media-index-info" hidden>
+          <h3>What is this index?</h3>
+          <p>The Media Language Index measures how frequently predefined categories such as war, disasters, crime, political pressure, and general alarm appear in observed headlines.</p>
+          <p>Higher values indicate more alarm-oriented language, not real-world danger or causality.</p>
+        </div>
 
         <div class="metric-grid media-metrics">
           <article class="metric-card">
-            <span class="metric-label">Overall indicator</span>
+            <span class="metric-label">Media Language Index</span>
             <strong id="media-fear-overall">—</strong>
           </article>
           <article class="metric-card">
@@ -166,6 +174,24 @@
               <span class="metric-label">Public/private spread</span>
               <strong id="media-trend-spread">—</strong>
             </article>
+          </div>
+
+
+          <div id="media-index-scale" class="media-index-scale" aria-label="Media Language Index scale">
+            <div class="media-index-scale-labels" aria-hidden="true">
+              <span>Calmer</span>
+              <span>More alarm-oriented</span>
+            </div>
+            <div class="media-index-scale-track" aria-hidden="true">
+              <div class="media-index-scale-line"></div>
+              <div class="media-index-scale-ticks">
+                <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+              </div>
+              <div id="media-index-marker" class="media-index-marker" style="left: 0%;">
+                <span class="media-index-arrow">▲</span>
+                <span id="media-index-marker-label" class="media-index-marker-label">— Today</span>
+              </div>
+            </div>
           </div>
 
           <div id="media-trend-sparkline" class="sparkline" aria-label="Germany media language trend sparkline"></div>
