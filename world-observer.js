@@ -334,7 +334,18 @@ function renderWorldObserverScale(containerId, config) {
 
   const markerLabel = document.createElement("span");
   markerLabel.className = "media-index-marker-label";
-  markerLabel.textContent = position === null ? "— Today" : config.markerLabel;
+  const markerLabelLines = Array.isArray(config.markerLabelLines) && config.markerLabelLines.length
+    ? config.markerLabelLines
+    : [config.markerLabel];
+  if (position === null) {
+    markerLabel.textContent = "— Today";
+  } else {
+    markerLabelLines.filter(Boolean).forEach((lineText) => {
+      const line = document.createElement("span");
+      line.textContent = lineText;
+      markerLabel.appendChild(line);
+    });
+  }
 
   marker.append(arrow, markerLabel);
   track.append(line, ticks, marker);
@@ -346,12 +357,16 @@ function formatFuelPrice(value) {
   return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} €` : null;
 }
 
-function formatFuelPercent(value) {
+function formatFuelPercent(value, digits = 0) {
   if (!Number.isFinite(Number(value))) {
     return null;
   }
   const percent = Number(value);
-  return `${percent > 0 ? "+" : ""}${percent.toFixed(0)}%`;
+  return `${percent > 0 ? "+" : ""}${percent.toFixed(digits)}%`;
+}
+
+function getFuelValue(data, camelCaseKey, snakeCaseKey = camelCaseKey) {
+  return data[snakeCaseKey] ?? data[camelCaseKey];
 }
 
 const SOCIETY_OBSERVERS = {
@@ -403,20 +418,19 @@ function setupRadioButtonSelector(selectorId, dataAttribute, onSelect) {
 
 const FUEL_OBSERVER_EXAMPLE_DATA = {
   benzin: {
-    currentPrice: 1.78,
-    thirtyDayAverage: 1.71,
-    annualAverage: 1.64,
-    since2000: 61,
+    current_price: 1.78,
+    average_30d: 1.71,
+    average_365d: 1.64,
+    record_high: 2.37,
+    record_low: 0.91,
+    compared_365d: 8.5,
     trendDelta: 0.04,
     trendDeltaPercent: 2.3,
-    historicalPercentile: 72,
-    historicalMin: 1.00,
-    historicalMax: 2.30,
     summaries: [
       "Price increased compared with yesterday.",
       "Above the 30-day average.",
       "Above the 365-day average.",
-      "Higher than 72% of observations since 2000.",
+      "Below the observed record high.",
     ],
   },
   diesel: {},
@@ -426,11 +440,18 @@ const FUEL_OBSERVER_EXAMPLE_DATA = {
 
 function renderFuelObserver(fuelType = "benzin") {
   const data = FUEL_OBSERVER_EXAMPLE_DATA[fuelType] || {};
+  const currentPrice = getFuelValue(data, "currentPrice", "current_price");
+  const average30d = getFuelValue(data, "thirtyDayAverage", "average_30d");
+  const average365d = getFuelValue(data, "annualAverage", "average_365d");
+  const recordHigh = getFuelValue(data, "recordHigh", "record_high");
+  const recordLow = getFuelValue(data, "recordLow", "record_low");
+  const compared365d = getFuelValue(data, "compared365d", "compared_365d");
+
   renderMetricCards("fuel-metric-grid", [
-    { label: "Current price", value: formatFuelPrice(data.currentPrice) },
-    { label: "30d average", value: formatFuelPrice(data.thirtyDayAverage) },
-    { label: "365d average", value: formatFuelPrice(data.annualAverage) },
-    { label: "Since 2000", value: formatFuelPercent(data.since2000) },
+    { label: "Current price", value: formatFuelPrice(currentPrice) },
+    { label: "30d average", value: formatFuelPrice(average30d) },
+    { label: "365d average", value: formatFuelPrice(average365d) },
+    { label: "Record high", value: formatFuelPrice(recordHigh) },
   ]);
 
   const trendValue = Number.isFinite(Number(data.trendDelta))
@@ -438,19 +459,20 @@ function renderFuelObserver(fuelType = "benzin") {
     : null;
   renderMetricCards("fuel-trend-grid", [
     { label: "TREND", value: trendValue },
-    { label: "30d average", value: formatFuelPrice(data.thirtyDayAverage) },
-    { label: "Historical percentile", value: formatFuelPercent(data.historicalPercentile)?.replace(/^\+/, "") },
+    { label: "30d average", value: formatFuelPrice(average30d) },
+    { label: "Compared with 365d", value: formatFuelPercent(compared365d, 1) },
   ]);
   setText("fuel-trend-status", Object.keys(data).length ? "" : "Fuel observer data is not available yet for this selection.");
   renderWorldObserverScale("fuel-historical-scale", {
     ariaLabel: "Fuel historical price scale",
-    lowLabel: "Cheaper",
-    highLabel: "More expensive",
-    ticks: ["2000", "Today"],
-    value: data.currentPrice,
-    min: data.historicalMin,
-    max: data.historicalMax,
-    markerLabel: `${formatFuelPrice(data.currentPrice) || "—"} Today`,
+    lowLabel: "Historical minimum",
+    highLabel: "Historical maximum",
+    ticks: [formatFuelPrice(recordLow) || "—", formatFuelPrice(recordHigh) || "—"],
+    value: currentPrice,
+    min: recordLow,
+    max: recordHigh,
+    markerLabel: `Today ${formatFuelPrice(currentPrice) || "—"}`,
+    markerLabelLines: ["Today", formatFuelPrice(currentPrice) || "—"],
   });
   renderObservedSummaryList("fuel-observed-summaries", data.summaries);
 }
