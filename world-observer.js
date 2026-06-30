@@ -354,12 +354,31 @@ function numericHistoryPoints(points) {
   return points.filter((point) => Number.isFinite(point.value));
 }
 
-function getObserverId(observer) {
+function slugifyObserverName(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getObserverLookupKeys(observer) {
   if (!observer || typeof observer !== "object") {
-    return "internet-observer";
+    return ["internet-observer"];
   }
 
-  return String(observer.id || observer.observer_id || observer.name || observer.slug || observer.display_name || observer.observer || "internet-observer");
+  return [
+    observer.observer,
+    observer.id,
+    observer.observer_id,
+    slugifyObserverName(observer.display_name),
+  ]
+    .filter((value) => value !== undefined && value !== null && value !== "")
+    .map(String);
+}
+
+function getObserverId(observer) {
+  return getObserverLookupKeys(observer)[0] || "internet-observer";
 }
 
 function normalizeStatusValue(value) {
@@ -634,12 +653,12 @@ function renderMetricList(metrics, className = "internet-secondary-metrics") {
   return list;
 }
 
-function findInternetHistoryRecord(history, id, title) {
+function findInternetHistoryRecord(history, observer) {
   if (!history) {
     return null;
   }
 
-  const candidates = [id, title].filter(Boolean).map(String);
+  const candidates = getObserverLookupKeys(observer);
   const collections = [history.history, history.observers_history, history.observers, history.data];
 
   for (const collection of collections) {
@@ -654,7 +673,10 @@ function findInternetHistoryRecord(history, id, title) {
     }
   }
 
-  return normalizeCollection(history).find((observer) => candidates.includes(getObserverId(observer))) || null;
+  return normalizeCollection(history).find((historyObserver) => {
+    const historyKeys = getObserverLookupKeys(historyObserver);
+    return candidates.some((candidate) => historyKeys.includes(candidate));
+  }) || null;
 }
 
 function getHistoryCount(record, key, fallback) {
@@ -798,12 +820,13 @@ function renderInternetObservers(data, history) {
     try {
       const observer = rawObserver && typeof rawObserver === "object" ? rawObserver : { display_name: String(rawObserver || `Internet Observer ${index + 1}`) };
       const id = getObserverId(observer);
+      const historyKeys = getObserverLookupKeys(observer);
       const titleText = observer.display_name || observer.name || observer.observer || id || "Internet Observer";
       const primaryMetric = prepareInternetPrimaryMetric(getPrimaryMetric(observer), observer);
       const secondaryMetrics = normalizeSecondaryMetrics(observer);
-      const points = historyById.get(id) || historyById.get(titleText) || [];
+      const points = historyKeys.map((key) => historyById.get(key)).find(Boolean) || [];
       const numericPoints = numericHistoryPoints(points);
-      const historyRecord = findInternetHistoryRecord(history, id, titleText);
+      const historyRecord = findInternetHistoryRecord(history, observer);
       const totalPointCount = getHistoryCount(historyRecord, "total_point_count", points.length);
       const numericPointCount = getHistoryCount(historyRecord, "numeric_point_count", numericPoints.length);
       const trendEmptyMessage = getTrendEmptyMessage(totalPointCount, numericPointCount);
