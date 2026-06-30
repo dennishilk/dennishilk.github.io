@@ -270,14 +270,22 @@ function renderMetricCards(containerId, metrics) {
     .forEach((metric) => container.appendChild(createMetricCard(metric.label, metric.value)));
 }
 
-function renderObservedSummaryList(containerId, summaries) {
+function renderObservedSummaryList(containerId, summaries, emptyMessage = null) {
   const container = document.getElementById(containerId);
   if (!container) {
     return;
   }
 
   container.textContent = "";
-  (Array.isArray(summaries) ? summaries : []).forEach((summary) => {
+  const summaryItems = Array.isArray(summaries) ? summaries : [];
+  if (!summaryItems.length && emptyMessage) {
+    const item = document.createElement("li");
+    item.textContent = emptyMessage;
+    container.appendChild(item);
+    return;
+  }
+
+  summaryItems.forEach((summary) => {
     const item = document.createElement("li");
     item.textContent = summary;
     container.appendChild(item);
@@ -300,8 +308,33 @@ function renderWorldObserverScale(containerId, config) {
     return;
   }
 
-  const position = calculateScalePosition(config.value, config.min, config.max);
   container.textContent = "";
+  if (config.firstObservation) {
+    const panel = document.createElement("div");
+    panel.className = "world-observer-first-observation";
+
+    const eyebrow = document.createElement("span");
+    eyebrow.className = "world-observer-first-observation-eyebrow";
+    eyebrow.textContent = "Observation range";
+
+    const label = document.createElement("strong");
+    label.textContent = "First observation";
+
+    const date = document.createElement("span");
+    date.className = "world-observer-first-observation-date";
+    date.textContent = config.firstObservationDate || "—";
+
+    const note = document.createElement("span");
+    note.className = "world-observer-first-observation-note";
+    note.textContent = "Range starts after the next observation.";
+
+    panel.append(eyebrow, label, date, note);
+    container.appendChild(panel);
+    container.setAttribute("aria-label", `${config.ariaLabel}: first observation ${config.firstObservationDate || "unavailable"}`);
+    return;
+  }
+
+  const position = calculateScalePosition(config.value, config.min, config.max);
 
   const labels = document.createElement("div");
   labels.className = "media-index-scale-labels";
@@ -506,6 +539,10 @@ function renderFuelObserver(fuelType = "benzin") {
   const compared365d = getFuelValue(data, "comparedWith365dPercent", "compared_with_365d_percent");
   const observedChanges = data.observed_changes || data.observedChanges;
   const lastSeenDate = data.last_seen_date || data.lastSeenDate;
+  const trendDelta = getFuelValue(data, "trendDelta", "trend_delta");
+  const observedRange = Number(observedHigh) - Number(observedLow);
+  const hasObservationRange = Number.isFinite(observedRange) && observedRange > 0;
+  const isFirstObservation = !hasObservationRange || !Number.isFinite(Number(trendDelta));
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
@@ -523,7 +560,11 @@ function renderFuelObserver(fuelType = "benzin") {
     { label: "365d comparison", value: formatFuelPercent(compared365d, 1) },
   ]);
   setText("fuel-trend-status", "");
-  renderWorldObserverScale("fuel-observer-scale", {
+  renderWorldObserverScale("fuel-observer-scale", isFirstObservation ? {
+    ariaLabel: "Fuel observer lifetime price scale",
+    firstObservation: true,
+    firstObservationDate: lastSeenDate,
+  } : {
     ariaLabel: "Fuel observer lifetime price scale",
     lowLabel: "Lowest observed",
     highLabel: "Highest observed",
@@ -537,7 +578,7 @@ function renderFuelObserver(fuelType = "benzin") {
     markerLabel: `Today ${formatFuelPrice(currentPrice) || "—"}`,
     markerLabelLines: ["Today", formatFuelPrice(currentPrice) || "—"],
   });
-  renderObservedSummaryList("fuel-observed-summaries", observedChanges);
+  renderObservedSummaryList("fuel-observed-summaries", observedChanges, "Waiting for more observations.");
 }
 
 function renderSocietyObservers(societyData) {
