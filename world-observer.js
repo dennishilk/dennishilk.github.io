@@ -731,18 +731,22 @@ function renderInternetTrendSummary(record, points, label, emptyMessage) {
 
   const delta = finiteHistoryValue(record, "delta");
   const deltaPercent = finiteHistoryValue(record, "delta_percent");
-  const latestValue = finiteHistoryValue(record, "latest_value");
-  const sevenDayAverage = finiteHistoryValue(record, "seven_day_average");
   const thirtyDayAverage = finiteHistoryValue(record, "thirty_day_average");
   const unit = record?.metric_unit && !["count", "score"].includes(String(record.metric_unit).toLowerCase()) ? String(record.metric_unit) : "";
+  const unitSuffix = unit ? ` ${unit}` : "";
   const wrap = document.createElement("div");
   wrap.className = "internet-trend-summary mini-sparkline";
 
+  const labelLine = document.createElement("p");
+  labelLine.className = "internet-trend-label";
+  labelLine.textContent = "Trend";
+  wrap.appendChild(labelLine);
+
   const trend = document.createElement("p");
   trend.className = "internet-trend-line";
-  const parts = ["Trend", getTrendDirectionArrow(record?.direction, delta)];
+  const parts = [getTrendDirectionArrow(record?.direction, delta)];
   if (delta !== null) {
-    parts.push(`${formatTrendNumber(delta)}${unit}`);
+    parts.push(`${formatTrendNumber(delta)}${unitSuffix}`);
   }
   if (deltaPercent !== null) {
     parts.push(`(${formatTrendNumber(deltaPercent)}%)`);
@@ -750,25 +754,12 @@ function renderInternetTrendSummary(record, points, label, emptyMessage) {
   trend.textContent = parts.join(" ");
   wrap.appendChild(trend);
 
-  if (latestValue !== null) {
-    const latest = document.createElement("p");
-    latest.className = "internet-trend-subline";
-    latest.textContent = `Latest: ${formatTrendNumber(latestValue)}${unit}`;
-    wrap.appendChild(latest);
-  }
-
-  [
-    ["7d avg", sevenDayAverage],
-    ["30d avg", thirtyDayAverage],
-  ].forEach(([averageLabel, averageValue]) => {
-    if (averageValue === null) {
-      return;
-    }
+  if (thirtyDayAverage !== null) {
     const averageLine = document.createElement("p");
     averageLine.className = "internet-trend-subline";
-    averageLine.textContent = `${averageLabel}: ${formatTrendNumber(averageValue)}${unit}`;
+    averageLine.textContent = `30d average - ${formatTrendNumber(thirtyDayAverage)}${unitSuffix}`;
     wrap.appendChild(averageLine);
-  });
+  }
 
   return wrap;
 }
