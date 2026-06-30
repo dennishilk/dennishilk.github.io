@@ -241,6 +241,206 @@ function setupMediaInfoToggle() {
   });
 }
 
+
+function createMetricCard(label, value) {
+  const card = document.createElement("article");
+  card.className = "metric-card";
+
+  const labelElement = document.createElement("span");
+  labelElement.className = "metric-label";
+  labelElement.textContent = label;
+
+  const valueElement = document.createElement("strong");
+  valueElement.textContent = value ?? "—";
+
+  card.append(labelElement, valueElement);
+  return card;
+}
+
+function renderMetricCards(containerId, metrics) {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    return;
+  }
+
+  container.textContent = "";
+  metrics
+    .filter((metric) => metric.value !== null && metric.value !== undefined && metric.value !== "")
+    .forEach((metric) => container.appendChild(createMetricCard(metric.label, metric.value)));
+}
+
+function renderObservedSummaryList(containerId, summaries) {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    return;
+  }
+
+  container.textContent = "";
+  (Array.isArray(summaries) ? summaries : []).forEach((summary) => {
+    const item = document.createElement("li");
+    item.textContent = summary;
+    container.appendChild(item);
+  });
+}
+
+function calculateScalePosition(value, min, max) {
+  const current = Number(value);
+  const low = Number(min);
+  const high = Number(max);
+  if (!Number.isFinite(current) || !Number.isFinite(low) || !Number.isFinite(high) || high <= low) {
+    return null;
+  }
+  return Math.min(100, Math.max(0, ((current - low) / (high - low)) * 100));
+}
+
+function renderWorldObserverScale(containerId, config) {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    return;
+  }
+
+  const position = calculateScalePosition(config.value, config.min, config.max);
+  container.textContent = "";
+
+  const labels = document.createElement("div");
+  labels.className = "media-index-scale-labels";
+  const lowLabel = document.createElement("span");
+  lowLabel.textContent = config.lowLabel || "Lower";
+  const highLabel = document.createElement("span");
+  highLabel.textContent = config.highLabel || "Higher";
+  labels.append(lowLabel, highLabel);
+
+  const track = document.createElement("div");
+  track.className = "media-index-scale-track world-observer-scale-track";
+
+  const line = document.createElement("div");
+  line.className = "media-index-scale-line";
+
+  const ticks = document.createElement("div");
+  ticks.className = "media-index-scale-ticks world-observer-scale-ticks";
+  (config.ticks || []).forEach((tick) => {
+    const tickElement = document.createElement("span");
+    tickElement.textContent = tick;
+    ticks.appendChild(tickElement);
+  });
+
+  const marker = document.createElement("div");
+  marker.className = "media-index-marker world-observer-scale-marker";
+  marker.style.left = `${position ?? 0}%`;
+
+  const arrow = document.createElement("span");
+  arrow.className = "media-index-arrow";
+  arrow.textContent = "▲";
+
+  const markerLabel = document.createElement("span");
+  markerLabel.className = "media-index-marker-label";
+  markerLabel.textContent = position === null ? "— Today" : config.markerLabel;
+
+  marker.append(arrow, markerLabel);
+  track.append(line, ticks, marker);
+  container.append(labels, track);
+  container.setAttribute("aria-label", position === null ? `${config.ariaLabel}: value unavailable` : `${config.ariaLabel}: ${config.markerLabel}`);
+}
+
+function formatFuelPrice(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} €` : null;
+}
+
+function formatFuelPercent(value) {
+  if (!Number.isFinite(Number(value))) {
+    return null;
+  }
+  const percent = Number(value);
+  return `${percent > 0 ? "+" : ""}${percent.toFixed(0)}%`;
+}
+
+const FUEL_OBSERVER_EXAMPLE_DATA = {
+  benzin: {
+    currentPrice: 1.78,
+    thirtyDayAverage: 1.71,
+    annualAverage: 1.64,
+    since2000: 61,
+    trendDelta: 0.04,
+    trendDeltaPercent: 2.3,
+    historicalPercentile: 72,
+    historicalMin: 1.00,
+    historicalMax: 2.30,
+    summaries: [
+      "Price increased compared with yesterday.",
+      "Above the 30-day average.",
+      "Above the 365-day average.",
+      "Higher than 72% of observations since 2000.",
+    ],
+  },
+  diesel: {},
+  "super-e10": {},
+  "super-plus": {},
+};
+
+function renderFuelObserver(fuelType = "benzin") {
+  const data = FUEL_OBSERVER_EXAMPLE_DATA[fuelType] || {};
+  renderMetricCards("fuel-metric-grid", [
+    { label: "Current price", value: formatFuelPrice(data.currentPrice) },
+    { label: "30d average", value: formatFuelPrice(data.thirtyDayAverage) },
+    { label: "365d average", value: formatFuelPrice(data.annualAverage) },
+    { label: "Since 2000", value: formatFuelPercent(data.since2000) },
+  ]);
+
+  const trendValue = Number.isFinite(Number(data.trendDelta))
+    ? `${Number(data.trendDelta) > 0 ? "↑" : Number(data.trendDelta) < 0 ? "↓" : "→"} ${formatFuelPrice(Math.abs(Number(data.trendDelta)))}${Number.isFinite(Number(data.trendDeltaPercent)) ? ` (${formatDeltaPercent(Number(data.trendDeltaPercent))})` : ""}`
+    : null;
+  renderMetricCards("fuel-trend-grid", [
+    { label: "TREND", value: trendValue },
+    { label: "30d average", value: formatFuelPrice(data.thirtyDayAverage) },
+    { label: "Historical percentile", value: formatFuelPercent(data.historicalPercentile)?.replace(/^\+/, "") },
+  ]);
+  setText("fuel-trend-status", Object.keys(data).length ? "" : "Fuel observer data is not available yet for this selection.");
+  renderWorldObserverScale("fuel-historical-scale", {
+    ariaLabel: "Fuel historical price scale",
+    lowLabel: "Cheaper",
+    highLabel: "More expensive",
+    ticks: ["2000", "Today"],
+    value: data.currentPrice,
+    min: data.historicalMin,
+    max: data.historicalMax,
+    markerLabel: `${formatFuelPrice(data.currentPrice) || "—"} Today`,
+  });
+  renderObservedSummaryList("fuel-observed-summaries", data.summaries);
+}
+
+function setupFuelSelector() {
+  const selector = document.getElementById("fuel-type-selector");
+  if (!selector) {
+    return;
+  }
+
+  const buttons = Array.from(selector.querySelectorAll("[data-fuel-type]"));
+  const selectFuelType = (button) => {
+    buttons.forEach((item) => {
+      const isActive = item === button;
+      item.classList.toggle("active", isActive);
+      item.setAttribute("aria-checked", String(isActive));
+    });
+    renderFuelObserver(button.dataset.fuelType);
+  };
+
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => selectFuelType(button));
+    button.addEventListener("keydown", (event) => {
+      const offset = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
+      if (!offset) {
+        return;
+      }
+      event.preventDefault();
+      const next = buttons[(index + offset + buttons.length) % buttons.length];
+      next.focus();
+      selectFuelType(next);
+    });
+  });
+
+  selectFuelType(buttons.find((button) => button.getAttribute("aria-checked") === "true") || buttons[0]);
+}
+
 function clampMediaIndex(value) {
   if (!Number.isFinite(value)) {
     return null;
@@ -1275,7 +1475,7 @@ async function initWorldObserver() {
 
   try {
     if (page === "society") {
-      renderPlannedCards("society-planned-cards", ["Fuel", "Electricity", "Food", "Housing", "Deutsche Bahn", "Deutsche Post"]);
+      setupFuelSelector();
       showDashboard();
       return;
     }
