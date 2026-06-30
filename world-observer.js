@@ -1087,56 +1087,6 @@ function renderMediaLists(media = {}) {
   });
 }
 
-function renderSparkline(points) {
-  const container = document.getElementById("media-trend-sparkline");
-  if (!container) {
-    return;
-  }
-  container.textContent = "";
-
-  if (!points.length) {
-    container.setAttribute("aria-label", "No media trend history points available");
-    return;
-  }
-
-  const width = 240;
-  const height = 64;
-  const padding = 5;
-  const values = points.map((point) => point.fearIndex);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-  const lastIndex = Math.max(points.length - 1, 1);
-  const coordinates = points.map((point, index) => {
-    const x = padding + (index / lastIndex) * (width - padding * 2);
-    const y = height - padding - ((point.fearIndex - min) / range) * (height - padding * 2);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", `Sparkline for ${points.length} media language fear index history points`);
-
-  const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-  polyline.setAttribute("points", coordinates.join(" "));
-  polyline.setAttribute("class", "sparkline-line");
-
-  svg.appendChild(polyline);
-
-  if (points.length === 1) {
-    const [cx, cy] = coordinates[0].split(",");
-    const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    marker.setAttribute("cx", cx);
-    marker.setAttribute("cy", cy);
-    marker.setAttribute("r", "4");
-    marker.setAttribute("class", "sparkline-point");
-    svg.appendChild(marker);
-  }
-
-  container.appendChild(svg);
-}
-
 function renderTermChangeGroup(container, title, arrow, terms) {
   if (!Array.isArray(terms) || !terms.length) {
     return;
@@ -1193,7 +1143,6 @@ function renderMediaTrend(history) {
     setText("media-trend-30d", "—");
     setText("media-trend-spread", "—");
     status.textContent = "Media trend history is not available yet.";
-    renderSparkline([]);
     renderObservedChanges(null);
     return;
   }
@@ -1204,7 +1153,6 @@ function renderMediaTrend(history) {
     setText("media-trend-30d", "—");
     setText("media-trend-spread", "—");
     status.textContent = "Media trend history has no usable fear index points yet.";
-    renderSparkline([]);
     renderObservedChanges(history);
     return;
   }
@@ -1228,7 +1176,6 @@ function renderMediaTrend(history) {
   setText("media-trend-spread", formatDelta(spread));
 
   status.textContent = points.length === 1 ? "Trend starts today." : "";
-  renderSparkline(points);
   renderObservedChanges(history);
 }
 
@@ -1275,21 +1222,10 @@ function renderHeartbeat() {
   });
 }
 
-function renderDashboard(summary = {}, media = {}, mediaHistory, internet, internetHistory) {
+function renderDashboard(summary = {}, mediaHistory, internetHistory) {
   try {
     renderOptional("overview", () => renderOverview(summary, mediaHistory, internetHistory));
     renderHeartbeat();
-    renderOptional("internet observers", () => renderInternetObservers(internet, internetHistory));
-
-    renderOptional("media overview", () => {
-      setText("media-fear-overall", formatIndex(media.fear_index_overall));
-      renderMediaIndexScale(media.fear_index_overall);
-      setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
-      setText("media-private-fear", formatIndex(media.private_media?.fear_index));
-      setText("media-headline-count", formatNumber(media.headline_count));
-      renderMediaLists(media);
-    });
-    renderOptional("media trend", () => renderMediaTrend(mediaHistory));
   } catch (error) {
     console.error("World Observer renderDashboard failed", error);
   }
@@ -1381,18 +1317,16 @@ async function initWorldObserver() {
       return;
     }
 
-    const [summary, media, mediaHistory, internet, internetHistory] = await Promise.all([
+    const [summary, mediaHistory, internetHistory] = await Promise.all([
       loadOptionalJson(SUMMARY_URLS),
-      loadOptionalJson(MEDIA_URLS),
       loadOptionalJson(MEDIA_HISTORY_URLS),
-      loadOptionalJson(INTERNET_URLS),
       loadOptionalJson(INTERNET_HISTORY_URLS),
     ]);
     if (!summary) {
       showFallback();
       return;
     }
-    renderDashboard(summary, media || {}, mediaHistory, internet, internetHistory);
+    renderDashboard(summary, mediaHistory, internetHistory);
     showDashboard();
   } catch (error) {
     console.error("World Observer dashboard initialization failed", error);
