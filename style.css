@@ -798,3 +798,41 @@ footer {
 .compact-planned p {
   margin-bottom: 0;
 }
+
+.media-observed-changes {
+  margin-top: 1.25rem;
+}
+
+.media-observed-changes h3,
+.term-change-card h4 {
+  color: var(--accent);
+}
+
+.observed-summary-list,
+.term-change-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.observed-summary-list li,
+.term-change-list li {
+  border-left: 2px solid rgba(0,180,255,0.45);
+  color: #c9d1d9;
+  margin-top: 0.55rem;
+  padding: 0.35rem 0 0.35rem 0.75rem;
+}
+
+.term-change-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin-top: 1rem;
+}
+
+.term-change-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0,180,255,0.25);
+  border-radius: 10px;
+  padding: 0.85rem;
+}

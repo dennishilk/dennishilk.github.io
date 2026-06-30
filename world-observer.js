@@ -246,6 +246,30 @@ function formatDelta(value) {
   return `${value > 0 ? "+" : ""}${value.toFixed(2)}`;
 }
 
+function formatDeltaPercent(value) {
+  if (!Number.isFinite(value)) {
+    return "—";
+  }
+  if (value === 0) {
+    return "0.0%";
+  }
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
+}
+
+function formatTrendSummary(delta, deltaPercent) {
+  const arrow = Number.isFinite(delta) ? (delta > 0 ? "↑" : delta < 0 ? "↓" : "→") : "—";
+  const deltaText = formatDelta(delta);
+  const percentText = formatDeltaPercent(deltaPercent);
+  return percentText === "—" ? `${arrow} ${deltaText}` : `${arrow} ${deltaText} (${percentText})`;
+}
+
+function formatTermChangeDelta(value) {
+  if (!Number.isFinite(value)) {
+    return "";
+  }
+  return ` (${value > 0 ? "+" : ""}${formatNumber(value)})`;
+}
+
 function average(values) {
   const validValues = values.filter(Number.isFinite);
   if (!validValues.length) {
@@ -1054,6 +1078,51 @@ function renderSparkline(points) {
   container.appendChild(svg);
 }
 
+function renderTermChangeGroup(container, title, arrow, terms) {
+  if (!Array.isArray(terms) || !terms.length) {
+    return;
+  }
+
+  const group = document.createElement("article");
+  group.className = "term-change-card";
+
+  const heading = document.createElement("h4");
+  heading.textContent = title;
+
+  const list = document.createElement("ul");
+  list.className = "term-change-list";
+  terms.forEach((change) => {
+    const item = document.createElement("li");
+    item.textContent = `${arrow} ${change.term ?? "—"}${formatTermChangeDelta(Number(change.delta))}`;
+    list.appendChild(item);
+  });
+
+  group.append(heading, list);
+  container.appendChild(group);
+}
+
+function renderObservedChanges(history) {
+  const summariesList = document.getElementById("media-observed-summaries");
+  const changesContainer = document.getElementById("media-term-changes");
+  if (!summariesList || !changesContainer) {
+    return;
+  }
+
+  summariesList.textContent = "";
+  changesContainer.textContent = "";
+
+  const summaries = history?.summaries || history?.neutral_summaries || [];
+  summaries.forEach((summary) => {
+    const item = document.createElement("li");
+    item.textContent = summary;
+    summariesList.appendChild(item);
+  });
+
+  const termChanges = history?.term_changes || {};
+  renderTermChangeGroup(changesContainer, "Trending terms", "↑", termChanges.rising_terms);
+  renderTermChangeGroup(changesContainer, "Less frequent terms", "↓", termChanges.falling_terms);
+}
+
 function renderMediaTrend(history) {
   const status = document.getElementById("media-trend-status");
   if (!status) {
@@ -1061,33 +1130,47 @@ function renderMediaTrend(history) {
   }
 
   if (!history) {
-    setText("media-trend-points", "—");
+    setText("media-trend-direction", "—");
+    setText("media-trend-30d", "—");
+    setText("media-trend-spread", "—");
     status.textContent = "Media trend history is not available yet.";
     renderSparkline([]);
+    renderObservedChanges(null);
     return;
   }
 
   const points = normalizeHistoryPoints(history);
   if (!points.length) {
-    setText("media-trend-points", "0");
+    setText("media-trend-direction", "—");
+    setText("media-trend-30d", "—");
+    setText("media-trend-spread", "—");
     status.textContent = "Media trend history has no usable fear index points yet.";
     renderSparkline([]);
+    renderObservedChanges(history);
     return;
   }
 
   const latest = points.at(-1)?.fearIndex;
   const previous = points.at(-2)?.fearIndex;
-  const delta = Number.isFinite(latest) && Number.isFinite(previous) ? latest - previous : null;
+  const computedDelta = Number.isFinite(latest) && Number.isFinite(previous) ? latest - previous : null;
+  const trend = history.trend || {};
+  const comparison = history.public_private_comparison || {};
+  const delta = Number.isFinite(Number(trend.delta)) ? Number(trend.delta) : computedDelta;
+  const deltaPercent = Number.isFinite(Number(trend.delta_percent)) ? Number(trend.delta_percent) : null;
+  const thirtyDayAverage = Number.isFinite(Number(trend.thirty_day_average))
+    ? Number(trend.thirty_day_average)
+    : average(points.slice(-30).map((point) => point.fearIndex));
+  const spread = Number.isFinite(Number(comparison.public_private_spread))
+    ? Number(comparison.public_private_spread)
+    : null;
 
-  setText("media-trend-points", formatNumber(points.length));
-  setText("media-trend-latest", formatIndex(latest));
-  setText("media-trend-previous", formatIndex(previous));
-  setText("media-trend-delta", formatDelta(delta));
-  setText("media-trend-7d", formatIndex(average(points.slice(-7).map((point) => point.fearIndex))));
-  setText("media-trend-30d", formatIndex(average(points.slice(-30).map((point) => point.fearIndex))));
+  setText("media-trend-direction", formatTrendSummary(delta, deltaPercent));
+  setText("media-trend-30d", formatIndex(thirtyDayAverage));
+  setText("media-trend-spread", formatDelta(spread));
 
   status.textContent = points.length === 1 ? "Trend starts today." : "";
   renderSparkline(points);
+  renderObservedChanges(history);
 }
 
 function logRendererError(rendererName, error) {
