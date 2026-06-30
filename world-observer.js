@@ -459,7 +459,6 @@ const FUEL_OBSERVER_ID = "germany-fuel-prices";
 const FUEL_TYPES = [
   { key: "benzin", label: "Super E5" },
   { key: "diesel", label: "Diesel" },
-  { key: "super_e10", label: "Super E10" },
 ];
 let fuelObserverFuels = null;
 
@@ -469,6 +468,15 @@ function normalizeFuelType(fuelType) {
 
 function getFuelObserver(societyData) {
   return (societyData?.observers || []).find((observer) => observer?.observer === FUEL_OBSERVER_ID) || null;
+}
+
+function getSupportedFuelObserverFuels(fuels) {
+  return FUEL_TYPES.reduce((supportedFuels, fuel) => {
+    if (fuels?.[fuel.key]) {
+      supportedFuels[fuel.key] = fuels[fuel.key];
+    }
+    return supportedFuels;
+  }, {});
 }
 
 function renderFuelSelector(fuels) {
@@ -583,7 +591,7 @@ function renderFuelObserver(fuelType = "benzin") {
 
 function renderSocietyObservers(societyData) {
   const observer = getFuelObserver(societyData);
-  fuelObserverFuels = observer?.fuels || null;
+  fuelObserverFuels = getSupportedFuelObserverFuels(observer?.fuels);
   renderFuelSelector(fuelObserverFuels);
   setupFuelSelector();
 }
