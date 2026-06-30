@@ -670,6 +670,87 @@ function getTrendEmptyMessage(totalPointCount, numericPointCount) {
   return "Collecting trend data...";
 }
 
+function finiteHistoryValue(record, key) {
+  const value = Number(record?.[key]);
+  return Number.isFinite(value) ? value : null;
+}
+
+function formatTrendNumber(value) {
+  if (!Number.isFinite(value)) {
+    return "—";
+  }
+
+  return Number.isInteger(value) ? value.toLocaleString() : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function getTrendDirectionArrow(direction, delta) {
+  const normalizedDirection = String(direction || "").toLowerCase();
+  if (normalizedDirection === "up") {
+    return "↑";
+  }
+  if (normalizedDirection === "down") {
+    return "↓";
+  }
+  if (normalizedDirection === "flat") {
+    return "→";
+  }
+  if (Number.isFinite(delta)) {
+    return delta > 0 ? "↑" : delta < 0 ? "↓" : "→";
+  }
+  return "→";
+}
+
+function renderInternetTrendSummary(record, points, label, emptyMessage) {
+  const numericPointCount = finiteHistoryValue(record, "numeric_point_count") ?? points.length;
+
+  if (numericPointCount < 2) {
+    return renderMiniSparkline(points, label, emptyMessage);
+  }
+
+  const delta = finiteHistoryValue(record, "delta");
+  const deltaPercent = finiteHistoryValue(record, "delta_percent");
+  const latestValue = finiteHistoryValue(record, "latest_value");
+  const sevenDayAverage = finiteHistoryValue(record, "seven_day_average");
+  const thirtyDayAverage = finiteHistoryValue(record, "thirty_day_average");
+  const unit = record?.metric_unit && !["count", "score"].includes(String(record.metric_unit).toLowerCase()) ? String(record.metric_unit) : "";
+  const wrap = document.createElement("div");
+  wrap.className = "internet-trend-summary mini-sparkline";
+
+  const trend = document.createElement("p");
+  trend.className = "internet-trend-line";
+  const parts = ["Trend", getTrendDirectionArrow(record?.direction, delta)];
+  if (delta !== null) {
+    parts.push(`${formatTrendNumber(delta)}${unit}`);
+  }
+  if (deltaPercent !== null) {
+    parts.push(`(${formatTrendNumber(deltaPercent)}%)`);
+  }
+  trend.textContent = parts.join(" ");
+  wrap.appendChild(trend);
+
+  if (latestValue !== null) {
+    const latest = document.createElement("p");
+    latest.className = "internet-trend-subline";
+    latest.textContent = `Latest: ${formatTrendNumber(latestValue)}${unit}`;
+    wrap.appendChild(latest);
+  }
+
+  [
+    ["7d avg", sevenDayAverage],
+    ["30d avg", thirtyDayAverage],
+  ].forEach(([averageLabel, averageValue]) => {
+    if (averageValue === null) {
+      return;
+    }
+    const averageLine = document.createElement("p");
+    averageLine.className = "internet-trend-subline";
+    averageLine.textContent = `${averageLabel}: ${formatTrendNumber(averageValue)}${unit}`;
+    wrap.appendChild(averageLine);
+  });
+
+  return wrap;
+}
+
 function renderInternetObserverFallback(container, observer, index, error) {
   const card = document.createElement("article");
   card.className = "internet-observer-card signal-unavailable";
@@ -783,7 +864,7 @@ function renderInternetObservers(data, history) {
       lastSeen.className = "internet-last-seen";
       lastSeen.textContent = `Last update: ${lastUpdate}`;
 
-      toggle.append(header, metric, signalNote, secondarySummary, lastSeen, renderMiniSparkline(numericPoints, titleText, trendEmptyMessage));
+      toggle.append(header, metric, signalNote, secondarySummary, lastSeen, renderInternetTrendSummary(historyRecord, numericPoints, titleText, trendEmptyMessage));
 
       const details = document.createElement("div");
       details.className = "internet-card-details";
