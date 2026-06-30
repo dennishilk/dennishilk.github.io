@@ -430,6 +430,7 @@ footer {
 }
 
 .internet-observer-grid {
+  align-items: start;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.9rem;
@@ -596,8 +597,12 @@ footer {
 .internet-detail-list {
   display: grid;
   gap: 0.35rem 0.75rem;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(7.5rem, max-content) minmax(0, 1fr);
   margin: 0 0 0.85rem;
+}
+
+.internet-detail-list {
+  grid-template-columns: minmax(8.5rem, max-content) minmax(0, 1fr);
 }
 
 .internet-secondary-metrics dt,
@@ -606,8 +611,9 @@ footer {
   font-size: 0.78rem;
   line-height: 1.3;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
   white-space: normal;
+  word-break: normal;
 }
 
 .internet-secondary-metrics dd,
@@ -618,8 +624,9 @@ footer {
   line-height: 1.3;
   margin: 0;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   text-align: right;
+  word-break: normal;
 }
 
 .internet-secondary-metrics.compact dd {

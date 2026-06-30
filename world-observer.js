@@ -783,11 +783,7 @@ function renderInternetObservers(data, history) {
       lastSeen.className = "internet-last-seen";
       lastSeen.textContent = `Last update: ${lastUpdate}`;
 
-      const historyCount = document.createElement("p");
-      historyCount.className = "internet-last-seen";
-      historyCount.textContent = `History points: ${formatNumber(totalPointCount)}`;
-
-      toggle.append(header, metric, signalNote, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText, trendEmptyMessage));
+      toggle.append(header, metric, signalNote, secondarySummary, lastSeen, renderMiniSparkline(numericPoints, titleText, trendEmptyMessage));
 
       const details = document.createElement("div");
       details.className = "internet-card-details";
