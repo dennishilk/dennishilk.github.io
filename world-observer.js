@@ -354,6 +354,53 @@ function formatFuelPercent(value) {
   return `${percent > 0 ? "+" : ""}${percent.toFixed(0)}%`;
 }
 
+const SOCIETY_OBSERVERS = {
+  fuel: { title: "Fuel Observer", panel: "fuel" },
+  electricity: { title: "Electricity Observer", panel: "planned" },
+  food: { title: "Food Observer", panel: "planned" },
+  housing: { title: "Housing Observer", panel: "planned" },
+  "deutsche-bahn": { title: "Deutsche Bahn Observer", panel: "planned" },
+  "deutsche-post": { title: "Deutsche Post Observer", panel: "planned" },
+};
+
+function setupRadioButtonSelector(selectorId, dataAttribute, onSelect) {
+  const selector = document.getElementById(selectorId);
+  if (!selector) {
+    return;
+  }
+
+  const buttons = Array.from(selector.querySelectorAll(`[data-${dataAttribute}]`));
+  if (!buttons.length) {
+    return;
+  }
+
+  const getValue = (button) => button.dataset[dataAttribute.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())];
+  const selectButton = (button) => {
+    buttons.forEach((item) => {
+      const isActive = item === button;
+      item.classList.toggle("active", isActive);
+      item.setAttribute("aria-checked", String(isActive));
+    });
+    onSelect(getValue(button), button);
+  };
+
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => selectButton(button));
+    button.addEventListener("keydown", (event) => {
+      const offset = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
+      if (!offset) {
+        return;
+      }
+      event.preventDefault();
+      const next = buttons[(index + offset + buttons.length) % buttons.length];
+      next.focus();
+      selectButton(next);
+    });
+  });
+
+  selectButton(buttons.find((button) => button.getAttribute("aria-checked") === "true") || buttons[0]);
+}
+
 const FUEL_OBSERVER_EXAMPLE_DATA = {
   benzin: {
     currentPrice: 1.78,
@@ -409,36 +456,28 @@ function renderFuelObserver(fuelType = "benzin") {
 }
 
 function setupFuelSelector() {
-  const selector = document.getElementById("fuel-type-selector");
-  if (!selector) {
-    return;
+  setupRadioButtonSelector("fuel-type-selector", "fuel-type", (fuelType) => renderFuelObserver(fuelType));
+}
+
+function showSocietyObserver(observerId = "fuel") {
+  const observer = SOCIETY_OBSERVERS[observerId] || SOCIETY_OBSERVERS.fuel;
+  const fuelPanel = document.getElementById("society-fuel-panel");
+  const plannedPanel = document.getElementById("society-planned-panel");
+  const plannedTitle = document.getElementById("society-planned-title");
+
+  if (fuelPanel) {
+    fuelPanel.hidden = observer.panel !== "fuel";
   }
+  if (plannedPanel) {
+    plannedPanel.hidden = observer.panel !== "planned";
+  }
+  if (plannedTitle) {
+    plannedTitle.textContent = observer.title;
+  }
+}
 
-  const buttons = Array.from(selector.querySelectorAll("[data-fuel-type]"));
-  const selectFuelType = (button) => {
-    buttons.forEach((item) => {
-      const isActive = item === button;
-      item.classList.toggle("active", isActive);
-      item.setAttribute("aria-checked", String(isActive));
-    });
-    renderFuelObserver(button.dataset.fuelType);
-  };
-
-  buttons.forEach((button, index) => {
-    button.addEventListener("click", () => selectFuelType(button));
-    button.addEventListener("keydown", (event) => {
-      const offset = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
-      if (!offset) {
-        return;
-      }
-      event.preventDefault();
-      const next = buttons[(index + offset + buttons.length) % buttons.length];
-      next.focus();
-      selectFuelType(next);
-    });
-  });
-
-  selectFuelType(buttons.find((button) => button.getAttribute("aria-checked") === "true") || buttons[0]);
+function setupSocietyObserverSelector() {
+  setupRadioButtonSelector("society-observer-selector", "society-observer", (observerId) => showSocietyObserver(observerId));
 }
 
 function clampMediaIndex(value) {
@@ -1475,6 +1514,7 @@ async function initWorldObserver() {
 
   try {
     if (page === "society") {
+      setupSocietyObserverSelector();
       setupFuelSelector();
       showDashboard();
       return;
