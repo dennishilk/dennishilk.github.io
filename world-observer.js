@@ -273,13 +273,18 @@ function normalizeCollection(data) {
     return data;
   }
 
-  return data?.observers || data?.internet_observers || data?.items || data?.data || [];
+  if (!data || typeof data !== "object") {
+    return [];
+  }
+
+  const collection = data.observers || data.internet_observers || data.items || data.data || [];
+  return Array.isArray(collection) ? collection : [];
 }
 
 function normalizeInternetHistory(history) {
   const byId = new Map();
 
-  if (!history) {
+  if (!history || typeof history !== "object") {
     return byId;
   }
 
@@ -294,7 +299,8 @@ function normalizeInternetHistory(history) {
   if (rawObservers.length) {
     rawObservers.forEach((observer) => {
       const id = getObserverId(observer);
-      addPoints(id, observer.history || observer.points || observer.data || observer.values || []);
+      const record = observer && typeof observer === "object" ? observer : {};
+      addPoints(id, record.history || record.points || record.data || record.values || []);
     });
   }
 
@@ -325,20 +331,23 @@ function firstFiniteMetricValue(source, keys) {
 }
 
 function normalizeObserverHistoryPoints(points) {
-  return (Array.isArray(points) ? points : []).map((point, index) => ({
-    date: point.date || point.last_seen || point.last_seen_date || point.last_update || point.timestamp || point.observed_at || `Point ${index + 1}`,
-    value: firstFiniteMetricValue(point, [
-      "value",
-      "primary_metric.value",
-      "primary_metric_value",
-      "metric_value",
-      "uptime",
-      "availability",
-      "latency_ms",
-      "response_time_ms",
-      "status_code",
-    ]),
-  }));
+  return (Array.isArray(points) ? points : []).map((point, index) => {
+    const record = point && typeof point === "object" ? point : { value: point };
+    return {
+      date: record.date || record.last_seen || record.last_seen_date || record.last_update || record.timestamp || record.observed_at || `Point ${index + 1}`,
+      value: firstFiniteMetricValue(record, [
+        "value",
+        "primary_metric.value",
+        "primary_metric_value",
+        "metric_value",
+        "uptime",
+        "availability",
+        "latency_ms",
+        "response_time_ms",
+        "status_code",
+      ]),
+    };
+  });
 }
 
 function numericHistoryPoints(points) {
@@ -346,6 +355,10 @@ function numericHistoryPoints(points) {
 }
 
 function getObserverId(observer) {
+  if (!observer || typeof observer !== "object") {
+    return "internet-observer";
+  }
+
   return String(observer.id || observer.observer_id || observer.name || observer.slug || observer.display_name || observer.observer || "internet-observer");
 }
 
@@ -446,6 +459,10 @@ function getPrimaryMetric(observer) {
 }
 
 function normalizeSecondaryMetrics(observer) {
+  if (!observer || typeof observer !== "object") {
+    return [];
+  }
+
   const source = observer.secondary_metrics || observer.secondaryMetrics || observer.metrics || [];
 
   if (Array.isArray(source)) {
@@ -461,7 +478,11 @@ function normalizeSecondaryMetrics(observer) {
     });
   }
 
-  return Object.entries(source || {}).map(([label, value]) => {
+  if (!source || typeof source !== "object") {
+    return [];
+  }
+
+  return Object.entries(source).map(([label, value]) => {
     if (value && typeof value === "object") {
       return {
         label: value.label || value.name || label,
@@ -649,17 +670,40 @@ function getTrendEmptyMessage(totalPointCount, numericPointCount) {
   return "Collecting trend data...";
 }
 
+function renderInternetObserverFallback(container, observer, index, error) {
+  const card = document.createElement("article");
+  card.className = "internet-observer-card signal-unavailable";
+
+  const title = document.createElement("h3");
+  title.textContent = observer && typeof observer === "object"
+    ? observer.display_name || observer.name || observer.observer || getObserverId(observer)
+    : `Internet Observer ${index + 1}`;
+
+  const message = document.createElement("p");
+  message.className = "internet-signal-note";
+  message.textContent = "This observer could not be rendered, but other observers are still available.";
+
+  console.error("Failed to render Internet observer card", { observer, error });
+  card.append(title, message);
+  container.appendChild(card);
+}
+
 function renderInternetObservers(data, history) {
   const container = document.getElementById("internet-observer-cards");
   const status = document.getElementById("internet-observer-status");
-  if (!container || !status) {
+  if (!container) {
+    console.error("Cannot render Internet observers: #internet-observer-cards is missing.");
+    return;
+  }
+  if (!status) {
+    console.error("Cannot render Internet observers: #internet-observer-status is missing.");
     return;
   }
   container.textContent = "";
 
   const observers = normalizeCollection(data)
     .slice()
-    .sort((a, b) => Number(a.dashboard_priority ?? a.priority ?? 9999) - Number(b.dashboard_priority ?? b.priority ?? 9999));
+    .sort((a, b) => Number(a?.dashboard_priority ?? a?.priority ?? 9999) - Number(b?.dashboard_priority ?? b?.priority ?? 9999));
   const historyById = history ? normalizeInternetHistory(history) : new Map();
 
   if (!data || !observers.length) {
@@ -669,113 +713,118 @@ function renderInternetObservers(data, history) {
 
   status.textContent = history ? "" : "Current cards loaded. Historical trend file is not available yet.";
 
-  observers.forEach((observer, index) => {
-    const id = getObserverId(observer);
-    const titleText = observer.display_name || observer.name || observer.observer || id || "Internet Observer";
-    const primaryMetric = prepareInternetPrimaryMetric(getPrimaryMetric(observer), observer);
-    const secondaryMetrics = normalizeSecondaryMetrics(observer);
-    const points = historyById.get(id) || historyById.get(titleText) || [];
-    const numericPoints = numericHistoryPoints(points);
-    const historyRecord = findInternetHistoryRecord(history, id, titleText);
-    const totalPointCount = getHistoryCount(historyRecord, "total_point_count", points.length);
-    const numericPointCount = getHistoryCount(historyRecord, "numeric_point_count", numericPoints.length);
-    const trendEmptyMessage = getTrendEmptyMessage(totalPointCount, numericPointCount);
-    const lastUpdate = formatDate(getLastUpdate(observer, data));
-    const detailsId = `internet-observer-details-${index}`;
+  observers.forEach((rawObserver, index) => {
+    try {
+      const observer = rawObserver && typeof rawObserver === "object" ? rawObserver : { display_name: String(rawObserver || `Internet Observer ${index + 1}`) };
+      const id = getObserverId(observer);
+      const titleText = observer.display_name || observer.name || observer.observer || id || "Internet Observer";
+      const primaryMetric = prepareInternetPrimaryMetric(getPrimaryMetric(observer), observer);
+      const secondaryMetrics = normalizeSecondaryMetrics(observer);
+      const points = historyById.get(id) || historyById.get(titleText) || [];
+      const numericPoints = numericHistoryPoints(points);
+      const historyRecord = findInternetHistoryRecord(history, id, titleText);
+      const totalPointCount = getHistoryCount(historyRecord, "total_point_count", points.length);
+      const numericPointCount = getHistoryCount(historyRecord, "numeric_point_count", numericPoints.length);
+      const trendEmptyMessage = getTrendEmptyMessage(totalPointCount, numericPointCount);
+      const lastUpdate = formatDate(getLastUpdate(observer, data));
+      const detailsId = `internet-observer-details-${index}`;
 
-    const card = document.createElement("article");
-    card.className = "internet-observer-card";
-    if (hasUnavailableInternetSignal(observer)) {
-      card.classList.add("signal-unavailable");
+      const card = document.createElement("article");
+      card.className = "internet-observer-card";
+      if (hasUnavailableInternetSignal(observer)) {
+        card.classList.add("signal-unavailable");
+      }
+
+      const toggle = document.createElement("button");
+      toggle.className = "internet-card-toggle";
+      toggle.type = "button";
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-controls", detailsId);
+
+      const header = document.createElement("div");
+      header.className = "internet-card-header";
+
+      const title = document.createElement("h3");
+      title.textContent = titleText;
+
+      const observerStatus = String(observer.status || observer.health || "unknown");
+      const dataStatus = String(observer.data_status || "published");
+      const badges = document.createElement("div");
+      badges.className = "internet-card-badges";
+
+      [observerStatus, dataStatus].forEach((badgeText) => {
+        const badge = document.createElement("span");
+        badge.className = `status-badge ${normalizeStatusClass(badgeText)}`;
+        badge.textContent = formatInternetStatusLabel(badgeText);
+        badges.appendChild(badge);
+      });
+
+      header.append(title, badges);
+
+      const metric = document.createElement("p");
+      metric.className = "internet-primary-metric";
+
+      const metricLabel = document.createElement("span");
+      metricLabel.textContent = primaryMetric.label;
+
+      const metricValue = document.createElement("strong");
+      metricValue.textContent = formatMetricValue(primaryMetric);
+
+      metric.append(metricLabel, metricValue);
+
+      const signalNote = document.createElement("p");
+      signalNote.className = "internet-signal-note";
+      signalNote.textContent = "Observer ran, but no usable signal was available in the latest export.";
+      signalNote.hidden = !hasUnavailableInternetSignal(observer);
+
+      const secondarySummary = renderMetricList(secondaryMetrics.slice(0, 4), "internet-secondary-metrics compact");
+
+      const lastSeen = document.createElement("p");
+      lastSeen.className = "internet-last-seen";
+      lastSeen.textContent = `Last update: ${lastUpdate}`;
+
+      const historyCount = document.createElement("p");
+      historyCount.className = "internet-last-seen";
+      historyCount.textContent = `History points: ${formatNumber(totalPointCount)}`;
+
+      toggle.append(header, metric, signalNote, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText, trendEmptyMessage));
+
+      const details = document.createElement("div");
+      details.className = "internet-card-details";
+      details.id = detailsId;
+      details.hidden = true;
+
+      const meta = document.createElement("dl");
+      meta.className = "internet-detail-list";
+      [
+        ["Observer", id],
+        ["Last update", lastUpdate],
+        ["History points", formatNumber(totalPointCount)],
+        ["Numeric trend points", formatNumber(numericPointCount)],
+      ].forEach(([label, value]) => {
+        const term = document.createElement("dt");
+        term.textContent = label;
+        const description = document.createElement("dd");
+        description.textContent = value;
+        meta.append(term, description);
+      });
+
+      const secondaryTitle = document.createElement("h4");
+      secondaryTitle.textContent = "Secondary metrics";
+      details.append(meta, secondaryTitle, renderMetricList(secondaryMetrics, "internet-secondary-metrics details"));
+
+      toggle.addEventListener("click", () => {
+        const expanded = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!expanded));
+        details.hidden = expanded;
+        card.classList.toggle("expanded", !expanded);
+      });
+
+      card.append(toggle, details);
+      container.appendChild(card);
+    } catch (error) {
+      renderInternetObserverFallback(container, rawObserver, index, error);
     }
-
-    const toggle = document.createElement("button");
-    toggle.className = "internet-card-toggle";
-    toggle.type = "button";
-    toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-controls", detailsId);
-
-    const header = document.createElement("div");
-    header.className = "internet-card-header";
-
-    const title = document.createElement("h3");
-    title.textContent = titleText;
-
-    const observerStatus = String(observer.status || observer.health || "unknown");
-    const dataStatus = String(observer.data_status || "published");
-    const badges = document.createElement("div");
-    badges.className = "internet-card-badges";
-
-    [observerStatus, dataStatus].forEach((badgeText) => {
-      const badge = document.createElement("span");
-      badge.className = `status-badge ${normalizeStatusClass(badgeText)}`;
-      badge.textContent = formatInternetStatusLabel(badgeText);
-      badges.appendChild(badge);
-    });
-
-    header.append(title, badges);
-
-    const metric = document.createElement("p");
-    metric.className = "internet-primary-metric";
-
-    const metricLabel = document.createElement("span");
-    metricLabel.textContent = primaryMetric.label;
-
-    const metricValue = document.createElement("strong");
-    metricValue.textContent = formatMetricValue(primaryMetric);
-
-    metric.append(metricLabel, metricValue);
-
-    const signalNote = document.createElement("p");
-    signalNote.className = "internet-signal-note";
-    signalNote.textContent = "Observer ran, but no usable signal was available in the latest export.";
-    signalNote.hidden = !hasUnavailableInternetSignal(observer);
-
-    const secondarySummary = renderMetricList(secondaryMetrics.slice(0, 4), "internet-secondary-metrics compact");
-
-    const lastSeen = document.createElement("p");
-    lastSeen.className = "internet-last-seen";
-    lastSeen.textContent = `Last update: ${lastUpdate}`;
-
-    const historyCount = document.createElement("p");
-    historyCount.className = "internet-last-seen";
-    historyCount.textContent = `History points: ${formatNumber(totalPointCount)}`;
-
-    toggle.append(header, metric, signalNote, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText, trendEmptyMessage));
-
-    const details = document.createElement("div");
-    details.className = "internet-card-details";
-    details.id = detailsId;
-    details.hidden = true;
-
-    const meta = document.createElement("dl");
-    meta.className = "internet-detail-list";
-    [
-      ["Observer", id],
-      ["Last update", lastUpdate],
-      ["History points", formatNumber(totalPointCount)],
-      ["Numeric trend points", formatNumber(numericPointCount)],
-    ].forEach(([label, value]) => {
-      const term = document.createElement("dt");
-      term.textContent = label;
-      const description = document.createElement("dd");
-      description.textContent = value;
-      meta.append(term, description);
-    });
-
-    const secondaryTitle = document.createElement("h4");
-    secondaryTitle.textContent = "Secondary metrics";
-    details.append(meta, secondaryTitle, renderMetricList(secondaryMetrics, "internet-secondary-metrics details"));
-
-    toggle.addEventListener("click", () => {
-      const expanded = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!expanded));
-      details.hidden = expanded;
-      card.classList.toggle("expanded", !expanded);
-    });
-
-    card.append(toggle, details);
-    container.appendChild(card);
   });
 }
 
