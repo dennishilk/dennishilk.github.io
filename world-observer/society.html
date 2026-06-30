@@ -11,9 +11,9 @@
     }
   </script>
 
-  <title>Fuel Observer – World Observer</title>
-  <meta name="description" content="Fuel Observer Society page using the World Observer dashboard design language.">
-  <meta property="og:title" content="Fuel Observer – World Observer">
+  <title>Society Observers – World Observer</title>
+  <meta name="description" content="Society Observers category page using the World Observer dashboard design language.">
+  <meta property="og:title" content="Society Observers – World Observer">
   <meta property="og:description" content="Observational dashboard preview. No causal or manipulation claims.">
   <meta property="og:url" content="https://dennishilk.github.io/world-observer/society.html">
   <meta property="og:type" content="website">
@@ -34,18 +34,9 @@
   <header class="dashboard-header">
     <h1>
       <span class="prompt">root@nebunix:~$</span>
-      <span class="name">Fuel Observer</span>
+      <span class="name">Society Observers</span>
     </h1>
-    <div class="observer-selector" aria-labelledby="fuel-type-label">
-      <span id="fuel-type-label" class="observer-selector-label">Fuel type</span>
-      <div id="fuel-type-selector" class="observer-selector-options" role="radiogroup" aria-labelledby="fuel-type-label">
-        <button type="button" class="observer-selector-button" role="radio" aria-checked="true" data-fuel-type="benzin">Benzin</button>
-        <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="diesel">Diesel</button>
-        <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super-e10">Super E10</button>
-        <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super-plus">Super Plus</button>
-      </div>
-    </div>
-    <p>Germany fuel price observer preview using static placeholder UI data until public exports are available.</p>
+    <p>Public, non-tracking society indicators from static World Observer exports.</p>
 
     <div class="button-group">
       <div class="buttons">
@@ -70,8 +61,23 @@
       <p>Dashboard values are descriptive public-data indicators and should be read with their observer-specific context.</p>
     </section>
 
+    <section class="observer-section society-observer-selector-panel" aria-labelledby="society-observer-label">
+      <div class="observer-selector society-observer-selector" aria-labelledby="society-observer-label">
+        <span id="society-observer-label" class="observer-selector-label">Observer</span>
+        <div id="society-observer-selector" class="observer-selector-options" role="radiogroup" aria-labelledby="society-observer-label">
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="true" data-society-observer="fuel">Fuel</button>
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="electricity">Electricity</button>
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="food">Food</button>
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="housing">Housing</button>
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="deutsche-bahn">Deutsche Bahn</button>
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="deutsche-post">Deutsche Post</button>
+        </div>
+      </div>
+    </section>
+
     <section id="observer-fallback" class="observer-fallback" hidden>World Observer data not available yet.</section>
     <section id="observer-dashboard" class="observer-dashboard" hidden>
+      <section id="society-fuel-panel" class="society-observer-panel" data-society-panel="fuel">
       <section class="observer-section fuel-observer" aria-labelledby="fuel-observer-title">
         <div class="observer-title-row">
           <h2 id="fuel-observer-title">Germany Fuel Observer</h2>
@@ -82,6 +88,15 @@
           <h3>What is this observer?</h3>
           <p>The Fuel Observer displays descriptive fuel price indicators for the selected fuel type.</p>
           <p>Higher values indicate a higher observed price, not cause, intent, or explanation.</p>
+        </div>
+        <div class="observer-selector fuel-type-selector" aria-labelledby="fuel-type-label">
+          <span id="fuel-type-label" class="observer-selector-label">Fuel type</span>
+          <div id="fuel-type-selector" class="observer-selector-options" role="radiogroup" aria-labelledby="fuel-type-label">
+            <button type="button" class="observer-selector-button" role="radio" aria-checked="true" data-fuel-type="benzin">Benzin</button>
+            <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="diesel">Diesel</button>
+            <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super-e10">Super E10</button>
+            <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-fuel-type="super-plus">Super Plus</button>
+          </div>
         </div>
         <div id="fuel-metric-grid" class="metric-grid media-metrics"></div>
 
@@ -96,6 +111,11 @@
           <h3 id="fuel-observed-changes-title">Observed changes</h3>
           <ul id="fuel-observed-summaries" class="observed-summary-list"></ul>
         </section>
+      </section>
+      </section>
+      <section id="society-planned-panel" class="observer-section society-observer-panel planned-observer-panel" data-society-panel="planned" hidden aria-live="polite">
+        <h2 id="society-planned-title">Electricity Observer</h2>
+        <p>This Society observer is planned. Public, non-tracking data exports are not available yet.</p>
       </section>
     </section>
   </main>
