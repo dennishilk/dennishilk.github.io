@@ -1000,6 +1000,21 @@ function formatTopTerm(term) {
   return String(term ?? "—");
 }
 
+function formatMediaCategoryName(category) {
+  const categoryNames = {
+    climate: "Climate",
+    crime: "Crime",
+    disaster: "Disaster",
+    economy: "Economy",
+    general_alarm: "General Alarm",
+    health: "Health",
+    political_pressure: "Political Pressure",
+    war_security: "War & Security",
+  };
+
+  return categoryNames[category] || String(category ?? "—");
+}
+
 function renderMediaLists(media = {}) {
   const terms = document.getElementById("media-top-terms");
   if (!terms) {
@@ -1019,7 +1034,7 @@ function renderMediaLists(media = {}) {
   counts.textContent = "";
   Object.entries(media.category_counts || {}).forEach(([category, value]) => {
     const term = document.createElement("dt");
-    term.textContent = category;
+    term.textContent = formatMediaCategoryName(category);
 
     const count = document.createElement("dd");
     count.textContent = formatNumber(value);
