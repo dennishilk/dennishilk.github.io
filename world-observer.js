@@ -214,7 +214,7 @@ async function renderServerHeartbeat() {
   try {
     renderHeartbeatStatus(await loadLatestHeartbeat());
   } catch (error) {
-    console.warn("Server heartbeat not available", error);
+    logRendererError("heartbeat", error);
     renderHeartbeatUnavailable();
   }
 }
@@ -779,6 +779,23 @@ function renderInternetObservers(data, history) {
   });
 }
 
+function normalizeCategories(categories) {
+  if (Array.isArray(categories)) {
+    return categories;
+  }
+
+  if (categories && typeof categories === "object") {
+    return Object.entries(categories).map(([name, observers]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      status: Number(observers) > 0 ? "active" : "planned",
+      observers: Number(observers),
+      description: Number(observers) > 0 ? "Observer data is available for this category." : "Observer card planned. Data will appear here once a public export is available.",
+    }));
+  }
+
+  return [];
+}
+
 function renderCategories(categories) {
   const container = document.getElementById("observer-categories");
   if (!container) {
@@ -786,7 +803,7 @@ function renderCategories(categories) {
   }
   container.textContent = "";
 
-  categories.forEach((category) => {
+  normalizeCategories(categories).forEach((category) => {
     const key = category.name?.toLowerCase();
     const card = document.createElement("a");
     card.className = `card observer-category ${category.status || "unknown"}`;
@@ -933,23 +950,66 @@ function renderMediaTrend(history) {
   renderSparkline(points);
 }
 
-function renderDashboard(summary = {}, media = {}, mediaHistory, internet, internetHistory) {
+function logRendererError(rendererName, error) {
+  console.error(`World Observer ${rendererName} renderer failed`, error);
+}
+
+function renderOptional(rendererName, render) {
+  try {
+    return render();
+  } catch (error) {
+    logRendererError(rendererName, error);
+    return null;
+  }
+}
+
+function getSummaryCount(summary, countKey, legacyKey) {
+  const count = summary?.[countKey];
+  if (Number.isFinite(Number(count))) {
+    return Number(count);
+  }
+
+  const legacy = summary?.[legacyKey];
+  if (Array.isArray(legacy)) {
+    return legacy.length;
+  }
+
+  return Number(legacy);
+}
+
+function renderOverview(summary = {}, mediaHistory, internetHistory) {
   setText("observer-last-update", summary.last_update || summary.last_run_utc || summary.generated_at || summary.latest_date_utc);
-  setText("observer-total", formatNumber(summary.total_observers ?? summary.observer_count));
-  setText("observer-missing", formatNumber(summary.missing_observers ?? summary.missing_count));
-  setText("observer-degraded", formatNumber(summary.degraded_observers ?? summary.degraded_count));
+  setText("observer-total", formatNumber(getSummaryCount(summary, "observer_count", "total_observers")));
+  setText("observer-missing", formatNumber(getSummaryCount(summary, "missing_count", "missing_observers")));
+  setText("observer-degraded", formatNumber(getSummaryCount(summary, "degraded_count", "degraded_observers")));
   setText("observer-version", getDashboardVersion(summary));
   renderObservedDays(mediaHistory, internetHistory);
-  renderServerHeartbeat();
+  renderCategories(summary.categories || []);
+}
 
-  renderInternetObservers(internet, internetHistory);
+function renderHeartbeat() {
+  return renderServerHeartbeat().catch((error) => {
+    logRendererError("heartbeat", error);
+  });
+}
 
-  setText("media-fear-overall", formatIndex(media.fear_index_overall));
-  setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
-  setText("media-private-fear", formatIndex(media.private_media?.fear_index));
-  setText("media-headline-count", formatNumber(media.headline_count));
-  renderMediaLists(media);
-  renderMediaTrend(mediaHistory);
+function renderDashboard(summary = {}, media = {}, mediaHistory, internet, internetHistory) {
+  try {
+    renderOptional("overview", () => renderOverview(summary, mediaHistory, internetHistory));
+    renderHeartbeat();
+    renderOptional("internet observers", () => renderInternetObservers(internet, internetHistory));
+
+    renderOptional("media overview", () => {
+      setText("media-fear-overall", formatIndex(media.fear_index_overall));
+      setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
+      setText("media-private-fear", formatIndex(media.private_media?.fear_index));
+      setText("media-headline-count", formatNumber(media.headline_count));
+      renderMediaLists(media);
+    });
+    renderOptional("media trend", () => renderMediaTrend(mediaHistory));
+  } catch (error) {
+    console.error("World Observer renderDashboard failed", error);
+  }
 }
 
 function showFallback(message = "World Observer data not available yet.") {
@@ -1012,7 +1072,7 @@ async function initWorldObserver() {
         loadOptionalJson(INTERNET_URLS),
         loadOptionalJson(INTERNET_HISTORY_URLS),
       ]);
-      renderInternetObservers(internet, internetHistory);
+      renderOptional("internet observers", () => renderInternetObservers(internet, internetHistory));
       showDashboard();
       return;
     }
@@ -1023,15 +1083,16 @@ async function initWorldObserver() {
         loadOptionalJson(MEDIA_HISTORY_URLS),
       ]);
       if (!media) {
-        showFallback("Media observer data not available yet.");
+        console.error("World Observer media data failed to load");
+        showDashboard();
         return;
       }
       setText("media-fear-overall", formatIndex(media.fear_index_overall));
       setText("media-public-fear", formatIndex(media.public_broadcast?.fear_index));
       setText("media-private-fear", formatIndex(media.private_media?.fear_index));
       setText("media-headline-count", formatNumber(media.headline_count));
-      renderMediaLists(media);
-      renderMediaTrend(mediaHistory);
+      renderOptional("media overview", () => renderMediaLists(media));
+      renderOptional("media trend", () => renderMediaTrend(mediaHistory));
       showDashboard();
       return;
     }
@@ -1050,8 +1111,10 @@ async function initWorldObserver() {
     renderDashboard(summary, media || {}, mediaHistory, internet, internetHistory);
     showDashboard();
   } catch (error) {
-    console.warn(error);
-    showFallback();
+    console.error("World Observer dashboard initialization failed", error);
+    if (page === "overview") {
+      showDashboard();
+    }
   }
 }
 
