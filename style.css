@@ -928,7 +928,7 @@ footer {
   top: 0.48rem;
 }
 
-.media-index-scale-ticks span {
+.media-index-scale-ticks > span {
   color: var(--accent);
   font-size: clamp(0.68rem, 1.8vw, 0.82rem);
   padding-top: 1.05rem;
@@ -938,7 +938,7 @@ footer {
   width: 1.2rem;
 }
 
-.media-index-scale-ticks span::before {
+.media-index-scale-ticks > span::before {
   background: rgba(0,180,255,0.72);
   box-shadow: 0 0 8px rgba(0,180,255,0.62);
   content: "";
@@ -1040,8 +1040,12 @@ footer {
   justify-content: space-between;
 }
 
-.world-observer-scale-ticks span {
+.world-observer-scale-ticks > span {
   width: auto;
+}
+
+.world-observer-scale-ticks > span > span {
+  display: block;
 }
 
 @media (max-width: 600px) {

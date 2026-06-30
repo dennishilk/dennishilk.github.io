@@ -320,7 +320,12 @@ function renderWorldObserverScale(containerId, config) {
   ticks.className = "media-index-scale-ticks world-observer-scale-ticks";
   (config.ticks || []).forEach((tick) => {
     const tickElement = document.createElement("span");
-    tickElement.textContent = tick;
+    const tickLines = Array.isArray(tick) ? tick : [tick];
+    tickLines.filter(Boolean).forEach((tickLine) => {
+      const lineElement = document.createElement("span");
+      lineElement.textContent = tickLine;
+      tickElement.appendChild(lineElement);
+    });
     ticks.appendChild(tickElement);
   });
 
@@ -421,8 +426,9 @@ const FUEL_OBSERVER_EXAMPLE_DATA = {
     current_price: 1.78,
     average_30d: 1.71,
     average_365d: 1.64,
-    record_high: 2.37,
-    record_low: 0.91,
+    observed_high: 2.37,
+    observed_low: 0.91,
+    observer_start_label: "First observation",
     compared_365d: 8.5,
     trendDelta: 0.04,
     trendDeltaPercent: 2.3,
@@ -430,7 +436,7 @@ const FUEL_OBSERVER_EXAMPLE_DATA = {
       "Price increased compared with yesterday.",
       "Above the 30-day average.",
       "Above the 365-day average.",
-      "Below the observed record high.",
+      "Below the highest observed value.",
     ],
   },
   diesel: {},
@@ -443,15 +449,16 @@ function renderFuelObserver(fuelType = "benzin") {
   const currentPrice = getFuelValue(data, "currentPrice", "current_price");
   const average30d = getFuelValue(data, "thirtyDayAverage", "average_30d");
   const average365d = getFuelValue(data, "annualAverage", "average_365d");
-  const recordHigh = getFuelValue(data, "recordHigh", "record_high");
-  const recordLow = getFuelValue(data, "recordLow", "record_low");
+  const observedHigh = getFuelValue(data, "observedHigh", "observed_high") ?? getFuelValue(data, "recordHigh", "record_high");
+  const observedLow = getFuelValue(data, "observedLow", "observed_low") ?? getFuelValue(data, "recordLow", "record_low");
+  const observerStartLabel = data.observer_start_label || data.observerStartLabel || "First observation";
   const compared365d = getFuelValue(data, "compared365d", "compared_365d");
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
     { label: "30d average", value: formatFuelPrice(average30d) },
     { label: "365d average", value: formatFuelPrice(average365d) },
-    { label: "Record high", value: formatFuelPrice(recordHigh) },
+    { label: "Highest observed", value: formatFuelPrice(observedHigh) },
   ]);
 
   const trendValue = Number.isFinite(Number(data.trendDelta))
@@ -460,17 +467,20 @@ function renderFuelObserver(fuelType = "benzin") {
   renderMetricCards("fuel-trend-grid", [
     { label: "TREND", value: trendValue },
     { label: "30d average", value: formatFuelPrice(average30d) },
-    { label: "Compared with 365d", value: formatFuelPercent(compared365d, 1) },
+    { label: "365d change", value: formatFuelPercent(compared365d, 1) },
   ]);
   setText("fuel-trend-status", Object.keys(data).length ? "" : "Fuel observer data is not available yet for this selection.");
-  renderWorldObserverScale("fuel-historical-scale", {
-    ariaLabel: "Fuel historical price scale",
-    lowLabel: "Historical minimum",
-    highLabel: "Historical maximum",
-    ticks: [formatFuelPrice(recordLow) || "—", formatFuelPrice(recordHigh) || "—"],
+  renderWorldObserverScale("fuel-observer-scale", {
+    ariaLabel: "Fuel observer lifetime price scale",
+    lowLabel: observerStartLabel,
+    highLabel: "Today",
+    ticks: [
+      ["Lowest observed", formatFuelPrice(observedLow) || "—"],
+      ["Highest observed", formatFuelPrice(observedHigh) || "—"],
+    ],
     value: currentPrice,
-    min: recordLow,
-    max: recordHigh,
+    min: observedLow,
+    max: observedHigh,
     markerLabel: `Today ${formatFuelPrice(currentPrice) || "—"}`,
     markerLabelLines: ["Today", formatFuelPrice(currentPrice) || "—"],
   });
@@ -1134,7 +1144,7 @@ function renderInternetObservers(data, history) {
     return;
   }
 
-  status.textContent = history ? "" : "Current cards loaded. Historical trend file is not available yet.";
+  status.textContent = history ? "" : "Current cards loaded. Trend file is not available yet.";
 
   observers.forEach((rawObserver, index) => {
     try {
