@@ -17,6 +17,7 @@ const MEDIA_URLS = [
 ];
 const MEDIA_HISTORY_URLS = buildDashboardUrls("history/media-language-germany.json");
 const INTERNET_URLS = buildDashboardUrls("internet.json");
+const SOCIETY_URLS = buildDashboardUrls("society.json");
 const INTERNET_HISTORY_URLS = buildDashboardUrls("history/internet-observers.json");
 const HEARTBEAT_URLS = buildDashboardUrls("heartbeat.json");
 const HEARTBEAT_CONTENTS_URL = "https://api.github.com/repos/dennishilk/world-observer/contents/state/heartbeat";
@@ -421,59 +422,111 @@ function setupRadioButtonSelector(selectorId, dataAttribute, onSelect) {
   selectButton(buttons.find((button) => button.getAttribute("aria-checked") === "true") || buttons[0]);
 }
 
-const FUEL_OBSERVER_EXAMPLE_DATA = {
-  benzin: {
-    current_price: 1.78,
-    average_30d: 1.71,
-    average_365d: 1.64,
-    observed_high: 2.37,
-    observed_low: 0.91,
-    observer_start_label: "First observation",
-    compared_365d: 8.5,
-    trendDelta: 0.04,
-    trendDeltaPercent: 2.3,
-    summaries: [
-      "Price increased compared with yesterday.",
-      "Above the 30-day average.",
-      "Above the 365-day average.",
-      "Below the highest observed value.",
+const FUEL_OBSERVER_ID = "germany-fuel-prices";
+const FUEL_TYPES = [
+  { key: "benzin", label: "Super E5" },
+  { key: "diesel", label: "Diesel" },
+  { key: "super_e10", label: "Super E10" },
+];
+let fuelObserverFuels = null;
+
+function normalizeFuelType(fuelType) {
+  return String(fuelType || "benzin").replace(/-/g, "_");
+}
+
+function getFuelObserver(societyData) {
+  return (societyData?.observers || []).find((observer) => observer?.observer === FUEL_OBSERVER_ID) || null;
+}
+
+function renderFuelSelector(fuels) {
+  const selector = document.getElementById("fuel-type-selector");
+  if (!selector) {
+    return;
+  }
+
+  selector.textContent = "";
+  FUEL_TYPES.forEach((fuel, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "observer-selector-button";
+    button.setAttribute("role", "radio");
+    button.setAttribute("aria-checked", String(index === 0));
+    button.dataset.fuelType = fuel.key;
+    button.textContent = fuels?.[fuel.key]?.label || fuel.label;
+    selector.appendChild(button);
+  });
+}
+
+function setFuelUnavailable(message = "Waiting for fuel observations.") {
+  renderMetricCards("fuel-metric-grid", []);
+  renderMetricCards("fuel-trend-grid", []);
+  renderWorldObserverScale("fuel-observer-scale", {
+    ariaLabel: "Fuel observer lifetime price scale",
+    lowLabel: "Lowest observed",
+    highLabel: "Highest observed",
+    ticks: [
+      ["Lowest observed", "—"],
+      ["Highest observed", "—"],
     ],
-  },
-  diesel: {},
-  "super-e10": {},
-  "super-plus": {},
-};
+    value: null,
+    min: null,
+    max: null,
+    markerLabel: "Today —",
+    markerLabelLines: ["Today", "—"],
+  });
+  renderObservedSummaryList("fuel-observed-summaries", []);
+  setText("fuel-trend-status", message);
+}
+
+function formatFuelTrend(data) {
+  const trendDelta = getFuelValue(data, "trendDelta", "trend_delta");
+  const trendDeltaPercent = getFuelValue(data, "trendDeltaPercent", "trend_delta_percent");
+  if (!Number.isFinite(Number(trendDelta))) {
+    return "Waiting for next observation";
+  }
+
+  const delta = Number(trendDelta);
+  const arrow = delta > 0 ? "↑" : delta < 0 ? "↓" : "→";
+  const percentText = Number.isFinite(Number(trendDeltaPercent)) ? ` (${formatDeltaPercent(Number(trendDeltaPercent))})` : "";
+  return `${arrow} ${formatFuelPrice(Math.abs(delta))}${percentText}`;
+}
 
 function renderFuelObserver(fuelType = "benzin") {
-  const data = FUEL_OBSERVER_EXAMPLE_DATA[fuelType] || {};
+  const data = fuelObserverFuels?.[normalizeFuelType(fuelType)];
+  if (!data || !Object.keys(data).length) {
+    setFuelUnavailable();
+    return;
+  }
+
   const currentPrice = getFuelValue(data, "currentPrice", "current_price");
   const average30d = getFuelValue(data, "thirtyDayAverage", "average_30d");
   const average365d = getFuelValue(data, "annualAverage", "average_365d");
-  const observedHigh = getFuelValue(data, "observedHigh", "observed_high") ?? getFuelValue(data, "recordHigh", "record_high");
-  const observedLow = getFuelValue(data, "observedLow", "observed_low") ?? getFuelValue(data, "recordLow", "record_low");
-  const observerStartLabel = data.observer_start_label || data.observerStartLabel || "First observation";
-  const compared365d = getFuelValue(data, "compared365d", "compared_365d");
+  const observedHigh = getFuelValue(data, "recordHigh", "record_high") ?? getFuelValue(data, "historicalMax", "historical_max");
+  const observedLow = getFuelValue(data, "recordLow", "record_low") ?? getFuelValue(data, "historicalMin", "historical_min");
+  const compared365d = getFuelValue(data, "comparedWith365dPercent", "compared_with_365d_percent");
+  const observedChanges = data.observed_changes || data.observedChanges;
+  const lastSeenDate = data.last_seen_date || data.lastSeenDate;
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
-    { label: "30d average", value: formatFuelPrice(average30d) },
-    { label: "365d average", value: formatFuelPrice(average365d) },
+    { label: "30d avg (available data)", value: formatFuelPrice(average30d) },
+    { label: "365d avg (available data)", value: formatFuelPrice(average365d) },
     { label: "Highest observed", value: formatFuelPrice(observedHigh) },
+    { label: "Lowest observed", value: formatFuelPrice(observedLow) },
+    { label: "Last seen", value: lastSeenDate },
   ]);
 
-  const trendValue = Number.isFinite(Number(data.trendDelta))
-    ? `${Number(data.trendDelta) > 0 ? "↑" : Number(data.trendDelta) < 0 ? "↓" : "→"} ${formatFuelPrice(Math.abs(Number(data.trendDelta)))}${Number.isFinite(Number(data.trendDeltaPercent)) ? ` (${formatDeltaPercent(Number(data.trendDeltaPercent))})` : ""}`
-    : null;
   renderMetricCards("fuel-trend-grid", [
-    { label: "TREND", value: trendValue },
-    { label: "30d average", value: formatFuelPrice(average30d) },
-    { label: "365d change", value: formatFuelPercent(compared365d, 1) },
+    { label: "TREND", value: formatFuelTrend(data) },
+    { label: "30d avg (available data)", value: formatFuelPrice(average30d) },
+    { label: "365d avg (available data)", value: formatFuelPrice(average365d) },
+    { label: "365d comparison", value: formatFuelPercent(compared365d, 1) },
   ]);
-  setText("fuel-trend-status", Object.keys(data).length ? "" : "Fuel observer data is not available yet for this selection.");
+  setText("fuel-trend-status", "");
   renderWorldObserverScale("fuel-observer-scale", {
     ariaLabel: "Fuel observer lifetime price scale",
-    lowLabel: observerStartLabel,
-    highLabel: "Today",
+    lowLabel: "Lowest observed",
+    highLabel: "Highest observed",
     ticks: [
       ["Lowest observed", formatFuelPrice(observedLow) || "—"],
       ["Highest observed", formatFuelPrice(observedHigh) || "—"],
@@ -484,7 +537,14 @@ function renderFuelObserver(fuelType = "benzin") {
     markerLabel: `Today ${formatFuelPrice(currentPrice) || "—"}`,
     markerLabelLines: ["Today", formatFuelPrice(currentPrice) || "—"],
   });
-  renderObservedSummaryList("fuel-observed-summaries", data.summaries);
+  renderObservedSummaryList("fuel-observed-summaries", observedChanges);
+}
+
+function renderSocietyObservers(societyData) {
+  const observer = getFuelObserver(societyData);
+  fuelObserverFuels = observer?.fuels || null;
+  renderFuelSelector(fuelObserverFuels);
+  setupFuelSelector();
 }
 
 function setupFuelSelector() {
@@ -1546,8 +1606,9 @@ async function initWorldObserver() {
 
   try {
     if (page === "society") {
+      const society = await loadOptionalJson(SOCIETY_URLS);
       setupSocietyObserverSelector();
-      setupFuelSelector();
+      renderOptional("society observers", () => renderSocietyObservers(society));
       showDashboard();
       return;
     }
