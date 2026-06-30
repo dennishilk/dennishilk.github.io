@@ -549,12 +549,12 @@ function renderObservedDays(mediaHistory, internetHistory) {
   }
 }
 
-function renderMiniSparkline(points, label) {
+function renderMiniSparkline(points, label, emptyMessage = "Collecting trend data...") {
   const wrap = document.createElement("div");
   wrap.className = "mini-sparkline";
 
   if (!points.length) {
-    wrap.textContent = "No numeric trend yet.";
+    wrap.textContent = emptyMessage;
     return wrap;
   }
 
@@ -620,6 +620,42 @@ function renderMetricList(metrics, className = "internet-secondary-metrics") {
   return list;
 }
 
+function findInternetHistoryRecord(history, id, title) {
+  if (!history) {
+    return null;
+  }
+
+  const candidates = [id, title].filter(Boolean).map(String);
+  const collections = [history.history, history.observers_history, history.observers, history.data];
+
+  for (const collection of collections) {
+    if (!collection || Array.isArray(collection) || typeof collection !== "object") {
+      continue;
+    }
+
+    for (const candidate of candidates) {
+      if (collection[candidate]) {
+        return collection[candidate];
+      }
+    }
+  }
+
+  return normalizeCollection(history).find((observer) => candidates.includes(getObserverId(observer))) || null;
+}
+
+function getHistoryCount(record, key, fallback) {
+  const value = Number(record?.[key]);
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function getTrendEmptyMessage(totalPointCount, numericPointCount) {
+  if (totalPointCount === 0 || numericPointCount === 0) {
+    return "Trend starts after multiple observations.";
+  }
+
+  return "Collecting trend data...";
+}
+
 function renderInternetObservers(data, history) {
   const container = document.getElementById("internet-observer-cards");
   const status = document.getElementById("internet-observer-status");
@@ -647,6 +683,10 @@ function renderInternetObservers(data, history) {
     const secondaryMetrics = normalizeSecondaryMetrics(observer);
     const points = historyById.get(id) || historyById.get(titleText) || [];
     const numericPoints = numericHistoryPoints(points);
+    const historyRecord = findInternetHistoryRecord(history, id, titleText);
+    const totalPointCount = getHistoryCount(historyRecord, "total_point_count", points.length);
+    const numericPointCount = getHistoryCount(historyRecord, "numeric_point_count", numericPoints.length);
+    const trendEmptyMessage = getTrendEmptyMessage(totalPointCount, numericPointCount);
     const lastUpdate = formatDate(getLastUpdate(observer, data));
     const detailsId = `internet-observer-details-${index}`;
 
@@ -706,9 +746,9 @@ function renderInternetObservers(data, history) {
 
     const historyCount = document.createElement("p");
     historyCount.className = "internet-last-seen";
-    historyCount.textContent = `History points: ${formatNumber(points.length)}`;
+    historyCount.textContent = `History points: ${formatNumber(totalPointCount)}`;
 
-    toggle.append(header, metric, signalNote, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText));
+    toggle.append(header, metric, signalNote, secondarySummary, lastSeen, historyCount, renderMiniSparkline(numericPoints, titleText, trendEmptyMessage));
 
     const details = document.createElement("div");
     details.className = "internet-card-details";
@@ -718,10 +758,10 @@ function renderInternetObservers(data, history) {
     const meta = document.createElement("dl");
     meta.className = "internet-detail-list";
     [
-      ["observer id", id],
-      ["last update", lastUpdate],
-      ["history points", formatNumber(points.length)],
-      ["numeric trend points", formatNumber(numericPoints.length)],
+      ["Observer", id],
+      ["Last update", lastUpdate],
+      ["History points", formatNumber(totalPointCount)],
+      ["Numeric trend points", formatNumber(numericPointCount)],
     ].forEach(([label, value]) => {
       const term = document.createElement("dt");
       term.textContent = label;
