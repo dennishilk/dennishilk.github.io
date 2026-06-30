@@ -1,31 +1,24 @@
-const SUMMARY_URLS = ["/world-observer/latest/summary.json", "world-observer/latest/summary.json"];
+function buildDashboardUrls(filename) {
+  return [
+    `world-observer/dashboard/${filename}`,
+    `./world-observer/dashboard/${filename}`,
+    `/world-observer/dashboard/${filename}`,
+    `dashboard/${filename}`,
+  ];
+}
+
+const SUMMARY_URLS = buildDashboardUrls("summary.json");
 const MEDIA_URLS = [
-  "/world-observer/dashboard/media.json",
+  ...buildDashboardUrls("media.json"),
   "/world-observer/latest/media-language-germany.json",
-  "dashboard/media.json",
-  "latest/media-language-germany.json",
   "world-observer/latest/media-language-germany.json",
+  "./world-observer/latest/media-language-germany.json",
+  "latest/media-language-germany.json",
 ];
-const MEDIA_HISTORY_URLS = [
-  "/world-observer/dashboard/history/media-language-germany.json",
-  "dashboard/history/media-language-germany.json",
-  "world-observer/dashboard/history/media-language-germany.json",
-];
-const INTERNET_URLS = [
-  "/world-observer/dashboard/internet.json",
-  "dashboard/internet.json",
-  "world-observer/dashboard/internet.json",
-];
-const INTERNET_HISTORY_URLS = [
-  "/world-observer/dashboard/history/internet-observers.json",
-  "dashboard/history/internet-observers.json",
-  "world-observer/dashboard/history/internet-observers.json",
-];
-const HEARTBEAT_URLS = [
-  "/world-observer/dashboard/heartbeat.json",
-  "dashboard/heartbeat.json",
-  "world-observer/dashboard/heartbeat.json",
-];
+const MEDIA_HISTORY_URLS = buildDashboardUrls("history/media-language-germany.json");
+const INTERNET_URLS = buildDashboardUrls("internet.json");
+const INTERNET_HISTORY_URLS = buildDashboardUrls("history/internet-observers.json");
+const HEARTBEAT_URLS = buildDashboardUrls("heartbeat.json");
 const HEARTBEAT_CONTENTS_URL = "https://api.github.com/repos/dennishilk/world-observer/contents/state/heartbeat";
 
 const CATEGORY_LINKS = {
@@ -941,10 +934,10 @@ function renderMediaTrend(history) {
 }
 
 function renderDashboard(summary = {}, media = {}, mediaHistory, internet, internetHistory) {
-  setText("observer-last-update", summary.last_update);
-  setText("observer-total", formatNumber(summary.total_observers));
-  setText("observer-missing", formatNumber(summary.missing_observers));
-  setText("observer-degraded", formatNumber(summary.degraded_observers));
+  setText("observer-last-update", summary.last_update || summary.last_run_utc || summary.generated_at || summary.latest_date_utc);
+  setText("observer-total", formatNumber(summary.total_observers ?? summary.observer_count));
+  setText("observer-missing", formatNumber(summary.missing_observers ?? summary.missing_count));
+  setText("observer-degraded", formatNumber(summary.degraded_observers ?? summary.degraded_count));
   setText("observer-version", getDashboardVersion(summary));
   renderObservedDays(mediaHistory, internetHistory);
   renderServerHeartbeat();
