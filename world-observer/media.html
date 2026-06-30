@@ -72,17 +72,20 @@
           <article class="metric-card"><span class="metric-label">headline_count</span><strong id="media-headline-count">—</strong></article>
         </div>
         <section class="observer-section media-trend" aria-labelledby="media-trend-title">
-          <h3 id="media-trend-title">Germany Media Language Trend</h3>
+          <h3 id="media-trend-title">Media Trend</h3>
           <p id="media-trend-status" class="observer-limitation" aria-live="polite"></p>
           <div class="metric-grid media-trend-metrics">
-            <article class="metric-card"><span class="metric-label">history points</span><strong id="media-trend-points">—</strong></article>
-            <article class="metric-card"><span class="metric-label">latest fear index</span><strong id="media-trend-latest">—</strong></article>
-            <article class="metric-card"><span class="metric-label">previous fear index</span><strong id="media-trend-previous">—</strong></article>
-            <article class="metric-card"><span class="metric-label">delta</span><strong id="media-trend-delta">—</strong></article>
-            <article class="metric-card"><span class="metric-label">7d avg</span><strong id="media-trend-7d">—</strong></article>
-            <article class="metric-card"><span class="metric-label">30d avg</span><strong id="media-trend-30d">—</strong></article>
+            <article class="metric-card"><span class="metric-label">TREND</span><strong id="media-trend-direction">—</strong></article>
+            <article class="metric-card"><span class="metric-label">30d average</span><strong id="media-trend-30d">—</strong></article>
+            <article class="metric-card"><span class="metric-label">Public/private spread</span><strong id="media-trend-spread">—</strong></article>
           </div>
           <div id="media-trend-sparkline" class="sparkline" aria-label="Germany media language trend sparkline"></div>
+        </section>
+
+        <section class="observer-section media-observed-changes" aria-labelledby="media-observed-changes-title">
+          <h3 id="media-observed-changes-title">Observed changes</h3>
+          <ul id="media-observed-summaries" class="observed-summary-list"></ul>
+          <div id="media-term-changes" class="term-change-grid"></div>
         </section>
         <div class="observer-detail-grid">
           <article class="detail-card"><h3>top_terms</h3><ul id="media-top-terms" class="term-list"></ul></article>
