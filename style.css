@@ -958,7 +958,6 @@ footer {
   top: 2.15rem;
   transform: translateX(-50%);
   transition: left 0.55s ease;
-  max-width: min(9rem, 42vw);
   white-space: normal;
 }
 
@@ -973,7 +972,22 @@ footer {
   display: block;
   font-size: clamp(0.68rem, 1.8vw, 0.82rem);
   margin-top: 0.28rem;
+  max-width: min(9rem, 42vw);
   text-shadow: 0 0 8px rgba(0,180,255,0.55);
+}
+
+.scale-marker-label-left {
+  text-align: left;
+  transform: translateX(50%);
+}
+
+.scale-marker-label-center {
+  text-align: center;
+}
+
+.scale-marker-label-right {
+  text-align: right;
+  transform: translateX(-50%);
 }
 
 .media-index-marker-label span {
