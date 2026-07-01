@@ -303,10 +303,13 @@ function calculateScalePosition(value, min, max) {
 }
 
 function getScaleMarkerAlignment(position) {
-  if (position === 0) {
+  if (!Number.isFinite(position)) {
+    return "scale-marker-label-center";
+  }
+  if (position <= 12) {
     return "scale-marker-label-left";
   }
-  if (position === 100) {
+  if (position >= 88) {
     return "scale-marker-label-right";
   }
   return "scale-marker-label-center";
@@ -566,8 +569,6 @@ function renderFuelObserver(fuelType = "benzin") {
     { label: "Current price", value: formatFuelPrice(currentPrice) },
     { label: "30d avg (available data)", value: formatFuelPrice(average30d) },
     { label: "365d avg (available data)", value: formatFuelPrice(average365d) },
-    { label: "Highest observed", value: formatFuelPrice(observedHigh) },
-    { label: "Lowest observed", value: formatFuelPrice(observedLow) },
     { label: "Last seen", value: lastSeenDate },
   ]);
 
