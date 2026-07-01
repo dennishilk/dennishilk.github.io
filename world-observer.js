@@ -550,7 +550,7 @@ function renderFuelObserver(fuelType = "benzin") {
   const trendDelta = getFuelValue(data, "trendDelta", "trend_delta");
   const observedRange = Number(observedHigh) - Number(observedLow);
   const hasObservationRange = Number.isFinite(observedRange) && observedRange > 0;
-  const isFirstObservation = !hasObservationRange || !Number.isFinite(Number(trendDelta));
+  const isFirstObservation = !Number.isFinite(Number(trendDelta));
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
