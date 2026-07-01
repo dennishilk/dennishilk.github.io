@@ -605,6 +605,7 @@ function getFuelValue(data, camelCaseKey, snakeCaseKey = camelCaseKey) {
 const SOCIETY_OBSERVERS = {
   fuel: { title: "Fuel Observer", panel: "fuel" },
   electricity: { title: "Electricity Observer", panel: "planned" },
+  "east-frisian-tea": { title: "East Frisian Tea Observer", panel: "tea" },
   food: { title: "Food Observer", panel: "planned" },
   housing: { title: "Housing Observer", panel: "planned" },
   "deutsche-bahn": { title: "Deutsche Bahn Observer", panel: "planned" },
@@ -656,6 +657,7 @@ const FUEL_TYPES = [
 ];
 let fuelObserverFuels = null;
 let selectedFuelTrendRange = 60;
+let selectedTeaTrendRange = 60;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -779,10 +781,45 @@ function renderFuelObserver(fuelType = "benzin") {
   renderObservedSummaryList("fuel-observed-summaries", observedChanges, "Waiting for more observations.");
 }
 
+
+function renderTeaObserverPlaceholder() {
+  renderMetricCards("tea-metric-grid", [
+    { label: "Current price", value: "—" },
+    { label: "30d avg (available data)", value: "—" },
+    { label: "365d avg (available data)", value: "—" },
+    { label: "Last seen", value: "—" },
+  ]);
+
+  renderMetricCards("tea-trend-grid", [
+    { label: "TREND", value: "Waiting for first observation" },
+    { label: "30d avg (available data)", value: "—" },
+    { label: "365d avg (available data)", value: "—" },
+    { label: "Observed changes", value: "—" },
+  ]);
+
+  setText("tea-trend-status", "Prepared for future East Frisian black tea price history; no price data is available yet.");
+  renderWorldObserverTrendChart("tea-trend-chart", {
+    title: `Tea Trend (last ${selectedTeaTrendRange} days)`,
+    series: [],
+    formatter: formatFuelPrice,
+    unit: "€",
+    selectedRange: selectedTeaTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: "Waiting for the first representative East Frisian black tea observation.",
+    latestLabel: "Latest",
+    onRangeChange(range) {
+      selectedTeaTrendRange = range;
+      renderTeaObserverPlaceholder();
+    },
+  });
+  renderObservedSummaryList("tea-observed-summaries", [], "No observed tea price changes yet.");
+}
+
 function renderSocietyObservers(societyData) {
   const observer = getFuelObserver(societyData);
   fuelObserverFuels = getSupportedFuelObserverFuels(observer?.fuels);
   renderFuelSelector(fuelObserverFuels);
+  renderTeaObserverPlaceholder();
   setupFuelSelector();
 }
 
@@ -793,11 +830,15 @@ function setupFuelSelector() {
 function showSocietyObserver(observerId = "fuel") {
   const observer = SOCIETY_OBSERVERS[observerId] || SOCIETY_OBSERVERS.fuel;
   const fuelPanel = document.getElementById("society-fuel-panel");
+  const teaPanel = document.getElementById("society-tea-panel");
   const plannedPanel = document.getElementById("society-planned-panel");
   const plannedTitle = document.getElementById("society-planned-title");
 
   if (fuelPanel) {
     fuelPanel.hidden = observer.panel !== "fuel";
+  }
+  if (teaPanel) {
+    teaPanel.hidden = observer.panel !== "tea";
   }
   if (plannedPanel) {
     plannedPanel.hidden = observer.panel !== "planned";
