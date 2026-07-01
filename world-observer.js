@@ -328,6 +328,162 @@ function valuesMatch(value, endpoint) {
   return Number.isFinite(numericValue) && Number.isFinite(numericEndpoint) && numericValue === numericEndpoint;
 }
 
+function normalizeSeriesPoints(series) {
+  return (Array.isArray(series) ? series : [])
+    .map((point) => {
+      const dateValue = point?.date || point?.day || point?.timestamp || point?.last_seen_date || point?.lastSeenDate;
+      const date = new Date(dateValue);
+      const value = Number(point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice);
+      return Number.isFinite(date.getTime()) && Number.isFinite(value) ? { date, value, dateKey: date.toISOString().slice(0, 10) } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+function filterSeriesByRange(series, rangeDays) {
+  const points = normalizeSeriesPoints(series);
+  const days = Number(rangeDays);
+  if (!points.length || !Number.isFinite(days) || days <= 0) {
+    return points;
+  }
+  const latest = points[points.length - 1].date.getTime();
+  const cutoff = latest - (days * 24 * 60 * 60 * 1000);
+  return points.filter((point) => point.date.getTime() >= cutoff);
+}
+
+function calculateChartDomain(points) {
+  const values = points.map((point) => point.value);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const valueRange = maxValue - minValue;
+  const padding = valueRange ? valueRange * 0.16 : Math.max(Math.abs(maxValue) * 0.04, 0.05);
+  return {
+    minDate: points[0]?.date,
+    maxDate: points[points.length - 1]?.date,
+    minValue: minValue - padding,
+    maxValue: maxValue + padding,
+  };
+}
+
+function formatAxisDate(date) {
+  return new Intl.DateTimeFormat(undefined, { month: "short", day: "2-digit" }).format(date);
+}
+
+function formatChartValue(value, formatter, unit = "") {
+  if (typeof formatter === "function") {
+    return formatter(value);
+  }
+  if (!Number.isFinite(Number(value))) {
+    return "—";
+  }
+  const formatted = Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 });
+  return unit ? `${formatted} ${unit}` : formatted;
+}
+
+function calculateTicks(min, max, count = 5) {
+  const low = Number(min);
+  const high = Number(max);
+  if (!Number.isFinite(low) || !Number.isFinite(high) || count < 2) {
+    return [];
+  }
+  const step = (high - low) / (count - 1 || 1);
+  return Array.from({ length: count }, (_, index) => low + (step * index));
+}
+
+function buildTrendChartPath(points, domain, width, height, padding) {
+  const timeRange = Math.max(1, domain.maxDate.getTime() - domain.minDate.getTime());
+  const valueRange = Math.max(0.000001, domain.maxValue - domain.minValue);
+  return points.map((point) => {
+    const x = padding.left + ((point.date.getTime() - domain.minDate.getTime()) / timeRange) * (width - padding.left - padding.right);
+    const y = padding.top + ((domain.maxValue - point.value) / valueRange) * (height - padding.top - padding.bottom);
+    return { ...point, x, y };
+  });
+}
+
+function renderWorldObserverTrendChart(containerId, config = {}) {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    return;
+  }
+
+  const ranges = config.availableRanges || [30, 60, 180, 365];
+  const selectedRange = Number(config.selectedRange || ranges[0]);
+  const color = config.color || "var(--accent)";
+  const allPoints = normalizeSeriesPoints(config.series);
+  const points = filterSeriesByRange(allPoints, selectedRange);
+  container.textContent = "";
+  container.style.setProperty("--trend-color", color);
+
+  const header = document.createElement("div");
+  header.className = "world-observer-trend-chart-header";
+  const title = document.createElement("h3");
+  title.textContent = config.title || "Trend";
+  const selector = document.createElement("div");
+  selector.className = "world-observer-trend-range-selector";
+  ranges.forEach((range) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "observer-selector-button";
+    button.textContent = `${range}d`;
+    button.classList.toggle("active", Number(range) === selectedRange);
+    button.addEventListener("click", () => {
+      if (typeof config.onRangeChange === "function") {
+        config.onRangeChange(Number(range));
+      }
+    });
+    selector.appendChild(button);
+  });
+  header.append(title, selector);
+  container.appendChild(header);
+
+  if (!points.length) {
+    const empty = document.createElement("div");
+    empty.className = "world-observer-trend-empty";
+    empty.textContent = config.emptyState || "Waiting for more observations.";
+    container.appendChild(empty);
+    container.setAttribute("aria-label", `${config.title || "Trend chart"}: no usable observations`);
+    return;
+  }
+
+  if (points.length === 1) {
+    const first = document.createElement("div");
+    first.className = "world-observer-trend-first-observation";
+    first.innerHTML = `<span>First observation</span><strong>${formatChartValue(points[0].value, config.formatter, config.unit)}</strong><small>${points[0].dateKey}</small><em>Trend line starts after the next observation.</em>`;
+    container.appendChild(first);
+    container.setAttribute("aria-label", `${config.title || "Trend chart"}: first observation ${points[0].dateKey}`);
+    return;
+  }
+
+  const width = 920;
+  const height = 330;
+  const padding = { top: 24, right: 34, bottom: 52, left: 72 };
+  const domain = calculateChartDomain(points);
+  const plotted = buildTrendChartPath(points, domain, width, height, padding);
+  const yTicks = calculateTicks(domain.minValue, domain.maxValue, 5);
+  const xTickCount = Math.min(6, plotted.length);
+  const xTicks = Array.from({ length: xTickCount }, (_, index) => plotted[Math.round(index * (plotted.length - 1) / Math.max(1, xTickCount - 1))]);
+  const pathData = plotted.map((point, index) => `${index ? "L" : "M"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
+  const latest = plotted[plotted.length - 1];
+  const areaPath = `${pathData} L ${latest.x.toFixed(2)} ${height - padding.bottom} L ${plotted[0].x.toFixed(2)} ${height - padding.bottom} Z`;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", `${config.title || "Trend"} from ${points[0].dateKey} to ${latest.dateKey}`);
+  svg.innerHTML = `
+    <defs><linearGradient id="${containerId}-area" x1="0" x2="0" y1="0" y2="1"><stop stop-color="currentColor" stop-opacity="0.18"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
+    ${yTicks.map((tick) => {
+      const y = padding.top + ((domain.maxValue - tick) / (domain.maxValue - domain.minValue)) * (height - padding.top - padding.bottom);
+      return `<line class="trend-grid-line" x1="${padding.left}" x2="${width - padding.right}" y1="${y}" y2="${y}"></line><text class="trend-y-label" x="${padding.left - 14}" y="${y + 4}" text-anchor="end">${formatChartValue(tick, config.formatter, config.unit)}</text>`;
+    }).join("")}
+    ${xTicks.map((point) => `<text class="trend-x-label" x="${point.x}" y="${height - 16}" text-anchor="middle">${formatAxisDate(point.date)}</text>`).join("")}
+    <path class="trend-area" d="${areaPath}"></path>
+    <path class="trend-line" d="${pathData}"></path>
+    ${plotted.map((point) => `<circle class="trend-point${point === latest ? " trend-point-latest" : ""}" cx="${point.x}" cy="${point.y}" r="${point === latest ? 5 : 3}"></circle>`).join("")}
+    <g class="trend-latest-label" transform="translate(${Math.min(latest.x + 14, width - 96)} ${Math.max(48, latest.y - 14)})"><rect width="82" height="44" rx="6"></rect><text x="41" y="18" text-anchor="middle">${config.latestLabel || "Today"}</text><text x="41" y="34" text-anchor="middle">${formatChartValue(latest.value, config.formatter, config.unit)}</text></g>
+  `;
+  container.appendChild(svg);
+}
+
 function renderWorldObserverScale(containerId, config) {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -499,6 +655,7 @@ const FUEL_TYPES = [
   { key: "diesel", label: "Diesel" },
 ];
 let fuelObserverFuels = null;
+let selectedFuelTrendRange = 60;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -539,19 +696,13 @@ function renderFuelSelector(fuels) {
 function setFuelUnavailable(message = "Waiting for fuel observations.") {
   renderMetricCards("fuel-metric-grid", []);
   renderMetricCards("fuel-trend-grid", []);
-  renderWorldObserverScale("fuel-observer-scale", {
-    ariaLabel: "Fuel observer lifetime price scale",
-    lowLabel: "Lowest observed",
-    highLabel: "Highest observed",
-    ticks: [
-      ["Lowest observed", "—"],
-      ["Highest observed", "—"],
-    ],
-    value: null,
-    min: null,
-    max: null,
-    markerLabel: "Today —",
-    markerLabelLines: ["Today", "—"],
+  renderWorldObserverTrendChart("fuel-trend-chart", {
+    title: "Fuel Trend",
+    series: [],
+    formatter: formatFuelPrice,
+    selectedRange: selectedFuelTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: "Waiting for fuel observations.",
   });
   renderObservedSummaryList("fuel-observed-summaries", []);
   setText("fuel-trend-status", message);
@@ -570,6 +721,16 @@ function formatFuelTrend(data) {
   return `${arrow} ${formatFuelPrice(Math.abs(delta))}${percentText}`;
 }
 
+function getFuelTrendSeries(data, currentPrice, lastSeenDate) {
+  const history = data.history || data.series || data.observations || data.points || data.trend_points || data.trendPoints || [];
+  const normalized = normalizeSeriesPoints(history);
+  const hasCurrentPoint = normalized.some((point) => point.dateKey === lastSeenDate);
+  if (Number.isFinite(Number(currentPrice)) && lastSeenDate && !hasCurrentPoint) {
+    normalized.push({ date: new Date(lastSeenDate), value: Number(currentPrice), dateKey: lastSeenDate });
+  }
+  return normalized.sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
 function renderFuelObserver(fuelType = "benzin") {
   const data = fuelObserverFuels?.[normalizeFuelType(fuelType)];
   if (!data || !Object.keys(data).length) {
@@ -580,15 +741,12 @@ function renderFuelObserver(fuelType = "benzin") {
   const currentPrice = getFuelValue(data, "currentPrice", "current_price");
   const average30d = getFuelValue(data, "thirtyDayAverage", "average_30d");
   const average365d = getFuelValue(data, "annualAverage", "average_365d");
-  const observedHigh = getFuelValue(data, "recordHigh", "record_high") ?? getFuelValue(data, "historicalMax", "historical_max");
-  const observedLow = getFuelValue(data, "recordLow", "record_low") ?? getFuelValue(data, "historicalMin", "historical_min");
   const compared365d = getFuelValue(data, "comparedWith365dPercent", "compared_with_365d_percent");
   const observedChanges = data.observed_changes || data.observedChanges;
   const lastSeenDate = data.last_seen_date || data.lastSeenDate;
   const trendDelta = getFuelValue(data, "trendDelta", "trend_delta");
-  const observedRange = Number(observedHigh) - Number(observedLow);
-  const hasObservationRange = Number.isFinite(observedRange) && observedRange > 0;
   const isFirstObservation = !Number.isFinite(Number(trendDelta));
+  const fuelSeries = getFuelTrendSeries(data, currentPrice, lastSeenDate);
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
@@ -604,23 +762,19 @@ function renderFuelObserver(fuelType = "benzin") {
     { label: "365d comparison", value: formatFuelPercent(compared365d, 1) },
   ]);
   setText("fuel-trend-status", "");
-  renderWorldObserverScale("fuel-observer-scale", isFirstObservation ? {
-    ariaLabel: "Fuel observer lifetime price scale",
-    firstObservation: true,
-    firstObservationDate: lastSeenDate,
-  } : {
-    ariaLabel: "Fuel observer lifetime price scale",
-    lowLabel: "Lowest observed",
-    highLabel: "Highest observed",
-    ticks: [
-      ["Lowest observed", formatFuelPrice(observedLow) || "—"],
-      ["Highest observed", formatFuelPrice(observedHigh) || "—"],
-    ],
-    value: currentPrice,
-    min: observedLow,
-    max: observedHigh,
-    markerLabel: `Today ${formatFuelPrice(currentPrice) || "—"}`,
-    markerLabelLines: ["Today", formatFuelPrice(currentPrice) || "—"],
+  renderWorldObserverTrendChart("fuel-trend-chart", {
+    title: `Fuel Trend (last ${selectedFuelTrendRange} days)`,
+    series: fuelSeries,
+    formatter: formatFuelPrice,
+    unit: "€",
+    selectedRange: selectedFuelTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: isFirstObservation ? "First observation recorded. Trend line starts after the next observation." : "Waiting for more historical observations.",
+    latestLabel: "Today",
+    onRangeChange(range) {
+      selectedFuelTrendRange = range;
+      renderFuelObserver(fuelType);
+    },
   });
   renderObservedSummaryList("fuel-observed-summaries", observedChanges, "Waiting for more observations.");
 }
