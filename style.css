@@ -1050,6 +1050,29 @@ footer {
   background: var(--accent);
 }
 
+.world-observer-scale-marker {
+  min-width: 0;
+  width: max-content;
+}
+
+.world-observer-scale-marker .media-index-marker-label {
+  left: 50%;
+  max-width: min(10rem, 38vw);
+  min-width: max-content;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.world-observer-scale-marker .scale-marker-label-left {
+  left: 0;
+  transform: translateX(0);
+}
+
+.world-observer-scale-marker .scale-marker-label-right {
+  left: 100%;
+  transform: translateX(-100%);
+}
+
 .world-observer-scale-ticks {
   justify-content: space-between;
 }
