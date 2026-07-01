@@ -788,7 +788,22 @@ function renderFuelObserver(fuelType = "benzin") {
 }
 
 
+function setTeaPlaceholderVisible(isVisible) {
+  const placeholder = document.getElementById("tea-placeholder-note");
+  if (placeholder) {
+    placeholder.hidden = !isVisible;
+  }
+}
+
+function hasValidTeaObserverPayload(data) {
+  if (!data || String(data.data_status || data.status || "").toLowerCase() !== "ok") {
+    return false;
+  }
+  return normalizeSeriesPoints(data.history || []).length > 0;
+}
+
 function renderTeaObserverPlaceholder() {
+  setTeaPlaceholderVisible(true);
   renderMetricCards("tea-metric-grid", [
     { label: "Current price", value: "—" },
     { label: "30d avg (available data)", value: "—" },
@@ -853,11 +868,12 @@ function renderTeaObserver() {
   const observedChanges = data?.observed_changes || data?.observedChanges;
   const teaSeries = getTeaTrendSeries(data, currentPrice, lastSeenDate);
 
-  if (!data || !teaSeries.length) {
+  if (!hasValidTeaObserverPayload(data) || !teaSeries.length) {
     renderTeaObserverPlaceholder();
     return;
   }
 
+  setTeaPlaceholderVisible(false);
   renderMetricCards("tea-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
     { label: "30d avg (available data)", value: formatFuelPrice(average30d) },
