@@ -302,6 +302,16 @@ function calculateScalePosition(value, min, max) {
   return Math.min(100, Math.max(0, ((current - low) / (high - low)) * 100));
 }
 
+function getScaleMarkerAlignment(position) {
+  if (position === 0) {
+    return "scale-marker-label-left";
+  }
+  if (position === 100) {
+    return "scale-marker-label-right";
+  }
+  return "scale-marker-label-center";
+}
+
 function renderWorldObserverScale(containerId, config) {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -372,7 +382,7 @@ function renderWorldObserverScale(containerId, config) {
   arrow.textContent = "▲";
 
   const markerLabel = document.createElement("span");
-  markerLabel.className = "media-index-marker-label";
+  markerLabel.className = `media-index-marker-label ${getScaleMarkerAlignment(position)}`;
   const markerLabelLines = Array.isArray(config.markerLabelLines) && config.markerLabelLines.length
     ? config.markerLabelLines
     : [config.markerLabel];
