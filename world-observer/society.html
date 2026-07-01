@@ -61,6 +61,7 @@
         <div id="society-observer-selector" class="observer-selector-options" role="radiogroup" aria-labelledby="society-observer-label">
           <button type="button" class="observer-selector-button" role="radio" aria-checked="true" data-society-observer="fuel">Fuel</button>
           <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="electricity">Electricity</button>
+          <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="east-frisian-tea">East Frisian Tea</button>
           <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="food">Food</button>
           <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="housing">Housing</button>
           <button type="button" class="observer-selector-button" role="radio" aria-checked="false" data-society-observer="deutsche-bahn">Deutsche Bahn</button>
@@ -102,6 +103,37 @@
         <section class="observer-section media-observed-changes" aria-labelledby="fuel-observed-changes-title">
           <h3 id="fuel-observed-changes-title">Observed changes</h3>
           <ul id="fuel-observed-summaries" class="observed-summary-list"></ul>
+        </section>
+      </section>
+      </section>
+      <section id="society-tea-panel" class="society-observer-panel" data-society-panel="tea" hidden>
+      <section class="observer-section tea-observer" aria-labelledby="tea-observer-title">
+        <div class="observer-title-row tea-observer-title-row">
+          <div>
+            <h2 id="tea-observer-title">East Frisian Tea Observer</h2>
+            <p class="observer-limitation">East Frisian Tea Observer tracks the price development of a representative East Frisian black tea product over time. The observer is descriptive only and does not rate brands or product quality.</p>
+          </div>
+          <a class="tea-donation-link" href="https://buymeacoffee.com/dennishilk" target="_blank" rel="noopener noreferrer">Buy me an East Frisian tea</a>
+        </div>
+
+        <div class="tea-placeholder-note" role="note">
+          <span class="tea-placeholder-kicker">First observation pending</span>
+          <strong>No tea price history has been published yet.</strong>
+          <p>This neutral placeholder is ready for a future representative regional black tea price export without inventing current prices, averages, or history.</p>
+        </div>
+
+        <div id="tea-metric-grid" class="metric-grid media-metrics" aria-label="East Frisian Tea observer prepared metrics"></div>
+
+        <section class="observer-section media-trend tea-trend" aria-labelledby="tea-trend-title">
+          <h3 id="tea-trend-title">Tea Trend</h3>
+          <p id="tea-trend-status" class="observer-limitation" aria-live="polite"></p>
+          <div id="tea-trend-chart" class="world-observer-trend-chart" aria-label="East Frisian Tea observer trend chart"></div>
+          <div id="tea-trend-grid" class="metric-grid media-trend-metrics"></div>
+        </section>
+
+        <section class="observer-section media-observed-changes" aria-labelledby="tea-observed-changes-title">
+          <h3 id="tea-observed-changes-title">Observed changes</h3>
+          <ul id="tea-observed-summaries" class="observed-summary-list"></ul>
         </section>
       </section>
       </section>
