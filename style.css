@@ -1056,11 +1056,21 @@ footer {
 }
 
 .world-observer-scale-marker .media-index-marker-label {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0,180,255,0.32);
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(0,180,255,0.16);
   left: 50%;
-  max-width: min(10rem, 38vw);
+  max-width: min(11rem, 42vw);
   min-width: max-content;
+  padding: 0.18rem 0.46rem;
   position: absolute;
   transform: translateX(-50%);
+}
+
+.world-observer-scale-marker-endpoint .media-index-marker-label {
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .world-observer-scale-marker .scale-marker-label-left {
@@ -1083,6 +1093,14 @@ footer {
 
 .world-observer-scale-ticks > span > span {
   display: block;
+}
+
+.world-observer-scale-current-endpoint {
+  opacity: 0.78;
+}
+
+.world-observer-scale-current-endpoint > span:first-child {
+  color: #c9d1d9;
 }
 
 @media (max-width: 600px) {

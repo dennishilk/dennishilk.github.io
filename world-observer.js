@@ -315,6 +315,19 @@ function getScaleMarkerAlignment(position) {
   return "scale-marker-label-center";
 }
 
+function getCompactMarkerLabel(lines, fallback) {
+  const labelLines = (Array.isArray(lines) && lines.length ? lines : [fallback])
+    .map((line) => (line == null ? "" : String(line).trim()))
+    .filter(Boolean);
+  return labelLines.join(" · ");
+}
+
+function valuesMatch(value, endpoint) {
+  const numericValue = Number(value);
+  const numericEndpoint = Number(endpoint);
+  return Number.isFinite(numericValue) && Number.isFinite(numericEndpoint) && numericValue === numericEndpoint;
+}
+
 function renderWorldObserverScale(containerId, config) {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -348,6 +361,9 @@ function renderWorldObserverScale(containerId, config) {
   }
 
   const position = calculateScalePosition(config.value, config.min, config.max);
+  const isCurrentAtMin = position !== null && valuesMatch(config.value, config.min);
+  const isCurrentAtMax = position !== null && valuesMatch(config.value, config.max);
+  const compactMarkerLabel = getCompactMarkerLabel(config.markerLabelLines, config.markerLabel);
 
   const labels = document.createElement("div");
   labels.className = "media-index-scale-labels";
@@ -365,10 +381,16 @@ function renderWorldObserverScale(containerId, config) {
 
   const ticks = document.createElement("div");
   ticks.className = "media-index-scale-ticks world-observer-scale-ticks";
-  (config.ticks || []).forEach((tick) => {
+  const scaleTicks = config.ticks || [];
+  scaleTicks.forEach((tick, index) => {
     const tickElement = document.createElement("span");
     const tickLines = Array.isArray(tick) ? tick : [tick];
-    tickLines.filter(Boolean).forEach((tickLine) => {
+    const isCurrentEndpointTick = (isCurrentAtMin && index === 0) || (isCurrentAtMax && index === scaleTicks.length - 1);
+    const visibleTickLines = isCurrentEndpointTick ? tickLines.slice(0, 1) : tickLines;
+    if (isCurrentEndpointTick) {
+      tickElement.classList.add("world-observer-scale-current-endpoint");
+    }
+    visibleTickLines.filter(Boolean).forEach((tickLine) => {
       const lineElement = document.createElement("span");
       lineElement.textContent = tickLine;
       tickElement.appendChild(lineElement);
@@ -389,7 +411,10 @@ function renderWorldObserverScale(containerId, config) {
   const markerLabelLines = Array.isArray(config.markerLabelLines) && config.markerLabelLines.length
     ? config.markerLabelLines
     : [config.markerLabel];
-  if (position === null) {
+  if (isCurrentAtMin || isCurrentAtMax) {
+    marker.classList.add("world-observer-scale-marker-endpoint");
+    markerLabel.textContent = compactMarkerLabel || config.markerLabel || "Today";
+  } else if (position === null) {
     markerLabel.textContent = "— Today";
   } else {
     markerLabelLines.filter(Boolean).forEach((lineText) => {
