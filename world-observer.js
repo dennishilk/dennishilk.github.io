@@ -662,6 +662,7 @@ let teaObserverData = null;
 let electricityObserverData = null;
 let selectedFuelTrendRange = 60;
 let selectedTeaTrendRange = 60;
+let selectedElectricityTrendRange = 60;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -958,9 +959,45 @@ function hasAvailableElectricityObserver(data) {
   return status === "ok" && dataStatus === "ok";
 }
 
+function getElectricityTrendSeries(data) {
+  const history = getElectricityValue(data, "history")
+    || getElectricityValue(data, "series")
+    || getElectricityValue(data, "observations")
+    || getElectricityValue(data, "points")
+    || getElectricityValue(data, "trend_points")
+    || getElectricityValue(data, "trendPoints")
+    || [];
+  const series = Array.isArray(history) ? history : [];
+  const currentPrice = getElectricityValue(data, "current_price_eur_per_kwh");
+  const lastSeenDate = getElectricityValue(data, "last_seen_date") || getElectricityValue(data, "date") || getElectricityValue(data, "date_utc");
+  const points = series.map((point) => ({
+    date: point.date || point.date_utc || point.observed_at || point.timestamp,
+    value: point.value ?? point.current_price_eur_per_kwh ?? point.price_eur_per_kwh ?? point.primary_metric_value,
+  }));
+
+  if (Number.isFinite(Number(currentPrice)) && lastSeenDate && !points.some((point) => point.date === lastSeenDate)) {
+    points.push({ date: lastSeenDate, value: currentPrice });
+  }
+
+  return points;
+}
+
 function renderElectricityObserverUnavailable() {
   renderMetricCards("electricity-metric-grid", []);
-  renderObservedSummaryList("electricity-source-summaries", [], "Public electricity price data is not available yet.");
+  setText("electricity-trend-status", "Public electricity price data is not available yet.");
+  renderWorldObserverTrendChart("electricity-trend-chart", {
+    title: "Electricity Trend",
+    series: [],
+    formatter: formatElectricityEurPerKwh,
+    selectedRange: selectedElectricityTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: "Waiting for more historical observations.",
+    latestLabel: "Latest",
+    onRangeChange(range) {
+      selectedElectricityTrendRange = range;
+      renderElectricityObserver();
+    },
+  });
   setText("electricity-observer-status", "Germany-only electricity price observer is waiting for an available Society dashboard export.");
 }
 
@@ -972,12 +1009,7 @@ function renderElectricityObserver() {
   }
 
   const household = getElectricityValue(data, "representative_household") || {};
-  const sourceType = getElectricityValue(data, "source_type");
-  const sourceNote = getElectricityValue(data, "source_note");
-  const sourceContext = [
-    sourceType ? `Source type: ${sourceType}` : null,
-    sourceNote ? `Source note: ${sourceNote}` : null,
-  ].filter(Boolean);
+  const electricitySeries = getElectricityTrendSeries(data);
 
   renderMetricCards("electricity-metric-grid", [
     { label: "Current price", value: formatElectricityEurPerKwh(getElectricityValue(data, "current_price_eur_per_kwh")) },
@@ -991,7 +1023,21 @@ function renderElectricityObserver() {
     { label: "Supplier", value: getElectricityValue(data, "supplier") },
     { label: "Tariff", value: getElectricityValue(data, "tariff") },
   ]);
-  renderObservedSummaryList("electricity-source-summaries", sourceContext, "No source context published yet.");
+  setText("electricity-trend-status", "");
+  renderWorldObserverTrendChart("electricity-trend-chart", {
+    title: `Electricity Trend (last ${selectedElectricityTrendRange} days)`,
+    series: electricitySeries,
+    formatter: formatElectricityEurPerKwh,
+    unit: "€/kWh",
+    selectedRange: selectedElectricityTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: "Waiting for more historical observations.",
+    latestLabel: "Latest",
+    onRangeChange(range) {
+      selectedElectricityTrendRange = range;
+      renderElectricityObserver();
+    },
+  });
   setText("electricity-observer-status", "Germany-only household electricity price observer using exported public dashboard data.");
 }
 
