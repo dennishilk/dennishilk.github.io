@@ -1101,6 +1101,41 @@ function getTechnologyObserverSource(observer) {
   return observer?.source_url || observer?.source || observer?.source_name || observer?.fetch_url || "dashboard/technology.json";
 }
 
+function getDebianPackageSourceInfo(observer) {
+  const rawSource = getTechnologyObserverSource(observer);
+  const sourceUrl = observer?.source_url || observer?.sourceUrl || observer?.fetch_url || observer?.fetchUrl || null;
+  const isInternalDashboardSource = !rawSource || String(rawSource).includes("dashboard/technology.json");
+  return {
+    label: isInternalDashboardSource ? "Official Debian Packages index" : String(rawSource),
+    host: "deb.debian.org",
+    url: sourceUrl || "https://deb.debian.org/debian/dists/stable/main/binary-amd64/Packages.gz",
+  };
+}
+
+function formatDebianTrendValue(series, trendDelta) {
+  if (series.length <= 1) {
+    return "First observation";
+  }
+  const formattedDelta = formatPackageDelta(trendDelta);
+  return formattedDelta === "—" ? "No trend available yet" : formattedDelta;
+}
+
+function setDebianPackageSource(elementId, observer) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    return;
+  }
+  const source = getDebianPackageSourceInfo(observer);
+  element.textContent = "";
+  const link = document.createElement("a");
+  link.href = source.url;
+  link.textContent = source.label;
+  link.rel = "noopener noreferrer";
+  const host = document.createElement("span");
+  host.textContent = ` ${source.host}`;
+  element.append(link, host);
+}
+
 function renderTechnologyCoreCards(technologyData) {
   const container = document.getElementById("technology-core-cards");
   if (!container) {
@@ -1164,11 +1199,11 @@ function renderDebianPackageObserver(technologyData) {
     { label: "365d average", value: formatPackageCount(average365d) || "—" },
   ]);
 
+  const sourceInfo = getDebianPackageSourceInfo(observer);
   renderMetricCards("debian-package-trend-grid", [
-    { label: "TREND", value: formatPackageDelta(trendDelta) },
+    { label: "TREND", value: formatDebianTrendValue(series, trendDelta) },
     { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
-    { label: "Observer", value: observer?.observer || DEBIAN_PACKAGE_OBSERVER_ID },
-    { label: "Source", value: getTechnologyObserverSource(observer) },
+    { label: "Source", value: `${sourceInfo.label} · ${sourceInfo.host}` },
   ]);
 
   renderWorldObserverTrendChart("debian-package-trend-chart", {
@@ -1192,7 +1227,7 @@ function renderDebianPackageObserver(technologyData) {
   );
   renderObservedSummaryList("debian-package-observed-summaries", observer?.observed_changes || observer?.observedChanges, "No observed changes have been published yet.");
   renderDebianPackageHistory(series);
-  setText("debian-package-source", getTechnologyObserverSource(observer));
+  setDebianPackageSource("debian-package-source", observer);
 }
 
 function renderDebianPackageHistory(series) {
