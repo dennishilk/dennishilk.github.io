@@ -1046,6 +1046,103 @@ function getTechnologyTrendSeries(observer, currentValue, lastSeenDate) {
   return series.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
+
+function getDebianCompactHint(observer, series, trendDelta) {
+  if (series.length <= 1) {
+    return "First observation recorded";
+  }
+  const formattedDelta = formatPackageDelta(trendDelta);
+  return formattedDelta === "—" ? `${series.length} observations` : `Trend ${formattedDelta}`;
+}
+
+function renderTechnologyCard(container, { title, status, description, metrics = [], planned = false, unavailable = false, onClick = null }) {
+  const card = document.createElement(onClick ? "button" : "article");
+  card.className = `card observer-category technology-observer-card${planned ? " planned" : " active"}${unavailable ? " signal-unavailable" : ""}`;
+  if (onClick) {
+    card.type = "button";
+    card.addEventListener("click", onClick);
+  }
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  const statusLine = document.createElement("p");
+  statusLine.innerHTML = `<strong>Status:</strong> ${status}`;
+  const descriptionLine = document.createElement("p");
+  descriptionLine.textContent = description;
+  card.append(heading, statusLine, descriptionLine);
+
+  metrics.forEach((metric) => {
+    if (metric.value === null || metric.value === undefined || metric.value === "") {
+      return;
+    }
+    const line = document.createElement("p");
+    line.className = "technology-card-metric";
+    const label = document.createElement("span");
+    label.textContent = metric.label;
+    const value = document.createElement("strong");
+    value.textContent = metric.value;
+    line.append(label, value);
+    card.appendChild(line);
+  });
+
+  container.appendChild(card);
+  return card;
+}
+
+function renderTechnologyCoreCards(technologyData) {
+  const container = document.getElementById("technology-core-cards");
+  if (!container) {
+    return;
+  }
+  container.textContent = "";
+
+  const debianObserver = getTechnologyObserver(technologyData, DEBIAN_PACKAGE_OBSERVER_ID);
+  const currentCount = getObserverMetricValue(debianObserver);
+  const lastSeenDate = debianObserver?.last_seen_date || debianObserver?.lastSeenDate;
+  const trendDelta = debianObserver?.trend_delta ?? debianObserver?.trendDelta;
+  const series = getTechnologyTrendSeries(debianObserver, currentCount, lastSeenDate);
+  const debianRawStatus = debianObserver?.data_status || debianObserver?.status || "unavailable";
+  const debianStatus = formatInternetStatusLabel(debianRawStatus);
+
+  renderTechnologyCard(container, {
+    title: "Linux Kernel Size",
+    status: formatInternetStatusLabel(getTechnologyObserver(technologyData, LINUX_KERNEL_SIZE_OBSERVER_ID)?.data_status || getTechnologyObserver(technologyData, LINUX_KERNEL_SIZE_OBSERVER_ID)?.status || "unavailable"),
+    description: "Kernel source archive size observer planned for a verified supported stable or longterm release URL.",
+    metrics: [{ label: "Last seen", value: getTechnologyObserver(technologyData, LINUX_KERNEL_SIZE_OBSERVER_ID)?.last_seen_date || getTechnologyObserver(technologyData, LINUX_KERNEL_SIZE_OBSERVER_ID)?.lastSeenDate || "—" }],
+    planned: true,
+    unavailable: true,
+  });
+
+  renderTechnologyCard(container, {
+    title: "Debian Package Count",
+    status: debianStatus,
+    description: "Published Debian stable package count; opens details without replacing this category layout.",
+    metrics: [
+      { label: "current_package_count", value: formatPackageCount(currentCount) },
+      { label: "Last seen", value: lastSeenDate || "—" },
+      { label: "Trend", value: getDebianCompactHint(debianObserver, series, trendDelta) },
+    ],
+    unavailable: normalizeStatusValue(debianRawStatus) !== "ok",
+    onClick: () => showTechnologyDetailPanel("debian-package-detail-panel"),
+  });
+
+  renderTechnologyCard(container, {
+    title: "Arch Packages",
+    status: "planned",
+    description: "Observer card planned. Data will appear here once a public export is available.",
+    planned: true,
+  });
+}
+
+function showTechnologyDetailPanel(panelId) {
+  const panel = document.getElementById(panelId);
+  if (!panel) {
+    return;
+  }
+  panel.hidden = false;
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function renderDebianPackageObserver(technologyData) {
   const observer = getTechnologyObserver(technologyData, DEBIAN_PACKAGE_OBSERVER_ID);
   const currentCount = getObserverMetricValue(observer);
@@ -1100,8 +1197,8 @@ function renderLinuxKernelSizePlaceholder(technologyData) {
 }
 
 function renderTechnologyObservers(technologyData) {
+  renderTechnologyCoreCards(technologyData);
   renderDebianPackageObserver(technologyData);
-  renderLinuxKernelSizePlaceholder(technologyData);
 }
 
 function clampMediaIndex(value) {
@@ -2177,7 +2274,6 @@ async function initWorldObserver() {
       const technology = await loadOptionalJson(TECHNOLOGY_URLS);
       renderOptional("technology observers", () => renderTechnologyObservers(technology));
       renderPlannedGroups("technology-planned-groups", [
-        { title: "Core Software", cards: ["Arch Packages"] },
         { title: "Open Knowledge", cards: ["Wikipedia Growth", "OpenStreetMap Growth", "Internet Archive"] },
         { title: "Open Source Ecosystem", cards: ["GitHub Repositories", "Docker Hub Images"] },
         { title: "Space Technology", cards: ["Space / Satellites"] },
