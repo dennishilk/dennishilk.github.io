@@ -1027,7 +1027,7 @@ function getTechnologyObserver(technologyData, observerId) {
 
 function formatPackageNumber(value) {
   const number = Number(value);
-  return Number.isFinite(number) ? number.toLocaleString("en-US", { maximumFractionDigits: 2 }) : null;
+  return Number.isFinite(number) ? Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 }) : null;
 }
 
 function formatPackageCount(value) {
@@ -1234,9 +1234,9 @@ function renderTechnologyCoreCards(technologyData) {
   });
 
   renderTechnologyCard(container, {
-    title: "Arch Packages",
+    title: "Arch Linux Package Count",
     status: archStatus,
-    description: "Tracks Arch Linux core + extra packages for x86_64.",
+    description: "Tracks the published Arch Linux package count across the official core and extra repositories for x86_64.",
     metrics: [
       { label: "current_package_count", value: formatPackageCount(archCurrentCount) },
       { label: "Last seen", value: archLastSeenDate || "—" },
