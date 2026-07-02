@@ -728,6 +728,28 @@ footer {
   min-height: 150px;
 }
 
+.technology-observer-panel {
+  border: 1px solid rgba(0,180,255,0.28);
+  border-radius: 14px;
+  margin-top: 1rem;
+  padding: 1.1rem;
+}
+
+.technology-observer-panel h3 {
+  color: var(--accent);
+  margin-bottom: 0;
+}
+
+.technology-placeholder-panel {
+  border-style: dashed;
+  opacity: 0.9;
+}
+
+.observer-status-message {
+  color: #8b949e;
+  margin: 0.75rem 0 0;
+}
+
 .section-heading-row {
   align-items: center;
   display: flex;
