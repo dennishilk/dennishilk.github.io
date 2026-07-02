@@ -1055,9 +1055,12 @@ function getDebianCompactHint(observer, series, trendDelta) {
   return formattedDelta === "—" ? `${series.length} observations` : `Trend ${formattedDelta}`;
 }
 
-function renderTechnologyCard(container, { title, status, description, metrics = [], planned = false, unavailable = false, onClick = null }) {
-  const card = document.createElement(onClick ? "button" : "article");
+function renderTechnologyCard(container, { title, status, description, metrics = [], planned = false, unavailable = false, onClick = null, href = null }) {
+  const card = document.createElement(href ? "a" : onClick ? "button" : "article");
   card.className = `card observer-category technology-observer-card${planned ? " planned" : " active"}${unavailable ? " signal-unavailable" : ""}`;
+  if (href) {
+    card.href = href;
+  }
   if (onClick) {
     card.type = "button";
     card.addEventListener("click", onClick);
@@ -1089,6 +1092,15 @@ function renderTechnologyCard(container, { title, status, description, metrics =
   return card;
 }
 
+function getTechnologySecondaryMetric(observer, label) {
+  const metrics = observer?.secondary_metrics || observer?.secondaryMetrics || {};
+  return metrics[label];
+}
+
+function getTechnologyObserverSource(observer) {
+  return observer?.source_url || observer?.source || observer?.source_name || observer?.fetch_url || "dashboard/technology.json";
+}
+
 function renderTechnologyCoreCards(technologyData) {
   const container = document.getElementById("technology-core-cards");
   if (!container) {
@@ -1116,14 +1128,14 @@ function renderTechnologyCoreCards(technologyData) {
   renderTechnologyCard(container, {
     title: "Debian Package Count",
     status: debianStatus,
-    description: "Published Debian stable package count; opens details without replacing this category layout.",
+    description: "Published Debian stable package count; opens its dedicated observer page.",
     metrics: [
       { label: "current_package_count", value: formatPackageCount(currentCount) },
       { label: "Last seen", value: lastSeenDate || "—" },
       { label: "Trend", value: getDebianCompactHint(debianObserver, series, trendDelta) },
     ],
     unavailable: normalizeStatusValue(debianRawStatus) !== "ok",
-    onClick: () => showTechnologyDetailPanel("debian-package-detail-panel"),
+    href: "/world-observer/technology/debian-package-count.html",
   });
 
   renderTechnologyCard(container, {
@@ -1134,14 +1146,6 @@ function renderTechnologyCoreCards(technologyData) {
   });
 }
 
-function showTechnologyDetailPanel(panelId) {
-  const panel = document.getElementById(panelId);
-  if (!panel) {
-    return;
-  }
-  panel.hidden = false;
-  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
 
 function renderDebianPackageObserver(technologyData) {
   const observer = getTechnologyObserver(technologyData, DEBIAN_PACKAGE_OBSERVER_ID);
@@ -1150,17 +1154,21 @@ function renderDebianPackageObserver(technologyData) {
   const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
   const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate);
 
+  const average30d = getTechnologySecondaryMetric(observer, "30-day average");
+  const average365d = getTechnologySecondaryMetric(observer, "365-day average");
+
   renderMetricCards("debian-package-metric-grid", [
-    { label: "Current count", value: formatPackageCount(currentCount) },
-    { label: "Unit", value: "packages" },
-    { label: "Last seen", value: lastSeenDate },
-    { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
+    { label: "Current package count", value: formatPackageCount(currentCount) },
+    { label: "Last seen", value: lastSeenDate || "—" },
+    { label: "30d average", value: formatPackageCount(average30d) || "—" },
+    { label: "365d average", value: formatPackageCount(average365d) || "—" },
   ]);
 
   renderMetricCards("debian-package-trend-grid", [
     { label: "TREND", value: formatPackageDelta(trendDelta) },
+    { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
     { label: "Observer", value: observer?.observer || DEBIAN_PACKAGE_OBSERVER_ID },
-    { label: "Source", value: observer?.source || observer?.source_name || "Debian stable release data" },
+    { label: "Source", value: getTechnologyObserverSource(observer) },
   ]);
 
   renderWorldObserverTrendChart("debian-package-trend-chart", {
@@ -1182,6 +1190,28 @@ function renderDebianPackageObserver(technologyData) {
     "debian-package-status",
     series.length <= 1 ? "First Debian package count observation recorded. Trend line starts after the next observation." : "",
   );
+  renderObservedSummaryList("debian-package-observed-summaries", observer?.observed_changes || observer?.observedChanges, "No observed changes have been published yet.");
+  renderDebianPackageHistory(series);
+  setText("debian-package-source", getTechnologyObserverSource(observer));
+}
+
+function renderDebianPackageHistory(series) {
+  const container = document.getElementById("debian-package-history");
+  if (!container) {
+    return;
+  }
+  container.textContent = "";
+  if (!series.length) {
+    const item = document.createElement("li");
+    item.textContent = "No package count history has been published yet.";
+    container.appendChild(item);
+    return;
+  }
+  series.slice().reverse().forEach((point) => {
+    const item = document.createElement("li");
+    item.textContent = `${point.dateKey}: ${formatPackageCount(point.value)}`;
+    container.appendChild(item);
+  });
 }
 
 function renderLinuxKernelSizePlaceholder(technologyData) {
@@ -1198,6 +1228,9 @@ function renderLinuxKernelSizePlaceholder(technologyData) {
 
 function renderTechnologyObservers(technologyData) {
   renderTechnologyCoreCards(technologyData);
+}
+
+function renderDebianPackageObserverPage(technologyData) {
   renderDebianPackageObserver(technologyData);
 }
 
@@ -2278,6 +2311,13 @@ async function initWorldObserver() {
         { title: "Open Source Ecosystem", cards: ["GitHub Repositories", "Docker Hub Images"] },
         { title: "Space Technology", cards: ["Space / Satellites"] },
       ]);
+      showDashboard();
+      return;
+    }
+
+    if (page === "technology-debian-package-count") {
+      const technology = await loadOptionalJson(TECHNOLOGY_URLS);
+      renderOptional("Debian Package Count observer", () => renderDebianPackageObserverPage(technology));
       showDashboard();
       return;
     }
