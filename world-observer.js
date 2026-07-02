@@ -604,7 +604,7 @@ function getFuelValue(data, camelCaseKey, snakeCaseKey = camelCaseKey) {
 
 const SOCIETY_OBSERVERS = {
   fuel: { title: "Fuel Observer", panel: "fuel" },
-  electricity: { title: "Electricity Observer", panel: "planned" },
+  electricity: { title: "Electricity Observer", panel: "electricity" },
   "east-frisian-tea": { title: "East Frisian Tea Observer", panel: "tea" },
   food: { title: "Food Observer", panel: "planned" },
   housing: { title: "Housing Observer", panel: "planned" },
@@ -652,12 +652,14 @@ function setupRadioButtonSelector(selectorId, dataAttribute, onSelect) {
 
 const FUEL_OBSERVER_ID = "germany-fuel-prices";
 const TEA_OBSERVER_ID = "east-frisian-tea-prices";
+const ELECTRICITY_OBSERVER_ID = "germany-electricity-prices";
 const FUEL_TYPES = [
   { key: "benzin", label: "Super E5" },
   { key: "diesel", label: "Diesel" },
 ];
 let fuelObserverFuels = null;
 let teaObserverData = null;
+let electricityObserverData = null;
 let selectedFuelTrendRange = 60;
 let selectedTeaTrendRange = 60;
 
@@ -671,6 +673,10 @@ function getFuelObserver(societyData) {
 
 function getTeaObserver(societyData) {
   return (societyData?.observers || []).find((observer) => observer?.observer === TEA_OBSERVER_ID) || null;
+}
+
+function getElectricityObserver(societyData) {
+  return (societyData?.observers || []).find((observer) => observer?.observer === ELECTRICITY_OBSERVER_ID) || null;
 }
 
 function getSupportedFuelObserverFuels(fuels) {
@@ -905,11 +911,97 @@ function renderTeaObserver() {
   renderObservedSummaryList("tea-observed-summaries", observedChanges, "No observed tea price changes yet.");
 }
 
+
+function formatElectricityEurPerKwh(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(3)} €/kWh` : null;
+}
+
+function formatElectricityCtPerKwh(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} ct/kWh` : null;
+}
+
+function formatElectricityEuro(value, suffix = "") {
+  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} €${suffix}` : null;
+}
+
+function formatElectricityKwh(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value).toLocaleString()} kWh` : null;
+}
+
+function getElectricityValue(data, key) {
+  const directValue = getNestedValue(data, key) ?? getNestedValue(data?.data, key) ?? getNestedValue(data?.payload, key) ?? getNestedValue(data?.latest, key);
+  if (directValue !== undefined) {
+    return directValue;
+  }
+  if (key === "current_price_eur_per_kwh" && data?.primary_metric_path === key) {
+    return data.primary_metric_value;
+  }
+  const secondaryMetricFallbacks = {
+    annual_cost_eur: "Annual household cost",
+    monthly_cost_eur: "Monthly household cost",
+  };
+  const fallbackLabel = secondaryMetricFallbacks[key];
+  return fallbackLabel ? data?.secondary_metrics?.[fallbackLabel] : undefined;
+}
+
+function getElectricityStatus(data) {
+  const status = normalizeStatusValue(getElectricityValue(data, "status"));
+  const dataStatus = normalizeStatusValue(getElectricityValue(data, "data_status"));
+  return { status, dataStatus };
+}
+
+function hasAvailableElectricityObserver(data) {
+  if (!data) {
+    return false;
+  }
+  const { status, dataStatus } = getElectricityStatus(data);
+  return status === "ok" && dataStatus === "ok";
+}
+
+function renderElectricityObserverUnavailable() {
+  renderMetricCards("electricity-metric-grid", []);
+  renderObservedSummaryList("electricity-source-summaries", [], "Public electricity price data is not available yet.");
+  setText("electricity-observer-status", "Germany-only electricity price observer is waiting for an available Society dashboard export.");
+}
+
+function renderElectricityObserver() {
+  const data = electricityObserverData;
+  if (!hasAvailableElectricityObserver(data)) {
+    renderElectricityObserverUnavailable();
+    return;
+  }
+
+  const household = getElectricityValue(data, "representative_household") || {};
+  const sourceType = getElectricityValue(data, "source_type");
+  const sourceNote = getElectricityValue(data, "source_note");
+  const sourceContext = [
+    sourceType ? `Source type: ${sourceType}` : null,
+    sourceNote ? `Source note: ${sourceNote}` : null,
+  ].filter(Boolean);
+
+  renderMetricCards("electricity-metric-grid", [
+    { label: "Current price", value: formatElectricityEurPerKwh(getElectricityValue(data, "current_price_eur_per_kwh")) },
+    { label: "Work price", value: formatElectricityCtPerKwh(getElectricityValue(data, "work_price_ct_per_kwh")) },
+    { label: "Base price", value: formatElectricityEuro(getElectricityValue(data, "base_price_eur_per_year"), "/year") },
+    { label: "Annual household cost", value: formatElectricityEuro(getElectricityValue(data, "annual_cost_eur")) },
+    { label: "Monthly household cost", value: formatElectricityEuro(getElectricityValue(data, "monthly_cost_eur")) },
+    { label: "Location", value: household.location },
+    { label: "Postal code", value: household.postal_code },
+    { label: "Annual consumption", value: formatElectricityKwh(household.annual_consumption_kwh) },
+    { label: "Supplier", value: getElectricityValue(data, "supplier") },
+    { label: "Tariff", value: getElectricityValue(data, "tariff") },
+  ]);
+  renderObservedSummaryList("electricity-source-summaries", sourceContext, "No source context published yet.");
+  setText("electricity-observer-status", "Germany-only household electricity price observer using exported public dashboard data.");
+}
+
 function renderSocietyObservers(societyData) {
   const observer = getFuelObserver(societyData);
   teaObserverData = getTeaObserver(societyData);
+  electricityObserverData = getElectricityObserver(societyData);
   fuelObserverFuels = getSupportedFuelObserverFuels(observer?.fuels);
   renderFuelSelector(fuelObserverFuels);
+  renderElectricityObserver();
   renderTeaObserver();
   setupFuelSelector();
 }
@@ -922,6 +1014,7 @@ function showSocietyObserver(observerId = "fuel") {
   const observer = SOCIETY_OBSERVERS[observerId] || SOCIETY_OBSERVERS.fuel;
   const fuelPanel = document.getElementById("society-fuel-panel");
   const teaPanel = document.getElementById("society-tea-panel");
+  const electricityPanel = document.getElementById("society-electricity-panel");
   const plannedPanel = document.getElementById("society-planned-panel");
   const plannedTitle = document.getElementById("society-planned-title");
 
@@ -930,6 +1023,9 @@ function showSocietyObserver(observerId = "fuel") {
   }
   if (teaPanel) {
     teaPanel.hidden = observer.panel !== "tea";
+  }
+  if (electricityPanel) {
+    electricityPanel.hidden = observer.panel !== "electricity";
   }
   if (plannedPanel) {
     plannedPanel.hidden = observer.panel !== "planned";
