@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/world-observer/technology/arch-package-count.html">
+
+  <script>
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+
+  <title>Arch Linux Package Count – World Observer</title>
+  <meta name="description" content="Arch Linux Package Count observer page using the World Observer dashboard design language.">
+  <meta property="og:title" content="Arch Linux Package Count – World Observer">
+  <meta property="og:description" content="Observational dashboard preview. No causal or manipulation claims.">
+  <meta property="og:url" content="https://dennishilk.github.io/world-observer/technology/arch-package-count.html">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=42">
+  <script defer src="/stars.js"></script>
+  <script defer src="/world-observer.js"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+</head>
+<body data-observer-page="technology-arch-package-count">
+
+<canvas id="stars"></canvas>
+
+<div class="content world-observer-page">
+  <header class="dashboard-header">
+    <h1>
+      <span class="prompt">root@nebunix:~$</span>
+      <span class="name">Arch Linux Package Count</span>
+    </h1>
+    <p>Arch Linux package count observer loaded from the Technology dashboard export.</p>
+
+    <div class="button-group">
+      <div class="buttons">
+        <a href="/">Home</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/news.html"><i class="fas fa-newspaper"></i> News</a>
+      </div>
+    </div>
+    <nav class="observer-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a>
+      <a href="/world-observer/internet.html">Internet</a>
+      <a href="/world-observer/media.html">Media</a>
+      <a href="/world-observer/society.html">Society</a>
+      <a href="/world-observer/environment.html">Environment</a>
+      <a href="/world-observer/technology.html">Technology</a>
+    </nav>
+  </header>
+
+  <main>
+    <p><a class="world-observer-back-link" href="/world-observer/technology.html">← Back to Technology</a></p>
+    <section id="observer-fallback" class="observer-fallback" hidden>World Observer data not available yet.</section>
+    <section id="observer-dashboard" class="observer-dashboard" hidden>
+      <section class="observer-section technology-detail-observer" aria-labelledby="arch-package-title">
+        <div class="observer-title-row">
+          <h2 id="arch-package-title">Arch Linux Package Count</h2>
+        </div>
+        <p class="observer-limitation">Tracks the published Arch Linux package count across core and extra for x86_64.</p>
+        <div id="arch-package-metric-grid" class="metric-grid media-metrics" aria-label="Arch Linux package count metrics"></div>
+
+        <section class="observer-section media-trend technology-trend" aria-labelledby="arch-package-trend-title">
+          <h3 id="arch-package-trend-title">Trend</h3>
+          <p id="arch-package-status" class="observer-limitation" aria-live="polite"></p>
+          <div id="arch-package-trend-chart" class="world-observer-trend-chart" aria-label="Arch Linux package count trend chart"></div>
+          <div id="arch-package-trend-grid" class="metric-grid media-trend-metrics" aria-label="Arch Linux package count trend metrics"></div>
+        </section>
+
+        <section class="observer-section media-observed-changes" aria-labelledby="arch-package-observed-changes-title">
+          <h3 id="arch-package-observed-changes-title">Observed changes</h3>
+          <ul id="arch-package-observed-summaries" class="observed-summary-list"></ul>
+        </section>
+
+        <div class="observer-detail-grid">
+          <article class="detail-card"><h3>Source</h3><p id="arch-package-source">—</p></article>
+          <article class="detail-card"><h3>History</h3><ul id="arch-package-history" class="observed-summary-list"></ul></article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <div class="nebby-terminal-line">
+      <img src="/nebby.png" class="nebby" alt="Nebby mascot">
+      <span class="coffee-text">&gt; cat world-observer/technology/arch-package-count.html<span class="cursor"></span></span>
+    </div>
+
+    <p class="footer-links">
+      © 2026 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a>
+    </p>
+  </footer>
+</div>
+
+</body>
+</html>

@@ -335,7 +335,7 @@ function normalizeSeriesPoints(series) {
     .map((point) => {
       const dateValue = point?.date || point?.day || point?.timestamp || point?.last_seen_date || point?.lastSeenDate;
       const date = new Date(dateValue);
-      const value = Number(point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice);
+      const value = Number(point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice ?? point?.package_count ?? point?.packageCount ?? point?.current_package_count ?? point?.currentPackageCount);
       return Number.isFinite(date.getTime()) && Number.isFinite(value) ? { date, value, dateKey: date.toISOString().slice(0, 10) } : null;
     })
     .filter(Boolean)
@@ -665,6 +665,7 @@ let electricityObserverData = null;
 let selectedFuelTrendRange = 60;
 let selectedTeaTrendRange = 60;
 let selectedDebianPackageTrendRange = 365;
+let selectedArchPackageTrendRange = 365;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -1003,6 +1004,7 @@ function setupSocietyObserverSelector() {
 }
 
 const DEBIAN_PACKAGE_OBSERVER_ID = "debian-package-count";
+const ARCH_PACKAGE_OBSERVER_ID = "arch-package-count";
 const LINUX_KERNEL_SIZE_OBSERVER_ID = "linux-kernel-size";
 
 function getTechnologyObserver(technologyData, observerId) {
@@ -1028,6 +1030,8 @@ function getObserverMetricValue(observer) {
   const candidates = [
     observer?.current_count,
     observer?.currentCount,
+    observer?.current_package_count,
+    observer?.currentPackageCount,
     observer?.package_count,
     observer?.packageCount,
     observer?.latest_value,
@@ -1047,7 +1051,10 @@ function getTechnologyTrendSeries(observer, currentValue, lastSeenDate) {
 }
 
 
-function getDebianCompactHint(observer, series, trendDelta) {
+function getPackageCompactHint(observer, series, trendDelta) {
+  if (!observer || !series.length) {
+    return "Waiting for data";
+  }
   if (series.length <= 1) {
     return "First observation recorded";
   }
@@ -1112,7 +1119,21 @@ function getDebianPackageSourceInfo(observer) {
   };
 }
 
-function formatDebianTrendValue(series, trendDelta) {
+function getArchPackageSourceInfo(observer) {
+  const rawSource = getTechnologyObserverSource(observer);
+  const sourceUrl = observer?.source_url || observer?.sourceUrl || observer?.fetch_url || observer?.fetchUrl || null;
+  const isInternalDashboardSource = !rawSource || String(rawSource).includes("dashboard/technology.json");
+  return {
+    label: isInternalDashboardSource ? "Official Arch Linux repository databases" : String(rawSource),
+    host: "geo.mirror.pkgbuild.com",
+    url: sourceUrl || "https://geo.mirror.pkgbuild.com/",
+  };
+}
+
+function formatPackageTrendValue(series, trendDelta) {
+  if (!series.length) {
+    return "Waiting for data";
+  }
   if (series.length <= 1) {
     return "First observation";
   }
@@ -1126,6 +1147,22 @@ function setDebianPackageSource(elementId, observer) {
     return;
   }
   const source = getDebianPackageSourceInfo(observer);
+  element.textContent = "";
+  const link = document.createElement("a");
+  link.href = source.url;
+  link.textContent = source.label;
+  link.rel = "noopener noreferrer";
+  const host = document.createElement("span");
+  host.textContent = ` ${source.host}`;
+  element.append(link, host);
+}
+
+function setArchPackageSource(elementId, observer) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    return;
+  }
+  const source = getArchPackageSourceInfo(observer);
   element.textContent = "";
   const link = document.createElement("a");
   link.href = source.url;
@@ -1150,6 +1187,13 @@ function renderTechnologyCoreCards(technologyData) {
   const series = getTechnologyTrendSeries(debianObserver, currentCount, lastSeenDate);
   const debianRawStatus = debianObserver?.data_status || debianObserver?.status || "unavailable";
   const debianStatus = formatInternetStatusLabel(debianRawStatus);
+  const archObserver = getTechnologyObserver(technologyData, ARCH_PACKAGE_OBSERVER_ID);
+  const archCurrentCount = getObserverMetricValue(archObserver);
+  const archLastSeenDate = archObserver?.last_seen_date || archObserver?.lastSeenDate;
+  const archTrendDelta = archObserver?.trend_delta ?? archObserver?.trendDelta;
+  const archSeries = getTechnologyTrendSeries(archObserver, archCurrentCount, archLastSeenDate);
+  const archRawStatus = archObserver?.data_status || archObserver?.status || "unavailable";
+  const archStatus = formatInternetStatusLabel(archRawStatus);
 
   renderTechnologyCard(container, {
     title: "Linux Kernel Size",
@@ -1167,7 +1211,7 @@ function renderTechnologyCoreCards(technologyData) {
     metrics: [
       { label: "current_package_count", value: formatPackageCount(currentCount) },
       { label: "Last seen", value: lastSeenDate || "—" },
-      { label: "Trend", value: getDebianCompactHint(debianObserver, series, trendDelta) },
+      { label: "Trend", value: getPackageCompactHint(debianObserver, series, trendDelta) },
     ],
     unavailable: normalizeStatusValue(debianRawStatus) !== "ok",
     href: "/world-observer/technology/debian-package-count.html",
@@ -1175,9 +1219,15 @@ function renderTechnologyCoreCards(technologyData) {
 
   renderTechnologyCard(container, {
     title: "Arch Packages",
-    status: "planned",
-    description: "Observer card planned. Data will appear here once a public export is available.",
-    planned: true,
+    status: archStatus,
+    description: "Published Arch Linux package count across core and extra; opens its dedicated observer page.",
+    metrics: [
+      { label: "current_package_count", value: formatPackageCount(archCurrentCount) },
+      { label: "Last seen", value: archLastSeenDate || "—" },
+      { label: "Trend", value: getPackageCompactHint(archObserver, archSeries, archTrendDelta) },
+    ],
+    unavailable: normalizeStatusValue(archRawStatus) !== "ok",
+    href: "/world-observer/technology/arch-package-count.html",
   });
 }
 
@@ -1201,7 +1251,7 @@ function renderDebianPackageObserver(technologyData) {
 
   const sourceInfo = getDebianPackageSourceInfo(observer);
   renderMetricCards("debian-package-trend-grid", [
-    { label: "TREND", value: formatDebianTrendValue(series, trendDelta) },
+    { label: "TREND", value: formatPackageTrendValue(series, trendDelta) },
     { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
     { label: "Source", value: `${sourceInfo.label} · ${sourceInfo.host}` },
   ]);
@@ -1249,6 +1299,73 @@ function renderDebianPackageHistory(series) {
   });
 }
 
+function renderArchPackageObserver(technologyData) {
+  const observer = getTechnologyObserver(technologyData, ARCH_PACKAGE_OBSERVER_ID);
+  const currentCount = getObserverMetricValue(observer);
+  const lastSeenDate = observer?.last_seen_date || observer?.lastSeenDate;
+  const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
+  const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate);
+
+  const average30d = getTechnologySecondaryMetric(observer, "30-day average");
+  const average365d = getTechnologySecondaryMetric(observer, "365-day average");
+
+  renderMetricCards("arch-package-metric-grid", [
+    { label: "Current package count", value: formatPackageCount(currentCount) },
+    { label: "Last seen", value: lastSeenDate || "—" },
+    { label: "30d average", value: formatPackageCount(average30d) || "—" },
+    { label: "365d average", value: formatPackageCount(average365d) || "—" },
+  ]);
+
+  const sourceInfo = getArchPackageSourceInfo(observer);
+  renderMetricCards("arch-package-trend-grid", [
+    { label: "TREND", value: formatPackageTrendValue(series, trendDelta) },
+    { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
+    { label: "Source", value: `${sourceInfo.label} · ${sourceInfo.host}` },
+  ]);
+
+  renderWorldObserverTrendChart("arch-package-trend-chart", {
+    title: `Arch Linux Package Trend (last ${selectedArchPackageTrendRange} days)`,
+    series,
+    formatter: formatPackageCount,
+    unit: "packages",
+    selectedRange: selectedArchPackageTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: "Waiting for Arch Linux package count observations.",
+    latestLabel: "Latest",
+    onRangeChange(range) {
+      selectedArchPackageTrendRange = range;
+      renderArchPackageObserver(technologyData);
+    },
+  });
+
+  setText(
+    "arch-package-status",
+    series.length <= 1 ? "First Arch Linux package count observation recorded. Trend line starts after the next observation." : "",
+  );
+  renderObservedSummaryList("arch-package-observed-summaries", observer?.observed_changes || observer?.observedChanges, "No observed changes have been published yet.");
+  renderArchPackageHistory(series);
+  setArchPackageSource("arch-package-source", observer);
+}
+
+function renderArchPackageHistory(series) {
+  const container = document.getElementById("arch-package-history");
+  if (!container) {
+    return;
+  }
+  container.textContent = "";
+  if (!series.length) {
+    const item = document.createElement("li");
+    item.textContent = "No package count history has been published yet.";
+    container.appendChild(item);
+    return;
+  }
+  series.slice().reverse().forEach((point) => {
+    const item = document.createElement("li");
+    item.textContent = `${point.dateKey}: ${formatPackageCount(point.value)}`;
+    container.appendChild(item);
+  });
+}
+
 function renderLinuxKernelSizePlaceholder(technologyData) {
   const observer = getTechnologyObserver(technologyData, LINUX_KERNEL_SIZE_OBSERVER_ID);
   renderMetricCards("linux-kernel-size-metric-grid", [
@@ -1267,6 +1384,10 @@ function renderTechnologyObservers(technologyData) {
 
 function renderDebianPackageObserverPage(technologyData) {
   renderDebianPackageObserver(technologyData);
+}
+
+function renderArchPackageObserverPage(technologyData) {
+  renderArchPackageObserver(technologyData);
 }
 
 function clampMediaIndex(value) {
@@ -2353,6 +2474,13 @@ async function initWorldObserver() {
     if (page === "technology-debian-package-count") {
       const technology = await loadOptionalJson(TECHNOLOGY_URLS);
       renderOptional("Debian Package Count observer", () => renderDebianPackageObserverPage(technology));
+      showDashboard();
+      return;
+    }
+
+    if (page === "technology-arch-package-count") {
+      const technology = await loadOptionalJson(TECHNOLOGY_URLS);
+      renderOptional("Arch Linux Package Count observer", () => renderArchPackageObserverPage(technology));
       showDashboard();
       return;
     }
