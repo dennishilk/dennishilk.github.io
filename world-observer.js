@@ -1109,22 +1109,18 @@ function getTechnologyObserverSource(observer) {
 }
 
 function getDebianPackageSourceInfo(observer) {
-  const rawSource = getTechnologyObserverSource(observer);
   const sourceUrl = observer?.source_url || observer?.sourceUrl || observer?.fetch_url || observer?.fetchUrl || null;
-  const isInternalDashboardSource = !rawSource || String(rawSource).includes("dashboard/technology.json");
   return {
-    label: isInternalDashboardSource ? "Official Debian Packages index" : String(rawSource),
+    label: "Official Debian Packages index",
     host: "deb.debian.org",
     url: sourceUrl || "https://deb.debian.org/debian/dists/stable/main/binary-amd64/Packages.gz",
   };
 }
 
 function getArchPackageSourceInfo(observer) {
-  const rawSource = getTechnologyObserverSource(observer);
   const sourceUrl = observer?.source_url || observer?.sourceUrl || observer?.fetch_url || observer?.fetchUrl || null;
-  const isInternalDashboardSource = !rawSource || String(rawSource).includes("dashboard/technology.json");
   return {
-    label: isInternalDashboardSource ? "Official Arch Linux repository databases" : String(rawSource),
+    label: "Official Arch Linux repository databases",
     host: "geo.mirror.pkgbuild.com",
     url: sourceUrl || "https://geo.mirror.pkgbuild.com/",
   };
@@ -1153,8 +1149,8 @@ function setDebianPackageSource(elementId, observer) {
   link.textContent = source.label;
   link.rel = "noopener noreferrer";
   const host = document.createElement("span");
-  host.textContent = ` ${source.host}`;
-  element.append(link, host);
+  host.textContent = source.host;
+  element.append(link, document.createElement("br"), host);
 }
 
 function setArchPackageSource(elementId, observer) {
@@ -1169,8 +1165,8 @@ function setArchPackageSource(elementId, observer) {
   link.textContent = source.label;
   link.rel = "noopener noreferrer";
   const host = document.createElement("span");
-  host.textContent = ` ${source.host}`;
-  element.append(link, host);
+  host.textContent = source.host;
+  element.append(link, document.createElement("br"), host);
 }
 
 function renderTechnologyCoreCards(technologyData) {
@@ -1207,7 +1203,7 @@ function renderTechnologyCoreCards(technologyData) {
   renderTechnologyCard(container, {
     title: "Debian Package Count",
     status: debianStatus,
-    description: "Published Debian stable package count; opens its dedicated observer page.",
+    description: "Tracks Debian stable/main binary packages for amd64.",
     metrics: [
       { label: "current_package_count", value: formatPackageCount(currentCount) },
       { label: "Last seen", value: lastSeenDate || "—" },
@@ -1220,7 +1216,7 @@ function renderTechnologyCoreCards(technologyData) {
   renderTechnologyCard(container, {
     title: "Arch Packages",
     status: archStatus,
-    description: "Published Arch Linux package count across core and extra; opens its dedicated observer page.",
+    description: "Tracks Arch Linux core + extra packages for x86_64.",
     metrics: [
       { label: "current_package_count", value: formatPackageCount(archCurrentCount) },
       { label: "Last seen", value: archLastSeenDate || "—" },
