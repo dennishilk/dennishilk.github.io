@@ -27,6 +27,7 @@ const CATEGORY_LINKS = {
   media: "/world-observer/media.html",
   society: "/world-observer/society.html",
   environment: "/world-observer/environment.html",
+  technology: "/world-observer/technology.html",
 };
 
 async function loadJson(url) {
@@ -2008,6 +2009,28 @@ function showDashboard() {
   }
 }
 
+
+function renderPlannedGroups(id, groups) {
+  const container = document.getElementById(id);
+  if (!container) {
+    return;
+  }
+  container.textContent = "";
+  groups.forEach((group) => {
+    const section = document.createElement("section");
+    section.className = "observer-section compact-planned";
+    const title = document.createElement("h2");
+    title.textContent = group.title;
+    const cards = document.createElement("div");
+    cards.className = "cards observer-cards planned-cards";
+    const cardId = `${id}-${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+    cards.id = cardId;
+    section.append(title, cards);
+    container.appendChild(section);
+    renderPlannedCards(cardId, group.cards);
+  });
+}
+
 function renderPlannedCards(id, items) {
   const container = document.getElementById(id);
   if (!container) {
@@ -2042,6 +2065,17 @@ async function initWorldObserver() {
 
     if (page === "environment") {
       renderPlannedCards("environment-planned-cards", ["Weather", "Climate", "Natural disasters"]);
+      showDashboard();
+      return;
+    }
+
+    if (page === "technology") {
+      renderPlannedGroups("technology-planned-groups", [
+        { title: "Core Software", cards: ["Linux Kernel Size", "Debian Packages", "Arch Packages"] },
+        { title: "Open Knowledge", cards: ["Wikipedia Growth", "OpenStreetMap Growth", "Internet Archive"] },
+        { title: "Open Source Ecosystem", cards: ["GitHub Repositories", "Docker Hub Images"] },
+        { title: "Space Technology", cards: ["Space / Satellites"] },
+      ]);
       showDashboard();
       return;
     }
