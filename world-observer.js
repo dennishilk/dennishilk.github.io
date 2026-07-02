@@ -18,6 +18,7 @@ const MEDIA_URLS = [
 const MEDIA_HISTORY_URLS = buildDashboardUrls("history/media-language-germany.json");
 const INTERNET_URLS = buildDashboardUrls("internet.json");
 const SOCIETY_URLS = buildDashboardUrls("society.json");
+const TECHNOLOGY_URLS = buildDashboardUrls("technology.json");
 const INTERNET_HISTORY_URLS = buildDashboardUrls("history/internet-observers.json");
 const HEARTBEAT_URLS = buildDashboardUrls("heartbeat.json");
 const HEARTBEAT_CONTENTS_URL = "https://api.github.com/repos/dennishilk/world-observer/contents/state/heartbeat";
@@ -663,6 +664,7 @@ let teaObserverData = null;
 let electricityObserverData = null;
 let selectedFuelTrendRange = 60;
 let selectedTeaTrendRange = 60;
+let selectedDebianPackageTrendRange = 365;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -998,6 +1000,108 @@ function showSocietyObserver(observerId = "fuel") {
 
 function setupSocietyObserverSelector() {
   setupRadioButtonSelector("society-observer-selector", "society-observer", (observerId) => showSocietyObserver(observerId));
+}
+
+const DEBIAN_PACKAGE_OBSERVER_ID = "debian-package-count";
+const LINUX_KERNEL_SIZE_OBSERVER_ID = "linux-kernel-size";
+
+function getTechnologyObserver(technologyData, observerId) {
+  return (technologyData?.observers || []).find((observer) => observer?.observer === observerId) || null;
+}
+
+function formatPackageCount(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value).toLocaleString()} packages` : null;
+}
+
+function formatPackageDelta(value) {
+  if (!Number.isFinite(Number(value))) {
+    return "—";
+  }
+  const delta = Number(value);
+  if (delta === 0) {
+    return "→ 0 packages";
+  }
+  return `${delta > 0 ? "↑" : "↓"} ${Math.abs(delta).toLocaleString()} packages`;
+}
+
+function getObserverMetricValue(observer) {
+  const candidates = [
+    observer?.current_count,
+    observer?.currentCount,
+    observer?.package_count,
+    observer?.packageCount,
+    observer?.latest_value,
+    observer?.latestValue,
+    observer?.primary_metric_value,
+  ];
+  return candidates.find((value) => Number.isFinite(Number(value)));
+}
+
+function getTechnologyTrendSeries(observer, currentValue, lastSeenDate) {
+  const series = normalizeSeriesPoints(observer?.history || observer?.series || observer?.points || []);
+  const hasCurrentPoint = series.some((point) => point.dateKey === lastSeenDate);
+  if (Number.isFinite(Number(currentValue)) && lastSeenDate && !hasCurrentPoint) {
+    series.push({ date: new Date(lastSeenDate), value: Number(currentValue), dateKey: lastSeenDate });
+  }
+  return series.sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+function renderDebianPackageObserver(technologyData) {
+  const observer = getTechnologyObserver(technologyData, DEBIAN_PACKAGE_OBSERVER_ID);
+  const currentCount = getObserverMetricValue(observer);
+  const lastSeenDate = observer?.last_seen_date || observer?.lastSeenDate;
+  const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
+  const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate);
+
+  renderMetricCards("debian-package-metric-grid", [
+    { label: "Current count", value: formatPackageCount(currentCount) },
+    { label: "Unit", value: "packages" },
+    { label: "Last seen", value: lastSeenDate },
+    { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
+  ]);
+
+  renderMetricCards("debian-package-trend-grid", [
+    { label: "TREND", value: formatPackageDelta(trendDelta) },
+    { label: "Observer", value: observer?.observer || DEBIAN_PACKAGE_OBSERVER_ID },
+    { label: "Source", value: observer?.source || observer?.source_name || "Debian stable release data" },
+  ]);
+
+  renderWorldObserverTrendChart("debian-package-trend-chart", {
+    title: `Debian Package Trend (last ${selectedDebianPackageTrendRange} days)`,
+    series,
+    formatter: formatPackageCount,
+    unit: "packages",
+    selectedRange: selectedDebianPackageTrendRange,
+    availableRanges: [30, 60, 180, 365],
+    emptyState: "Waiting for Debian package count observations.",
+    latestLabel: "Latest",
+    onRangeChange(range) {
+      selectedDebianPackageTrendRange = range;
+      renderDebianPackageObserver(technologyData);
+    },
+  });
+
+  setText(
+    "debian-package-status",
+    series.length <= 1 ? "First Debian package count observation recorded. Trend line starts after the next observation." : "",
+  );
+}
+
+function renderLinuxKernelSizePlaceholder(technologyData) {
+  const observer = getTechnologyObserver(technologyData, LINUX_KERNEL_SIZE_OBSERVER_ID);
+  renderMetricCards("linux-kernel-size-metric-grid", [
+    { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
+    { label: "Last seen", value: observer?.last_seen_date || observer?.lastSeenDate },
+  ]);
+  setText(
+    "linux-kernel-size-status",
+    observer?.degraded_reason || "Unavailable until a verified supported kernel source archive URL exposes a numeric Content-Length.",
+  );
+}
+
+function renderTechnologyObservers(technologyData) {
+  renderDebianPackageObserver(technologyData);
+  renderLinuxKernelSizePlaceholder(technologyData);
 }
 
 function clampMediaIndex(value) {
@@ -2070,8 +2174,10 @@ async function initWorldObserver() {
     }
 
     if (page === "technology") {
+      const technology = await loadOptionalJson(TECHNOLOGY_URLS);
+      renderOptional("technology observers", () => renderTechnologyObservers(technology));
       renderPlannedGroups("technology-planned-groups", [
-        { title: "Core Software", cards: ["Linux Kernel Size", "Debian Packages", "Arch Packages"] },
+        { title: "Core Software", cards: ["Arch Packages"] },
         { title: "Open Knowledge", cards: ["Wikipedia Growth", "OpenStreetMap Growth", "Internet Archive"] },
         { title: "Open Source Ecosystem", cards: ["GitHub Repositories", "Docker Hub Images"] },
         { title: "Space Technology", cards: ["Space / Satellites"] },
