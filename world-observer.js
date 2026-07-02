@@ -254,7 +254,21 @@ function createMetricCard(label, value) {
   labelElement.textContent = label;
 
   const valueElement = document.createElement("strong");
-  valueElement.textContent = value ?? "—";
+  if (Array.isArray(value)) {
+    const lines = value.map((line) => (line == null ? "" : String(line).trim())).filter(Boolean);
+    if (lines.length) {
+      lines.forEach((line, index) => {
+        if (index > 0) {
+          valueElement.appendChild(document.createElement("br"));
+        }
+        valueElement.appendChild(document.createTextNode(line));
+      });
+    } else {
+      valueElement.textContent = "—";
+    }
+  } else {
+    valueElement.textContent = value ?? "—";
+  }
 
   card.append(labelElement, valueElement);
   return card;
@@ -1011,8 +1025,14 @@ function getTechnologyObserver(technologyData, observerId) {
   return (technologyData?.observers || []).find((observer) => observer?.observer === observerId) || null;
 }
 
+function formatPackageNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toLocaleString("en-US", { maximumFractionDigits: 2 }) : null;
+}
+
 function formatPackageCount(value) {
-  return Number.isFinite(Number(value)) ? `${Number(value).toLocaleString()} packages` : null;
+  const formatted = formatPackageNumber(value);
+  return formatted ? `${formatted} packages` : null;
 }
 
 function formatPackageDelta(value) {
@@ -1023,7 +1043,7 @@ function formatPackageDelta(value) {
   if (delta === 0) {
     return "→ 0 packages";
   }
-  return `${delta > 0 ? "↑" : "↓"} ${Math.abs(delta).toLocaleString()} packages`;
+  return `${delta > 0 ? "↑" : "↓"} ${formatPackageNumber(Math.abs(delta))} packages`;
 }
 
 function getObserverMetricValue(observer) {
@@ -1249,7 +1269,7 @@ function renderDebianPackageObserver(technologyData) {
   renderMetricCards("debian-package-trend-grid", [
     { label: "TREND", value: formatPackageTrendValue(series, trendDelta) },
     { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
-    { label: "Source", value: `${sourceInfo.label} · ${sourceInfo.host}` },
+    { label: "Source", value: [sourceInfo.label, sourceInfo.host] },
   ]);
 
   renderWorldObserverTrendChart("debian-package-trend-chart", {
@@ -1316,7 +1336,7 @@ function renderArchPackageObserver(technologyData) {
   renderMetricCards("arch-package-trend-grid", [
     { label: "TREND", value: formatPackageTrendValue(series, trendDelta) },
     { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
-    { label: "Source", value: `${sourceInfo.label} · ${sourceInfo.host}` },
+    { label: "Source", value: [sourceInfo.label, sourceInfo.host] },
   ]);
 
   renderWorldObserverTrendChart("arch-package-trend-chart", {
