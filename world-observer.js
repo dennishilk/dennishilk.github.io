@@ -657,6 +657,7 @@ const FUEL_TYPES = [
   { key: "benzin", label: "Super E5" },
   { key: "diesel", label: "Diesel" },
 ];
+let fuelObserverData = null;
 let fuelObserverFuels = null;
 let teaObserverData = null;
 let electricityObserverData = null;
@@ -736,8 +737,60 @@ function formatFuelTrend(data) {
   return `${arrow} ${formatFuelPrice(Math.abs(delta))}${percentText}`;
 }
 
-function getFuelTrendSeries(data, currentPrice, lastSeenDate) {
-  const history = data.history || data.series || data.observations || data.points || data.trend_points || data.trendPoints || [];
+function normalizeFuelDashboardHistoryPoints(points, fuelType) {
+  const normalizedFuelType = normalizeFuelType(fuelType);
+  return (Array.isArray(points) ? points : [])
+    .map((point) => {
+      const pointFuelType = point?.fuel_type || point?.fuelType || point?.fuel;
+      if (pointFuelType && normalizeFuelType(pointFuelType) !== normalizedFuelType) {
+        return null;
+      }
+
+      const nestedFuel = point?.fuels?.[normalizedFuelType] || point?.fuels?.[normalizedFuelType.replace(/_/g, "-")];
+      const value = point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice ?? nestedFuel?.value ?? nestedFuel?.price ?? nestedFuel?.current_price ?? nestedFuel?.currentPrice;
+      return { ...point, value };
+    })
+    .filter((point) => point && Number.isFinite(Number(point.value)));
+}
+
+function getFuelDashboardHistory(data, fuelType) {
+  const normalizedFuelType = normalizeFuelType(fuelType);
+  const candidates = [
+    fuelObserverData?.dashboard_history,
+    fuelObserverData?.dashboardHistory,
+    fuelObserverData?.exported_dashboard_history,
+    fuelObserverData?.exportedDashboardHistory,
+    fuelObserverData?.history,
+    fuelObserverData?.series,
+    fuelObserverData?.observations,
+    fuelObserverData?.points,
+    data?.dashboard_history,
+    data?.dashboardHistory,
+    data?.exported_dashboard_history,
+    data?.exportedDashboardHistory,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      const fuelSpecificPoints = normalizeFuelDashboardHistoryPoints(candidate, normalizedFuelType);
+      if (fuelSpecificPoints.length) {
+        return fuelSpecificPoints;
+      }
+    } else if (candidate && typeof candidate === "object") {
+      const fuelHistory = candidate[normalizedFuelType] || candidate[normalizedFuelType.replace(/_/g, "-")] || candidate.fuels?.[normalizedFuelType];
+      const points = Array.isArray(fuelHistory) ? fuelHistory : fuelHistory?.history || fuelHistory?.points || fuelHistory?.data || fuelHistory?.values;
+      if (Array.isArray(points) && points.length) {
+        return normalizeFuelDashboardHistoryPoints(points, normalizedFuelType);
+      }
+    }
+  }
+
+  return [];
+}
+
+function getFuelTrendSeries(data, currentPrice, lastSeenDate, fuelType) {
+  const dashboardHistory = getFuelDashboardHistory(data, fuelType);
+  const history = dashboardHistory.length ? dashboardHistory : data.history || data.series || data.observations || data.points || data.trend_points || data.trendPoints || [];
   const normalized = normalizeSeriesPoints(history);
   const hasCurrentPoint = normalized.some((point) => point.dateKey === lastSeenDate);
   if (Number.isFinite(Number(currentPrice)) && lastSeenDate && !hasCurrentPoint) {
@@ -760,8 +813,8 @@ function renderFuelObserver(fuelType = "benzin") {
   const observedChanges = data.observed_changes || data.observedChanges;
   const lastSeenDate = data.last_seen_date || data.lastSeenDate;
   const trendDelta = getFuelValue(data, "trendDelta", "trend_delta");
-  const isFirstObservation = !Number.isFinite(Number(trendDelta));
-  const fuelSeries = getFuelTrendSeries(data, currentPrice, lastSeenDate);
+  const fuelSeries = getFuelTrendSeries(data, currentPrice, lastSeenDate, fuelType);
+  const isFirstObservation = fuelSeries.length < 2 && !Number.isFinite(Number(trendDelta));
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
@@ -1043,6 +1096,7 @@ function renderElectricityObserver() {
 
 function renderSocietyObservers(societyData) {
   const observer = getFuelObserver(societyData);
+  fuelObserverData = observer;
   teaObserverData = getTeaObserver(societyData);
   electricityObserverData = getElectricityObserver(societyData);
   fuelObserverFuels = getSupportedFuelObserverFuels(observer?.fuels);
