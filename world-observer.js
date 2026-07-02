@@ -657,13 +657,11 @@ const FUEL_TYPES = [
   { key: "benzin", label: "Super E5" },
   { key: "diesel", label: "Diesel" },
 ];
-let fuelObserverData = null;
 let fuelObserverFuels = null;
 let teaObserverData = null;
 let electricityObserverData = null;
 let selectedFuelTrendRange = 60;
 let selectedTeaTrendRange = 60;
-let selectedElectricityTrendRange = 60;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -737,60 +735,8 @@ function formatFuelTrend(data) {
   return `${arrow} ${formatFuelPrice(Math.abs(delta))}${percentText}`;
 }
 
-function normalizeFuelDashboardHistoryPoints(points, fuelType) {
-  const normalizedFuelType = normalizeFuelType(fuelType);
-  return (Array.isArray(points) ? points : [])
-    .map((point) => {
-      const pointFuelType = point?.fuel_type || point?.fuelType || point?.fuel;
-      if (pointFuelType && normalizeFuelType(pointFuelType) !== normalizedFuelType) {
-        return null;
-      }
-
-      const nestedFuel = point?.fuels?.[normalizedFuelType] || point?.fuels?.[normalizedFuelType.replace(/_/g, "-")];
-      const value = point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice ?? nestedFuel?.value ?? nestedFuel?.price ?? nestedFuel?.current_price ?? nestedFuel?.currentPrice;
-      return { ...point, value };
-    })
-    .filter((point) => point && Number.isFinite(Number(point.value)));
-}
-
-function getFuelDashboardHistory(data, fuelType) {
-  const normalizedFuelType = normalizeFuelType(fuelType);
-  const candidates = [
-    fuelObserverData?.dashboard_history,
-    fuelObserverData?.dashboardHistory,
-    fuelObserverData?.exported_dashboard_history,
-    fuelObserverData?.exportedDashboardHistory,
-    fuelObserverData?.history,
-    fuelObserverData?.series,
-    fuelObserverData?.observations,
-    fuelObserverData?.points,
-    data?.dashboard_history,
-    data?.dashboardHistory,
-    data?.exported_dashboard_history,
-    data?.exportedDashboardHistory,
-  ];
-
-  for (const candidate of candidates) {
-    if (Array.isArray(candidate)) {
-      const fuelSpecificPoints = normalizeFuelDashboardHistoryPoints(candidate, normalizedFuelType);
-      if (fuelSpecificPoints.length) {
-        return fuelSpecificPoints;
-      }
-    } else if (candidate && typeof candidate === "object") {
-      const fuelHistory = candidate[normalizedFuelType] || candidate[normalizedFuelType.replace(/_/g, "-")] || candidate.fuels?.[normalizedFuelType];
-      const points = Array.isArray(fuelHistory) ? fuelHistory : fuelHistory?.history || fuelHistory?.points || fuelHistory?.data || fuelHistory?.values;
-      if (Array.isArray(points) && points.length) {
-        return normalizeFuelDashboardHistoryPoints(points, normalizedFuelType);
-      }
-    }
-  }
-
-  return [];
-}
-
-function getFuelTrendSeries(data, currentPrice, lastSeenDate, fuelType) {
-  const dashboardHistory = getFuelDashboardHistory(data, fuelType);
-  const history = dashboardHistory.length ? dashboardHistory : data.history || data.series || data.observations || data.points || data.trend_points || data.trendPoints || [];
+function getFuelTrendSeries(data, currentPrice, lastSeenDate) {
+  const history = data.history || data.series || data.observations || data.points || data.trend_points || data.trendPoints || [];
   const normalized = normalizeSeriesPoints(history);
   const hasCurrentPoint = normalized.some((point) => point.dateKey === lastSeenDate);
   if (Number.isFinite(Number(currentPrice)) && lastSeenDate && !hasCurrentPoint) {
@@ -813,8 +759,8 @@ function renderFuelObserver(fuelType = "benzin") {
   const observedChanges = data.observed_changes || data.observedChanges;
   const lastSeenDate = data.last_seen_date || data.lastSeenDate;
   const trendDelta = getFuelValue(data, "trendDelta", "trend_delta");
-  const fuelSeries = getFuelTrendSeries(data, currentPrice, lastSeenDate, fuelType);
-  const isFirstObservation = fuelSeries.length < 2 && !Number.isFinite(Number(trendDelta));
+  const isFirstObservation = !Number.isFinite(Number(trendDelta));
+  const fuelSeries = getFuelTrendSeries(data, currentPrice, lastSeenDate);
 
   renderMetricCards("fuel-metric-grid", [
     { label: "Current price", value: formatFuelPrice(currentPrice) },
@@ -965,21 +911,12 @@ function renderTeaObserver() {
   renderObservedSummaryList("tea-observed-summaries", observedChanges, "No observed tea price changes yet.");
 }
 
-
 function formatElectricityEurPerKwh(value) {
   return Number.isFinite(Number(value)) ? `${Number(value).toFixed(3)} €/kWh` : null;
 }
 
-function formatElectricityCtPerKwh(value) {
-  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} ct/kWh` : null;
-}
-
-function formatElectricityEuro(value, suffix = "") {
-  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} €${suffix}` : null;
-}
-
-function formatElectricityKwh(value) {
-  return Number.isFinite(Number(value)) ? `${Number(value).toLocaleString()} kWh` : null;
+function formatElectricityEuro(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value).toFixed(2)} €` : null;
 }
 
 function getElectricityValue(data, key) {
@@ -998,105 +935,28 @@ function getElectricityValue(data, key) {
   return fallbackLabel ? data?.secondary_metrics?.[fallbackLabel] : undefined;
 }
 
-function getElectricityStatus(data) {
-  const status = normalizeStatusValue(getElectricityValue(data, "status"));
-  const dataStatus = normalizeStatusValue(getElectricityValue(data, "data_status"));
-  return { status, dataStatus };
-}
-
-function hasAvailableElectricityObserver(data) {
-  if (!data) {
-    return false;
-  }
-  const { status, dataStatus } = getElectricityStatus(data);
-  return status === "ok" && dataStatus === "ok";
-}
-
-function getElectricityTrendSeries(data) {
-  const history = getElectricityValue(data, "history")
-    || getElectricityValue(data, "series")
-    || getElectricityValue(data, "observations")
-    || getElectricityValue(data, "points")
-    || getElectricityValue(data, "trend_points")
-    || getElectricityValue(data, "trendPoints")
-    || [];
-  const series = Array.isArray(history) ? history : [];
-  const currentPrice = getElectricityValue(data, "current_price_eur_per_kwh");
-  const lastSeenDate = getElectricityValue(data, "last_seen_date") || getElectricityValue(data, "date") || getElectricityValue(data, "date_utc");
-  const points = series.map((point) => ({
-    date: point.date || point.date_utc || point.observed_at || point.timestamp,
-    value: point.value ?? point.current_price_eur_per_kwh ?? point.price_eur_per_kwh ?? point.primary_metric_value,
-  }));
-
-  if (Number.isFinite(Number(currentPrice)) && lastSeenDate && !points.some((point) => point.date === lastSeenDate)) {
-    points.push({ date: lastSeenDate, value: currentPrice });
-  }
-
-  return points;
-}
-
-function renderElectricityObserverUnavailable() {
-  renderMetricCards("electricity-metric-grid", []);
-  setText("electricity-trend-status", "Public electricity price data is not available yet.");
-  renderWorldObserverTrendChart("electricity-trend-chart", {
-    title: "Electricity Trend",
-    series: [],
-    formatter: formatElectricityEurPerKwh,
-    selectedRange: selectedElectricityTrendRange,
-    availableRanges: [30, 60, 180, 365],
-    emptyState: "Waiting for more historical observations.",
-    latestLabel: "Latest",
-    onRangeChange(range) {
-      selectedElectricityTrendRange = range;
-      renderElectricityObserver();
-    },
-  });
-  setText("electricity-observer-status", "Germany-only electricity price observer is waiting for an available Society dashboard export.");
+function hasElectricityMetricData(data) {
+  return ["current_price_eur_per_kwh", "annual_cost_eur", "monthly_cost_eur"].some((key) => Number.isFinite(Number(getElectricityValue(data, key))));
 }
 
 function renderElectricityObserver() {
   const data = electricityObserverData;
-  if (!hasAvailableElectricityObserver(data)) {
-    renderElectricityObserverUnavailable();
+  if (!hasElectricityMetricData(data)) {
+    renderMetricCards("electricity-metric-grid", []);
+    setText("electricity-observer-status", "Germany-only electricity price observer is waiting for an available Society dashboard export.");
     return;
   }
 
-  const household = getElectricityValue(data, "representative_household") || {};
-  const electricitySeries = getElectricityTrendSeries(data);
-
   renderMetricCards("electricity-metric-grid", [
     { label: "Current price", value: formatElectricityEurPerKwh(getElectricityValue(data, "current_price_eur_per_kwh")) },
-    { label: "Work price", value: formatElectricityCtPerKwh(getElectricityValue(data, "work_price_ct_per_kwh")) },
-    { label: "Base price", value: formatElectricityEuro(getElectricityValue(data, "base_price_eur_per_year"), "/year") },
     { label: "Annual household cost", value: formatElectricityEuro(getElectricityValue(data, "annual_cost_eur")) },
     { label: "Monthly household cost", value: formatElectricityEuro(getElectricityValue(data, "monthly_cost_eur")) },
-    { label: "Location", value: household.location },
-    { label: "Postal code", value: household.postal_code },
-    { label: "Annual consumption", value: formatElectricityKwh(household.annual_consumption_kwh) },
-    { label: "Supplier", value: getElectricityValue(data, "supplier") },
-    { label: "Tariff", value: getElectricityValue(data, "tariff") },
   ]);
-  setText("electricity-trend-status", "");
-  renderWorldObserverTrendChart("electricity-trend-chart", {
-    title: `Electricity Trend (last ${selectedElectricityTrendRange} days)`,
-    series: electricitySeries,
-    formatter: formatElectricityEurPerKwh,
-    unit: "€/kWh",
-    selectedRange: selectedElectricityTrendRange,
-    availableRanges: [30, 60, 180, 365],
-    emptyState: "Waiting for more historical observations.",
-    latestLabel: "Latest",
-    onRangeChange(range) {
-      selectedElectricityTrendRange = range;
-      renderElectricityObserver();
-    },
-  });
   setText("electricity-observer-status", "Germany-only household electricity price observer using exported public dashboard data.");
 }
 
 function renderSocietyObservers(societyData) {
   const observer = getFuelObserver(societyData);
-  fuelObserverData = observer;
   teaObserverData = getTeaObserver(societyData);
   electricityObserverData = getElectricityObserver(societyData);
   fuelObserverFuels = getSupportedFuelObserverFuels(observer?.fuels);
