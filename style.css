@@ -728,6 +728,42 @@ footer {
   min-height: 150px;
 }
 
+.technology-card-grid {
+  margin-top: 1rem;
+}
+
+.technology-observer-card {
+  background: var(--card-bg);
+  color: inherit;
+  font: inherit;
+  min-height: 190px;
+  text-align: left;
+  width: 100%;
+}
+
+button.technology-observer-card {
+  cursor: pointer;
+}
+
+.technology-card-metric {
+  border-top: 1px solid rgba(0,180,255,0.16);
+  display: flex;
+  gap: 0.6rem;
+  justify-content: space-between;
+  padding-top: 0.45rem;
+}
+
+.technology-card-metric span {
+  color: #8b949e;
+}
+
+.technology-card-metric strong {
+  color: var(--accent);
+  font-size: 0.86rem;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
 .technology-observer-panel {
   border: 1px solid rgba(0,180,255,0.28);
   border-radius: 14px;

@@ -61,8 +61,9 @@
       <section class="observer-section" aria-labelledby="technology-core-title">
         <h2 id="technology-core-title">Core Software</h2>
         <p class="observer-limitation">Descriptive software ecosystem indicators from public dashboard exports.</p>
+        <div id="technology-core-cards" class="cards observer-cards technology-card-grid" aria-label="Core Software observer cards"></div>
 
-        <article class="technology-observer-panel" aria-labelledby="debian-package-title">
+        <article id="debian-package-detail-panel" class="technology-observer-panel" aria-labelledby="debian-package-title" hidden>
           <div class="observer-title-row">
             <h3 id="debian-package-title">Debian Package Count</h3>
           </div>
@@ -72,22 +73,9 @@
           <div id="debian-package-trend-chart" class="world-observer-trend-chart" aria-label="Debian package count trend chart"></div>
           <p id="debian-package-status" class="observer-status-message"></p>
         </article>
-
-        <article class="technology-observer-panel technology-placeholder-panel" aria-labelledby="linux-kernel-size-title">
-          <div class="observer-title-row">
-            <h3 id="linux-kernel-size-title">Linux Kernel Size</h3>
-          </div>
-          <p>Linux Kernel Size remains unavailable until a verified supported stable or longterm kernel source archive URL with numeric Content-Length is available.</p>
-          <div id="linux-kernel-size-metric-grid" class="metrics-grid media-metrics" aria-label="Linux kernel size placeholder metrics"></div>
-          <p id="linux-kernel-size-status" class="observer-status-message"></p>
-        </article>
       </section>
 
-      <section class="observer-section" aria-labelledby="technology-planned-title">
-        <h2 id="technology-planned-title">Planned cards</h2>
-        <p class="observer-limitation">These cards are placeholders until public, non-tracking data exports are available.</p>
-        <div id="technology-planned-groups" aria-label="Technology planned observer groups"></div>
-      </section>
+      <div id="technology-planned-groups" aria-label="Technology observer groups"></div>
     </section>
   </main>
 
