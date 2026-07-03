@@ -367,17 +367,58 @@ function filterSeriesByRange(series, rangeDays) {
   return points.filter((point) => point.date.getTime() >= cutoff);
 }
 
-function calculateChartDomain(points) {
+function getNiceChartStep(rawStep) {
+  const step = Number(rawStep);
+  if (!Number.isFinite(step) || step <= 0) {
+    return 1;
+  }
+  const magnitude = 10 ** Math.floor(Math.log10(step));
+  const normalized = step / magnitude;
+  const niceNormalized = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+  return niceNormalized * magnitude;
+}
+
+function calculateChartTicks(min, max, count = 5, options = {}) {
+  const low = Number(min);
+  const high = Number(max);
+  if (!Number.isFinite(low) || !Number.isFinite(high) || count < 2) {
+    return [];
+  }
+  const lower = Math.min(low, high);
+  const upper = Math.max(low, high);
+  const range = upper - lower;
+  const paddedRange = range > 0 ? range : Math.max(Math.abs(upper) * 0.002, 2);
+  const center = range > 0 ? null : upper;
+  const step = options.integerTicks ? Math.max(1, Math.ceil(getNiceChartStep(paddedRange / (count - 1)))) : getNiceChartStep(paddedRange / (count - 1));
+  const tickMin = center === null ? Math.floor(lower / step) * step : Math.floor((center - paddedRange / 2) / step) * step;
+  const tickMax = center === null ? Math.ceil(upper / step) * step : Math.ceil((center + paddedRange / 2) / step) * step;
+  const ticks = [];
+  for (let tick = tickMin; tick <= tickMax + step / 2; tick += step) {
+    ticks.push(Number(tick.toFixed(10)));
+  }
+  if (ticks.length < 2) {
+    ticks.unshift(Number((ticks[0] - step).toFixed(10)));
+    ticks.push(Number((ticks[ticks.length - 1] + step).toFixed(10)));
+  }
+  return ticks.sort((a, b) => a - b);
+}
+
+function calculateChartDomain(points, options = {}) {
   const values = points.map((point) => point.value);
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
   const valueRange = maxValue - minValue;
-  const padding = valueRange ? valueRange * 0.16 : Math.max(Math.abs(maxValue) * 0.04, 0.05);
+  const padding = valueRange ? valueRange * 0.16 : Math.max(Math.abs(maxValue) * 0.001, 1);
+  const yTicks = calculateChartTicks(minValue - padding, maxValue + padding, 5, options);
+  const firstDate = points[0]?.date;
+  const lastDate = points[points.length - 1]?.date;
+  const oneDay = 24 * 60 * 60 * 1000;
   return {
-    minDate: points[0]?.date,
-    maxDate: points[points.length - 1]?.date,
-    minValue: minValue - padding,
-    maxValue: maxValue + padding,
+    minDate: points.length === 1 ? new Date(firstDate.getTime() - oneDay) : firstDate,
+    maxDate: points.length === 1 ? new Date(lastDate.getTime() + oneDay) : lastDate,
+    minValue: yTicks[0] ?? minValue - padding,
+    maxValue: yTicks[yTicks.length - 1] ?? maxValue + padding,
+    yTicks,
   };
 }
 
@@ -396,15 +437,6 @@ function formatChartValue(value, formatter, unit = "") {
   return unit ? `${formatted} ${unit}` : formatted;
 }
 
-function calculateTicks(min, max, count = 5) {
-  const low = Number(min);
-  const high = Number(max);
-  if (!Number.isFinite(low) || !Number.isFinite(high) || count < 2) {
-    return [];
-  }
-  const step = (high - low) / (count - 1 || 1);
-  return Array.from({ length: count }, (_, index) => low + (step * index));
-}
 
 function buildTrendChartPath(points, domain, width, height, padding) {
   const timeRange = Math.max(1, domain.maxDate.getTime() - domain.minDate.getTime());
@@ -461,21 +493,12 @@ function renderWorldObserverTrendChart(containerId, config = {}) {
     return;
   }
 
-  if (points.length === 1) {
-    const first = document.createElement("div");
-    first.className = "world-observer-trend-first-observation";
-    first.innerHTML = `<span>First observation</span><strong>${formatChartValue(points[0].value, config.formatter, config.unit)}</strong><small>${points[0].dateKey}</small><em>Trend line starts after the next observation.</em>`;
-    container.appendChild(first);
-    container.setAttribute("aria-label", `${config.title || "Trend chart"}: first observation ${points[0].dateKey}`);
-    return;
-  }
-
   const width = 920;
   const height = 330;
   const padding = { top: 24, right: 34, bottom: 52, left: 72 };
-  const domain = calculateChartDomain(points);
+  const domain = calculateChartDomain(points, { integerTicks: Boolean(config.integerTicks) });
   const plotted = buildTrendChartPath(points, domain, width, height, padding);
-  const yTicks = calculateTicks(domain.minValue, domain.maxValue, 5);
+  const yTicks = domain.yTicks || calculateChartTicks(domain.minValue, domain.maxValue, 5, { integerTicks: Boolean(config.integerTicks) });
   const xTickCount = Math.min(6, plotted.length);
   const xTicks = Array.from({ length: xTickCount }, (_, index) => plotted[Math.round(index * (plotted.length - 1) / Math.max(1, xTickCount - 1))]);
   const pathData = plotted.map((point, index) => `${index ? "L" : "M"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
@@ -1176,7 +1199,7 @@ function getArchPackageSourceInfo(observer) {
   return {
     label: "Official Arch Linux Repositories",
     labelLines: ["Official Arch Linux", "Repositories"],
-    host: "geo.mirror.pkgbuild.com",
+    host: "",
     url: sourceUrl || "https://geo.mirror.pkgbuild.com/",
   };
 }
@@ -1225,9 +1248,7 @@ function setArchPackageSource(elementId, observer) {
     link.appendChild(document.createTextNode(line));
   });
   link.rel = "noopener noreferrer";
-  const host = document.createElement("span");
-  host.textContent = source.host;
-  element.append(link, document.createElement("br"), host);
+  element.append(link);
 }
 
 function renderTechnologyCoreCards(technologyData) {
@@ -1318,6 +1339,7 @@ function renderDebianPackageObserver(technologyData) {
     series,
     formatter: formatPackageCount,
     unit: "packages",
+    integerTicks: true,
     selectedRange: selectedDebianPackageTrendRange,
     availableRanges: [30, 60, 180, 365],
     emptyState: "Waiting for Debian package count observations.",
@@ -1377,7 +1399,7 @@ function renderArchPackageObserver(technologyData) {
   renderMetricCards("arch-package-trend-grid", [
     { label: "TREND", value: formatPackageTrendValue(series, trendDelta) },
     { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
-    { label: "Source", value: [...(sourceInfo.labelLines || [sourceInfo.label]), sourceInfo.host] },
+    { label: "Source", value: sourceInfo.labelLines || [sourceInfo.label] },
   ]);
 
   renderWorldObserverTrendChart("arch-package-trend-chart", {
@@ -1385,6 +1407,7 @@ function renderArchPackageObserver(technologyData) {
     series,
     formatter: formatPackageCount,
     unit: "packages",
+    integerTicks: true,
     selectedRange: selectedArchPackageTrendRange,
     availableRanges: [30, 60, 180, 365],
     emptyState: "Waiting for Arch Linux package count observations.",
