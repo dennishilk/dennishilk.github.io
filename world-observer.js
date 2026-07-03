@@ -1140,7 +1140,8 @@ function getDebianPackageSourceInfo(observer) {
 function getArchPackageSourceInfo(observer) {
   const sourceUrl = observer?.source_url || observer?.sourceUrl || observer?.fetch_url || observer?.fetchUrl || null;
   return {
-    label: "Official Arch Linux repository databases",
+    label: "Official Arch Linux Repositories",
+    labelLines: ["Official Arch Linux", "Repositories"],
     host: "geo.mirror.pkgbuild.com",
     url: sourceUrl || "https://geo.mirror.pkgbuild.com/",
   };
@@ -1182,7 +1183,13 @@ function setArchPackageSource(elementId, observer) {
   element.textContent = "";
   const link = document.createElement("a");
   link.href = source.url;
-  link.textContent = source.label;
+  const labelLines = Array.isArray(source.labelLines) && source.labelLines.length ? source.labelLines : [source.label];
+  labelLines.filter(Boolean).forEach((line, index) => {
+    if (index > 0) {
+      link.appendChild(document.createElement("br"));
+    }
+    link.appendChild(document.createTextNode(line));
+  });
   link.rel = "noopener noreferrer";
   const host = document.createElement("span");
   host.textContent = source.host;
@@ -1336,7 +1343,7 @@ function renderArchPackageObserver(technologyData) {
   renderMetricCards("arch-package-trend-grid", [
     { label: "TREND", value: formatPackageTrendValue(series, trendDelta) },
     { label: "Status", value: formatInternetStatusLabel(observer?.data_status || observer?.status || "unavailable") },
-    { label: "Source", value: [sourceInfo.label, sourceInfo.host] },
+    { label: "Source", value: [...(sourceInfo.labelLines || [sourceInfo.label]), sourceInfo.host] },
   ]);
 
   renderWorldObserverTrendChart("arch-package-trend-chart", {
