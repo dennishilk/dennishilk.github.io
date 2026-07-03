@@ -500,7 +500,13 @@ function renderWorldObserverTrendChart(containerId, config = {}) {
 
   const width = 920;
   const height = 330;
-  const padding = { top: 24, right: 34, bottom: 52, left: 72 };
+  const yAxisWidth = Number(config.yAxisWidth);
+  const padding = {
+    top: 24,
+    right: 34,
+    bottom: 52,
+    left: Number.isFinite(yAxisWidth) && yAxisWidth > 0 ? yAxisWidth : 72,
+  };
   const domain = calculateChartDomain(points, { integerTicks: Boolean(config.integerTicks), padding: config.yPadding });
   const plotted = buildTrendChartPath(points, domain, width, height, padding);
   const yTicks = domain.yTicks || calculateChartTicks(domain.minValue, domain.maxValue, 5, { integerTicks: Boolean(config.integerTicks) });
@@ -1377,6 +1383,7 @@ function renderDebianPackageObserver(technologyData) {
     unit: "packages",
     integerTicks: true,
     yPadding: getPackageChartPadding(series),
+    yAxisWidth: 148,
     selectedRange: selectedDebianPackageTrendRange,
     availableRanges: [30, 60, 180, 365],
     emptyState: "Waiting for Debian package count observations.",
@@ -1447,6 +1454,7 @@ function renderArchPackageObserver(technologyData) {
     unit: "packages",
     integerTicks: true,
     yPadding: getPackageChartPadding(series),
+    yAxisWidth: 148,
     selectedRange: selectedArchPackageTrendRange,
     availableRanges: [30, 60, 180, 365],
     emptyState: "Waiting for Arch Linux package count observations.",
