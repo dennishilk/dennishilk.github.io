@@ -347,9 +347,9 @@ function valuesMatch(value, endpoint) {
 function normalizeSeriesPoints(series) {
   return (Array.isArray(series) ? series : [])
     .map((point) => {
-      const dateValue = point?.date || point?.day || point?.timestamp || point?.last_seen_date || point?.lastSeenDate;
+      const dateValue = point?.date || point?.day || point?.timestamp || point?.observed_at || point?.observedAt || point?.last_seen_date || point?.lastSeenDate;
       const date = new Date(dateValue);
-      const value = Number(point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice ?? point?.package_count ?? point?.packageCount ?? point?.current_package_count ?? point?.currentPackageCount);
+      const value = Number(point?.value ?? point?.price ?? point?.current_price ?? point?.currentPrice ?? point?.package_count ?? point?.packageCount ?? point?.current_package_count ?? point?.currentPackageCount ?? point?.primary_metric_value ?? point?.primaryMetricValue);
       return Number.isFinite(date.getTime()) && Number.isFinite(value) ? { date, value, dateKey: date.toISOString().slice(0, 10) } : null;
     })
     .filter(Boolean)
@@ -1061,8 +1061,42 @@ function getObserverMetricValue(observer) {
   return candidates.find((value) => Number.isFinite(Number(value)));
 }
 
-function getTechnologyTrendSeries(observer, currentValue, lastSeenDate) {
-  const series = normalizeSeriesPoints(observer?.history || observer?.series || observer?.points || []);
+function getTechnologyHistoryPoints(candidate, observerId) {
+  if (!candidate) {
+    return [];
+  }
+  if (Array.isArray(candidate)) {
+    const matchingPoints = candidate.filter((point) => !point?.observer || point.observer === observerId);
+    return matchingPoints.length ? matchingPoints : candidate;
+  }
+  return candidate.points || candidate.history || candidate.observations || candidate.series || candidate.data || candidate.values || [];
+}
+
+function getTechnologyHistoryCandidates(technologyData, observer) {
+  const observerId = observer?.observer;
+  const candidates = [
+    observer?.history,
+    observer?.series,
+    observer?.points,
+    observer?.observations,
+    observer?.trend_points,
+    observer?.trendPoints,
+    observer?.data,
+    observer?.values,
+  ];
+  const topLevelHistory = technologyData?.history || technologyData?.observer_history || technologyData?.observerHistory || technologyData?.observations;
+  if (observerId && topLevelHistory) {
+    candidates.push(topLevelHistory[observerId]);
+    candidates.push(topLevelHistory[observer?.display_name]);
+    candidates.push(topLevelHistory);
+  }
+  return candidates.map((candidate) => getTechnologyHistoryPoints(candidate, observerId));
+}
+
+function getTechnologyTrendSeries(observer, currentValue, lastSeenDate, technologyData = null) {
+  const series = getTechnologyHistoryCandidates(technologyData, observer)
+    .map((candidate) => normalizeSeriesPoints(candidate))
+    .find((candidate) => candidate.length) || [];
   const hasCurrentPoint = series.some((point) => point.dateKey === lastSeenDate);
   if (Number.isFinite(Number(currentValue)) && lastSeenDate && !hasCurrentPoint) {
     series.push({ date: new Date(lastSeenDate), value: Number(currentValue), dateKey: lastSeenDate });
@@ -1200,14 +1234,14 @@ function renderTechnologyCoreCards(technologyData) {
   const currentCount = getObserverMetricValue(debianObserver);
   const lastSeenDate = debianObserver?.last_seen_date || debianObserver?.lastSeenDate;
   const trendDelta = debianObserver?.trend_delta ?? debianObserver?.trendDelta;
-  const series = getTechnologyTrendSeries(debianObserver, currentCount, lastSeenDate);
+  const series = getTechnologyTrendSeries(debianObserver, currentCount, lastSeenDate, technologyData);
   const debianRawStatus = debianObserver?.data_status || debianObserver?.status || "unavailable";
   const debianStatus = formatInternetStatusLabel(debianRawStatus);
   const archObserver = getTechnologyObserver(technologyData, ARCH_PACKAGE_OBSERVER_ID);
   const archCurrentCount = getObserverMetricValue(archObserver);
   const archLastSeenDate = archObserver?.last_seen_date || archObserver?.lastSeenDate;
   const archTrendDelta = archObserver?.trend_delta ?? archObserver?.trendDelta;
-  const archSeries = getTechnologyTrendSeries(archObserver, archCurrentCount, archLastSeenDate);
+  const archSeries = getTechnologyTrendSeries(archObserver, archCurrentCount, archLastSeenDate, technologyData);
   const archRawStatus = archObserver?.data_status || archObserver?.status || "unavailable";
   const archStatus = formatInternetStatusLabel(archRawStatus);
 
@@ -1253,7 +1287,7 @@ function renderDebianPackageObserver(technologyData) {
   const currentCount = getObserverMetricValue(observer);
   const lastSeenDate = observer?.last_seen_date || observer?.lastSeenDate;
   const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
-  const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate);
+  const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate, technologyData);
 
   const average30d = getTechnologySecondaryMetric(observer, "30-day average");
   const average365d = getTechnologySecondaryMetric(observer, "365-day average");
@@ -1320,7 +1354,7 @@ function renderArchPackageObserver(technologyData) {
   const currentCount = getObserverMetricValue(observer);
   const lastSeenDate = observer?.last_seen_date || observer?.lastSeenDate;
   const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
-  const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate);
+  const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate, technologyData);
 
   const average30d = getTechnologySecondaryMetric(observer, "30-day average");
   const average365d = getTechnologySecondaryMetric(observer, "365-day average");
