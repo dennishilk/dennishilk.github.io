@@ -408,7 +408,12 @@ function calculateChartDomain(points, options = {}) {
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
   const valueRange = maxValue - minValue;
-  const padding = valueRange ? valueRange * 0.16 : Math.max(Math.abs(maxValue) * 0.001, 1);
+  const explicitPadding = Number(options.padding);
+  const padding = Number.isFinite(explicitPadding) && explicitPadding >= 0
+    ? explicitPadding
+    : valueRange
+      ? valueRange * 0.16
+      : Math.max(Math.abs(maxValue) * 0.001, 1);
   const yTicks = calculateChartTicks(minValue - padding, maxValue + padding, 5, options);
   const firstDate = points[0]?.date;
   const lastDate = points[points.length - 1]?.date;
@@ -496,7 +501,7 @@ function renderWorldObserverTrendChart(containerId, config = {}) {
   const width = 920;
   const height = 330;
   const padding = { top: 24, right: 34, bottom: 52, left: 72 };
-  const domain = calculateChartDomain(points, { integerTicks: Boolean(config.integerTicks) });
+  const domain = calculateChartDomain(points, { integerTicks: Boolean(config.integerTicks), padding: config.yPadding });
   const plotted = buildTrendChartPath(points, domain, width, height, padding);
   const yTicks = domain.yTicks || calculateChartTicks(domain.minValue, domain.maxValue, 5, { integerTicks: Boolean(config.integerTicks) });
   const xTickCount = Math.min(6, plotted.length);
@@ -1196,12 +1201,40 @@ function getDebianPackageSourceInfo(observer) {
 
 function getArchPackageSourceInfo(observer) {
   const sourceUrl = observer?.source_url || observer?.sourceUrl || observer?.fetch_url || observer?.fetchUrl || null;
+  const officialSourceUrl = sourceUrl && !String(sourceUrl).includes("geo.mirror.pkgbuild.com") ? sourceUrl : "https://archlinux.org/packages/";
   return {
     label: "Official Arch Linux Repositories",
     labelLines: ["Official Arch Linux", "Repositories"],
     host: "",
-    url: sourceUrl || "https://geo.mirror.pkgbuild.com/",
+    url: officialSourceUrl,
   };
+}
+
+function getPackageTrendDelta(observer, series) {
+  const directDelta = observer?.trend_delta ?? observer?.trendDelta;
+  if (Number.isFinite(Number(directDelta))) {
+    return Number(directDelta);
+  }
+  const secondaryChange = getTechnologySecondaryMetric(observer, "Change");
+  if (Number.isFinite(Number(secondaryChange))) {
+    return Number(secondaryChange);
+  }
+  if (Array.isArray(series) && series.length >= 2) {
+    return Number(series[series.length - 1].value) - Number(series[series.length - 2].value);
+  }
+  return null;
+}
+
+function getPackageChartPadding(series) {
+  if (!Array.isArray(series) || !series.length) {
+    return undefined;
+  }
+  const values = series.map((point) => Number(point.value)).filter((value) => Number.isFinite(value));
+  if (!values.length) {
+    return undefined;
+  }
+  const range = Math.max(...values) - Math.min(...values);
+  return Math.max(1, range * 0.16);
 }
 
 function formatPackageTrendValue(series, trendDelta) {
@@ -1212,7 +1245,7 @@ function formatPackageTrendValue(series, trendDelta) {
     return "First observation";
   }
   const formattedDelta = formatPackageDelta(trendDelta);
-  return formattedDelta === "—" ? "No trend available yet" : formattedDelta;
+  return formattedDelta === "—" ? `${series.length} observations` : formattedDelta;
 }
 
 function setDebianPackageSource(elementId, observer) {
@@ -1261,15 +1294,17 @@ function renderTechnologyCoreCards(technologyData) {
   const debianObserver = getTechnologyObserver(technologyData, DEBIAN_PACKAGE_OBSERVER_ID);
   const currentCount = getObserverMetricValue(debianObserver);
   const lastSeenDate = debianObserver?.last_seen_date || debianObserver?.lastSeenDate;
-  const trendDelta = debianObserver?.trend_delta ?? debianObserver?.trendDelta;
+  let trendDelta = debianObserver?.trend_delta ?? debianObserver?.trendDelta;
   const series = getTechnologyTrendSeries(debianObserver, currentCount, lastSeenDate, technologyData);
+  trendDelta = getPackageTrendDelta(debianObserver, series);
   const debianRawStatus = debianObserver?.data_status || debianObserver?.status || "unavailable";
   const debianStatus = formatInternetStatusLabel(debianRawStatus);
   const archObserver = getTechnologyObserver(technologyData, ARCH_PACKAGE_OBSERVER_ID);
   const archCurrentCount = getObserverMetricValue(archObserver);
   const archLastSeenDate = archObserver?.last_seen_date || archObserver?.lastSeenDate;
-  const archTrendDelta = archObserver?.trend_delta ?? archObserver?.trendDelta;
+  let archTrendDelta = archObserver?.trend_delta ?? archObserver?.trendDelta;
   const archSeries = getTechnologyTrendSeries(archObserver, archCurrentCount, archLastSeenDate, technologyData);
+  archTrendDelta = getPackageTrendDelta(archObserver, archSeries);
   const archRawStatus = archObserver?.data_status || archObserver?.status || "unavailable";
   const archStatus = formatInternetStatusLabel(archRawStatus);
 
@@ -1314,8 +1349,9 @@ function renderDebianPackageObserver(technologyData) {
   const observer = getTechnologyObserver(technologyData, DEBIAN_PACKAGE_OBSERVER_ID);
   const currentCount = getObserverMetricValue(observer);
   const lastSeenDate = observer?.last_seen_date || observer?.lastSeenDate;
-  const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
+  let trendDelta = observer?.trend_delta ?? observer?.trendDelta;
   const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate, technologyData);
+  trendDelta = getPackageTrendDelta(observer, series);
 
   const average30d = getTechnologySecondaryMetric(observer, "30-day average");
   const average365d = getTechnologySecondaryMetric(observer, "365-day average");
@@ -1340,6 +1376,7 @@ function renderDebianPackageObserver(technologyData) {
     formatter: formatPackageCount,
     unit: "packages",
     integerTicks: true,
+    yPadding: getPackageChartPadding(series),
     selectedRange: selectedDebianPackageTrendRange,
     availableRanges: [30, 60, 180, 365],
     emptyState: "Waiting for Debian package count observations.",
@@ -1382,8 +1419,9 @@ function renderArchPackageObserver(technologyData) {
   const observer = getTechnologyObserver(technologyData, ARCH_PACKAGE_OBSERVER_ID);
   const currentCount = getObserverMetricValue(observer);
   const lastSeenDate = observer?.last_seen_date || observer?.lastSeenDate;
-  const trendDelta = observer?.trend_delta ?? observer?.trendDelta;
+  let trendDelta = observer?.trend_delta ?? observer?.trendDelta;
   const series = getTechnologyTrendSeries(observer, currentCount, lastSeenDate, technologyData);
+  trendDelta = getPackageTrendDelta(observer, series);
 
   const average30d = getTechnologySecondaryMetric(observer, "30-day average");
   const average365d = getTechnologySecondaryMetric(observer, "365-day average");
@@ -1408,6 +1446,7 @@ function renderArchPackageObserver(technologyData) {
     formatter: formatPackageCount,
     unit: "packages",
     integerTicks: true,
+    yPadding: getPackageChartPadding(series),
     selectedRange: selectedArchPackageTrendRange,
     availableRanges: [30, 60, 180, 365],
     emptyState: "Waiting for Arch Linux package count observations.",
