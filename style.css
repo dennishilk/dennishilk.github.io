@@ -728,6 +728,16 @@ footer {
   min-height: 150px;
 }
 
+#environment-planned-cards {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  #environment-planned-cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
 .technology-card-grid {
   margin-top: 1rem;
 }

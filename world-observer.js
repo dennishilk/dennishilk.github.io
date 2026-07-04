@@ -27,6 +27,7 @@ const CATEGORY_LINKS = {
   internet: "/world-observer/internet.html",
   media: "/world-observer/media.html",
   society: "/world-observer/society.html",
+  "earth & space": "/world-observer/environment.html",
   environment: "/world-observer/environment.html",
   technology: "/world-observer/technology.html",
 };
@@ -2581,7 +2582,7 @@ async function initWorldObserver() {
     }
 
     if (page === "environment") {
-      renderPlannedCards("environment-planned-cards", ["Weather", "Climate", "Natural disasters"]);
+      renderPlannedCards("environment-planned-cards", ["Cosmic Ray Observer", "Geomagnetic Storm Observer", "Natural Disaster Observer", "Ionosphere Observer"]);
       showDashboard();
       return;
     }
