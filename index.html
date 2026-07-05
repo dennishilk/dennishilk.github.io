@@ -129,9 +129,20 @@
       Open-source Linux tools, experimental input projects and utilities by Dennis Hilk.
     </p>
 
-    <div id="visitor-counter">
-      <span class="label">Visitors:</span>
-      <span class="glow" id="visitor-count">loading…</span>
+    <div id="visitor-counter" aria-live="polite">
+      <div class="traffic-metric">
+        <span class="label">PAGEVIEWS TODAY</span>
+        <span class="glow" id="traffic-today">loading…</span>
+      </div>
+      <div class="traffic-metric">
+        <span class="label">LAST 24H</span>
+        <span class="glow" id="traffic-24h">loading…</span>
+      </div>
+      <div class="traffic-metric">
+        <span class="label">TOTAL PAGEVIEWS</span>
+        <span class="glow" id="traffic-total">loading…</span>
+      </div>
+      <div class="traffic-updated" id="traffic-updated"></div>
     </div>
 
     <p class="footer-links">
@@ -145,31 +156,49 @@
 
 <!-- JS -->
 <script>
-async function updateVisitorCounter() {
-  const el = document.getElementById("visitor-count");
-  try {
-    const res = await fetch("https://visitor-counter.hilk-dennis.workers.dev/");
-    const data = await res.json();
+async function updateTrafficCounter() {
+  const fields = {
+    today: document.getElementById("traffic-today"),
+    last24h: document.getElementById("traffic-24h"),
+    total: document.getElementById("traffic-total"),
+    updated: document.getElementById("traffic-updated"),
+  };
 
-    const start = 42000;
-    const end = data.count;
-    const duration = 900;
+  const formatPageviews = (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toLocaleString() : "—";
+  };
 
-    let startTime = null;
-    function animate(ts) {
-      if (!startTime) startTime = ts;
-      const progress = Math.min((ts - startTime) / duration, 1);
-      const current = Math.floor(start + (end - start) * progress);
-
-      el.textContent = current.toLocaleString();
-      if (progress < 1) requestAnimationFrame(animate);
+  const firstValue = (data, names) => {
+    for (const name of names) {
+      if (data[name] !== undefined && data[name] !== null) return data[name];
     }
-    requestAnimationFrame(animate);
+    return null;
+  };
+
+  try {
+    const res = await fetch(`/data/site-traffic.json?ts=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error("Traffic data unavailable");
+
+    const data = await res.json();
+    fields.today.textContent = formatPageviews(firstValue(data, ["pageviews_today", "today", "today_pageviews"]));
+    fields.last24h.textContent = formatPageviews(firstValue(data, ["pageviews_last_24h", "last_24h", "last24h_pageviews"]));
+    fields.total.textContent = formatPageviews(firstValue(data, ["total_pageviews", "total", "pageviews_total"]));
+
+    if (data.generated_at) {
+      const generatedAt = new Date(data.generated_at);
+      fields.updated.textContent = Number.isNaN(generatedAt.getTime())
+        ? `updated ${data.generated_at}`
+        : `updated ${generatedAt.toLocaleString()}`;
+    }
   } catch {
-    el.textContent = "offline";
+    fields.today.textContent = "offline";
+    fields.last24h.textContent = "offline";
+    fields.total.textContent = "offline";
+    fields.updated.textContent = "traffic data unavailable";
   }
 }
-updateVisitorCounter();
+updateTrafficCounter();
 </script>
 
 </body>
