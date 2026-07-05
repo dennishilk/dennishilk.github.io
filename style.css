@@ -1472,11 +1472,11 @@ button.technology-observer-card {
 /* Site Traffic Observer */
 .traffic-page { text-align: left; background:#02060b; }
 .traffic-shell { max-width: 1500px; margin: 0 auto; padding: 0 1.1rem; }
-.traffic-header { padding: .95rem 0 1rem; border-bottom: 1px solid rgba(0,220,255,.22); }
-.traffic-topbar { display:flex; justify-content:center; flex-wrap:wrap; gap:.55rem; margin-bottom:1.25rem; }
+.traffic-header { padding: .8rem 0 .85rem; border-bottom: 1px solid rgba(0,220,255,.22); }
+.traffic-topbar { display:flex; justify-content:center; flex-wrap:wrap; gap:.55rem; margin-bottom:1rem; }
 .traffic-topbar a { color:var(--fg); text-decoration:none; border:1px solid rgba(88,200,255,.42); border-radius:4px; padding:.55rem .9rem; background:rgba(2,8,14,.78); box-shadow:inset 0 0 14px rgba(0,180,255,.05); }
 .traffic-topbar a:hover, .traffic-topbar .active { color:#001018; background:var(--accent); box-shadow:0 0 22px rgba(0,210,255,.58); }
-.traffic-hero-grid { display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:1rem; align-items:stretch; }
+.traffic-hero-grid { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:1rem; align-items:center; }
 .terminal-command { color:var(--accent); font-weight:700; margin-bottom:.45rem; text-shadow:0 0 10px rgba(0,210,255,.7); }
 .traffic-hero-copy h1 { font-size:clamp(2.5rem,5.2vw,5.4rem); line-height:.9; color:#19c9ff; letter-spacing:.045em; text-shadow:0 0 12px rgba(0,200,255,.9),0 0 32px rgba(0,180,255,.5); margin-bottom:.5rem; }
 .traffic-hero-copy p:last-child { line-height:1.4; color:#d8dee9; margin:0; }
@@ -1488,16 +1488,18 @@ button.technology-observer-card {
 .traffic-live-card em { color:#7cff82; font-style:normal; }
 .traffic-live-card hr { border:0; border-top:1px solid rgba(0,180,255,.22); margin:.75rem 0; }
 .live-dot { display:inline-block; width:9px; height:9px; border-radius:50%; background:#66ff72; box-shadow:0 0 12px #66ff72; margin-right:.5rem; }
-.traffic-dashboard { padding:1rem 0 .85rem; }
-.traffic-kpis { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.65rem; margin-bottom:.75rem; }
-.traffic-card { padding:.82rem; overflow:hidden; }
-.kpi { text-align:center; min-height:92px; display:flex; flex-direction:column; justify-content:center; padding:.7rem .48rem; }
+.traffic-dashboard { padding:.85rem 0 .75rem; }
+.traffic-dashboard > .traffic-kpis { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.55rem; margin-bottom:.7rem; align-items:stretch; }
+.traffic-card { padding:.72rem; overflow:hidden; }
+.traffic-dashboard > .traffic-kpis > .traffic-card.kpi { grid-column:auto / span 1; min-width:0; }
+.kpi { text-align:center; min-height:82px; display:flex; flex-direction:column; justify-content:center; padding:.62rem .42rem; }
 .kpi span, .traffic-card h2 { font-size:.84rem; color:#f0f6fc; letter-spacing:.065em; }
 .kpi span { min-height:2.05em; display:flex; align-items:center; justify-content:center; line-height:1.08; }
 .kpi strong { color:#20c8ff; font-size:clamp(1.55rem,2.25vw,2.45rem); text-shadow:0 0 18px rgba(0,200,255,.7); margin:.18rem 0; }
 .kpi small, .traffic-card h2 span, .privacy-note { color:#9facba; }
-.traffic-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:.75rem; grid-auto-flow:dense; }
+.traffic-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:.68rem; grid-auto-flow:dense; }
 .traffic-card { grid-column:span 4; }
+.traffic-dashboard > .traffic-kpis > .traffic-card.kpi { grid-column:auto / span 1; }
 .panel-pulse, .panel-stream { grid-column:span 6; }
 .panel-map { grid-column:span 9; }
 .panel-ratio { grid-column:span 3; }
@@ -1506,7 +1508,7 @@ button.technology-observer-card {
 .traffic-card h2 { margin:0 0 .65rem; text-shadow:0 0 8px rgba(0,200,255,.48); }
 .live-stream h2 { display:flex; justify-content:space-between; }
 .live-stream h2 b { color:#72ff7c; border:1px solid rgba(114,255,124,.55); border-radius:999px; padding:.1rem .55rem; font-size:.68rem; }
-.pulse-chart { height:132px; padding:.55rem; border:1px solid rgba(0,180,255,.18); background:linear-gradient(180deg,rgba(0,180,255,.06),rgba(0,0,0,.16)),repeating-linear-gradient(to right,transparent 0 38px,rgba(88,166,255,.08) 39px),repeating-linear-gradient(to top,transparent 0 30px,rgba(88,166,255,.09) 31px); color:#8b949e; }
+.pulse-chart { height:126px; padding:.55rem; border:1px solid rgba(0,180,255,.18); background:linear-gradient(180deg,rgba(0,180,255,.06),rgba(0,0,0,.16)),repeating-linear-gradient(to right,transparent 0 38px,rgba(88,166,255,.08) 39px),repeating-linear-gradient(to top,transparent 0 30px,rgba(88,166,255,.09) 31px); color:#8b949e; }
 .pulse-chart svg { width:100%; height:100%; overflow:visible; filter:drop-shadow(0 0 6px rgba(0,180,255,.28)); }
 .pulse-grid path { stroke:rgba(88,166,255,.18); stroke-width:.35; vector-effect:non-scaling-stroke; }
 .pulse-human,.pulse-bot { fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.7; vector-effect:non-scaling-stroke; }
@@ -1527,12 +1529,12 @@ button.technology-observer-card {
 .ratio-bars i,.bar-list i,.mini-list i { grid-column:1/-1; height:14px; background:rgba(0,180,255,.12); display:block; overflow:hidden; border:1px solid rgba(0,220,255,.12); }
 .ratio-bars b,.bar-list b,.mini-list b { height:100%; display:block; background:linear-gradient(90deg,#16bfff,#42d3ff); box-shadow:0 0 10px rgba(0,180,255,.55); }
 .ratio-card p { color:#aab3c0; margin-top:.65rem; } .ratio-card p strong { color:var(--accent); font-size:1.35rem; }
-.map-layout { display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:.85rem; }
-.world-signal-map { width:100%; height:auto; min-height:340px; background:#010509; border:1px solid rgba(0,180,255,.18); box-shadow:inset 0 0 36px rgba(0,180,255,.09),0 0 18px rgba(0,180,255,.08); }
-.world-signal-map rect { fill:#010509; }
-.map-graticule path { fill:none; stroke:rgba(88,166,255,.13); stroke-width:1; }
-.map-lines path { fill:rgba(0,180,255,.022); stroke:#1fd0ff; stroke-width:1.55; filter:drop-shadow(0 0 4px rgba(31,208,255,.75)); }
-#map-points circle { fill:#44d9ff; opacity:.94; filter:drop-shadow(0 0 9px #20cfff); }
+.map-layout { display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:.8rem; align-items:stretch; }
+.world-map-frame { position:relative; min-height:340px; background:#010509; border:1px solid rgba(0,180,255,.18); box-shadow:inset 0 0 36px rgba(0,180,255,.09),0 0 18px rgba(0,180,255,.08); overflow:hidden; }
+.world-map-base,.world-signal-overlay { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.world-map-base { object-fit:contain; opacity:.96; }
+.world-signal-overlay { z-index:2; pointer-events:none; }
+#map-points circle { fill:#44d9ff; opacity:.94; filter:drop-shadow(0 0 7px #20cfff); }
 #map-points .point-halo { fill:rgba(68,217,255,.13); opacity:1; filter:none; }
 .bar-list div,.mini-list div { display:grid; grid-template-columns:minmax(84px,1fr) 1fr 48px; gap:.55rem; align-items:center; margin:.42rem 0; color:#e6edf3; font-size:.84rem; }
 .bar-list span,.mini-list span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -1542,10 +1544,11 @@ button.technology-observer-card {
 .timeline-dots { height:48px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(0,180,255,.28); background:linear-gradient(to top,rgba(0,180,255,.08),transparent); }
 .timeline-dots span { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 12px var(--accent); }
 .timeline-dots .high { background:#72ff7c; box-shadow:0 0 12px #72ff7c; }
+.timeline-dots .spike { background:#ff573d; box-shadow:0 0 12px #ff573d; }
 .timeline #anomaly-note { color:#8b949e; margin:.48rem 0 0; font-size:.86rem; }
 .method-card dl { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; color:#d8dee9; font-size:.86rem; }
 .method-card dt { color:#f0f6fc; font-weight:700; }
 .method-card dd { color:#c9d1d9; margin:0; }
 .traffic-page footer { margin-top:.6rem; }
-@media (max-width: 1050px) { .traffic-kpis { grid-template-columns:repeat(2,1fr); } .traffic-kpis .kpi:last-child { grid-column:span 2; } .traffic-grid { grid-template-columns:repeat(2,1fr); } .traffic-card,.panel-pulse,.panel-stream,.panel-map,.panel-ratio,.timeline,.method-card { grid-column:span 1; } .map-layout { grid-template-columns:1fr; } .traffic-hero-grid { grid-template-columns:1fr; } }
-@media (max-width: 620px) { .traffic-shell { padding:0 .8rem; } .traffic-kpis,.traffic-grid { grid-template-columns:1fr; } .traffic-kpis .kpi:last-child { grid-column:span 1; } #request-stream div { grid-template-columns:54px 66px 26px minmax(0,1fr); font-size:.72rem; } .traffic-topbar a { padding:.5rem .65rem; } .traffic-hero-copy h1 { font-size:2.3rem; } .method-card dl { grid-template-columns:1fr; } .world-signal-map { min-height:220px; } }
+@media (max-width: 1050px) { .traffic-dashboard > .traffic-kpis { grid-template-columns:repeat(2,1fr); } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:span 2; } .traffic-grid { grid-template-columns:repeat(2,1fr); } .traffic-card,.panel-pulse,.panel-stream,.panel-map,.panel-ratio,.timeline,.method-card { grid-column:span 1; } .map-layout { grid-template-columns:1fr; } .traffic-hero-grid { grid-template-columns:1fr; } }
+@media (max-width: 620px) { .traffic-shell { padding:0 .8rem; } .traffic-dashboard > .traffic-kpis,.traffic-grid { grid-template-columns:1fr; } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:span 1; } #request-stream div { grid-template-columns:54px 66px 26px minmax(0,1fr); font-size:.72rem; } .traffic-topbar a { padding:.5rem .65rem; } .traffic-hero-copy h1 { font-size:2.3rem; } .method-card dl { grid-template-columns:1fr; } .world-map-frame { min-height:220px; } }
