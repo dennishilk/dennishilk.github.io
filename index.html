@@ -164,6 +164,8 @@ async function updateTrafficCounter() {
     updated: document.getElementById("traffic-updated"),
   };
 
+  const LEGACY_TOTAL_PAGEVIEWS_OFFSET = 45100;
+
   const formatPageviews = (value) => {
     const number = Number(value);
     return Number.isFinite(number) ? number.toLocaleString() : "—";
@@ -181,9 +183,18 @@ async function updateTrafficCounter() {
     if (!res.ok) throw new Error("Traffic data unavailable");
 
     const data = await res.json();
-    fields.today.textContent = formatPageviews(firstValue(data, ["pageviews_today", "today", "today_pageviews"]));
-    fields.last24h.textContent = formatPageviews(firstValue(data, ["pageviews_last_24h", "last_24h", "last24h_pageviews"]));
-    fields.total.textContent = formatPageviews(firstValue(data, ["total_pageviews", "total", "pageviews_total"]));
+    const todayPageviews = firstValue(data, ["today_pageviews", "pageviews_today", "today"]);
+    const last24hPageviews = firstValue(data, ["last_24h_pageviews", "pageviews_last_24h", "last_24h", "last24h_pageviews"]);
+    const totalPageviews = firstValue(data, ["total_pageviews", "total", "pageviews_total"]);
+    const totalPageviewsNumber = Number(totalPageviews);
+
+    fields.today.textContent = formatPageviews(todayPageviews);
+    fields.last24h.textContent = formatPageviews(last24hPageviews);
+    fields.total.textContent = formatPageviews(
+      Number.isFinite(totalPageviewsNumber)
+        ? LEGACY_TOTAL_PAGEVIEWS_OFFSET + totalPageviewsNumber
+        : totalPageviews
+    );
 
     if (data.generated_at) {
       const generatedAt = new Date(data.generated_at);
