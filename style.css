@@ -155,12 +155,31 @@ footer {
 
 /* Visitor Counter */
 #visitor-counter {
+  display: inline-grid;
+  grid-template-columns: repeat(3, minmax(110px, 1fr));
+  gap: 0.65rem;
   margin-top: 1.5rem;
   margin-bottom: 1.2rem;
   color: var(--accent);
 }
-#visitor-counter .label { color: #8b949e; }
-#visitor-count { text-shadow: 0 0 12px var(--accent); }
+.traffic-metric {
+  border: 1px solid rgba(88, 166, 255, 0.35);
+  background: rgba(13, 17, 23, 0.72);
+  padding: 0.55rem 0.75rem;
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.12);
+}
+#visitor-counter .label {
+  display: block;
+  color: #8b949e;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+#visitor-counter .glow { text-shadow: 0 0 12px var(--accent); }
+.traffic-updated {
+  grid-column: 1 / -1;
+  color: #8b949e;
+  font-size: 0.75rem;
+}
 
 /* Footer links */
 .footer-links a { color: var(--accent); text-decoration: none; }
@@ -171,6 +190,7 @@ footer {
   header { padding: 4rem 1rem 2rem; }
   .avatar { width: 120px; }
   .buttons a { font-size: .85rem; }
+  #visitor-counter { grid-template-columns: 1fr; }
 }
 
 /* World Observer dashboard */
