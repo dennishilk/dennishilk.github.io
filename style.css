@@ -1532,7 +1532,7 @@ button.technology-observer-card {
 .map-layout { display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:.8rem; align-items:stretch; }
 .world-map-frame { position:relative; min-height:340px; background:#010509; border:1px solid rgba(0,180,255,.18); box-shadow:inset 0 0 36px rgba(0,180,255,.09),0 0 18px rgba(0,180,255,.08); overflow:hidden; }
 .world-map-base,.world-signal-overlay { position:absolute; inset:0; width:100%; height:100%; display:block; }
-.world-map-base { object-fit:contain; opacity:.96; }
+.world-map-base { object-fit:contain; object-position:center; opacity:.96; }
 .world-signal-overlay { z-index:2; pointer-events:none; }
 #map-points circle { fill:#44d9ff; opacity:.94; filter:drop-shadow(0 0 7px #20cfff); }
 #map-points .point-halo { fill:rgba(68,217,255,.13); opacity:1; filter:none; }
