@@ -30,8 +30,16 @@
       <a href="https://github.com/dennishilk" target="_blank">GitHub</a>
       <a href="https://youtube.com/dennishilk" target="_blank">YouTube</a>
       <a href="world-observer.html">World Observer</a>
-      <a href="traffic.html" class="active">Traffic</a>
       <a href="news.html">News</a>
+    </nav>
+    <nav class="observer-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a>
+      <a href="/world-observer/internet.html">Internet</a>
+      <a href="/world-observer/media.html">Media</a>
+      <a href="/world-observer/society.html">Society</a>
+      <a href="/world-observer/environment.html">Earth &amp; Space</a>
+      <a href="/world-observer/technology.html">Technology</a>
+      <a href="/traffic.html" class="active" aria-current="page">Traffic</a>
     </nav>
     <div class="traffic-hero-grid">
       <div class="traffic-hero-copy">
@@ -74,7 +82,6 @@
 
   <footer>
     <div class="nebby-terminal-line"><img src="nebby.png" class="nebby" alt="Nebby penguin"><span class="coffee-text">&gt; cat world-observer/latest/summary.json<span class="cursor"></span></span></div>
-    <div id="visitor-counter" aria-live="polite"><div class="traffic-metric"><span class="label">PAGEVIEWS TODAY</span><span class="glow" id="traffic-today">loading…</span></div><div class="traffic-metric"><span class="label">LAST 24H</span><span class="glow" id="traffic-24h">loading…</span></div><div class="traffic-metric"><span class="label">TOTAL PAGEVIEWS</span><span class="glow" id="traffic-total">loading…</span></div><div class="traffic-updated" id="traffic-updated"></div></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>
@@ -90,8 +97,7 @@
   const redact = (v) => String(v || "").replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[redacted]").replace(/\b(?:[a-f0-9]{1,4}:){2,7}[a-f0-9]{1,4}\b/gi, "[redacted]");
   const safePath = (p) => { const clean = redact(p || "/").replace(/[\u0000-\u001f\u007f-\u009f]+/g, "?"); return clean.length > 140 ? clean.slice(0, 137) + "…" : clean; };
   const setUnavailable = () => {
-    ["kpi-humans","kpi-pageviews","kpi-unique","kpi-bots","kpi-requests","traffic-today","traffic-24h","traffic-total"].forEach(id => $(id).textContent = id.startsWith("traffic") ? "offline" : "—");
-    $("traffic-updated").textContent = "traffic data unavailable";
+    ["kpi-humans","kpi-pageviews","kpi-unique","kpi-bots","kpi-requests"].forEach(id => $(id).textContent = "—");
     renderPulse([]); renderTimeline([]); renderMapPoints([]); renderList("top-countries", []); renderBars("top-pages", []); renderBars("crawler-species", []); renderBars("top-referrers", []);
   };
   const renderBars = (id, rows) => { const clean = arr(rows).filter(r => Number(r.value ?? r.count ?? r.pageviews ?? 0) > 0 || (r.path || r.name || r.referrer || r.label)); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const label = r.path || r.name || r.referrer || r.label || "Unknown"; const value = Number(r.value ?? r.count ?? r.pageviews ?? 0); return `<div><span title="${esc(redact(label))}">${esc(safePath(label))}</span><i><b style="width:${Math.max(3,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : '<p class="stream-empty">unavailable</p>'; };
@@ -103,7 +109,6 @@
   fetch(`/data/site-traffic.json?t=${Date.now()}`, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(data => {
     const pageviews = val(data,["pageviews_today","today_pageviews","today"]), last24 = val(data,["requests_total","last_24h","last_24h_pageviews","pageviews_last_24h"]), total = val(data,["total_pageviews","pageviews_total","total"]), humans = val(data,["human_requests_today","humans_today","human_today"]), unique = val(data,["estimated_unique_visitors","unique_visitors","visitors_unique"]), bots = val(data,["bot_requests_today","bots_today","crawlers_today","bots_crawlers"]), requests = val(data,["requests_total","requests_24h","requests_last_24h","last_24h_requests","total_requests"]);
     $("kpi-humans").textContent = fmt(humans); $("kpi-pageviews").textContent = fmt(pageviews); $("kpi-unique").textContent = fmt(unique); $("kpi-bots").textContent = fmt(bots); $("kpi-requests").textContent = fmt(requests);
-    $("traffic-today").textContent = fmt(pageviews); $("traffic-24h").textContent = fmt(last24); $("traffic-total").textContent = fmt(total); $("traffic-updated").textContent = data.generated_at ? `updated ${new Date(data.generated_at).toLocaleString()}` : "";
     $("last-observation").textContent = data.generated_at ? new Date(data.generated_at).toLocaleTimeString() : "—"; $("live-state").textContent = "live update active";
     const h = Number(humans), b = Number(bots), hp = Number(data.human_percent), bp = Number(data.bot_percent), denom = h + b; const humanRatio = Number.isFinite(hp) ? hp : (denom ? h / denom * 100 : NaN); const botRatio = Number.isFinite(bp) ? bp : (denom ? b / denom * 100 : NaN); $("ratio-bars").innerHTML = Number.isFinite(humanRatio) && Number.isFinite(botRatio) ? `<div><span>HUMAN</span><strong>${humanRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, humanRatio)}%"></b></i></div><div><span>MACHINE</span><strong>${botRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, botRatio)}%"></b></i></div>` : "ratio unavailable"; $("ratio-total").textContent = fmt(requests);
     const hourly = arr(data.hourly); renderPulse(hourly); renderTimeline(hourly); renderStream(arr(data.live_requests)); renderList("top-countries", arr(data.countries)); renderMapPoints(data.countries); renderBars("top-pages", rowsFrom(data.top_pages, data.top_paths)); renderBars("crawler-species", arr(data.crawler_species)); renderBars("top-referrers", arr(data.top_referrers));

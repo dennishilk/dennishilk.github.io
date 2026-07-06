@@ -70,7 +70,6 @@
         <a href="https://github.com/dennishilk" target="_blank"><i class="fab fa-github"></i> GitHub</a>
         <a href="https://youtube.com/dennishilk" target="_blank"><i class="fas fa-globe"></i> YouTube</a>
         <a href="world-observer.html"><i class="fas fa-globe"></i> World Observer</a>
-        <a href="traffic.html"><i class="fas fa-signal"></i> Traffic</a>
         <a href="news.html"><i class="fas fa-newspaper"></i> News</a>
       </div>
 
@@ -129,22 +128,6 @@
       Open-source Linux tools, experimental input projects and utilities by Dennis Hilk.
     </p>
 
-    <div id="visitor-counter" aria-live="polite">
-      <div class="traffic-metric">
-        <span class="label">PAGEVIEWS TODAY</span>
-        <span class="glow" id="traffic-today">loading…</span>
-      </div>
-      <div class="traffic-metric">
-        <span class="label">LAST 24H</span>
-        <span class="glow" id="traffic-24h">loading…</span>
-      </div>
-      <div class="traffic-metric">
-        <span class="label">TOTAL PAGEVIEWS</span>
-        <span class="glow" id="traffic-total">loading…</span>
-      </div>
-      <div class="traffic-updated" id="traffic-updated"></div>
-    </div>
-
     <p class="footer-links">
       © 2026 Dennis Hilk —
       <a href="/impressum.html">Impressum</a> ·
@@ -153,64 +136,6 @@
   </footer>
 
 </div>
-
-<!-- JS -->
-<script>
-async function updateTrafficCounter() {
-  const fields = {
-    today: document.getElementById("traffic-today"),
-    last24h: document.getElementById("traffic-24h"),
-    total: document.getElementById("traffic-total"),
-    updated: document.getElementById("traffic-updated"),
-  };
-
-  const LEGACY_TOTAL_PAGEVIEWS_OFFSET = 45100;
-
-  const formatPageviews = (value) => {
-    const number = Number(value);
-    return Number.isFinite(number) ? number.toLocaleString() : "—";
-  };
-
-  const firstValue = (data, names) => {
-    for (const name of names) {
-      if (data[name] !== undefined && data[name] !== null) return data[name];
-    }
-    return null;
-  };
-
-  try {
-    const res = await fetch(`/data/site-traffic.json?ts=${Date.now()}`, { cache: "no-store" });
-    if (!res.ok) throw new Error("Traffic data unavailable");
-
-    const data = await res.json();
-    const todayPageviews = firstValue(data, ["today_pageviews", "pageviews_today", "today"]);
-    const last24hPageviews = firstValue(data, ["last_24h_pageviews", "pageviews_last_24h", "last_24h", "last24h_pageviews"]);
-    const totalPageviews = firstValue(data, ["total_pageviews", "total", "pageviews_total"]);
-    const totalPageviewsNumber = Number(totalPageviews);
-
-    fields.today.textContent = formatPageviews(todayPageviews);
-    fields.last24h.textContent = formatPageviews(last24hPageviews);
-    fields.total.textContent = formatPageviews(
-      Number.isFinite(totalPageviewsNumber)
-        ? LEGACY_TOTAL_PAGEVIEWS_OFFSET + totalPageviewsNumber
-        : totalPageviews
-    );
-
-    if (data.generated_at) {
-      const generatedAt = new Date(data.generated_at);
-      fields.updated.textContent = Number.isNaN(generatedAt.getTime())
-        ? `updated ${data.generated_at}`
-        : `updated ${generatedAt.toLocaleString()}`;
-    }
-  } catch {
-    fields.today.textContent = "offline";
-    fields.last24h.textContent = "offline";
-    fields.total.textContent = "offline";
-    fields.updated.textContent = "traffic data unavailable";
-  }
-}
-updateTrafficCounter();
-</script>
 
 </body>
 </html>
