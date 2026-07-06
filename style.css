@@ -1519,11 +1519,26 @@ button.technology-observer-card {
 .ratio-card p { color:#aab3c0; margin-top:.65rem; } .ratio-card p strong { color:var(--accent); font-size:1.35rem; }
 .map-layout { display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:.8rem; align-items:stretch; }
 .world-map-frame { position:relative; min-height:340px; background:#010509; border:1px solid rgba(0,180,255,.18); box-shadow:inset 0 0 36px rgba(0,180,255,.09),0 0 18px rgba(0,180,255,.08); overflow:hidden; }
+.world-map-frame:before { content:""; position:absolute; inset:-35%; z-index:1; pointer-events:none; background:conic-gradient(from 235deg, transparent 0 72%, rgba(68,217,255,.12) 76%, transparent 81%); mix-blend-mode:screen; opacity:.32; animation:trafficRadarSweep 9s linear infinite; }
+.world-map-frame:after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(rgba(68,217,255,.045) 1px, transparent 1px),linear-gradient(90deg, rgba(68,217,255,.035) 1px, transparent 1px),radial-gradient(circle at 50% 48%, transparent 0 31%, rgba(68,217,255,.05) 32%, transparent 33%, transparent 48%, rgba(68,217,255,.035) 49%, transparent 50%); background-size:42px 42px,42px 42px,100% 100%; opacity:.45; }
 .world-map-base,.world-signal-overlay { position:absolute; inset:0; width:100%; height:100%; display:block; }
 .world-map-base { object-fit:contain; object-position:center; opacity:.96; }
-.world-signal-overlay { z-index:2; pointer-events:none; }
+.world-signal-overlay { z-index:2; pointer-events:none; filter:drop-shadow(0 0 4px rgba(68,217,255,.32)); }
+.signal-route { opacity:1; transition:opacity .45s ease; }
+.signal-route.done { opacity:0; }
+.signal-trail { fill:none; stroke:#44d9ff; stroke-width:1.35; stroke-linecap:round; stroke-dasharray:10 320; animation:signalTrail 3.1s ease-out forwards; filter:drop-shadow(0 0 5px rgba(68,217,255,.82)); opacity:.82; }
+.signal-route.bot .signal-trail { stroke:#9b8cff; filter:drop-shadow(0 0 5px rgba(155,140,255,.82)); }
+.signal-packet { fill:#dffbff; filter:drop-shadow(0 0 7px #44d9ff) drop-shadow(0 0 14px rgba(68,217,255,.7)); }
+.signal-route.bot .signal-packet { fill:#efe8ff; filter:drop-shadow(0 0 7px #9b8cff) drop-shadow(0 0 14px rgba(155,140,255,.7)); }
+.destination-node .destination-ring { fill:rgba(68,217,255,.07); stroke:#44d9ff; stroke-width:1.2; opacity:.82; transform-origin:508px 181px; animation:destinationPulse 2.8s ease-in-out infinite; filter:drop-shadow(0 0 8px rgba(68,217,255,.85)); }
+.destination-node .destination-core { fill:#dffbff; filter:drop-shadow(0 0 8px #44d9ff); }
+.destination-node text { fill:rgba(223,251,255,.78); font-size:10px; letter-spacing:2px; font-family:"JetBrains Mono", monospace; text-shadow:0 0 8px rgba(68,217,255,.7); }
 #map-points circle { fill:#44d9ff; opacity:.94; filter:drop-shadow(0 0 7px #20cfff); }
 #map-points .point-halo { fill:rgba(68,217,255,.13); opacity:1; filter:none; }
+@keyframes signalTrail { 0% { stroke-dashoffset:330; opacity:0; } 12% { opacity:.9; } 72% { opacity:.55; } 100% { stroke-dashoffset:0; opacity:0; } }
+@keyframes destinationPulse { 0%,100% { transform:scale(.86); opacity:.45; } 50% { transform:scale(1.18); opacity:.95; } }
+@keyframes trafficRadarSweep { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .world-map-frame:before,.signal-trail,.destination-node .destination-ring { animation:none; } .world-map-frame:before { opacity:.08; } }
 .bar-list div,.mini-list div { display:grid; grid-template-columns:minmax(84px,1fr) 1fr 48px; gap:.55rem; align-items:center; margin:.42rem 0; color:#e6edf3; font-size:.84rem; }
 .bar-list span,.mini-list span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .bar-list i,.mini-list i { grid-column:auto; height:8px; }
