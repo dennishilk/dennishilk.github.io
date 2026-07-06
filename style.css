@@ -709,11 +709,21 @@ footer {
   transition: 0.2s;
 }
 
+.observer-nav .observer-nav-standalone {
+  margin-left: 1.2rem;
+}
+
 .observer-nav a:hover,
 .observer-nav a.active {
   background: rgba(0,180,255,0.16);
   border-color: var(--accent);
   transform: translateY(-2px);
+}
+
+@media (max-width: 640px) {
+  .observer-nav .observer-nav-standalone {
+    margin-left: 0;
+  }
 }
 
 #observer-last-update {
