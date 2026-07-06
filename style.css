@@ -1532,7 +1532,7 @@ button.technology-observer-card {
 .signal-route.bot .signal-trail { stroke:#efe8ff; filter:drop-shadow(0 0 5px rgba(155,140,255,.88)); }
 .signal-packet { fill:#dffbff; filter:drop-shadow(0 0 7px #44d9ff) drop-shadow(0 0 14px rgba(68,217,255,.7)); }
 .signal-route.bot .signal-packet { fill:#efe8ff; filter:drop-shadow(0 0 7px #9b8cff) drop-shadow(0 0 14px rgba(155,140,255,.7)); }
-.destination-node .destination-ring { fill:rgba(68,217,255,.07); stroke:#44d9ff; stroke-width:1.2; opacity:.82; transform-origin:505px 174px; animation:destinationPulse 2.8s ease-in-out infinite; filter:drop-shadow(0 0 8px rgba(68,217,255,.85)); }
+.destination-node .destination-ring { fill:rgba(68,217,255,.07); stroke:#44d9ff; stroke-width:1.2; opacity:.82; transform-origin:505px 151px; animation:destinationPulse 2.8s ease-in-out infinite; filter:drop-shadow(0 0 8px rgba(68,217,255,.85)); }
 .destination-node .destination-core { fill:#dffbff; filter:drop-shadow(0 0 8px #44d9ff); }
 .destination-node text { fill:rgba(223,251,255,.78); font-size:10px; letter-spacing:2px; font-family:"JetBrains Mono", monospace; text-shadow:0 0 8px rgba(68,217,255,.7); }
 #map-points circle { fill:#44d9ff; opacity:.94; filter:drop-shadow(0 0 7px #20cfff); }
