@@ -26,10 +26,12 @@
 <canvas id="stars"></canvas>
 <div class="content traffic-shell">
   <header class="traffic-header">
-    <nav class="traffic-topbar" aria-label="Primary navigation">
-      <a href="/">Home</a>
-      <a href="/world-observer.html">World Observer</a>
-      <a href="/news.html">News</a>
+    <nav class="button-group traffic-global-nav" aria-label="Primary navigation">
+      <div class="buttons">
+        <a href="/">Home</a>
+        <a href="/world-observer.html">World Observer</a>
+        <a href="/news.html">News</a>
+      </div>
     </nav>
     <nav class="observer-nav" aria-label="World Observer sections">
       <a href="/world-observer.html">Overview</a>
@@ -69,7 +71,7 @@
     <section class="traffic-grid">
       <article class="traffic-card traffic-pulse panel-pulse"><h2>TRAFFIC PULSE <span>(24H)</span></h2><div id="pulse-chart" class="pulse-chart empty">traffic data unavailable</div><div class="traffic-legend"><span class="human-line">Humans</span><span class="bot-line">Bots / Scanners</span></div></article>
       <article class="traffic-card live-stream panel-stream"><h2>LIVE REQUEST STREAM <b>LIVE</b></h2><div id="request-stream" class="stream-empty">No recent public request stream available.</div></article>
-      <article class="traffic-card map-card panel-map"><div class="map-layout"><div><h2>GLOBAL SIGNAL MAP</h2><div class="world-map-frame" role="img" aria-label="Country-level world signal map"><img src="assets/traffic-world-map.png" alt="Recognizable world map silhouette for aggregated country-level traffic signals" class="world-map-base"><svg viewBox="0 0 1000 470" aria-hidden="true" class="world-signal-overlay"><g id="map-points"></g></svg></div></div><aside><h3>TOP COUNTRIES (24H)</h3><div id="top-countries" class="mini-list"></div><p class="privacy-note">no IP addresses shown<br>country level only</p></aside></div></article>
+      <article class="traffic-card map-card panel-map"><div class="map-layout"><div><h2>GLOBAL SIGNAL MAP</h2><div class="world-map-frame" role="img" aria-label="Country-level world signal map"><img src="assets/traffic-world-map.png" alt="Recognizable world map silhouette for aggregated country-level traffic signals" class="world-map-base"><svg viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet" aria-hidden="true" class="world-signal-overlay"><g id="map-points" transform="translate(0 151.04) scale(1.536)"></g></svg></div></div><aside><h3>TOP COUNTRIES (24H)</h3><div id="top-countries" class="mini-list"></div><p class="privacy-note">no IP addresses shown<br>country level only</p></aside></div></article>
       <article class="traffic-card ratio-card panel-ratio"><h2>HUMAN / MACHINE RATIO</h2><div id="ratio-bars" class="ratio-bars unavailable">ratio unavailable</div><p>observed requests<br><strong id="ratio-total">—</strong></p></article>
       <article class="traffic-card"><h2>MOST OBSERVED PAGES</h2><div id="top-pages" class="bar-list"></div></article>
       <article class="traffic-card"><h2>CRAWLER SPECIES</h2><div id="crawler-species" class="bar-list purple"></div></article>
