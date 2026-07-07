@@ -1550,6 +1550,19 @@ function formatBz(value) {
   return Number.isFinite(number) ? `${number.toLocaleString(undefined, { maximumFractionDigits: 1 })} nT` : "—";
 }
 
+function formatOptionalBz(value) {
+  return value === null || value === undefined || value === "" ? "unavailable" : formatBz(value);
+}
+
+function formatOptionalSpeed(value) {
+  return value === null || value === undefined || value === "" ? "unavailable" : formatSpeed(value);
+}
+
+function getLatestGeomagneticHistoryPoint(history) {
+  const rawPoints = Array.isArray(history) ? history : history?.points || history?.history || history?.data || [];
+  return rawPoints.length ? rawPoints[rawPoints.length - 1] : {};
+}
+
 function normalizeGeomagneticHistoryPoints(history) {
   const rawPoints = Array.isArray(history) ? history : history?.points || history?.history || history?.data || [];
   return rawPoints
@@ -1591,6 +1604,7 @@ function renderEnvironmentOverviewCards(environmentData) {
     status: formatInternetStatusLabel(statusValue),
     description: "Public NOAA SWPC-derived geomagnetic observation dashboard. Observations only; no predictions or aurora guarantees.",
     metrics: [
+      { label: "Status", value: formatInternetStatusLabel(statusValue) },
       { label: "latest Kp", value: formatKp(latestKp) },
       { label: "Last collected", value: formatDateTimeUtc(collectedAt) },
     ],
@@ -1605,14 +1619,27 @@ function renderEnvironmentObservers(environmentData) {
 
 function renderGeomagneticStormObserver(environmentData, history) {
   const observer = findEnvironmentObserver(environmentData, GEOMAGNETIC_OBSERVER_ID) || {};
+  const latestHistoryPoint = getLatestGeomagneticHistoryPoint(history);
   const statusValue = firstValue(observer, ["status", "health", "state"]) || (observer.planned ? "planned" : "unknown");
   const dataStatusValue = firstValue(observer, ["data_status", "dataStatus"]) || (observer.planned ? "unavailable" : "unknown");
   const collectedAt = firstValue(observer, ["collected_at", "collectedAt", "observed_at", "observedAt", "timestamp", "last_update", "generated_at", "last_seen_date"]);
   const sourceLabel = firstValue(observer, ["source_label", "sourceLabel", "source", "provider"]) || "NOAA SWPC";
   const latestKp = firstNumber(observer, ["latest_kp", "latestKp", "kp", "kp_index", "primary_metric.value", "primary_metric_value"]);
-  const maxKp = firstNumber(observer, ["max_kp", "maxKp", "maximum_kp", "maximumKp"]);
-  const gScale = firstValue(observer, ["noaa_g_scale", "noaaGScale", "g_scale", "gScale", "storm_scale"]);
-  const condition = firstValue(observer, ["condition", "summary", "classification", "level"]);
+  const maxKp = firstNumber(observer, [
+    "kp.max_available",
+    "kp.maxAvailable",
+    "max_available",
+    "maxAvailable",
+    "max_kp",
+    "maxKp",
+    "maximum_kp",
+    "maximumKp",
+    "secondary_metrics.Max Kp",
+  ]) ?? firstNumber(latestHistoryPoint, ["kp.max_available", "max_available", "max_kp"]);
+  const gScale = firstValue(observer, ["noaa_g_scale", "noaaGScale", "g_scale", "gScale", "storm_scale"])
+    ?? firstValue(latestHistoryPoint, ["noaa_g_scale", "g_scale", "storm_scale"]);
+  const condition = firstValue(observer, ["condition", "summary", "classification", "level"])
+    ?? firstValue(latestHistoryPoint, ["condition", "summary", "classification", "level"]);
   const bz = firstNumber(observer, ["latest_imf_bz_gsm", "latestImfBzGsm", "imf_bz_gsm", "bz_gsm", "bz"]);
   const windSpeed = firstNumber(observer, ["latest_solar_wind_speed", "latestSolarWindSpeed", "solar_wind_speed", "wind_speed_kms", "speed"]);
   const hasLiveData = Object.keys(observer).length > 0 && !observer.planned;
@@ -1639,8 +1666,8 @@ function renderGeomagneticStormObserver(environmentData, history) {
     { label: "max Kp", value: formatKp(maxKp) },
     { label: "NOAA G-scale", value: gScale || "—" },
     { label: "condition", value: condition || "—" },
-    { label: "latest IMF Bz GSM", value: formatBz(bz) },
-    { label: "latest solar wind speed", value: formatSpeed(windSpeed) },
+    { label: "latest IMF Bz GSM", value: formatOptionalBz(bz) },
+    { label: "latest solar wind speed", value: formatOptionalSpeed(windSpeed) },
     { label: "collected", value: formatDateTimeUtc(collectedAt) },
     { label: "source", value: sourceLabel },
   ]);
@@ -2714,7 +2741,7 @@ function renderPlannedCards(id, items) {
   container.textContent = "";
   items.forEach((item) => {
     const card = document.createElement("article");
-    card.className = "card observer-category planned";
+    card.className = "card observer-category technology-observer-card planned";
     const title = document.createElement("h3");
     title.textContent = item;
     const status = document.createElement("p");

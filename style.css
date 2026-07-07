@@ -742,6 +742,11 @@ footer {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+#environment-core-cards {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 270px));
+  justify-content: start;
+}
+
 @media (max-width: 900px) {
   #environment-planned-cards {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -782,6 +787,67 @@ button.technology-observer-card {
   font-size: 0.86rem;
   overflow-wrap: anywhere;
   text-align: right;
+}
+
+.geomagnetic-detail-section {
+  background:
+    radial-gradient(circle at top left, rgba(88, 166, 255, 0.18), transparent 34rem),
+    linear-gradient(180deg, rgba(0,180,255,0.08), rgba(0, 0, 0, 0.18)),
+    var(--card-bg);
+  box-shadow: 0 0 28px rgba(0,180,255,0.12), inset 0 0 24px rgba(0,180,255,0.05);
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+}
+
+.geomagnetic-detail-section .observer-title-row {
+  align-items: center;
+  border-bottom: 1px solid rgba(0,180,255,0.18);
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
+.geomagnetic-current-card {
+  height: auto;
+  margin-top: 1.2rem;
+  overflow: visible;
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.geomagnetic-current-card .internet-card-header {
+  align-items: center;
+  background: rgba(0,180,255,0.06);
+  border: 1px solid rgba(0,180,255,0.18);
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+}
+
+.geomagnetic-current-card .internet-card-header h3 {
+  color: var(--accent);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 12px rgba(0,180,255,0.35);
+}
+
+.geomagnetic-current-card .observer-detail-grid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin: 1rem 0;
+}
+
+.geomagnetic-current-card .metric-card {
+  background: rgba(13, 17, 23, 0.72);
+  border-color: rgba(0,180,255,0.25);
+  min-height: 126px;
+}
+
+.geomagnetic-current-card .metric-card strong {
+  display: block;
+  font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.environment-trend-chart {
+  margin-top: 1.2rem;
+  padding: clamp(1rem, 2vw, 1.35rem);
 }
 
 .technology-observer-panel {
