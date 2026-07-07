@@ -4,18 +4,33 @@ const transmissionList = document.getElementById("transmission-list");
 
 function formatTransmissionTime(value) {
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "TIME UNKNOWN";
+  if (Number.isNaN(date.getTime())) return "UTC TIME UNKNOWN";
   return new Intl.DateTimeFormat("en-GB", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    second: "2-digit",
     timeZone: "UTC",
     timeZoneName: "short",
-  }).format(date).replace(":", ":");
+  }).format(date);
 }
 
 function setTransmissionStatus(text, mode = "") {
+  if (!transmissionStatus) return;
   transmissionStatus.textContent = text;
   transmissionStatus.className = `transmission-status ${mode}`.trim();
+}
+
+function appendDetail(parent, label, value) {
+  const row = document.createElement("p");
+  const strong = document.createElement("strong");
+  strong.textContent = `${label}: `;
+  const span = document.createElement("span");
+  span.textContent = value;
+  row.append(strong, span);
+  parent.appendChild(row);
 }
 
 function renderTransmissions(transmissions) {
@@ -28,29 +43,41 @@ function renderTransmissions(transmissions) {
     return;
   }
 
-  transmissions.forEach((transmission) => {
+  transmissions.forEach((transmission, index) => {
     const article = document.createElement("article");
     article.className = "transmission-entry";
 
+    const header = document.createElement("div");
+    header.className = "transmission-entry-header";
+
+    const signal = document.createElement("h3");
+    signal.textContent = `SIGNAL ${String(index + 1).padStart(4, "0")}`;
+
     const time = document.createElement("time");
-    time.dateTime = transmission.receivedAt;
+    time.dateTime = transmission.receivedAt || "";
     time.textContent = formatTransmissionTime(transmission.receivedAt);
 
-    const callsign = document.createElement("p");
-    callsign.textContent = `CALLSIGN: ${transmission.callsign || "UNKNOWN"}`;
+    header.append(signal, time);
 
-    const origin = document.createElement("p");
-    origin.textContent = `ORIGIN: ${transmission.origin || "UNSPECIFIED"}`;
+    const meta = document.createElement("div");
+    meta.className = "transmission-entry-meta";
+    appendDetail(meta, "CALLSIGN", transmission.callsign || "UNKNOWN");
+    appendDetail(meta, "ORIGIN", transmission.origin || "UNSPECIFIED");
 
     const message = document.createElement("blockquote");
-    message.textContent = `"${transmission.message || ""}"`;
+    message.textContent = transmission.message || "";
 
-    article.append(time, callsign, origin, message);
+    const status = document.createElement("p");
+    status.className = "transmission-entry-status";
+    status.textContent = "STATUS RECEIVED";
+
+    article.append(header, meta, message, status);
     transmissionList.appendChild(article);
   });
 }
 
 async function loadTransmissions() {
+  if (!transmissionList) return;
   try {
     const response = await fetch("/api/transmissions", { headers: { "Accept": "application/json" } });
     if (!response.ok) throw new Error("public transmissions unavailable");
@@ -87,13 +114,14 @@ async function submitTransmission(event) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok || data.ok === false) throw new Error("submission rejected");
     transmissionForm.reset();
-    setTransmissionStatus(data.message || "TRANSMISSION RECEIVED. AWAITING REVIEW.", "success");
+    setTransmissionStatus("TRANSMISSION RECEIVED.\nAWAITING REVIEW.", "success");
   } catch (error) {
-    setTransmissionStatus("TRANSMISSION FAILED. RETRY LATER.", "error");
+    setTransmissionStatus("TRANSMISSION FAILED.\nRETRY LATER.", "error");
   }
 }
 
-if (transmissionForm && transmissionStatus && transmissionList) {
+if (transmissionForm && transmissionStatus) {
   transmissionForm.addEventListener("submit", submitTransmission);
-  loadTransmissions();
 }
+
+loadTransmissions();
