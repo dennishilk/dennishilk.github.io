@@ -46,7 +46,6 @@
   <link rel="stylesheet" href="style.css?v=42">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
-  <script defer src="transmissions.js?v=1"></script>
 </head>
 
 <body>
@@ -118,36 +117,13 @@
     </div>
   </section>
 
-  <!-- INCOMING TRANSMISSIONS -->
-  <section class="transmissions" aria-labelledby="transmissions-title">
-    <div class="transmission-terminal">
+  <!-- PUBLIC SIGNAL UPLINK -->
+  <section class="transmissions transmission-cta" aria-labelledby="transmissions-title">
+    <div class="transmission-terminal transmission-cta-panel">
       <p class="transmission-kicker">PUBLIC SIGNAL UPLINK</p>
       <h2 id="transmissions-title">INCOMING TRANSMISSIONS</h2>
-      <p class="transmission-copy">YOU FOUND THIS NODE.<br>LEAVE A SIGNAL FROM THE OUTSIDE WORLD.</p>
-
-      <form id="transmission-form" class="transmission-form" autocomplete="off">
-        <label>CALLSIGN
-          <input name="callsign" maxlength="40" required aria-label="Callsign">
-        </label>
-        <label>ORIGIN
-          <input name="origin" maxlength="80" aria-label="Origin">
-        </label>
-        <label class="transmission-message">MESSAGE
-          <textarea name="message" maxlength="1200" required aria-label="Message"></textarea>
-        </label>
-        <label class="signal-trap" aria-hidden="true">CONTACT CHANNEL
-          <input name="contact_channel" tabindex="-1" autocomplete="off">
-        </label>
-        <button type="submit">TRANSMIT</button>
-        <p id="transmission-status" class="transmission-status" role="status" aria-live="polite">PENDING SIGNAL INPUT.</p>
-      </form>
-
-      <div class="received-transmissions">
-        <h3>RECEIVED TRANSMISSIONS</h3>
-        <div id="transmission-list" class="transmission-list" aria-live="polite">
-          <p class="transmission-empty">SCANNING APPROVED SIGNALS…</p>
-        </div>
-      </div>
+      <p class="transmission-copy">OPEN A SECURE PUBLIC CHANNEL TO LEAVE A REVIEWED SIGNAL FOR THIS WORLDNODE.</p>
+      <a class="transmission-cta-button" href="/transmissions/">LEAVE A TRANSMISSION</a>
     </div>
   </section>
 

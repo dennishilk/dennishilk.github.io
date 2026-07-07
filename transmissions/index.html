@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/transmissions/">
+  <title>Public Signal Uplink – Dennis Hilk</title>
+  <meta name="description" content="Public Signal Uplink guestbook for dennishilk.com. Leave an external communication for review before it appears publicly.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=43">
+  <script defer src="/stars.js"></script>
+  <script defer src="/transmissions.js?v=2"></script>
+</head>
+<body class="transmissions-page">
+
+<canvas id="stars"></canvas>
+
+<div class="content transmission-page-shell">
+  <header class="transmission-page-header">
+    <a class="terminal-backlink" href="/">← RETURN TO MAIN NODE</a>
+    <p class="transmission-kicker">WORLDNODE / EXTERNAL COMMUNICATION CHANNEL</p>
+    <h1>PUBLIC SIGNAL UPLINK</h1>
+    <p>TRANSMIT A PUBLIC MESSAGE INTO THE WORLDNODE BUFFER. ALL SIGNALS ARE REVIEWED BY WOPR BEFORE BROADCAST.</p>
+  </header>
+
+  <main>
+    <section class="transmissions" aria-labelledby="uplink-title">
+      <div class="transmission-terminal transmission-uplink-terminal">
+        <div class="terminal-window-bar" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="transmission-kicker">PUBLIC SIGNAL UPLINK</p>
+        <h2 id="uplink-title">WORLDNODE / EXTERNAL COMMUNICATION CHANNEL</h2>
+        <p class="transmission-copy">IDENTIFY YOUR SIGNAL, WRITE YOUR MESSAGE, AND SEND IT INTO THE MODERATION QUEUE.</p>
+
+        <form id="transmission-form" class="transmission-form" autocomplete="off">
+          <label>CALLSIGN
+            <input name="callsign" maxlength="40" required aria-label="Callsign" placeholder="e.g. TUX-42">
+          </label>
+          <label>ORIGIN
+            <input name="origin" maxlength="80" aria-label="Origin" placeholder="e.g. Berlin / Earth orbit">
+          </label>
+          <label class="transmission-message">MESSAGE
+            <textarea name="message" maxlength="1200" required aria-label="Message" placeholder="Type your transmission..."></textarea>
+          </label>
+          <label>CONTACT CHANNEL (OPTIONAL)
+            <input name="reply_channel" maxlength="160" aria-label="Contact channel optional" placeholder="Not shown publicly">
+          </label>
+          <label class="signal-trap" aria-hidden="true">CONTACT CHANNEL
+            <input name="contact_channel" tabindex="-1" autocomplete="off">
+          </label>
+          <button type="submit">TRANSMIT SIGNAL</button>
+          <p id="transmission-status" class="transmission-status" role="status" aria-live="polite">PENDING SIGNAL INPUT.</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="received-transmissions public-transmission-archive" aria-labelledby="received-title">
+      <div class="archive-heading">
+        <p class="transmission-kicker">APPROVED PUBLIC BROADCASTS ONLY</p>
+        <h2 id="received-title">RECEIVED TRANSMISSIONS</h2>
+      </div>
+      <div id="transmission-list" class="transmission-list" aria-live="polite">
+        <p class="transmission-empty">SCANNING APPROVED SIGNALS…</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-links">
+      © 2026 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a> ·
+      <a href="/wopr/" class="footer-link-muted">Nothing</a>
+    </p>
+  </footer>
+</div>
+
+</body>
+</html>
