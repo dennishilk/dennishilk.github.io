@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="googlebot" content="noindex, nofollow, noarchive" />
+  <title>WOPR – World Observer Development Network</title>
+  <meta name="description" content="Private World Observer staging environment. Authentication required." />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png" />
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/wopr/wopr.css?v=1" />
+  <script defer src="/wopr/wopr.js?v=1"></script>
+</head>
+<body>
+  <main class="wopr-shell" aria-labelledby="wopr-title">
+    <section class="wopr-terminal" aria-label="WOPR identification terminal">
+      <div class="wopr-statusbar" aria-label="System status">
+        <span>WORLD OBSERVER DEVELOPMENT NETWORK</span>
+        <span class="status-online">WORLDNODE ONLINE</span>
+        <span>PRIVATE STAGING ENVIRONMENT</span>
+      </div>
+
+      <div class="wopr-screen">
+        <header class="wopr-header">
+          <p class="kicker">WOPR / JOSHUA INTERFACE</p>
+          <h1 id="wopr-title">WORLD OBSERVER DEVELOPMENT NETWORK</h1>
+          <p class="classification">PRIVATE STAGING ENVIRONMENT · AUTHORIZED ACCESS ONLY</p>
+        </header>
+
+        <section class="dialogue" aria-live="polite">
+          <p>GREETINGS PROFESSOR FALKEN.</p>
+          <p>HELLO.</p>
+          <p>HOW ARE YOU FEELING TODAY?</p>
+          <p class="identification">IDENTIFICATION PLEASE:</p>
+        </section>
+
+        <form id="wopr-login" class="login-panel" autocomplete="off" novalidate>
+          <label for="wopr-identifier">IDENTIFIER</label>
+          <input id="wopr-identifier" name="identifier" type="text" inputmode="text" autocomplete="username" spellcheck="false" required />
+
+          <label for="wopr-secret">ACCESS PHRASE</label>
+          <input id="wopr-secret" name="password" type="password" autocomplete="current-password" required />
+
+          <button type="submit">TRANSMIT IDENTIFICATION</button>
+          <p id="auth-message" class="auth-message" role="status" aria-live="polite">Awaiting credentials. Transmission requires HTTPS and server-side session auth.</p>
+        </form>
+
+        <section id="game-section" class="game-section" hidden aria-labelledby="game-title">
+          <p class="warning-line">IDENTIFICATION NOT RECOGNIZED.</p>
+          <h2 id="game-title">SHALL WE PLAY A GAME?</h2>
+          <p class="game-copy">TIC-TAC-TOE SIMULATION LOADED. YOU ARE X. WOPR IS O.</p>
+          <div id="tic-tac-toe-board" class="tic-tac-toe-board" role="grid" aria-label="Tic-Tac-Toe board"></div>
+          <p id="game-status" class="game-status" role="status" aria-live="polite">YOUR MOVE, PROFESSOR.</p>
+          <button id="reset-game" type="button" class="secondary-button">RESET SIMULATION</button>
+        </section>
+
+        <section class="staging-preview" aria-labelledby="staging-title">
+          <h2 id="staging-title">OBSERVER STAGING LIFECYCLE</h2>
+          <p>Dashboard access is released only after server-side authentication. These placeholder states define the future module workflow.</p>
+          <div class="lifecycle-grid">
+            <article><span>01</span><strong>IDEA</strong><p>Concept captured for later observation design.</p></article>
+            <article><span>02</span><strong>EXPERIMENTAL</strong><p>Prototype logic under controlled internal review.</p></article>
+            <article><span>03</span><strong>COLLECTING</strong><p>Collector behavior validated with non-public staging exports.</p></article>
+            <article><span>04</span><strong>VALIDATING</strong><p>Data quality, freshness and failure modes checked.</p></article>
+            <article><span>05</span><strong>READY</strong><p>Candidate for public dashboard promotion.</p></article>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
