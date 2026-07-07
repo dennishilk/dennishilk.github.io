@@ -1531,6 +1531,9 @@ function firstValue(source, keys) {
 
 function firstNumber(source, keys) {
   const value = firstValue(source, keys);
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
 }
@@ -1672,6 +1675,30 @@ function getEnvironmentObserverStatus(observer) {
   return firstValue(observer, ["data_status", "dataStatus", "status", "health", "state"]) || (observer?.planned ? "planned" : "unavailable");
 }
 
+
+function getGeomagneticObservationTimestamp(observer) {
+  return firstValue(observer, [
+    "collected_at_utc",
+    "collectedAtUtc",
+    "collected_at",
+    "collectedAt",
+    "kp.collected_at_utc",
+    "kp.collectedAtUtc",
+    "kp.collected_at",
+    "kp.collectedAt",
+    "kp.observed_at_utc",
+    "kp.observedAtUtc",
+    "observed_at_utc",
+    "observedAtUtc",
+    "observed_at",
+    "observedAt",
+    "timestamp",
+    "last_update",
+    "generated_at",
+    "last_seen_date",
+  ]);
+}
+
 function renderEnvironmentOverviewCards(environmentData) {
   const container = document.getElementById("environment-core-cards");
   if (!container) {
@@ -1681,7 +1708,7 @@ function renderEnvironmentOverviewCards(environmentData) {
 
   const observer = findEnvironmentObserver(environmentData, GEOMAGNETIC_OBSERVER_ID);
   const statusValue = getEnvironmentObserverStatus(observer);
-  const collectedAt = firstValue(observer, ["collected_at", "collectedAt", "observed_at", "observedAt", "timestamp", "last_update", "generated_at", "last_seen_date"]);
+  const collectedAt = getGeomagneticObservationTimestamp(observer);
   const latestKp = firstNumber(observer, ["latest_kp", "latestKp", "kp", "kp_index", "primary_metric.value", "primary_metric_value"]);
 
   renderTechnologyCard(container, {
@@ -1707,7 +1734,7 @@ function renderGeomagneticStormObserver(environmentData, history) {
   const latestHistoryPoint = getLatestGeomagneticHistoryPoint(history);
   const statusValue = firstValue(observer, ["status", "health", "state"]) || (observer.planned ? "planned" : "unknown");
   const dataStatusValue = firstValue(observer, ["data_status", "dataStatus"]) || (observer.planned ? "unavailable" : "unknown");
-  const collectedAt = firstValue(observer, ["collected_at", "collectedAt", "observed_at", "observedAt", "timestamp", "last_update", "generated_at", "last_seen_date"]);
+  const collectedAt = getGeomagneticObservationTimestamp(observer);
   const sourceLabel = firstValue(observer, ["source_label", "sourceLabel", "source", "provider"]) || "NOAA SWPC";
   const latestKp = firstNumber(observer, ["latest_kp", "latestKp", "kp", "kp_index", "primary_metric.value", "primary_metric_value"]);
   const maxKp = firstNumber(observer, [
