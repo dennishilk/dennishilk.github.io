@@ -1577,3 +1577,133 @@ button.technology-observer-card {
 .traffic-page .nebby-terminal-line { flex-wrap:wrap; }
 @media (max-width: 1050px) { .traffic-dashboard > .traffic-kpis { grid-template-columns:repeat(3,1fr); } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:auto; } .traffic-grid { grid-template-columns:repeat(2,1fr); } .traffic-card,.panel-pulse,.panel-stream,.panel-map,.panel-ratio,.timeline,.method-card { grid-column:span 1; } .map-layout { grid-template-columns:1fr; } .traffic-hero-grid { grid-template-columns:1fr; } }
 @media (max-width: 620px) { .traffic-shell { padding:0 .8rem; } .traffic-header { padding-top:1.15rem; } .traffic-dashboard > .traffic-kpis,.traffic-grid { grid-template-columns:1fr; } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:span 1; } #request-stream div { grid-template-columns:54px 66px 26px minmax(0,1fr); font-size:.72rem; } .traffic-hero-copy h1 { font-size:2.05rem; } .terminal-command { font-size:.86rem; } .method-card dl { grid-template-columns:1fr; } .world-map-frame { min-height:220px; } }
+
+/* Incoming transmissions */
+.transmissions {
+  padding: 2rem 1rem 3rem;
+  text-align: left;
+}
+
+.transmission-terminal {
+  max-width: 1000px;
+  margin: 0 auto;
+  border: 1px solid rgba(0, 180, 255, 0.32);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(2, 11, 16, 0.94), rgba(0, 0, 0, 0.78));
+  box-shadow: 0 0 24px rgba(0, 180, 255, 0.13), inset 0 0 40px rgba(0, 180, 255, 0.035);
+  padding: clamp(1rem, 3vw, 1.6rem);
+}
+
+.transmission-kicker,
+.transmission-status,
+.transmission-empty {
+  color: #8bdfff;
+  font-size: 0.82rem;
+  letter-spacing: 0.09em;
+}
+
+.transmission-terminal h2,
+.received-transmissions h3 {
+  color: var(--accent);
+  text-shadow: 0 0 14px rgba(0, 180, 255, 0.36);
+}
+
+.transmission-copy {
+  margin: 0.9rem 0 1.3rem;
+  color: #c9d1d9;
+  line-height: 1.6;
+}
+
+.transmission-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  border: 1px solid rgba(0, 180, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  padding: 1rem;
+}
+
+.transmission-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--accent);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+}
+
+.transmission-form input,
+.transmission-form textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 180, 255, 0.32);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.58);
+  color: var(--fg);
+  font: inherit;
+  padding: 0.72rem 0.82rem;
+  outline: none;
+}
+
+.transmission-form input:focus,
+.transmission-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 180, 255, 0.12);
+}
+
+.transmission-message,
+.transmission-status {
+  grid-column: 1 / -1;
+}
+
+.transmission-form textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.transmission-form button {
+  justify-self: start;
+  border: 1px solid rgba(0, 180, 255, 0.55);
+  border-radius: 8px;
+  background: rgba(0, 180, 255, 0.14);
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.75rem 1.15rem;
+}
+
+.transmission-form button:hover {
+  background: rgba(0, 180, 255, 0.22);
+  box-shadow: 0 0 12px rgba(0, 180, 255, 0.34);
+}
+
+.signal-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.transmission-status { align-self: center; margin: 0; }
+.transmission-status.success { color: #7cff9b; }
+.transmission-status.error { color: #ff6b5f; }
+
+.received-transmissions { margin-top: 1.4rem; }
+.transmission-list { display: grid; gap: 0.85rem; margin-top: 0.85rem; }
+.transmission-entry {
+  border-left: 2px solid var(--accent);
+  background: rgba(0, 180, 255, 0.055);
+  padding: 0.9rem 1rem;
+}
+.transmission-entry time { color: #8bdfff; }
+.transmission-entry p { margin: 0.4rem 0 0; color: #c9d1d9; }
+.transmission-entry blockquote {
+  margin: 0.55rem 0 0;
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+  .transmission-form { grid-template-columns: 1fr; }
+}

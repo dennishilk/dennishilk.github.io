@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
-  <title>WOPR Dashboard – Private Staging</title>
+  <title>WOPR Dashboard – Incoming Transmissions</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-  <link rel="stylesheet" href="/wopr/wopr.css?v=1" />
+  <link rel="stylesheet" href="/wopr/wopr.css?v=2" />
+  <script defer src="/wopr/dashboard/transmissions.js?v=1"></script>
 </head>
 <body>
   <main class="wopr-shell">
@@ -20,18 +21,22 @@
         <header class="wopr-header">
           <p class="kicker">SECURE SESSION</p>
           <h1>WOPR OBSERVER WORKSHOP</h1>
-          <p class="classification">PLACEHOLDER DASHBOARD · NO LIVE OBSERVER DATA CONNECTED</p>
+          <p class="classification">AUTHENTICATED OPERATIONS · PUBLICATION QUEUE</p>
         </header>
 
-        <section class="staging-preview">
-          <h2>STAGING MODULES</h2>
-          <p>Future World Observer modules can be reviewed here before public release. No collectors or live dashboard data have been moved into this private area yet.</p>
-          <div class="lifecycle-grid">
-            <article><span>IDEA</span><strong>Signal Sketchpad</strong><p>Reserved for early observation concepts.</p></article>
-            <article><span>EXPERIMENTAL</span><strong>Prototype Bay</strong><p>Reserved for internal test cards and trial logic.</p></article>
-            <article><span>COLLECTING</span><strong>Collector Watch</strong><p>Reserved for staged collection health checks.</p></article>
-            <article><span>VALIDATING</span><strong>Data Review</strong><p>Reserved for quality and freshness validation.</p></article>
-            <article><span>READY</span><strong>Release Queue</strong><p>Reserved for candidates ready for public promotion.</p></article>
+        <section class="staging-preview transmissions-ops" aria-labelledby="incoming-title">
+          <div class="ops-card">
+            <div>
+              <h2 id="incoming-title">INCOMING TRANSMISSIONS</h2>
+              <p><strong id="pending-count">0</strong> PENDING</p>
+            </div>
+            <button type="button" class="secondary-button" id="review-button">REVIEW</button>
+          </div>
+          <p id="review-status" class="auth-message">AWAITING QUEUE STATUS.</p>
+
+          <div id="review-panel" class="review-panel" hidden>
+            <h2>REVIEW QUEUE</h2>
+            <div id="pending-list" class="pending-list" aria-live="polite"></div>
           </div>
         </section>
       </div>

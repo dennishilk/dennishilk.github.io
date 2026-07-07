@@ -43,9 +43,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="avatar.png">
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="style.css?v=41">
+  <link rel="stylesheet" href="style.css?v=42">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+  <script defer src="transmissions.js?v=1"></script>
 </head>
 
 <body>
@@ -114,6 +115,39 @@
         <p>Automatic NVIDIA driver installer for Debian.</p>
       </a>
 
+    </div>
+  </section>
+
+  <!-- INCOMING TRANSMISSIONS -->
+  <section class="transmissions" aria-labelledby="transmissions-title">
+    <div class="transmission-terminal">
+      <p class="transmission-kicker">PUBLIC SIGNAL UPLINK</p>
+      <h2 id="transmissions-title">INCOMING TRANSMISSIONS</h2>
+      <p class="transmission-copy">YOU FOUND THIS NODE.<br>LEAVE A SIGNAL FROM THE OUTSIDE WORLD.</p>
+
+      <form id="transmission-form" class="transmission-form" autocomplete="off">
+        <label>CALLSIGN
+          <input name="callsign" maxlength="40" required aria-label="Callsign">
+        </label>
+        <label>ORIGIN
+          <input name="origin" maxlength="80" aria-label="Origin">
+        </label>
+        <label class="transmission-message">MESSAGE
+          <textarea name="message" maxlength="1200" required aria-label="Message"></textarea>
+        </label>
+        <label class="signal-trap" aria-hidden="true">CONTACT CHANNEL
+          <input name="contact_channel" tabindex="-1" autocomplete="off">
+        </label>
+        <button type="submit">TRANSMIT</button>
+        <p id="transmission-status" class="transmission-status" role="status" aria-live="polite">PENDING SIGNAL INPUT.</p>
+      </form>
+
+      <div class="received-transmissions">
+        <h3>RECEIVED TRANSMISSIONS</h3>
+        <div id="transmission-list" class="transmission-list" aria-live="polite">
+          <p class="transmission-empty">SCANNING APPROVED SIGNALS…</p>
+        </div>
+      </div>
     </div>
   </section>
 
