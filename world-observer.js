@@ -19,6 +19,8 @@ const MEDIA_HISTORY_URLS = buildDashboardUrls("history/media-language-germany.js
 const INTERNET_URLS = buildDashboardUrls("internet.json");
 const SOCIETY_URLS = buildDashboardUrls("society.json");
 const TECHNOLOGY_URLS = buildDashboardUrls("technology.json");
+const ENVIRONMENT_URLS = buildDashboardUrls("environment.json");
+const GEOMAGNETIC_HISTORY_URLS = buildDashboardUrls("history/geomagnetic-storm-observer.json");
 const INTERNET_HISTORY_URLS = buildDashboardUrls("history/internet-observers.json");
 const HEARTBEAT_URLS = buildDashboardUrls("heartbeat.json");
 const HEARTBEAT_CONTENTS_URL = "https://api.github.com/repos/dennishilk/world-observer/contents/state/heartbeat";
@@ -715,6 +717,7 @@ let selectedFuelTrendRange = 60;
 let selectedTeaTrendRange = 60;
 let selectedDebianPackageTrendRange = 365;
 let selectedArchPackageTrendRange = 365;
+let selectedGeomagneticTrendRange = 30;
 
 function normalizeFuelType(fuelType) {
   return String(fuelType || "benzin").replace(/-/g, "_");
@@ -1504,6 +1507,126 @@ function renderLinuxKernelSizePlaceholder(technologyData) {
     "linux-kernel-size-status",
     observer?.degraded_reason || "Unavailable until a verified supported kernel source archive URL exposes a numeric Content-Length.",
   );
+}
+
+const GEOMAGNETIC_OBSERVER_ID = "geomagnetic-storm-observer";
+
+function findEnvironmentObserver(environmentData, observerId) {
+  const observers = [
+    ...normalizeCollection(environmentData),
+    ...(Array.isArray(environmentData?.items) ? environmentData.items : []),
+  ];
+  return observers.find((observer) => getObserverLookupKeys(observer).includes(observerId)) || null;
+}
+
+function firstValue(source, keys) {
+  for (const key of keys) {
+    const value = getNestedValue(source, key);
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
+  }
+  return null;
+}
+
+function firstNumber(source, keys) {
+  const value = firstValue(source, keys);
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function formatKp(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toFixed(1).replace(/\.0$/, "") : "—";
+}
+
+function formatSpeed(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? `${number.toLocaleString(undefined, { maximumFractionDigits: 0 })} km/s` : "—";
+}
+
+function formatBz(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? `${number.toLocaleString(undefined, { maximumFractionDigits: 1 })} nT` : "—";
+}
+
+function normalizeGeomagneticHistoryPoints(history) {
+  const rawPoints = Array.isArray(history) ? history : history?.points || history?.history || history?.data || [];
+  return rawPoints
+    .map((point) => {
+      const value = firstNumber(point, [
+        "kp",
+        "latest_kp",
+        "max_kp",
+        "kp_index",
+        "value",
+        "primary_metric.value",
+        "primary_metric_value",
+      ]);
+      const date = firstValue(point, ["date", "timestamp", "observed_at", "collected_at", "time_tag", "generated_at"]);
+      return value === null ? null : { date, value };
+    })
+    .filter(Boolean);
+}
+
+function renderGeomagneticStormObserver(environmentData, history) {
+  const observer = findEnvironmentObserver(environmentData, GEOMAGNETIC_OBSERVER_ID) || {};
+  const statusValue = firstValue(observer, ["status", "health", "state"]) || (observer.planned ? "planned" : "unknown");
+  const dataStatusValue = firstValue(observer, ["data_status", "dataStatus"]) || (observer.planned ? "unavailable" : "unknown");
+  const collectedAt = firstValue(observer, ["collected_at", "collectedAt", "observed_at", "observedAt", "timestamp", "last_update", "generated_at", "last_seen_date"]);
+  const sourceLabel = firstValue(observer, ["source_label", "sourceLabel", "source", "provider"]) || "NOAA SWPC";
+  const latestKp = firstNumber(observer, ["latest_kp", "latestKp", "kp", "kp_index", "primary_metric.value", "primary_metric_value"]);
+  const maxKp = firstNumber(observer, ["max_kp", "maxKp", "maximum_kp", "maximumKp"]);
+  const gScale = firstValue(observer, ["noaa_g_scale", "noaaGScale", "g_scale", "gScale", "storm_scale"]);
+  const condition = firstValue(observer, ["condition", "summary", "classification", "level"]);
+  const bz = firstNumber(observer, ["latest_imf_bz_gsm", "latestImfBzGsm", "imf_bz_gsm", "bz_gsm", "bz"]);
+  const windSpeed = firstNumber(observer, ["latest_solar_wind_speed", "latestSolarWindSpeed", "solar_wind_speed", "wind_speed_kms", "speed"]);
+  const hasLiveData = Object.keys(observer).length > 0 && !observer.planned;
+
+  setText("geomagnetic-storm-status", hasLiveData
+    ? "Latest public NOAA SWPC-derived geomagnetic observation. Observational display only; no forecasts or visibility guarantees."
+    : "Geomagnetic Storm Observer export is listed but has no current usable observation yet.");
+  setText("geomagnetic-storm-source", sourceLabel);
+
+  const statusBadge = document.getElementById("geomagnetic-storm-status-badge");
+  if (statusBadge) {
+    statusBadge.textContent = formatInternetStatusLabel(statusValue);
+    statusBadge.className = `status-badge ${normalizeStatusClass(statusValue)}`;
+  }
+  const dataStatusBadge = document.getElementById("geomagnetic-storm-data-status-badge");
+  if (dataStatusBadge) {
+    dataStatusBadge.textContent = formatInternetStatusLabel(dataStatusValue);
+    dataStatusBadge.className = `status-badge ${normalizeStatusClass(dataStatusValue)}`;
+  }
+
+  renderMetricCards("geomagnetic-storm-metrics", [
+    { label: "status / data_status", value: `${formatInternetStatusLabel(statusValue)} / ${formatInternetStatusLabel(dataStatusValue)}` },
+    { label: "latest Kp", value: formatKp(latestKp) },
+    { label: "max Kp", value: formatKp(maxKp) },
+    { label: "NOAA G-scale", value: gScale || "—" },
+    { label: "condition", value: condition || "—" },
+    { label: "latest IMF Bz GSM", value: formatBz(bz) },
+    { label: "latest solar wind speed", value: formatSpeed(windSpeed) },
+    { label: "collected", value: formatDateTimeUtc(collectedAt) },
+    { label: "source", value: sourceLabel },
+  ]);
+
+  renderWorldObserverTrendChart("geomagnetic-storm-trend-chart", {
+    title: "Kp trend history",
+    series: normalizeGeomagneticHistoryPoints(history),
+    selectedRange: selectedGeomagneticTrendRange,
+    availableRanges: [7, 30, 90, 180],
+    integerTicks: false,
+    yPadding: 0.6,
+    formatter: formatKp,
+    latestLabel: "Latest",
+    emptyState: "Kp trend starts after public history observations are collected.",
+    color: "#58a6ff",
+    onRangeChange: (range) => {
+      selectedGeomagneticTrendRange = range;
+      renderGeomagneticStormObserver(environmentData, history);
+    },
+  });
 }
 
 function renderTechnologyObservers(technologyData) {
@@ -2582,7 +2705,12 @@ async function initWorldObserver() {
     }
 
     if (page === "environment") {
-      renderPlannedCards("environment-planned-cards", ["Cosmic Ray Observer", "Geomagnetic Storm Observer", "Natural Disaster Observer", "Ionosphere Observer"]);
+      const [environment, geomagneticHistory] = await Promise.all([
+        loadOptionalJson(ENVIRONMENT_URLS),
+        loadOptionalJson(GEOMAGNETIC_HISTORY_URLS),
+      ]);
+      renderOptional("Geomagnetic Storm Observer", () => renderGeomagneticStormObserver(environment, geomagneticHistory));
+      renderPlannedCards("environment-planned-cards", ["Cosmic Ray Observer", "Natural Disaster Observer", "Ionosphere Observer"]);
       showDashboard();
       return;
     }
