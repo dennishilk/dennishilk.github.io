@@ -1747,7 +1747,11 @@ button.technology-observer-card {
 .transmission-cta-button:after { content: " ]"; color: #8bdfff; }
 .transmission-cta-button:hover { color: #001018; background: var(--accent); box-shadow: 0 0 16px rgba(0, 220, 255, 0.34); }
 
-.transmissions-page .content { max-width: 1180px; }
+.transmissions-page .content {
+  width: min(100%, 1180px);
+  margin-left: auto;
+  margin-right: auto;
+}
 .transmission-page-shell { min-height: 100vh; }
 .transmission-page-header { padding-bottom: 1rem; }
 .transmission-page-header h1 {
