@@ -1558,6 +1558,91 @@ function formatOptionalSpeed(value) {
   return value === null || value === undefined || value === "" ? "unavailable" : formatSpeed(value);
 }
 
+
+function getGeomagneticSeverityClass(gScale, kpValue) {
+  const gNumber = Number(String(gScale || "").match(/\d+/)?.[0]);
+  const kp = Number(kpValue);
+  const severity = Number.isFinite(gNumber) && gNumber > 0
+    ? gNumber
+    : Number.isFinite(kp) && kp >= 5
+      ? Math.min(5, Math.max(1, Math.floor(kp - 4)))
+      : 0;
+
+  if (severity >= 5) return "severity-g5";
+  if (severity >= 3) return "severity-g3";
+  if (severity >= 1) return "severity-g1";
+  return "severity-g0";
+}
+
+function getGeomagneticState(condition, kpValue) {
+  const text = String(condition || "").trim();
+  if (text) {
+    return text.toUpperCase();
+  }
+  const kp = Number(kpValue);
+  if (!Number.isFinite(kp)) return "UNKNOWN";
+  if (kp >= 5) return "STORM";
+  if (kp >= 3) return "UNSETTLED";
+  return "QUIET";
+}
+
+function getKpActivityLabel(kpValue) {
+  const kp = Number(kpValue);
+  if (!Number.isFinite(kp)) return "Current Kp unavailable";
+  if (kp <= 2) return "Quiet";
+  if (kp <= 4) return "Unsettled";
+  if (kp <= 6) return "Active / storm threshold";
+  return "Strong storm activity";
+}
+
+function getSystemStatusLabel(statusValue) {
+  const normalized = normalizeStatusValue(statusValue);
+  if (normalized === "ok") return "ONLINE";
+  if (normalized === "partial") return "PARTIAL";
+  if (normalized === "planned") return "PLANNED";
+  if (normalized === "unavailable") return "UNAVAILABLE";
+  return formatInternetStatusLabel(statusValue);
+}
+
+function setGeomagneticKpScale(kpValue) {
+  const marker = document.getElementById("geomagnetic-kp-scale-marker");
+  const fill = document.getElementById("geomagnetic-kp-scale-fill");
+  const label = document.getElementById("geomagnetic-kp-scale-label");
+  const kp = Number(kpValue);
+  const position = Number.isFinite(kp) ? Math.max(0, Math.min(100, (kp / 9) * 100)) : 0;
+  if (marker) {
+    marker.style.left = `${position}%`;
+    marker.querySelector("span").textContent = Number.isFinite(kp) ? `Current Kp ${formatKp(kp)}` : "Current Kp unavailable";
+  }
+  if (fill) {
+    fill.style.width = `${position}%`;
+  }
+  if (label) {
+    label.textContent = getKpActivityLabel(kp);
+  }
+}
+
+function renderGeomagneticInstrumentPanels(containerId, metrics) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.textContent = "";
+  metrics.forEach((metric) => {
+    const panel = document.createElement("article");
+    panel.className = `geomagnetic-instrument-panel${metric.featured ? " featured" : ""}`;
+    const label = document.createElement("span");
+    label.textContent = metric.label;
+    const value = document.createElement("strong");
+    value.textContent = metric.value ?? "—";
+    panel.append(label, value);
+    if (metric.detail) {
+      const detail = document.createElement("small");
+      detail.textContent = metric.detail;
+      panel.appendChild(detail);
+    }
+    container.appendChild(panel);
+  });
+}
+
 function getLatestGeomagneticHistoryPoint(history) {
   const rawPoints = Array.isArray(history) ? history : history?.points || history?.history || history?.data || [];
   return rawPoints.length ? rawPoints[rawPoints.length - 1] : {};
@@ -1660,20 +1745,32 @@ function renderGeomagneticStormObserver(environmentData, history) {
     dataStatusBadge.className = `status-badge ${normalizeStatusClass(dataStatusValue)}`;
   }
 
-  renderMetricCards("geomagnetic-storm-metrics", [
-    { label: "status / data_status", value: `${formatInternetStatusLabel(statusValue)} / ${formatInternetStatusLabel(dataStatusValue)}` },
-    { label: "latest Kp", value: formatKp(latestKp) },
-    { label: "max Kp", value: formatKp(maxKp) },
-    { label: "NOAA G-scale", value: gScale || "—" },
-    { label: "condition", value: condition || "—" },
-    { label: "latest IMF Bz GSM", value: formatOptionalBz(bz) },
-    { label: "latest solar wind speed", value: formatOptionalSpeed(windSpeed) },
-    { label: "collected", value: formatDateTimeUtc(collectedAt) },
-    { label: "source", value: sourceLabel },
+  const geomagneticState = getGeomagneticState(condition, latestKp);
+  const severityClass = getGeomagneticSeverityClass(gScale, latestKp);
+  const hero = document.getElementById("geomagnetic-command-hero");
+  if (hero) {
+    hero.className = `geomagnetic-command-hero ${severityClass}`;
+  }
+  setText("geomagnetic-system-status", getSystemStatusLabel(statusValue));
+  setText("geomagnetic-system-source", sourceLabel);
+  setText("geomagnetic-system-update", formatDateTimeUtc(collectedAt));
+  setText("geomagnetic-state-value", geomagneticState);
+  setText("geomagnetic-kp-value", formatKp(latestKp));
+  setText("geomagnetic-gscale-value", gScale || "—");
+  setText("geomagnetic-gscale-condition", condition || geomagneticState.toLowerCase());
+  setGeomagneticKpScale(latestKp);
+
+  renderGeomagneticInstrumentPanels("geomagnetic-storm-metrics", [
+    { label: "Available-window max Kp", value: formatKp(maxKp), detail: "Real exported max_available / fallback", featured: true },
+    { label: "Current geomagnetic condition", value: condition || geomagneticState.toLowerCase() },
+    { label: "Latest IMF Bz GSM", value: formatOptionalBz(bz) },
+    { label: "Solar wind speed", value: formatOptionalSpeed(windSpeed) },
+    { label: "Collected", value: formatDateTimeUtc(collectedAt) },
+    { label: "Source", value: sourceLabel },
   ]);
 
   renderWorldObserverTrendChart("geomagnetic-storm-trend-chart", {
-    title: "Kp trend history",
+    title: "Planetary Kp trend",
     series: normalizeGeomagneticHistoryPoints(history),
     selectedRange: selectedGeomagneticTrendRange,
     availableRanges: [7, 30, 90, 180],

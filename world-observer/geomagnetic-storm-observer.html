@@ -60,24 +60,96 @@
     <p><a class="world-observer-back-link" href="/world-observer/environment.html">← Back to Earth &amp; Space</a></p>
     <section id="observer-fallback" class="observer-fallback" hidden>World Observer data not available yet.</section>
     <section id="observer-dashboard" class="observer-dashboard" hidden>
-      <section class="observer-section geomagnetic-detail-section" aria-labelledby="geomagnetic-storm-title">
-        <div class="observer-title-row">
-          <h2 id="geomagnetic-storm-title">Geomagnetic Storm Observer</h2>
+      <section class="observer-section geomagnetic-detail-section geomagnetic-command-console" aria-labelledby="geomagnetic-storm-title">
+        <div class="observer-title-row geomagnetic-console-title-row">
+          <div>
+            <h2 id="geomagnetic-storm-title">Geomagnetic Storm Observer</h2>
+            <p id="geomagnetic-storm-status" class="observer-limitation" aria-live="polite">Loading public space weather observation export.</p>
+          </div>
           <span id="geomagnetic-storm-source" class="status-badge partial">NOAA SWPC</span>
         </div>
-        <p id="geomagnetic-storm-status" class="observer-limitation" aria-live="polite">Loading public space weather observation export.</p>
-        <article class="internet-observer-card environment-live-card geomagnetic-current-card" aria-label="Geomagnetic Storm Observer current observation">
-          <div class="internet-card-header">
-            <h3>Current observation</h3>
-            <div class="internet-card-badges">
+
+        <div class="geomagnetic-status-strip" aria-label="Geomagnetic command status">
+          <div><span>System status</span><strong id="geomagnetic-system-status">—</strong></div>
+          <div><span>Data source</span><strong id="geomagnetic-system-source">—</strong></div>
+          <div><span>Last update</span><strong id="geomagnetic-system-update">—</strong></div>
+        </div>
+
+        <article id="geomagnetic-command-hero" class="geomagnetic-command-hero severity-unknown" aria-label="Current geomagnetic monitoring console">
+          <div class="geomagnetic-hero-panel geomagnetic-state-panel">
+            <div class="geomagnetic-panel-kicker">Current geomagnetic conditions</div>
+            <div class="geomagnetic-primary-readouts">
+              <div class="geomagnetic-state-readout">
+                <span>Geomagnetic state</span>
+                <strong id="geomagnetic-state-value">—</strong>
+              </div>
+              <div class="geomagnetic-kp-readout">
+                <span>Kp index</span>
+                <strong id="geomagnetic-kp-value">—</strong>
+              </div>
+              <div class="geomagnetic-gscale-readout">
+                <span>NOAA G-scale</span>
+                <strong id="geomagnetic-gscale-value">—</strong>
+                <em id="geomagnetic-gscale-condition">—</em>
+              </div>
+            </div>
+            <div class="geomagnetic-kp-scale" aria-label="Kp activity scale from 0 to 9">
+              <div class="geomagnetic-kp-scale-heading"><span>Kp scale 0–9</span><strong id="geomagnetic-kp-scale-label">—</strong></div>
+              <div class="geomagnetic-kp-scale-track">
+                <div id="geomagnetic-kp-scale-fill" class="geomagnetic-kp-scale-fill"></div>
+                <div id="geomagnetic-kp-scale-marker" class="geomagnetic-kp-scale-marker"><span>Current Kp</span></div>
+                <div class="geomagnetic-kp-scale-ticks" aria-hidden="true">
+                  <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+                </div>
+              </div>
+            </div>
+            <div class="geomagnetic-badge-row">
               <span id="geomagnetic-storm-status-badge" class="status-badge unavailable">UNKNOWN</span>
               <span id="geomagnetic-storm-data-status-badge" class="status-badge unavailable">UNKNOWN</span>
             </div>
           </div>
-          <div id="geomagnetic-storm-metrics" class="status-grid observer-detail-grid"></div>
-          <p class="observer-limitation">Descriptive NOAA SWPC public-data signal. It does not predict local sky conditions and does not guarantee aurora visibility.</p>
+
+          <div class="geomagnetic-visual-panel" aria-label="Illustrative Earth magnetosphere visualization">
+            <div class="geomagnetic-visual-label">Illustrative magnetosphere view</div>
+            <svg class="geomagnetic-magnetosphere" viewBox="0 0 720 430" role="img" aria-labelledby="geomagnetic-visual-title geomagnetic-visual-desc">
+              <title id="geomagnetic-visual-title">Earth magnetosphere illustration</title>
+              <desc id="geomagnetic-visual-desc">Decorative command-console illustration of Earth, magnetic field arcs, and solar-wind flow; not a measured live map.</desc>
+              <defs>
+                <radialGradient id="earthGlow" cx="48%" cy="45%" r="58%"><stop offset="0" stop-color="#78f6ff" stop-opacity="0.96"/><stop offset="0.38" stop-color="#0b5f8f" stop-opacity="0.86"/><stop offset="0.72" stop-color="#051627" stop-opacity="0.98"/><stop offset="1" stop-color="#02070d"/></radialGradient>
+                <linearGradient id="fieldLine" x1="0" x2="1"><stop stop-color="#00d8ff" stop-opacity="0"/><stop offset="0.42" stop-color="#19e6ff" stop-opacity="0.92"/><stop offset="1" stop-color="#19e6ff" stop-opacity="0.18"/></linearGradient>
+                <linearGradient id="solarWind" x1="0" x2="1"><stop stop-color="#ff9d2e" stop-opacity="0.86"/><stop offset="1" stop-color="#ff9d2e" stop-opacity="0"/></linearGradient>
+              </defs>
+              <g class="solar-wind-lines">
+                <path d="M15 145 C120 130 168 166 250 178"/><path d="M0 205 C95 192 170 210 258 212"/><path d="M18 265 C126 285 176 252 252 238"/>
+              </g>
+              <g class="magnetic-field-lines">
+                <path d="M336 215 C260 80 440 30 666 54"/><path d="M337 214 C250 124 438 92 699 104"/><path d="M338 215 C258 172 438 155 704 164"/><path d="M338 215 C258 258 438 275 704 266"/><path d="M337 216 C250 306 438 338 699 326"/><path d="M336 216 C260 350 440 400 666 376"/>
+                <path d="M345 214 C438 76 588 82 716 126"/><path d="M345 216 C438 354 588 348 716 304"/>
+              </g>
+              <circle class="earth-orbit-ring" cx="340" cy="215" r="106"/>
+              <circle class="earth-glow" cx="340" cy="215" r="88"/>
+              <circle class="earth-disc" cx="340" cy="215" r="70"/>
+              <path class="earth-terminator" d="M366 150 C327 168 308 204 315 244 C321 280 346 299 383 296 C414 277 430 246 426 211 C422 178 400 156 366 150Z"/>
+              <g class="instrument-grid"><circle cx="340" cy="215" r="130"/><circle cx="340" cy="215" r="174"/><path d="M340 35 V395"/><path d="M160 215 H690"/></g>
+            </svg>
+          </div>
         </article>
-        <div id="geomagnetic-storm-trend-chart" class="world-observer-trend-chart environment-trend-chart" aria-live="polite"></div>
+
+        <div id="geomagnetic-storm-metrics" class="geomagnetic-instrument-grid" aria-label="Geomagnetic instrument panels"></div>
+        <div class="geomagnetic-lower-grid">
+          <div id="geomagnetic-storm-trend-chart" class="world-observer-trend-chart environment-trend-chart geomagnetic-trend-chart" aria-live="polite"></div>
+          <aside class="geomagnetic-about-panel" aria-labelledby="geomagnetic-about-title">
+            <h3 id="geomagnetic-about-title">About the Kp index</h3>
+            <p>Kp describes global geomagnetic activity on a 0–9 scale.</p>
+            <p>This observer records public NOAA SWPC data only and does not forecast aurora visibility.</p>
+            <dl>
+              <div><dt>Kp 0–2</dt><dd>Quiet</dd></div>
+              <div><dt>Kp 3–4</dt><dd>Unsettled</dd></div>
+              <div><dt>Kp 5–6</dt><dd>Active / storm threshold</dd></div>
+              <div><dt>Kp 7–9</dt><dd>Strong storm activity</dd></div>
+            </dl>
+          </aside>
+        </div>
       </section>
     </section>
   </main>
