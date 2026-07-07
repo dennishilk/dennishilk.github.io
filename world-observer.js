@@ -1597,7 +1597,7 @@ function getKpActivityLabel(kpValue) {
 
 function getSystemStatusLabel(statusValue) {
   const normalized = normalizeStatusValue(statusValue);
-  if (normalized === "ok") return "ONLINE";
+  if (normalized === "ok") return "OK";
   if (normalized === "partial") return "PARTIAL";
   if (normalized === "planned") return "PLANNED";
   if (normalized === "unavailable") return "UNAVAILABLE";
@@ -1628,7 +1628,7 @@ function renderGeomagneticInstrumentPanels(containerId, metrics) {
   container.textContent = "";
   metrics.forEach((metric) => {
     const panel = document.createElement("article");
-    panel.className = `geomagnetic-instrument-panel${metric.featured ? " featured" : ""}`;
+    panel.className = `geomagnetic-instrument-panel${metric.featured ? " featured" : ""}${metric.compact ? " compact" : ""}${metric.unavailable ? " unavailable" : ""}`;
     const label = document.createElement("span");
     label.textContent = metric.label;
     const value = document.createElement("strong");
@@ -1752,6 +1752,15 @@ function renderGeomagneticStormObserver(environmentData, history) {
     hero.className = `geomagnetic-command-hero ${severityClass}`;
   }
   setText("geomagnetic-system-status", getSystemStatusLabel(statusValue));
+  const systemCell = document.getElementById("geomagnetic-system-status")?.closest(".geomagnetic-status-cell");
+  if (systemCell) {
+    systemCell.className = `geomagnetic-status-cell ${normalizeStatusClass(statusValue)}`;
+  }
+  setText("geomagnetic-data-coverage", formatInternetStatusLabel(dataStatusValue));
+  const coverageCell = document.querySelector(".geomagnetic-status-cell.data-coverage");
+  if (coverageCell) {
+    coverageCell.className = `geomagnetic-status-cell data-coverage ${normalizeStatusClass(dataStatusValue)}`;
+  }
   setText("geomagnetic-system-source", sourceLabel);
   setText("geomagnetic-system-update", formatDateTimeUtc(collectedAt));
   setText("geomagnetic-state-value", geomagneticState);
@@ -1761,12 +1770,12 @@ function renderGeomagneticStormObserver(environmentData, history) {
   setGeomagneticKpScale(latestKp);
 
   renderGeomagneticInstrumentPanels("geomagnetic-storm-metrics", [
-    { label: "Available-window max Kp", value: formatKp(maxKp), detail: "Real exported max_available / fallback", featured: true },
-    { label: "Current geomagnetic condition", value: condition || geomagneticState.toLowerCase() },
-    { label: "Latest IMF Bz GSM", value: formatOptionalBz(bz) },
-    { label: "Solar wind speed", value: formatOptionalSpeed(windSpeed) },
-    { label: "Collected", value: formatDateTimeUtc(collectedAt) },
-    { label: "Source", value: sourceLabel },
+    { label: "Available-window max Kp", value: formatKp(maxKp), detail: "Historical peak in available export window; not current conditions", featured: true },
+    { label: "Current geomagnetic condition", value: condition || geomagneticState.toLowerCase(), detail: "Derived from exported Kp / NOAA scale" },
+    { label: "Latest IMF Bz GSM", value: formatOptionalBz(bz), detail: "Optional instrument feed", unavailable: bz === null },
+    { label: "Solar wind speed", value: formatOptionalSpeed(windSpeed), detail: "Optional instrument feed", unavailable: windSpeed === null },
+    { label: "Collected", value: formatDateTimeUtc(collectedAt), compact: true },
+    { label: "Source", value: sourceLabel, compact: true },
   ]);
 
   renderWorldObserverTrendChart("geomagnetic-storm-trend-chart", {
