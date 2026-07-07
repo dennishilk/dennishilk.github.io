@@ -2,7 +2,9 @@
 "use strict";
 
 const crypto = require("node:crypto");
+const fs = require("node:fs/promises");
 const http = require("node:http");
+const path = require("node:path");
 
 const CONFIG = {
   host: process.env.WOPR_AUTH_HOST || "127.0.0.1",
@@ -15,9 +17,18 @@ const CONFIG = {
   secureCookie: process.env.WOPR_COOKIE_SECURE !== "false",
   sameSite: process.env.WOPR_COOKIE_SAMESITE || "Strict",
   allowedOrigin: process.env.WOPR_ALLOWED_ORIGIN || "https://dennishilk.com",
+  transmissionsDir: process.env.WOPR_TRANSMISSIONS_DIR || "/var/lib/wopr/transmissions",
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
+const TRANSMISSION_FILE = "transmissions.jsonl";
+const MAX_CALLSIGN_LENGTH = 40;
+const MAX_ORIGIN_LENGTH = 80;
+const MAX_MESSAGE_LENGTH = 1200;
+const PUBLIC_TRANSMISSION_LIMIT = 50;
+const PENDING_TRANSMISSION_LIMIT = 200;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
 const ALLOWED_EVENTS = new Set([
   "wopr_view",
   "login_failed",
@@ -27,6 +38,8 @@ const ALLOWED_EVENTS = new Set([
   "logout",
 ]);
 const eventCounters = new Map();
+const submissionCounters = new Map();
+let writeQueue = Promise.resolve();
 
 function requireConfig() {
   const missing = [];
@@ -111,6 +124,11 @@ function sendEmpty(res, status, headers = {}) {
   res.end();
 }
 
+function requireJsonContent(req) {
+  const contentType = String(req.headers["content-type"] || "").toLowerCase();
+  return contentType.split(";")[0].trim() === "application/json";
+}
+
 function readJson(req) {
   return new Promise((resolve, reject) => {
     let size = 0;
@@ -139,6 +157,23 @@ function hasTrustedOrigin(req) {
   return origin === CONFIG.allowedOrigin;
 }
 
+function clientRateKey(req) {
+  return String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown").split(",")[0].trim();
+}
+
+function rateLimitAllows(req) {
+  const now = Date.now();
+  const key = clientRateKey(req);
+  const current = submissionCounters.get(key) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+  if (current.resetAt <= now) {
+    current.count = 0;
+    current.resetAt = now + RATE_LIMIT_WINDOW_MS;
+  }
+  current.count += 1;
+  submissionCounters.set(key, current);
+  return current.count <= RATE_LIMIT_MAX;
+}
+
 function recordEvent(type) {
   const current = eventCounters.get(type) || { count: 0, lastAt: null };
   current.count += 1;
@@ -146,8 +181,76 @@ function recordEvent(type) {
   eventCounters.set(type, current);
 }
 
+function transmissionPath() {
+  return path.join(CONFIG.transmissionsDir, TRANSMISSION_FILE);
+}
+
+async function ensureTransmissionStore() {
+  await fs.mkdir(CONFIG.transmissionsDir, { recursive: true, mode: 0o750 });
+  await fs.appendFile(transmissionPath(), "", { mode: 0o640 });
+}
+
+async function readTransmissions() {
+  await writeQueue;
+  await ensureTransmissionStore();
+  const content = await fs.readFile(transmissionPath(), "utf8");
+  return content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+}
+
+function writeTransmissions(records) {
+  writeQueue = writeQueue.then(async () => {
+    await ensureTransmissionStore();
+    const tmpPath = `${transmissionPath()}.${process.pid}.tmp`;
+    const data = records.map((record) => JSON.stringify(record)).join("\n");
+    await fs.writeFile(tmpPath, data ? `${data}\n` : "", { mode: 0o640 });
+    await fs.rename(tmpPath, transmissionPath());
+  });
+  return writeQueue;
+}
+
+function appendTransmission(record) {
+  writeQueue = writeQueue.then(async () => {
+    await ensureTransmissionStore();
+    await fs.appendFile(transmissionPath(), `${JSON.stringify(record)}\n`, { mode: 0o640 });
+  });
+  return writeQueue;
+}
+
+function requireSession(req) {
+  const token = parseCookies(req.headers.cookie).get(CONFIG.cookieName);
+  return isValidSession(token);
+}
+
+function cleanText(value, maxLength) {
+  return String(value || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, maxLength);
+}
+
+function sanitizeTransmission(body) {
+  const keys = Object.keys(body || {});
+  const allowed = new Set(["callsign", "origin", "message", "contact_channel"]);
+  if (keys.some((key) => !allowed.has(key))) return { ok: false, status: 400 };
+  if (cleanText(body.contact_channel, 200)) return { ok: false, honeypot: true };
+  const callsign = cleanText(body.callsign, MAX_CALLSIGN_LENGTH);
+  const origin = cleanText(body.origin, MAX_ORIGIN_LENGTH);
+  const message = cleanText(body.message, MAX_MESSAGE_LENGTH);
+  if (!callsign || !message) return { ok: false, status: 400 };
+  return { ok: true, value: { callsign, origin, message } };
+}
+
+function publicTransmission(record) {
+  return {
+    id: record.id,
+    callsign: record.callsign,
+    origin: record.origin,
+    message: record.message,
+    receivedAt: record.receivedAt,
+    status: record.status,
+  };
+}
+
 async function handleLogin(req, res) {
   if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
+  if (!requireJsonContent(req)) return sendJson(res, 415, { ok: false });
   const body = await readJson(req);
   const ok = timingSafeEqualString(body.identifier || "", CONFIG.identifier) && timingSafeEqualString(body.password || "", CONFIG.password);
   if (!ok) {
@@ -158,6 +261,48 @@ async function handleLogin(req, res) {
   return sendJson(res, 200, { ok: true }, { "Set-Cookie": cookieHeader(createSessionCookie(), CONFIG.sessionTtlSeconds) });
 }
 
+async function handleSubmitTransmission(req, res) {
+  if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
+  if (!requireJsonContent(req)) return sendJson(res, 415, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
+  if (!rateLimitAllows(req)) return sendJson(res, 429, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
+  const body = await readJson(req);
+  const sanitized = sanitizeTransmission(body);
+  if (sanitized.honeypot) return sendJson(res, 200, { ok: true, message: "TRANSMISSION RECEIVED. AWAITING REVIEW." });
+  if (!sanitized.ok) return sendJson(res, sanitized.status || 400, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
+  await appendTransmission({
+    id: crypto.randomUUID(),
+    ...sanitized.value,
+    status: "PENDING",
+    receivedAt: new Date().toISOString(),
+  });
+  return sendJson(res, 202, { ok: true, message: "TRANSMISSION RECEIVED. AWAITING REVIEW." });
+}
+
+async function handlePublicTransmissions(_req, res) {
+  const records = await readTransmissions();
+  const approved = records.filter((record) => record.status === "APPROVED").slice(-PUBLIC_TRANSMISSION_LIMIT).reverse().map(publicTransmission);
+  return sendJson(res, 200, { ok: true, transmissions: approved });
+}
+
+async function handlePendingTransmissions(req, res) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  const records = await readTransmissions();
+  const pending = records.filter((record) => record.status === "PENDING").slice(-PENDING_TRANSMISSION_LIMIT).reverse().map(publicTransmission);
+  return sendJson(res, 200, { ok: true, pending, count: pending.length });
+}
+
+async function updateTransmissionStatus(req, res, id, status) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
+  const records = await readTransmissions();
+  const record = records.find((entry) => entry.id === id && entry.status === "PENDING");
+  if (!record) return sendJson(res, 404, { ok: false });
+  record.status = status;
+  record.reviewedAt = new Date().toISOString();
+  await writeTransmissions(records);
+  return sendJson(res, 200, { ok: true });
+}
+
 async function handleEvent(req, res) {
   const body = await readJson(req).catch(() => ({}));
   if (ALLOWED_EVENTS.has(body.type)) recordEvent(body.type);
@@ -165,8 +310,7 @@ async function handleEvent(req, res) {
 }
 
 function handleSession(req, res) {
-  const token = parseCookies(req.headers.cookie).get(CONFIG.cookieName);
-  return sendEmpty(res, isValidSession(token) ? 204 : 401);
+  return sendEmpty(res, requireSession(req) ? 204 : 401);
 }
 
 function handleLogout(req, res) {
@@ -187,6 +331,13 @@ async function route(req, res) {
     if (req.method === "GET" && url.pathname === "/wopr/auth/session") return handleSession(req, res);
     if (req.method === "POST" && url.pathname === "/wopr/auth/logout") return handleLogout(req, res);
     if (req.method === "POST" && url.pathname === "/wopr/auth/event") return await handleEvent(req, res);
+    if (req.method === "POST" && url.pathname === "/api/transmissions") return await handleSubmitTransmission(req, res);
+    if (req.method === "GET" && url.pathname === "/api/transmissions") return await handlePublicTransmissions(req, res);
+    if (req.method === "GET" && url.pathname === "/wopr/api/transmissions/pending") return await handlePendingTransmissions(req, res);
+    const approveMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/approve$/);
+    if (req.method === "POST" && approveMatch) return await updateTransmissionStatus(req, res, approveMatch[1], "APPROVED");
+    const rejectMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/reject$/);
+    if (req.method === "POST" && rejectMatch) return await updateTransmissionStatus(req, res, rejectMatch[1], "REJECTED");
     return sendJson(res, 404, { ok: false });
   } catch (error) {
     return sendJson(res, error.status || 500, { ok: false });
@@ -194,6 +345,11 @@ async function route(req, res) {
 }
 
 requireConfig();
-http.createServer(route).listen(CONFIG.port, CONFIG.host, () => {
-  console.log(`WOPR auth service listening on ${CONFIG.host}:${CONFIG.port}`);
+ensureTransmissionStore().catch((error) => {
+  console.error(`WOPR transmission store unavailable: ${error.message}`);
+  process.exit(1);
+}).then(() => {
+  http.createServer(route).listen(CONFIG.port, CONFIG.host, () => {
+    console.log(`WOPR auth service listening on ${CONFIG.host}:${CONFIG.port}`);
+  });
 });
