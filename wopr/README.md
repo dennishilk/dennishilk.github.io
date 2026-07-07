@@ -61,3 +61,14 @@ The frontend can send event names to `/wopr/auth/event` with `navigator.sendBeac
 - `tictactoe_finished`
 
 The server should store only aggregate counters and timestamps if needed. Do not store passwords, request bodies containing passwords, raw query strings with secrets, or long-lived visitor identifiers.
+
+## Server-side auth component
+
+A dependency-free Node.js auth service now lives in `server/wopr-auth/`. It is the real server-side gate for private WOPR paths and must run only on the server behind nginx.
+
+- Secrets are read from server environment variables, normally `/etc/wopr/wopr-auth.env` on worldnode.
+- Successful login sets a signed `HttpOnly`, `Secure`, `SameSite=Strict` cookie scoped to `/wopr/`.
+- nginx protects `/wopr/dashboard/` with an internal `auth_request` to `GET /wopr/auth/session`.
+- Wrong login attempts return `401`, so the existing frontend Tic-Tac-Toe flow continues.
+
+See `server/wopr-auth/README.md`, `server/wopr-auth/wopr-auth.service`, and `wopr/nginx.example.conf` for exact worldnode setup commands.

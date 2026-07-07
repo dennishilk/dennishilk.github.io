@@ -1,0 +1,21 @@
+[Unit]
+Description=WOPR authentication service
+After=network.target
+
+[Service]
+Type=simple
+User=wopr-auth
+Group=wopr-auth
+WorkingDirectory=/srv/www/dennishilk.github.io/server/wopr-auth
+EnvironmentFile=/etc/wopr/wopr-auth.env
+ExecStart=/usr/bin/node /srv/www/dennishilk.github.io/server/wopr-auth/server.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/tmp
+
+[Install]
+WantedBy=multi-user.target
