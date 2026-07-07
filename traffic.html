@@ -77,7 +77,7 @@
       <article class="traffic-card"><h2>MOST OBSERVED PAGES</h2><div id="top-pages" class="bar-list"></div></article>
       <article class="traffic-card"><h2>CRAWLER SPECIES</h2><div id="crawler-species" class="bar-list purple"></div></article>
       <article class="traffic-card"><h2>TOP REFERRERS</h2><div id="top-referrers" class="bar-list"></div></article>
-      <article class="traffic-card timeline wide"><h2>OBSERVATION TIMELINE <span>(24H)</span></h2><div id="timeline-dots" class="timeline-dots"></div><div class="traffic-legend"><span class="normal-dot">normal activity</span><span class="high-dot">high activity</span><span class="spike-dot">unusual spike</span></div><p id="anomaly-note">unusual activity: none</p></article>
+      <article class="traffic-card timeline wide"><h2>SIGNAL ACTIVITY MATRIX <span>(24H)</span></h2><div id="signal-matrix" class="signal-matrix empty">hourly signal data unavailable</div><div class="traffic-legend signal-legend"><span class="matrix-human">Humans</span><span class="matrix-bot">Bots / Crawlers</span><span id="matrix-scanner-legend" class="matrix-scanner" hidden>Scanners</span></div><div id="signal-facts" class="signal-facts"></div></article>
       <article class="traffic-card method-card"><h2>OBSERVATION METHOD</h2><dl><dt>Source</dt><dd>worldnode / nginx access logs</dd><dt>Human classification</dt><dd>request-pattern and user-agent heuristics</dd><dt>Privacy</dt><dd>no raw visitor IP addresses exposed</dd><dt>Retention</dt><dd>aggregated observational data</dd></dl></article>
     </section>
   </main>
@@ -101,15 +101,47 @@
   const redact = (v) => String(v || "").replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[redacted]").replace(/\b(?:[a-f0-9]{1,4}:){2,7}[a-f0-9]{1,4}\b/gi, "[redacted]");
   const safePath = (p) => { const clean = redact(p || "/").replace(/[\u0000-\u001f\u007f-\u009f]+/g, "?"); return clean.length > 140 ? clean.slice(0, 137) + "…" : clean; };
   const MAP_COORDS = {US:[190,215],CA:[205,135],DE:[510,178],NL:[499,178],FR:[488,202],ES:[469,229],GB:[474,163],SE:[523,132],FI:[557,126],PL:[536,177],IT:[515,225],BG:[552,211],SG:[742,315],HK:[805,251],KR:[853,220],CN:[760,225],JP:[879,219],IN:[678,276],BR:[355,363],AU:[834,391]};
-  const WIESMOOR_NODE = [505, 151];
+  const WIESMOOR_NODE = [492, 126];
   const signalState = { timer: null, active: 0, routes: [], index: 0, reduced: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false };
   const setUnavailable = () => {
     ["kpi-humans","kpi-pageviews","kpi-total-pageviews","kpi-unique","kpi-bots","kpi-requests"].forEach(id => $(id).textContent = "—");
-    renderPulse([]); renderTimeline([]); renderMapPoints([]); renderSignalRoutes([], []); renderList("top-countries", []); renderBars("top-pages", []); renderBars("crawler-species", []); renderBars("top-referrers", []);
+    renderPulse([]); renderSignalMatrix([]); renderMapPoints([]); renderSignalRoutes([], []); renderList("top-countries", []); renderBars("top-pages", []); renderBars("crawler-species", []); renderBars("top-referrers", []);
   };
   const renderBars = (id, rows) => { const clean = arr(rows).filter(r => Number(r.value ?? r.count ?? r.pageviews ?? 0) > 0 || (r.path || r.name || r.referrer || r.label)); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const label = r.path || r.name || r.referrer || r.label || "Unknown"; const value = Number(r.value ?? r.count ?? r.pageviews ?? 0); return `<div><span title="${esc(redact(label))}">${esc(safePath(label))}</span><i><b style="width:${Math.max(3,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : '<p class="stream-empty">unavailable</p>'; };
   const renderList = (id, rows) => { const clean = arr(rows).filter(r => r.country || r.code || r.label); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const value = Number(r.value ?? r.count ?? 0); return `<div><span>${esc(String(r.country || r.code || r.label || "").toUpperCase().slice(0,12))}</span><i><b style="width:${Math.max(4,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : '<p class="stream-empty">unavailable</p>'; };
-  const renderTimeline = (hourly) => { const max = Math.max(1, ...hourly.map(h => Number(h.total ?? h.requests ?? h.humans ?? 0))); $("timeline-dots").innerHTML = Array.from({length:24}, (_,i) => { const h = hourly[i] || {}; const n = Number(h.total ?? h.requests ?? h.humans ?? 0); const cls = n > max * .92 && max > 18 ? "spike" : (n > max * .72 && max > 10 ? "high" : "normal"); return `<span class="${cls}" title="${String(i).padStart(2,"0")}:00"></span>`; }).join(""); };
+  const hourLabel = (h, i) => String(h.hour ?? h.label ?? i).match(/\d{1,2}/)?.[0]?.padStart(2, "0") || String(i).padStart(2, "0");
+  const renderSignalMatrix = (hourly) => {
+    const rows = arr(hourly).slice(0, 24);
+    const matrix = $("signal-matrix"), facts = $("signal-facts"), scannerLegend = $("matrix-scanner-legend");
+    if (!rows.length) { matrix.classList.add("empty"); matrix.textContent = "hourly signal data unavailable"; facts.innerHTML = ""; scannerLegend.hidden = true; return; }
+    const hasScanner = rows.some(h => ["scanners", "scanner", "scan", "scanner_requests"].some(k => Number.isFinite(Number(h[k]))));
+    scannerLegend.hidden = !hasScanner;
+    const bins = Array.from({length:24}, (_, i) => {
+      const h = rows[i] || {};
+      const humans = Math.max(0, Number(h.humans ?? h.human ?? h.human_requests ?? 0));
+      const bots = Math.max(0, Number(h.bots ?? h.crawlers ?? h.bot ?? h.machine ?? h.bot_requests ?? 0));
+      const scanners = hasScanner ? Math.max(0, Number(h.scanners ?? h.scanner ?? h.scan ?? h.scanner_requests ?? 0)) : 0;
+      const explicitTotal = Number(h.total ?? h.requests ?? h.request_count);
+      const total = Number.isFinite(explicitTotal) ? Math.max(0, explicitTotal) : humans + bots + scanners;
+      return { hour: hourLabel(h, i), humans, bots, scanners, total };
+    });
+    const max = Math.max(1, ...bins.map(b => b.total || b.humans + b.bots + b.scanners));
+    const activeHour = new Date().getHours();
+    matrix.classList.remove("empty");
+    matrix.innerHTML = bins.map((b, i) => {
+      const total = b.total || b.humans + b.bots + b.scanners;
+      const height = Math.max(total ? 8 : 2, total / max * 100);
+      const humanPct = total ? b.humans / total * 100 : 0;
+      const botPct = total ? b.bots / total * 100 : 0;
+      const scannerPct = total ? b.scanners / total * 100 : 0;
+      const title = `${b.hour}:00 total ${fmt(total)}; humans ${fmt(b.humans)}; bots/crawlers ${fmt(b.bots)}${hasScanner ? `; scanners ${fmt(b.scanners)}` : ""}`;
+      return `<div class="signal-bin${Number(b.hour) === activeHour ? " current" : ""}" title="${esc(title)}"><i style="height:${height.toFixed(1)}%"><b class="seg-scanner" style="height:${scannerPct.toFixed(1)}%"></b><b class="seg-bot" style="height:${botPct.toFixed(1)}%"></b><b class="seg-human" style="height:${humanPct.toFixed(1)}%"></b></i><span>${esc(b.hour)}</span></div>`;
+    }).join("");
+    const observed = bins.filter(b => b.total > 0 || b.humans > 0 || b.bots > 0 || b.scanners > 0);
+    const peak = observed.reduce((best, b) => !best || b.total > best.total ? b : best, null);
+    const quietest = observed.reduce((best, b) => !best || b.total < best.total ? b : best, null);
+    facts.innerHTML = [peak && `PEAK HOUR ${peak.hour}:00`, quietest && `QUIETEST HOUR ${quietest.hour}:00`, peak && `PEAK REQUESTS ${fmt(peak.total)}`].filter(Boolean).map(v => `<span>${esc(v)}</span>`).join("");
+  };
   const renderDestinationNode = () => { $("map-destination-node").innerHTML = `<g class="destination-node" aria-hidden="true"><circle class="destination-ring" cx="${WIESMOOR_NODE[0]}" cy="${WIESMOOR_NODE[1]}" r="13"/><circle class="destination-core" cx="${WIESMOOR_NODE[0]}" cy="${WIESMOOR_NODE[1]}" r="4.2"/><text x="${WIESMOOR_NODE[0] + 11}" y="${WIESMOOR_NODE[1] - 8}">WIESMOOR</text></g>`; };
   const renderMapPoints = (countries) => { renderDestinationNode(); $("map-points").innerHTML = arr(countries).map(r => { const c = String(r.country || r.code || r.label || "").toUpperCase(); const xy = MAP_COORDS[c]; if (!xy) return ""; const radius = 3 + Math.min(8, Math.sqrt(Number(r.value ?? r.count ?? 1))); return `<g><circle class="point-halo" cx="${xy[0]}" cy="${xy[1]}" r="${radius + 7}"/><circle cx="${xy[0]}" cy="${xy[1]}" r="${radius}"><title>${esc(c)} ${fmt(r.value ?? r.count ?? 0)}</title></circle></g>`; }).join(""); };
   const routePath = (from, to) => { const dx = to[0] - from[0], dy = to[1] - from[1], lift = Math.max(32, Math.min(120, Math.abs(dx) * .22 + Math.abs(dy) * .35)); const cx = from[0] + dx * .52, cy = Math.min(from[1], to[1]) - lift; return `M${from[0].toFixed(1)} ${from[1].toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${to[0].toFixed(1)} ${to[1].toFixed(1)}`; };
@@ -126,7 +158,7 @@
     $("kpi-humans").textContent = fmt(humans); $("kpi-pageviews").textContent = fmt(pageviews); $("kpi-total-pageviews").textContent = fmt(totalPageviewsWithBaseline(totalPageviews)); $("kpi-unique").textContent = fmt(unique); $("kpi-bots").textContent = fmt(bots); $("kpi-requests").textContent = fmt(requests);
     $("last-observation").textContent = data.generated_at ? new Date(data.generated_at).toLocaleTimeString() : "—"; $("live-state").textContent = "live update active";
     const h = Number(humans), b = Number(bots), hp = Number(data.human_percent), bp = Number(data.bot_percent), denom = h + b; const humanRatio = Number.isFinite(hp) ? hp : (denom ? h / denom * 100 : NaN); const botRatio = Number.isFinite(bp) ? bp : (denom ? b / denom * 100 : NaN); $("ratio-bars").innerHTML = Number.isFinite(humanRatio) && Number.isFinite(botRatio) ? `<div><span>HUMAN</span><strong>${humanRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, humanRatio)}%"></b></i></div><div><span>MACHINE</span><strong>${botRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, botRatio)}%"></b></i></div>` : "ratio unavailable"; $("ratio-total").textContent = fmt(requests);
-    const hourly = arr(data.hourly); renderPulse(hourly); renderTimeline(hourly); const liveRequests = arr(data.live_requests); renderStream(liveRequests); renderList("top-countries", arr(data.countries)); renderMapPoints(data.countries); renderSignalRoutes(data.countries, liveRequests); renderBars("top-pages", rowsFrom(data.top_pages, data.top_paths)); renderBars("crawler-species", arr(data.crawler_species)); renderBars("top-referrers", arr(data.top_referrers));
+    const hourly = arr(data.hourly); renderPulse(hourly); renderSignalMatrix(hourly); const liveRequests = arr(data.live_requests); renderStream(liveRequests); renderList("top-countries", arr(data.countries)); renderMapPoints(data.countries); renderSignalRoutes(data.countries, liveRequests); renderBars("top-pages", rowsFrom(data.top_pages, data.top_paths)); renderBars("crawler-species", arr(data.crawler_species)); renderBars("top-referrers", arr(data.top_referrers));
   }).catch(setUnavailable);
 })();
 </script>
