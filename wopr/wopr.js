@@ -163,3 +163,43 @@ loginForm.addEventListener("submit", submitLogin);
 resetButton.addEventListener("click", resetGame);
 renderBoard();
 recordAnonymousEvent("wopr_view");
+
+const culturalReference = document.querySelector("[data-typewriter='cultural-reference']");
+
+function typeCulturalReference() {
+  if (!culturalReference) return;
+
+  const output = culturalReference.querySelector(".cultural-reference-text");
+  if (!output) return;
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const archiveText = output.textContent;
+
+  if (prefersReducedMotion) {
+    output.textContent = archiveText;
+    return;
+  }
+
+  const characters = Array.from(archiveText);
+  let index = 0;
+  output.textContent = "";
+  culturalReference.classList.add("is-typing");
+
+  function typeNextCharacter() {
+    output.textContent += characters[index] || "";
+    index += 1;
+
+    if (index >= characters.length) {
+      culturalReference.classList.remove("is-typing");
+      return;
+    }
+
+    const previousCharacter = characters[index - 1];
+    const delay = previousCharacter === "\n" ? 170 : 18;
+    window.setTimeout(typeNextCharacter, delay);
+  }
+
+  window.setTimeout(typeNextCharacter, 450);
+}
+
+typeCulturalReference();
