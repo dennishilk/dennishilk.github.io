@@ -101,7 +101,7 @@
   const redact = (v) => String(v || "").replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[redacted]").replace(/\b(?:[a-f0-9]{1,4}:){2,7}[a-f0-9]{1,4}\b/gi, "[redacted]");
   const safePath = (p) => { const clean = redact(p || "/").replace(/[\u0000-\u001f\u007f-\u009f]+/g, "?"); return clean.length > 140 ? clean.slice(0, 137) + "…" : clean; };
   const MAP_COORDS = {US:[190,215],CA:[205,135],DE:[510,178],NL:[499,178],FR:[488,202],ES:[469,229],GB:[474,163],SE:[523,132],FI:[557,126],PL:[536,177],IT:[515,225],BG:[552,211],SG:[742,315],HK:[805,251],KR:[853,220],CN:[760,225],JP:[879,219],IN:[678,276],BR:[355,363],AU:[834,391]};
-  const WIESMOOR_NODE = [492, 126];
+  const WIESMOOR_NODE = [496, 137];
   const signalState = { timer: null, active: 0, routes: [], index: 0, reduced: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false };
   const setUnavailable = () => {
     ["kpi-humans","kpi-pageviews","kpi-total-pageviews","kpi-unique","kpi-bots","kpi-requests"].forEach(id => $(id).textContent = "—");
