@@ -1569,6 +1569,40 @@ function normalizeGeomagneticHistoryPoints(history) {
     .filter(Boolean);
 }
 
+
+function getEnvironmentObserverStatus(observer) {
+  return firstValue(observer, ["data_status", "dataStatus", "status", "health", "state"]) || (observer?.planned ? "planned" : "unavailable");
+}
+
+function renderEnvironmentOverviewCards(environmentData) {
+  const container = document.getElementById("environment-core-cards");
+  if (!container) {
+    return;
+  }
+  container.textContent = "";
+
+  const observer = findEnvironmentObserver(environmentData, GEOMAGNETIC_OBSERVER_ID);
+  const statusValue = getEnvironmentObserverStatus(observer);
+  const collectedAt = firstValue(observer, ["collected_at", "collectedAt", "observed_at", "observedAt", "timestamp", "last_update", "generated_at", "last_seen_date"]);
+  const latestKp = firstNumber(observer, ["latest_kp", "latestKp", "kp", "kp_index", "primary_metric.value", "primary_metric_value"]);
+
+  renderTechnologyCard(container, {
+    title: "Geomagnetic Storm Observer",
+    status: formatInternetStatusLabel(statusValue),
+    description: "Public NOAA SWPC-derived geomagnetic observation dashboard. Observations only; no predictions or aurora guarantees.",
+    metrics: [
+      { label: "latest Kp", value: formatKp(latestKp) },
+      { label: "Last collected", value: formatDateTimeUtc(collectedAt) },
+    ],
+    unavailable: normalizeStatusValue(statusValue) !== "ok",
+    href: "/world-observer/geomagnetic-storm-observer.html",
+  });
+}
+
+function renderEnvironmentObservers(environmentData) {
+  renderEnvironmentOverviewCards(environmentData);
+}
+
 function renderGeomagneticStormObserver(environmentData, history) {
   const observer = findEnvironmentObserver(environmentData, GEOMAGNETIC_OBSERVER_ID) || {};
   const statusValue = firstValue(observer, ["status", "health", "state"]) || (observer.planned ? "planned" : "unknown");
@@ -2705,12 +2739,19 @@ async function initWorldObserver() {
     }
 
     if (page === "environment") {
+      const environment = await loadOptionalJson(ENVIRONMENT_URLS);
+      renderOptional("Earth & Space observers", () => renderEnvironmentObservers(environment));
+      renderPlannedCards("environment-planned-cards", ["Cosmic Ray Observer", "Natural Disaster Observer", "Ionosphere Observer"]);
+      showDashboard();
+      return;
+    }
+
+    if (page === "geomagnetic-storm-observer") {
       const [environment, geomagneticHistory] = await Promise.all([
         loadOptionalJson(ENVIRONMENT_URLS),
         loadOptionalJson(GEOMAGNETIC_HISTORY_URLS),
       ]);
       renderOptional("Geomagnetic Storm Observer", () => renderGeomagneticStormObserver(environment, geomagneticHistory));
-      renderPlannedCards("environment-planned-cards", ["Cosmic Ray Observer", "Natural Disaster Observer", "Ionosphere Observer"]);
       showDashboard();
       return;
     }
