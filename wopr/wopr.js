@@ -195,7 +195,7 @@ function typeCulturalReference() {
     }
 
     const previousCharacter = characters[index - 1];
-    const delay = previousCharacter === "\n" ? 170 : 18;
+    const delay = previousCharacter === "\n" ? 340 : 36;
     window.setTimeout(typeNextCharacter, delay);
   }
 
