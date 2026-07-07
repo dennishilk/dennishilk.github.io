@@ -156,6 +156,8 @@ footer {
 /* Footer links */
 .footer-links a { color: var(--accent); text-decoration: none; }
 .footer-links a:hover { text-decoration: underline; }
+.footer-links a.footer-link-muted { color: var(--fg); }
+.footer-links a.footer-link-muted:hover { color: #f2f6fa; text-decoration: none; }
 
 /* Responsive */
 @media (max-width: 600px) {
