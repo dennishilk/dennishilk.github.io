@@ -62,14 +62,13 @@
 
     <section class="wiesmoor-hero" aria-labelledby="wiesmoor-title">
       <div class="wiesmoor-hero-copy">
-        <p class="terminal-command">&gt; boot hometown/wiesmoor.identity</p>
+        <p class="observer-kicker">Hometown Observer · local history</p>
         <h2 id="wiesmoor-title">Wiesmoor</h2>
         <p class="wiesmoor-subtitle">Moorland · Power · Flowers · East Frisia</p>
-        <p>Wiesmoor is one of East Frisia's youngest towns. Its modern centre grew from a landscape that was once dominated by raised bog, peat extraction, power generation and later horticulture. The Hometown Observer uses this local context to frame public, non-personal observations around weather, water, sky, peatland and environment.</p>
+        <p>Wiesmoor is one of East Frisia's youngest towns. Its modern centre grew from a landscape once dominated by raised bog, peat extraction, power generation, and later horticulture. The Hometown Observer begins here: with public, non-personal observations grounded in a place shaped by weather, water, sky, peatland, and environmental change.</p>
       </div>
-      <div class="wiesmoor-crest-terminal" aria-label="Wiesmoor coat of arms">
-        <span>crest.render()</span>
-        <img src="/world-observer/assets/wiesmoor-coat-of-arms.jpg" alt="Wiesmoor coat of arms">
+      <div class="wiesmoor-crest-showcase" aria-label="Wiesmoor coat of arms">
+        <img src="/world-observer/assets/wiesmoor-coat-of-arms.svg" alt="Wiesmoor coat of arms">
       </div>
     </section>
 
@@ -82,22 +81,31 @@
     </section>
 
     <section class="wiesmoor-story-grid" aria-label="Wiesmoor story sections">
-      <article class="wiesmoor-story-card"><p class="terminal-command">&gt; cat story/moorland</p><h3>From moorland to town</h3><p>Much of today's Wiesmoor belonged to the East Frisian central raised bog. For centuries, the landscape was difficult to access and only gradually settled from the edges inward. The modern town centre developed much later, shaped by industrial peat extraction and planned settlement.</p></article>
-      <article class="wiesmoor-story-card"><p class="terminal-command">&gt; cat story/power</p><h3>Peat, power and settlement</h3><p>At the beginning of the twentieth century, the Prussian state decided to extract peat industrially from the raised bog between Aurich and Wilhelmshaven and open the area for settlement. The peat was intended to fuel a power station. The first residents settled in the still undeveloped Wiesmoor in 1907, and the peat-fired power station began operating in 1909. For decades, peat extraction, electricity generation, horticulture and agriculture formed the economic basis of the settlement.</p></article>
-      <article class="wiesmoor-story-card"><p class="terminal-command">&gt; cat story/horticulture</p><h3>From energy to horticulture</h3><p>From 1925 onward, waste heat from the power station was used to heat greenhouses for vegetables and later ornamental plants. This link between energy and cultivation shaped Wiesmoor's later identity as a flower town. After peat-fired electricity generation ended and the old power station was replaced, Wiesmoor went through structural change, with horticulture, tourism and local services becoming more important.</p></article>
-      <article class="wiesmoor-story-card crest-story"><p class="terminal-command">&gt; decode crest.symbols</p><h3>Why this crest?</h3><p>The coat of arms compresses Wiesmoor's story into two symbols. The black grouse refers to the former moorland landscape where the bird was once widespread. The golden lightning bolt points to electricity generated from peat and to the urban development that followed.</p></article>
+      <article class="wiesmoor-story-card moorland-card"><span class="story-label">Landscape</span><h3>Moorland</h3><p>Much of today's Wiesmoor belonged to the East Frisian central raised bog. For centuries, the landscape was difficult to access and only gradually settled from the edges inward. The modern town centre developed much later, shaped by industrial peat extraction and planned settlement.</p></article>
+      <article class="wiesmoor-story-card power-card"><span class="story-label">Energy</span><h3>Power</h3><p>At the beginning of the twentieth century, the Prussian state decided to extract peat industrially from the raised bog between Aurich and Wilhelmshaven and open the area for settlement. The peat was intended to fuel a power station. The first residents settled in the still undeveloped Wiesmoor in 1907, and the peat-fired power station began operating in 1909. For decades, peat extraction, electricity generation, horticulture and agriculture formed the economic basis of the settlement.</p></article>
+      <article class="wiesmoor-story-card flowers-card"><span class="story-label">Identity</span><h3>Flowers</h3><p>From 1925 onward, waste heat from the power station was used to heat greenhouses for vegetables and later ornamental plants. This link between energy and cultivation shaped Wiesmoor's later identity as a flower town. After peat-fired electricity generation ended and the old power station was replaced, Wiesmoor went through structural change, with horticulture, tourism and local services becoming more important.</p></article>
+      <article class="wiesmoor-story-card observer-context-card"><span class="story-label">World Observer</span><h3>Observer context</h3><p>The Hometown Observer uses this local context to frame public, non-personal observations around weather, water, sky, peatland and environment.</p></article>
+      <article class="wiesmoor-story-card crest-story"><span class="story-label">Crest symbols</span><h3>Why this crest?</h3><p>The coat of arms compresses Wiesmoor's story into two symbols. The black grouse refers to the former moorland landscape where the bird was once widespread. The golden lightning bolt points to electricity generated from peat and to the urban development that followed.</p></article>
+    </section>
+
+    <section class="wiesmoor-flower-strip" aria-labelledby="wiesmoor-flower-strip-title">
+      <div class="flower-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div>
+        <p class="observer-kicker" id="wiesmoor-flower-strip-title">Flower Town</p>
+        <p>From waste heat to greenhouses, Wiesmoor's energy history became part of its flower-town identity.</p>
+      </div>
     </section>
 
     <section class="wiesmoor-timeline-section" aria-labelledby="wiesmoor-timeline-title">
-      <p class="terminal-command">&gt; tail -f wiesmoor.timeline</p>
+      <p class="observer-kicker">Observer notes · verified historical milestones</p>
       <h2 id="wiesmoor-timeline-title">Timeline</h2>
       <ol class="wiesmoor-timeline">
-        <li><time>1907</time><span>First residents settle in the undeveloped Wiesmoor.</span></li>
-        <li><time>1909</time><span>Peat-fired power station begins operation.</span></li>
-        <li><time>1925</time><span>Waste heat from the power station is used for greenhouse cultivation.</span></li>
-        <li><time>1966</time><span>Peat-fired electricity generation ends; the old power station is replaced.</span></li>
-        <li><time>1977</time><span>Wiesmoor is recognised as a climatic health resort.</span></li>
-        <li><time>2006</time><span>Wiesmoor receives town status.</span></li>
+        <li><time>1907</time><span><em>settlement</em>First residents settle in the undeveloped Wiesmoor.</span></li>
+        <li><time>1909</time><span><em>power</em>Peat-fired power station begins operation.</span></li>
+        <li><time>1925</time><span><em>horticulture</em>Waste heat from the power station is used for greenhouse cultivation.</span></li>
+        <li><time>1966</time><span><em>transition</em>Peat-fired electricity generation ends; the old power station is replaced.</span></li>
+        <li><time>1977</time><span><em>health resort</em>Wiesmoor is recognised as a climatic health resort.</span></li>
+        <li><time>2006</time><span><em>town status</em>Wiesmoor receives town status.</span></li>
       </ol>
     </section>
 
