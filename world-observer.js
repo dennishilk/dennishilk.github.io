@@ -1510,6 +1510,7 @@ function renderLinuxKernelSizePlaceholder(technologyData) {
 }
 
 const GEOMAGNETIC_OBSERVER_ID = "geomagnetic-storm-observer";
+const WIESMOOR_WEATHER_OBSERVER_ID = "wiesmoor-weather";
 
 function findEnvironmentObserver(environmentData, observerId) {
   const observers = [
@@ -1723,6 +1724,22 @@ function renderEnvironmentOverviewCards(environmentData) {
     unavailable: normalizeStatusValue(statusValue) !== "ok",
     href: "/world-observer/geomagnetic-storm-observer.html",
   });
+
+  const weatherObserver = findEnvironmentObserver(environmentData, WIESMOOR_WEATHER_OBSERVER_ID);
+  if (weatherObserver && !weatherObserver.planned) {
+    const weatherStatus = getEnvironmentObserverStatus(weatherObserver);
+    renderTechnologyCard(container, {
+      title: "Wiesmoor Weather Observer",
+      status: formatInternetStatusLabel(weatherStatus),
+      description: "Täglicher Wetter-Snapshot für Wiesmoor, Niedersachsen, powered by the Open-Meteo forecast export.",
+      metrics: [
+        { label: "Temperature", value: `${firstValue(weatherObserver, ["primary_metric_value"])} ${firstValue(weatherObserver, ["primary_metric_unit"]) || ""}`.trim() },
+        { label: "Last seen", value: firstValue(weatherObserver, ["last_seen_date", "lastSeenDate"]) || "—" },
+      ],
+      unavailable: normalizeStatusValue(weatherStatus) !== "ok",
+      href: "/world-observer/wiesmoor-weather.html",
+    });
+  }
 }
 
 function renderEnvironmentObservers(environmentData) {

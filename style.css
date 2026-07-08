@@ -2122,3 +2122,44 @@ button.technology-observer-card {
   .geomagnetic-kp-readout strong { font-size: clamp(3rem, 16vw, 4.2rem); }
   .geomagnetic-kp-scale-heading { align-items: flex-start; flex-direction: column; }
 }
+
+/* Wiesmoor Weather Observer */
+.weather-shell { max-width: 1260px; }
+.weather-hero { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; margin-top:.8rem; padding:1rem; }
+.weather-hero h1 { color:#19c9ff; font-size:clamp(2rem,3vw,3.05rem); margin:.15rem 0 .35rem; letter-spacing:.03em; text-shadow:0 0 14px rgba(0,200,255,.68); }
+.weather-hero p { color:#d8dee9; margin:0 0 .45rem; }
+.weather-hero small { color:#aab3c0; }
+.weather-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:.75rem; }
+.weather-grid > .traffic-card { grid-column:span 4; }
+.weather-current { grid-column:span 5 !important; }
+.weather-map-card { grid-column:span 3 !important; }
+.weather-chart-card { grid-column:span 8 !important; }
+.weather-details { grid-column:span 7 !important; }
+.weather-diagnostics { grid-column:span 5 !important; }
+.weather-temp { min-height:150px; display:grid; grid-template-columns:auto 1fr; gap:.35rem .7rem; align-items:center; border:1px solid rgba(0,180,255,.16); background:radial-gradient(circle at 20% 30%,rgba(0,200,255,.12),transparent 42%); padding:.9rem; margin-bottom:.65rem; }
+.weather-temp span { font-size:3.4rem; filter:drop-shadow(0 0 10px rgba(68,217,255,.55)); }
+.weather-temp strong { color:#ffad72; font-size:clamp(2.7rem,5vw,4.4rem); line-height:1; text-shadow:0 0 16px rgba(255,128,64,.44); }
+.weather-temp small { grid-column:2; color:#d8dee9; }
+.weather-metric-list { display:grid; gap:.5rem; }
+.weather-metric-list.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.weather-metric-list p { margin:0; padding:.72rem; min-height:72px; border:1px solid rgba(0,180,255,.18); background:rgba(0,20,34,.48); display:flex; flex-direction:column; justify-content:center; }
+.weather-metric-list span { color:#aab3c0; font-size:.78rem; }
+.weather-metric-list strong { color:#20c8ff; font-size:1.28rem; text-shadow:0 0 10px rgba(0,200,255,.44); }
+.weather-note { color:#aab3c0; border-top:1px solid rgba(0,180,255,.16); margin:.75rem 0 0; padding-top:.7rem; font-size:.86rem; }
+.weather-mini-map { border:1px solid rgba(0,180,255,.18); background:linear-gradient(145deg,rgba(0,24,38,.8),rgba(0,6,12,.95)); overflow:hidden; margin-bottom:.75rem; }
+.weather-mini-map svg { width:100%; height:auto; display:block; }
+.weather-mini-map path { fill:rgba(0,180,255,.08); stroke:rgba(68,217,255,.42); stroke-width:2; }
+.weather-mini-map circle { fill:#ff3d91; filter:drop-shadow(0 0 9px #ff3d91); }
+.weather-mini-map .ring { fill:none; stroke:#ff3d91; stroke-width:2; opacity:.6; }
+.weather-mini-map text { fill:#dffbff; font:700 20px "JetBrains Mono", monospace; text-shadow:0 0 8px rgba(68,217,255,.8); }
+.weather-info { display:grid; grid-template-columns:auto 1fr; gap:.45rem .7rem; color:#d8dee9; font-size:.86rem; }
+.weather-info dt, .weather-diagnostics dt { color:#f0f6fc; font-weight:700; }
+.weather-info dd, .weather-diagnostics dd { margin:0; color:#c9d1d9; }
+.weather-chart-temp,.weather-chart-gust { fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; vector-effect:non-scaling-stroke; }
+.weather-chart-temp { stroke:#ff9d3d; filter:drop-shadow(0 0 5px #ff9d3d); }
+.weather-chart-gust { stroke:#44d9ff; filter:drop-shadow(0 0 5px #44d9ff); }
+.weather-temp-line:before,.weather-gust-line:before { content:""; display:inline-block; width:26px; height:3px; margin-right:.45rem; vertical-align:middle; }
+.weather-temp-line:before { background:#ff9d3d; box-shadow:0 0 8px #ff9d3d; }
+.weather-gust-line:before { background:#44d9ff; box-shadow:0 0 8px #44d9ff; }
+.weather-diagnostics dl.method-card { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; margin:0; }
+@media (max-width: 950px) { .weather-grid, .weather-metric-list.two { grid-template-columns:1fr; } .weather-grid > .traffic-card, .weather-current, .weather-map-card, .weather-chart-card, .weather-details, .weather-diagnostics { grid-column:span 1 !important; } .weather-hero { flex-direction:column; } }
