@@ -59,6 +59,16 @@ test('Berlin today uses log timezone offset and 24h is rolling', () => {
   assert.equal(payload.requests_24h, 2);
 });
 
+test('requests_total remains a backward-compatible alias for requests_24h', () => {
+  const payload = buildTrafficPayload([
+    line({ at: '08/Jul/2026:00:30:00 +0200', path: '/' }),
+    line({ at: '07/Jul/2026:23:30:00 +0200', path: '/yesterday.html' }),
+    line({ at: '07/Jul/2026:09:00:00 +0200', path: '/old.html' }),
+  ], { now });
+  assert.equal(payload.requests_total, payload.requests_24h);
+  assert.equal(payload.requests_total, 2);
+});
+
 test('nginx timestamps preserve their explicit timezone offset', () => {
   assert.equal(parseNginxTime('08/Jul/2026:00:30:00 +0200').toISOString(), '2026-07-07T22:30:00.000Z');
 });
