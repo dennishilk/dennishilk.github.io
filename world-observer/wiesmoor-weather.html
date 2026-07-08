@@ -10,7 +10,7 @@
     }
   </script>
   <title>Wiesmoor Weather Observer – World Observer</title>
-  <meta name="description" content="Täglicher Wetter-Snapshot für Wiesmoor, Niedersachsen im World Observer Terminal-Stil.">
+  <meta name="description" content="Daily weather snapshot for Wiesmoor, Lower Saxony in the World Observer terminal style.">
   <meta property="og:title" content="Wiesmoor Weather Observer – World Observer">
   <meta property="og:description" content="Wiesmoor weather observation card powered by public Open-Meteo forecast data.">
   <meta property="og:url" content="https://dennishilk.github.io/world-observer/wiesmoor-weather.html">
@@ -20,7 +20,6 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/style.css?v=47">
   <script defer src="/stars.js"></script>
-  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
 <body class="traffic-page weather-observer-page">
 <canvas id="stars"></canvas>
@@ -33,19 +32,58 @@
       <a href="/world-observer.html">Overview</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Media</a><a href="/world-observer/society.html">Society</a><a href="/world-observer/hometown.html" class="active" aria-current="page">Hometown</a><a href="/world-observer/environment.html">Earth &amp; Space</a><a href="/world-observer/technology.html">Technology</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
     </nav>
     <section class="weather-hero traffic-card">
-      <div><p class="terminal-command">&gt; cat world-observer/dashboard/hometown.json | jq '.observer=="wiesmoor-weather"'</p><h1>Wiesmoor Weather Observer</h1><p>Täglicher Wetter-Snapshot für Wiesmoor, Niedersachsen</p><small id="weather-last-seen">Letzte Beobachtung: —</small></div>
+      <div>
+        <p class="terminal-command">&gt; cat world-observer/dashboard/hometown.json | jq '.observer=="wiesmoor-weather"'</p>
+        <h1>Wiesmoor Weather Observer</h1>
+        <p>Daily weather snapshot for Wiesmoor, Lower Saxony</p>
+        <small id="weather-last-seen">Last observation: —</small>
+        <small class="weather-source-line">Source: <span id="hero-source-name">Open-Meteo Forecast API</span></small>
+      </div>
       <strong id="weather-status" class="status-badge unavailable">STATUS: —</strong>
     </section>
   </header>
 
   <main class="traffic-dashboard weather-dashboard">
     <section class="weather-grid">
-      <article class="traffic-card weather-current"><h2>AKTUELLE BEDINGUNGEN</h2><div class="weather-temp"><span>☁</span><strong id="current-temp">—</strong><small>Aktuelle Temperatur</small></div><div class="weather-metric-list"><p><span>Gefühlt</span><strong id="feels-like">—</strong></p><p><span>Relative humidity</span><strong id="humidity">—</strong></p><p><span>Wind gusts</span><strong id="wind-gusts">—</strong></p><p><span>Cloud cover</span><strong id="cloud-cover">—</strong></p></div></article>
-      <article class="traffic-card"><h2>HEUTE IM ÜBERBLICK</h2><div class="weather-metric-list two"><p><span>Min / Max</span><strong id="today-minmax">—</strong></p><p><span>Precipitation sum</span><strong id="precip-sum">—</strong></p><p><span>Probability max</span><strong id="precip-prob">—</strong></p><p><span>Max wind gusts</span><strong id="max-gusts">—</strong></p></div><p id="weather-summary" class="weather-note">Rohdaten optional; environment.json bleibt die primäre Quelle.</p></article>
-      <article class="traffic-card weather-map-card weather-location-card"><h2>LOCATION METADATA</h2><dl class="weather-info"><dt>Place</dt><dd>Wiesmoor</dd><dt>Region</dt><dd>East Frisia · Lower Saxony · Germany</dd><dt>Coordinates</dt><dd>53.4167° N, 7.7333° E</dd><dt>Timezone</dt><dd>Europe/Berlin</dd><dt>Source</dt><dd id="source-name">Open-Meteo Forecast API</dd></dl></article>
-      <article class="traffic-card weather-chart-card"><h2>VERLAUF DER LETZTEN 24 STUNDEN</h2><div id="weather-chart" class="pulse-chart empty">24h-Verlauf wird angezeigt, sobald Rohdaten im Website-Export verfügbar sind.</div><div class="traffic-legend"><span class="weather-temp-line">Temperatur</span><span class="weather-gust-line">Böen</span></div></article>
-      <article class="traffic-card weather-details"><h2>ZUSÄTZLICHE DETAILS</h2><div class="weather-metric-list two"><p><span>Precipitation now</span><strong id="current-precip">—</strong></p><p><span>Rain now</span><strong id="current-rain">—</strong></p><p><span>Pressure MSL</span><strong id="pressure-msl">—</strong></p><p><span>Surface pressure</span><strong id="surface-pressure">—</strong></p><p><span>Wind speed</span><strong id="wind-speed">—</strong></p><p><span>Wind direction</span><strong id="wind-direction">—</strong></p></div></article>
-      <article class="traffic-card weather-diagnostics"><h2>DIAGNOSE</h2><dl class="method-card"><dt>API Status</dt><dd id="api-status">—</dd><dt>Datenstatus</dt><dd id="data-status">—</dd><dt>Last seen</dt><dd id="diag-last-seen">—</dd><dt>HTTP</dt><dd id="http-status">—</dd><dt>Attempts / Retries</dt><dd id="attempts-retries">—</dd><dt>Source</dt><dd id="diag-source">Open-Meteo Forecast API</dd></dl></article>
+      <article class="traffic-card weather-current">
+        <h2>CURRENT CONDITIONS</h2>
+        <div class="weather-temp"><span id="weather-symbol" aria-hidden="true">☁</span><strong id="current-temp">—</strong><small>Current temperature</small></div>
+        <div class="weather-metric-list two">
+          <p><span>Feels like</span><strong id="feels-like">—</strong></p><p><span>Humidity</span><strong id="humidity">—</strong></p>
+          <p><span>Wind speed</span><strong id="wind-speed">—</strong></p><p><span>Wind gusts</span><strong id="wind-gusts">—</strong></p>
+          <p><span>Cloud cover</span><strong id="cloud-cover">—</strong></p><p><span>Pressure MSL</span><strong id="pressure-msl">—</strong></p>
+        </div>
+      </article>
+      <article class="traffic-card">
+        <h2>TODAY AT A GLANCE</h2>
+        <div class="weather-metric-list two">
+          <p><span>Min / Max</span><strong id="today-minmax">—</strong></p><p><span>Precipitation sum</span><strong id="precip-sum">—</strong></p>
+          <p><span>Max precipitation probability</span><strong id="precip-prob">—</strong></p><p><span>Max wind gust</span><strong id="max-gusts">—</strong></p>
+          <p id="sunrise-card" hidden><span>Sunrise</span><strong id="sunrise">—</strong></p><p id="sunset-card" hidden><span>Sunset</span><strong id="sunset">—</strong></p>
+        </div>
+        <p id="weather-summary" class="weather-note">Raw latest data adds richer measurements; dashboard summary remains the primary status source.</p>
+      </article>
+      <article class="traffic-card weather-map-card weather-location-card">
+        <h2>LOCATION</h2>
+        <dl class="weather-info"><dt>Place</dt><dd>Wiesmoor</dd><dt>Region</dt><dd>East Frisia · Lower Saxony · Germany</dd><dt>Coordinates</dt><dd>53.4167° N, 7.7333° E</dd><dt>Timezone</dt><dd>Europe/Berlin</dd><dt>Source</dt><dd id="source-name">Open-Meteo Forecast API</dd></dl>
+      </article>
+      <article class="traffic-card weather-chart-card">
+        <h2>NEXT 24 HOURS</h2>
+        <div id="weather-chart" class="pulse-chart weather-trend-chart empty">24-hour trend will appear when hourly raw data is available.</div>
+        <div class="traffic-legend"><span class="weather-temp-line">Temperature</span><span class="weather-gust-line">Wind gusts</span></div>
+      </article>
+      <article class="traffic-card weather-forecast-card">
+        <h2>FORECAST OUTLOOK</h2>
+        <div id="forecast-outlook" class="weather-forecast-list"><p class="weather-note">Forecast outlook will appear when daily raw data is available.</p></div>
+      </article>
+      <article class="traffic-card weather-details">
+        <h2>ADDITIONAL DETAILS</h2>
+        <div class="weather-metric-list two"><p><span>Precipitation now</span><strong id="current-precip">—</strong></p><p><span>Rain now</span><strong id="current-rain">—</strong></p><p><span>Surface pressure</span><strong id="surface-pressure">—</strong></p><p><span>Wind direction</span><strong id="wind-direction">—</strong></p></div>
+      </article>
+      <article class="traffic-card weather-diagnostics">
+        <h2>DIAGNOSTICS</h2>
+        <dl class="method-card"><dt>API status</dt><dd id="api-status">—</dd><dt>Data status</dt><dd id="data-status">—</dd><dt>Last observation</dt><dd id="diag-last-seen">—</dd><dt>HTTP status</dt><dd id="http-status">—</dd><dt>Attempts / retries</dt><dd id="attempts-retries">—</dd><dt>Source</dt><dd id="diag-source">Open-Meteo Forecast API</dd><dt>Raw latest availability</dt><dd id="raw-availability">—</dd><dt>Dashboard summary availability</dt><dd id="dashboard-availability">—</dd></dl>
+      </article>
     </section>
   </main>
   <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; fetch dashboard/latest/wiesmoor-weather.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
@@ -54,36 +92,53 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
-  const fmt = (v, unit = "", d = 1) => Number.isFinite(Number(v)) ? `${Number(v).toLocaleString(undefined,{maximumFractionDigits:d})}${unit ? " " + unit : ""}` : "—";
+  const isNum = (v) => v !== null && v !== "" && Number.isFinite(Number(v));
+  const fmt = (v, unit = "", d = 1) => isNum(v) ? `${Number(v).toLocaleString(undefined,{maximumFractionDigits:d})}${unit ? " " + unit : ""}` : "—";
   const set = (id, value) => { const el = $(id); if (el) el.textContent = value ?? "—"; };
   const get = (o, path) => path.split('.').reduce((a,k) => a?.[k], o);
   const first = (o, paths) => { for (const p of paths) { const v = get(o,p); if (v !== undefined && v !== null && v !== "") return v; } return null; };
-  async function optional(urls) { for (const url of urls) { try { const r = await fetch(url,{cache:"no-store"}); if (r.ok) return r.json(); } catch {} } return null; }
+  async function optional(urls) { for (const url of urls) { try { const r = await fetch(url,{cache:"no-store"}); if (r.ok) return {data: await r.json(), url, status: r.status}; } catch {} } return {data:null, url:null, status:null}; }
   function findObserver(data) { const rows = [...(Array.isArray(data)?data:[]), ...(data?.observers||[]), ...(data?.items||[])]; return rows.find(o => o?.observer === "wiesmoor-weather") || null; }
+  function weatherSymbol(cloud, precip) { if (isNum(precip) && Number(precip) > 0) return "☔"; if (isNum(cloud) && Number(cloud) < 25) return "☀"; if (isNum(cloud) && Number(cloud) < 70) return "⛅"; return "☁"; }
+  function timeLabel(v) { if (!v) return "—"; const d = new Date(v); return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}); }
+  function dateLabel(v) { const d = new Date(v); return Number.isNaN(d.getTime()) ? String(v ?? "—") : d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}); }
   function renderChart(raw) {
     const hourly = raw?.hourly || raw?.hours || raw?.forecast?.hourly;
     const times = hourly?.time || hourly?.times || [];
     const temps = hourly?.temperature_2m || hourly?.temperature || [];
     const gusts = hourly?.wind_gusts_10m || hourly?.wind_gusts || [];
-    if (!times.length || !temps.length || !gusts.length) return;
-    const n = Math.min(24, times.length, temps.length, gusts.length), tv = temps.slice(0,n).map(Number), gv = gusts.slice(0,n).map(Number);
-    const vals = [...tv, ...gv].filter(Number.isFinite), min = Math.min(...vals), max = Math.max(...vals), range = Math.max(1, max-min);
-    const pts = (arr) => arr.map((v,i)=>`${(i/(n-1)*100).toFixed(2)},${(92-((v-min)/range*78)).toFixed(2)}`).join(' ');
-    $("weather-chart").classList.remove("empty");
-    $("weather-chart").innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24 hour temperature and wind gust chart"><g class="pulse-grid"><path d="M0 20H100M0 50H100M0 80H100"/></g><polyline class="weather-chart-temp" points="${pts(tv)}"/><polyline class="weather-chart-gust" points="${pts(gv)}"/></svg>`;
+    const n = Math.min(24, times.length, temps.length, gusts.length);
+    if (n < 2) return;
+    const tv = temps.slice(0,n).map(Number), gv = gusts.slice(0,n).map(Number);
+    const vals = [...tv, ...gv].filter(Number.isFinite); if (!vals.length) return;
+    const min = Math.min(...vals), max = Math.max(...vals), range = Math.max(1, max-min);
+    const pts = (arr) => arr.map((v,i)=>`${(8 + (i/(n-1)*86)).toFixed(2)},${(86-((v-min)/range*68)).toFixed(2)}`).join(' ');
+    const chart = $("weather-chart"); chart.classList.remove("empty");
+    chart.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24-hour temperature and wind gust trend"><g class="pulse-grid"><path d="M8 18H96M8 52H96M8 86H96M8 18V86M51 18V86M96 18V86"/></g><polyline class="weather-chart-temp" points="${pts(tv)}"/><polyline class="weather-chart-gust" points="${pts(gv)}"/><text x="8" y="96" class="weather-axis-label">${esc(timeLabel(times[0]))}</text><text x="88" y="96" class="weather-axis-label">${esc(timeLabel(times[n-1]))}</text></svg>`;
+  }
+  function renderForecast(raw) {
+    const daily = raw?.daily || raw?.forecast?.daily; const times = daily?.time || [];
+    if (!times.length) return;
+    const html = times.slice(0,7).map((t,i) => {
+      const min = daily?.temperature_2m_min?.[i], max = daily?.temperature_2m_max?.[i], rain = daily?.precipitation_sum?.[i];
+      const prob = daily?.precipitation_probability_max?.[i], gust = daily?.wind_gusts_10m_max?.[i], cloud = daily?.cloud_cover_mean?.[i] ?? daily?.cloud_cover_max?.[i];
+      return `<div class="weather-forecast-day"><strong>${esc(dateLabel(t))}</strong><span class="weather-forecast-cue">${weatherSymbol(cloud, rain)}</span><small>${fmt(min,"°C")} / ${fmt(max,"°C")}</small><small>${fmt(rain,"mm")} · ${fmt(prob,"%",0)}</small><small>Gust ${fmt(gust,"km/h")}</small></div>`;
+    }).join("");
+    $("forecast-outlook").innerHTML = html;
   }
   Promise.all([
     optional(["/world-observer/dashboard/environment.json","dashboard/environment.json","../world-observer/dashboard/environment.json"]),
-    optional(["dashboard/latest/wiesmoor-weather.json","/world-observer/dashboard/latest/wiesmoor-weather.json","/world-observer/data/latest/wiesmoor-weather.json","data/latest/wiesmoor-weather.json"])
-  ]).then(([env, raw]) => {
-    const o = findObserver(env) || {};
-    const sm = o.secondary_metrics || {};
-    set("current-temp", fmt(o.primary_metric_value, o.primary_metric_unit || "°C")); set("feels-like", sm["Feels like"] ?? "—"); set("humidity", sm["Relative humidity"] ?? "—"); set("wind-gusts", sm["Wind gusts"] ?? "—");
-    const status = String(o.status || "unavailable"); $("weather-status").textContent = `STATUS: ${status.toUpperCase()}`; $("weather-status").className = `status-badge ${status}`;
-    set("data-status", o.data_status || "—"); set("weather-last-seen", `Letzte Beobachtung: ${o.last_seen_date || "—"}`); set("diag-last-seen", o.last_seen_date || "—");
-    set("cloud-cover", fmt(first(raw,["current.cloud_cover"]), "%", 0)); set("current-precip", fmt(first(raw,["current.precipitation"]), "mm")); set("current-rain", fmt(first(raw,["current.rain"]), "mm")); set("pressure-msl", fmt(first(raw,["current.pressure_msl"]), "hPa")); set("surface-pressure", fmt(first(raw,["current.surface_pressure"]), "hPa")); set("wind-speed", fmt(first(raw,["current.wind_speed_10m"]), "km/h")); set("wind-direction", fmt(first(raw,["current.wind_direction_10m"]), "°", 0));
-    const min = first(raw,["today.temperature_2m_min"]), max = first(raw,["today.temperature_2m_max"]); set("today-minmax", min !== null && max !== null ? `${fmt(min,"°C")} / ${fmt(max,"°C")}` : "—"); set("precip-sum", fmt(first(raw,["today.precipitation_sum"]), "mm")); set("precip-prob", fmt(first(raw,["today.precipitation_probability_max"]), "%", 0)); set("max-gusts", fmt(first(raw,["today.wind_gusts_10m_max"]), "km/h"));
-    set("weather-summary", raw?.summary || "Rohdaten optional; environment.json bleibt die primäre Quelle."); const source = raw?.source?.name || "Open-Meteo Forecast API"; set("source-name", source); set("diag-source", source); set("api-status", raw ? "available" : "raw latest unavailable"); set("http-status", raw?.diagnostics?.http_status ?? "—"); set("attempts-retries", raw ? `${raw?.diagnostics?.api_attempts ?? "—"} / ${raw?.diagnostics?.retries ?? "—"}` : "—"); renderChart(raw);
+    optional(["/world-observer/dashboard/latest/wiesmoor-weather.json","dashboard/latest/wiesmoor-weather.json","/world-observer/data/latest/wiesmoor-weather.json","data/latest/wiesmoor-weather.json"])
+  ]).then(([envResult, rawResult]) => {
+    const env = envResult.data, raw = rawResult.data, o = findObserver(env) || {}, sm = o.secondary_metrics || {}, cur = raw?.current || {};
+    const currentTemp = first(raw,["current.temperature_2m"]) ?? o.primary_metric_value;
+    set("current-temp", fmt(currentTemp, o.primary_metric_unit || "°C")); set("feels-like", fmt(first(raw,["current.apparent_temperature"]), "°C") !== "—" ? fmt(first(raw,["current.apparent_temperature"]), "°C") : (sm["Feels like"] ?? "—")); set("humidity", fmt(first(raw,["current.relative_humidity_2m"]), "%", 0) !== "—" ? fmt(first(raw,["current.relative_humidity_2m"]), "%", 0) : (sm["Relative humidity"] ?? "—"));
+    set("wind-speed", fmt(cur.wind_speed_10m, "km/h")); set("wind-gusts", fmt(cur.wind_gusts_10m, "km/h") !== "—" ? fmt(cur.wind_gusts_10m, "km/h") : (sm["Wind gusts"] ?? "—")); set("cloud-cover", fmt(cur.cloud_cover, "%", 0)); set("current-precip", fmt(cur.precipitation, "mm")); set("current-rain", fmt(cur.rain, "mm")); set("pressure-msl", fmt(cur.pressure_msl, "hPa")); set("surface-pressure", fmt(cur.surface_pressure, "hPa")); set("wind-direction", fmt(cur.wind_direction_10m, "°", 0)); set("weather-symbol", weatherSymbol(cur.cloud_cover, cur.precipitation ?? cur.rain));
+    const status = String(o.status || (raw ? "available" : "unavailable")); $("weather-status").textContent = `STATUS: ${status.toUpperCase()}`; $("weather-status").className = `status-badge ${status}`;
+    const last = o.last_seen_date || raw?.current?.time || raw?.generation_time || raw?.updated_at || "—"; set("weather-last-seen", `Last observation: ${last}`); set("diag-last-seen", last); set("data-status", o.data_status || (raw ? "raw latest loaded" : "—"));
+    const daily = raw?.daily || {}; const min = first(raw,["today.temperature_2m_min"]) ?? daily.temperature_2m_min?.[0], max = first(raw,["today.temperature_2m_max"]) ?? daily.temperature_2m_max?.[0]; set("today-minmax", min !== null && max !== null ? `${fmt(min,"°C")} / ${fmt(max,"°C")}` : "—"); set("precip-sum", fmt(first(raw,["today.precipitation_sum"]) ?? daily.precipitation_sum?.[0], "mm")); set("precip-prob", fmt(first(raw,["today.precipitation_probability_max"]) ?? daily.precipitation_probability_max?.[0], "%", 0)); set("max-gusts", fmt(first(raw,["today.wind_gusts_10m_max"]) ?? daily.wind_gusts_10m_max?.[0], "km/h"));
+    if (daily.sunrise?.[0]) { $("sunrise-card").hidden = false; set("sunrise", timeLabel(daily.sunrise[0])); } if (daily.sunset?.[0]) { $("sunset-card").hidden = false; set("sunset", timeLabel(daily.sunset[0])); }
+    set("weather-summary", raw?.summary || "Raw latest data adds richer measurements; dashboard summary remains the primary status source."); const source = raw?.source?.name || "Open-Meteo Forecast API"; ["source-name","hero-source-name","diag-source"].forEach(id => set(id, source)); set("api-status", raw ? "available" : "raw latest unavailable"); set("http-status", raw?.diagnostics?.http_status ?? rawResult.status ?? "—"); set("attempts-retries", raw ? `${raw?.diagnostics?.api_attempts ?? "—"} / ${raw?.diagnostics?.retries ?? "—"}` : "—"); set("raw-availability", raw ? `loaded from ${rawResult.url}` : "unavailable"); set("dashboard-availability", env ? `loaded from ${envResult.url}` : "unavailable"); renderChart(raw); renderForecast(raw);
   }).catch(err => { console.error("Wiesmoor weather observer failed", err); });
 })();
 </script>

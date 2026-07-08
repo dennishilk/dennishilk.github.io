@@ -2245,7 +2245,18 @@ button.technology-observer-card {
 .weather-temp-line:before { background:#ff9d3d; box-shadow:0 0 8px #ff9d3d; }
 .weather-gust-line:before { background:#44d9ff; box-shadow:0 0 8px #44d9ff; }
 .weather-diagnostics dl.method-card { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; margin:0; }
-@media (max-width: 950px) { .weather-grid, .weather-metric-list.two { grid-template-columns:1fr; } .weather-grid > .traffic-card, .weather-current, .weather-map-card, .weather-chart-card, .weather-details, .weather-diagnostics { grid-column:span 1 !important; } .weather-hero { flex-direction:column; } }
+.weather-source-line { display:block; margin-top:.25rem; color:#8bdfff !important; }
+.weather-trend-chart { min-height:150px; }
+.weather-axis-label { fill:#aab3c0; font-size:4px; font-family:inherit; }
+.weather-forecast-card { grid-column:span 12 !important; }
+.weather-forecast-list { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:.6rem; }
+.weather-forecast-day { min-height:132px; padding:.7rem; border:1px solid rgba(0,180,255,.18); background:linear-gradient(180deg,rgba(0,20,34,.58),rgba(0,12,24,.42)); display:flex; flex-direction:column; gap:.3rem; justify-content:center; }
+.weather-forecast-day strong { color:#f0f6fc; font-size:.88rem; }
+.weather-forecast-day small { color:#c9d1d9; line-height:1.35; }
+.weather-forecast-cue { color:#ffad72; font-size:1.65rem; line-height:1; filter:drop-shadow(0 0 8px rgba(255,128,64,.38)); }
+@media (max-width: 950px) { .weather-forecast-card { grid-column:span 1 !important; } .weather-forecast-list { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 560px) { .weather-forecast-list { grid-template-columns:1fr; } }
+@media (max-width: 950px) { .weather-grid, .weather-metric-list.two { grid-template-columns:1fr; } .weather-grid > .traffic-card, .weather-current, .weather-map-card, .weather-chart-card, .weather-details, .weather-diagnostics, .weather-forecast-card { grid-column:span 1 !important; } .weather-hero { flex-direction:column; } }
 
 /* Hometown active observer state */
 .hometown-live-indicator {
