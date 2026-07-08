@@ -2373,7 +2373,7 @@ button.technology-observer-card {
 .wiesmoor-story-card { border-left: 4px solid rgba(0, 180, 255, .58); padding: 1.25rem; position: relative; text-align: left; }
 .wiesmoor-story-card h3 { color: #f0f6fc; font-size: 1.45rem; margin-bottom: .7rem; }
 .wiesmoor-story-card:before { content: ""; background: radial-gradient(circle, rgba(255,207,90,.7), transparent 62%); border-radius: 50%; height: 32px; opacity: .18; position: absolute; right: 1rem; top: 1rem; width: 32px; }
-.wiesmoor-story-card.moorland-card { border-color: rgba(93,190,111,.42); }
+.wiesmoor-story-card.raised-bog-card { border-color: rgba(93,190,111,.42); }
 .wiesmoor-story-card.power-card,
 .wiesmoor-story-card.crest-story { border-color: rgba(255,207,90,.78); }
 .wiesmoor-story-card.flowers-card { border-color: rgba(255, 183, 90, .78); }
@@ -2386,7 +2386,14 @@ button.technology-observer-card {
 .wiesmoor-flower-strip p:last-child { color: #f0f6fc; font-size: 1.1rem; font-weight: 800; margin: 0; }
 
 .wiesmoor-timeline-section { margin-bottom: 1.5rem; padding: 1.5rem; text-align: left; }
-.wiesmoor-longer-history p:last-child { color: #c9d1d9; line-height: 1.65; margin: 0; }
+.wiesmoor-longer-history { padding: clamp(1.4rem, 4vw, 2.4rem); }
+.wiesmoor-story-prose { max-width: 930px; }
+.wiesmoor-story-prose p { color: #d7e1e6; font-size: 1.02rem; line-height: 1.82; margin: 0 0 1rem; }
+.wiesmoor-story-intro { border-left: 3px solid #ffcf5a; color: #f0f6fc; font-size: clamp(1.06rem, 2vw, 1.2rem); margin-bottom: 1.4rem; padding-left: 1rem; }
+.wiesmoor-article-block { margin-top: clamp(1.45rem, 3vw, 2.25rem); }
+.wiesmoor-article-block h3 { color: #8bdfff; font-size: clamp(1.35rem, 3vw, 2rem); margin-bottom: .8rem; text-shadow: 0 0 14px rgba(0,180,255,.14); }
+.wiesmoor-crest-note { background: linear-gradient(135deg, rgba(255,207,90,.09), rgba(0,180,255,.055)); border: 1px solid rgba(255,207,90,.2); border-radius: 16px; padding: 1.1rem; }
+.wiesmoor-photo-placeholder { border: 1px dashed rgba(139,223,255,.35); border-radius: 16px; color: rgba(215,225,230,.62); font-size: .8rem; letter-spacing: .08em; margin: 1.2rem 0 1.7rem; padding: 1rem; text-align: center; text-transform: uppercase; }
 .wiesmoor-timeline-section h2 { color: #f0f6fc; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.1rem; }
 .wiesmoor-timeline { background: linear-gradient(180deg, rgba(0, 220, 255, .42), rgba(255, 207, 90, .55)) left 1rem top / 3px 100% no-repeat; list-style: none; padding-left: 2.6rem; }
 .wiesmoor-timeline li { display: grid; gap: 1rem; grid-template-columns: 110px 1fr; padding: .35rem 0 1.4rem; position: relative; }
