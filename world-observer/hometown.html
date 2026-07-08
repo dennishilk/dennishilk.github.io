@@ -21,9 +21,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/style.css?v=42">
+  <link rel="stylesheet" href="/style.css?v=47">
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer.js?v=20260703-package-fix"></script>
+  <script defer src="/world-observer.js?v=20260708-wiesmoor-live"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
 <body data-observer-page="hometown">
@@ -64,7 +64,7 @@
       <div class="cards observer-cards technology-card-grid planned-cards" aria-label="Hometown observer planned cards">
         <a class="card observer-category technology-observer-card active" href="/world-observer/wiesmoor-weather.html" aria-label="Open Wiesmoor Weather Observer">
           <h3>Wiesmoor Weather Observer</h3>
-          <p><strong>Status:</strong> active</p>
+          <p><strong>Status:</strong> <span id="wiesmoor-weather-live" class="hometown-live-indicator" aria-live="polite">● ACTIVE</span></p>
           <p>Täglicher Wetter-Snapshot für Wiesmoor, Niedersachsen, powered by the Open-Meteo forecast export.</p>
         </a>
         <article class="card observer-category technology-observer-card planned">
@@ -105,5 +105,45 @@
   </footer>
 </div>
 
+<script>
+(() => {
+  const live = document.getElementById("wiesmoor-weather-live");
+  if (!live) return;
+
+  const urls = [
+    "/world-observer/dashboard/environment.json",
+    "dashboard/environment.json",
+    "../world-observer/dashboard/environment.json"
+  ];
+  const findObserver = (data) => {
+    const rows = [
+      ...(Array.isArray(data) ? data : []),
+      ...(Array.isArray(data?.observers) ? data.observers : []),
+      ...(Array.isArray(data?.items) ? data.items : [])
+    ];
+    return rows.find((observer) => observer?.observer === "wiesmoor-weather") || null;
+  };
+  const formatTemperature = (observer) => {
+    const value = observer?.primary_metric_value;
+    if (!Number.isFinite(Number(value))) return null;
+    const unit = observer?.primary_metric_unit || "°C";
+    return `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${unit}`;
+  };
+
+  (async () => {
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) continue;
+        const observer = findObserver(await response.json());
+        const temperature = formatTemperature(observer);
+        live.textContent = temperature ? `● LIVE · ${temperature}` : "● ACTIVE";
+        live.classList.toggle("has-temperature", Boolean(temperature));
+        return;
+      } catch {}
+    }
+  })();
+})();
+</script>
 </body>
 </html>

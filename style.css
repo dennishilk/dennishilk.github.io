@@ -2163,3 +2163,24 @@ button.technology-observer-card {
 .weather-gust-line:before { background:#44d9ff; box-shadow:0 0 8px #44d9ff; }
 .weather-diagnostics dl.method-card { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; margin:0; }
 @media (max-width: 950px) { .weather-grid, .weather-metric-list.two { grid-template-columns:1fr; } .weather-grid > .traffic-card, .weather-current, .weather-map-card, .weather-chart-card, .weather-details, .weather-diagnostics { grid-column:span 1 !important; } .weather-hero { flex-direction:column; } }
+
+/* Hometown active observer state */
+.hometown-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  color: #50fa7b;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(80, 250, 123, .72), 0 0 18px rgba(68, 217, 255, .28);
+}
+
+.hometown-live-indicator.has-temperature {
+  color: #44d9ff;
+  text-shadow: 0 0 9px rgba(68, 217, 255, .82), 0 0 20px rgba(80, 250, 123, .28);
+}
+
+.hometown-live-indicator::first-letter {
+  color: #50fa7b;
+}
