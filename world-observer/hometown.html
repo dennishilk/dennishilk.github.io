@@ -58,14 +58,33 @@
   </header>
 
   <main>
-    <section class="observer-section" aria-labelledby="hometown-planned-title">
-      <h2 id="hometown-planned-title">Planned cards</h2>
+    <section class="observer-section hometown-about-section" aria-labelledby="hometown-about-title">
+      <article class="card hometown-about-card">
+        <div class="hometown-crest-frame">
+          <img src="/world-observer/assets/wiesmoor-coat-of-arms.jpg" alt="Official Wiesmoor coat of arms" class="hometown-crest">
+        </div>
+        <div class="hometown-about-copy">
+          <p class="terminal-command">&gt; inspect hometown.identity</p>
+          <h2 id="hometown-about-title">About Wiesmoor</h2>
+          <p class="hometown-identity">Wiesmoor · East Frisia · Lower Saxony · Germany</p>
+          <p>Wiesmoor grew from a moorland and peat-energy landscape into a town. The Hometown Observer collects public, non-personal local signals around weather, sky, water, peatland, and environment.</p>
+          <div class="hometown-history-block">
+            <h3>Why this crest?</h3>
+            <p>The black grouse represents the former moorland landscape where the bird was once widespread. The golden lightning bolt reflects Wiesmoor's history of electricity generation from peat and the development that followed.</p>
+            <a href="https://www.wiesmoor.de/Daten-und-Fakten/Geschichtsueberblick.htm" rel="noopener">Official city history</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="observer-section" aria-labelledby="hometown-cards-title">
+      <h2 id="hometown-cards-title">Local observer cards</h2>
       <p class="observer-limitation">Local public-data observer concepts for weather, sky, peatland, water, and environment around Wiesmoor. Observations only; no tracking and no personal data.</p>
-      <div class="cards observer-cards technology-card-grid planned-cards" aria-label="Hometown observer planned cards">
+      <div class="cards observer-cards technology-card-grid planned-cards" aria-label="Hometown local observer cards">
         <a class="card observer-category technology-observer-card active" href="/world-observer/wiesmoor-weather.html" aria-label="Open Wiesmoor Weather Observer">
           <h3>Wiesmoor Weather Observer</h3>
           <p><strong>Status:</strong> <span id="wiesmoor-weather-live" class="hometown-live-indicator" aria-live="polite">● ACTIVE</span></p>
-          <p>Täglicher Wetter-Snapshot für Wiesmoor, Niedersachsen, powered by the Open-Meteo forecast export.</p>
+          <p>Daily weather snapshot for Wiesmoor, Lower Saxony, powered by the Open-Meteo forecast export.</p>
         </a>
         <article class="card observer-category technology-observer-card planned">
           <h3>Peatland Observer</h3>

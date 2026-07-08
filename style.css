@@ -757,6 +757,62 @@ footer {
   margin-top: 1rem;
 }
 
+.hometown-about-card {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) 1fr;
+  gap: 1.1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.hometown-crest-frame {
+  justify-self: center;
+  border: 1px solid rgba(0,180,255,0.32);
+  background: radial-gradient(circle at 50% 35%, rgba(255, 196, 48, 0.14), rgba(0, 8, 14, 0.92) 68%);
+  box-shadow: 0 0 22px rgba(0,180,255,0.18), inset 0 0 18px rgba(255,196,48,0.1);
+  padding: .7rem;
+}
+
+.hometown-crest {
+  display: block;
+  width: min(150px, 32vw);
+  height: auto;
+}
+
+.hometown-about-copy h2 {
+  margin-top: .2rem;
+}
+
+.hometown-identity {
+  color: #ffcf5a;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-shadow: 0 0 10px rgba(255, 207, 90, .32);
+}
+
+.hometown-history-block {
+  border-left: 3px solid rgba(255, 207, 90, .72);
+  margin-top: .9rem;
+  padding: .15rem 0 .15rem .9rem;
+}
+
+.hometown-history-block h3 {
+  color: #f0f6fc;
+  margin: 0 0 .35rem;
+}
+
+.hometown-history-block a {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .hometown-about-card {
+    grid-template-columns: 1fr;
+  }
+}
+
 .technology-observer-card {
   background: var(--card-bg);
   color: inherit;
@@ -2146,12 +2202,6 @@ button.technology-observer-card {
 .weather-metric-list span { color:#aab3c0; font-size:.78rem; }
 .weather-metric-list strong { color:#20c8ff; font-size:1.28rem; text-shadow:0 0 10px rgba(0,200,255,.44); }
 .weather-note { color:#aab3c0; border-top:1px solid rgba(0,180,255,.16); margin:.75rem 0 0; padding-top:.7rem; font-size:.86rem; }
-.weather-mini-map { border:1px solid rgba(0,180,255,.18); background:linear-gradient(145deg,rgba(0,24,38,.8),rgba(0,6,12,.95)); overflow:hidden; margin-bottom:.75rem; }
-.weather-mini-map svg { width:100%; height:auto; display:block; }
-.weather-mini-map path { fill:rgba(0,180,255,.08); stroke:rgba(68,217,255,.42); stroke-width:2; }
-.weather-mini-map circle { fill:#ff3d91; filter:drop-shadow(0 0 9px #ff3d91); }
-.weather-mini-map .ring { fill:none; stroke:#ff3d91; stroke-width:2; opacity:.6; }
-.weather-mini-map text { fill:#dffbff; font:700 20px "JetBrains Mono", monospace; text-shadow:0 0 8px rgba(68,217,255,.8); }
 .weather-info { display:grid; grid-template-columns:auto 1fr; gap:.45rem .7rem; color:#d8dee9; font-size:.86rem; }
 .weather-info dt, .weather-diagnostics dt { color:#f0f6fc; font-weight:700; }
 .weather-info dd, .weather-diagnostics dd { margin:0; color:#c9d1d9; }
