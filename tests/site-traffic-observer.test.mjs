@@ -59,6 +59,47 @@ test('Berlin today uses log timezone offset and 24h is rolling', () => {
   assert.equal(payload.requests_24h, 2);
 });
 
+
+test('newest live request is first and uses current newest log entry Berlin time', () => {
+  const payload = buildTrafficPayload([
+    line({ at: '08/Jul/2026:11:58:01 +0200', path: '/older.html' }),
+    line({ at: '08/Jul/2026:11:59:59 +0200', path: '/newest.html' }),
+    line({ at: '08/Jul/2026:11:58:59 +0200', path: '/middle.html' }),
+  ], { now });
+  assert.equal(payload.live_requests[0].path, '/newest.html');
+  assert.equal(payload.live_requests[0].timestamp, '2026-07-08T09:59:59.000Z');
+  assert.equal(payload.live_requests[0].time, '11:59:59');
+  assert.deepEqual(payload.live_requests.map(r => r.path), ['/newest.html', '/middle.html', '/older.html']);
+});
+
+test('writer output derives live stream from supplied logs instead of stale output snapshot', async () => {
+  const { mkdtemp, readFile, writeFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-'));
+  try {
+    const output = join(dir, 'site-traffic.json');
+    const log = join(dir, 'access.log');
+    await writeFile(output, JSON.stringify({
+      generated_at: '2026-07-08T00:00:00.000Z',
+      live_requests: [{ time: '00:38:18', kind: 'HUMAN', country: 'GB', path: '/stale.html' }]
+    }));
+    await writeFile(log, `${line({ at: '08/Jul/2026:11:59:59 +0200', path: '/fresh.html' })}\n`);
+    writeTrafficPayload([log], output, { now });
+    const payload = JSON.parse(await readFile(output, 'utf8'));
+    assert.equal(payload.generated_at, now.toISOString());
+    assert.equal(payload.live_requests[0].path, '/fresh.html');
+    assert.equal(payload.live_requests.some(r => r.path === '/stale.html' || r.country === 'GB'), false);
+    assert.equal(payload.requests_24h, 1);
+    assert.equal(payload.requests_total, 1);
+    assert('top_pages' in payload);
+    assert('top_paths' in payload);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test('requests_total remains a backward-compatible alias for requests_24h', () => {
   const payload = buildTrafficPayload([
     line({ at: '08/Jul/2026:00:30:00 +0200', path: '/' }),
