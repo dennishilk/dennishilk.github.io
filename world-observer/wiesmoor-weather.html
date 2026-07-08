@@ -93,28 +93,73 @@
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
   const isNum = (v) => v !== null && v !== "" && Number.isFinite(Number(v));
-  const fmt = (v, unit = "", d = 1) => isNum(v) ? `${Number(v).toLocaleString(undefined,{maximumFractionDigits:d})}${unit ? " " + unit : ""}` : "—";
+  const fmt = (v, unit = "", d = 1) => isNum(v) ? `${Number(v).toLocaleString("de-DE",{maximumFractionDigits:d})}${unit ? " " + unit : ""}` : "—";
   const set = (id, value) => { const el = $(id); if (el) el.textContent = value ?? "—"; };
   const get = (o, path) => path.split('.').reduce((a,k) => a?.[k], o);
   const first = (o, paths) => { for (const p of paths) { const v = get(o,p); if (v !== undefined && v !== null && v !== "") return v; } return null; };
   async function optional(urls) { for (const url of urls) { try { const r = await fetch(url,{cache:"no-store"}); if (r.ok) return {data: await r.json(), url, status: r.status}; } catch {} } return {data:null, url:null, status:null}; }
   function findObserver(data) { const rows = [...(Array.isArray(data)?data:[]), ...(data?.observers||[]), ...(data?.items||[])]; return rows.find(o => o?.observer === "wiesmoor-weather") || null; }
   function weatherSymbol(cloud, precip) { if (isNum(precip) && Number(precip) > 0) return "☔"; if (isNum(cloud) && Number(cloud) < 25) return "☀"; if (isNum(cloud) && Number(cloud) < 70) return "⛅"; return "☁"; }
-  function timeLabel(v) { if (!v) return "—"; const d = new Date(v); return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}); }
-  function dateLabel(v) { const d = new Date(v); return Number.isNaN(d.getTime()) ? String(v ?? "—") : d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}); }
+  const BERLIN_TZ = "Europe/Berlin";
+  const dateFormatter = new Intl.DateTimeFormat("en-GB", {timeZone:BERLIN_TZ,weekday:"short",day:"numeric",month:"short"});
+  const berlinPartsFormatter = new Intl.DateTimeFormat("en-CA", {timeZone:BERLIN_TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});
+  function parseHour(v) {
+    if (!v) return null;
+    const text = String(v);
+    const match = text.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}):(\d{2})/);
+    if (match) return `${match[1]}T${match[2]}:${match[3]}`;
+    const d = new Date(text);
+    return Number.isNaN(d.getTime()) ? null : berlinHourKey(d);
+  }
+  function berlinHourKey(date = new Date()) {
+    const parts = Object.fromEntries(berlinPartsFormatter.formatToParts(date).filter(p => p.type !== "literal").map(p => [p.type, p.value]));
+    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+  }
+  function timeLabel(v) { const key = parseHour(v); return key ? key.slice(11,16) : String(v ?? "—"); }
+  function dateLabel(v) { const key = parseHour(`${v}T12:00`); return key ? dateFormatter.format(new Date(`${key}:00`)) : String(v ?? "—"); }
   function renderChart(raw) {
     const hourly = raw?.hourly || raw?.hours || raw?.forecast?.hourly;
     const times = hourly?.time || hourly?.times || [];
     const temps = hourly?.temperature_2m || hourly?.temperature || [];
     const gusts = hourly?.wind_gusts_10m || hourly?.wind_gusts || [];
-    const n = Math.min(24, times.length, temps.length, gusts.length);
+    const limit = Math.min(times.length, temps.length, gusts.length);
+    if (limit < 2) return;
+    const currentKey = parseHour(raw?.current?.time) || berlinHourKey();
+    const keyedTimes = times.slice(0, limit).map(parseHour);
+    let start = keyedTimes.findIndex(key => key && key >= currentKey);
+    if (start < 0) start = Math.max(0, limit - 24);
+    const end = Math.min(limit, start + 24);
+    const n = end - start;
     if (n < 2) return;
-    const tv = temps.slice(0,n).map(Number), gv = gusts.slice(0,n).map(Number);
+    const sliceTimes = times.slice(start, end);
+    const tv = temps.slice(start, end).map(v => isNum(v) ? Number(v) : null);
+    const gv = gusts.slice(start, end).map(v => isNum(v) ? Number(v) : null);
     const vals = [...tv, ...gv].filter(Number.isFinite); if (!vals.length) return;
     const min = Math.min(...vals), max = Math.max(...vals), range = Math.max(1, max-min);
-    const pts = (arr) => arr.map((v,i)=>`${(8 + (i/(n-1)*86)).toFixed(2)},${(86-((v-min)/range*68)).toFixed(2)}`).join(' ');
+    const xFor = (i) => 8 + (i/(n-1)*88);
+    const yFor = (v) => 88-((v-min)/range*72);
+    const pathData = (arr) => {
+      let open = false;
+      return arr.map((v,i) => {
+        if (!Number.isFinite(v)) { open = false; return ""; }
+        const cmd = open ? "L" : "M"; open = true;
+        return `${cmd}${xFor(i).toFixed(2)},${yFor(v).toFixed(2)}`;
+      }).filter(Boolean).join(" ");
+    };
+    const tempVals = tv.filter(Number.isFinite);
+    const tempMin = tempVals.length ? Math.min(...tempVals) : min;
+    const tempMax = tempVals.length ? Math.max(...tempVals) : max;
+    const tempStep = Math.max(1, Math.ceil((tempMax - tempMin) / 3));
+    const tempRefs = Array.from({length:4}, (_,i) => Math.round(tempMin + (tempStep * i))).filter(v => v >= min && v <= max);
+    const gridRefs = tempRefs.length >= 2 ? tempRefs : [min, min + range / 3, min + 2 * range / 3, max];
+    const grid = gridRefs.map(v => `<span class="weather-chart-grid-line" style="top:${yFor(v).toFixed(2)}%"><b>${esc(fmt(v,"°C",0))}</b></span>`).join("");
+    const labelCount = Math.min(5, n);
+    const labelIndexes = Array.from({length:labelCount}, (_,i) => Math.round(i * (n - 1) / (labelCount - 1)));
+    const labels = labelIndexes.map(i => `<span style="left:${xFor(i).toFixed(2)}%">${esc(timeLabel(sliceTimes[i]))}</span>`).join("");
+    const currentIndex = keyedTimes.slice(start, end).findIndex(key => key && key >= currentKey);
+    const nowMarker = currentIndex >= 0 ? `<div class="weather-now-marker" style="left:${xFor(currentIndex).toFixed(2)}%"><span>NOW</span></div>` : "";
     const chart = $("weather-chart"); chart.classList.remove("empty");
-    chart.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24-hour temperature and wind gust trend"><g class="pulse-grid"><path d="M8 18H96M8 52H96M8 86H96M8 18V86M51 18V86M96 18V86"/></g><polyline class="weather-chart-temp" points="${pts(tv)}"/><polyline class="weather-chart-gust" points="${pts(gv)}"/><text x="8" y="96" class="weather-axis-label">${esc(timeLabel(times[0]))}</text><text x="88" y="96" class="weather-axis-label">${esc(timeLabel(times[n-1]))}</text></svg>`;
+    chart.innerHTML = `<div class="weather-chart-stage">${grid}${nowMarker}<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24-hour temperature and wind gust trend"><g class="pulse-grid"><path d="M8 16H96M8 40H96M8 64H96M8 88H96M8 16V88M30 16V88M52 16V88M74 16V88M96 16V88"/></g><path class="weather-chart-temp" d="${pathData(tv)}"/><path class="weather-chart-gust" d="${pathData(gv)}"/></svg></div><div class="weather-chart-time-labels" aria-hidden="true">${labels}</div>`;
   }
   function renderForecast(raw) {
     const daily = raw?.daily || raw?.forecast?.daily; const times = daily?.time || [];
