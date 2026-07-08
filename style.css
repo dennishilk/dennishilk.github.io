@@ -2282,20 +2282,9 @@ button.technology-observer-card {
     linear-gradient(180deg, #050b12 0%, #08121a 48%, #050a10 100%);
 }
 
-.wiesmoor-page .dashboard-header {
-  background: linear-gradient(180deg, rgba(12, 35, 35, .88), rgba(8, 18, 22, .58));
-  border-bottom: 1px solid rgba(255, 207, 90, .18);
-  border-radius: 0 0 26px 26px;
-  margin-bottom: 1.1rem;
-  padding-bottom: 1.25rem;
-}
-
-.wiesmoor-page .dashboard-header .prompt {
-  color: #8bdfff;
-  opacity: .72;
-}
-
 .wiesmoor-page main { max-width: 1180px; }
+.wiesmoor-back-nav { margin: .35rem 0 1rem; text-align: left; }
+.wiesmoor-back-nav .world-observer-back-link { margin-bottom: 0; }
 
 .observer-kicker,
 .story-label {
@@ -2448,6 +2437,8 @@ button.technology-observer-card {
 .wiesmoor-sources a { color: var(--accent); font-weight: 800; }
 .wiesmoor-sources ul { padding-left: 1.1rem; }
 .wiesmoor-sources li { margin: .45rem 0; }
+.wiesmoor-photo-credit { color: rgba(201, 209, 217, .68); font-size: .82rem; letter-spacing: .02em; line-height: 1.65; margin: -.35rem 0 1.5rem; text-align: center; }
+.wiesmoor-photo-credit::before { color: rgba(139, 223, 255, .72); content: "// "; }
 
 @media (max-width: 900px) {
   .wiesmoor-hero,
