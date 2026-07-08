@@ -18,7 +18,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/style.css?v=46">
+  <link rel="stylesheet" href="/style.css?v=47">
   <script defer src="/stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
@@ -48,7 +48,7 @@
       <article class="traffic-card weather-diagnostics"><h2>DIAGNOSE</h2><dl class="method-card"><dt>API Status</dt><dd id="api-status">—</dd><dt>Datenstatus</dt><dd id="data-status">—</dd><dt>Last seen</dt><dd id="diag-last-seen">—</dd><dt>HTTP</dt><dd id="http-status">—</dd><dt>Attempts / Retries</dt><dd id="attempts-retries">—</dd><dt>Source</dt><dd id="diag-source">Open-Meteo Forecast API</dd></dl></article>
     </section>
   </main>
-  <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; fetch optional latest/wiesmoor-weather.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+  <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; fetch dashboard/latest/wiesmoor-weather.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
 </div>
 <script>
 (() => {
@@ -74,7 +74,7 @@
   }
   Promise.all([
     optional(["/world-observer/dashboard/environment.json","dashboard/environment.json","../world-observer/dashboard/environment.json"]),
-    optional(["/world-observer/dashboard/latest/wiesmoor-weather.json","/world-observer/data/latest/wiesmoor-weather.json","dashboard/latest/wiesmoor-weather.json","data/latest/wiesmoor-weather.json"])
+    optional(["dashboard/latest/wiesmoor-weather.json","/world-observer/dashboard/latest/wiesmoor-weather.json","/world-observer/data/latest/wiesmoor-weather.json","data/latest/wiesmoor-weather.json"])
   ]).then(([env, raw]) => {
     const o = findObserver(env) || {};
     const sm = o.secondary_metrics || {};
