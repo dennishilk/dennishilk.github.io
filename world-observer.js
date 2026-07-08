@@ -1637,6 +1637,7 @@ function renderGeomagneticInstrumentPanels(containerId, metrics) {
     const label = document.createElement("span");
     label.textContent = metric.label;
     const value = document.createElement("strong");
+    value.className = metric.textState ? "geomagnetic-text-state" : "";
     value.textContent = metric.value ?? "—";
     panel.append(label, value);
     if (metric.detail) {
@@ -1801,11 +1802,11 @@ function renderGeomagneticStormObserver(environmentData, history) {
 
   renderGeomagneticInstrumentPanels("geomagnetic-storm-metrics", [
     { label: "Available-window max Kp", value: formatKp(maxKp), detail: "Historical peak in available export window; not current conditions", featured: true },
-    { label: "Current geomagnetic condition", value: condition || geomagneticState.toLowerCase(), detail: "Derived from exported Kp / NOAA scale" },
-    { label: "Latest IMF Bz GSM", value: formatOptionalBz(bz), detail: "Optional instrument feed", unavailable: bz === null },
-    { label: "Solar wind speed", value: formatOptionalSpeed(windSpeed), detail: "Optional instrument feed", unavailable: windSpeed === null },
-    { label: "Collected", value: formatDateTimeUtc(collectedAt), compact: true },
-    { label: "Source", value: sourceLabel, compact: true },
+    { label: "Current geomagnetic condition", value: condition || geomagneticState.toLowerCase(), detail: "Derived from exported Kp / NOAA scale", textState: true },
+    { label: "Latest IMF Bz GSM", value: formatOptionalBz(bz), detail: "Optional instrument feed", unavailable: bz === null, textState: bz === null },
+    { label: "Solar wind speed", value: formatOptionalSpeed(windSpeed), detail: "Optional instrument feed", unavailable: windSpeed === null, textState: windSpeed === null },
+    { label: "Collected", value: formatDateTimeUtc(collectedAt), compact: true, textState: true },
+    { label: "Source", value: sourceLabel, compact: true, textState: true },
   ]);
 
   renderWorldObserverTrendChart("geomagnetic-storm-trend-chart", {
