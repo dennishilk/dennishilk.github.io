@@ -2196,8 +2196,14 @@ button.technology-observer-card {
 
 .geomagnetic-state-readout strong {
   color: var(--geomag-accent);
-  font-size: clamp(2.35rem, 5.4vw, 4.65rem);
+  font-size: clamp(2rem, 4.4vw, 3.85rem);
+  hyphens: auto;
   letter-spacing: -0.035em;
+  line-height: 0.98;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  word-break: normal;
 }
 .geomagnetic-kp-readout strong { font-size: clamp(3.1rem, 9vw, 6.4rem); }
 .geomagnetic-gscale-readout strong { font-size: clamp(2rem, 5vw, 3.65rem); }
