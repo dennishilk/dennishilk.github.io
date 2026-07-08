@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/world-observer/wiesmoor.html">
+
+  <script>
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+
+  <title>Wiesmoor Local History – World Observer</title>
+  <meta name="description" content="A terminal-style local identity and history page for Wiesmoor, East Frisia: moorland, peat-fired power, horticulture, flowers, and environmental change.">
+  <meta property="og:title" content="Wiesmoor Local History – World Observer">
+  <meta property="og:description" content="Moorland · Power · Flowers · East Frisia">
+  <meta property="og:url" content="https://dennishilk.github.io/world-observer/wiesmoor.html">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=48">
+  <script defer src="/stars.js"></script>
+  <script defer src="/world-observer.js?v=20260703-package-fix"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+</head>
+<body data-observer-page="hometown">
+
+<canvas id="stars"></canvas>
+
+<div class="content world-observer-page wiesmoor-page">
+  <header class="dashboard-header">
+    <h1>
+      <span class="prompt">root@nebinux:~$</span>
+      <span class="name">Hometown Observer</span>
+    </h1>
+    <p>Local identity context for Wiesmoor, East Frisia.</p>
+
+    <div class="button-group">
+      <div class="buttons">
+        <a href="/">Home</a>
+        <a href="/world-observer.html">World Observer</a>
+        <a href="/news.html"><i class="fas fa-newspaper"></i> News</a>
+      </div>
+    </div>
+    <nav class="observer-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a>
+      <a href="/world-observer/internet.html">Internet</a>
+      <a href="/world-observer/media.html">Media</a>
+      <a href="/world-observer/society.html">Society</a>
+      <a href="/world-observer/hometown.html" class="active" aria-current="page">Hometown</a>
+      <a href="/world-observer/environment.html">Earth &amp; Space</a>
+      <a href="/world-observer/technology.html">Technology</a>
+      <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
+    </nav>
+  </header>
+
+  <main>
+    <p><a class="world-observer-back-link" href="/world-observer/hometown.html">← Back to Hometown</a></p>
+
+    <section class="wiesmoor-hero" aria-labelledby="wiesmoor-title">
+      <div class="wiesmoor-hero-copy">
+        <p class="terminal-command">&gt; boot hometown/wiesmoor.identity</p>
+        <h2 id="wiesmoor-title">Wiesmoor</h2>
+        <p class="wiesmoor-subtitle">Moorland · Power · Flowers · East Frisia</p>
+        <p>Wiesmoor is one of East Frisia's youngest towns. Its modern centre grew from a landscape that was once dominated by raised bog, peat extraction, power generation and later horticulture. The Hometown Observer uses this local context to frame public, non-personal observations around weather, water, sky, peatland and environment.</p>
+      </div>
+      <div class="wiesmoor-crest-terminal" aria-label="Wiesmoor coat of arms">
+        <span>crest.render()</span>
+        <img src="/world-observer/assets/wiesmoor-coat-of-arms.jpg" alt="Wiesmoor coat of arms">
+      </div>
+    </section>
+
+    <section class="wiesmoor-identity-grid" aria-label="Wiesmoor identity cards">
+      <article><span>region</span><strong>East Frisia</strong><p>A local frame for observations shaped by coast, moor, weather and regional culture.</p></article>
+      <article><span>state</span><strong>Lower Saxony</strong><p>Wiesmoor belongs to north-west Germany's Lower Saxony context.</p></article>
+      <article><span>landscape</span><strong>Former raised bog</strong><p>The town centre developed from an East Frisian central raised bog landscape.</p></article>
+      <article><span>identity</span><strong>Flower town</strong><p>Waste heat, greenhouses and horticulture shaped the later public identity.</p></article>
+      <article><span>observer</span><strong>Hometown Observer</strong><p>Public, non-personal signals around weather, water, sky, peatland and environment.</p></article>
+    </section>
+
+    <section class="wiesmoor-story-grid" aria-label="Wiesmoor story sections">
+      <article class="wiesmoor-story-card"><p class="terminal-command">&gt; cat story/moorland</p><h3>From moorland to town</h3><p>Much of today's Wiesmoor belonged to the East Frisian central raised bog. For centuries, the landscape was difficult to access and only gradually settled from the edges inward. The modern town centre developed much later, shaped by industrial peat extraction and planned settlement.</p></article>
+      <article class="wiesmoor-story-card"><p class="terminal-command">&gt; cat story/power</p><h3>Peat, power and settlement</h3><p>At the beginning of the twentieth century, the Prussian state decided to extract peat industrially from the raised bog between Aurich and Wilhelmshaven and open the area for settlement. The peat was intended to fuel a power station. The first residents settled in the still undeveloped Wiesmoor in 1907, and the peat-fired power station began operating in 1909. For decades, peat extraction, electricity generation, horticulture and agriculture formed the economic basis of the settlement.</p></article>
+      <article class="wiesmoor-story-card"><p class="terminal-command">&gt; cat story/horticulture</p><h3>From energy to horticulture</h3><p>From 1925 onward, waste heat from the power station was used to heat greenhouses for vegetables and later ornamental plants. This link between energy and cultivation shaped Wiesmoor's later identity as a flower town. After peat-fired electricity generation ended and the old power station was replaced, Wiesmoor went through structural change, with horticulture, tourism and local services becoming more important.</p></article>
+      <article class="wiesmoor-story-card crest-story"><p class="terminal-command">&gt; decode crest.symbols</p><h3>Why this crest?</h3><p>The coat of arms compresses Wiesmoor's story into two symbols. The black grouse refers to the former moorland landscape where the bird was once widespread. The golden lightning bolt points to electricity generated from peat and to the urban development that followed.</p></article>
+    </section>
+
+    <section class="wiesmoor-timeline-section" aria-labelledby="wiesmoor-timeline-title">
+      <p class="terminal-command">&gt; tail -f wiesmoor.timeline</p>
+      <h2 id="wiesmoor-timeline-title">Timeline</h2>
+      <ol class="wiesmoor-timeline">
+        <li><time>1907</time><span>First residents settle in the undeveloped Wiesmoor.</span></li>
+        <li><time>1909</time><span>Peat-fired power station begins operation.</span></li>
+        <li><time>1925</time><span>Waste heat from the power station is used for greenhouse cultivation.</span></li>
+        <li><time>1966</time><span>Peat-fired electricity generation ends; the old power station is replaced.</span></li>
+        <li><time>1977</time><span>Wiesmoor is recognised as a climatic health resort.</span></li>
+        <li><time>2006</time><span>Wiesmoor receives town status.</span></li>
+      </ol>
+    </section>
+
+    <section class="wiesmoor-sources observer-section" aria-labelledby="wiesmoor-sources-title">
+      <h2 id="wiesmoor-sources-title">Sources</h2>
+      <ul>
+        <li><a href="https://www.wiesmoor.de/Daten-und-Fakten/Geschichtsueberblick.htm" rel="noopener">Official city history</a></li>
+        <li><a href="https://de.wikipedia.org/wiki/Wiesmoor" rel="noopener">Wikipedia: Wiesmoor</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="nebby-terminal-line">
+      <img src="/nebby.png" class="nebby" alt="Nebby mascot">
+      <span class="coffee-text">&gt; cat world-observer/wiesmoor.html<span class="cursor"></span></span>
+    </div>
+
+    <p class="footer-links">
+      © 2026 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a>
+    </p>
+  </footer>
+</div>
+</body>
+</html>
