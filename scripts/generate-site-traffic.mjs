@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 import { writeTrafficPayload } from './site-traffic-observer.mjs';
-const [output = 'data/site-traffic.json', ...inputs] = process.argv.slice(2);
-if (!inputs.length) { console.error('Usage: node scripts/generate-site-traffic.mjs <output-json> <access.log...>'); process.exit(2); }
+
+const DEFAULT_ACCESS_LOG = process.env.SITE_TRAFFIC_ACCESS_LOG || '/var/log/nginx/access.log';
+const [output = 'data/site-traffic.json', ...providedInputs] = process.argv.slice(2);
+const inputs = providedInputs.length ? providedInputs : [DEFAULT_ACCESS_LOG];
+
 writeTrafficPayload(inputs, output);
