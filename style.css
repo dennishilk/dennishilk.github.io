@@ -760,11 +760,11 @@ footer {
 .hometown-about-card {
   align-items: center;
   background:
-    radial-gradient(circle at 12% 18%, rgba(255, 226, 122, .24), transparent 32%),
-    radial-gradient(circle at 88% 82%, rgba(93, 190, 111, .18), transparent 34%),
-    linear-gradient(135deg, rgba(18, 37, 35, .96), rgba(35, 30, 19, .9));
-  border-color: rgba(255, 207, 90, .38);
-  box-shadow: 0 18px 46px rgba(0, 0, 0, .24), inset 0 0 44px rgba(255, 207, 90, .06);
+    radial-gradient(circle at 12% 18%, rgba(0, 220, 255, .12), transparent 32%),
+    radial-gradient(circle at 88% 82%, rgba(0, 180, 255, .08), transparent 34%),
+    linear-gradient(145deg, rgba(5, 12, 18, .96), rgba(9, 17, 24, .92));
+  border-color: rgba(0, 180, 255, .38);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, .24), 0 0 24px rgba(0, 180, 255, .12), inset 0 0 34px rgba(0, 180, 255, .045);
   display: grid;
   grid-template-columns: minmax(110px, 160px) 1fr;
   gap: 1.25rem;
@@ -775,7 +775,7 @@ footer {
 }
 
 .hometown-about-card:after {
-  background: linear-gradient(90deg, rgba(0, 220, 255, .5), rgba(255, 207, 90, .75), rgba(93, 190, 111, .42));
+  background: linear-gradient(90deg, rgba(0, 220, 255, .58), rgba(0, 180, 255, .34), rgba(255, 207, 90, .5));
   content: "";
   height: 3px;
   inset: auto 1.1rem 0;
@@ -785,19 +785,18 @@ footer {
 
 .hometown-crest-frame {
   justify-self: center;
-  border: 1px solid rgba(255,207,90,0.62);
+  border: 1px solid rgba(0,180,255,0.42);
   border-radius: 18px;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255, 235, 160, 0.42), rgba(255, 207, 90, 0.18) 46%, rgba(19, 42, 34, 0.88) 78%);
-  box-shadow: 0 0 28px rgba(255,207,90,0.2), 0 0 18px rgba(93,190,111,0.14);
+  background: rgba(3, 8, 12, .72);
+  box-shadow: 0 0 24px rgba(0,180,255,0.14), inset 0 0 18px rgba(0,180,255,.05);
   padding: .78rem;
   transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 
 .hometown-crest-frame:hover,
 .hometown-crest-frame:focus-visible {
-  border-color: rgba(255, 226, 122, .78);
-  box-shadow: 0 0 34px rgba(255,207,90,0.24), 0 0 24px rgba(0,220,255,0.2);
+  border-color: rgba(255, 207, 90, .68);
+  box-shadow: 0 0 28px rgba(0,220,255,0.22), 0 0 18px rgba(255,207,90,0.14);
   transform: translateY(-2px);
 }
 
@@ -808,13 +807,13 @@ footer {
 }
 
 .hometown-about-copy h2 {
-  color: #fff7d6;
+  color: #8bdfff;
   font-size: clamp(1.7rem, 3vw, 2.35rem);
   margin: .1rem 0 .35rem;
 }
 
 .hometown-identity {
-  color: #ffe58a;
+  color: #ffcf5a;
   font-weight: 900;
   letter-spacing: .06em;
   margin-bottom: .7rem;
@@ -2273,42 +2272,14 @@ button.technology-observer-card {
 .hometown-crest-frame {
   display: inline-block;
   text-decoration: none;
-  transition: border-color .2s, box-shadow .2s, transform .2s;
 }
-
-.hometown-crest-frame:hover,
-.hometown-crest-frame:focus-visible {
-  border-color: rgba(255, 207, 90, .9);
-  box-shadow: 0 0 24px rgba(255, 207, 90, .24), 0 0 34px rgba(0,180,255,.16), inset 0 0 18px rgba(255,196,48,.14);
-  transform: translateY(-2px);
-}
-
-.hometown-card-actions { margin-top: 1rem; }
-
-.hometown-history-cta {
-  background: linear-gradient(135deg, #ffcf5a, #ff8f3a);
-  border: 1px solid rgba(255, 207, 90, .86);
-  border-radius: 999px;
-  box-shadow: 0 0 18px rgba(255, 207, 90, .18);
-  color: #050505;
-  display: inline-flex;
-  font-weight: 900;
-  padding: .62rem .95rem;
-  text-decoration: none;
-}
-
-.hometown-history-cta:hover,
-.hometown-history-cta:focus-visible {
-  box-shadow: 0 0 24px rgba(255, 207, 90, .34);
-  transform: translateY(-1px);
-}
-
 
 .wiesmoor-page {
   background:
-    radial-gradient(circle at 22% 9%, rgba(255, 207, 90, .16), transparent 28%),
-    radial-gradient(circle at 84% 26%, rgba(93, 190, 111, .12), transparent 30%),
-    linear-gradient(180deg, #071214 0%, #101a16 48%, #071016 100%);
+    radial-gradient(circle at 22% 9%, rgba(0, 180, 255, .12), transparent 28%),
+    radial-gradient(circle at 84% 26%, rgba(255, 207, 90, .08), transparent 30%),
+    radial-gradient(circle at 50% 82%, rgba(93, 190, 111, .045), transparent 32%),
+    linear-gradient(180deg, #050b12 0%, #08121a 48%, #050a10 100%);
 }
 
 .wiesmoor-page .dashboard-header {
@@ -2343,12 +2314,12 @@ button.technology-observer-card {
 .wiesmoor-flower-strip,
 .wiesmoor-timeline-section {
   background:
-    radial-gradient(circle at 14% 12%, rgba(255,207,90,.14), transparent 30%),
-    radial-gradient(circle at 88% 76%, rgba(93,190,111,.09), transparent 32%),
-    linear-gradient(145deg, rgba(17, 35, 32, .94), rgba(36, 30, 20, .84));
-  border: 1px solid rgba(255, 207, 90, .26);
+    radial-gradient(circle at 14% 12%, rgba(0,220,255,.11), transparent 30%),
+    radial-gradient(circle at 88% 76%, rgba(255,207,90,.055), transparent 32%),
+    linear-gradient(145deg, rgba(5, 13, 20, .95), rgba(10, 20, 29, .88));
+  border: 1px solid rgba(0, 180, 255, .28);
   border-radius: 18px;
-  box-shadow: inset 0 0 34px rgba(255,207,90,.045), 0 18px 48px rgba(0,0,0,.22);
+  box-shadow: inset 0 0 34px rgba(0,180,255,.035), 0 18px 48px rgba(0,0,0,.22);
 }
 
 .wiesmoor-hero {
@@ -2365,9 +2336,9 @@ button.technology-observer-card {
 
 .wiesmoor-hero:before {
   background:
-    radial-gradient(circle at 88% 45%, rgba(255,231,143,.32), transparent 30%),
-    radial-gradient(circle at 16% 82%, rgba(93,190,111,.18), transparent 26%),
-    linear-gradient(90deg, rgba(0,220,255,.12), rgba(255,207,90,.1) 48%, rgba(93,190,111,.08));
+    radial-gradient(circle at 88% 45%, rgba(0,220,255,.14), transparent 30%),
+    radial-gradient(circle at 16% 82%, rgba(93,190,111,.07), transparent 26%),
+    linear-gradient(90deg, rgba(0,220,255,.1), rgba(255,207,90,.045) 58%, rgba(93,190,111,.035));
   content: "";
   inset: 0;
   pointer-events: none;
@@ -2375,19 +2346,19 @@ button.technology-observer-card {
 }
 
 .wiesmoor-hero > * { position: relative; }
-.wiesmoor-hero h2 { color: #fff7d6; font-size: clamp(3.6rem, 9vw, 7.1rem); line-height: .86; margin: .05rem 0 .7rem; text-shadow: 0 0 24px rgba(255,207,90,.2), 0 0 18px rgba(0,200,255,.18); }
+.wiesmoor-hero h2 { color: #8bdfff; font-size: clamp(3.6rem, 9vw, 7.1rem); line-height: .86; margin: .05rem 0 .7rem; text-shadow: 0 0 24px rgba(255,207,90,.2), 0 0 18px rgba(0,200,255,.18); }
 .wiesmoor-subtitle { color: #ffcf5a; font-weight: 900; letter-spacing: .08em; margin-bottom: 1rem; text-transform: uppercase; }
 .wiesmoor-hero p:last-child { color: #e6eadf; font-size: 1.05rem; line-height: 1.72; max-width: 790px; }
 
 .wiesmoor-crest-showcase {
-  background: radial-gradient(circle at 50% 48%, rgba(255,236,169,.62), rgba(255,207,90,.2) 45%, rgba(45,69,42,.48) 76%);
-  border: 1px solid rgba(255,207,90,.58);
-  border-radius: 50%;
-  box-shadow: 0 0 54px rgba(255,207,90,.28), 0 0 34px rgba(93,190,111,.14);
+  background: linear-gradient(145deg, rgba(4, 10, 15, .94), rgba(10, 20, 29, .88));
+  border: 1px solid rgba(0,180,255,.34);
+  border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(0,0,0,.28), inset 0 0 24px rgba(0,180,255,.045);
   padding: clamp(1rem, 3vw, 1.6rem);
   text-align: center;
 }
-.wiesmoor-crest-showcase img { display: block; filter: drop-shadow(0 12px 24px rgba(0,0,0,.38)); margin: 0 auto; max-width: 230px; width: 100%; }
+.wiesmoor-crest-showcase img { display: block; filter: drop-shadow(0 12px 24px rgba(0,0,0,.38)); height: auto; margin: 0 auto; max-width: 230px; width: 100%; }
 
 .wiesmoor-identity-grid { display: grid; gap: .8rem; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom: 1.2rem; }
 .wiesmoor-identity-grid article { padding: 1rem; text-align: left; }
@@ -2402,7 +2373,7 @@ button.technology-observer-card {
 .wiesmoor-story-card { border-left: 4px solid rgba(0, 180, 255, .58); padding: 1.25rem; position: relative; text-align: left; }
 .wiesmoor-story-card h3 { color: #f0f6fc; font-size: 1.45rem; margin-bottom: .7rem; }
 .wiesmoor-story-card:before { content: ""; background: radial-gradient(circle, rgba(255,207,90,.7), transparent 62%); border-radius: 50%; height: 32px; opacity: .18; position: absolute; right: 1rem; top: 1rem; width: 32px; }
-.wiesmoor-story-card.moorland-card { border-color: rgba(93,190,111,.72); }
+.wiesmoor-story-card.moorland-card { border-color: rgba(93,190,111,.42); }
 .wiesmoor-story-card.power-card,
 .wiesmoor-story-card.crest-story { border-color: rgba(255,207,90,.78); }
 .wiesmoor-story-card.flowers-card { border-color: rgba(255, 183, 90, .78); }
@@ -2415,6 +2386,7 @@ button.technology-observer-card {
 .wiesmoor-flower-strip p:last-child { color: #f0f6fc; font-size: 1.1rem; font-weight: 800; margin: 0; }
 
 .wiesmoor-timeline-section { margin-bottom: 1.5rem; padding: 1.5rem; text-align: left; }
+.wiesmoor-longer-history p:last-child { color: #c9d1d9; line-height: 1.65; margin: 0; }
 .wiesmoor-timeline-section h2 { color: #f0f6fc; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.1rem; }
 .wiesmoor-timeline { background: linear-gradient(180deg, rgba(0, 220, 255, .42), rgba(255, 207, 90, .55)) left 1rem top / 3px 100% no-repeat; list-style: none; padding-left: 2.6rem; }
 .wiesmoor-timeline li { display: grid; gap: 1rem; grid-template-columns: 110px 1fr; padding: .35rem 0 1.4rem; position: relative; }
