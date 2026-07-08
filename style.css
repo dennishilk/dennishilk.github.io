@@ -2234,6 +2234,21 @@ button.technology-observer-card {
 .geomagnetic-visual-panel::before { background: linear-gradient(90deg, rgba(0, 5, 10, 0.55), transparent 20%, transparent 74%, rgba(0, 5, 10, 0.5)), radial-gradient(circle at 82% 52%, rgba(32, 215, 255, 0.18), transparent 28%); content: ""; inset: 0; pointer-events: none; position: absolute; z-index: 2; }
 .geomagnetic-visual-panel::after { background-image: linear-gradient(rgba(214, 248, 255, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(214, 248, 255, 0.035) 1px, transparent 1px), linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18)); background-size: 100% 7px, 52px 52px, 100% 100%; content: ""; inset: 0; mix-blend-mode: screen; opacity: 0.42; pointer-events: none; position: absolute; z-index: 3; }
 .geomagnetic-magnetosphere-art { animation: geomagImageDrift 18s ease-in-out infinite alternate; display: block; height: 100%; min-height: inherit; object-fit: cover; object-position: 48% 50%; width: 100%; }
+.geomagnetic-solar-wind-particles { inset: 0; overflow: hidden; pointer-events: none; position: absolute; z-index: 2; }
+.geomagnetic-solar-particle { --particle-y: 50%; --particle-drift: 0px; --particle-size: 2px; --particle-opacity: 0.46; --particle-duration: 16s; --particle-delay: 0s; animation: geomagSolarParticle var(--particle-duration) linear infinite; animation-delay: var(--particle-delay); background: linear-gradient(90deg, rgba(255, 211, 90, 0), rgba(255, 211, 90, 0.8), rgba(255, 157, 46, 0.45)); border-radius: 999px; box-shadow: 0 0 7px rgba(255, 194, 71, 0.42); height: var(--particle-size); left: -12%; opacity: 0; position: absolute; top: var(--particle-y); transform: translate3d(0, 0, 0); width: calc(var(--particle-size) * 5.5); }
+.geomagnetic-solar-particle::after { background: rgba(32, 215, 255, 0.38); border-radius: 50%; box-shadow: 0 0 10px rgba(32, 215, 255, 0.28); content: ""; height: calc(var(--particle-size) * 1.2); opacity: 0.28; position: absolute; right: -0.25rem; top: 50%; transform: translateY(-50%); width: calc(var(--particle-size) * 1.2); }
+.geomagnetic-solar-particle:nth-child(1) { --particle-y: 18%; --particle-drift: 22px; --particle-size: 1.5px; --particle-opacity: 0.34; --particle-duration: 18s; --particle-delay: -4s; }
+.geomagnetic-solar-particle:nth-child(2) { --particle-y: 27%; --particle-drift: -18px; --particle-size: 2px; --particle-opacity: 0.42; --particle-duration: 15s; --particle-delay: -11s; }
+.geomagnetic-solar-particle:nth-child(3) { --particle-y: 36%; --particle-drift: 10px; --particle-size: 1.6px; --particle-opacity: 0.36; --particle-duration: 20s; --particle-delay: -7s; }
+.geomagnetic-solar-particle:nth-child(4) { --particle-y: 43%; --particle-drift: -24px; --particle-size: 2.2px; --particle-opacity: 0.5; --particle-duration: 17s; --particle-delay: -14s; }
+.geomagnetic-solar-particle:nth-child(5) { --particle-y: 51%; --particle-drift: 16px; --particle-size: 1.7px; --particle-opacity: 0.38; --particle-duration: 22s; --particle-delay: -2s; }
+.geomagnetic-solar-particle:nth-child(6) { --particle-y: 58%; --particle-drift: -10px; --particle-size: 2.4px; --particle-opacity: 0.44; --particle-duration: 19s; --particle-delay: -16s; }
+.geomagnetic-solar-particle:nth-child(7) { --particle-y: 66%; --particle-drift: 26px; --particle-size: 1.8px; --particle-opacity: 0.4; --particle-duration: 16s; --particle-delay: -9s; }
+.geomagnetic-solar-particle:nth-child(8) { --particle-y: 74%; --particle-drift: -20px; --particle-size: 1.4px; --particle-opacity: 0.3; --particle-duration: 24s; --particle-delay: -5s; }
+.geomagnetic-solar-particle:nth-child(9) { --particle-y: 32%; --particle-drift: 30px; --particle-size: 1.3px; --particle-opacity: 0.28; --particle-duration: 23s; --particle-delay: -19s; }
+.geomagnetic-solar-particle:nth-child(10) { --particle-y: 47%; --particle-drift: -30px; --particle-size: 1.9px; --particle-opacity: 0.36; --particle-duration: 21s; --particle-delay: -12s; }
+.geomagnetic-solar-particle:nth-child(11) { --particle-y: 62%; --particle-drift: 14px; --particle-size: 1.5px; --particle-opacity: 0.32; --particle-duration: 18s; --particle-delay: -1s; }
+.geomagnetic-solar-particle:nth-child(12) { --particle-y: 23%; --particle-drift: -12px; --particle-size: 2.1px; --particle-opacity: 0.4; --particle-duration: 26s; --particle-delay: -22s; }
 .geomagnetic-visual-label, .geomagnetic-art-label { background: rgba(0, 7, 13, 0.62); border: 1px solid rgba(32, 215, 255, 0.34); border-radius: 999px; color: rgba(214, 248, 255, 0.82); font-size: 0.68rem; letter-spacing: 0.11em; padding: 0.28rem 0.5rem; position: absolute; text-transform: uppercase; z-index: 4; }
 .geomagnetic-visual-label { right: 1rem; top: 0.9rem; }
 .geomagnetic-art-label.solar-wind { color: #ffd35a; left: 1rem; top: 47%; }
@@ -2263,8 +2278,9 @@ button.technology-observer-card {
 .geomagnetic-about-panel dd { margin: 0; text-align: right; }
 
 @keyframes geomagImageDrift { from { transform: scale(1.01) translateX(-0.4%); } to { transform: scale(1.045) translateX(0.6%); } }
+@keyframes geomagSolarParticle { 0% { opacity: 0; transform: translate3d(0, 0, 0) scaleX(0.7); } 12% { opacity: var(--particle-opacity); } 70% { opacity: var(--particle-opacity); transform: translate3d(68vw, calc(var(--particle-drift) * 0.22), 0) scaleX(1); } 86% { opacity: calc(var(--particle-opacity) * 0.66); transform: translate3d(82vw, var(--particle-drift), 0) scaleX(0.78); } 100% { opacity: 0; transform: translate3d(104vw, calc(var(--particle-drift) * 1.28), 0) scaleX(0.55); } }
 
-@media (prefers-reduced-motion: reduce) { .geomagnetic-magnetosphere-art { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .geomagnetic-magnetosphere-art, .geomagnetic-solar-particle { animation: none; } .geomagnetic-solar-particle { opacity: 0.18; transform: translate3d(18vw, 0, 0); } }
 
 @media (max-width: 1100px) {
   .geomagnetic-command-hero,
