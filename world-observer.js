@@ -2890,6 +2890,10 @@ async function initWorldObserver() {
   const page = document.body.dataset.observerPage || "overview";
 
   try {
+    if (page === "hometown") {
+      return;
+    }
+
     if (page === "society") {
       const society = await loadOptionalJson(SOCIETY_URLS);
       setupSocietyObserverSelector();
