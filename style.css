@@ -2378,134 +2378,22 @@ button.technology-observer-card {
 @media (max-width: 950px) { .weather-grid, .weather-metric-list.two { grid-template-columns:1fr; } .weather-grid > .traffic-card, .weather-current, .weather-map-card, .weather-chart-card, .weather-details, .weather-diagnostics, .weather-forecast-card { grid-column:span 1 !important; } .weather-hero { flex-direction:column; } }
 
 
-/* Wiesmoor Peatland Observer card */
-.peatland-observer-card {
-  position: relative;
-  overflow: hidden;
-  border-color: rgba(89, 214, 141, .58);
-  background:
-    radial-gradient(circle at 18% 16%, rgba(89, 214, 141, .20), transparent 30%),
-    radial-gradient(circle at 86% 18%, rgba(68, 217, 255, .14), transparent 28%),
-    linear-gradient(180deg, rgba(5, 19, 18, .96) 0%, rgba(8, 24, 22, .94) 48%, rgba(31, 20, 12, .92) 100%);
-  box-shadow: 0 0 28px rgba(89, 214, 141, .12), inset 0 0 26px rgba(68, 217, 255, .055);
+/* Compact Hometown observer cards */
+.hometown-observer-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 138px;
+  text-decoration: none;
 }
 
-.peatland-observer-card:before {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 46px;
-  background:
-    linear-gradient(180deg, transparent, rgba(87, 53, 26, .42)),
-    repeating-linear-gradient(90deg, rgba(89, 214, 141, .12) 0 1px, transparent 1px 22px);
-  opacity: .75;
-  pointer-events: none;
-}
-
-.peatland-layer-glow {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0 8%, rgba(68, 217, 255, .16) 9%, transparent 10% 100%);
-  opacity: .8;
-  pointer-events: none;
-}
-
-.peatland-kicker {
-  color: #9df2b1;
-  font-size: .68rem !important;
-  font-weight: 900;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-}
-
-.peatland-observer-card h3,
-.peatland-observer-card p,
-.peatland-observer-card dl,
-.peatland-observer-card ul {
-  position: relative;
-  z-index: 1;
-}
-
-.peatland-live-indicator {
-  color: #9df2b1;
-  text-shadow: 0 0 9px rgba(157, 242, 177, .72), 0 0 20px rgba(68, 217, 255, .22);
-}
-
-.peatland-pressure-strip {
-  position: relative;
-  z-index: 1;
-  margin: .62rem 0 .72rem;
-}
-
-.peatland-pressure-chip {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid rgba(157, 242, 177, .42);
-  border-radius: 999px;
-  background: rgba(3, 14, 13, .72);
-  color: #c9ffd6;
-  font-size: .72rem;
-  font-weight: 900;
-  letter-spacing: .06em;
-  padding: .38rem .62rem;
-  text-transform: uppercase;
-}
-
-.peatland-pressure-chip.low,
-.peatland-pressure-chip.normal { border-color: rgba(80, 250, 123, .62); color: #50fa7b; }
-.peatland-pressure-chip.elevated { border-color: rgba(255, 207, 90, .7); color: #ffcf5a; }
-.peatland-pressure-chip.high { border-color: rgba(255, 128, 128, .72); color: #ff9f9f; }
-.peatland-pressure-chip.unavailable { border-color: rgba(68, 217, 255, .42); color: #8bdfff; }
-
-.peatland-metrics {
-  display: grid;
-  gap: .42rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: .35rem 0 .65rem;
-}
-
-.peatland-metrics div {
-  border: 1px solid rgba(157, 242, 177, .18);
-  background: rgba(2, 10, 12, .42);
-  border-radius: 10px;
-  padding: .45rem .5rem;
-}
-
-.peatland-metrics dt {
-  color: #93a7a0;
-  font-size: .64rem;
+.hometown-observer-card h3 { margin-bottom: .85rem; }
+.hometown-observer-card p { margin: 0; }
+.hometown-observer-card p span:not(.hometown-live-indicator) {
+  color: #aab3c0;
   font-weight: 800;
-  letter-spacing: .06em;
+  letter-spacing: .04em;
   text-transform: uppercase;
-}
-
-.peatland-metrics dd {
-  color: #f0f6fc;
-  font-size: .8rem;
-  font-weight: 800;
-  margin: .16rem 0 0;
-}
-
-.peatland-summary { color: #d8ffe2; font-weight: 700; }
-.peatland-note { color: #ffcf5a; font-weight: 800; }
-
-.peatland-adapter-list {
-  color: #9fb4ad;
-  display: grid;
-  gap: .18rem;
-  font-size: .72rem;
-  list-style: none;
-  margin: .55rem 0 0;
-  padding: 0;
-}
-
-.peatland-adapter-list li:before {
-  color: #44d9ff;
-  content: "↳ ";
-}
-
-@media (max-width: 560px) {
-  .peatland-metrics { grid-template-columns: 1fr; }
 }
 
 /* Hometown active observer state */
@@ -2518,11 +2406,6 @@ button.technology-observer-card {
   letter-spacing: .08em;
   text-transform: uppercase;
   text-shadow: 0 0 8px rgba(80, 250, 123, .72), 0 0 18px rgba(68, 217, 255, .28);
-}
-
-.hometown-live-indicator.has-temperature {
-  color: #44d9ff;
-  text-shadow: 0 0 9px rgba(68, 217, 255, .82), 0 0 20px rgba(80, 250, 123, .28);
 }
 
 .hometown-live-indicator::first-letter {
@@ -2747,50 +2630,22 @@ button.technology-observer-card {
 .sky-method-card dl.method-card { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; margin:0; color:#c9d1d9; }
 .sky-method-card dt { color:#f0f6fc; font-weight:800; }
 .sky-method-card dd { margin:0; }
-.hometown-live-indicator.has-sky-data { color:#8bdfff; }
 @media (max-width: 950px) { .sky-grid, .sky-grid > .traffic-card, .sky-tonight-card, .sky-window-card, .sky-timeline-card, .sky-sun-card, .sky-moon-card, .sky-method-card, .sky-location-card { grid-column:span 1 !important; } .sky-timeline { overflow-x:auto; } .sky-timeline-track { min-width:760px; } }
 @media (max-width: 560px) { .sky-primary-status,.sky-window-summary { min-height:112px; } .sky-timeline { padding-left:.35rem; padding-right:.35rem; } .sky-timeline-marker strong,.sky-timeline-marker span { width:96px; font-size:.66rem; } }
 
 /* Wiesmoor Peatland Observer detail page */
-.peatland-compact-card {
-  min-height: 220px;
-  text-decoration: none;
-}
-
-.peatland-compact-card p { margin: .48rem 0; }
-.peatland-compact-card .peatland-note { margin-top: .72rem; line-height: 1.45; }
-
 .peatland-shell { max-width: 1260px; }
 
-.peatland-hero {
-  border-color: rgba(89, 214, 141, .5);
-  background:
-    radial-gradient(circle at 12% 18%, rgba(89, 214, 141, .18), transparent 34%),
-    radial-gradient(circle at 88% 24%, rgba(68, 217, 255, .16), transparent 32%),
-    linear-gradient(180deg, rgba(4, 18, 18, .96), rgba(9, 22, 21, .9) 55%, rgba(30, 20, 13, .88));
-}
-
-.peatland-hero:after,
-.peatland-main-card:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 52px;
-  background:
-    linear-gradient(180deg, transparent, rgba(87, 53, 26, .42)),
-    repeating-linear-gradient(90deg, rgba(89, 214, 141, .14) 0 1px, transparent 1px 24px);
-  pointer-events: none;
-}
-
 .peatland-hero h1 {
-  color: #9df2b1;
-  text-shadow: 0 0 16px rgba(89, 214, 141, .65), 0 0 24px rgba(68, 217, 255, .24);
+  color: #9fdcff;
+  text-shadow: 0 0 16px rgba(120, 180, 255, .7);
 }
 
 .peatland-grid > .traffic-card { grid-column: span 4; }
-.peatland-main-card { grid-column: span 7 !important; border-color: rgba(89, 214, 141, .42); }
+.peatland-main-card {
+  grid-column: span 7 !important;
+  border-color: rgba(0, 180, 255, .28);
+}
 .peatland-context-card { grid-column: span 5 !important; }
 .peatland-limits-card { grid-column: span 12 !important; }
 
@@ -2801,31 +2656,39 @@ button.technology-observer-card {
   justify-content: center;
   margin-bottom: .75rem;
   padding: 1rem;
-  border: 1px solid rgba(89, 214, 141, .24);
-  background:
-    radial-gradient(circle at 50% 35%, rgba(89, 214, 141, .14), transparent 55%),
-    linear-gradient(180deg, rgba(0, 32, 30, .76), rgba(0, 10, 14, .56));
-  color: #d8ffe2;
+  border: 1px solid rgba(0, 180, 255, .22);
+  background: radial-gradient(circle at 50% 35%, rgba(68, 217, 255, .16), transparent 55%), linear-gradient(180deg, rgba(0, 20, 40, .76), rgba(0, 8, 18, .5));
+  color: #f0f6fc;
   font-size: clamp(1.5rem, 4vw, 3rem);
   font-weight: 900;
   letter-spacing: .055em;
   text-align: center;
   text-transform: uppercase;
-  text-shadow: 0 0 18px rgba(89, 214, 141, .42);
+  text-shadow: 0 0 18px rgba(68, 217, 255, .5);
 }
 
-.peatland-primary-status.unavailable { color: #8bdfff; border-color: rgba(68, 217, 255, .34); text-shadow: 0 0 18px rgba(68, 217, 255, .42); }
+.peatland-primary-status.unavailable {
+  color: #8bdfff;
+  border-color: rgba(68, 217, 255, .34);
+  text-shadow: 0 0 18px rgba(68, 217, 255, .42);
+}
 .peatland-primary-status.low,
 .peatland-primary-status.normal { color: #50fa7b; }
 .peatland-primary-status.elevated { color: #ffcf5a; border-color: rgba(255, 207, 90, .48); }
 .peatland-primary-status.high { color: #ff9f9f; border-color: rgba(255, 128, 128, .52); }
 
-.peatland-detail-page .traffic-card h2 { color: #d8ffe2; }
-.peatland-detail-page .weather-metric-list p { border-color: rgba(89, 214, 141, .18); background: rgba(2, 18, 17, .48); }
-.peatland-detail-page .weather-metric-list strong { color: #9df2b1; text-shadow: 0 0 10px rgba(89, 214, 141, .38); }
+.peatland-detail-page .traffic-card h2 { color: #8bdfff; }
+.peatland-detail-page .weather-metric-list p {
+  border-color: rgba(0, 180, 255, .18);
+  background: linear-gradient(180deg, rgba(0, 180, 255, .06), rgba(0, 0, 0, .18));
+}
+.peatland-detail-page .weather-metric-list strong {
+  color: #44d9ff;
+  text-shadow: 0 0 10px rgba(68, 217, 255, .38);
+}
 .peatland-detail-page .weather-info dd,
 .peatland-detail-page .traffic-card p { color: #c9d1d9; }
-.peatland-detail-page .peatland-note { color: #ffcf5a; font-weight: 900; }
+.peatland-detail-page .peatland-note { color: #8bdfff; font-weight: 900; }
 
 .peatland-limit-list {
   display: grid;

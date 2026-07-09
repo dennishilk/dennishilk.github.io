@@ -78,32 +78,25 @@
       <h2 id="hometown-cards-title">Local observer cards</h2>
       <p class="observer-limitation">Local public-data observer concepts for weather, sky, peatland, water, and environment around Wiesmoor. Observations only; no tracking and no personal data.</p>
       <div class="cards observer-cards technology-card-grid planned-cards" aria-label="Hometown local observer cards">
-        <a class="card observer-category technology-observer-card active" href="/world-observer/wiesmoor-weather.html" aria-label="Open Wiesmoor Weather Observer">
+        <a class="card observer-category technology-observer-card active hometown-observer-card" href="/world-observer/wiesmoor-weather.html" aria-label="Open Wiesmoor Weather Observer">
           <h3>Wiesmoor Weather Observer</h3>
-          <p><strong>Status:</strong> <span id="wiesmoor-weather-live" class="hometown-live-indicator" aria-live="polite">● ACTIVE</span></p>
-          <p>Daily weather snapshot for Wiesmoor, Lower Saxony, powered by the Open-Meteo forecast export.</p>
+          <p><strong>Status:</strong><br><span class="hometown-live-indicator">● ACTIVE</span></p>
         </a>
-        <a class="card observer-category technology-observer-card active peatland-observer-card peatland-compact-card" href="/world-observer/wiesmoor-peatland.html" aria-label="Open Wiesmoor Peatland Observer">
-          <div class="peatland-layer-glow" aria-hidden="true"></div>
-          <h3 id="wiesmoor-peatland-title">Wiesmoor Peatland Observer</h3>
-          <p><strong>Status:</strong> <span id="wiesmoor-peatland-live" class="hometown-live-indicator peatland-live-indicator" aria-live="polite">● ACTIVE · PROXY SETUP</span></p>
-          <p><strong>Hydrological pressure:</strong> <span id="wiesmoor-peatland-pressure">awaiting live data</span></p>
-          <p id="wiesmoor-peatland-note" class="peatland-note">Regional proxy observation — not an in-situ peat water-table sensor.</p>
+        <a class="card observer-category technology-observer-card active hometown-observer-card" href="/world-observer/wiesmoor-peatland.html" aria-label="Open Wiesmoor Peatland Observer">
+          <h3>Wiesmoor Peatland Observer</h3>
+          <p><strong>Status:</strong><br><span class="hometown-live-indicator">● ACTIVE</span></p>
         </a>
-        <a class="card observer-category technology-observer-card active" href="/world-observer/wiesmoor-sky.html" aria-label="Open Wiesmoor Sky Observer">
+        <a class="card observer-category technology-observer-card active hometown-observer-card" href="/world-observer/wiesmoor-sky.html" aria-label="Open Wiesmoor Sky Observer">
           <h3>Wiesmoor Sky Observer</h3>
-          <p><strong>Status:</strong> <span id="wiesmoor-sky-live" class="hometown-live-indicator" aria-live="polite">● ACTIVE</span></p>
-          <p id="wiesmoor-sky-summary">Local astronomical conditions above Wiesmoor from Sun/Moon geometry.</p>
+          <p><strong>Status:</strong><br><span class="hometown-live-indicator">● ACTIVE</span></p>
         </a>
-        <article class="card observer-category technology-observer-card planned">
+        <article class="card observer-category technology-observer-card planned hometown-observer-card">
           <h3>East Frisia Water Observer</h3>
-          <p><strong>Status:</strong> planned</p>
-          <p>Observer card planned. Regional water and rainfall context will appear here once verified public data is available.</p>
+          <p><strong>Status:</strong><br><span>planned</span></p>
         </article>
-        <article class="card observer-category technology-observer-card planned">
+        <article class="card observer-category technology-observer-card planned hometown-observer-card">
           <h3>Local Environment Observer</h3>
-          <p><strong>Status:</strong> planned</p>
-          <p>Observer card planned. Local environmental indicators will appear here once verified public data is available.</p>
+          <p><strong>Status:</strong><br><span>planned</span></p>
         </article>
       </div>
     </section>
@@ -123,124 +116,5 @@
   </footer>
 </div>
 
-<script>
-(() => {
-  const live = document.getElementById("wiesmoor-weather-live");
-  const skyLive = document.getElementById("wiesmoor-sky-live");
-  const skySummary = document.getElementById("wiesmoor-sky-summary");
-  const peatland = {
-    title: document.getElementById("wiesmoor-peatland-title"),
-    live: document.getElementById("wiesmoor-peatland-live"),
-    pressure: document.getElementById("wiesmoor-peatland-pressure"),
-    note: document.getElementById("wiesmoor-peatland-note")
-  };
-  if (!live && !skyLive && !peatland.live) return;
-
-  const urls = [
-    "/world-observer/dashboard/environment.json",
-    "dashboard/environment.json",
-    "../world-observer/dashboard/environment.json"
-  ];
-  const findObserver = (data) => {
-    const rows = [
-      ...(Array.isArray(data) ? data : []),
-      ...(Array.isArray(data?.observers) ? data.observers : []),
-      ...(Array.isArray(data?.items) ? data.items : [])
-    ];
-    return rows.find((observer) => observer?.observer === "wiesmoor-weather") || null;
-  };
-  const formatTemperature = (observer) => {
-    const value = observer?.primary_metric_value;
-    if (!Number.isFinite(Number(value))) return null;
-    const unit = observer?.primary_metric_unit || "°C";
-    return `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${unit}`;
-  };
-
-  const skyUrls = [
-    "/world-observer/dashboard/latest/wiesmoor-sky-observer.json",
-    "dashboard/latest/wiesmoor-sky-observer.json",
-    "../world-observer/dashboard/latest/wiesmoor-sky-observer.json"
-  ];
-  const formatPercent = (value) => Number.isFinite(Number(value)) ? `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` : null;
-  const readable = (value) => value ? String(value).replace(/[_-]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : null;
-  const safeText = (value, fallback = "unavailable") => {
-    if (value === null || value === undefined || value === "") return fallback;
-    return readable(value) || fallback;
-  };
-  const peatlandUrls = [
-    "/world-observer/dashboard/latest/wiesmoor-peatland.json",
-    "dashboard/latest/wiesmoor-peatland.json",
-    "../world-observer/dashboard/latest/wiesmoor-peatland.json"
-  ];
-  const setPeatlandFallback = () => {
-    if (peatland.live) peatland.live.textContent = "● ACTIVE · DATA TEMPORARILY UNAVAILABLE";
-    if (peatland.pressure) peatland.pressure.textContent = "awaiting live data";
-    if (peatland.note) peatland.note.textContent = "Regional proxy observation — not an in-situ peat water-table sensor.";
-  };
-  const renderPeatland = (data) => {
-    const rawPressure = data?.peatland_hydrological_pressure?.value ?? data?.primary_metric_value;
-    const pressure = rawPressure && String(rawPressure).toLowerCase() !== "unavailable" ? safeText(rawPressure, "awaiting live data").toLowerCase() : "awaiting live data";
-    const dataStatus = String(data?.data_status || "").toLowerCase();
-    const note = data?.peatland_hydrological_pressure?.limitations?.find((item) => String(item).includes("not an in-situ"));
-
-    if (peatland.title) peatland.title.textContent = data?.display_name || "Wiesmoor Peatland Observer";
-    if (peatland.live) peatland.live.textContent = dataStatus === "unavailable" ? "● ACTIVE · PROXY SETUP" : `● ACTIVE · ${safeText(data?.status || data?.data_status, "PROXY SETUP").toUpperCase()}`;
-    if (peatland.pressure) peatland.pressure.textContent = pressure;
-    if (peatland.note) peatland.note.textContent = note || "Regional proxy observation — not an in-situ peat water-table sensor.";
-  };
-
-  (async () => {
-    if (live) {
-      for (const url of urls) {
-        try {
-          const response = await fetch(url, { cache: "no-store" });
-          if (!response.ok) continue;
-          const observer = findObserver(await response.json());
-          const temperature = formatTemperature(observer);
-          live.textContent = temperature ? `● LIVE · ${temperature}` : "● ACTIVE";
-          live.classList.toggle("has-temperature", Boolean(temperature));
-          break;
-        } catch {}
-      }
-    }
-
-    if (peatland.live) {
-      let loaded = false;
-      for (const url of peatlandUrls) {
-        try {
-          const response = await fetch(url, { cache: "no-store" });
-          if (!response.ok) continue;
-          renderPeatland(await response.json());
-          loaded = true;
-          break;
-        } catch {}
-      }
-      if (!loaded) setPeatlandFallback();
-    }
-    if (skyLive) {
-      for (const url of skyUrls) {
-        try {
-          const response = await fetch(url, { cache: "no-store" });
-          if (!response.ok) continue;
-          const data = await response.json();
-          const available = data?.astronomical_night?.available === true;
-          const illumination = formatPercent(data?.moon?.illumination_percent);
-          const interference = readable(data?.astronomical_night?.moon_interference_classification);
-          skyLive.textContent = available ? "● ACTIVE · ASTRONOMICAL NIGHT" : "● ACTIVE · NO ASTRONOMICAL NIGHT";
-          skyLive.classList.add("has-sky-data");
-          if (skySummary) {
-            skySummary.textContent = [
-              available ? "Astronomical night available" : "Astronomical night unavailable",
-              illumination ? `Moon ${illumination}` : null,
-              interference ? `Moon interference: ${interference}` : null
-            ].filter(Boolean).join(" · ");
-          }
-          break;
-        } catch {}
-      }
-    }
-  })();
-})();
-</script>
 </body>
 </html>
