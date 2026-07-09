@@ -172,6 +172,32 @@
     }).join("");
     $("forecast-outlook").innerHTML = html;
   }
+  const validDataStatuses = new Set(["ok", "stale", "degraded", "partial", "unavailable"]);
+  function normalizedStatus(value) {
+    const status = String(value || "").trim().toLowerCase();
+    return validDataStatuses.has(status) ? status : "";
+  }
+  function hasUsableWeatherData(raw) {
+    const today = raw?.today || {};
+    const hourly = raw?.hourly || raw?.hours || raw?.forecast?.hourly || {};
+    const daily = raw?.daily || raw?.forecast?.daily || {};
+    return Boolean(
+      isNum(raw?.current?.temperature_2m) ||
+      isNum(today.temperature_2m_min) ||
+      isNum(today.temperature_2m_max) ||
+      (Array.isArray(hourly.temperature_2m || hourly.temperature) && (hourly.temperature_2m || hourly.temperature).some(isNum)) ||
+      (Array.isArray(daily.temperature_2m_min) && daily.temperature_2m_min.some(isNum)) ||
+      (Array.isArray(daily.temperature_2m_max) && daily.temperature_2m_max.some(isNum))
+    );
+  }
+  function resolveWeatherDataStatus(raw, summary) {
+    const rawDataStatus = normalizedStatus(raw?.data_status);
+    const rawStatus = normalizedStatus(raw?.status);
+    if (rawDataStatus === "stale" || rawDataStatus === "degraded") return rawDataStatus;
+    if (rawStatus === "stale" || rawStatus === "degraded") return rawStatus;
+    if (raw && hasUsableWeatherData(raw)) return rawDataStatus || rawStatus || "ok";
+    return normalizedStatus(summary?.data_status) || normalizedStatus(summary?.status) || (raw ? "raw latest loaded" : "—");
+  }
   Promise.all([
     optional(["/world-observer/dashboard/environment.json","dashboard/environment.json","../world-observer/dashboard/environment.json"]),
     optional(["/world-observer/dashboard/latest/wiesmoor-weather.json","dashboard/latest/wiesmoor-weather.json","/world-observer/data/latest/wiesmoor-weather.json","data/latest/wiesmoor-weather.json"])
@@ -180,14 +206,15 @@
     const currentTemp = first(raw,["current.temperature_2m"]) ?? o.primary_metric_value;
     set("current-temp", fmt(currentTemp, o.primary_metric_unit || "°C")); set("feels-like", fmt(first(raw,["current.apparent_temperature"]), "°C") !== "—" ? fmt(first(raw,["current.apparent_temperature"]), "°C") : (sm["Feels like"] ?? "—")); set("humidity", fmt(first(raw,["current.relative_humidity_2m"]), "%", 0) !== "—" ? fmt(first(raw,["current.relative_humidity_2m"]), "%", 0) : (sm["Relative humidity"] ?? "—"));
     set("wind-speed", fmt(cur.wind_speed_10m, "km/h")); set("wind-gusts", fmt(cur.wind_gusts_10m, "km/h") !== "—" ? fmt(cur.wind_gusts_10m, "km/h") : (sm["Wind gusts"] ?? "—")); set("cloud-cover", fmt(cur.cloud_cover, "%", 0)); set("current-precip", fmt(cur.precipitation, "mm")); set("current-rain", fmt(cur.rain, "mm")); set("pressure-msl", fmt(cur.pressure_msl, "hPa")); set("surface-pressure", fmt(cur.surface_pressure, "hPa")); set("wind-direction", fmt(cur.wind_direction_10m, "°", 0)); set("weather-symbol", weatherSymbol(cur.cloud_cover, cur.precipitation ?? cur.rain));
+    const dataStatus = resolveWeatherDataStatus(raw, o);
     const rawStatus = String(raw?.status || raw?.data_status || "").toLowerCase();
     const rawApiStatus = String(raw?.diagnostics?.api_status || raw?.api_status || "").toLowerCase();
-    const rawHasUsableCurrent = isNum(raw?.current?.temperature_2m);
-    const rawIndicatesOk = rawStatus === "ok" || (rawApiStatus === "available" && rawHasUsableCurrent);
+    const rawHasUsableWeatherData = hasUsableWeatherData(raw);
+    const rawIndicatesOk = rawStatus === "ok" || (rawApiStatus === "available" && rawHasUsableWeatherData);
     const summaryStatus = String(o.status || o.data_status || "").toLowerCase();
-    const status = rawIndicatesOk ? "ok" : (summaryStatus || (rawHasUsableCurrent ? "ok" : "unavailable"));
+    const status = dataStatus === "stale" || dataStatus === "degraded" ? dataStatus : (rawIndicatesOk ? "ok" : (summaryStatus || (rawHasUsableWeatherData ? "ok" : "unavailable")));
     $("weather-status").textContent = `STATUS: ${status.toUpperCase()}`; $("weather-status").className = `status-badge ${status}`;
-    const last = o.last_seen_date || raw?.current?.time || raw?.generation_time || raw?.updated_at || "—"; set("weather-last-seen", `Last observation: ${last}`); set("diag-last-seen", last); set("data-status", o.data_status || raw?.data_status || raw?.status || (raw ? "raw latest loaded" : "—"));
+    const last = o.last_seen_date || raw?.current?.time || raw?.generation_time || raw?.updated_at || "—"; set("weather-last-seen", `Last observation: ${last}`); set("diag-last-seen", last); set("data-status", dataStatus);
     const daily = raw?.daily || {}; const min = first(raw,["today.temperature_2m_min"]) ?? daily.temperature_2m_min?.[0], max = first(raw,["today.temperature_2m_max"]) ?? daily.temperature_2m_max?.[0]; set("today-minmax", min !== null && max !== null ? `${fmt(min,"°C")} / ${fmt(max,"°C")}` : "—"); set("precip-sum", fmt(first(raw,["today.precipitation_sum"]) ?? daily.precipitation_sum?.[0], "mm")); set("precip-prob", fmt(first(raw,["today.precipitation_probability_max"]) ?? daily.precipitation_probability_max?.[0], "%", 0)); set("max-gusts", fmt(first(raw,["today.wind_gusts_10m_max"]) ?? daily.wind_gusts_10m_max?.[0], "km/h"));
     if (daily.sunrise?.[0]) { $("sunrise-card").hidden = false; set("sunrise", timeLabel(daily.sunrise[0])); } if (daily.sunset?.[0]) { $("sunset-card").hidden = false; set("sunset", timeLabel(daily.sunset[0])); }
     set("weather-summary", raw?.summary || "Raw latest data adds richer measurements; dashboard summary remains the primary status source."); const source = raw?.source?.name || "Open-Meteo Forecast API"; ["source-name","hero-source-name","diag-source"].forEach(id => set(id, source)); set("api-status", raw ? "available" : "raw latest unavailable"); set("http-status", raw?.diagnostics?.http_status ?? rawResult.status ?? "—"); set("attempts-retries", raw ? `${raw?.diagnostics?.api_attempts ?? "—"} / ${raw?.diagnostics?.retries ?? "—"}` : "—"); set("raw-availability", raw ? `loaded from ${rawResult.url}` : "unavailable"); set("dashboard-availability", env ? `loaded from ${envResult.url}` : "unavailable"); renderChart(raw); renderForecast(raw);
