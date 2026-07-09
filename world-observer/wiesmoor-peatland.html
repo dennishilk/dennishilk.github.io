@@ -65,7 +65,8 @@
 
       <article class="traffic-card">
         <h2>WEATHER PRESSURE / DWD DAILY CLIMATE</h2>
-        <div class="weather-metric-list two peatland-compact-metrics"><p><span>Latest rain</span><strong id="latest-precipitation">awaiting live adapter</strong></p><p><span>7-day rainfall</span><strong id="rainfall-7d">awaiting live adapter</strong></p><p><span>30-day rainfall</span><strong id="rainfall-30d">awaiting live adapter</strong></p><p><span>Dry days 7 / 30</span><strong id="dry-days-summary">pending</strong></p><p><span>Dry streak</span><strong id="consecutive-dry-days">pending</strong></p><p><span>Temperature latest / 7d / 30d</span><strong id="temperature">pending</strong></p><p><span>Dry-day rule</span><strong id="dry-day-rule">pending</strong></p><p><span>Status</span><strong id="weather-pressure-status">not yet live-ingested</strong></p></div>
+        <div class="weather-metric-list two peatland-compact-metrics"><p><span>Latest rain</span><strong id="latest-precipitation">awaiting live adapter</strong></p><p><span>7-day rainfall</span><strong id="rainfall-7d">awaiting live adapter</strong></p><p><span>30-day rainfall</span><strong id="rainfall-30d">awaiting live adapter</strong></p><p><span>Dry days 7 / 30</span><strong id="dry-days-summary">pending</strong></p><p><span>Dry streak</span><strong id="consecutive-dry-days">pending</strong></p><p><span>Temperature latest / 7d / 30d</span><strong id="temperature">pending</strong></p><p><span>Status</span><strong id="weather-pressure-status">not yet live-ingested</strong></p></div>
+        <p id="dry-day-rule" class="weather-note peatland-methodology-note">Dry day: awaiting DWD daily precipitation rule.</p>
         <p id="weather-pressure-source" class="weather-note">DWD Climate Data Center daily climate / precipitation adapter pending.</p>
       </article>
 
@@ -115,6 +116,20 @@
     const parsed = explicitNumber(value);
     return parsed === null ? fallback : `${parsed.toLocaleString(undefined, { maximumFractionDigits: 1 })}${unit ? " " + unit : ""}`;
   };
+  const dayCount = (value) => {
+    const parsed = explicitNumber(value);
+    if (parsed === null) return "pending";
+    const formatted = parsed.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    return `${formatted} ${parsed === 1 ? "day" : "days"}`;
+  };
+  const dryDayRule = (coverage = {}) => {
+    const threshold = explicitNumber(coverage.dry_day_threshold_mm);
+    const rule = typeof coverage.dry_day_rule === "string" ? coverage.dry_day_rule.trim() : "";
+    if (threshold !== null) {
+      return `Dry day: valid DWD daily precipitation < ${threshold.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mm; missing dates are never inferred as dry.`;
+    }
+    return rule || "Dry day: awaiting DWD daily precipitation rule.";
+  };
   async function loadJson(urls) { for (const url of urls) { try { const r = await fetch(url, { cache: "no-store" }); if (r.ok) return await r.json(); } catch {} } return null; }
   function renderFallback() {
     set("peatland-status", "ACTIVE · DATA TEMPORARILY UNAVAILABLE");
@@ -147,11 +162,10 @@
     set("rainfall-30d", num(weather.rainfall_30d_mm ?? data?.peatland_hydrological_pressure?.rainfall_30d, "mm"));
     const dry7 = explicitNumber(weather.dry_days_7d), dry30 = explicitNumber(weather.dry_days_30d);
     set("dry-days-summary", dry7 === null && dry30 === null ? "pending" : `${dry7 === null ? "—" : dry7} / ${dry30 === null ? "—" : dry30}`);
-    set("consecutive-dry-days", num(weather.consecutive_dry_days, "days"));
+    set("consecutive-dry-days", dayCount(weather.consecutive_dry_days));
     const temps = [num(weather.temperature_c, "°C", "—"), num(weather.temperature_mean_7d_c, "°C", "—"), num(weather.temperature_mean_30d_c, "°C", "—")];
     set("temperature", temps.every((item) => item === "—") ? "pending" : temps.join(" / "));
-    const dryRule = weather.coverage?.dry_day_rule || (explicitNumber(weather.coverage?.dry_day_threshold_mm) === null ? null : `< ${weather.coverage.dry_day_threshold_mm} mm/day`);
-    set("dry-day-rule", dryRule);
+    set("dry-day-rule", dryDayRule(weather.coverage));
     set("weather-pressure-status", clean(weather.data_status, "not yet live-ingested"));
     set("weather-pressure-source", `${clean(weather.source?.name, "DWD daily climate adapter")} — ${clean(weather.source?.dataset || weather.source?.status, "awaiting live adapter")}`);
     const soil = data?.regional_soil_water || {};
