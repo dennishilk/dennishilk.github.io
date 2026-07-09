@@ -2678,6 +2678,12 @@ button.technology-observer-card {
   color: #44d9ff;
   text-shadow: 0 0 10px rgba(68, 217, 255, .38);
 }
+.peatland-detail-page .peatland-compact-metrics p { min-height: 66px; }
+.peatland-detail-page .peatland-compact-metrics strong {
+  overflow-wrap: anywhere;
+  font-size: clamp(.92rem, 1.45vw, 1.08rem);
+  line-height: 1.25;
+}
 .peatland-detail-page .weather-info dd,
 .peatland-detail-page .traffic-card p { color: #c9d1d9; }
 .peatland-detail-page .peatland-note { color: #8bdfff; font-weight: 900; }
