@@ -2582,3 +2582,40 @@ button.technology-observer-card {
   .wiesmoor-timeline li { grid-template-columns: 1fr; }
   .wiesmoor-timeline li { gap: .2rem; }
 }
+
+/* Wiesmoor Sky Observer */
+.sky-shell { max-width: 1260px; }
+.sky-hero h1 { color:#9fdcff; text-shadow:0 0 16px rgba(120,180,255,.7); }
+.sky-grid > .traffic-card { grid-column:span 4; }
+.sky-tonight-card { grid-column:span 7 !important; }
+.sky-window-card { grid-column:span 5 !important; }
+.sky-timeline-card { grid-column:span 12 !important; }
+.sky-sun-card,.sky-moon-card { grid-column:span 6 !important; }
+.sky-method-card { grid-column:span 9 !important; }
+.sky-location-card { grid-column:span 3 !important; }
+.sky-primary-status { min-height:132px; display:flex; align-items:center; justify-content:center; margin-bottom:.75rem; padding:1rem; border:1px solid rgba(0,180,255,.22); background:radial-gradient(circle at 50% 35%,rgba(68,217,255,.16),transparent 55%),linear-gradient(180deg,rgba(0,20,40,.76),rgba(0,8,18,.5)); color:#f0f6fc; font-size:clamp(1.55rem,4vw,3rem); font-weight:900; letter-spacing:.06em; text-align:center; text-shadow:0 0 18px rgba(68,217,255,.5); }
+.sky-primary-status.available { color:#7dffcf; border-color:rgba(46,255,190,.34); text-shadow:0 0 18px rgba(46,255,190,.45); }
+.sky-primary-status.unavailable { color:#ffbd86; border-color:rgba(255,173,114,.35); text-shadow:0 0 18px rgba(255,128,64,.42); }
+.sky-window-summary { min-height:132px; display:flex; flex-direction:column; justify-content:center; gap:.35rem; padding:1rem; border:1px solid rgba(0,180,255,.18); background:linear-gradient(145deg,rgba(0,28,48,.74),rgba(0,10,22,.58)); }
+.sky-window-summary strong { color:#20c8ff; font-size:clamp(1.35rem,3vw,2.35rem); line-height:1.15; text-shadow:0 0 14px rgba(0,200,255,.46); }
+.sky-window-summary small { color:#aab3c0; }
+.sky-timeline { min-height:260px; padding:1rem .75rem 3.8rem; border:1px solid rgba(0,180,255,.14); background:linear-gradient(180deg,rgba(0,180,255,.08),rgba(0,0,0,.2)),radial-gradient(circle at 50% 18%,rgba(80,120,255,.12),transparent 48%); position:relative; overflow:hidden; }
+.sky-timeline.empty { color:#aab3c0; display:flex; align-items:center; justify-content:center; }
+.sky-timeline-track { position:relative; height:210px; margin:0 .4rem; }
+.sky-timeline-track:before { content:""; position:absolute; left:0; right:0; top:96px; height:5px; border-radius:999px; background:linear-gradient(90deg,#ffad72,#44d9ff,#1b2e75,#44d9ff,#ffad72); box-shadow:0 0 18px rgba(68,217,255,.34); }
+.sky-timeline-band { position:absolute; top:78px; height:42px; min-width:2%; border:1px solid rgba(125,255,207,.55); background:rgba(46,255,190,.14); box-shadow:0 0 16px rgba(46,255,190,.28); }
+.sky-timeline-band span { position:absolute; left:.45rem; top:-1.55rem; color:#7dffcf; font-size:.72rem; font-weight:800; white-space:nowrap; text-shadow:0 0 8px rgba(46,255,190,.38); }
+.sky-timeline-marker { position:absolute; top:72px; width:0; min-height:122px; border-left:1px solid rgba(240,246,252,.28); }
+.sky-timeline-marker i { position:absolute; left:-6px; top:18px; width:11px; height:11px; border-radius:50%; background:#44d9ff; box-shadow:0 0 11px #44d9ff; }
+.sky-timeline-marker.window i { background:#7dffcf; box-shadow:0 0 11px #7dffcf; }
+.sky-timeline-marker strong,.sky-timeline-marker span { position:absolute; left:.45rem; width:118px; color:#f0f6fc; font-size:.72rem; line-height:1.2; text-shadow:0 0 8px rgba(0,200,255,.32); }
+.sky-timeline-marker strong { top:36px; font-weight:800; }
+.sky-timeline-marker span { top:72px; color:#c9d1d9; }
+.sky-disclaimer { margin:.75rem 0; padding:.75rem; border:1px solid rgba(255,173,114,.32); background:rgba(255,128,64,.08); color:#ffbd86; font-weight:800; }
+.sky-method-card p { color:#c9d1d9; }
+.sky-method-card dl.method-card { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; margin:0; color:#c9d1d9; }
+.sky-method-card dt { color:#f0f6fc; font-weight:800; }
+.sky-method-card dd { margin:0; }
+.hometown-live-indicator.has-sky-data { color:#8bdfff; }
+@media (max-width: 950px) { .sky-grid, .sky-grid > .traffic-card, .sky-tonight-card, .sky-window-card, .sky-timeline-card, .sky-sun-card, .sky-moon-card, .sky-method-card, .sky-location-card { grid-column:span 1 !important; } .sky-timeline { overflow-x:auto; } .sky-timeline-track { min-width:760px; } }
+@media (max-width: 560px) { .sky-primary-status,.sky-window-summary { min-height:112px; } .sky-timeline { padding-left:.35rem; padding-right:.35rem; } .sky-timeline-marker strong,.sky-timeline-marker span { width:96px; font-size:.66rem; } }

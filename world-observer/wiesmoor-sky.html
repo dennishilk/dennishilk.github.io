@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/world-observer/wiesmoor-sky.html">
+  <script>
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+  <title>Wiesmoor Sky Observer – World Observer</title>
+  <meta name="description" content="Local astronomical conditions above Wiesmoor from Sun and Moon geometry.">
+  <meta property="og:title" content="Wiesmoor Sky Observer – World Observer">
+  <meta property="og:description" content="Astronomical darkness, twilight, and Moon interference for Wiesmoor.">
+  <meta property="og:url" content="https://dennishilk.github.io/world-observer/wiesmoor-sky.html">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=48">
+  <script defer src="/stars.js"></script>
+</head>
+<body class="traffic-page weather-observer-page sky-observer-page">
+<canvas id="stars"></canvas>
+<div class="content traffic-shell weather-shell sky-shell">
+  <header class="traffic-header wo-page-header">
+    <nav class="button-group wo-site-nav traffic-global-nav" aria-label="Primary navigation">
+      <div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/news.html">News</a></div>
+    </nav>
+    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Media</a><a href="/world-observer/society.html">Society</a><a href="/world-observer/hometown.html" class="active" aria-current="page">Hometown</a><a href="/world-observer/environment.html">Earth &amp; Space</a><a href="/world-observer/technology.html">Technology</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
+    </nav>
+    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/hometown.html">← Back to Hometown</a></p>
+    <section class="weather-hero sky-hero traffic-card">
+      <div>
+        <p class="terminal-command">&gt; fetch dashboard/latest/wiesmoor-sky-observer.json</p>
+        <h1>Wiesmoor Sky Observer</h1>
+        <p>Local astronomical conditions above Wiesmoor.</p>
+        <small id="sky-location">Location: Wiesmoor, Lower Saxony, Germany</small>
+        <small id="sky-last-seen">Last update: —</small>
+        <small class="weather-source-line">Source: <span id="sky-source-name">Local Sun/Moon geometry calculation</span></small>
+      </div>
+      <strong id="sky-status" class="status-badge unavailable">STATUS: —</strong>
+    </section>
+  </header>
+
+  <main class="traffic-dashboard weather-dashboard sky-dashboard">
+    <section class="weather-grid sky-grid">
+      <article class="traffic-card sky-tonight-card">
+        <h2>TONIGHT</h2>
+        <div class="sky-primary-status" id="night-available">—</div>
+        <div class="weather-metric-list two">
+          <p><span>Night quality by Sun/Moon geometry</span><strong id="night-quality">—</strong></p>
+          <p><span>Moon interference</span><strong id="moon-interference-tonight">—</strong></p>
+        </div>
+        <p class="weather-note" id="tonight-note">Astronomical darkness availability is calculated from local Sun/Moon geometry.</p>
+      </article>
+
+      <article class="traffic-card sky-window-card">
+        <h2>BEST DARK WINDOW</h2>
+        <div class="sky-window-summary"><strong id="best-window">—</strong><small>Best astronomical darkness window tonight</small></div>
+        <p class="weather-note" id="dark-window-note">No astronomical darkness window tonight</p>
+      </article>
+
+      <article class="traffic-card sky-timeline-card">
+        <h2>SKY TIMELINE</h2>
+        <div id="sky-timeline" class="sky-timeline empty" role="img" aria-label="Local timeline of sunset, twilight, darkness, dawn, and sunrise events">Timeline will appear when sky data is available.</div>
+        <p class="weather-note" id="timeline-note">Missing astronomical twilight events mean astronomical darkness is not reached tonight.</p>
+      </article>
+
+      <article class="traffic-card sky-sun-card">
+        <h2>SUN</h2>
+        <div class="weather-metric-list two">
+          <p><span>Sunrise</span><strong id="sunrise">—</strong></p><p><span>Sunset</span><strong id="sunset">—</strong></p>
+          <p><span>Civil twilight</span><strong id="civil-twilight">—</strong></p><p><span>Nautical twilight</span><strong id="nautical-twilight">—</strong></p>
+          <p><span>Astronomical twilight</span><strong id="astronomical-twilight">—</strong></p><p><span>Current Sun altitude</span><strong id="sun-altitude">—</strong></p>
+        </div>
+      </article>
+
+      <article class="traffic-card sky-moon-card">
+        <h2>MOON</h2>
+        <div class="weather-metric-list two">
+          <p><span>Phase</span><strong id="moon-phase">—</strong></p><p><span>Illumination</span><strong id="moon-illumination">—</strong></p>
+          <p><span>Age</span><strong id="moon-age">—</strong></p><p><span>Moonrise</span><strong id="moonrise">—</strong></p>
+          <p><span>Moonset</span><strong id="moonset">—</strong></p><p><span>Current Moon altitude</span><strong id="moon-altitude">—</strong></p>
+          <p><span>Moon interference</span><strong id="moon-interference">—</strong></p>
+        </div>
+      </article>
+
+      <article class="traffic-card weather-map-card sky-location-card">
+        <h2>LOCATION</h2>
+        <dl class="weather-info"><dt>Place</dt><dd id="location-name">Wiesmoor, Lower Saxony, Germany</dd><dt>Coordinates</dt><dd id="location-coordinates">53.4167° N, 7.7333° E</dd><dt>Timezone</dt><dd id="location-timezone">Europe/Berlin</dd><dt>Calculation</dt><dd>Local Sun/Moon geometry</dd></dl>
+      </article>
+
+      <article class="traffic-card sky-method-card">
+        <h2>METHODOLOGY &amp; SOURCE</h2>
+        <p>Calculations are local for Wiesmoor and use Sun/Moon geometry. They do not depend on a weather API or network access for the astronomical calculation.</p>
+        <p class="sky-disclaimer" id="sky-disclaimer">Astronomical darkness is calculated from Sun/Moon geometry only. Clouds, fog and local weather are not included.</p>
+        <dl class="method-card"><dt>Data status</dt><dd id="data-status">—</dd><dt>Collected at UTC</dt><dd id="collected-at">—</dd><dt>Network dependency</dt><dd id="network-dependency">—</dd><dt>Weather API dependency</dt><dd id="weather-dependency">—</dd></dl>
+      </article>
+    </section>
+  </main>
+  <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; fetch dashboard/latest/wiesmoor-sky-observer.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
+  const isNum = (v) => v !== null && v !== "" && Number.isFinite(Number(v));
+  const fmt = (v, unit = "", d = 1) => isNum(v) ? `${Number(v).toLocaleString("de-DE",{maximumFractionDigits:d})}${unit ? " " + unit : ""}` : "—";
+  const title = (v) => v ? String(v).replace(/[_-]+/g," ").replace(/\b\w/g, c => c.toUpperCase()) : "—";
+  const set = (id, value) => { const el = $(id); if (el) el.textContent = value ?? "—"; };
+  const hasTime = (v) => Boolean(v && !Number.isNaN(new Date(v).getTime()));
+  const timeLabel = (v) => hasTime(v) ? new Intl.DateTimeFormat("en-GB", {timeZone:"Europe/Berlin", hour:"2-digit", minute:"2-digit"}).format(new Date(v)) : "—";
+  const rangeLabel = (start, end, empty = "Not reached tonight") => hasTime(start) && hasTime(end) ? `${timeLabel(start)}–${timeLabel(end)}` : empty;
+  async function loadJson(urls) { for (const url of urls) { try { const r = await fetch(url,{cache:"no-store"}); if (r.ok) return await r.json(); } catch {} } return null; }
+  function timelineEvents(data) {
+    const sun = data?.sun || {}, night = data?.astronomical_night || {}, best = night.best_astronomical_darkness_window_tonight || {};
+    return [
+      ["Sunset", sun.sunset], ["Civil dusk", sun.civil_twilight_end], ["Nautical dusk", sun.nautical_twilight_end], ["Astronomical dusk", sun.astronomical_twilight_end],
+      ["Best dark window starts", best.start, "window"], ["Best dark window ends", best.end, "window"],
+      ["Astronomical dawn", sun.astronomical_twilight_start], ["Nautical dawn", sun.nautical_twilight_start], ["Civil dawn", sun.civil_twilight_start], ["Sunrise", sun.sunrise]
+    ].filter(([, value]) => hasTime(value)).map(([label, value, kind]) => {
+      let ms = new Date(value).getTime();
+      const sunsetMs = hasTime(sun.sunset) ? new Date(sun.sunset).getTime() : null;
+      if (sunsetMs && ["Astronomical dawn", "Nautical dawn", "Civil dawn", "Sunrise"].includes(label) && ms < sunsetMs) ms += 24 * 60 * 60 * 1000;
+      return {label, value, kind, ms};
+    }).sort((a,b) => a.ms - b.ms);
+  }
+  function renderTimeline(data) {
+    const el = $("sky-timeline"), events = timelineEvents(data), night = data?.astronomical_night || {}, best = night.best_astronomical_darkness_window_tonight || {};
+    if (!el || events.length < 2) return;
+    const min = events[0].ms, max = events[events.length - 1].ms, span = Math.max(1, max - min);
+    const left = (ms) => ((ms - min) / span * 100).toFixed(2);
+    const bestBand = hasTime(best.start) && hasTime(best.end) ? `<div class="sky-timeline-band" style="left:${left(new Date(best.start).getTime())}%;width:${Math.max(1, left(new Date(best.end).getTime()) - left(new Date(best.start).getTime())).toFixed(2)}%"><span>Best dark window</span></div>` : "";
+    const markers = events.map((event, index) => `<div class="sky-timeline-marker ${event.kind || ""}" style="left:${left(event.ms)}%" title="${esc(event.label)}: ${esc(timeLabel(event.value))}" aria-label="${esc(event.label)} at ${esc(timeLabel(event.value))}"><i></i><strong>${esc(event.label)}</strong><span>${esc(timeLabel(event.value))}</span></div>`).join("");
+    el.classList.remove("empty");
+    el.innerHTML = `<div class="sky-timeline-track">${bestBand}${markers}</div>`;
+  }
+  function render(data) {
+    const sun = data?.sun || {}, moon = data?.moon || {}, night = data?.astronomical_night || {}, location = data?.location || {};
+    const available = night.available === true;
+    set("sky-status", `STATUS: ${String(data?.data_status || data?.status || "unavailable").toUpperCase()}`); $("sky-status").className = `status-badge ${data?.data_status || data?.status || "unavailable"}`;
+    set("night-available", available ? "ASTRONOMICAL NIGHT AVAILABLE" : "NO ASTRONOMICAL NIGHT"); $("night-available").className = `sky-primary-status ${available ? "available" : "unavailable"}`;
+    set("night-quality", title(night.night_quality_classification)); set("moon-interference-tonight", title(night.moon_interference_classification)); set("moon-interference", title(night.moon_interference_classification));
+    set("best-window", rangeLabel(night.best_astronomical_darkness_window_tonight?.start, night.best_astronomical_darkness_window_tonight?.end, "No astronomical darkness window tonight"));
+    set("dark-window-note", available ? "Best astronomical darkness window tonight." : "No astronomical darkness window tonight");
+    set("sunrise", timeLabel(sun.sunrise)); set("sunset", timeLabel(sun.sunset)); set("civil-twilight", rangeLabel(sun.civil_twilight_start, sun.civil_twilight_end)); set("nautical-twilight", rangeLabel(sun.nautical_twilight_start, sun.nautical_twilight_end)); set("astronomical-twilight", rangeLabel(sun.astronomical_twilight_start, sun.astronomical_twilight_end)); set("sun-altitude", fmt(sun.current_altitude_degrees, "°", 1));
+    set("moon-phase", moon.phase_name || "—"); set("moon-illumination", fmt(moon.illumination_percent, "%", 1)); set("moon-age", fmt(moon.age_days, "days", 1)); set("moonrise", timeLabel(moon.moonrise)); set("moonset", timeLabel(moon.moonset)); set("moon-altitude", fmt(moon.current_altitude_degrees, "°", 1));
+    set("sky-location", `Location: ${location.name || "Wiesmoor, Lower Saxony, Germany"}`); set("location-name", location.name || "Wiesmoor, Lower Saxony, Germany"); set("location-timezone", location.timezone || "Europe/Berlin"); set("location-coordinates", `${fmt(location.latitude, "° N", 4)}, ${fmt(location.longitude, "° E", 4)}`);
+    set("sky-last-seen", `Last update: ${data?.collected_at_utc || "—"}`); set("collected-at", data?.collected_at_utc || "—"); set("data-status", data?.data_status || data?.status || "—"); set("sky-source-name", data?.source?.name || "Local Sun/Moon geometry calculation");
+    set("network-dependency", data?.source?.network_dependency === false ? "none for calculation" : "—"); set("weather-dependency", data?.source?.weather_api_dependency === false || data?.diagnostics?.weather_api_dependency === false ? "none" : "—");
+    set("sky-disclaimer", data?.disclaimer || "Astronomical darkness is calculated from Sun/Moon geometry only. Clouds, fog and local weather are not included.");
+    renderTimeline(data);
+  }
+  loadJson(["/world-observer/dashboard/latest/wiesmoor-sky-observer.json","dashboard/latest/wiesmoor-sky-observer.json","../world-observer/dashboard/latest/wiesmoor-sky-observer.json"]).then(data => {
+    if (!data) { set("sky-status", "STATUS: UNAVAILABLE"); set("tonight-note", "Sky observer data is currently unavailable. No fallback astronomical values are fabricated."); return; }
+    render(data);
+  }).catch(err => { console.error("Wiesmoor sky observer failed", err); });
+})();
+</script>
+</body>
+</html>

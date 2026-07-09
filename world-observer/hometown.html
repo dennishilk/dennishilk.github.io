@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/style.css?v=47">
+  <link rel="stylesheet" href="/style.css?v=48">
   <script defer src="/stars.js"></script>
   <script defer src="/world-observer.js?v=20260708-wiesmoor-live"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
@@ -88,11 +88,11 @@
           <p><strong>Status:</strong> planned</p>
           <p>Observer card planned. Peatland and restoration context around Wiesmoor will appear here once verified public data is available.</p>
         </article>
-        <article class="card observer-category technology-observer-card planned">
+        <a class="card observer-category technology-observer-card active" href="/world-observer/wiesmoor-sky.html" aria-label="Open Wiesmoor Sky Observer">
           <h3>Wiesmoor Sky Observer</h3>
-          <p><strong>Status:</strong> planned</p>
-          <p>Observer card planned. Sky, satellite, and local night-sky context will appear here once verified public data is available.</p>
-        </article>
+          <p><strong>Status:</strong> <span id="wiesmoor-sky-live" class="hometown-live-indicator" aria-live="polite">● ACTIVE</span></p>
+          <p id="wiesmoor-sky-summary">Local astronomical conditions above Wiesmoor from Sun/Moon geometry.</p>
+        </a>
         <article class="card observer-category technology-observer-card planned">
           <h3>East Frisia Water Observer</h3>
           <p><strong>Status:</strong> planned</p>
@@ -124,7 +124,9 @@
 <script>
 (() => {
   const live = document.getElementById("wiesmoor-weather-live");
-  if (!live) return;
+  const skyLive = document.getElementById("wiesmoor-sky-live");
+  const skySummary = document.getElementById("wiesmoor-sky-summary");
+  if (!live && !skyLive) return;
 
   const urls = [
     "/world-observer/dashboard/environment.json",
@@ -146,17 +148,49 @@
     return `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${unit}`;
   };
 
+  const skyUrls = [
+    "/world-observer/dashboard/latest/wiesmoor-sky-observer.json",
+    "dashboard/latest/wiesmoor-sky-observer.json",
+    "../world-observer/dashboard/latest/wiesmoor-sky-observer.json"
+  ];
+  const formatPercent = (value) => Number.isFinite(Number(value)) ? `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` : null;
+  const readable = (value) => value ? String(value).replace(/[_-]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : null;
+
   (async () => {
-    for (const url of urls) {
-      try {
-        const response = await fetch(url, { cache: "no-store" });
-        if (!response.ok) continue;
-        const observer = findObserver(await response.json());
-        const temperature = formatTemperature(observer);
-        live.textContent = temperature ? `● LIVE · ${temperature}` : "● ACTIVE";
-        live.classList.toggle("has-temperature", Boolean(temperature));
-        return;
-      } catch {}
+    if (live) {
+      for (const url of urls) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) continue;
+          const observer = findObserver(await response.json());
+          const temperature = formatTemperature(observer);
+          live.textContent = temperature ? `● LIVE · ${temperature}` : "● ACTIVE";
+          live.classList.toggle("has-temperature", Boolean(temperature));
+          break;
+        } catch {}
+      }
+    }
+    if (skyLive) {
+      for (const url of skyUrls) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) continue;
+          const data = await response.json();
+          const available = data?.astronomical_night?.available === true;
+          const illumination = formatPercent(data?.moon?.illumination_percent);
+          const interference = readable(data?.astronomical_night?.moon_interference_classification);
+          skyLive.textContent = available ? "● ACTIVE · ASTRONOMICAL NIGHT" : "● ACTIVE · NO ASTRONOMICAL NIGHT";
+          skyLive.classList.add("has-sky-data");
+          if (skySummary) {
+            skySummary.textContent = [
+              available ? "Astronomical night available" : "Astronomical night unavailable",
+              illumination ? `Moon ${illumination}` : null,
+              interference ? `Moon interference: ${interference}` : null
+            ].filter(Boolean).join(" · ");
+          }
+          break;
+        } catch {}
+      }
     }
   })();
 })();
