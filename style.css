@@ -2750,3 +2750,101 @@ button.technology-observer-card {
 .hometown-live-indicator.has-sky-data { color:#8bdfff; }
 @media (max-width: 950px) { .sky-grid, .sky-grid > .traffic-card, .sky-tonight-card, .sky-window-card, .sky-timeline-card, .sky-sun-card, .sky-moon-card, .sky-method-card, .sky-location-card { grid-column:span 1 !important; } .sky-timeline { overflow-x:auto; } .sky-timeline-track { min-width:760px; } }
 @media (max-width: 560px) { .sky-primary-status,.sky-window-summary { min-height:112px; } .sky-timeline { padding-left:.35rem; padding-right:.35rem; } .sky-timeline-marker strong,.sky-timeline-marker span { width:96px; font-size:.66rem; } }
+
+/* Wiesmoor Peatland Observer detail page */
+.peatland-compact-card {
+  min-height: 220px;
+  text-decoration: none;
+}
+
+.peatland-compact-card p { margin: .48rem 0; }
+.peatland-compact-card .peatland-note { margin-top: .72rem; line-height: 1.45; }
+
+.peatland-shell { max-width: 1260px; }
+
+.peatland-hero {
+  border-color: rgba(89, 214, 141, .5);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(89, 214, 141, .18), transparent 34%),
+    radial-gradient(circle at 88% 24%, rgba(68, 217, 255, .16), transparent 32%),
+    linear-gradient(180deg, rgba(4, 18, 18, .96), rgba(9, 22, 21, .9) 55%, rgba(30, 20, 13, .88));
+}
+
+.peatland-hero:after,
+.peatland-main-card:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 52px;
+  background:
+    linear-gradient(180deg, transparent, rgba(87, 53, 26, .42)),
+    repeating-linear-gradient(90deg, rgba(89, 214, 141, .14) 0 1px, transparent 1px 24px);
+  pointer-events: none;
+}
+
+.peatland-hero h1 {
+  color: #9df2b1;
+  text-shadow: 0 0 16px rgba(89, 214, 141, .65), 0 0 24px rgba(68, 217, 255, .24);
+}
+
+.peatland-grid > .traffic-card { grid-column: span 4; }
+.peatland-main-card { grid-column: span 7 !important; border-color: rgba(89, 214, 141, .42); }
+.peatland-context-card { grid-column: span 5 !important; }
+.peatland-limits-card { grid-column: span 12 !important; }
+
+.peatland-primary-status {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .75rem;
+  padding: 1rem;
+  border: 1px solid rgba(89, 214, 141, .24);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(89, 214, 141, .14), transparent 55%),
+    linear-gradient(180deg, rgba(0, 32, 30, .76), rgba(0, 10, 14, .56));
+  color: #d8ffe2;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: .055em;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(89, 214, 141, .42);
+}
+
+.peatland-primary-status.unavailable { color: #8bdfff; border-color: rgba(68, 217, 255, .34); text-shadow: 0 0 18px rgba(68, 217, 255, .42); }
+.peatland-primary-status.low,
+.peatland-primary-status.normal { color: #50fa7b; }
+.peatland-primary-status.elevated { color: #ffcf5a; border-color: rgba(255, 207, 90, .48); }
+.peatland-primary-status.high { color: #ff9f9f; border-color: rgba(255, 128, 128, .52); }
+
+.peatland-detail-page .traffic-card h2 { color: #d8ffe2; }
+.peatland-detail-page .weather-metric-list p { border-color: rgba(89, 214, 141, .18); background: rgba(2, 18, 17, .48); }
+.peatland-detail-page .weather-metric-list strong { color: #9df2b1; text-shadow: 0 0 10px rgba(89, 214, 141, .38); }
+.peatland-detail-page .weather-info dd,
+.peatland-detail-page .traffic-card p { color: #c9d1d9; }
+.peatland-detail-page .peatland-note { color: #ffcf5a; font-weight: 900; }
+
+.peatland-limit-list {
+  display: grid;
+  gap: .55rem;
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #c9d1d9;
+}
+
+.peatland-limit-list li::marker { color: #44d9ff; }
+
+@media (max-width: 950px) {
+  .peatland-grid,
+  .peatland-grid > .traffic-card,
+  .peatland-main-card,
+  .peatland-context-card,
+  .peatland-limits-card { grid-column: span 1 !important; }
+}
+
+@media (max-width: 560px) {
+  .peatland-primary-status { min-height: 118px; }
+}
