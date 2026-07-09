@@ -102,7 +102,19 @@
     if (value === null || value === undefined || value === "" || String(value).toLowerCase() === "unavailable") return fallback;
     return String(value).replace(/[_-]+/g, " ");
   };
-  const num = (value, unit = "", fallback = "awaiting live adapter") => Number.isFinite(Number(value)) ? `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })}${unit ? " " + unit : ""}` : fallback;
+  const explicitNumber = (value) => {
+    if (typeof value === "number") return Number.isFinite(value) ? value : null;
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    if (!trimmed || ["unavailable", "pending"].includes(trimmed.toLowerCase())) return null;
+    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(trimmed)) return null;
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const num = (value, unit = "", fallback = "pending") => {
+    const parsed = explicitNumber(value);
+    return parsed === null ? fallback : `${parsed.toLocaleString(undefined, { maximumFractionDigits: 1 })}${unit ? " " + unit : ""}`;
+  };
   async function loadJson(urls) { for (const url of urls) { try { const r = await fetch(url, { cache: "no-store" }); if (r.ok) return await r.json(); } catch {} } return null; }
   function renderFallback() {
     set("peatland-status", "ACTIVE · DATA TEMPORARILY UNAVAILABLE");
