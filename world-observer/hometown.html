@@ -83,10 +83,28 @@
           <p><strong>Status:</strong> <span id="wiesmoor-weather-live" class="hometown-live-indicator" aria-live="polite">● ACTIVE</span></p>
           <p>Daily weather snapshot for Wiesmoor, Lower Saxony, powered by the Open-Meteo forecast export.</p>
         </a>
-        <article class="card observer-category technology-observer-card planned">
-          <h3>Peatland Observer</h3>
-          <p><strong>Status:</strong> planned</p>
-          <p>Observer card planned. Peatland and restoration context around Wiesmoor will appear here once verified public data is available.</p>
+        <article class="card observer-category technology-observer-card active peatland-observer-card" aria-label="Wiesmoor Peatland Observer status card">
+          <div class="peatland-layer-glow" aria-hidden="true"></div>
+          <p class="peatland-kicker">MOORLAND · WATER · PEAT · PROXY SIGNALS</p>
+          <h3 id="wiesmoor-peatland-title">Wiesmoor Peatland Observer</h3>
+          <p><strong>Status:</strong> <span id="wiesmoor-peatland-live" class="hometown-live-indicator peatland-live-indicator" aria-live="polite">● ACTIVE · PROXY ADAPTERS PENDING</span></p>
+          <div class="peatland-pressure-strip" aria-label="Peatland hydrological pressure indicator">
+            <span id="wiesmoor-peatland-pressure-chip" class="peatland-pressure-chip unavailable">Pressure: awaiting live proxy data</span>
+          </div>
+          <dl class="peatland-metrics" aria-label="Peatland proxy metrics">
+            <div><dt>Hydrological pressure</dt><dd id="wiesmoor-peatland-pressure">unavailable</dd></div>
+            <div><dt>Confidence</dt><dd id="wiesmoor-peatland-confidence">low</dd></div>
+            <div><dt>Rainfall 7d / 30d</dt><dd id="wiesmoor-peatland-rainfall">pending</dd></div>
+            <div><dt>Soil water</dt><dd id="wiesmoor-peatland-soil">unavailable</dd></div>
+            <div><dt>Groundwater proxy</dt><dd id="wiesmoor-peatland-groundwater">adapter pending</dd></div>
+          </dl>
+          <p id="wiesmoor-peatland-summary" class="peatland-summary">Wiesmoor-Nord context online · live proxy adapters pending.</p>
+          <p id="wiesmoor-peatland-note" class="peatland-note">Regional proxy observation — not an in-situ peat water-table sensor.</p>
+          <ul class="peatland-adapter-list" aria-label="Peatland adapter status">
+            <li>DWD rainfall adapter pending</li>
+            <li>Copernicus SWI adapter pending</li>
+            <li>NLWKN groundwater proxy pending</li>
+          </ul>
         </article>
         <a class="card observer-category technology-observer-card active" href="/world-observer/wiesmoor-sky.html" aria-label="Open Wiesmoor Sky Observer">
           <h3>Wiesmoor Sky Observer</h3>
@@ -126,7 +144,19 @@
   const live = document.getElementById("wiesmoor-weather-live");
   const skyLive = document.getElementById("wiesmoor-sky-live");
   const skySummary = document.getElementById("wiesmoor-sky-summary");
-  if (!live && !skyLive) return;
+  const peatland = {
+    title: document.getElementById("wiesmoor-peatland-title"),
+    live: document.getElementById("wiesmoor-peatland-live"),
+    pressureChip: document.getElementById("wiesmoor-peatland-pressure-chip"),
+    pressure: document.getElementById("wiesmoor-peatland-pressure"),
+    confidence: document.getElementById("wiesmoor-peatland-confidence"),
+    rainfall: document.getElementById("wiesmoor-peatland-rainfall"),
+    soil: document.getElementById("wiesmoor-peatland-soil"),
+    groundwater: document.getElementById("wiesmoor-peatland-groundwater"),
+    summary: document.getElementById("wiesmoor-peatland-summary"),
+    note: document.getElementById("wiesmoor-peatland-note")
+  };
+  if (!live && !skyLive && !peatland.live) return;
 
   const urls = [
     "/world-observer/dashboard/environment.json",
@@ -155,6 +185,57 @@
   ];
   const formatPercent = (value) => Number.isFinite(Number(value)) ? `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })}%` : null;
   const readable = (value) => value ? String(value).replace(/[_-]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : null;
+  const safeText = (value, fallback = "unavailable") => {
+    if (value === null || value === undefined || value === "") return fallback;
+    return readable(value) || fallback;
+  };
+  const formatMm = (value) => Number.isFinite(Number(value)) ? `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} mm` : null;
+  const peatlandUrls = [
+    "/world-observer/dashboard/latest/wiesmoor-peatland.json",
+    "dashboard/latest/wiesmoor-peatland.json",
+    "../world-observer/dashboard/latest/wiesmoor-peatland.json"
+  ];
+  const pressureClasses = ["low", "normal", "elevated", "high", "unavailable"];
+  const setPeatlandFallback = () => {
+    if (!peatland.live) return;
+    peatland.live.textContent = "● ACTIVE · DATA TEMPORARILY UNAVAILABLE";
+    if (peatland.pressureChip) {
+      peatland.pressureChip.className = "peatland-pressure-chip unavailable";
+      peatland.pressureChip.textContent = "Pressure: awaiting live proxy data";
+    }
+    if (peatland.pressure) peatland.pressure.textContent = "Hydrological pressure unavailable";
+    if (peatland.confidence) peatland.confidence.textContent = "unavailable";
+    if (peatland.rainfall) peatland.rainfall.textContent = "pending";
+    if (peatland.soil) peatland.soil.textContent = "unavailable";
+    if (peatland.groundwater) peatland.groundwater.textContent = "adapter pending";
+    if (peatland.summary) peatland.summary.textContent = "Wiesmoor-Nord context online · live proxy data temporarily unavailable.";
+  };
+  const renderPeatland = (data) => {
+    const pressure = String(data?.peatland_hydrological_pressure?.value || data?.primary_metric_value || "unavailable").toLowerCase();
+    const dataStatus = String(data?.data_status || "").toLowerCase();
+    const isUnavailable = pressure === "unavailable" || dataStatus === "unavailable";
+    const pressureClass = pressureClasses.includes(pressure) ? pressure : "unavailable";
+    const confidence = data?.peatland_hydrological_pressure?.confidence;
+    const rainfall7d = data?.peatland_hydrological_pressure?.rainfall_7d ?? data?.weather_pressure?.rainfall_7d_mm;
+    const rainfall30d = data?.peatland_hydrological_pressure?.rainfall_30d ?? data?.weather_pressure?.rainfall_30d_mm;
+    const soil = data?.regional_soil_water?.trend || data?.regional_soil_water?.status || data?.peatland_hydrological_pressure?.soil_water_trend;
+    const groundwater = data?.groundwater_proxy?.data_status || data?.peatland_hydrological_pressure?.groundwater_proxy_status;
+    const note = data?.peatland_hydrological_pressure?.limitations?.find((item) => String(item).includes("not an in-situ"));
+
+    if (peatland.title) peatland.title.textContent = data?.display_name || "Wiesmoor Peatland Observer";
+    if (peatland.live) peatland.live.textContent = isUnavailable ? "● ACTIVE · PROXY ADAPTERS PENDING" : `● ACTIVE · ${safeText(data?.status, "online")}`;
+    if (peatland.pressureChip) {
+      peatland.pressureChip.className = `peatland-pressure-chip ${pressureClass}`;
+      peatland.pressureChip.textContent = isUnavailable ? "Pressure: awaiting live proxy data" : `Pressure: ${safeText(pressure)}`;
+    }
+    if (peatland.pressure) peatland.pressure.textContent = isUnavailable ? "Hydrological pressure unavailable" : safeText(pressure);
+    if (peatland.confidence) peatland.confidence.textContent = safeText(confidence, "unavailable");
+    if (peatland.rainfall) peatland.rainfall.textContent = [formatMm(rainfall7d), formatMm(rainfall30d)].filter(Boolean).join(" / ") || "adapter pending";
+    if (peatland.soil) peatland.soil.textContent = safeText(soil, "unavailable");
+    if (peatland.groundwater) peatland.groundwater.textContent = safeText(groundwater, "adapter pending");
+    if (peatland.summary) peatland.summary.textContent = data?.summary || "Wiesmoor-Nord context online · live proxy adapters pending.";
+    if (peatland.note) peatland.note.textContent = note || "Regional proxy observation — not an in-situ peat water-table sensor.";
+  };
 
   (async () => {
     if (live) {
@@ -169,6 +250,20 @@
           break;
         } catch {}
       }
+    }
+
+    if (peatland.live) {
+      let loaded = false;
+      for (const url of peatlandUrls) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) continue;
+          renderPeatland(await response.json());
+          loaded = true;
+          break;
+        } catch {}
+      }
+      if (!loaded) setPeatlandFallback();
     }
     if (skyLive) {
       for (const url of skyUrls) {
