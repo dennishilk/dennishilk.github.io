@@ -76,7 +76,7 @@
       <div class="peatland-right-stack">
         <article class="traffic-card peatland-soil-card">
           <h2 id="soil-card-heading">REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM</h2>
-          <div id="soil-metrics" class="weather-metric-list two"><p><span>Latest value</span><strong id="soil-value">awaiting live adapter</strong></p><p><span>Latest date</span><strong id="soil-date">pending</strong></p><p><span>Resolution</span><strong id="soil-resolution">1 km</strong></p><p><span>Status</span><strong id="soil-status">pending</strong></p></div>
+          <div id="soil-metrics" class="weather-metric-list two"><p><span>Latest value</span><strong id="soil-value">awaiting live adapter</strong></p><p><span>Latest date</span><strong id="soil-date">pending</strong></p><p><span>Resolution</span><strong id="soil-resolution">1 km</strong></p></div>
           <p id="soil-source" class="weather-note">DWD soil-moisture-under-grass grid adapter pending.</p>
         </article>
 
@@ -253,8 +253,6 @@
     }
     set("soil-date", clean(soil.latest_date));
     set("soil-resolution", explicitNumber(soil.spatial_resolution_km) === null ? "pending" : `${soil.spatial_resolution_km} km`);
-    const soilStatus = compact(soil.data_status);
-    set("soil-status", soilStatus.toLowerCase() === "ok" ? soilStatus : "pending");
     const soilDataset = soil.source?.dataset || soil.dataset || soil.variable || soil.source?.status;
     set("soil-source", `${clean(soil.source?.name || soil.source || "DWD soil moisture adapter")} — ${clean(soilDataset, "awaiting live adapter")}`);
     const station = data?.groundwater_proxy?.stations?.[0] || {};
