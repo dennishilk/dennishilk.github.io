@@ -60,7 +60,9 @@
       <article class="traffic-card peatland-context-card">
         <h2>PEAT CONTEXT / WIESMOOR-NORD</h2>
         <p id="peat-context-note">Wiesmoor-Nord peatland context is available as source metadata; live extraction remains pending.</p>
-        <dl class="weather-info"><dt>Area</dt><dd id="peat-area">Wiesmoor-Nord / Wiesmoor peatland landscape</dd><dt>Source</dt><dd id="peat-context-source">MoorIS Niedersachsen / Wiesmoor-Nord</dd><dt>Peat thickness</dt><dd id="peat-thickness">pending</dd></dl>
+        <dl id="peat-context-facts" class="weather-info peat-context-facts"><dt>Area</dt><dd id="peat-area">Wiesmoor-Nord / Wiesmoor peatland landscape</dd><dt>Source</dt><dd id="peat-context-source">MoorIS Niedersachsen / Wiesmoor-Nord</dd><dt>Peat thickness</dt><dd id="peat-thickness">numeric value unavailable</dd></dl>
+        <p id="peat-management-note" class="weather-note peatland-methodology-note" hidden></p>
+        <p id="peat-methodology-note" class="weather-note peatland-methodology-note">Static source-backed context; no live sensor request.</p>
       </article>
 
       <article class="traffic-card">
@@ -99,9 +101,28 @@
   const $ = (id) => document.getElementById(id);
   const allowedPressures = new Set(["low", "normal", "elevated", "high"]);
   const set = (id, value) => { const el = $(id); if (el) el.textContent = clean(value); };
+  const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
   const clean = (value, fallback = "pending") => {
-    if (value === null || value === undefined || value === "" || String(value).toLowerCase() === "unavailable") return fallback;
-    return String(value).replace(/[_-]+/g, " ");
+    if (value === null || value === undefined || value === "") return fallback;
+    if (typeof value === "object") return fallback;
+    if (String(value).toLowerCase() === "unavailable") return fallback;
+    return String(value).replace(/_+/g, " ");
+  };
+  const hasText = (value) => clean(value, "") !== "";
+  const compact = (value) => clean(value, "").replace(/\s+/g, " ").trim();
+  const sourceLink = (label, url) => {
+    const text = compact(label);
+    const href = compact(url);
+    if (!text && !href) return "";
+    if (!href || !/^https?:\/\//i.test(href)) return escapeHtml(text || "source");
+    return `<a href="${escapeHtml(href)}">${escapeHtml(text || "source")}</a>`;
+  };
+  const setHiddenText = (id, value) => {
+    const el = $(id);
+    if (!el) return;
+    const text = compact(value);
+    el.hidden = !text;
+    el.textContent = text;
   };
   const explicitNumber = (value) => {
     if (typeof value === "number") return Number.isFinite(value) ? value : null;
@@ -138,6 +159,39 @@
     set("pressure-data-status", "not yet live-ingested");
     set("peatland-updated", "Last update: data temporarily unavailable");
   }
+  function renderPeatContext(ctx = {}) {
+    const facts = [];
+    const source = ctx?.source || {};
+    const nord = ctx?.wiesmoor_nord || {};
+    const thickness = ctx?.peat_thickness_context || {};
+    if (hasText(ctx?.area_name)) facts.push(["Area", ctx.area_name]);
+    if (hasText(ctx?.moor_type_context)) facts.push(["Moor type", ctx.moor_type_context]);
+    if (hasText(ctx?.land_use_history)) facts.push(["Historical use", ctx.land_use_history]);
+    if (hasText(ctx?.drainage_context)) facts.push(["Drainage context", ctx.drainage_context]);
+    const sourceName = ctx?.source_name || source?.name;
+    const sourceUrl = ctx?.source_url || source?.url;
+    if (hasText(sourceName) || hasText(sourceUrl)) facts.push(["Source", sourceLink(sourceName || "source", sourceUrl), true]);
+    if (hasText(nord?.page_or_dataset_identifier)) facts.push(["Dataset / entry", nord.page_or_dataset_identifier]);
+    if (hasText(ctx?.context_status || ctx?.data_status)) facts.push(["Context status", ctx?.context_status || ctx?.data_status]);
+    const thicknessValue = explicitNumber(thickness?.value);
+    const thicknessText = thicknessValue === null
+      ? clean(thickness?.status, "numeric value unavailable")
+      : `${thicknessValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}${hasText(thickness?.unit) ? " " + clean(thickness.unit, "") : ""}`;
+    facts.push(["Peat thickness", thicknessText]);
+    const factId = (label) => ({ "Area": "peat-area", "Source": "peat-context-source", "Peat thickness": "peat-thickness" }[label] || "");
+    const factsEl = $("peat-context-facts");
+    if (factsEl) factsEl.innerHTML = facts.map(([label, value, html]) => {
+      const id = factId(label);
+      return `<dt>${escapeHtml(label)}</dt><dd${id ? ` id="${id}"` : ""}>${html ? value : escapeHtml(clean(value, "not available"))}</dd>`;
+    }).join("");
+
+    const summaryParts = [ctx?.context_note, ctx?.moor_type_context, ctx?.land_use_history, ctx?.drainage_context].map(compact).filter(Boolean);
+    set("peat-context-note", summaryParts.length ? summaryParts.slice(0, 3).join(" ") : "Peat context unavailable in the current JSON.");
+    setHiddenText("peat-management-note", ctx?.restoration_or_management_context);
+    const reproducibility = compact(ctx?.reproducibility_note);
+    const limitation = Array.isArray(ctx?.limitations) ? ctx.limitations.find((item) => /numeric|thickness|area|water-table/i.test(String(item))) : "";
+    set("peat-methodology-note", reproducibility || limitation || "Static source-backed MoorIS/NLWKN context; no live request required during observer runs; no numeric peat thickness or mapped area is emitted without reproducible extraction.");
+  }
   function render(data) {
     const pressure = String(data?.peatland_hydrological_pressure?.value ?? data?.primary_metric_value ?? "").toLowerCase();
     const livePressure = allowedPressures.has(pressure);
@@ -152,10 +206,7 @@
     set("peatland-source", data?.sources?.[0]?.name || data?.peat_context?.source?.name || "Regional proxy setup");
     set("pressure-confidence", data?.peatland_hydrological_pressure?.confidence);
     set("pressure-data-status", clean(data?.data_status, "not yet live-ingested"));
-    set("peat-context-note", data?.peat_context?.context_note || "Peat context pending.");
-    set("peat-area", data?.peat_context?.area_name);
-    set("peat-context-source", data?.peat_context?.source?.name);
-    set("peat-thickness", data?.peat_context?.peat_thickness_context?.value ? `${data.peat_context.peat_thickness_context.value} ${data.peat_context.peat_thickness_context.unit || ""}` : "pending");
+    renderPeatContext(data?.peat_context);
     const weather = data?.weather_pressure || {};
     set("latest-precipitation", num(weather.latest_precipitation_mm, "mm"));
     set("rainfall-7d", num(weather.rainfall_7d_mm ?? data?.peatland_hydrological_pressure?.rainfall_7d, "mm"));

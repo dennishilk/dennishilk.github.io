@@ -2724,6 +2724,26 @@ button.technology-observer-card {
 .peatland-detail-page .traffic-card p { color: #c9d1d9; }
 .peatland-detail-page .peatland-note { color: #8bdfff; font-weight: 900; }
 
+.peatland-detail-page .peat-context-facts {
+  margin-top: .75rem;
+  gap: .35rem .7rem;
+}
+.peatland-detail-page .peat-context-facts dt {
+  white-space: nowrap;
+}
+.peatland-detail-page .peat-context-facts dd {
+  overflow-wrap: anywhere;
+}
+.peatland-detail-page .peat-context-facts a {
+  color: #8bdfff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(139, 223, 255, .42);
+}
+.peatland-detail-page .peat-context-facts a:hover,
+.peatland-detail-page .peat-context-facts a:focus {
+  color: #f0f6fc;
+}
+
 .peatland-limit-list {
   display: grid;
   gap: .55rem;
