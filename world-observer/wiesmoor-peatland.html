@@ -76,7 +76,7 @@
       <div class="peatland-right-stack">
         <article class="traffic-card peatland-soil-card">
           <h2 id="soil-card-heading">REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM</h2>
-          <div id="soil-metrics" class="weather-metric-list two"><p><span>Latest value</span><strong id="soil-value">awaiting live adapter</strong></p><p><span>Latest date</span><strong id="soil-date">pending</strong></p><p><span>Resolution</span><strong id="soil-resolution">1 km</strong></p></div>
+          <div id="soil-metrics" class="weather-metric-list two"><p><span>Latest value</span><strong id="soil-value">awaiting live adapter</strong></p><p><span>Latest date</span><strong id="soil-date">pending</strong></p><p><span>Resolution</span><strong id="soil-resolution">1 km</strong></p><p><span>Status</span><strong id="soil-status">not yet live-ingested</strong></p></div>
           <p id="soil-source" class="weather-note">DWD soil-moisture-under-grass grid adapter pending.</p>
         </article>
 
@@ -91,8 +91,11 @@
         <h2>OBSERVATION LIMITS</h2>
         <ul id="observation-limits" class="peatland-limit-list">
           <li>Regional proxy observation — not an in-situ peat water-table sensor.</li>
-          <li>Hydrological pressure is pending until at least one live proxy source is reproducibly ingested.</li>
-          <li>Weather, soil-water and groundwater proxies describe different footprints and response times.</li>
+          <li>No peat-water-table depth is measured or inferred.</li>
+          <li>NLWKN groundwater stations are regional groundwater proxies; station distance and local hydrogeological representativeness are uncertain.</li>
+          <li>DWD gridded soil moisture under grass is a regional model product for the 0-60 cm layer and is not converted to peat water-table depth.</li>
+          <li>DWD weather pressure comes from the selected nearby daily climate station; station distance and weather gradients limit site representativeness.</li>
+          <li>Copernicus SWI metadata-only and MoorIS static context are not used as live pressure signals.</li>
         </ul>
       </article>
     </section>
@@ -242,17 +245,9 @@
     const soil = data?.regional_soil_water || {};
     const soilUnit = clean(soil.unit, "");
     set("soil-value", num(soil.latest_value, soilUnit));
-    const soilMetrics = $("soil-metrics");
-    const trendText = compact(soil.trend);
-    const hasRealTrend = trendText && !/^(?:pending|unavailable|not available|n\/a)$/i.test(trendText);
-    if (soilMetrics) {
-      const existingTrend = $("soil-trend")?.parentNode;
-      if (existingTrend && !hasRealTrend) existingTrend.remove();
-      if (hasRealTrend && !$("soil-trend")) soilMetrics.insertAdjacentHTML("beforeend", `<p><span>Trend</span><strong id="soil-trend">${escapeHtml(trendText)}</strong></p>`);
-      if (hasRealTrend) set("soil-trend", trendText);
-    }
     set("soil-date", clean(soil.latest_date));
     set("soil-resolution", explicitNumber(soil.spatial_resolution_km) === null ? "pending" : `${soil.spatial_resolution_km} km`);
+    set("soil-status", compact(soil.data_status).toLowerCase() === "ok" ? "ok" : "not yet live-ingested");
     const soilDataset = soil.source?.dataset || soil.dataset || soil.variable || soil.source?.status;
     set("soil-source", `${clean(soil.source?.name || soil.source || "DWD soil moisture adapter")} — ${clean(soilDataset, "awaiting live adapter")}`);
     const station = data?.groundwater_proxy?.stations?.[0] || {};
@@ -261,8 +256,6 @@
     set("groundwater-date", clean(station.latest_date));
     set("groundwater-status", clean(station.status_category || data?.groundwater_proxy?.data_status, "not yet live-ingested"));
     set("groundwater-note", data?.groundwater_proxy?.interpretation_note || "Nearby groundwater stations can support regional interpretation only.");
-    const limits = data?.peatland_hydrological_pressure?.limitations;
-    if (Array.isArray(limits) && limits.length && $("observation-limits")) $("observation-limits").innerHTML = limits.map((item) => `<li>${String(item).replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]))}</li>`).join("");
   }
   loadJson(["/world-observer/dashboard/latest/wiesmoor-peatland.json", "dashboard/latest/wiesmoor-peatland.json", "../world-observer/dashboard/latest/wiesmoor-peatland.json"]).then((data) => data ? render(data) : renderFallback()).catch(renderFallback);
 })();
