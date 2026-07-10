@@ -109,16 +109,32 @@ test('decorative map signals render for ZZ or unknown country data without deriv
 
   const routeLayer = getElementById('map-signal-routes');
   assert.equal(routeLayer.children.length, 1, 'one bounded decorative signal launches immediately');
-  assert.match(routeLayer.children[0].innerHTML, /M190\.0 215\.0 Q[\s\S]*496\.0 137\.0/, 'first fixed decorative origin routes toward Wiesmoor');
+  assert.match(routeLayer.children[0].innerHTML, /M260\.0 220\.0 Q[\s\S]*496\.0 137\.0/, 'first fixed decorative land origin routes toward Wiesmoor');
   assert.doesNotMatch(routeLayer.children[0].innerHTML, /ZZ|UNKNOWN|unknown-origin|12:00:00/);
   assert.match(routeLayer.children[0].className, /signal-route human/);
 });
 
-test('decorative map signal origins are fixed static constants and not derived from visitor fields', () => {
+test('decorative map signal origins are fixed land-position constants and not derived from visitor fields', () => {
   assert.match(script, /const decorativeSignalOrigins = \[/);
   assert.match(script, /Visual-only, privacy-safe origins/);
   assert.match(script, /not derived from visitors, IPs, countries, paths, or identities/);
-  assert.match(script, /signalState\.routes = decorativeSignalOrigins\.map/);
+
+  const originsBlock = script.match(/const decorativeSignalOrigins = \[([\s\S]*?)\n  \];/)?.[1];
+  assert.ok(originsBlock, 'decorative origins block should be present');
+  const configuredOrigins = [...originsBlock.matchAll(/\{ code: "([^"]+)", xy: \[(\d+), (\d+)\], kind: "(human|bot)" \}/g)]
+    .map(([, code, x, y, kind]) => ({ code, xy: [Number(x), Number(y)], kind }));
+
+  assert.deepEqual(configuredOrigins, [
+    { code: 'EASTERN_NORTH_AMERICA', xy: [260, 220], kind: 'human' },
+    { code: 'WESTERN_NORTH_AMERICA', xy: [150, 190], kind: 'bot' },
+    { code: 'NORTHERN_SOUTH_AMERICA', xy: [350, 335], kind: 'human' },
+    { code: 'WESTERN_CENTRAL_EUROPE', xy: [500, 185], kind: 'human' },
+    { code: 'SOUTHERN_AFRICA', xy: [535, 415], kind: 'bot' },
+    { code: 'EAST_ASIA', xy: [815, 245], kind: 'human' },
+    { code: 'SOUTHEAST_ASIA', xy: [745, 315], kind: 'bot' },
+    { code: 'EASTERN_AUSTRALIA', xy: [860, 410], kind: 'human' },
+  ]);
+  assert.match(script, /signalState\.routes = decorativeSignalOrigins\.map[\s\S]*\.slice\(0, 6\)/);
   assert.doesNotMatch(script, /signalState\.routes = arr\(countries\)/);
   assert.doesNotMatch(script, /classifyRouteKind/);
 });

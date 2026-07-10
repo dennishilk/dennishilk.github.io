@@ -1794,7 +1794,7 @@ button.technology-observer-card {
 .traffic-page footer { margin-top:1rem; text-align:center; border-top-color:rgba(0,220,255,.22); }
 .traffic-page .nebby-terminal-line { flex-wrap:wrap; }
 
-.honeypot-card { grid-column:span 8; border-color:rgba(124,255,130,.32); background:linear-gradient(145deg,rgba(0,8,8,.97),rgba(0,19,24,.88)); }
+.honeypot-card { grid-column:span 8; }
 .honeypot-card h2 { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
 .honeypot-card h2 b { color:#7cff82; font-size:.78rem; letter-spacing:.14em; font-weight:700; }
 .honeypot-card h2 .live-dot { display:inline-block; width:.55em; height:.55em; margin-right:.36rem; border-radius:50%; background:#7cff82; box-shadow:0 0 10px rgba(124,255,130,.85); }

@@ -109,12 +109,14 @@
   const WIESMOOR_NODE = [496, 137];
   // Visual-only, privacy-safe origins for atmospheric map pings; not derived from visitors, IPs, countries, paths, or identities.
   const decorativeSignalOrigins = [
-    { code: "US", xy: [190, 215], kind: "human" },
-    { code: "BR", xy: [355, 363], kind: "human" },
-    { code: "SG", xy: [742, 315], kind: "bot" },
-    { code: "JP", xy: [879, 219], kind: "human" },
-    { code: "AU", xy: [834, 391], kind: "bot" },
-    { code: "GB", xy: [474, 163], kind: "human" }
+    { code: "EASTERN_NORTH_AMERICA", xy: [260, 220], kind: "human" },
+    { code: "WESTERN_NORTH_AMERICA", xy: [150, 190], kind: "bot" },
+    { code: "NORTHERN_SOUTH_AMERICA", xy: [350, 335], kind: "human" },
+    { code: "WESTERN_CENTRAL_EUROPE", xy: [500, 185], kind: "human" },
+    { code: "SOUTHERN_AFRICA", xy: [535, 415], kind: "bot" },
+    { code: "EAST_ASIA", xy: [815, 245], kind: "human" },
+    { code: "SOUTHEAST_ASIA", xy: [745, 315], kind: "bot" },
+    { code: "EASTERN_AUSTRALIA", xy: [860, 410], kind: "human" }
   ];
   const signalState = { timer: null, active: 0, routes: [], index: 0, reduced: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false };
   const setUnavailable = () => {
