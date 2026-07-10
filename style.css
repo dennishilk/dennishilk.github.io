@@ -1717,7 +1717,7 @@ button.technology-observer-card {
 .pulse-human { stroke:#19d7ff; filter:drop-shadow(0 0 5px #19d7ff); }
 .pulse-bot { stroke:#7a68d9; opacity:.85; filter:drop-shadow(0 0 4px #7a68d9); }
 .pulse-chart.empty { display:flex; align-items:center; justify-content:center; }
-.traffic-legend { display:flex; gap:1.4rem; justify-content:center; margin-top:.55rem; color:#d8dee9; font-size:.78rem; }
+.traffic-legend { display:flex; flex-wrap:wrap; gap:.45rem 1.4rem; justify-content:center; margin-top:.55rem; color:#d8dee9; font-size:.78rem; }
 .human-line:before,.bot-line:before,.normal-dot:before,.high-dot:before,.spike-dot:before { content:""; display:inline-block; width:26px; height:3px; background:var(--accent); margin-right:.45rem; vertical-align:middle; box-shadow:0 0 8px var(--accent); }
 .bot-line:before { background:#7a68d9; box-shadow:0 0 8px #7a68d9; }
 .normal-dot:before,.high-dot:before,.spike-dot:before { width:8px; height:8px; border-radius:50%; }
@@ -1782,6 +1782,12 @@ button.technology-observer-card {
 .signal-legend .matrix-scanner:before { background:#ff704d; box-shadow:0 0 8px #ff704d; }
 .signal-facts { display:flex; flex-wrap:wrap; justify-content:center; gap:.45rem .75rem; margin-top:.5rem; color:#d8dee9; font-size:.76rem; letter-spacing:.06em; }
 .signal-facts span { border:1px solid rgba(0,220,255,.2); background:rgba(0,180,255,.07); padding:.18rem .45rem; }
+
+.signal-matrix-card .signal-matrix { height:112px; gap:3px; padding:.52rem .38rem .32rem; }
+.signal-matrix-card .signal-bin span { font-size:.5rem; }
+.signal-matrix-card .signal-legend { justify-content:flex-start; font-size:.68rem; line-height:1.25; }
+.signal-matrix-card .signal-facts { justify-content:flex-start; font-size:.66rem; gap:.35rem; }
+.signal-matrix-card .signal-facts span { padding:.14rem .32rem; }
 .method-card dl { display:grid; grid-template-columns:auto 1fr; gap:.42rem .85rem; color:#d8dee9; font-size:.86rem; }
 .method-card dt { color:#f0f6fc; font-weight:700; }
 .method-card dd { color:#c9d1d9; margin:0; }

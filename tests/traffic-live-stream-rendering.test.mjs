@@ -7,14 +7,22 @@ const html = readFileSync(new URL('../traffic.html', import.meta.url), 'utf8');
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>\n?([\s\S]*?)<\/script>/g)];
 const script = scripts.at(-1)?.[1];
 
-const makeElement = () => ({
-  innerHTML: '',
-  textContent: '',
-  hidden: false,
-  className: '',
-  classList: { add() {}, remove() {} },
-  querySelectorAll() { return []; },
-});
+const makeElement = () => {
+  const element = {
+    innerHTML: '',
+    textContent: '',
+    hidden: false,
+    className: '',
+    children: [],
+    attributes: {},
+    classList: { add() {}, remove() {} },
+    setAttribute(name, value) { this.attributes[name] = value; if (name === 'class') this.className = value; },
+    appendChild(child) { this.children.push(child); return child; },
+    remove() { this.removed = true; },
+    querySelectorAll() { return []; },
+  };
+  return element;
+};
 
 const basePayload = (overrides = {}) => ({
   generated_at: '2026-07-08T18:30:00.000Z',
@@ -42,7 +50,7 @@ const payload = (time, path, kind = 'HUMAN') => basePayload({
   top_pages: [{ path, count: 1 }],
 });
 
-const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z') => {
+const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z', options = {}) => {
   assert.ok(script, 'traffic inline script should be found');
   const elements = new Map();
   const getElementById = (id) => {
@@ -57,9 +65,9 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z') => 
     static parse(value) { return RealDate.parse(value); }
   }
   const context = {
-    document: { hidden: false, getElementById, addEventListener() {} },
+    document: { hidden: false, getElementById, addEventListener() {}, createElementNS: () => makeElement() },
     window: {
-      matchMedia: () => ({ matches: true }),
+      matchMedia: () => ({ matches: options.reducedMotion ?? true }),
       setInterval: (fn) => { intervalCallbacks.push(fn); return intervalCallbacks.length; },
       clearInterval() {},
       setTimeout() {},
@@ -78,6 +86,42 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z') => 
   await new Promise((resolve) => setImmediate(resolve));
   return { getElementById, intervalCallbacks };
 };
+
+
+test('traffic dashboard card layout replaces Top Referrers with one compact signal matrix', () => {
+  assert.doesNotMatch(html, /TOP REFERRERS/);
+  assert.equal((html.match(/SIGNAL ACTIVITY MATRIX <span>\(24H\)<\/span>/g) || []).length, 1);
+  assert.doesNotMatch(html, /top-referrers/);
+  assert.doesNotMatch(html, /traffic-card timeline wide/);
+
+  const rowPattern = /MOST OBSERVED PAGES[\s\S]*CRAWLER SPECIES[\s\S]*<article class="traffic-card signal-matrix-card"><h2>SIGNAL ACTIVITY MATRIX <span>\(24H\)<\/span>/;
+  assert.match(html, rowPattern, 'matrix should occupy the former third card position after pages and crawler species');
+  assert.match(html, /HONEYPOT/);
+  assert.match(html, /OBSERVATION METHOD/);
+  assert.match(html, /GLOBAL SIGNAL MAP/);
+});
+
+test('decorative map signals render for ZZ or unknown country data without deriving origins from payload', async () => {
+  const { getElementById } = await runTrafficScript([basePayload({
+    countries: [{ country: 'ZZ', count: 9 }, { country: 'UNKNOWN', count: 4 }],
+    live_requests: [{ time: '12:00:00', kind: 'SCANNER', country: 'ZZ', path: '/unknown-origin' }],
+  })], '2026-07-08T18:30:00.000Z', { reducedMotion: false });
+
+  const routeLayer = getElementById('map-signal-routes');
+  assert.equal(routeLayer.children.length, 1, 'one bounded decorative signal launches immediately');
+  assert.match(routeLayer.children[0].innerHTML, /M190\.0 215\.0 Q[\s\S]*496\.0 137\.0/, 'first fixed decorative origin routes toward Wiesmoor');
+  assert.doesNotMatch(routeLayer.children[0].innerHTML, /ZZ|UNKNOWN|unknown-origin|12:00:00/);
+  assert.match(routeLayer.children[0].className, /signal-route human/);
+});
+
+test('decorative map signal origins are fixed static constants and not derived from visitor fields', () => {
+  assert.match(script, /const decorativeSignalOrigins = \[/);
+  assert.match(script, /Visual-only, privacy-safe origins/);
+  assert.match(script, /not derived from visitors, IPs, countries, paths, or identities/);
+  assert.match(script, /signalState\.routes = decorativeSignalOrigins\.map/);
+  assert.doesNotMatch(script, /signalState\.routes = arr\(countries\)/);
+  assert.doesNotMatch(script, /classifyRouteKind/);
+});
 
 test('traffic page contains HONEYPOT title and exact visual metaphor sentence', () => {
   assert.match(html, /HONEYPOT/);
