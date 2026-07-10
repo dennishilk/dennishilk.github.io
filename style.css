@@ -2727,26 +2727,37 @@ button.technology-observer-card {
 
 .peatland-detail-page .peat-context-facts {
   display: grid;
-  grid-template-columns: repeat(2, max-content minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: .45rem;
-  gap: .28rem .65rem;
-  align-items: baseline;
-  font-size: .82rem;
+  gap: .5rem;
 }
-.peatland-detail-page .peat-context-facts dt {
-  white-space: nowrap;
+.peatland-detail-page .peat-context-tile {
+  min-height: 66px;
+  padding: .72rem;
+  border: 1px solid rgba(0, 180, 255, .22);
+  background: linear-gradient(180deg, rgba(0, 180, 255, .06), rgba(0, 0, 0, .2));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-.peatland-detail-page .peat-context-facts dd {
+.peatland-detail-page .peat-context-tile span {
+  color: #aab3c0;
+  font-size: .74rem;
+}
+.peatland-detail-page .peat-context-tile strong {
+  color: #44d9ff;
+  font-size: clamp(.88rem, 1.35vw, 1.04rem);
+  line-height: 1.25;
   overflow-wrap: anywhere;
+  text-shadow: 0 0 10px rgba(68, 217, 255, .34);
 }
-.peatland-detail-page .peat-context-facts dd a { overflow-wrap: normal; }
-.peatland-detail-page .peat-context-facts a {
+.peatland-detail-page .peat-context-tile a {
   color: #8bdfff;
   text-decoration: none;
   border-bottom: 1px solid rgba(139, 223, 255, .42);
 }
-.peatland-detail-page .peat-context-facts a:hover,
-.peatland-detail-page .peat-context-facts a:focus {
+.peatland-detail-page .peat-context-tile a:hover,
+.peatland-detail-page .peat-context-tile a:focus {
   color: #f0f6fc;
 }
 
@@ -2761,7 +2772,7 @@ button.technology-observer-card {
 .peatland-limit-list li::marker { color: #44d9ff; }
 
 @media (max-width: 950px) {
-  .peatland-detail-page .peat-context-facts { grid-template-columns: max-content minmax(0, 1fr); }
+  .peatland-detail-page .peat-context-facts { grid-template-columns: 1fr; }
   .peatland-grid,
   .peatland-grid > .traffic-card,
   .peatland-main-card,
