@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import net from 'node:net';
+import { execFileSync } from 'node:child_process';
 
 const BERLIN_TZ = 'Europe/Berlin';
 const STATIC_EXT = /\.(?:css|js|mjs|map|png|jpe?g|gif|webp|svg|ico|avif|bmp|tiff?|woff2?|ttf|otf|eot|txt|xml|json|webmanifest|wasm|mp4|webm|mp3|ogg|pdf|zip|gz|br)(?:$|[?#])/i;
@@ -116,14 +118,62 @@ export function isPageview(req, kind = classifyRequest(req)) {
 
 const inc = (map, key) => map.set(key, (map.get(key) || 0) + 1);
 const rows = (map, name = 'path') => [...map.entries()].sort((a,b) => b[1] - a[1]).map(([k,v]) => ({ [name]: k, count: v }));
-const countryFor = () => 'ZZ';
+const COUNTRY_CODE = /^[A-Z]{2}$/;
 
-export function buildTrafficPayload(lines, { now = new Date() } = {}) {
+function isPrivateIpv4(ip) {
+  const parts = ip.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(part => !Number.isInteger(part) || part < 0 || part > 255)) return true;
+  const [a, b] = parts;
+  return a === 10 || a === 127 || a === 0 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 198 && (b === 18 || b === 19));
+}
+
+function isPrivateIpv6(ip) {
+  const value = ip.toLowerCase();
+  if (value === '::' || value === '::1') return true;
+  if (value.startsWith('fc') || value.startsWith('fd') || value.startsWith('fe80:')) return true;
+  if (value.startsWith('::ffff:')) return isPrivateIp(value.slice(7));
+  return false;
+}
+
+export function isPrivateIp(ip) {
+  const version = net.isIP(ip);
+  if (version === 4) return isPrivateIpv4(ip);
+  if (version === 6) return isPrivateIpv6(ip);
+  return true;
+}
+
+export function countryFromGeoiplookup(ip) {
+  if (isPrivateIp(ip)) return 'ZZ';
+  try {
+    const output = execFileSync('geoiplookup', [ip], { encoding: 'utf8', timeout: 750, stdio: ['ignore', 'pipe', 'ignore'] });
+    const match = output.match(/GeoIP\s+Country\s+Edition:\s+([A-Z]{2}),/i) || output.match(/GeoIP2?\s+Country.*?:\s+([A-Z]{2})\b/i) || output.match(/\bcountry\s+(?:code|iso_code):\s*([A-Z]{2})\b/i);
+    const code = match?.[1]?.toUpperCase();
+    return code && COUNTRY_CODE.test(code) && code !== 'A1' && code !== 'A2' ? code : 'ZZ';
+  } catch {
+    return 'ZZ';
+  }
+}
+
+export function createCountryLookup(resolveCountry = countryFromGeoiplookup) {
+  const cache = new Map();
+  return ip => {
+    const raw = String(ip || '');
+    if (cache.has(raw)) return cache.get(raw);
+    const code = isPrivateIp(raw) ? 'ZZ' : String(resolveCountry(raw) || 'ZZ').toUpperCase();
+    const safeCode = COUNTRY_CODE.test(code) ? code : 'ZZ';
+    cache.set(raw, safeCode);
+    return safeCode;
+  };
+}
+
+export function buildTrafficPayload(lines, { now = new Date(), countryResolver } = {}) {
+  const countryFor = createCountryLookup(countryResolver);
   const todayKey = berlinDateKey(now);
   const since24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const topPaths = new Map(), topPages = new Map(), countries = new Map(), referrers = new Map(), species = new Map();
   const hourly = Array.from({ length: 24 }, (_, i) => ({ hour: String(i).padStart(2, '0'), humans: 0, bots: 0, scanners: 0, total: 0 }));
   const live = [];
+  const uniqueVisitorIps = new Set();
   const scannerIntentCounts = new Map(SCANNER_INTENT_PRIORITY.map(id => [id, 0]));
   const recentScannerEvents = [];
   const rollingScannerTimestamps = [];
@@ -151,8 +201,10 @@ export function buildTrafficPayload(lines, { now = new Date() } = {}) {
       requests24h++;
       const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: BERLIN_TZ, hour: '2-digit', hour12: false }).format(req.time));
       const bin = hourly[hour === 24 ? 0 : hour]; bin.total++; bin[kind === 'scanner' ? 'scanners' : `${kind}s`]++;
-      inc(countries, countryFor(req.ip));
-      live.push({ timestamp: req.time.toISOString(), time: berlinTime(req.time), kind: kind === 'scanner' ? 'SCANNER' : kind.toUpperCase(), country: countryFor(req.ip), path: req.path, status: req.status, method: req.method });
+      uniqueVisitorIps.add(req.ip);
+      const country = countryFor(req.ip);
+      inc(countries, country);
+      live.push({ timestamp: req.time.toISOString(), time: berlinTime(req.time), kind: kind === 'scanner' ? 'SCANNER' : kind.toUpperCase(), country, path: req.path, status: req.status, method: req.method });
       if (kind === 'scanner') {
         const intentId = classifyScannerIntent(req);
         rollingScannerTimestamps.push(req.time);
@@ -192,7 +244,7 @@ export function buildTrafficPayload(lines, { now = new Date() } = {}) {
     trapping_duration_seconds: oldestScanner && newestScanner ? Math.floor((newestScanner - oldestScanner) / 1000) : 0,
   };
   const machine = botRequestsToday + scannerRequestsToday, denom = humanRequestsToday + machine;
-  return { generated_at: now.toISOString(), timezone: BERLIN_TZ, pageviews_today: pageviewsToday, human_requests_today: humanRequestsToday, bot_requests_today: machine, scanner_requests_today: scannerRequestsToday, requests_24h: requests24h, requests_total: requests24h, total_pageviews: totalPageviews, estimated_unique_visitors: countries.size, human_percent: denom ? humanRequestsToday / denom * 100 : 0, bot_percent: denom ? machine / denom * 100 : 0, top_paths: rows(topPaths), top_pages: rows(topPages), countries: rows(countries, 'country'), crawler_species: rows(species, 'name'), top_referrers: rows(referrers, 'referrer'), hourly, live_requests: live.slice(0, 25), scanner_intent: scannerIntent };
+  return { generated_at: now.toISOString(), timezone: BERLIN_TZ, pageviews_today: pageviewsToday, human_requests_today: humanRequestsToday, bot_requests_today: machine, scanner_requests_today: scannerRequestsToday, requests_24h: requests24h, requests_total: requests24h, total_pageviews: totalPageviews, estimated_unique_visitors: uniqueVisitorIps.size, human_percent: denom ? humanRequestsToday / denom * 100 : 0, bot_percent: denom ? machine / denom * 100 : 0, top_paths: rows(topPaths), top_pages: rows(topPages), countries: rows(countries, 'country'), crawler_species: rows(species, 'name'), top_referrers: rows(referrers, 'referrer'), hourly, live_requests: live.slice(0, 25), scanner_intent: scannerIntent };
 }
 
 export function writeTrafficPayload(inputFiles, outputFile, options) {

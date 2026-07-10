@@ -195,3 +195,95 @@ test('scanner intent timing metadata derives from actual rolling scanner timesta
   assert.equal(payload.scanner_intent.last_probe_at, '2026-07-08T09:45:00.000Z');
   assert.equal(payload.scanner_intent.trapping_duration_seconds, 9000);
 });
+
+test('GeoIP resolver maps known public IPs to mocked country codes', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/' }),
+  ], { now, countryResolver: ip => ip === '8.8.8.8' ? 'US' : 'ZZ' });
+
+  assert.deepEqual(payload.countries, [{ country: 'US', count: 1 }]);
+  assert.equal(payload.live_requests[0].country, 'US');
+});
+
+test('GeoIP unknown, private, local, and invalid addresses resolve to ZZ', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.4.4', at, path: '/' }),
+    line({ ip: '10.0.0.5', at, path: '/private.html' }),
+    line({ ip: '127.0.0.1', at, path: '/local.html' }),
+    line({ ip: 'not-an-ip', at, path: '/invalid.html' }),
+  ], { now, countryResolver: () => 'ZZ' });
+
+  assert.deepEqual(payload.countries, [{ country: 'ZZ', count: 4 }]);
+  assert(payload.live_requests.every(request => request.country === 'ZZ'));
+});
+
+test('countries aggregate counts use resolved country codes', () => {
+  const countries = new Map([['8.8.8.8', 'US'], ['1.1.1.1', 'AU'], ['8.8.4.4', 'US']]);
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/' }),
+    line({ ip: '1.1.1.1', at, path: '/about.html' }),
+    line({ ip: '8.8.4.4', at, path: '/contact.html' }),
+  ], { now, countryResolver: ip => countries.get(ip) || 'ZZ' });
+
+  assert.deepEqual(payload.countries, [{ country: 'US', count: 2 }, { country: 'AU', count: 1 }]);
+});
+
+test('live requests expose country code only, never IP', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/' }),
+  ], { now, countryResolver: () => 'US' });
+
+  assert.equal(payload.live_requests[0].country, 'US');
+  assert.equal('ip' in payload.live_requests[0], false);
+  assert.equal(JSON.stringify(payload.live_requests).includes('8.8.8.8'), false);
+});
+
+test('estimated unique visitors uses distinct source IPs in the rolling window', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/' }),
+    line({ ip: '8.8.8.8', at, path: '/again.html' }),
+    line({ ip: '8.8.4.4', at, path: '/same-country.html' }),
+    line({ ip: '1.1.1.1', at, path: '/other-country.html' }),
+    line({ ip: '9.9.9.9', at: '07/Jul/2026:09:00:00 +0200', path: '/old.html' }),
+  ], { now, countryResolver: ip => ip === '1.1.1.1' ? 'AU' : 'US' });
+
+  assert.equal(payload.estimated_unique_visitors, 3);
+  assert.deepEqual(payload.countries, [{ country: 'US', count: 3 }, { country: 'AU', count: 1 }]);
+});
+
+test('country lookup cache is in-run only and avoids repeated resolver calls', () => {
+  const seen = [];
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/' }),
+    line({ ip: '8.8.8.8', at, path: '/again.html' }),
+  ], { now, countryResolver: ip => { seen.push(ip); return 'US'; } });
+
+  assert.equal(payload.estimated_unique_visitors, 1);
+  assert.deepEqual(seen, ['8.8.8.8']);
+});
+
+test('scanner intent contains no IP or country leakage and invariants remain exact with GeoIP enabled', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/.env', ua: 'zgrab/0.x' }),
+    line({ ip: '1.1.1.1', at, path: '/wp-admin/install.php' }),
+  ], { now, countryResolver: ip => ip === '1.1.1.1' ? 'AU' : 'US' });
+
+  const scannerJson = JSON.stringify(payload.scanner_intent);
+  assert.equal(payload.scanner_intent.total_scanner_requests, payload.scanner_requests_today);
+  assert.equal(payload.scanner_intent.categories.reduce((sum, category) => sum + category.count, 0), payload.scanner_requests_today);
+  assert.equal(scannerJson.includes('8.8.8.8'), false);
+  assert.equal(scannerJson.includes('1.1.1.1'), false);
+  assert.equal(scannerJson.includes('US'), false);
+  assert.equal(scannerJson.includes('AU'), false);
+});
+
+test('raw IPs do not appear anywhere in output JSON for ordinary log input', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/' }),
+    line({ ip: '1.1.1.1', at, path: '/wp-admin/install.php' }),
+  ], { now, countryResolver: ip => ip === '1.1.1.1' ? 'AU' : 'US' });
+  const output = JSON.stringify(payload);
+
+  assert.equal(output.includes('8.8.8.8'), false);
+  assert.equal(output.includes('1.1.1.1'), false);
+});
