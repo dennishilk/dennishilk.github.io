@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildTrafficPayload, parseNginxTime } from '../scripts/site-traffic-observer.mjs';
+import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS } from '../scripts/site-traffic-observer.mjs';
 
 const line = ({ ip = '203.0.113.10', at, method = 'GET', path = '/', status = 200, ref = '-', ua = 'Mozilla/5.0' }) =>
   `${ip} - - [${at}] "${method} ${path} HTTP/1.1" ${status} 123 "${ref}" "${ua}"`;
@@ -112,4 +112,86 @@ test('requests_total remains a backward-compatible alias for requests_24h', () =
 
 test('nginx timestamps preserve their explicit timezone offset', () => {
   assert.equal(parseNginxTime('08/Jul/2026:00:30:00 +0200').toISOString(), '2026-07-07T22:30:00.000Z');
+});
+
+
+const scannerReq = (path, userAgent = 'zgrab/0.x') => ({ path, userAgent, method: 'GET', status: 404, referrer: '-' });
+
+test('scanner intent helper assigns the documented exact priority categories', () => {
+  const cases = [
+    ['/wp-admin/install.php', 'wordpress_probing'],
+    ['/.env', 'secret_hunting'],
+    ['/.env.backup', 'secret_hunting'],
+    ['/.git/config', 'secret_hunting'],
+    ['/../../etc/passwd', 'path_traversal'],
+    ['/%2e%2e/%2e%2e/etc/passwd', 'path_traversal'],
+    ['/%252e%252e/%252e%252e/etc/passwd', 'path_traversal'],
+    ['/phpmyadmin', 'admin_discovery'],
+    ['/cgi-bin/goform/setup.cgi?next=router', 'iot_camera_probing'],
+    ['/uploads/webshell.php?cmd=wget', 'generic_exploit_probing'],
+    ['/just-noisy', 'unknown_scanner_noise'],
+  ];
+
+  for (const [path, expected] of cases) {
+    assert.equal(classifyScannerIntent(scannerReq(path)), expected, path);
+  }
+  assert.doesNotThrow(() => classifyScannerIntent(scannerReq('/%E0%A4%A')));
+});
+
+test('scanner intent aggregate matches scanner_requests_today and excludes humans and known bots', () => {
+  const payload = buildTrafficPayload([
+    line({ at, path: '/wp-admin/install.php' }),
+    line({ at, path: '/.env' }),
+    line({ at, path: '/%252e%252e/%252e%252e/etc/passwd' }),
+    line({ at, path: '/', ua: 'zgrab/0.x' }),
+    line({ at, path: '/human.html' }),
+    line({ at, path: '/robots.txt', ua: 'Googlebot/2.1' }),
+    line({ at, path: '/robots.txt', ua: 'bingbot/2.0' }),
+  ], { now });
+
+  const categorySum = payload.scanner_intent.categories.reduce((sum, category) => sum + category.count, 0);
+  assert.equal(payload.scanner_requests_today, 4);
+  assert.equal(payload.scanner_intent.total_scanner_requests, payload.scanner_requests_today);
+  assert.equal(categorySum, payload.scanner_requests_today);
+  assert.equal(payload.human_requests_today, 1);
+  assert.equal(payload.bot_requests_today, 6);
+  assert.equal(payload.scanner_intent.categories.find(c => c.id === 'unknown_scanner_noise').count, 1);
+});
+
+test('recent scanner intent events are newest first, bounded, privacy safe, and use fixed decorative masks', () => {
+  const lines = Array.from({ length: 12 }, (_, index) => line({
+    ip: `203.0.113.${index}`,
+    at: `08/Jul/2026:11:${String(index).padStart(2, '0')}:00 +0200`,
+    path: `/.env?token=${index}`,
+    status: 500,
+    ua: `zgrab/${index}`,
+    ref: `https://example.test/?q=${index}`,
+  }));
+  const payload = buildTrafficPayload(lines, { now });
+  const events = payload.scanner_intent.recent_events;
+
+  assert.equal(events.length, 10);
+  assert.deepEqual(events.map(event => event.timestamp), [...events.map(event => event.timestamp)].sort().reverse());
+  for (const event of events) {
+    assert.deepEqual(Object.keys(event).sort(), ['decorative_mask', 'intent_id', 'intent_label', 'time', 'timestamp']);
+    assert(SCANNER_INTENT_DECORATIVE_MASKS.includes(event.decorative_mask));
+  }
+  assert.equal(JSON.stringify(payload.scanner_intent).includes('203.0.113'), false);
+  assert.equal(JSON.stringify(payload.scanner_intent).includes('/.env'), false);
+  assert.equal(JSON.stringify(payload.scanner_intent).includes('token='), false);
+  assert.equal(JSON.stringify(payload.scanner_intent).includes('zgrab'), false);
+  assert.equal(JSON.stringify(payload.scanner_intent).includes('500'), false);
+  assert.equal(JSON.stringify(payload.scanner_intent).includes('GET'), false);
+});
+
+test('scanner intent timing metadata derives from actual rolling scanner timestamps', () => {
+  const payload = buildTrafficPayload([
+    line({ at: '08/Jul/2026:09:00:00 +0200', path: '/old-human.html' }),
+    line({ at: '08/Jul/2026:09:15:00 +0200', path: '/.env' }),
+    line({ at: '08/Jul/2026:11:45:00 +0200', path: '/wp-admin/install.php' }),
+  ], { now });
+
+  assert.equal(payload.scanner_intent.observation_window_started_at, '2026-07-08T07:15:00.000Z');
+  assert.equal(payload.scanner_intent.last_probe_at, '2026-07-08T09:45:00.000Z');
+  assert.equal(payload.scanner_intent.trapping_duration_seconds, 9000);
 });
