@@ -85,8 +85,24 @@ function payload(peat_context = richPeatContext) {
 }
 
 
+test('healthy observer status badge uses green ok class while partial data status remains separate', async () => {
+  const page = await render(payload());
+  assert.equal(page.text('peatland-status'), 'ACTIVE · OK');
+  assert.match(page.element('peatland-status').className, /status-badge ok/);
+  assert.equal(page.text('pressure-data-status'), 'partial');
+});
+
+test('soil trend pending is not visibly rendered when no real trend exists', async () => {
+  const page = await render(payload());
+  assert.doesNotMatch(page.allText(), /Trendpending|Trend: pending|pending.*Trend/i);
+  assert.equal(page.text('soil-value'), '89,5 ‰ nFK');
+  assert.equal(page.text('soil-date'), '2026-07-08');
+  assert.equal(page.text('soil-resolution'), '1 km');
+});
+
 test('peat context layout stays compact without stretching the pressure card', () => {
-  assert.match(css, /\.peatland-detail-page \.peat-context-facts \{[\s\S]*grid-template-columns: repeat\(2, max-content minmax\(0, 1fr\)\)/);
+  assert.match(css, /\.peatland-detail-page \.peat-context-facts \{[\s\S]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(css, /\.peatland-detail-page \.peat-context-tile \{[\s\S]*border: 1px solid rgba\(0, 180, 255,/);
   assert.match(css, /\.peatland-primary-status \{[\s\S]*min-height: 150px/);
   assert.doesNotMatch(css, /\.peatland-primary-status \{[\s\S]*min-height: (?:2\d\d|[3-9]\d\d)px/);
 });
@@ -100,7 +116,10 @@ test('rich peat_context renders compact sourced context instead of generic pendi
   assert.match(page.html('peat-context-facts'), /href="https:\/\/mooris-niedersachsen\.de\/\?pgId=585"/);
   assert.match(page.text('peat-context-facts'), /SourceMoorIS \/ NLWKN/);
   assert.doesNotMatch(page.text('peat-context-facts'), /MoorIS Niedersachsen \/ NLWKN Moorschutzprogramm entry 377 Wiesmoor-Nord/);
-  assert.match(page.text('peat-context-facts'), /MoorIS page pgId=585; Moorschutzprogramm area 377 Wiesmoor-Nord/);
+  assert.equal((page.html('peat-context-facts').match(/peat-context-tile/g) || []).length, 6);
+  assert.equal(page.text('peat-dataset-line'), 'MoorIS pgId 585 · Moorschutzprogramm area 377');
+  assert.equal(page.text('peat-source-status-line'), 'Static source-backed context · not live');
+  assert.doesNotMatch(page.text('peat-context-facts'), /Dataset \/ entry|Context status/);
 });
 
 test('moor type, drainage, historical use, and unavailable thickness render as compact labels without fabricated numbers', async () => {
@@ -127,7 +146,8 @@ test('verbose source-backed context is not dumped into the visible peat card', a
     page.text('peat-context-note'),
     page.text('peat-context-facts'),
     page.text('peat-management-note'),
-    page.text('peat-methodology-note'),
+    page.text('peat-dataset-line'),
+    page.text('peat-source-status-line'),
   ].join(' ');
   assert.doesNotMatch(visiblePeatText, /MoorIS\/NLWKN place Wiesmoor-Nord in the East Frisian central raised-bog/);
   assert.doesNotMatch(visiblePeatText, /MoorIS describes Wiesmoor as shaped by peat-fired power generation/);
