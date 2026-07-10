@@ -85,6 +85,75 @@ function payload(peat_context = richPeatContext) {
 }
 
 
+
+function normalizeCss(value) {
+  return String(value).replace(/\s+/g, ' ').trim();
+}
+
+function classForHeading(headingText) {
+  const escaped = headingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = html.match(new RegExp(`<article class="([^"]+)">\\s*<h2(?: id="[^"]+")?>${escaped}</h2>`));
+  return match?.[1] || '';
+}
+
+function cardHeadingOrder() {
+  return Array.from(html.matchAll(/<article class="[^"]+">\s*<h2(?: id="[^"]+")?>([^<]+)<\/h2>/g)).map((match) => match[1]);
+}
+
+test('desktop peatland main grid is deterministic two-column row layout', () => {
+  const compactCss = normalizeCss(css);
+  assert.match(compactCss, /\.peatland-grid \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(compactCss, /grid-template-areas: "pressure context" "weather soil" "groundwater groundwater" "limits limits"/);
+  assert.match(css, /\.peatland-main-card \{[\s\S]*grid-area: pressure/);
+  assert.match(css, /\.peatland-context-card \{ grid-area: context; \}/);
+  assert.match(css, /\.peatland-weather-card \{ grid-area: weather; \}/);
+  assert.match(css, /\.peatland-soil-card \{ grid-area: soil; \}/);
+  assert.match(css, /\.peatland-groundwater-card \{ grid-area: groundwater; \}/);
+  assert.match(css, /\.peatland-limits-card \{ grid-area: limits; \}/);
+});
+
+test('desktop row placement classes match the approved card order', () => {
+  assert.match(classForHeading('HYDROLOGICAL PRESSURE'), /peatland-main-card/);
+  assert.match(classForHeading('PEAT CONTEXT \/ WIESMOOR-NORD'), /peatland-context-card/);
+  assert.match(classForHeading('WEATHER PRESSURE \/ DWD DAILY CLIMATE'), /peatland-weather-card/);
+  assert.match(classForHeading('REGIONAL SOIL WATER \/ DWD SOIL MOISTURE \/ 0–60 CM'), /peatland-soil-card/);
+  assert.match(classForHeading('GROUNDWATER PROXY \/ NLWKN'), /peatland-groundwater-card/);
+  assert.match(classForHeading('OBSERVATION LIMITS'), /peatland-limits-card/);
+});
+
+test('groundwater and observation cards span both desktop columns with groundwater metrics in four columns', () => {
+  const compactCss = normalizeCss(css);
+  assert.match(compactCss, /grid-template-areas: "pressure context" "weather soil" "groundwater groundwater" "limits limits"/);
+  assert.match(compactCss, /\.peatland-detail-page \.peatland-groundwater-metrics \{ grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(html, /class="weather-metric-list two peatland-groundwater-metrics"/);
+});
+
+test('mobile peatland grid stacks in the approved card order', () => {
+  const compactCss = normalizeCss(css);
+  assert.match(compactCss, /@media \(max-width: 720px\)/);
+  assert.match(compactCss, /grid-template-columns: 1fr; grid-template-areas: "pressure" "context" "weather" "soil" "groundwater" "limits"/);
+  assert.deepEqual(cardHeadingOrder(), [
+    'HYDROLOGICAL PRESSURE',
+    'PEAT CONTEXT / WIESMOOR-NORD',
+    'WEATHER PRESSURE / DWD DAILY CLIMATE',
+    'REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM',
+    'GROUNDWATER PROXY / NLWKN',
+    'OBSERVATION LIMITS',
+  ]);
+});
+
+test('layout cleanup preserves approved visible labels and initial values', () => {
+  const visible = stripTags(html.match(/<section class="weather-grid peatland-grid">([\s\S]*?)<\/section>/)[1]).replace(/\s+/g, ' ').trim();
+  for (const expected of [
+    'HYDROLOGICAL PRESSURE', 'Confidence', 'Data status', 'Regional proxy observation — not an in-situ peat water-table sensor.',
+    'PEAT CONTEXT / WIESMOOR-NORD', 'WEATHER PRESSURE / DWD DAILY CLIMATE', 'Latest rain', '7-day rainfall', '30-day rainfall',
+    'Dry days 7 / 30', 'Dry streak', 'Temperature latest / 7d / 30d', 'Status',
+    'REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM', 'Latest value', 'Latest date', 'Resolution',
+    'GROUNDWATER PROXY / NLWKN', 'Station', 'candidate source pending', 'OBSERVATION LIMITS',
+  ]) assert.match(visible, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.doesNotMatch(visible, /placeholder|sample value/i);
+});
+
 test('healthy observer status badge uses green ok class while partial data status remains separate', async () => {
   const page = await render(payload());
   assert.equal(page.text('peatland-status'), 'ACTIVE · OK');
