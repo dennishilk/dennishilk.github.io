@@ -59,10 +59,10 @@
 
       <article class="traffic-card peatland-context-card">
         <h2>PEAT CONTEXT / WIESMOOR-NORD</h2>
-        <p id="peat-context-note">Wiesmoor-Nord peatland context is available as source metadata; live extraction remains pending.</p>
+        <p id="peat-context-note" hidden></p>
         <dl id="peat-context-facts" class="weather-info peat-context-facts"><dt>Area</dt><dd id="peat-area">Wiesmoor-Nord / Wiesmoor peatland landscape</dd><dt>Source</dt><dd id="peat-context-source">MoorIS Niedersachsen / Wiesmoor-Nord</dd><dt>Peat thickness</dt><dd id="peat-thickness">numeric value unavailable</dd></dl>
         <p id="peat-management-note" class="weather-note peatland-methodology-note" hidden></p>
-        <p id="peat-methodology-note" class="weather-note peatland-methodology-note">Static source-backed context; no live sensor request.</p>
+        <p id="peat-methodology-note" class="weather-note peatland-methodology-note" hidden></p>
       </article>
 
       <article class="traffic-card">
@@ -139,7 +139,7 @@
   };
   const contextNote = (ctx = {}) => {
     const management = compact(ctx?.restoration_or_management_context);
-    if (/nearby/i.test(management)) return "Nearby restoration context only; not a numeric Wiesmoor-Nord measurement.";
+    if (/nearby/i.test(management)) return "Nearby restoration context only; not a Wiesmoor-Nord measurement.";
     const limitation = Array.isArray(ctx?.limitations) ? ctx.limitations.find((item) => /subareas|nearby|contextual/i.test(String(item))) : "";
     return compact(limitation).split(/[.;]/)[0].trim();
   };
@@ -154,19 +154,19 @@
   };
   const num = (value, unit = "", fallback = "pending") => {
     const parsed = explicitNumber(value);
-    return parsed === null ? fallback : `${parsed.toLocaleString(undefined, { maximumFractionDigits: 1 })}${unit ? " " + unit : ""}`;
+    return parsed === null ? fallback : `${parsed.toLocaleString("de-DE", { maximumFractionDigits: 1 })}${unit ? " " + unit : ""}`;
   };
   const dayCount = (value) => {
     const parsed = explicitNumber(value);
     if (parsed === null) return "pending";
-    const formatted = parsed.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const formatted = parsed.toLocaleString("de-DE", { maximumFractionDigits: 0 });
     return `${formatted} ${parsed === 1 ? "day" : "days"}`;
   };
   const dryDayRule = (coverage = {}) => {
     const threshold = explicitNumber(coverage.dry_day_threshold_mm);
     const rule = typeof coverage.dry_day_rule === "string" ? coverage.dry_day_rule.trim() : "";
     if (threshold !== null) {
-      return `Dry day: valid DWD daily precipitation < ${threshold.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mm; missing dates are never inferred as dry.`;
+      return `Dry day: valid DWD daily precipitation < ${threshold.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mm; missing dates are never inferred as dry.`;
     }
     return rule || "Dry day: awaiting DWD daily precipitation rule.";
   };
@@ -195,7 +195,7 @@
     const thicknessValue = explicitNumber(thickness?.value);
     const thicknessText = thicknessValue === null
       ? clean(thickness?.status, "numeric value unavailable")
-      : `${thicknessValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}${hasText(thickness?.unit) ? " " + clean(thickness.unit, "") : ""}`;
+      : `${thicknessValue.toLocaleString("de-DE", { maximumFractionDigits: 2 })}${hasText(thickness?.unit) ? " " + clean(thickness.unit, "") : ""}`;
     facts.push(["Peat thickness", thicknessText]);
     const factId = (label) => ({ "Area": "peat-area", "Source": "peat-context-source", "Peat thickness": "peat-thickness" }[label] || "");
     const factsEl = $("peat-context-facts");
@@ -204,14 +204,10 @@
       return `<dt>${escapeHtml(label)}</dt><dd${id ? ` id="${id}"` : ""}>${html ? value : escapeHtml(clean(value, "not available"))}</dd>`;
     }).join("");
 
-    const summary = hasText(ctx?.area_name) || hasText(ctx?.moor_type_context) || hasText(ctx?.land_use_history) || hasText(ctx?.drainage_context)
-      ? "Compact source-backed static context for Wiesmoor-Nord."
-      : "Peat context unavailable in the current JSON.";
-    set("peat-context-note", summary);
+    const hasContext = hasText(ctx?.area_name) || hasText(ctx?.moor_type_context) || hasText(ctx?.land_use_history) || hasText(ctx?.drainage_context);
+    setHiddenText("peat-context-note", hasContext ? "" : "Peat context unavailable in the current JSON.");
     setHiddenText("peat-management-note", contextNote(ctx));
-    const reproducibility = compact(ctx?.reproducibility_note);
-    const limitation = Array.isArray(ctx?.limitations) ? ctx.limitations.find((item) => /numeric|thickness|area|water-table/i.test(String(item))) : "";
-    set("peat-methodology-note", reproducibility || limitation || "Static source-backed MoorIS/NLWKN context; no live request required during observer runs; no numeric peat thickness or mapped area is emitted without reproducible extraction.");
+    setHiddenText("peat-methodology-note", "");
   }
   function render(data) {
     const pressure = String(data?.peatland_hydrological_pressure?.value ?? data?.primary_metric_value ?? "").toLowerCase();

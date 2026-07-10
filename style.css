@@ -2717,17 +2717,21 @@ button.technology-observer-card {
 .peatland-detail-page .traffic-card .peatland-methodology-note {
   color: #9fb8c8;
   font-size: .82rem;
-  line-height: 1.45;
-  margin-top: .6rem;
-  padding-top: .55rem;
+  line-height: 1.35;
+  margin-top: .35rem;
+  padding-top: .25rem;
 }
 .peatland-detail-page .weather-info dd,
 .peatland-detail-page .traffic-card p { color: #c9d1d9; }
 .peatland-detail-page .peatland-note { color: #8bdfff; font-weight: 900; }
 
 .peatland-detail-page .peat-context-facts {
-  margin-top: .75rem;
-  gap: .35rem .7rem;
+  display: grid;
+  grid-template-columns: repeat(2, max-content minmax(0, 1fr));
+  margin-top: .45rem;
+  gap: .28rem .65rem;
+  align-items: baseline;
+  font-size: .82rem;
 }
 .peatland-detail-page .peat-context-facts dt {
   white-space: nowrap;
@@ -2757,6 +2761,7 @@ button.technology-observer-card {
 .peatland-limit-list li::marker { color: #44d9ff; }
 
 @media (max-width: 950px) {
+  .peatland-detail-page .peat-context-facts { grid-template-columns: max-content minmax(0, 1fr); }
   .peatland-grid,
   .peatland-grid > .traffic-card,
   .peatland-main-card,
