@@ -2662,14 +2662,25 @@ button.technology-observer-card {
   text-shadow: 0 0 16px rgba(120, 180, 255, .7);
 }
 
-.peatland-grid { align-items: start; }
-.peatland-grid > .traffic-card { grid-column: span 4; }
+.peatland-grid {
+  align-items: stretch;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "pressure context"
+    "weather soil"
+    "groundwater groundwater"
+    "limits limits";
+}
+.peatland-grid > .traffic-card { grid-column: auto; }
 .peatland-main-card {
-  grid-column: span 7 !important;
+  grid-area: pressure;
   border-color: rgba(0, 180, 255, .28);
 }
-.peatland-context-card { grid-column: span 5 !important; }
-.peatland-limits-card { grid-column: span 12 !important; }
+.peatland-context-card { grid-area: context; }
+.peatland-weather-card { grid-area: weather; }
+.peatland-soil-card { grid-area: soil; }
+.peatland-groundwater-card { grid-area: groundwater; }
+.peatland-limits-card { grid-area: limits; }
 
 .peatland-primary-status {
   min-height: 150px;
@@ -2713,6 +2724,12 @@ button.technology-observer-card {
   overflow-wrap: anywhere;
   font-size: clamp(.92rem, 1.45vw, 1.08rem);
   line-height: 1.25;
+}
+.peatland-detail-page .peatland-groundwater-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.peatland-detail-page .peatland-groundwater-metrics p {
+  min-height: 66px;
 }
 .peatland-detail-page .traffic-card .peatland-methodology-note {
   color: #9fb8c8;
@@ -2772,12 +2789,36 @@ button.technology-observer-card {
 .peatland-limit-list li::marker { color: #44d9ff; }
 
 @media (max-width: 950px) {
-  .peatland-detail-page .peat-context-facts { grid-template-columns: 1fr; }
-  .peatland-grid,
+  .peatland-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "pressure context"
+      "weather soil"
+      "groundwater groundwater"
+      "limits limits";
+  }
   .peatland-grid > .traffic-card,
   .peatland-main-card,
   .peatland-context-card,
-  .peatland-limits-card { grid-column: span 1 !important; }
+  .peatland-weather-card,
+  .peatland-soil-card,
+  .peatland-groundwater-card,
+  .peatland-limits-card { grid-column: auto !important; }
+}
+
+@media (max-width: 720px) {
+  .peatland-detail-page .peat-context-facts { grid-template-columns: 1fr; }
+  .peatland-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "pressure"
+      "context"
+      "weather"
+      "soil"
+      "groundwater"
+      "limits";
+  }
+  .peatland-detail-page .peatland-groundwater-metrics { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
