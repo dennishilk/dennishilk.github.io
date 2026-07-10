@@ -124,6 +124,25 @@
     el.hidden = !text;
     el.textContent = text;
   };
+  const shortLabel = (value, rules = [], fallback = "not available") => {
+    const text = compact(value);
+    if (!text) return fallback;
+    const lower = text.toLowerCase();
+    const found = rules.find(([pattern]) => pattern.test(lower));
+    return found ? found[1] : text.split(/[.;]/)[0].trim().slice(0, 80);
+  };
+  const areaLabel = (value) => {
+    const text = compact(value);
+    if (!text) return "not available";
+    const match = text.match(/Wiesmoor-Nord/i);
+    return match ? "Wiesmoor-Nord" : text.split(/[\/;,.]/)[0].trim().slice(0, 60);
+  };
+  const contextNote = (ctx = {}) => {
+    const management = compact(ctx?.restoration_or_management_context);
+    if (/nearby/i.test(management)) return "Nearby restoration context only; not a numeric Wiesmoor-Nord measurement.";
+    const limitation = Array.isArray(ctx?.limitations) ? ctx.limitations.find((item) => /subareas|nearby|contextual/i.test(String(item))) : "";
+    return compact(limitation).split(/[.;]/)[0].trim();
+  };
   const explicitNumber = (value) => {
     if (typeof value === "number") return Number.isFinite(value) ? value : null;
     if (typeof value !== "string") return null;
@@ -164,13 +183,13 @@
     const source = ctx?.source || {};
     const nord = ctx?.wiesmoor_nord || {};
     const thickness = ctx?.peat_thickness_context || {};
-    if (hasText(ctx?.area_name)) facts.push(["Area", ctx.area_name]);
-    if (hasText(ctx?.moor_type_context)) facts.push(["Moor type", ctx.moor_type_context]);
-    if (hasText(ctx?.land_use_history)) facts.push(["Historical use", ctx.land_use_history]);
-    if (hasText(ctx?.drainage_context)) facts.push(["Drainage context", ctx.drainage_context]);
+    if (hasText(ctx?.area_name)) facts.push(["Area", areaLabel(ctx.area_name)]);
+    if (hasText(ctx?.moor_type_context)) facts.push(["Moor type", shortLabel(ctx.moor_type_context, [[/raised[- ]bog|hochmoor/, "Raised bog context"]])]);
+    if (hasText(ctx?.land_use_history)) facts.push(["Historical use", shortLabel(ctx.land_use_history, [[/peat.*horticulture|horticulture.*peat|greenhouse/, "Peat / horticulture"], [/agriculture|grassland/, "Agriculture context"]])]);
+    if (hasText(ctx?.drainage_context)) facts.push(["Drainage", shortLabel(ctx.drainage_context, [[/canal|kanal|road/, "Canal / road network"], [/drainage/, "Drainage context"]])]);
     const sourceName = ctx?.source_name || source?.name;
     const sourceUrl = ctx?.source_url || source?.url;
-    if (hasText(sourceName) || hasText(sourceUrl)) facts.push(["Source", sourceLink(sourceName || "source", sourceUrl), true]);
+    if (hasText(sourceName) || hasText(sourceUrl)) facts.push(["Source", sourceLink("MoorIS / NLWKN", sourceUrl), true]);
     if (hasText(nord?.page_or_dataset_identifier)) facts.push(["Dataset / entry", nord.page_or_dataset_identifier]);
     if (hasText(ctx?.context_status || ctx?.data_status)) facts.push(["Context status", ctx?.context_status || ctx?.data_status]);
     const thicknessValue = explicitNumber(thickness?.value);
@@ -185,9 +204,11 @@
       return `<dt>${escapeHtml(label)}</dt><dd${id ? ` id="${id}"` : ""}>${html ? value : escapeHtml(clean(value, "not available"))}</dd>`;
     }).join("");
 
-    const summaryParts = [ctx?.context_note, ctx?.moor_type_context, ctx?.land_use_history, ctx?.drainage_context].map(compact).filter(Boolean);
-    set("peat-context-note", summaryParts.length ? summaryParts.slice(0, 3).join(" ") : "Peat context unavailable in the current JSON.");
-    setHiddenText("peat-management-note", ctx?.restoration_or_management_context);
+    const summary = hasText(ctx?.area_name) || hasText(ctx?.moor_type_context) || hasText(ctx?.land_use_history) || hasText(ctx?.drainage_context)
+      ? "Compact source-backed static context for Wiesmoor-Nord."
+      : "Peat context unavailable in the current JSON.";
+    set("peat-context-note", summary);
+    setHiddenText("peat-management-note", contextNote(ctx));
     const reproducibility = compact(ctx?.reproducibility_note);
     const limitation = Array.isArray(ctx?.limitations) ? ctx.limitations.find((item) => /numeric|thickness|area|water-table/i.test(String(item))) : "";
     set("peat-methodology-note", reproducibility || limitation || "Static source-backed MoorIS/NLWKN context; no live request required during observer runs; no numeric peat thickness or mapped area is emitted without reproducible extraction.");
