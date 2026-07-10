@@ -79,7 +79,7 @@ function payload(peat_context = richPeatContext) {
     peat_context,
     peatland_hydrological_pressure: { value: 'normal', confidence: 'medium', limitations: ['Regional proxy observation — not an in-situ peat water-table sensor.'] },
     weather_pressure: { latest_precipitation_mm: 0, rainfall_7d_mm: 13.7, rainfall_30d_mm: 70.1, dry_days_7d: 3, dry_days_30d: 15, consecutive_dry_days: 1, temperature_c: 16.5, temperature_mean_7d_c: 16.6, temperature_mean_30d_c: 17.5, data_status: 'ok', source: { name: 'Deutscher Wetterdienst (DWD) Climate Data Center', dataset: 'Recent daily climate observations Germany' } },
-    regional_soil_water: { latest_value: 89.5, unit: '‰ nFK', latest_date: '2026-07-08', trend: 'unavailable', spatial_resolution_km: 1, source: { name: 'Deutscher Wetterdienst (DWD) Climate Data Center', dataset: 'Daily grids of mean soil moisture under grass' } },
+    regional_soil_water: { latest_value: 89.5, unit: '‰ nFK', latest_date: '2026-07-08', trend: 'unavailable', spatial_resolution_km: 1, data_status: 'ok', source: { name: 'Deutscher Wetterdienst (DWD) Climate Data Center', dataset: 'Daily grids of mean soil moisture under grass' } },
     groundwater_proxy: { data_status: 'ok', interpretation_note: 'Nearby groundwater stations can indicate regional groundwater behaviour but are not an in-situ peat water-table sensor for Wiesmoor-Nord.', stations: [{ station_name: 'Remels', latest_value: 3.96, latest_value_unit: 'm', latest_date: '10.07.2026', status_category: 'normal' }] },
   };
 }
@@ -109,7 +109,9 @@ test('desktop peatland main grid is deterministic two-column row layout', () => 
   assert.match(css, /\.peatland-weather-card \{ grid-area: weather; \}/);
   assert.match(css, /\.peatland-right-stack \{[\s\S]*grid-area: right-stack/);
   assert.match(css, /\.peatland-soil-card,\n\.peatland-groundwater-card \{ min-width: 0; \}/);
-  assert.match(css, /\.peatland-limits-card \{ grid-area: limits; \}/);
+  assert.match(css, /\.peatland-limits-card \{[\s\S]*grid-area: limits;[\s\S]*grid-column: 1 \/ -1;/);
+  assert.doesNotMatch(css, /\.peatland-grid > \.traffic-card \{ grid-column: auto; \}/);
+  assert.doesNotMatch(css, /\.peatland-limits-card \{ grid-column: auto !important; \}/);
 });
 
 test('desktop row placement classes match the approved card order', () => {
@@ -127,6 +129,7 @@ test('desktop row two places weather left and soil plus groundwater stacked righ
   assert.doesNotMatch(compactCss, /"groundwater groundwater"|"weather soil"/);
   assert.match(compactCss, /\.peatland-right-stack \{ grid-area: right-stack; display: grid; gap: var\(--space-md, 1rem\); align-content: start; \}/);
   assert.match(html, /<div class="peatland-right-stack">[\s\S]*REGIONAL SOIL WATER \/ DWD SOIL MOISTURE \/ 0–60 CM[\s\S]*GROUNDWATER PROXY \/ NLWKN[\s\S]*<\/div>\s*<article class="traffic-card peatland-limits-card">/);
+  assert.match(html, /<section class="weather-grid peatland-grid">[\s\S]*<article class="traffic-card peatland-weather-card">[\s\S]*<div class="peatland-right-stack">[\s\S]*<\/div>\s*<article class="traffic-card peatland-limits-card">/);
   assert.match(compactCss, /\.peatland-detail-page \.peatland-groundwater-metrics \{ grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
   assert.match(html, /class="weather-metric-list two peatland-groundwater-metrics"/);
 });
@@ -151,12 +154,37 @@ test('layout cleanup preserves approved visible labels and initial values', () =
     'HYDROLOGICAL PRESSURE', 'Confidence', 'Data status', 'Regional proxy observation — not an in-situ peat water-table sensor.',
     'PEAT CONTEXT / WIESMOOR-NORD', 'WEATHER PRESSURE / DWD DAILY CLIMATE', 'Latest rain', '7-day rainfall', '30-day rainfall',
     'Dry days 7 / 30', 'Dry streak', 'Temperature latest / 7d / 30d',
-    'REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM', 'Latest value', 'Latest date', 'Resolution',
+    'REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM', 'Latest value', 'Latest date', 'Resolution', 'Status',
     'GROUNDWATER PROXY / NLWKN', 'Station', 'candidate source pending', 'OBSERVATION LIMITS',
   ]) assert.match(visible, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.doesNotMatch(visible, /placeholder|sample value/i);
 });
 
+
+
+test('soil water renders exactly four visible metrics in approved 2x2 order from real ok status', async () => {
+  const soilHtml = html.match(/<div id="soil-metrics" class="weather-metric-list two">([\s\S]*?)<\/div>/)[1];
+  const labels = Array.from(soilHtml.matchAll(/<span>([^<]+)<\/span>/g)).map((match) => match[1]);
+  assert.deepEqual(labels, ['Latest value', 'Latest date', 'Resolution', 'Status']);
+  assert.equal((soilHtml.match(/<p>/g) || []).length, 4);
+  assert.doesNotMatch(soilHtml, /Trend/);
+
+  const page = await render(payload());
+  assert.equal(page.text('soil-status'), 'ok');
+
+  const unavailable = await render({ ...payload(), regional_soil_water: { ...payload().regional_soil_water, data_status: 'partial' } });
+  assert.equal(unavailable.text('soil-status'), 'pending');
+});
+
+test('observation limits direct desktop grid child spans both columns without obsolete reset', () => {
+  const directChildPattern = /<section class="weather-grid peatland-grid">[\s\S]*<\/div>\s*<article class="traffic-card peatland-limits-card">/;
+  assert.match(html, directChildPattern);
+  const compactCss = normalizeCss(css);
+  assert.match(compactCss, /\.peatland-limits-card \{ grid-area: limits; grid-column: 1 \/ -1; \}/);
+  assert.doesNotMatch(compactCss, /\.peatland-grid > \.traffic-card \{ grid-column: auto/);
+  assert.doesNotMatch(compactCss, /\.peatland-limits-card \{ grid-column: auto !important; \}/);
+  assert.match(compactCss, /@media \(max-width: 950px\)[\s\S]*\.peatland-limits-card \{ grid-column: 1 \/ -1; \}/);
+});
 
 test('weather status ok tile is not visibly rendered while remaining weather metrics stay visible', async () => {
   const visible = stripTags(html.match(/<article class="traffic-card peatland-weather-card">([\s\S]*?)<\/article>/)[1]).replace(/\s+/g, ' ').trim();
@@ -187,6 +215,7 @@ test('soil trend pending is not visibly rendered when no real trend exists', asy
   assert.equal(page.text('soil-value'), '89,5 ‰ nFK');
   assert.equal(page.text('soil-date'), '2026-07-08');
   assert.equal(page.text('soil-resolution'), '1 km');
+  assert.equal(page.text('soil-status'), 'ok');
 });
 
 test('peat context layout stays compact without stretching the pressure card', () => {
@@ -275,6 +304,7 @@ test('existing pressure weather soil and groundwater rendering stays intact', as
   assert.equal(page.text('latest-precipitation'), '0 mm');
   assert.equal(page.text('rainfall-7d'), '13,7 mm');
   assert.equal(page.text('soil-value'), '89,5 ‰ nFK');
+  assert.equal(page.text('soil-status'), 'ok');
   assert.equal(page.text('groundwater-station'), 'Remels');
   assert.equal(page.text('groundwater-value'), '4 m');
 });
