@@ -15,11 +15,11 @@ const makeElement = () => {
     className: '',
     children: [],
     attributes: {},
-    classList: { add() {}, remove() {} },
+    classList: { add(name) { element.className = `${element.className} ${name}`.trim(); }, remove(name) { element.className = element.className.split(/\s+/).filter(c => c && c !== name).join(' '); } },
     setAttribute(name, value) { this.attributes[name] = value; if (name === 'class') this.className = value; },
     appendChild(child) { this.children.push(child); return child; },
     remove() { this.removed = true; },
-    querySelectorAll() { return []; },
+    querySelectorAll(selector) { const wanted = selector.split(',').map(s => s.trim().replace(/^\./, '').split('.')); return this.children.filter(child => wanted.some(parts => parts.every(part => child.className.split(/\s+/).includes(part)))); },
   };
   return element;
 };
@@ -58,6 +58,7 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z', opt
     return elements.get(id);
   };
   const intervalCallbacks = [];
+  const timeoutCallbacks = [];
   const RealDate = Date;
   class FixedDate extends RealDate {
     constructor(...args) { super(...(args.length ? args : [now])); }
@@ -70,7 +71,7 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z', opt
       matchMedia: () => ({ matches: options.reducedMotion ?? true }),
       setInterval: (fn) => { intervalCallbacks.push(fn); return intervalCallbacks.length; },
       clearInterval() {},
-      setTimeout() {},
+      setTimeout: (fn, delay) => { timeoutCallbacks.push({ fn, delay }); return timeoutCallbacks.length; },
     },
     Date: FixedDate,
     Number,
@@ -84,7 +85,7 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z', opt
   };
   vm.runInNewContext(script, context);
   await new Promise((resolve) => setImmediate(resolve));
-  return { getElementById, intervalCallbacks };
+  return { getElementById, intervalCallbacks, timeoutCallbacks };
 };
 
 
@@ -101,6 +102,37 @@ test('traffic dashboard card layout replaces Top Referrers with one compact sign
   assert.match(html, /GLOBAL SIGNAL MAP/);
 });
 
+
+test('Wiesmoor is the only permanent map node and country data does not render persistent map dots', async () => {
+  const { getElementById } = await runTrafficScript([basePayload({
+    countries: [{ country: 'US', count: 4 }, { country: 'DE', count: 2 }, { country: 'AU', count: 1 }],
+  })], '2026-07-08T18:30:00.000Z', { reducedMotion: true });
+
+  const destination = getElementById('map-destination-node').innerHTML;
+  assert.match(destination, /destination-node[\s\S]*WIESMOOR/);
+  assert.match(destination, /cx="496" cy="137"/);
+  assert.equal(getElementById('map-points').innerHTML, '', 'no non-Wiesmoor persistent map dots should render at rest');
+  assert.equal(getElementById('map-signal-routes').innerHTML, '', 'reduced-motion idle state has no route-origin dots');
+});
+
+test('temporary decorative origin appears only during an active route and is removed after completion', async () => {
+  const { getElementById, timeoutCallbacks } = await runTrafficScript([basePayload()], '2026-07-08T18:30:00.000Z', { reducedMotion: false });
+
+  const routeLayer = getElementById('map-signal-routes');
+  assert.equal(routeLayer.children.length, 1, 'one active route starts immediately');
+  const activeRoute = routeLayer.children[0];
+  assert.match(activeRoute.innerHTML, /class="signal-origin"/);
+  assert.match(activeRoute.innerHTML, /signal-origin-halo" cx="260" cy="220"/);
+  assert.match(activeRoute.innerHTML, /class="signal-arc"/);
+
+  const completion = timeoutCallbacks.find(({ delay }) => delay === 3650);
+  assert.ok(completion, 'route completion timeout should be registered');
+  completion.fn();
+
+  assert.match(activeRoute.className, /done/);
+  assert.ok(activeRoute.removed, 'completed route group, including temporary origin marker, should be removed');
+});
+
 test('decorative map signals render for ZZ or unknown country data without deriving origins from payload', async () => {
   const { getElementById } = await runTrafficScript([basePayload({
     countries: [{ country: 'ZZ', count: 9 }, { country: 'UNKNOWN', count: 4 }],
@@ -110,6 +142,7 @@ test('decorative map signals render for ZZ or unknown country data without deriv
   const routeLayer = getElementById('map-signal-routes');
   assert.equal(routeLayer.children.length, 1, 'one bounded decorative signal launches immediately');
   assert.match(routeLayer.children[0].innerHTML, /M260\.0 220\.0 Q[\s\S]*496\.0 137\.0/, 'first fixed decorative land origin routes toward Wiesmoor');
+  assert.match(routeLayer.children[0].innerHTML, /signal-origin-halo" cx="260" cy="220"/, 'temporary origin marker uses first fixed decorative origin');
   assert.doesNotMatch(routeLayer.children[0].innerHTML, /ZZ|UNKNOWN|unknown-origin|12:00:00/);
   assert.match(routeLayer.children[0].className, /signal-route human/);
 });
