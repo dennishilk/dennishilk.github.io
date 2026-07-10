@@ -85,29 +85,45 @@ function payload(peat_context = richPeatContext) {
 
 test('rich peat_context renders compact sourced context instead of generic pending copy', async () => {
   const page = await render(payload());
-  assert.match(page.text('peat-context-note'), /raised-bog \(Hochmoor\).*peat-fired power generation.*moor drainage/);
+  assert.equal(page.text('peat-context-note'), 'Compact source-backed static context for Wiesmoor-Nord.');
   assert.doesNotMatch(page.allText(), /Peat context pending\.|Peat thickness pending/);
-  assert.match(page.text('peat-context-facts'), /Wiesmoor-Nord \/ Wiesmoor peatland landscape/);
+  assert.match(page.text('peat-context-facts'), /AreaWiesmoor-Nord/);
   assert.match(page.html('peat-context-facts'), /href="https:\/\/mooris-niedersachsen\.de\/\?pgId=585"/);
-  assert.match(page.text('peat-context-facts'), /MoorIS Niedersachsen \/ NLWKN Moorschutzprogramm entry 377 Wiesmoor-Nord/);
+  assert.match(page.text('peat-context-facts'), /SourceMoorIS \/ NLWKN/);
+  assert.doesNotMatch(page.text('peat-context-facts'), /MoorIS Niedersachsen \/ NLWKN Moorschutzprogramm entry 377 Wiesmoor-Nord/);
   assert.match(page.text('peat-context-facts'), /MoorIS page pgId=585; Moorschutzprogramm area 377 Wiesmoor-Nord/);
 });
 
-test('moor type, drainage, historical use, and unavailable thickness render without fabricated numbers', async () => {
+test('moor type, drainage, historical use, and unavailable thickness render as compact labels without fabricated numbers', async () => {
   const page = await render(payload());
   const facts = page.text('peat-context-facts');
-  assert.match(facts, /East Frisian central raised-bog/);
-  assert.match(facts, /canals cross the moor and serve moor drainage/);
-  assert.match(facts, /peat-fired power generation/);
+  assert.match(facts, /Moor typeRaised bog context/);
+  assert.match(facts, /DrainageCanal \/ road network/);
+  assert.match(facts, /Historical usePeat \/ horticulture/);
+  assert.doesNotMatch(facts, /East Frisian central raised-bog|canals cross the moor and serve moor drainage|peat-fired power generation/);
   assert.match(facts, /numeric value unavailable/);
   assert.doesNotMatch(facts, /\b\d+(?:\.\d+)?\s*(?:m|cm)\b.*Peat thickness/i);
 });
 
 test('nearby restoration context is kept as nearby supporting context', async () => {
   const page = await render(payload());
-  assert.match(page.text('peat-management-note'), /nearby state-owned Wiesmoor-Klinge protected area/);
-  assert.match(page.text('peat-management-note'), /supporting local context, not a numeric Wiesmoor-Nord measurement/);
+  assert.equal(page.text('peat-management-note'), 'Nearby restoration context only; not a numeric Wiesmoor-Nord measurement.');
   assert.doesNotMatch(page.text('peat-management-note'), /all Wiesmoor-Nord/i);
+});
+
+
+test('verbose source-backed context is not dumped into the visible peat card', async () => {
+  const page = await render(payload());
+  const visiblePeatText = [
+    page.text('peat-context-note'),
+    page.text('peat-context-facts'),
+    page.text('peat-management-note'),
+    page.text('peat-methodology-note'),
+  ].join(' ');
+  assert.doesNotMatch(visiblePeatText, /MoorIS\/NLWKN place Wiesmoor-Nord in the East Frisian central raised-bog/);
+  assert.doesNotMatch(visiblePeatText, /MoorIS describes Wiesmoor as shaped by peat-fired power generation/);
+  assert.doesNotMatch(visiblePeatText, /MoorIS notes canals cross the moor and serve moor drainage/);
+  assert.doesNotMatch(visiblePeatText, /https?:\/\//);
 });
 
 test('raw null undefined and object strings never render', async () => {

@@ -2662,6 +2662,7 @@ button.technology-observer-card {
   text-shadow: 0 0 16px rgba(120, 180, 255, .7);
 }
 
+.peatland-grid { align-items: start; }
 .peatland-grid > .traffic-card { grid-column: span 4; }
 .peatland-main-card {
   grid-column: span 7 !important;
@@ -2734,6 +2735,7 @@ button.technology-observer-card {
 .peatland-detail-page .peat-context-facts dd {
   overflow-wrap: anywhere;
 }
+.peatland-detail-page .peat-context-facts dd a { overflow-wrap: normal; }
 .peatland-detail-page .peat-context-facts a {
   color: #8bdfff;
   text-decoration: none;
