@@ -5,6 +5,7 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'world-observer', 'wiesmoor-peatland.html'), 'utf8');
+const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
 const script = html.match(/<script>\s*\(\(\) => \{([\s\S]*?)\}\)\(\);\s*<\/script>/)[0].replace(/^<script>/, '').replace(/<\/script>$/, '');
 
 function stripTags(value) {
@@ -83,9 +84,17 @@ function payload(peat_context = richPeatContext) {
   };
 }
 
+
+test('peat context layout stays compact without stretching the pressure card', () => {
+  assert.match(css, /\.peatland-detail-page \.peat-context-facts \{[\s\S]*grid-template-columns: repeat\(2, max-content minmax\(0, 1fr\)\)/);
+  assert.match(css, /\.peatland-primary-status \{[\s\S]*min-height: 150px/);
+  assert.doesNotMatch(css, /\.peatland-primary-status \{[\s\S]*min-height: (?:2\d\d|[3-9]\d\d)px/);
+});
+
 test('rich peat_context renders compact sourced context instead of generic pending copy', async () => {
   const page = await render(payload());
-  assert.equal(page.text('peat-context-note'), 'Compact source-backed static context for Wiesmoor-Nord.');
+  assert.equal(page.text('peat-context-note'), '');
+  assert.equal(page.element('peat-context-note').hidden, true);
   assert.doesNotMatch(page.allText(), /Peat context pending\.|Peat thickness pending/);
   assert.match(page.text('peat-context-facts'), /AreaWiesmoor-Nord/);
   assert.match(page.html('peat-context-facts'), /href="https:\/\/mooris-niedersachsen\.de\/\?pgId=585"/);
@@ -107,7 +116,7 @@ test('moor type, drainage, historical use, and unavailable thickness render as c
 
 test('nearby restoration context is kept as nearby supporting context', async () => {
   const page = await render(payload());
-  assert.equal(page.text('peat-management-note'), 'Nearby restoration context only; not a numeric Wiesmoor-Nord measurement.');
+  assert.equal(page.text('peat-management-note'), 'Nearby restoration context only; not a Wiesmoor-Nord measurement.');
   assert.doesNotMatch(page.text('peat-management-note'), /all Wiesmoor-Nord/i);
 });
 
@@ -148,8 +157,8 @@ test('existing pressure weather soil and groundwater rendering stays intact', as
   assert.equal(page.text('pressure-value'), 'normal');
   assert.equal(page.text('pressure-confidence'), 'medium');
   assert.equal(page.text('latest-precipitation'), '0 mm');
-  assert.equal(page.text('rainfall-7d'), '13.7 mm');
-  assert.equal(page.text('soil-value'), '89.5 ‰ nFK');
+  assert.equal(page.text('rainfall-7d'), '13,7 mm');
+  assert.equal(page.text('soil-value'), '89,5 ‰ nFK');
   assert.equal(page.text('groundwater-station'), 'Remels');
   assert.equal(page.text('groundwater-value'), '4 m');
 });
