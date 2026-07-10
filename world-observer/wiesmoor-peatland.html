@@ -87,18 +87,19 @@
         </article>
       </div>
 
-      <article class="traffic-card peatland-limits-card">
-        <h2>OBSERVATION LIMITS</h2>
-        <ul id="observation-limits" class="peatland-limit-list">
-          <li>Regional proxy observation — not an in-situ peat water-table sensor.</li>
-          <li>No peat-water-table depth is measured or inferred.</li>
-          <li>NLWKN groundwater stations are regional groundwater proxies; station distance and local hydrogeological representativeness are uncertain.</li>
-          <li>DWD gridded soil moisture under grass is a regional model product for the 0-60 cm layer and is not converted to peat water-table depth.</li>
-          <li>DWD weather pressure comes from the selected nearby daily climate station; station distance and weather gradients limit site representativeness.</li>
-          <li>Copernicus SWI metadata-only and MoorIS static context are not used as live pressure signals.</li>
-        </ul>
-      </article>
     </section>
+
+    <article class="traffic-card peatland-limits-card">
+      <h2>OBSERVATION LIMITS</h2>
+      <ul id="observation-limits" class="peatland-limit-list">
+        <li>Regional proxy observation — not an in-situ peat water-table sensor.</li>
+        <li>No peat-water-table depth is measured or inferred.</li>
+        <li>NLWKN groundwater stations are regional groundwater proxies; station distance and local hydrogeological representativeness are uncertain.</li>
+        <li>DWD gridded soil moisture under grass is a regional model product for the 0-60 cm layer and is not converted to peat water-table depth.</li>
+        <li>DWD weather pressure comes from the selected nearby daily climate station; station distance and weather gradients limit site representativeness.</li>
+        <li>Copernicus SWI metadata-only and MoorIS static context are not used as live pressure signals.</li>
+      </ul>
+    </article>
   </main>
   <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; fetch dashboard/latest/wiesmoor-peatland.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
 </div>
@@ -246,8 +247,10 @@
     const soilUnit = clean(soil.unit, "");
     set("soil-value", num(soil.latest_value, soilUnit));
     set("soil-date", clean(soil.latest_date));
+    const soilHasAvailabilityFields = explicitNumber(soil.latest_value) !== null && hasText(soil.latest_date) && hasText(soil.spatial_resolution_km);
     set("soil-resolution", explicitNumber(soil.spatial_resolution_km) === null ? "pending" : `${soil.spatial_resolution_km} km`);
-    set("soil-status", compact(soil.data_status).toLowerCase() === "ok" ? "ok" : "not yet live-ingested");
+    const soilStatusEl = $("soil-status");
+    if (soilStatusEl) soilStatusEl.textContent = soilHasAvailabilityFields ? "ok" : "unavailable";
     const soilDataset = soil.source?.dataset || soil.dataset || soil.variable || soil.source?.status;
     set("soil-source", `${clean(soil.source?.name || soil.source || "DWD soil moisture adapter")} — ${clean(soilDataset, "awaiting live adapter")}`);
     const station = data?.groundwater_proxy?.stations?.[0] || {};

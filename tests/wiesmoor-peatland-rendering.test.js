@@ -122,13 +122,15 @@ function cardLabels(headingText) {
 test('desktop peatland main grid is deterministic two-column row layout', () => {
   const compactCss = normalizeCss(css);
   assert.match(compactCss, /\.peatland-grid \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
-  assert.match(compactCss, /grid-template-areas: "pressure context" "weather right-stack" "limits limits"/);
+  assert.match(compactCss, /grid-template-areas: "pressure context" "weather right-stack"/);
+  assert.doesNotMatch(compactCss, /"limits limits"/);
   assert.match(css, /\.peatland-main-card \{[\s\S]*grid-area: pressure/);
   assert.match(css, /\.peatland-context-card \{ grid-area: context; \}/);
   assert.match(css, /\.peatland-weather-card \{ grid-area: weather; \}/);
   assert.match(css, /\.peatland-right-stack \{[\s\S]*grid-area: right-stack/);
   assert.match(css, /\.peatland-soil-card,\n\.peatland-groundwater-card \{ min-width: 0; \}/);
-  assert.match(css, /\.peatland-limits-card \{ grid-area: limits; \}/);
+  const peatlandCss = css.slice(css.indexOf('/* Wiesmoor Peatland Observer detail page */'));
+  assert.doesNotMatch(peatlandCss, /\.peatland-limits-card\s*\{[^}]*grid-area|grid-area:\s*limits|grid-column:\s*(?:1\s*\/\s*-1|span\s*2)/);
 });
 
 test('desktop row placement classes match the approved card order', () => {
@@ -142,10 +144,10 @@ test('desktop row placement classes match the approved card order', () => {
 
 test('desktop row two places weather left and soil plus groundwater stacked right', () => {
   const compactCss = normalizeCss(css);
-  assert.match(compactCss, /grid-template-areas: "pressure context" "weather right-stack" "limits limits"/);
-  assert.doesNotMatch(compactCss, /"groundwater groundwater"|"weather soil"/);
+  assert.match(compactCss, /grid-template-areas: "pressure context" "weather right-stack"/);
+  assert.doesNotMatch(compactCss, /"limits limits"|"groundwater groundwater"|"weather soil"/);
   assert.match(compactCss, /\.peatland-right-stack \{ grid-area: right-stack; display: grid; gap: var\(--space-md, 1rem\); align-content: start; \}/);
-  assert.match(html, /<div class="peatland-right-stack">[\s\S]*REGIONAL SOIL WATER \/ DWD SOIL MOISTURE \/ 0–60 CM[\s\S]*GROUNDWATER PROXY \/ NLWKN[\s\S]*<\/div>\s*<article class="traffic-card peatland-limits-card">/);
+  assert.match(html, /<section class="weather-grid peatland-grid">[\s\S]*<div class="peatland-right-stack">[\s\S]*REGIONAL SOIL WATER \/ DWD SOIL MOISTURE \/ 0–60 CM[\s\S]*GROUNDWATER PROXY \/ NLWKN[\s\S]*<\/div>\s*<\/section>\s*<article class="traffic-card peatland-limits-card">/);
   assert.match(compactCss, /\.peatland-detail-page \.peatland-groundwater-metrics \{ grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
   assert.match(html, /class="weather-metric-list two peatland-groundwater-metrics"/);
 });
@@ -153,7 +155,8 @@ test('desktop row two places weather left and soil plus groundwater stacked righ
 test('mobile peatland grid stacks in the approved card order', () => {
   const compactCss = normalizeCss(css);
   assert.match(compactCss, /@media \(max-width: 720px\)/);
-  assert.match(compactCss, /grid-template-columns: 1fr; grid-template-areas: "pressure" "context" "weather" "right-stack" "limits"/);
+  assert.match(compactCss, /grid-template-columns: 1fr; grid-template-areas: "pressure" "context" "weather" "right-stack"/);
+  assert.doesNotMatch(compactCss, /"right-stack" "limits"/);
   assert.deepEqual(cardHeadingOrder(), [
     'HYDROLOGICAL PRESSURE',
     'PEAT CONTEXT / WIESMOOR-NORD',
@@ -171,22 +174,25 @@ test('layout cleanup preserves approved visible labels and initial values', () =
     'PEAT CONTEXT / WIESMOOR-NORD', 'WEATHER PRESSURE / DWD DAILY CLIMATE', 'Latest rain', '7-day rainfall', '30-day rainfall',
     'Dry days 7 / 30', 'Dry streak', 'Temperature latest / 7d / 30d',
     'REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM', 'Latest value', 'Latest date', 'Resolution', 'Status',
-    'GROUNDWATER PROXY / NLWKN', 'Station', 'candidate source pending', 'OBSERVATION LIMITS',
+    'GROUNDWATER PROXY / NLWKN', 'Station', 'candidate source pending',
   ]) assert.match(visible, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.doesNotMatch(visible, /placeholder|sample value/i);
 });
 
 
 
-test('observation limits card is unique full-width after the Weather Soil Groundwater section', () => {
+test('observation limits card is unique and outside the two-column grid at full page container width', () => {
   assert.equal((html.match(/<h2>OBSERVATION LIMITS<\/h2>/g) || []).length, 1);
   assert.ok(html.indexOf('WEATHER PRESSURE / DWD DAILY CLIMATE') < html.indexOf('OBSERVATION LIMITS'));
   assert.ok(html.indexOf('REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM') < html.indexOf('OBSERVATION LIMITS'));
   assert.ok(html.indexOf('GROUNDWATER PROXY / NLWKN') < html.indexOf('OBSERVATION LIMITS'));
-  assert.match(html, /<\/div>\s*<article class="traffic-card peatland-limits-card">\s*<h2>OBSERVATION LIMITS<\/h2>/);
+  assert.match(html, /<main class="traffic-dashboard weather-dashboard peatland-dashboard">\s*<section class="weather-grid peatland-grid">[\s\S]*<\/section>\s*<article class="traffic-card peatland-limits-card">\s*<h2>OBSERVATION LIMITS<\/h2>/);
+  const gridSection = html.match(/<section class="weather-grid peatland-grid">([\s\S]*?)<\/section>/)[1];
+  assert.doesNotMatch(gridSection, /OBSERVATION LIMITS|peatland-limits-card/);
   const compactCss = normalizeCss(css);
-  assert.match(compactCss, /grid-template-areas: "pressure context" "weather right-stack" "limits limits"/);
-  assert.match(css, /\.peatland-limits-card \{ grid-area: limits; \}/);
+  assert.match(compactCss, /grid-template-areas: "pressure context" "weather right-stack"/);
+  const peatlandCss = normalizeCss(css.slice(css.indexOf('/* Wiesmoor Peatland Observer detail page */')));
+  assert.doesNotMatch(peatlandCss, /"limits limits"|grid-area: limits|grid-column: (?:1 \/ -1|span 2)/);
 });
 
 test('observation limits bullets remain unchanged and in the same order', () => {
@@ -203,11 +209,23 @@ test('soil water renders exactly four tiles in the approved 2x2 order without Tr
   assert.doesNotMatch(page.allText(), /Trend/);
 });
 
-test('soil status uses regional soil water data_status and falls back defensively unless ok', async () => {
-  const notOk = await render({ ...payload(), regional_soil_water: { ...payload().regional_soil_water, data_status: 'partial' } });
-  assert.equal(notOk.text('soil-status'), 'not yet live-ingested');
-  const missing = await render({ ...payload(), regional_soil_water: { ...payload().regional_soil_water, data_status: undefined } });
-  assert.equal(missing.text('soil-status'), 'not yet live-ingested');
+test('soil status uses displayed field availability rather than regional soil water data_status', async () => {
+  const withoutDataStatus = await render({ ...payload(), regional_soil_water: { ...payload().regional_soil_water, data_status: undefined } });
+  assert.equal(withoutDataStatus.text('soil-status'), 'ok');
+  const notOkDataStatus = await render({ ...payload(), regional_soil_water: { ...payload().regional_soil_water, data_status: 'partial' } });
+  assert.equal(notOkDataStatus.text('soil-status'), 'ok');
+  for (const field of ['latest_value', 'latest_date', 'spatial_resolution_km']) {
+    const soil = { ...payload().regional_soil_water };
+    delete soil[field];
+    const page = await render({ ...payload(), regional_soil_water: soil });
+    assert.equal(page.text('soil-status'), 'unavailable', `${field} should be required for ok soil status`);
+  }
+});
+
+test('not yet live-ingested never renders for regional soil water status', async () => {
+  const missing = await render({ ...payload(), regional_soil_water: { source: payload().regional_soil_water.source } });
+  assert.equal(missing.text('soil-status'), 'unavailable');
+  assert.doesNotMatch(missing.allText(), /not yet live-ingested/);
 });
 
 test('weather status ok tile is not visibly rendered while remaining weather metrics stay visible', async () => {
