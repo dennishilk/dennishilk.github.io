@@ -182,21 +182,16 @@
   function renderPeatContext(ctx = {}) {
     const source = ctx?.source || {};
     const nord = ctx?.wiesmoor_nord || {};
-    const thickness = ctx?.peat_thickness_context || {};
     const sourceUrl = ctx?.source_url || source?.url;
-    const thicknessValue = explicitNumber(thickness?.value);
-    const thicknessText = thicknessValue === null
-      ? "numeric value unavailable"
-      : `${thicknessValue.toLocaleString("de-DE", { maximumFractionDigits: 2 })}${hasText(thickness?.unit) ? " " + clean(thickness.unit, "") : ""}`;
     const facts = [
       ["Area", areaLabel(ctx?.area_name || "Wiesmoor-Nord")],
-      ["Moor type", shortLabel(ctx?.moor_type_context, [[/raised[- ]bog|hochmoor/, "Raised bog context"]], "Raised bog context")],
+      ["Moor type", shortLabel(ctx?.moor_type_context, [[/raised[- ]bog|hochmoor/, "Raised bog"]], "Raised bog")],
       ["Historical use", shortLabel(ctx?.land_use_history, [[/peat.*horticulture|horticulture.*peat|greenhouse/, "Peat / horticulture"], [/agriculture|grassland/, "Agriculture context"]], "Peat / horticulture")],
       ["Drainage", shortLabel(ctx?.drainage_context, [[/canal|kanal|road/, "Canal / road network"], [/drainage/, "Drainage context"]], "Canal / road network")],
       ["Source", sourceLink("MoorIS / NLWKN", sourceUrl), true],
-      ["Peat thickness", thicknessText],
+      ["Context", "Static · not live"],
     ];
-    const factId = (label) => ({ "Area": "peat-area", "Source": "peat-context-source", "Peat thickness": "peat-thickness" }[label] || "");
+    const factId = (label) => ({ "Area": "peat-area", "Source": "peat-context-source", "Context": "peat-context-status" }[label] || "");
     const factsEl = $("peat-context-facts");
     if (factsEl) factsEl.innerHTML = facts.map(([label, value, html]) => {
       const id = factId(label);
@@ -207,7 +202,7 @@
     const pgMatch = datasetId.match(/pgId\s*=?\s*(\d+)/i) || compact(sourceUrl).match(/pgId=(\d+)/i);
     const areaMatch = datasetId.match(/(?:area|gebiet|fläche)\s*(\d+)/i) || datasetId.match(/\b(377)\b/);
     setHiddenText("peat-dataset-line", pgMatch || areaMatch ? `MoorIS pgId ${pgMatch ? pgMatch[1] : "585"} · Moorschutzprogramm area ${areaMatch ? areaMatch[1] : "377"}` : "");
-    setHiddenText("peat-source-status-line", hasText(ctx?.context_status || ctx?.data_status) ? "Static source-backed context · not live" : "");
+    setHiddenText("peat-source-status-line", "");
     const hasContext = hasText(ctx?.area_name) || hasText(ctx?.moor_type_context) || hasText(ctx?.land_use_history) || hasText(ctx?.drainage_context);
     setHiddenText("peat-context-note", hasContext ? "" : "Peat context unavailable in the current JSON.");
     setHiddenText("peat-management-note", contextNote(ctx));

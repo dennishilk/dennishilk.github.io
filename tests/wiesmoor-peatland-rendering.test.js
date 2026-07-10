@@ -118,18 +118,24 @@ test('rich peat_context renders compact sourced context instead of generic pendi
   assert.doesNotMatch(page.text('peat-context-facts'), /MoorIS Niedersachsen \/ NLWKN Moorschutzprogramm entry 377 Wiesmoor-Nord/);
   assert.equal((page.html('peat-context-facts').match(/peat-context-tile/g) || []).length, 6);
   assert.equal(page.text('peat-dataset-line'), 'MoorIS pgId 585 · Moorschutzprogramm area 377');
-  assert.equal(page.text('peat-source-status-line'), 'Static source-backed context · not live');
+  assert.equal(page.text('peat-source-status-line'), '');
+  assert.equal(page.element('peat-source-status-line').hidden, true);
   assert.doesNotMatch(page.text('peat-context-facts'), /Dataset \/ entry|Context status/);
 });
 
-test('moor type, drainage, historical use, and unavailable thickness render as compact labels without fabricated numbers', async () => {
+test('peat context renders exact six-tile hierarchy without unavailable thickness placeholder', async () => {
   const page = await render(payload());
   const facts = page.text('peat-context-facts');
-  assert.match(facts, /Moor typeRaised bog context/);
+  const labels = Array.from(page.html('peat-context-facts').matchAll(/<span>([^<]+)<\/span>/g)).map((match) => match[1]);
+  assert.deepEqual(labels, ['Area', 'Moor type', 'Historical use', 'Drainage', 'Source', 'Context']);
+  assert.match(facts, /AreaWiesmoor-Nord/);
+  assert.match(facts, /Moor typeRaised bog/);
+  assert.doesNotMatch(facts, /Raised bog context/);
   assert.match(facts, /DrainageCanal \/ road network/);
   assert.match(facts, /Historical usePeat \/ horticulture/);
+  assert.match(facts, /ContextStatic · not live/);
   assert.doesNotMatch(facts, /East Frisian central raised-bog|canals cross the moor and serve moor drainage|peat-fired power generation/);
-  assert.match(facts, /numeric value unavailable/);
+  assert.doesNotMatch(facts, /Peat thickness|numeric value unavailable/);
   assert.doesNotMatch(facts, /\b\d+(?:\.\d+)?\s*(?:m|cm)\b.*Peat thickness/i);
 });
 
@@ -149,6 +155,7 @@ test('verbose source-backed context is not dumped into the visible peat card', a
     page.text('peat-dataset-line'),
     page.text('peat-source-status-line'),
   ].join(' ');
+  assert.equal(page.text('peat-source-status-line'), '');
   assert.doesNotMatch(visiblePeatText, /MoorIS\/NLWKN place Wiesmoor-Nord in the East Frisian central raised-bog/);
   assert.doesNotMatch(visiblePeatText, /MoorIS describes Wiesmoor as shaped by peat-fired power generation/);
   assert.doesNotMatch(visiblePeatText, /MoorIS notes canals cross the moor and serve moor drainage/);
@@ -169,7 +176,7 @@ test('raw null undefined and object strings never render', async () => {
 test('graceful fallback remains when peat_context is absent', async () => {
   const page = await render(payload(null));
   assert.equal(page.text('peat-context-note'), 'Peat context unavailable in the current JSON.');
-  assert.match(page.text('peat-context-facts'), /Peat thicknessnumeric value unavailable/);
+  assert.doesNotMatch(page.text('peat-context-facts'), /Peat thickness|numeric value unavailable/);
 });
 
 test('existing pressure weather soil and groundwater rendering stays intact', async () => {
