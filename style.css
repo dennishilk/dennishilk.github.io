@@ -2667,8 +2667,7 @@ button.technology-observer-card {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-areas:
     "pressure context"
-    "weather soil"
-    "groundwater groundwater"
+    "weather right-stack"
     "limits limits";
 }
 .peatland-grid > .traffic-card { grid-column: auto; }
@@ -2678,8 +2677,14 @@ button.technology-observer-card {
 }
 .peatland-context-card { grid-area: context; }
 .peatland-weather-card { grid-area: weather; }
-.peatland-soil-card { grid-area: soil; }
-.peatland-groundwater-card { grid-area: groundwater; }
+.peatland-right-stack {
+  grid-area: right-stack;
+  display: grid;
+  gap: var(--space-md, 1rem);
+  align-content: start;
+}
+.peatland-soil-card,
+.peatland-groundwater-card { min-width: 0; }
 .peatland-limits-card { grid-area: limits; }
 
 .peatland-primary-status {
@@ -2793,16 +2798,14 @@ button.technology-observer-card {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
       "pressure context"
-      "weather soil"
-      "groundwater groundwater"
+      "weather right-stack"
       "limits limits";
   }
   .peatland-grid > .traffic-card,
   .peatland-main-card,
   .peatland-context-card,
   .peatland-weather-card,
-  .peatland-soil-card,
-  .peatland-groundwater-card,
+  .peatland-right-stack,
   .peatland-limits-card { grid-column: auto !important; }
 }
 
@@ -2814,10 +2817,10 @@ button.technology-observer-card {
       "pressure"
       "context"
       "weather"
-      "soil"
-      "groundwater"
+      "right-stack"
       "limits";
   }
+  .peatland-right-stack { gap: 1rem; }
   .peatland-detail-page .peatland-groundwater-metrics { grid-template-columns: 1fr; }
 }
 
