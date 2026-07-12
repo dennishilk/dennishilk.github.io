@@ -253,43 +253,16 @@
         "update_frequency": "Near real-time; WSV PEGELONLINE public descriptions indicate minute-current data with station/time-series-specific cadences."
       },
       "status": "live"
-    },
-    {
-      "adapter": "bsh",
-      "data_status": "adapter_pending",
-      "diagnostics": {
-        "adapter_errors": [],
-        "api_attempts": 0,
-        "live_adapter_enabled": false,
-        "note": "Research documented; live downloads intentionally not implemented in this scaffolding task.",
-        "retries": 0
-      },
-      "observations": {},
-      "source_research": {
-        "access_method": "Official BSH Open Data, GeoSeaPortal, and OGC/geodata services; no website scraping.",
-        "agency": "Bundesamt für Seeschifffahrt und Hydrographie (BSH)",
-        "available_datasets": [
-          "BSH geoinformation and marine Open Data services via GeoSeaPortal/GDI-BSH",
-          "Oceanographic data including sea-level, tide, hydrographic, and coastal/marine datasets where published",
-          "North Sea and German coastal reference datasets relevant to storm-surge and tidal context"
-        ],
-        "expected_usefulness": "Important second-phase source for coastal North Sea, tidal, storm-surge, and marine context affecting East Frisia.",
-        "licensing": "BSH states many data are available publicly free of charge and licensed for subsequent use; capture per-dataset licence before downloads.",
-        "long_term_stability": "High: federal maritime and hydrographic agency with established GeoSeaPortal and German Oceanographic Data Center responsibilities.",
-        "official_url": "https://www.bsh.de/EN/TOPICS/Geoinformation_and_Open_Data/geoinformation_and_open_data_node.html",
-        "update_frequency": "Dataset-specific; operational marine products and archived oceanographic datasets are published through BSH data and geodata portals."
-      },
-      "status": "adapter_pending"
     }
   ],
   "category": "Environment",
-  "data_status": "partial",
+  "data_status": "ok",
   "date": "2026-07-12",
   "date_utc": "2026-07-12",
   "diagnostics": {
     "adapter_errors": {},
     "api_attempts": 5,
-    "data_status": "partial",
+    "data_status": "ok",
     "http_status": null,
     "live_adapters_enabled": true,
     "max_retries": 1,
@@ -299,9 +272,5 @@
   "live_adapters_enabled": true,
   "name": "East Frisia Water Observer",
   "observer": "east-frisia-water-observer",
-  "recommendation": {
-    "next_recommended_adapter": "bsh",
-    "reason": "WSV PEGELONLINE, NLWKN Pegelonline, and DWD CDC daily precipitation are live sources; retain BSH later for coastal marine context."
-  },
   "region": "East Frisia, Lower Saxony, Germany"
 }
