@@ -2827,11 +2827,12 @@ button.technology-observer-card {
 .water-observer-page .water-overview-card,
 .water-observer-page .water-context-card,
 .water-observer-page .water-limits-card,
-.water-observer-page .water-diagnostics-card { grid-column: span 12 !important; }
+.water-observer-page .water-diagnostics-card,
+.water-observer-page .water-status-card,
+.water-observer-page .water-bsh-card { grid-column: span 12 !important; }
 .water-observer-page .water-level-card,
 .water-observer-page .water-rain-card,
-.water-observer-page .water-chart-card,
-.water-observer-page .water-bsh-card { grid-column: span 6 !important; }
+.water-observer-page .rain-totals-card { grid-column: span 6 !important; }
 .water-observer-page .water-primary strong { color:#44d9ff; font-size:clamp(2.1rem,4vw,3.45rem); }
 .water-observer-page .water-primary span { color:#8bdfff; }
 .water-overview-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
@@ -2859,7 +2860,6 @@ button.technology-observer-card {
 .water-diagnostic-row dl { display:grid; grid-template-columns:auto 1fr; gap:.35rem .65rem; margin:0; font-size:.82rem; }
 .water-diagnostic-row dt { color:#f0f6fc; font-weight:800; }
 .water-diagnostic-row dd { margin:0; color:#c9d1d9; overflow-wrap:anywhere; }
-.hometown-observer-card .hometown-card-description { color:#aab3c0; font-size:.82rem; line-height:1.35; margin-top:.55rem; text-transform:none; letter-spacing:normal; font-weight:600; }
 @media (max-width:950px) {
   .water-observer-page .water-level-card,
   .water-observer-page .water-rain-card,
