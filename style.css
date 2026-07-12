@@ -2847,6 +2847,7 @@ button.technology-observer-card {
 .water-limits { columns:2; margin:.2rem 0 0; padding-left:1.2rem; line-height:1.55; }
 .water-bar-chart { min-height:220px; height:auto; padding:.8rem; }
 .water-bars { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.75rem; align-items:end; min-height:190px; }
+.water-status-card .water-bars { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .water-bar-item { display:grid; grid-template-rows:auto 1fr auto; gap:.45rem; min-width:0; color:#c9d1d9; text-align:center; }
 .water-bar-item span { color:#f0f6fc; font-size:.82rem; font-weight:800; overflow-wrap:anywhere; }
 .water-bar-item div { height:126px; display:flex; align-items:end; justify-content:center; border:1px solid rgba(0,180,255,.16); background:rgba(0,20,34,.55); }
