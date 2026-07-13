@@ -83,7 +83,10 @@ let svg='<defs><radialGradient id="mapBg"><stop offset="0%" stop-color="#09233b"
 $('milky-panel').innerHTML=`<path d="${(d.milky_way.points||[]).map((p,i)=>`${i?'L':'M'} ${x(p.azimuth_deg)/100*500} ${60-(Math.max(-30,Math.min(90,p.altitude_deg))/120)*90}`).join(' ')}" fill="none" stroke="#d8f7ff" stroke-width=".7" stroke-linecap="round" opacity=".42"/>`;$('milky-desc').textContent=d.milky_way.description;
 $('iss').innerHTML=renderIss(d.iss);$('history-content').innerHTML=renderHistory(d)}
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(schedulePlacement,120)},{passive:true});
-const url='/world-observer/dashboard/latest/horizon-observer.json?ts='+Date.now();fetch(url,{cache:'no-store'}).then(r=>r.json()).then(render).catch(e=>console.error(e));})();
+const refreshMs=660000,jsonUrl='/world-observer/dashboard/latest/horizon-observer.json';let refreshTimer=null;
+function latestUrl(){return jsonUrl+'?ts='+Date.now()}
+function refresh(){fetch(latestUrl(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Horizon Observer JSON fetch failed');return r.json()}).then(d=>{render(d);if(refreshTimer===null)refreshTimer=setInterval(refresh,refreshMs)}).catch(()=>{})}
+refresh();})();
 </script>
 </body>
 </html>
