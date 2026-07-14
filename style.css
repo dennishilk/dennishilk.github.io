@@ -2876,3 +2876,225 @@ button.technology-observer-card {
   .water-limits { columns:1; }
 }
 @media (max-width:560px) { .water-bars { grid-template-columns:1fr; } .water-bar-item div { height:86px; } }
+
+/* Computer Museum */
+.museum-page main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+
+.museum-hero {
+  position: relative;
+}
+
+.museum-tagline,
+.museum-exhibit-summary {
+  color: #d8f5ff;
+  line-height: 1.6;
+  max-width: 760px;
+}
+
+.museum-status {
+  border: 1px solid rgba(0,180,255,0.42);
+  border-radius: 999px;
+  color: #d8f5ff;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.34rem 0.7rem;
+  text-transform: uppercase;
+}
+
+.museum-status.open,
+.museum-status.available {
+  background: rgba(61, 255, 120, 0.12);
+  border-color: rgba(61, 255, 120, 0.55);
+  color: #8cffb0;
+}
+
+.museum-status.planned {
+  background: rgba(255, 190, 92, 0.12);
+  border-color: rgba(255, 190, 92, 0.5);
+  color: #ffd08a;
+}
+
+.museum-notice {
+  border-color: rgba(0,180,255,0.38);
+}
+
+.museum-exhibits {
+  margin: 1.5rem 0 2rem;
+  text-align: left;
+}
+
+.museum-exhibits h2 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.museum-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+  gap: 1rem;
+}
+
+.museum-card,
+.museum-home-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 1.15rem;
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.museum-card:hover,
+.museum-card:focus-within,
+.museum-home-card:hover,
+.museum-home-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 14px rgba(0,180,255,0.28);
+  transform: translateY(-3px);
+}
+
+.museum-card-wopr { box-shadow: inset 0 0 20px rgba(96, 255, 115, 0.04); }
+.museum-card-c64 { box-shadow: inset 0 0 20px rgba(81, 126, 255, 0.06); }
+.museum-card-ibm { box-shadow: inset 0 0 20px rgba(85, 255, 145, 0.05); }
+.museum-card-dsky { box-shadow: inset 0 0 20px rgba(255, 176, 72, 0.06); }
+
+.museum-card-top {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.museum-kicker,
+.museum-meta dt {
+  color: #8b949e;
+  font-size: 0.78rem;
+}
+
+.museum-card h3,
+.museum-home-card h3,
+.museum-exhibit-layout h2 {
+  color: var(--accent);
+}
+
+.museum-card p,
+.museum-home-card p,
+.museum-exhibit-layout p,
+.museum-exhibit-layout li {
+  color: #c9d1d9;
+  line-height: 1.55;
+}
+
+.museum-meta {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.museum-meta div {
+  border-left: 2px solid rgba(0,180,255,0.45);
+  padding-left: 0.65rem;
+}
+
+.museum-meta dd {
+  color: #e6edf3;
+  margin-top: 0.2rem;
+}
+
+.card-button,
+.museum-back {
+  align-items: center;
+  background: rgba(0,180,255,0.12);
+  border: 1px solid rgba(0,180,255,0.48);
+  border-radius: 10px;
+  color: #d8f5ff;
+  display: inline-flex;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.65rem 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.card-button:hover,
+.card-button:focus-visible,
+.museum-back:hover,
+.museum-back:focus-visible {
+  background: rgba(0,180,255,0.22);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(0,180,255,0.32);
+  transform: translateY(-2px);
+}
+
+.museum-home-cards {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.museum-home-card {
+  align-items: center;
+  text-align: center;
+}
+
+.exhibit-meta {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 720px;
+  width: min(720px, 100%);
+}
+
+.museum-primary-action {
+  margin-top: 0.5rem;
+}
+
+.museum-exhibit-layout {
+  display: grid;
+  gap: 1rem;
+  text-align: left;
+}
+
+.museum-exhibit-layout ul {
+  margin-left: 1.2rem;
+}
+
+.museum-exhibit-layout .detail-card h2 {
+  font-size: 1.15rem;
+}
+
+@media (max-width: 600px) {
+  .museum-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .museum-card-top,
+  .exhibit-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .museum-card-top {
+    flex-direction: column;
+  }
+
+  .museum-hero h1 {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .museum-card,
+  .museum-home-card,
+  .card-button,
+  .museum-back {
+    transition: none;
+  }
+}
