@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/museum/">
+  <title>Computer Museum – Dennis Hilk</title>
+  <meta name="description" content="Interactive educational computer museum exhibits and planned browser simulations.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="stylesheet" href="/style.css?v=43">
+  <script defer src="/stars.js"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="content museum-page">
+  <header class="dashboard-header wo-page-header museum-hero">
+    <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html"><i class="fas fa-newspaper"></i> News</a></div></div>
+    <p class="museum-status open">OPEN</p>
+    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Computer Museum</span></h1>
+    <p class="observer-hero">Interactive recreations of iconic computers,<br>terminals and control systems from computing history.</p>
+    <p class="museum-tagline">Boot. Explore. Learn.</p>
+  </header>
+  <main>
+    <section class="observer-notice museum-notice" aria-labelledby="museum-context-title">
+      <h2 id="museum-context-title">Important context</h2>
+      <p>These exhibits are independently created educational simulations. No proprietary ROM images, operating-system files or original software are distributed.</p>
+      <p>They are inspired by historically significant or fictional computer interfaces and are not exact archival emulations unless explicitly stated.</p>
+    </section>
+    <section class="museum-exhibits" aria-labelledby="museum-exhibits-title">
+      <h2 id="museum-exhibits-title">Exhibits</h2>
+      <div class="museum-grid">
+      <article class="museum-card museum-card-wopr">
+        <div class="museum-card-top"><span class="museum-kicker">War Operations Plan Response</span><span class="museum-status available">AVAILABLE</span></div>
+        <h3>WOPR</h3>
+        <dl class="museum-meta"><div><dt>Era</dt><dd>1983-inspired fictional system</dd></div><div><dt>Type</dt><dd>Interactive terminal simulation</dd></div></dl>
+        <p>A browser-based command terminal inspired by the fictional strategic computer from WarGames.</p>
+        <a class="card-button" href="/museum/wopr/">ENTER SYSTEM</a>
+      </article>
+      <article class="museum-card museum-card-c64">
+        <div class="museum-card-top"><span class="museum-kicker">Home computing era</span><span class="museum-status planned">PLANNED</span></div>
+        <h3>8-Bit BASIC Terminal</h3>
+        <dl class="museum-meta"><div><dt>Era</dt><dd>1982-inspired</dd></div><div><dt>Type</dt><dd>Planned interactive simulation</dd></div></dl>
+        <p>An original browser-built BASIC-style terminal inspired by early 8-bit home computing.</p>
+        <a class="card-button" href="/museum/c64/">VIEW EXHIBIT</a>
+      </article>
+      <article class="museum-card museum-card-ibm">
+        <div class="museum-card-top"><span class="museum-kicker">Early personal computing</span><span class="museum-status planned">PLANNED</span></div>
+        <h3>PC XT Command Desk</h3>
+        <dl class="museum-meta"><div><dt>Era</dt><dd>1983-inspired</dd></div><div><dt>Type</dt><dd>Planned interactive simulation</dd></div></dl>
+        <p>A simulated early personal-computer command environment with an original file system and command parser.</p>
+        <a class="card-button" href="/museum/ibm-pc-xt/">VIEW EXHIBIT</a>
+      </article>
+      <article class="museum-card museum-card-dsky">
+        <div class="museum-card-top"><span class="museum-kicker">Guidance computer interface</span><span class="museum-status planned">PLANNED</span></div>
+        <h3>Apollo DSKY</h3>
+        <dl class="museum-meta"><div><dt>Era</dt><dd>1960s spaceflight</dd></div><div><dt>Type</dt><dd>Planned educational simulation</dd></div></dl>
+        <p>An interactive educational recreation of the Display and Keyboard interface used with the Apollo Guidance Computer.</p>
+        <a class="card-button" href="/museum/apollo-dsky/">VIEW EXHIBIT</a>
+      </article>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div>
+    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</div>
+</body>
+</html>
