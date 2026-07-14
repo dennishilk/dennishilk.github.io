@@ -71,10 +71,8 @@ button, input { font: inherit; }
 
 .wopr-screen { padding: clamp(1.25rem, 4vw, 3rem); }
 
-.wopr-back-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
+.wopr-terminal-return-link {
+  display: inline-block;
   max-width: 100%;
   margin: 0 0 0.9rem;
   color: var(--muted);
@@ -84,16 +82,16 @@ button, input { font: inherit; }
   text-decoration: none;
   text-transform: uppercase;
   overflow-wrap: anywhere;
-  transition: color 0.15s ease, text-shadow 0.15s ease;
+  transition: color 0.15s ease, opacity 0.15s ease;
 }
 
-.wopr-back-link:hover,
-.wopr-back-link:focus-visible {
-  color: var(--green);
-  text-shadow: 0 0 12px rgba(124, 255, 155, 0.32);
+.wopr-terminal-return-link:hover,
+.wopr-terminal-return-link:focus-visible {
+  color: var(--text);
+  opacity: 0.86;
 }
 
-.wopr-back-link:focus-visible {
+.wopr-terminal-return-link:focus-visible {
   outline: 1px solid var(--border);
   outline-offset: 0.2rem;
 }
