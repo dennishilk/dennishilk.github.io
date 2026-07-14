@@ -3001,6 +3001,14 @@ button.technology-observer-card {
   gap: 0.55rem;
 }
 
+.museum-card > .museum-meta {
+  flex: 1;
+}
+
+.museum-card > .card-button {
+  margin-top: auto;
+}
+
 .museum-meta div {
   border-left: 2px solid rgba(0,180,255,0.45);
   padding-left: 0.65rem;
