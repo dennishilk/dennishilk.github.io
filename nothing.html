@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://dennishilk.com/nothing.html" />
+  <title>Nothing.</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --terminal-fg: #d7e0e7;
+      --terminal-muted: #6f7d86;
+      --terminal-dim: #8b98a1;
+      --terminal-accent: #f2f6fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background: #000;
+      color: var(--terminal-fg);
+      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: clamp(1.25rem, 5vw, 4rem);
+    }
+
+    main {
+      width: min(100%, 42rem);
+    }
+
+    .terminal {
+      margin: 0;
+      font-size: clamp(0.92rem, 2.7vw, 1.05rem);
+      line-height: 1.75;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .terminal-line {
+      margin: 0;
+      opacity: 0;
+      transform: translateY(0.15rem);
+      transition: opacity 360ms ease, transform 360ms ease;
+    }
+
+    .terminal-line.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .terminal-line.command {
+      color: var(--terminal-accent);
+    }
+
+    .terminal-line.response {
+      color: var(--terminal-dim);
+    }
+
+    .terminal-line.final {
+      margin-top: 1.25rem;
+    }
+
+    .return-home {
+      display: inline-block;
+      margin-top: 2rem;
+      color: var(--terminal-muted);
+      font-size: 0.88rem;
+      text-decoration: none;
+      opacity: 0;
+      transition: color 180ms ease, opacity 360ms ease;
+    }
+
+    .return-home.is-visible {
+      opacity: 1;
+    }
+
+    .return-home:focus,
+    .return-home:hover {
+      color: var(--terminal-accent);
+      outline: none;
+    }
+
+    .return-home:focus-visible {
+      outline: 1px solid var(--terminal-muted);
+      outline-offset: 0.35rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .terminal-line,
+      .return-home {
+        transition: none;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main aria-labelledby="nothing-title">
+    <h1 id="nothing-title" hidden>Nothing</h1>
+    <section class="terminal" aria-label="Terminal output" aria-live="polite">
+      <p class="terminal-line command is-visible" data-delay="0">root@nebunix:~$ file nothing</p>
+      <p class="terminal-line response" data-delay="800">nothing: ASCII text</p>
+      <p class="terminal-line response" data-delay="1500">Opening...</p>
+      <p class="terminal-line response" data-delay="2300">Nothing.</p>
+      <p class="terminal-line final" data-delay="4800">Congratulations.</p>
+      <p class="terminal-line" data-delay="5600">Most people never click &quot;Nothing&quot;.</p>
+      <a class="return-home" href="/" data-delay="5600" hidden>← Return Home</a>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const revealItems = document.querySelectorAll(".terminal-line:not(.is-visible), .return-home");
+
+      revealItems.forEach((item) => {
+        const reveal = () => {
+          item.hidden = false;
+          item.classList.add("is-visible");
+        };
+
+        if (reducedMotion) {
+          reveal();
+          return;
+        }
+
+        window.setTimeout(reveal, Number(item.dataset.delay) || 0);
+      });
+    })();
+  </script>
+</body>
+</html>
