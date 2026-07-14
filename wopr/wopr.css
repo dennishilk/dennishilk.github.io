@@ -71,6 +71,33 @@ button, input { font: inherit; }
 
 .wopr-screen { padding: clamp(1.25rem, 4vw, 3rem); }
 
+.wopr-back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  max-width: 100%;
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+  font-size: clamp(0.68rem, 1.7vw, 0.82rem);
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.wopr-back-link:hover,
+.wopr-back-link:focus-visible {
+  color: var(--green);
+  text-shadow: 0 0 12px rgba(124, 255, 155, 0.32);
+}
+
+.wopr-back-link:focus-visible {
+  outline: 1px solid var(--border);
+  outline-offset: 0.2rem;
+}
+
 .wopr-header { margin-bottom: 2rem; }
 .kicker, .classification { color: var(--amber); letter-spacing: 0.14em; text-transform: uppercase; }
 .kicker { margin: 0 0 0.5rem; font-size: 0.82rem; }
