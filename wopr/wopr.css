@@ -312,12 +312,13 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
 .joshua-rocket {
   position: absolute;
   left: var(--rocket-start);
-  bottom: -2rem;
+  bottom: -2.5rem;
   font-size: var(--rocket-size);
   line-height: 1;
-  filter: drop-shadow(0 0 8px rgba(255, 191, 95, 0.35));
+  filter: drop-shadow(0 0 10px rgba(255, 191, 95, 0.42));
   opacity: 0;
-  animation: joshua-rocket-flight var(--rocket-duration) ease-out var(--rocket-delay) forwards;
+  will-change: opacity, transform;
+  animation: joshua-rocket-flight var(--rocket-duration) cubic-bezier(0.18, 0.74, 0.24, 1) var(--rocket-delay) forwards;
 }
 
 .joshua-achievement-overlay {
@@ -381,9 +382,10 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
 }
 
 @keyframes joshua-rocket-flight {
-  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-16deg) scale(0.86); }
-  12% { opacity: 0.9; }
-  100% { opacity: 0; transform: translate3d(var(--rocket-drift), calc(-1 * var(--rocket-rise) - 4rem), 0) rotate(16deg) scale(1); }
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(calc(-1 * var(--rocket-rotation))) scale(0.94); }
+  8%, 78% { opacity: 0.96; }
+  45% { transform: translate3d(var(--rocket-mid-drift), calc(-0.48 * var(--rocket-rise)), 0) rotate(calc(var(--rocket-rotation) * 0.15)) scale(1); }
+  100% { opacity: 0.9; transform: translate3d(var(--rocket-drift), calc(-1 * var(--rocket-rise) - 5rem), 0) rotate(var(--rocket-rotation)) scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -395,6 +397,6 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
 
 @keyframes joshua-rocket-fade {
   0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.96); }
-  20%, 70% { opacity: 0.72; }
+  20%, 70% { opacity: 0.9; }
   100% { opacity: 0; transform: translate3d(0, -0.35rem, 0) scale(1); }
 }

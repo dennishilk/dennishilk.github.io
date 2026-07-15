@@ -12,11 +12,12 @@ const identifierInput = document.getElementById("wopr-identifier");
 const passwordInput = document.getElementById("wopr-secret");
 
 const JOSHUA_FILM_CREDENTIAL = "JOSHUA";
-const JOSHUA_ROCKET_COUNT = 28;
-const JOSHUA_ROCKET_MIN_SIZE = 12;
-const JOSHUA_ROCKET_MAX_SIZE = 24;
+const JOSHUA_ROCKET_COUNT = 72;
+const JOSHUA_ROCKET_MIN_SIZE = 18;
+const JOSHUA_ROCKET_MAX_SIZE = 32;
 const JOSHUA_DISMISS_ARM_DELAY = 220;
 const JOSHUA_ALARM_PULSES = 3;
+const JOSHUA_ROCKET_LAUNCH_WINDOW = 0.9;
 
 let joshuaAudioContext = null;
 let joshuaSequenceActive = false;
@@ -62,11 +63,17 @@ function getJoshuaAudioContext() {
   return joshuaAudioContext;
 }
 
+async function readyJoshuaAudioContext() {
+  const context = getJoshuaAudioContext();
+  if (!context) return null;
+  if (context.state === "suspended") await context.resume();
+  return context;
+}
+
 async function playJoshuaAlarm() {
   try {
-    const context = getJoshuaAudioContext();
+    const context = await readyJoshuaAudioContext();
     if (!context) return;
-    if (context.state === "suspended") await context.resume();
 
     const now = context.currentTime;
     const masterGain = context.createGain();
@@ -85,8 +92,8 @@ async function playJoshuaAlarm() {
       oscillator.frequency.linearRampToValueAtTime(610 + (pulse * 30), end);
 
       pulseGain.gain.setValueAtTime(0.0001, start);
-      pulseGain.gain.linearRampToValueAtTime(0.11, start + 0.018);
-      pulseGain.gain.linearRampToValueAtTime(0.08, start + 0.09);
+      pulseGain.gain.linearRampToValueAtTime(0.16, start + 0.018);
+      pulseGain.gain.linearRampToValueAtTime(0.1, start + 0.09);
       pulseGain.gain.exponentialRampToValueAtTime(0.0001, end);
 
       oscillator.connect(pulseGain);
@@ -99,7 +106,8 @@ async function playJoshuaAlarm() {
       }, { once: true });
     }
 
-    window.setTimeout(() => masterGain.disconnect(), 1100);
+    window.setTimeout(() => masterGain.disconnect(), 1050);
+    await new Promise((resolve) => window.setTimeout(resolve, 900));
   } catch (error) {
     // Audio is celebratory only; blocked playback must not interrupt the Easter egg.
   }
@@ -113,27 +121,36 @@ function createJoshuaRockets() {
   document.body.appendChild(layer);
 
   const rocketCount = reduceMotion ? 8 : JOSHUA_ROCKET_COUNT;
+  let longestFlight = 0;
+
   for (let index = 0; index < rocketCount; index += 1) {
     const rocket = document.createElement("span");
-    const size = reduceMotion ? 16 : JOSHUA_ROCKET_MIN_SIZE + Math.round(Math.random() * (JOSHUA_ROCKET_MAX_SIZE - JOSHUA_ROCKET_MIN_SIZE));
-    const startX = 6 + Math.random() * 88;
-    const drift = (Math.random() * 34) - 17;
-    const rise = 78 + Math.random() * 30;
-    const delay = reduceMotion ? Math.random() * 0.35 : Math.random() * 0.85;
-    const duration = reduceMotion ? 1.8 : 1.8 + Math.random() * 0.9;
+    const size = reduceMotion ? 18 : JOSHUA_ROCKET_MIN_SIZE + Math.round(Math.random() * (JOSHUA_ROCKET_MAX_SIZE - JOSHUA_ROCKET_MIN_SIZE));
+    const isLeftGutter = Math.random() < 0.5;
+    const startX = isLeftGutter ? Math.random() * 34 : 66 + Math.random() * 34;
+    const driftDirection = isLeftGutter ? 1 : -1;
+    const drift = driftDirection * (6 + Math.random() * 20);
+    const midDrift = drift * (0.35 + Math.random() * 0.3);
+    const rise = 110 + Math.random() * 24;
+    const delay = reduceMotion ? Math.random() * 0.35 : (index / Math.max(rocketCount - 1, 1)) * JOSHUA_ROCKET_LAUNCH_WINDOW;
+    const duration = reduceMotion ? 1.8 : 4 + Math.random();
+    const rotation = driftDirection * (10 + Math.random() * 18);
 
     rocket.className = "joshua-rocket";
     rocket.textContent = "🚀";
     rocket.style.setProperty("--rocket-size", `${size}px`);
     rocket.style.setProperty("--rocket-start", `${startX}vw`);
     rocket.style.setProperty("--rocket-drift", `${drift}vw`);
+    rocket.style.setProperty("--rocket-mid-drift", `${midDrift}vw`);
     rocket.style.setProperty("--rocket-rise", `${rise}vh`);
     rocket.style.setProperty("--rocket-delay", `${delay}s`);
     rocket.style.setProperty("--rocket-duration", `${duration}s`);
+    rocket.style.setProperty("--rocket-rotation", `${rotation}deg`);
     layer.appendChild(rocket);
+    longestFlight = Math.max(longestFlight, delay + duration);
   }
 
-  window.setTimeout(() => layer.remove(), reduceMotion ? 2600 : 3800);
+  window.setTimeout(() => layer.remove(), reduceMotion ? 2600 : Math.ceil((longestFlight + 0.25) * 1000));
   return layer;
 }
 
@@ -161,8 +178,10 @@ async function startJoshuaFilmSequence() {
   setLoginDisabled(true);
   setMessage("JOSHUA REFERENCE ACCEPTED.", "success");
 
+  await readyJoshuaAudioContext();
   await new Promise((resolve) => window.setTimeout(resolve, 420));
-  playJoshuaAlarm();
+  await playJoshuaAlarm();
+  await new Promise((resolve) => window.setTimeout(resolve, 240));
   const rocketLayer = createJoshuaRockets();
 
   const overlay = document.createElement("div");
