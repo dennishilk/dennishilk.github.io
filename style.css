@@ -3223,6 +3223,13 @@ button.technology-observer-card {
   color: #ffe08a;
 }
 
+.pcxt-editor-workflow {
+  border-left: 3px double #555;
+  color: #d8cfae;
+  margin: .7rem 0 0;
+  padding-left: .75rem;
+}
+
 .pcxt-editor-label {
   margin: .7rem 0 .35rem;
 }
@@ -3256,6 +3263,28 @@ button.technology-observer-card {
 .pcxt-editor output {
   flex: 1;
   min-width: 12rem;
+}
+
+.pcxt-editor-help {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem 1rem;
+}
+
+.pcxt-editor-exit {
+  color: #fff7df;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.pcxt-editor-exit::before {
+  color: #777;
+  content: "•";
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-right: 1rem;
 }
 
 .pcxt-editor button {
