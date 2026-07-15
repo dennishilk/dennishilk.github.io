@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/museum/bios-setup/">
+  <title>BIOS Setup Utility – Computer Museum</title>
+  <meta name="description" content="A planned educational BIOS Setup Utility simulation inspired by classic PC firmware configuration screens from the late 1980s through the late 1990s.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="stylesheet" href="/style.css?v=43">
+  <script defer src="/stars.js"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="content museum-page bios-setup-shell">
+  <div class="museum-exhibit">
+    <header class="dashboard-header wo-page-header museum-hero exhibit-hero">
+      <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html"><i class="fas fa-newspaper"></i> News</a></div></div>
+      <a class="museum-back" href="/museum/">← Back to Computer Museum</a>
+      <span class="museum-status planned">PLANNED</span>
+      <h1><span class="prompt">root@nebunix:~$</span> <span class="name">BIOS Setup Utility</span></h1>
+      <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>Late 1980s – Late 1990s</dd></div><div><dt>Focus</dt><dd>Classic PC firmware configuration</dd></div></dl>
+      <p class="museum-exhibit-summary">An original educational simulation inspired by classic PC BIOS Setup utilities. Explore how early personal computers stored hardware settings, selected boot devices and prepared a machine before the operating system started.</p>
+      <button id="biosSetupPlaceholder" class="card-button museum-primary-action" type="button" aria-describedby="biosSetupNote biosSetupStatus">ENTER SETUP</button>
+      <p id="biosSetupNote" class="museum-exhibit-summary">Interactive setup environment coming in the next phase.</p>
+      <p id="biosSetupStatus" class="museum-exhibit-summary" role="status" aria-live="polite" hidden></p>
+    </header>
+    <main class="museum-exhibit-layout">
+      <section class="detail-card"><h2>About this exhibit</h2><p>The BIOS Setup Utility is an original educational environment inspired by PC firmware interfaces from the late 1980s through the late 1990s. It is not a motherboard BIOS, UEFI implementation, extracted firmware, ROM image or exact recreation of a vendor product.</p></section>
+      <section class="detail-card"><h2>What the finished exhibit will let you explore</h2><ul><li>Navigate an original keyboard-first BIOS-style interface.</li><li>Change virtual boot devices, memory and hardware options.</li><li>Save a browser-local virtual CMOS configuration.</li><li>Restore safe optimized defaults without affecting the real computer.</li></ul></section>
+      <section class="detail-card"><h2>Safety boundary</h2><p>The exhibit runs entirely inside the browser. It cannot access firmware, hardware settings, the operating system, real disks or files on the visitor’s computer. All future configuration data will belong only to this educational simulation.</p></section>
+      <section class="observer-notice museum-notice"><h2>Recreation notice</h2><p>This exhibit combines historically familiar BIOS concepts into one original museum interface. It is inspired by an era of computing rather than one specific motherboard or vendor utility. No proprietary firmware, trademarks, ROM images or original BIOS software are distributed.</p></section>
+    </main>
+  </div>
+  <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div>
+<script>
+  const biosSetupPlaceholder = document.getElementById('biosSetupPlaceholder');
+  const biosSetupStatus = document.getElementById('biosSetupStatus');
+
+  biosSetupPlaceholder.addEventListener('click', () => {
+    biosSetupStatus.hidden = false;
+    biosSetupStatus.textContent = 'Interactive setup environment coming in the next phase.';
+  });
+</script>
+</body>
+</html>
