@@ -3302,6 +3302,14 @@ button.technology-observer-card {
   background: #1f1f1f;
 }
 
+.pcxt-editor .pcxt-shortcut-control {
+  display: inline-block;
+  min-height: 0;
+  min-width: 0;
+  padding: .05rem .32rem;
+  vertical-align: baseline;
+}
+
 .pcxt-hidden-input {
   bottom: 0;
   height: 1px;
