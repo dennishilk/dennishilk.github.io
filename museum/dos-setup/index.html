@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.github.io/museum/dos-setup/">
+  <title>DOS Setup Utility – Computer Museum</title>
+  <meta name="description" content="An original browser-only educational DOS game-style setup utility inspired by Sound Blaster, MIDI, joystick and memory configuration screens from the late 1980s and 1990s.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="stylesheet" href="/style.css?v=43">
+  <script defer src="/stars.js"></script>
+  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="content museum-page dos-setup-shell">
+  <div class="museum-exhibit">
+    <header class="dashboard-header wo-page-header museum-hero exhibit-hero">
+      <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html"><i class="fas fa-newspaper"></i> News</a></div></div>
+      <a class="museum-back" href="/museum/">← Back to Computer Museum</a>
+      <span class="museum-status available">AVAILABLE</span>
+      <h1><span class="prompt">root@nebunix:~$</span> <span class="name">DOS Setup Utility</span></h1>
+      <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>1989 – 1998 inspired</dd></div><div><dt>Focus</dt><dd>DOS game and application configuration</dd></div></dl>
+      <p class="museum-exhibit-summary">An original educational recreation of the setup utilities many visitors used before launching DOS games and applications. Configure virtual Sound Blaster audio, MIDI music, IRQs, DMA channels, joysticks, display modes and memory settings entirely inside the browser.</p>
+      <a id="dosSetupStart" class="card-button museum-primary-action" href="/museum/dos-setup/setup.html" aria-describedby="dosSetupNote">START SETUP</a>
+      <p id="dosSetupNote" class="museum-exhibit-summary">Open the browser-only DOS software setup shell.</p>
+    </header>
+    <main class="museum-exhibit-layout">
+      <section class="detail-card"><h2>About this exhibit</h2><p>The DOS Setup Utility is an original Computer Museum experience inspired by late-1980s and 1990s game and application setup programs. It is not an installer, not a game setup executable, not extracted DOS software and not an emulator.</p></section>
+      <section class="detail-card"><h2>What this exhibit lets you explore</h2><ul><li>Navigate a keyboard-first DOS-style configuration interface.</li><li>Choose virtual digital audio, MIDI music, ports, IRQs and DMA channels.</li><li>Configure browser-local joystick, display, memory and game options.</li><li>Save a private configuration to localStorage without touching the real computer.</li></ul></section>
+      <section class="detail-card"><h2>Safety boundary</h2><p>Everything runs in the browser. No DOS, VM, emulator, proprietary installer, original game data, real hardware setting or operating-system file is used. Future virtual files such as <code>SETUP.CFG</code> would exist only inside museum-controlled browser data.</p></section>
+      <section class="observer-notice museum-notice"><h2>Recreation notice</h2><p>This exhibit combines familiar setup concepts from the era into one original educational interface. It is meant to evoke memories of configuring Sound Blaster cards, MIDI devices and joysticks without recreating one specific commercial product.</p></section>
+    </main>
+  </div>
+  <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div>
+</body>
+</html>
