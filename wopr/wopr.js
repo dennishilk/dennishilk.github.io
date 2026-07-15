@@ -16,19 +16,20 @@ const JOSHUA_ROCKET_COUNT = 72;
 const JOSHUA_ROCKET_MIN_SIZE = 18;
 const JOSHUA_ROCKET_MAX_SIZE = 32;
 const JOSHUA_DISMISS_ARM_DELAY = 220;
-const JOSHUA_ALARM_DURATION = 7.2;
-const JOSHUA_ALARM_SWEEP_SECONDS = 1.8;
-const JOSHUA_ALARM_LOW_FREQUENCY = 380;
-const JOSHUA_ALARM_HIGH_FREQUENCY = 900;
-const JOSHUA_ALARM_MASTER_GAIN = 0.18;
+const JOSHUA_ALARM_ASSET = "/assets/wopr/air-raid-alarm-8s.wav";
+const JOSHUA_ALARM_VOLUME = 0.45;
 const JOSHUA_ALARM_START_DELAY = 320;
 const JOSHUA_ROCKET_LAUNCH_DELAY = 780;
 const JOSHUA_ROCKET_LAUNCH_WINDOW = 2.1;
 
-let joshuaAudioContext = null;
 let joshuaSequenceActive = false;
 let joshuaDismissHandler = null;
-let joshuaActiveAlarm = null;
+let joshuaAlarmEndedHandler = null;
+
+const joshuaAlarmAudio = new Audio(JOSHUA_ALARM_ASSET);
+joshuaAlarmAudio.preload = "auto";
+joshuaAlarmAudio.volume = JOSHUA_ALARM_VOLUME;
+joshuaAlarmAudio.loop = false;
 
 const wins = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -61,105 +62,35 @@ function setLoginDisabled(isDisabled) {
   });
 }
 
-function getJoshuaAudioContext() {
-  const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextConstructor) return null;
-  if (!joshuaAudioContext || joshuaAudioContext.state === "closed") {
-    joshuaAudioContext = new AudioContextConstructor();
-  }
-  return joshuaAudioContext;
+function removeJoshuaAlarmEndedHandler() {
+  if (!joshuaAlarmEndedHandler) return;
+  joshuaAlarmAudio.removeEventListener("ended", joshuaAlarmEndedHandler);
+  joshuaAlarmEndedHandler = null;
 }
 
-async function readyJoshuaAudioContext() {
-  const context = getJoshuaAudioContext();
-  if (!context) return null;
-  if (context.state === "suspended") await context.resume();
-  return context;
-}
-
-function cleanupJoshuaAlarm(alarm = joshuaActiveAlarm, fadeSeconds = 0.08) {
-  if (!alarm) return;
-  const { context, masterGain, nodes, cleanupTimer } = alarm;
-  if (cleanupTimer) window.clearTimeout(cleanupTimer);
+function stopJoshuaAlarm() {
+  removeJoshuaAlarmEndedHandler();
+  joshuaAlarmAudio.pause();
+  joshuaAlarmAudio.currentTime = 0;
   document.body.classList.remove("joshua-alarm-active");
-
-  try {
-    const stopAt = context.currentTime + fadeSeconds;
-    masterGain.gain.cancelScheduledValues(context.currentTime);
-    masterGain.gain.setTargetAtTime(0.0001, context.currentTime, Math.max(0.01, fadeSeconds / 3));
-    nodes.forEach((node) => {
-      try { node.stop(stopAt + 0.02); } catch (error) { /* Node may already be stopped. */ }
-    });
-  } catch (error) {
-    // Cleanup is best-effort; dismissal must still restore the login state.
-  }
-
-  window.setTimeout(() => {
-    nodes.forEach((node) => {
-      try { node.disconnect(); } catch (error) { /* Node may already be disconnected. */ }
-    });
-    try { masterGain.disconnect(); } catch (error) { /* Node may already be disconnected. */ }
-    if (joshuaActiveAlarm === alarm) joshuaActiveAlarm = null;
-  }, Math.ceil((fadeSeconds + 0.08) * 1000));
 }
 
 async function playJoshuaAlarm() {
   try {
-    const context = await readyJoshuaAudioContext();
-    if (!context) return null;
-
-    cleanupJoshuaAlarm(joshuaActiveAlarm, 0.03);
-
-    const now = context.currentTime + 0.035;
-    const masterGain = context.createGain();
-    const nodes = [];
-    const alarmDuration = JOSHUA_ALARM_DURATION;
-    const stopAt = now + alarmDuration + 0.12;
-
-    masterGain.gain.setValueAtTime(0.0001, now);
-    masterGain.gain.linearRampToValueAtTime(JOSHUA_ALARM_MASTER_GAIN, now + 0.18);
-    masterGain.gain.setValueAtTime(JOSHUA_ALARM_MASTER_GAIN, now + alarmDuration - 0.35);
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, stopAt);
-    masterGain.connect(context.destination);
-
-    const primary = context.createOscillator();
-    const body = context.createOscillator();
-    primary.type = "sawtooth";
-    body.type = "square";
-    nodes.push(primary, body);
-
-    for (let sweepStart = now; sweepStart < now + alarmDuration; sweepStart += JOSHUA_ALARM_SWEEP_SECONDS) {
-      const riseEnd = Math.min(sweepStart + (JOSHUA_ALARM_SWEEP_SECONDS / 2), now + alarmDuration);
-      const fallEnd = Math.min(sweepStart + JOSHUA_ALARM_SWEEP_SECONDS, now + alarmDuration);
-
-      primary.frequency.setValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY, sweepStart);
-      primary.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_HIGH_FREQUENCY, riseEnd);
-      primary.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY, fallEnd);
-
-      body.frequency.setValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY / 2, sweepStart);
-      body.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_HIGH_FREQUENCY / 2, riseEnd);
-      body.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY / 2, fallEnd);
-    }
-
+    stopJoshuaAlarm();
+    joshuaAlarmAudio.volume = JOSHUA_ALARM_VOLUME;
+    joshuaAlarmAudio.loop = false;
+    joshuaAlarmAudio.currentTime = 0;
+    joshuaAlarmEndedHandler = () => {
+      removeJoshuaAlarmEndedHandler();
+      document.body.classList.remove("joshua-alarm-active");
+    };
+    joshuaAlarmAudio.addEventListener("ended", joshuaAlarmEndedHandler);
     document.body.classList.add("joshua-alarm-active");
-
-    const primaryGain = context.createGain();
-    const bodyGain = context.createGain();
-    nodes.push(primaryGain, bodyGain);
-    primaryGain.gain.setValueAtTime(0.82, now);
-    bodyGain.gain.setValueAtTime(0.26, now);
-    primary.connect(primaryGain).connect(masterGain);
-    body.connect(bodyGain).connect(masterGain);
-    primary.start(now);
-    body.start(now);
-    primary.stop(stopAt);
-    body.stop(stopAt);
-
-    const alarm = { context, masterGain, nodes, cleanupTimer: null };
-    joshuaActiveAlarm = alarm;
-    alarm.cleanupTimer = window.setTimeout(() => cleanupJoshuaAlarm(alarm, 0), Math.ceil((stopAt - context.currentTime + 0.05) * 1000));
-    return alarm;
+    await joshuaAlarmAudio.play();
+    return joshuaAlarmAudio;
   } catch (error) {
+    stopJoshuaAlarm();
     if (console && typeof console.warn === "function") console.warn("Joshua alarm audio could not be started.", error);
     return null;
   }
@@ -214,7 +145,7 @@ function dismissJoshuaSequence(overlay, rocketLayer, event) {
     joshuaDismissHandler = null;
   }
   overlay.remove();
-  cleanupJoshuaAlarm();
+  stopJoshuaAlarm();
   if (rocketLayer) rocketLayer.remove();
   passwordInput.value = "";
   setLoginDisabled(false);
@@ -229,7 +160,7 @@ async function startJoshuaFilmSequence() {
   setLoginDisabled(true);
   setMessage("JOSHUA REFERENCE ACCEPTED.", "success");
 
-  await readyJoshuaAudioContext();
+  joshuaAlarmAudio.load();
 
   let rocketLayer = null;
   const alarmTimer = window.setTimeout(() => {
