@@ -16,9 +16,11 @@ const JOSHUA_ROCKET_COUNT = 72;
 const JOSHUA_ROCKET_MIN_SIZE = 18;
 const JOSHUA_ROCKET_MAX_SIZE = 32;
 const JOSHUA_DISMISS_ARM_DELAY = 220;
-const JOSHUA_ALARM_SEGMENTS = 12;
-const JOSHUA_ALARM_SEGMENT_DURATION = 0.34;
-const JOSHUA_ALARM_SEGMENT_GAP = 0.12;
+const JOSHUA_ALARM_DURATION = 7.2;
+const JOSHUA_ALARM_SWEEP_SECONDS = 1.8;
+const JOSHUA_ALARM_LOW_FREQUENCY = 380;
+const JOSHUA_ALARM_HIGH_FREQUENCY = 900;
+const JOSHUA_ALARM_MASTER_GAIN = 0.18;
 const JOSHUA_ALARM_START_DELAY = 320;
 const JOSHUA_ROCKET_LAUNCH_DELAY = 780;
 const JOSHUA_ROCKET_LAUNCH_WINDOW = 2.1;
@@ -111,29 +113,32 @@ async function playJoshuaAlarm() {
     const now = context.currentTime + 0.035;
     const masterGain = context.createGain();
     const nodes = [];
-    const alarmDuration = (JOSHUA_ALARM_SEGMENTS * JOSHUA_ALARM_SEGMENT_DURATION) + ((JOSHUA_ALARM_SEGMENTS - 1) * JOSHUA_ALARM_SEGMENT_GAP);
+    const alarmDuration = JOSHUA_ALARM_DURATION;
     const stopAt = now + alarmDuration + 0.12;
 
     masterGain.gain.setValueAtTime(0.0001, now);
-    masterGain.gain.linearRampToValueAtTime(0.2, now + 0.035);
-    masterGain.gain.setValueAtTime(0.2, now + alarmDuration - 0.12);
+    masterGain.gain.linearRampToValueAtTime(JOSHUA_ALARM_MASTER_GAIN, now + 0.18);
+    masterGain.gain.setValueAtTime(JOSHUA_ALARM_MASTER_GAIN, now + alarmDuration - 0.35);
     masterGain.gain.exponentialRampToValueAtTime(0.0001, stopAt);
     masterGain.connect(context.destination);
 
     const primary = context.createOscillator();
     const body = context.createOscillator();
-    primary.type = "square";
-    body.type = "triangle";
+    primary.type = "sawtooth";
+    body.type = "square";
     nodes.push(primary, body);
 
-    for (let segment = 0; segment < JOSHUA_ALARM_SEGMENTS; segment += 1) {
-      const start = now + (segment * (JOSHUA_ALARM_SEGMENT_DURATION + JOSHUA_ALARM_SEGMENT_GAP));
-      const end = start + JOSHUA_ALARM_SEGMENT_DURATION;
-      const frequency = segment % 2 === 0 ? 520 : 780;
-      primary.frequency.setValueAtTime(frequency, start);
-      primary.frequency.setValueAtTime(frequency, end);
-      body.frequency.setValueAtTime(frequency / 2, start);
-      body.frequency.setValueAtTime(frequency / 2, end);
+    for (let sweepStart = now; sweepStart < now + alarmDuration; sweepStart += JOSHUA_ALARM_SWEEP_SECONDS) {
+      const riseEnd = Math.min(sweepStart + (JOSHUA_ALARM_SWEEP_SECONDS / 2), now + alarmDuration);
+      const fallEnd = Math.min(sweepStart + JOSHUA_ALARM_SWEEP_SECONDS, now + alarmDuration);
+
+      primary.frequency.setValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY, sweepStart);
+      primary.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_HIGH_FREQUENCY, riseEnd);
+      primary.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY, fallEnd);
+
+      body.frequency.setValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY / 2, sweepStart);
+      body.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_HIGH_FREQUENCY / 2, riseEnd);
+      body.frequency.exponentialRampToValueAtTime(JOSHUA_ALARM_LOW_FREQUENCY / 2, fallEnd);
     }
 
     document.body.classList.add("joshua-alarm-active");
@@ -141,8 +146,8 @@ async function playJoshuaAlarm() {
     const primaryGain = context.createGain();
     const bodyGain = context.createGain();
     nodes.push(primaryGain, bodyGain);
-    primaryGain.gain.setValueAtTime(0.74, now);
-    bodyGain.gain.setValueAtTime(0.28, now);
+    primaryGain.gain.setValueAtTime(0.82, now);
+    bodyGain.gain.setValueAtTime(0.26, now);
     primary.connect(primaryGain).connect(masterGain);
     body.connect(bodyGain).connect(masterGain);
     primary.start(now);
@@ -173,23 +178,24 @@ function createJoshuaRockets() {
   for (let index = 0; index < rocketCount; index += 1) {
     const rocket = document.createElement("span");
     const size = reduceMotion ? 18 : JOSHUA_ROCKET_MIN_SIZE + Math.round(Math.random() * (JOSHUA_ROCKET_MAX_SIZE - JOSHUA_ROCKET_MIN_SIZE));
-    const startX = Math.random() * 100;
-    const driftDirection = Math.random() < 0.5 ? 1 : -1;
-    const drift = driftDirection * (4 + Math.random() * 14);
+    const startX = reduceMotion ? 8 + (Math.random() * 24) : -10 + (Math.random() * 38);
+    const startY = 92 + (Math.random() * 26);
+    const endX = 78 + (Math.random() * 40);
+    const endY = -28 + (Math.random() * 18);
     const delay = reduceMotion ? Math.random() * 0.35 : (index / Math.max(rocketCount - 1, 1)) * JOSHUA_ROCKET_LAUNCH_WINDOW;
     const duration = reduceMotion ? 1.8 : 4.5 + (Math.random() * 2.5);
-    const startRotation = (Math.random() * 10) - 5;
-    const endRotation = Math.max(-5, Math.min(5, startRotation + ((Math.random() * 4) - 2)));
+    const flightRotation = -45 + ((Math.random() * 6) - 3);
 
     rocket.className = "joshua-rocket";
     rocket.textContent = "🚀";
     rocket.style.setProperty("--rocket-size", `${size}px`);
-    rocket.style.setProperty("--rocket-start", `${startX}vw`);
-    rocket.style.setProperty("--rocket-drift", `${drift}vw`);
+    rocket.style.setProperty("--rocket-start-x", `${startX}vw`);
+    rocket.style.setProperty("--rocket-start-y", `${startY}vh`);
+    rocket.style.setProperty("--rocket-end-x", `${endX}vw`);
+    rocket.style.setProperty("--rocket-end-y", `${endY}vh`);
     rocket.style.setProperty("--rocket-delay", `${delay}s`);
     rocket.style.setProperty("--rocket-duration", `${duration}s`);
-    rocket.style.setProperty("--rocket-start-rotation", `${startRotation}deg`);
-    rocket.style.setProperty("--rocket-end-rotation", `${endRotation}deg`);
+    rocket.style.setProperty("--rocket-flight-rotation", `${flightRotation}deg`);
     layer.appendChild(rocket);
     longestFlight = Math.max(longestFlight, delay + duration);
   }
