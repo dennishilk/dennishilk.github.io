@@ -1,5 +1,7 @@
 (() => {
   'use strict';
+  const shell = document.querySelector('.c64-shell');
+  const startButton = document.getElementById('c64Start');
   const term = document.getElementById('c64Terminal');
   const input = document.getElementById('c64Input');
   const STORE = 'c64basic.programs.v1';
@@ -13,7 +15,7 @@
   };
   let lines = new Map(), vars = {}, arrays = {}, pc = 0, order = [], stack = [], fors = [], data = [], dataPtr = 0, running = false, execSteps = 0;
   const MAX_STEPS = 20000;
-  let current = '', inputWait = null;
+  let current = '', inputWait = null, terminalActive = false;
   const helps = {PRINT:'PRINT expression[,expression] displays text or values. Example: PRINT "HELLO"',INPUT:'INPUT A or INPUT "NAME";N reads keyboard input.',FOR:'FOR I=1 TO 10 ... NEXT I repeats a block.',IF:'IF A>5 THEN PRINT "HIGH" or IF A=1 THEN GOTO 100.',SAVE:'SAVE "NAME" stores the current program in browser localStorage.',LOAD:'LOAD "HELLO" loads a demo or saved program.',DATA:'DATA 5,7,12 with READ A retrieves constants.'};
   function upper(s){return s.toUpperCase();}
   function print(s=''){ const p=promptSpan(); term.insertBefore(document.createTextNode(String(s)+'\n'), p || null); scroll(); }
@@ -46,7 +48,8 @@
   function run(){ vars={}; arrays={}; stack=[]; fors=[]; order=[...lines.keys()].sort((a,b)=>a-b); buildData(); pc=0; execSteps=0; running=true; step(); }
   function command(line){ print(line); const m=line.match(/^(\d+)\s*(.*)$/); if(m){ const n=+m[1]; if(m[2].trim()) lines.set(n,m[2].trim()); else lines.delete(n); return renderPrompt(); } try{ const u=upper(line.trim()); if(!u)return renderPrompt(); if(u==='RUN')return run(); if(u==='LIST'){list(); return ready();} if(u==='NEW'){lines.clear(); vars={}; arrays={}; stack=[]; fors=[]; data=[]; dataPtr=0; return ready();} if(u==='CLS'){term.textContent=''; renderPrompt(); return ready();} if(u==='DIR'){dir(); return ready();} if(u==='BASIC'){print('8-BIT EDUCATIONAL BASIC V1'); return ready();} if(u==='ABOUT'){print('ORIGINAL EDUCATIONAL BASIC INTERPRETER. NO COMMODORE ROMS. NO COPYRIGHTED SOFTWARE. BUILT FOR THE COMPUTER MUSEUM.'); return ready();} if(u.startsWith('HELP')){const k=upper(line.slice(4).trim()); print(k&&helps[k]?helps[k]:'SYSTEM: HELP ABOUT LIST RUN NEW CLS DIR LOAD SAVE BASIC\nPROGRAM: PRINT INPUT LET IF THEN GOTO GOSUB RETURN FOR NEXT END STOP REM DIM DATA READ RESTORE\nFUNCTIONS: RND() INT() LEN() ABS() CHR$()'); return ready();} if(u.startsWith('SAVE')){persist(parseName(line.slice(4))); return ready();} if(u.startsWith('LOAD')){const name=parseName(line.slice(4)); const all=stored(); if(demos[name])loadProgram(demos[name]); else if(all[name])loadProgram(all[name]); else {print('FILE NOT FOUND'); return ready();} return ready();} stmt(line); return ready(); }catch(e){} }
   function enter(){ const line=current; current=''; const p=promptSpan(); if(p)p.remove(); if(inputWait){ print(line); const cb=inputWait; inputWait=null; cb(line); } else command(line); }
-  function focusInput(){ input.focus({preventScroll:true}); }
-  term.addEventListener('click',focusInput); input.addEventListener('keydown',e=>{ if(e.key==='Escape' && running){ e.preventDefault(); print('BREAK'); return ready(); } if(e.key==='Enter'){e.preventDefault(); enter();} else if(e.key==='Backspace'){e.preventDefault(); current=current.slice(0,-1); sync();} }); input.addEventListener('input',()=>{ current += input.value.toUpperCase(); input.value=''; sync(); });
-  term.textContent='8-BIT EDUCATIONAL BASIC\nTYPE HELP FOR COMMANDS.\n'; renderPrompt(); ready();
+  function focusInput(){ if(terminalActive) input.focus({preventScroll:true}); }
+  function startTerminal(){ terminalActive=true; shell.classList.add('is-terminal-active'); term.setAttribute('tabindex','0'); term.textContent='8-BIT EDUCATIONAL BASIC\nTYPE HELP FOR COMMANDS.\n'; renderPrompt(); ready(); }
+  if(startButton) startButton.addEventListener('click',startTerminal); term.addEventListener('click',focusInput); input.addEventListener('keydown',e=>{ if(e.key==='Escape' && running){ e.preventDefault(); print('BREAK'); return ready(); } if(e.key==='Enter'){e.preventDefault(); enter();} else if(e.key==='Backspace'){e.preventDefault(); current=current.slice(0,-1); sync();} }); input.addEventListener('input',()=>{ current += input.value.toUpperCase(); input.value=''; sync(); });
+
 })();

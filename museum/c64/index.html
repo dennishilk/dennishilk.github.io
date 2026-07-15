@@ -11,25 +11,32 @@
   <link rel="stylesheet" href="/style.css?v=43">
   <script defer src="/stars.js"></script>
   <style>
-    .c64-shell{min-height:100vh}.museum-status.live{border-color:#53ff7b;color:#53ff7b}.c64-stage{border:10px solid #8b8dff;background:#4040e8;box-shadow:0 0 45px rgba(64,64,232,.55);border-radius:12px;overflow:hidden}.c64-terminal{height:min(78vh,760px);min-height:520px;background:#4040e8;color:#a7abff;font:20px/1.3 "Courier New",Courier,monospace;text-transform:uppercase;letter-spacing:.02em;padding:22px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;outline:none;cursor:text}.c64-input-line{display:inline}.c64-cursor{display:inline-block;width:.62em;height:1em;background:#a7abff;vertical-align:-.15em;animation:c64blink 1s steps(1) infinite}@keyframes c64blink{50%{opacity:0}}.c64-keyboard-help{font:14px/1.5 "Courier New",monospace;color:#cdd0ff;background:#2525a8;padding:10px 16px}.c64-hidden-input{position:fixed;left:-9999px;opacity:0}.detail-card code{color:#fff;background:rgba(255,255,255,.12);padding:.1rem .25rem;border-radius:.25rem}@media(max-width:700px){.c64-terminal{font-size:16px;min-height:60vh;padding:14px}.c64-stage{border-width:6px}.museum-exhibit-layout{display:block}}
+    .c64-shell{min-height:100vh}.c64-shell.is-terminal-active{max-width:none;padding:1rem 1.25rem}.c64-shell.is-terminal-active .museum-exhibit,.c64-shell.is-terminal-active footer{display:none}.c64-computer{display:none}.c64-shell.is-terminal-active .c64-computer{display:block}.c64-computer-nav{margin:0 0 .8rem}.c64-computer-title{color:#d8f5ff;font-size:.9rem;font-weight:700;letter-spacing:.12em;margin:0 0 .8rem;text-transform:uppercase}.c64-stage{border:10px solid #8b8dff;background:#4040e8;box-shadow:0 0 45px rgba(64,64,232,.55);border-radius:12px;overflow:hidden}.c64-terminal{height:calc(100vh - 175px);min-height:620px;background:#4040e8;color:#a7abff;font:22px/1.3 "Courier New",Courier,monospace;text-transform:uppercase;letter-spacing:.02em;padding:26px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;outline:none;cursor:text}.c64-input-line{display:inline}.c64-cursor{display:inline-block;width:.62em;height:1em;background:#a7abff;vertical-align:-.15em;animation:c64blink 1s steps(1) infinite}@keyframes c64blink{50%{opacity:0}}.c64-keyboard-help{font:14px/1.5 "Courier New",monospace;color:#cdd0ff;background:#2525a8;padding:10px 16px}.c64-hidden-input{position:fixed;left:-9999px;opacity:0}.detail-card code{color:#fff;background:rgba(255,255,255,.12);padding:.1rem .25rem;border-radius:.25rem}@media(max-width:700px){.c64-shell.is-terminal-active{padding:.75rem}.c64-terminal{font-size:16px;height:calc(100vh - 145px);min-height:70vh;padding:14px}.c64-stage{border-width:6px}.museum-exhibit-layout{display:block}}
   </style>
 </head>
 <body>
 <canvas id="stars"></canvas>
 <div class="content museum-page c64-shell">
-  <header class="dashboard-header wo-page-header museum-hero exhibit-hero">
-    <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html">News</a></div></div>
-    <a class="museum-back" href="/museum/">← Back to Computer Museum</a>
-    <span class="museum-status live">LIVE</span>
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">8-Bit BASIC Terminal</span></h1>
-    <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>1982-inspired</dd></div><div><dt>Type</dt><dd>Interactive interpreter</dd></div></dl>
-    <p class="museum-exhibit-summary">An independently created educational 8-bit BASIC interpreter inspired by early home computers. It executes BASIC programs in your browser without ROMs, copyrighted software, servers or libraries.</p>
-  </header>
-  <main class="museum-exhibit-layout">
-    <section class="detail-card c64-panel"><h2>Fullscreen BASIC screen</h2><div class="c64-stage"><div id="c64Terminal" class="c64-terminal" tabindex="0" role="application" aria-label="8-bit BASIC terminal"></div><div class="c64-keyboard-help">Keyboard driven: type BASIC lines or commands. Try <code>LOAD "HELLO"</code>, <code>LIST</code>, <code>RUN</code>, <code>HELP</code>.</div></div><input id="c64Input" class="c64-hidden-input" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-hidden="true"></section>
-    <section class="detail-card"><h2>About this exhibit</h2><p>This is an original, browser-based BASIC interpreter for museum learning. It supports numbered program lines, variables, expressions, loops, subroutines, data statements, local saves and built-in demos.</p></section>
-    <section class="detail-card"><h2>Commands</h2><p>Implemented commands include <code>HELP</code>, <code>ABOUT</code>, <code>LIST</code>, <code>RUN</code>, <code>NEW</code>, <code>CLS</code>, <code>DIR</code>, <code>LOAD</code>, <code>SAVE</code>, <code>PRINT</code>, <code>INPUT</code>, <code>LET</code>, <code>IF</code>, <code>THEN</code>, <code>GOTO</code>, <code>GOSUB</code>, <code>RETURN</code>, <code>FOR</code>, <code>NEXT</code>, <code>END</code>, <code>STOP</code>, <code>REM</code>, <code>DIM</code>, <code>DATA</code>, <code>READ</code> and <code>RESTORE</code>.</p></section>
-    <section class="observer-notice museum-notice"><h2>Recreation notice</h2><p>No original Commodore ROMs or proprietary software are used or distributed. This is not an official Commodore product.</p><p>The interpreter, command responses and demo programs are independently created for education.</p></section>
+  <div class="museum-exhibit">
+    <header class="dashboard-header wo-page-header museum-hero exhibit-hero">
+      <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html">News</a></div></div>
+      <a class="museum-back" href="/museum/">← Back to Computer Museum</a>
+      <span class="museum-status available">ACTIVE</span>
+      <h1><span class="prompt">root@nebunix:~$</span> <span class="name">8-Bit BASIC Terminal</span></h1>
+      <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>1982-inspired</dd></div><div><dt>Type</dt><dd>Interactive interpreter</dd></div></dl>
+      <p class="museum-exhibit-summary">An independently created educational 8-bit BASIC interpreter inspired by early home computers. It executes BASIC programs in your browser without ROMs, copyrighted software, servers or libraries.</p>
+      <button id="c64Start" class="card-button museum-primary-action" type="button">START BASIC TERMINAL</button>
+    </header>
+    <main class="museum-exhibit-layout">
+      <section class="detail-card"><h2>About this exhibit</h2><p>This is an original, browser-based BASIC interpreter for museum learning. It supports numbered program lines, variables, expressions, loops, subroutines, data statements, local saves and built-in demos.</p></section>
+      <section class="detail-card"><h2>Historical context</h2><p>Home computers of the early 1980s often opened directly into BASIC, making programming part of the first encounter with the machine. This exhibit presents that approachable, keyboard-first style as a browser-based learning environment.</p></section>
+      <section class="observer-notice museum-notice"><h2>Recreation notice</h2><p>No original Commodore ROMs or proprietary software are used or distributed. This is not an official Commodore product.</p><p>The interpreter, command responses and demo programs are independently created for education.</p></section>
+    </main>
+  </div>
+  <main class="c64-computer" aria-live="polite">
+    <div class="c64-computer-nav"><a class="museum-back" href="/museum/">← COMPUTER MUSEUM</a></div>
+    <h2 class="c64-computer-title">Interactive BASIC Terminal</h2>
+    <section class="c64-stage"><div id="c64Terminal" class="c64-terminal" tabindex="-1" role="application" aria-label="Interactive BASIC terminal"></div><div class="c64-keyboard-help">Keyboard driven: type BASIC lines or commands. Try <code>LOAD "HELLO"</code>, <code>LIST</code>, <code>RUN</code>, <code>HELP</code>.</div></section><input id="c64Input" class="c64-hidden-input" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-hidden="true">
   </main>
   <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
 </div>
