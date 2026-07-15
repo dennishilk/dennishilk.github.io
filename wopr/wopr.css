@@ -386,9 +386,9 @@ body.joshua-alarm-active {
 }
 
 @keyframes joshua-rocket-flight {
-  from { opacity: 0; transform: translate3d(var(--rocket-start), 110vh, 0) rotate(var(--rocket-start-rotation)); }
+  from { opacity: 0; transform: translate3d(var(--rocket-start-x), var(--rocket-start-y), 0) rotate(var(--rocket-flight-rotation)); }
   6%, 92% { opacity: 0.98; }
-  to { opacity: 0; transform: translate3d(calc(var(--rocket-start) + var(--rocket-drift)), -20vh, 0) rotate(var(--rocket-end-rotation)); }
+  to { opacity: 0; transform: translate3d(var(--rocket-end-x), var(--rocket-end-y), 0) rotate(var(--rocket-flight-rotation)); }
 }
 
 @keyframes joshua-terminal-alert-pulse {
@@ -403,7 +403,7 @@ body.joshua-alarm-active {
 
   .joshua-rocket-layer.reduced-motion .joshua-rocket {
     top: 72vh;
-    left: var(--rocket-start);
+    left: var(--rocket-start-x);
     animation: joshua-rocket-fade var(--rocket-duration) ease-in-out var(--rocket-delay) forwards;
   }
 }
