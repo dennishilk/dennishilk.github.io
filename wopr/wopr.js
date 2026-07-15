@@ -117,11 +117,13 @@ function createJoshuaRockets() {
     const endY = reduceMotion ? -28 + (Math.random() * 18) : -28 + (Math.random() * 10);
     const delay = reduceMotion ? Math.random() * 0.35 : (index / Math.max(rocketCount - 1, 1)) * JOSHUA_ROCKET_LAUNCH_WINDOW;
     const duration = reduceMotion ? 1.8 : 4.5 + (Math.random() * 2.5);
-    const flightRotation = reduceMotion ? 0 : (Math.random() * 2) - 1;
     const trailLength = Math.round(size * (1.4 + (Math.random() * 0.45)));
 
     rocket.className = "joshua-rocket";
-    rocket.textContent = "🚀";
+    const sprite = document.createElement("span");
+    sprite.className = "joshua-rocket-sprite";
+    sprite.textContent = "🚀";
+    rocket.appendChild(sprite);
     rocket.style.setProperty("--rocket-size", `${size}px`);
     rocket.style.setProperty("--rocket-start-x", `${startX}vw`);
     rocket.style.setProperty("--rocket-start-y", `${startY}vh`);
@@ -129,7 +131,6 @@ function createJoshuaRockets() {
     rocket.style.setProperty("--rocket-end-y", `${endY}vh`);
     rocket.style.setProperty("--rocket-delay", `${delay}s`);
     rocket.style.setProperty("--rocket-duration", `${duration}s`);
-    rocket.style.setProperty("--rocket-flight-rotation", `${flightRotation}deg`);
     rocket.style.setProperty("--rocket-trail-length", `${trailLength}px`);
     layer.appendChild(rocket);
     longestFlight = Math.max(longestFlight, delay + duration);

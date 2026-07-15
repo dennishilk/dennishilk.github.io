@@ -321,6 +321,12 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
   animation: joshua-rocket-flight var(--rocket-duration) linear var(--rocket-delay) forwards;
 }
 
+.joshua-rocket-sprite {
+  display: inline-block;
+  transform: rotate(-45deg);
+  transform-origin: center;
+}
+
 .joshua-rocket::before,
 .joshua-rocket::after {
   content: "";
@@ -418,9 +424,9 @@ body.joshua-alarm-active {
 }
 
 @keyframes joshua-rocket-flight {
-  from { opacity: 0; transform: translate3d(var(--rocket-start-x), var(--rocket-start-y), 0) rotate(var(--rocket-flight-rotation)); }
+  from { opacity: 0; transform: translate3d(var(--rocket-start-x), var(--rocket-start-y), 0); }
   6%, 92% { opacity: 0.98; }
-  to { opacity: 0; transform: translate3d(var(--rocket-end-x), var(--rocket-end-y), 0) rotate(var(--rocket-flight-rotation)); }
+  to { opacity: 0; transform: translate3d(var(--rocket-end-x), var(--rocket-end-y), 0); }
 }
 
 @keyframes joshua-rocket-flame {
