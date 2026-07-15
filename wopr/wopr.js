@@ -101,6 +101,7 @@ function createJoshuaRockets() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   layer.className = `joshua-rocket-layer${reduceMotion ? " reduced-motion" : ""}`;
   layer.setAttribute("aria-hidden", "true");
+  document.querySelectorAll(".joshua-rocket-layer").forEach((existingLayer) => existingLayer.remove());
   document.body.appendChild(layer);
 
   const rocketCount = reduceMotion ? 8 : JOSHUA_ROCKET_COUNT;
@@ -111,12 +112,12 @@ function createJoshuaRockets() {
     const size = reduceMotion ? 18 : JOSHUA_ROCKET_MIN_SIZE + Math.round(Math.random() * (JOSHUA_ROCKET_MAX_SIZE - JOSHUA_ROCKET_MIN_SIZE));
     const startX = reduceMotion ? 8 + (Math.random() * 24) : 2 + (Math.random() * 96);
     const startY = reduceMotion ? 92 + (Math.random() * 26) : 105 + (Math.random() * 15);
-    const driftX = reduceMotion ? 0 : (Math.random() * 4) - 2;
-    const endX = reduceMotion ? startX : Math.min(100, Math.max(0, startX + driftX));
+    const driftX = reduceMotion ? 0 : (Math.random() * 0.8) - 0.4;
+    const endX = startX + driftX;
     const endY = reduceMotion ? -28 + (Math.random() * 18) : -28 + (Math.random() * 10);
     const delay = reduceMotion ? Math.random() * 0.35 : (index / Math.max(rocketCount - 1, 1)) * JOSHUA_ROCKET_LAUNCH_WINDOW;
     const duration = reduceMotion ? 1.8 : 4.5 + (Math.random() * 2.5);
-    const flightRotation = reduceMotion ? 0 : (Math.random() * 4) - 2;
+    const flightRotation = reduceMotion ? 0 : (Math.random() * 2) - 1;
     const trailLength = Math.round(size * (1.4 + (Math.random() * 0.45)));
 
     rocket.className = "joshua-rocket";
