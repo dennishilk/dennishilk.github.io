@@ -1,0 +1,18 @@
+const assert = require('assert');
+const pcxt = require('../museum/ibm-pc-xt/pcxt.js');
+const state = pcxt.defaultState();
+assert.strictEqual(pcxt.STORAGE_KEY, 'computerMuseum.pcXtCommandDesk.v1');
+assert.ok(pcxt.validateState(state));
+assert.deepStrictEqual(pcxt.normalizePath('C:\\GAMES\\DOOM', []).parts, ['GAMES','DOOM']);
+assert.deepStrictEqual(pcxt.normalizePath('..', []).parts, []);
+assert.deepStrictEqual(pcxt.normalizePath('..', ['GAMES']).parts, []);
+assert.deepStrictEqual(pcxt.normalizePath('\\WINDOWS', ['GAMES']).parts, ['WINDOWS']);
+assert.strictEqual(pcxt.lookup(state.filesystem, ['GAMES','WOLF3D']).type, 'directory');
+assert.strictEqual(pcxt.lookup(state.filesystem, ['AUTOEXEC.BAT']).type, 'file');
+assert.strictEqual(pcxt.bytes('ABC'), 3);
+assert.ok(pcxt.stats(state.filesystem).files >= 12);
+state.cwd = ['GAMES'];
+assert.strictEqual(pcxt.renderPromptFormat(state), 'C:\\GAMES>');
+assert.deepStrictEqual(pcxt.splitCommand('TYPE C:\\README.TXT'), { command:'TYPE', args:'C:\\README.TXT' });
+assert.strictEqual(pcxt.validateState({ schemaVersion:1, filesystem:{ type:'file' } }), false);
+console.log('pcxt-command-desk tests passed');

@@ -3106,3 +3106,125 @@ button.technology-observer-card {
     transition: none;
   }
 }
+
+
+.pcxt-shell {
+  min-height: 100vh;
+}
+
+.pcxt-shell.is-terminal-active {
+  background: #050505;
+  max-width: none;
+  padding: 1rem 1.25rem;
+}
+
+.pcxt-shell.is-terminal-active #stars,
+.pcxt-shell.is-terminal-active .museum-exhibit,
+.pcxt-shell.is-terminal-active footer {
+  display: none;
+}
+
+.pcxt-computer {
+  display: none;
+}
+
+.pcxt-shell.is-terminal-active .pcxt-computer {
+  display: block;
+  max-width: none;
+  padding: 0;
+}
+
+.pcxt-computer-nav {
+  margin: 0 0 .8rem;
+}
+
+.pcxt-stage {
+  background: #050505;
+  border: 1px solid #343434;
+  box-shadow: 0 0 32px rgba(255,255,255,.06);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 84px);
+}
+
+.pcxt-terminal {
+  background: #050505;
+  color: #e7e1d5;
+  flex: 1;
+  font: 18px/1.35 "Courier New", Courier, monospace;
+  letter-spacing: .01em;
+  outline: none;
+  overflow: auto;
+  padding: 1.1rem;
+  text-align: left;
+  text-shadow: 0 0 6px rgba(231,225,213,.14);
+  user-select: text;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pcxt-terminal:focus {
+  box-shadow: inset 0 0 0 2px rgba(231,225,213,.22);
+}
+
+.pcxt-cursor {
+  background: #e7e1d5;
+  color: #050505;
+  display: inline-block;
+  min-width: .62em;
+  text-shadow: none;
+}
+
+.pcxt-hidden-input {
+  bottom: 0;
+  height: 1px;
+  left: 0;
+  opacity: .01;
+  position: fixed;
+  width: 1px;
+}
+
+.pcxt-input-label {
+  left: -10000px;
+  position: absolute;
+}
+
+.pcxt-keyboard-help {
+  background: #111;
+  border-top: 1px solid #343434;
+  color: #bdb7aa;
+  font: 14px/1.45 "Courier New", Courier, monospace;
+  padding: .7rem 1rem;
+  text-align: left;
+}
+
+.pcxt-keyboard-help code,
+.museum-exhibit-layout code {
+  background: rgba(255,255,255,.12);
+  border-radius: .25rem;
+  color: #fff;
+  padding: .08rem .24rem;
+}
+
+@media (max-width: 700px) {
+  .pcxt-shell.is-terminal-active {
+    padding: .65rem;
+  }
+
+  .pcxt-stage {
+    min-height: calc(100vh - 74px);
+  }
+
+  .pcxt-terminal {
+    font-size: 15px;
+    padding: .75rem;
+  }
+
+  .pcxt-keyboard-help {
+    font-size: 12px;
+  }
+
+  .museum-exhibit-layout {
+    display: block;
+  }
+}
