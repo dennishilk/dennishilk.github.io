@@ -23,9 +23,8 @@
       <h1><span class="prompt">root@nebunix:~$</span> <span class="name">BIOS Setup Utility</span></h1>
       <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>Late 1980s – Late 1990s</dd></div><div><dt>Focus</dt><dd>Classic PC firmware configuration</dd></div></dl>
       <p class="museum-exhibit-summary">An original educational simulation inspired by classic PC BIOS Setup utilities. Explore how early personal computers stored hardware settings, selected boot devices and prepared a machine before the operating system started.</p>
-      <button id="biosSetupPlaceholder" class="card-button museum-primary-action" type="button" aria-describedby="biosSetupNote biosSetupStatus">ENTER SETUP</button>
-      <p id="biosSetupNote" class="museum-exhibit-summary">Interactive setup environment coming in the next phase.</p>
-      <p id="biosSetupStatus" class="museum-exhibit-summary" role="status" aria-live="polite" hidden></p>
+      <a id="biosSetupPlaceholder" class="card-button museum-primary-action" href="/museum/bios-setup/setup.html" aria-describedby="biosSetupNote">ENTER SETUP</a>
+      <p id="biosSetupNote" class="museum-exhibit-summary">Open the browser-only educational BIOS setup shell.</p>
     </header>
     <main class="museum-exhibit-layout">
       <section class="detail-card"><h2>About this exhibit</h2><p>The BIOS Setup Utility is an original educational environment inspired by PC firmware interfaces from the late 1980s through the late 1990s. It is not a motherboard BIOS, UEFI implementation, extracted firmware, ROM image or exact recreation of a vendor product.</p></section>
@@ -36,14 +35,6 @@
   </div>
   <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
 </div>
-<script>
-  const biosSetupPlaceholder = document.getElementById('biosSetupPlaceholder');
-  const biosSetupStatus = document.getElementById('biosSetupStatus');
 
-  biosSetupPlaceholder.addEventListener('click', () => {
-    biosSetupStatus.hidden = false;
-    biosSetupStatus.textContent = 'Interactive setup environment coming in the next phase.';
-  });
-</script>
 </body>
 </html>
