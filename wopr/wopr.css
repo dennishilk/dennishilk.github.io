@@ -321,6 +321,10 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
   animation: joshua-rocket-flight var(--rocket-duration) linear var(--rocket-delay) forwards;
 }
 
+body.joshua-alarm-active {
+  animation: joshua-terminal-alert-pulse 0.46s linear infinite;
+}
+
 .joshua-achievement-overlay {
   position: fixed;
   inset: 0;
@@ -387,7 +391,16 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
   to { opacity: 0; transform: translate3d(calc(var(--rocket-start) + var(--rocket-drift)), -20vh, 0) rotate(var(--rocket-end-rotation)); }
 }
 
+@keyframes joshua-terminal-alert-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.04); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  body.joshua-alarm-active {
+    animation: none;
+  }
+
   .joshua-rocket-layer.reduced-motion .joshua-rocket {
     top: 72vh;
     left: var(--rocket-start);

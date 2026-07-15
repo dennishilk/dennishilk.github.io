@@ -16,11 +16,11 @@ const JOSHUA_ROCKET_COUNT = 72;
 const JOSHUA_ROCKET_MIN_SIZE = 18;
 const JOSHUA_ROCKET_MAX_SIZE = 32;
 const JOSHUA_DISMISS_ARM_DELAY = 220;
-const JOSHUA_ALARM_SEGMENTS = 7;
-const JOSHUA_ALARM_SEGMENT_DURATION = 0.26;
+const JOSHUA_ALARM_SEGMENTS = 12;
+const JOSHUA_ALARM_SEGMENT_DURATION = 0.34;
 const JOSHUA_ALARM_SEGMENT_GAP = 0.12;
-const JOSHUA_ALARM_START_DELAY = 360;
-const JOSHUA_ROCKET_LAUNCH_DELAY = 720;
+const JOSHUA_ALARM_START_DELAY = 320;
+const JOSHUA_ROCKET_LAUNCH_DELAY = 780;
 const JOSHUA_ROCKET_LAUNCH_WINDOW = 2.1;
 
 let joshuaAudioContext = null;
@@ -79,6 +79,7 @@ function cleanupJoshuaAlarm(alarm = joshuaActiveAlarm, fadeSeconds = 0.08) {
   if (!alarm) return;
   const { context, masterGain, nodes, cleanupTimer } = alarm;
   if (cleanupTimer) window.clearTimeout(cleanupTimer);
+  document.body.classList.remove("joshua-alarm-active");
 
   try {
     const stopAt = context.currentTime + fadeSeconds;
@@ -114,8 +115,8 @@ async function playJoshuaAlarm() {
     const stopAt = now + alarmDuration + 0.12;
 
     masterGain.gain.setValueAtTime(0.0001, now);
-    masterGain.gain.linearRampToValueAtTime(0.18, now + 0.035);
-    masterGain.gain.setValueAtTime(0.18, now + alarmDuration - 0.12);
+    masterGain.gain.linearRampToValueAtTime(0.2, now + 0.035);
+    masterGain.gain.setValueAtTime(0.2, now + alarmDuration - 0.12);
     masterGain.gain.exponentialRampToValueAtTime(0.0001, stopAt);
     masterGain.connect(context.destination);
 
@@ -134,6 +135,8 @@ async function playJoshuaAlarm() {
       body.frequency.setValueAtTime(frequency / 2, start);
       body.frequency.setValueAtTime(frequency / 2, end);
     }
+
+    document.body.classList.add("joshua-alarm-active");
 
     const primaryGain = context.createGain();
     const bodyGain = context.createGain();
@@ -175,8 +178,8 @@ function createJoshuaRockets() {
     const drift = driftDirection * (4 + Math.random() * 14);
     const delay = reduceMotion ? Math.random() * 0.35 : (index / Math.max(rocketCount - 1, 1)) * JOSHUA_ROCKET_LAUNCH_WINDOW;
     const duration = reduceMotion ? 1.8 : 4.5 + (Math.random() * 2.5);
-    const startRotation = driftDirection * (8 + Math.random() * 12);
-    const endRotation = startRotation + (driftDirection * (8 + Math.random() * 18));
+    const startRotation = (Math.random() * 10) - 5;
+    const endRotation = Math.max(-5, Math.min(5, startRotation + ((Math.random() * 4) - 2)));
 
     rocket.className = "joshua-rocket";
     rocket.textContent = "🚀";
