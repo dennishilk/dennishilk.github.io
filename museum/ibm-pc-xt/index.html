@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="canonical" href="https://dennishilk.github.io/museum/ibm-pc-xt/">
   <title>PC XT Command Desk – Computer Museum</title>
-  <meta name="description" content="A simulated early personal-computer command environment with an original file system and command parser.">
+  <meta name="description" content="An educational DOS-style browser environment inspired by classic DOS PCs of the late 1980s and early 1990s.">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="stylesheet" href="/style.css?v=43">
@@ -14,25 +14,35 @@
 </head>
 <body>
 <canvas id="stars"></canvas>
-<div class="content museum-page">
-  <header class="dashboard-header wo-page-header museum-hero exhibit-hero">
-    <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html"><i class="fas fa-newspaper"></i> News</a></div></div>
-    <a class="museum-back" href="/museum/">← Back to Computer Museum</a>
-    <span class="museum-status planned">PLANNED</span>
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">PC XT Command Desk</span></h1>
-    <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>1983-inspired</dd></div><div><dt>Type</dt><dd>Planned interactive simulation</dd></div></dl>
-    <p class="museum-exhibit-summary">A simulated early personal-computer command environment with an original file system and command parser.</p>
-  </header>
-  <main class="museum-exhibit-layout">
-    <section class="detail-card"><h2>About this exhibit</h2><p>A simulated early personal-computer command environment with an original file system and command parser.</p></section>
-    <section class="detail-card"><h2>Planned interaction</h2><ul><li>Original command prompt</li><li>Simulated directory tree</li><li>Help system</li><li>Text files</li><li>Educational command tasks</li><li>Browser-local state</li></ul></section>
-    <section class="detail-card"><h2>Historical context</h2><p>Early business personal computers popularized text command workflows, expansion cards and disk-based software routines.</p></section>
-    <section class="observer-notice museum-notice"><h2>Recreation notice</h2><p>This will be an independently created command environment and will not distribute DOS, BIOS images or proprietary software.</p><p>These exhibits are independently created educational simulations. No proprietary ROM images, operating-system files or original software are distributed.</p></section>
+<div class="content museum-page pcxt-shell">
+  <div class="museum-exhibit">
+    <header class="dashboard-header wo-page-header museum-hero exhibit-hero">
+      <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a><a href="/museum/">Computer Museum</a><a href="/news.html"><i class="fas fa-newspaper"></i> News</a></div></div>
+      <a class="museum-back" href="/museum/">← Back to Computer Museum</a>
+      <span class="museum-status available">ACTIVE</span>
+      <h1><span class="prompt">root@nebunix:~$</span> <span class="name">PC XT Command Desk</span></h1>
+      <dl class="museum-meta exhibit-meta"><div><dt>Era</dt><dd>Inspired by classic DOS PCs</dd></div><div><dt>Focus</dt><dd>Late 1980s – Early 1990s command workflow</dd></div></dl>
+      <p class="museum-exhibit-summary">An original educational DOS environment that runs entirely in your browser. It evokes a classic command prompt, directories, text files, memory reports and configuration files without emulating a real PC or executing a real operating system.</p>
+      <button id="pcxtStart" class="card-button museum-primary-action" type="button">START PC XT</button>
+    </header>
+    <main class="museum-exhibit-layout">
+      <section class="detail-card"><h2>About this exhibit</h2><p>The PC XT Command Desk is an educational simulation inspired by classic DOS PCs. It is not an IBM PC emulator, not an MS-DOS emulator, not a virtual machine and not FreeDOS. All commands, documentation and files are original Computer Museum content.</p></section>
+      <section class="detail-card"><h2>What happens when you start it</h2><ul><li>Boot into the original <strong>PC XT Command Desk</strong> identity.</li><li>Navigate a structured browser-local <code>C:\</code> filesystem with <code>DIR</code>, <code>CD</code>, <code>TYPE</code> and <code>TREE</code>.</li><li>Inspect simulated memory, disk usage and DOS-style environment variables.</li><li>Change <code>PATH</code>, <code>SET</code> variables and <code>PROMPT</code> values that persist only for you.</li></ul></section>
+      <section class="detail-card"><h2>Safety boundary</h2><p>No real operating system is executed. The server filesystem and your real computer files are never accessed. The simulated files exist as plain browser data, and changes are stored only under the PC XT Command Desk localStorage key for this visitor.</p></section>
+      <section class="observer-notice museum-notice"><h2>Recreation notice</h2><p>This is a historically inspired educational environment, not an exact 1983 machine recreation and not an official vendor product. It does not distribute DOS, BIOS images, game binaries, manuals or proprietary software.</p><p>Use <code>RESET</code> inside the terminal if you want to restore the original museum filesystem. The reset affects only this exhibit’s browser-local PC XT data.</p></section>
+    </main>
+  </div>
+  <main class="pcxt-computer" aria-live="polite">
+    <div class="pcxt-computer-nav"><a class="museum-back" href="/museum/">← COMPUTER MUSEUM</a></div>
+    <section class="pcxt-stage" aria-label="PC XT Command Desk display">
+      <div id="pcxtTerminal" class="pcxt-terminal" tabindex="0" role="application" aria-label="Interactive PC XT command terminal"></div>
+      <label class="pcxt-input-label" for="pcxtInput">PC XT command input</label>
+      <input id="pcxtInput" class="pcxt-hidden-input" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="pcxt-keyboard-help">Keyboard driven: try <code>HELP</code>, <code>DIR</code>, <code>TYPE README.TXT</code>, <code>CD GAMES</code>, <code>MEM</code>, <code>CHKDSK</code>, or <code>RESET</code>.</div>
+    </section>
   </main>
-  <footer>
-    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div>
-    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
-  </footer>
+  <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
 </div>
+<script src="pcxt.js"></script>
 </body>
 </html>
