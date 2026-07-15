@@ -299,3 +299,102 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
 @media (max-width: 620px) {
   .ops-card { align-items: flex-start; flex-direction: column; }
 }
+
+.joshua-rocket-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.joshua-rocket {
+  position: absolute;
+  left: var(--rocket-start);
+  bottom: -2rem;
+  font-size: var(--rocket-size);
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(255, 191, 95, 0.35));
+  opacity: 0;
+  animation: joshua-rocket-flight var(--rocket-duration) ease-out var(--rocket-delay) forwards;
+}
+
+.joshua-achievement-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  background: rgba(0, 0, 0, 0.68);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+.joshua-achievement-panel {
+  width: min(680px, 100%);
+  max-height: min(90vh, 760px);
+  overflow: auto;
+  border: 1px solid rgba(124, 255, 155, 0.55);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(4, 13, 9, 0.97), rgba(0, 0, 0, 0.94));
+  box-shadow: 0 0 38px rgba(124, 255, 155, 0.18), inset 0 0 34px rgba(124, 255, 155, 0.055);
+  padding: clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.joshua-achievement-panel pre {
+  margin: 0.2rem 0 1rem;
+  color: var(--amber);
+  font: inherit;
+  font-size: clamp(0.58rem, 1.8vw, 0.9rem);
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+.joshua-achievement-panel h2 {
+  margin-bottom: 1rem;
+  color: var(--green);
+  font-size: clamp(1rem, 4vw, 1.45rem);
+}
+
+.joshua-achievement-panel p {
+  margin: 0 0 1rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.joshua-continue-copy { color: var(--amber); }
+
+.joshua-continue-button {
+  min-width: 9rem;
+  min-height: 2.75rem;
+  border: 1px solid rgba(255, 191, 95, 0.62);
+  border-radius: 8px;
+  background: rgba(255, 191, 95, 0.12);
+  color: var(--amber);
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  padding: 0.8rem 1rem;
+}
+
+@keyframes joshua-rocket-flight {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-16deg) scale(0.86); }
+  12% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate3d(var(--rocket-drift), calc(-1 * var(--rocket-rise) - 4rem), 0) rotate(16deg) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .joshua-rocket-layer.reduced-motion .joshua-rocket {
+    bottom: 11vh;
+    animation: joshua-rocket-fade var(--rocket-duration) ease-in-out var(--rocket-delay) forwards;
+  }
+}
+
+@keyframes joshua-rocket-fade {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.96); }
+  20%, 70% { opacity: 0.72; }
+  100% { opacity: 0; transform: translate3d(0, -0.35rem, 0) scale(1); }
+}
