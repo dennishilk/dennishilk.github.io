@@ -62,16 +62,15 @@
     .bios-menu {
       display: flex;
       flex-wrap: wrap;
-      gap: 0 14px;
+      gap: 0 12px;
       justify-content: center;
-      padding: 8px 10px;
+      padding: 7px 10px;
       border-bottom: 2px solid var(--bios-gray);
       color: var(--bios-cyan);
     }
 
     .bios-menu button,
-    .bios-row,
-    .dialog-actions button {
+    .bios-row {
       font: inherit;
       border: 0;
       cursor: pointer;
@@ -115,9 +114,9 @@
     .bios-row {
       width: 100%;
       display: grid;
-      grid-template-columns: minmax(150px, 1fr) minmax(120px, 0.55fr);
+      grid-template-columns: minmax(170px, 1fr) minmax(140px, 0.55fr);
       gap: 18px;
-      padding: 4px 8px;
+      padding: 5px 8px;
       color: var(--bios-white);
       background: transparent;
       text-align: left;
@@ -160,25 +159,23 @@
       border: 3px double var(--bios-gray);
       background: var(--bios-blue);
       color: var(--bios-white);
-      padding: 22px;
+      padding: 20px 22px;
       text-align: center;
       box-shadow: 12px 12px 0 var(--bios-shadow);
     }
 
     .dialog h2 { margin: 0 0 14px; color: var(--bios-cyan); font-size: 1.1rem; }
     .dialog-options { display: grid; gap: 6px; justify-content: center; margin: 16px 0; }
-    .dialog-option { min-width: 180px; padding: 4px 18px; color: var(--bios-white); }
+    .dialog-option { min-width: 180px; padding: 5px 18px; color: var(--bios-white); text-align: center; }
     .dialog-option[aria-selected="true"] { background: var(--bios-gray); color: var(--bios-blue); }
     .editor-values { color: var(--bios-white); font-size: 1.2rem; margin: 18px 0; }
     .editor-values span { display: inline-block; padding: 2px 8px; }
     .editor-values .active { background: var(--bios-gray); color: var(--bios-blue); }
-    .post-screen { background: #000; color: #c0c0c0; width: 100%; height: 100%; padding: 26px; line-height: 1.55; }
+    .post-screen { background: #000; color: #c0c0c0; width: 100%; height: 100%; padding: 26px; line-height: 1.55; white-space: pre-line; }
     .post-screen strong { color: #fff; font-weight: 400; }
     .fade-black { background: #000; transition: background 500ms ease; }
-    .dialog p { margin: 0 0 22px; }
-    .dialog-actions { display: flex; justify-content: center; gap: 18px; }
-    .dialog-actions button { min-width: 90px; padding: 5px 16px; background: var(--bios-gray); color: var(--bios-blue); }
-    .dialog-actions button:focus { outline: 2px solid var(--bios-cyan); outline-offset: 2px; }
+    .dialog p { margin: 0 0 20px; line-height: 1.45; }
+    .dialog-keys { margin-top: 18px; color: var(--bios-gray); }
 
     @media (max-width: 760px) {
       body { padding: 0; }
@@ -200,7 +197,7 @@
     const RETURN_URL = '/museum/bios-setup/';
 
     const hardware = {
-      cpu: 'Museum 80486DX2-66', memory: '8192 KB', display: 'Museum VGA Compatible', hdd: 'MuseumDisk 512 MB', floppy: '1.44 MB 3½"', keyboard: '101-Key Enhanced', mouse: 'PS/2 Compatible'
+      cpu: 'Museum 80486DX2-66', memory: '8192 KB', display: 'Museum VGA Compatible', hdd: 'MuseumDisk 512 MB', floppy: '1.44 MB 3.5 in', keyboard: '101-Key Enhanced', mouse: 'PS/2 Compatible'
     };
 
     const helpText = {
@@ -215,17 +212,17 @@
       'Mouse': 'PS/2 mouse ports were common on PCs before USB became the usual way to connect pointing devices.',
       'CPU Internal Cache': 'Enables or disables the processor internal cache. Disabling cache was sometimes useful when troubleshooting unstable hardware but greatly reduced performance.',
       'Quick Boot': 'Skips or shortens some startup checks. Many BIOS utilities offered this after users trusted their hardware.',
-      'Boot Logo': 'Controls whether a decorative startup logo hides technical POST messages. Turning it off exposes more educational detail.',
+      'Boot Logo': 'Controls whether a startup logo hides technical POST messages. Mid-1990s PCs increasingly used logos, but text POST remained useful for learning and troubleshooting.',
       'NumLock Status': 'Selects whether the numeric keypad starts in number-entry mode, a small but common preference in classic setup screens.',
-      'Security Option': 'Older BIOS utilities could ask for a password at setup only or at every boot. This exhibit does not implement passwords.',
-      'Typematic Rate': 'Controls keyboard repeat behavior from the era before operating systems always managed this setting themselves.',
+      'Security Option': 'Selected whether a BIOS password protected Setup only or every boot. Offices and classrooms used this to discourage casual changes, though it was not strong modern security.',
+      'Typematic Rate': 'Controlled how quickly held keys repeated. DOS programs and early setup utilities often relied on firmware defaults before operating systems took over keyboard behavior.',
       'Serial Port A': 'COM ports connected modems, mice, terminals and lab equipment before USB simplified peripheral connections.',
       'Parallel Port': 'LPT ports were widely used for printers and sometimes scanners, external drives and copy-protection dongles.',
-      'IDE Controller': 'IDE integrated disk control electronics onto the drive and became a dominant PC hard disk interface.',
+      'IDE Controller': 'Enabled the onboard IDE disk interface used by many 1990s hard drives and CD-ROM drives. Integrating the controller reduced expansion-card complexity.',
       'USB Legacy Mode': 'Later BIOS software could translate USB keyboards for older operating systems that expected PS/2-style input.',
       'Sound Device': 'Many early PCs had no built-in advanced sound; expansion cards made games and multimedia more expressive.',
-      'Power Management': 'APM-era settings tried to reduce energy use before modern ACPI power control became standard.',
-      'Suspend Mode': 'Suspend attempted to pause a running PC while preserving state, but support varied across hardware and software.',
+      'Power Management': 'APM-era settings let firmware dim displays, slow devices, or suspend parts of the PC to save electricity before modern ACPI became common.',
+      'Suspend Mode': 'Attempted to place the PC in a low-power state while preserving work. In the mid-1990s this depended heavily on compatible hardware, drivers, and operating systems.',
       'HDD Power Down': 'Spinning down hard disks saved power and noise, though repeated spin-up cycles could be inconvenient.',
       'Wake on Keyboard': 'Some systems could resume from low-power states using keyboard activity rather than the front power button.',
       'Soft-Off Method': 'ATX-era PCs allowed software-controlled power-off, unlike earlier machines with purely mechanical switches.',
@@ -242,8 +239,8 @@
       'System Temperature': 'Case temperature gives a broad view of airflow inside the computer enclosure.',
       'CPU Fan Speed': 'Fan tachometer readings helped diagnose cooling failures before they damaged components.',
       'Chassis Fan': 'Many older systems had few monitored fans; later PCs exposed more health information in BIOS.',
-      'Voltage Monitor': 'Voltage rails reveal whether a power supply is delivering stable power to the system.',
-      'Temperature Unit': 'Lets visitors view simulated thermal readings in Celsius or Fahrenheit while learning how BIOS monitor screens presented sensor data.'
+      'Voltage Monitor': 'Summarizes simulated +5 V, +12 V, and low-voltage rails. BIOS health pages taught users that stable power was as important as temperature and fan readings.',
+      'Temperature Unit': 'Changes the display unit for the simulated sensor readings. Hardware monitor screens often offered this preference as PC health pages became more common.'
     };
 
     const defaultConfig = () => ({
@@ -266,8 +263,8 @@
       { id: 'peripherals', label: 'Integrated Peripherals', rows: [['Serial Port A', 'Virtual COM1'], ['Parallel Port', 'Virtual LPT1'], ['IDE Controller', 'Enabled'], ['USB Legacy Mode', 'Enabled'], ['Sound Device', 'Not Installed']] },
       { id: 'power', label: 'Power Management', rows: [['Power Management', 'User Define'], ['Suspend Mode', 'Disabled'], ['HDD Power Down', 'Disabled'], ['Wake on Keyboard', 'Disabled'], ['Soft-Off Method', 'Instant-Off']] },
       { id: 'pnp', label: 'PnP / PCI Configuration', rows: [['PNP OS Installed', 'No'], ['Reset Configuration Data', 'Disabled'], ['IRQ Resources', 'Auto'], ['PCI VGA Palette Snoop', 'Disabled']] },
-      { id: 'boot', label: 'Boot Configuration', rows: [['First Boot Device', biosConfig.bootOrder[0]], ['Second Boot Device', biosConfig.bootOrder[1]], ['Third Boot Device', biosConfig.bootOrder[2]], ['Boot Other Device', 'Enabled'], ['Boot Delay', '0 seconds']] },
-      { id: 'monitor', label: 'Hardware Monitor', rows: [['CPU Temperature', biosConfig.temperatureUnit === 'Celsius' ? '36 °C' : '97 °F'], ['System Temperature', biosConfig.temperatureUnit === 'Celsius' ? '31 °C' : '88 °F'], ['CPU Fan Speed', '2400 RPM'], ['Chassis Fan', 'Not Installed'], ['Voltage Monitor', 'Nominal'], ['Temperature Unit', biosConfig.temperatureUnit]] }
+      { id: 'boot', label: 'Boot Configuration', rows: [['First Boot Device', biosConfig.bootOrder[0]], ['Second Boot Device', biosConfig.bootOrder[1]], ['Third Boot Device', biosConfig.bootOrder[2]], ['Boot Other Device', 'Enabled'], ['Boot Delay', '2 seconds']] },
+      { id: 'monitor', label: 'Hardware Monitor', rows: [['CPU Temperature', biosConfig.temperatureUnit === 'Celsius' ? '38 °C' : '100 °F'], ['System Temperature', biosConfig.temperatureUnit === 'Celsius' ? '32 °C' : '90 °F'], ['CPU Fan Speed', '2600 RPM'], ['Chassis Fan', 'Not Installed'], ['Voltage Monitor', '+5 V / +12 V Nominal'], ['Temperature Unit', biosConfig.temperatureUnit]] }
     ]; }
 
     function loadConfig() { try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) return { ...defaultConfig(), ...JSON.parse(saved) }; } catch (error) { console.warn('Unable to load virtual CMOS configuration.', error); } return defaultConfig(); }
@@ -280,20 +277,35 @@
     function openExitDialog() { appState.dialog = 'exit'; appState.dialogSelection = 1; render(); }
     function openSaveDialog() { appState.dialog = 'save'; appState.dialogSelection = 0; render(); }
     function exitSetup() { window.location.href = RETURN_URL; }
-    function beginReboot() { appState.rebooting = true; appState.dialog = null; app.classList.add('fade-black'); renderPost('Saving CMOS...<br>Done.'); setTimeout(()=>renderPost(''),700); setTimeout(showPost,1300); }
-    function showPost() { renderPost(`<strong>Computer Museum BIOS</strong><br><br>Memory Test&nbsp;&nbsp;${hardware.memory} OK<br>CPU&nbsp;&nbsp;${hardware.cpu}<br>Primary Master&nbsp;&nbsp;${hardware.hdd}<br>Primary Slave&nbsp;&nbsp;None<br>Floppy Drive&nbsp;&nbsp;${hardware.floppy}<br>Keyboard&nbsp;&nbsp;Detected<br><br>Press DEL to enter Setup<br><br>Booting Virtual System...`); setTimeout(exitSetup, 3800); }
-    function renderPost(html) { app.innerHTML = `<section class="post-screen">${html}</section>`; }
+    function beginReboot() {
+      appState.rebooting = true; appState.dialog = null; app.classList.add('fade-black');
+      renderPost(['Saving CMOS...', 'Updating CMOS checksum...', 'Done.']);
+      setTimeout(() => renderPost([]), 750);
+      setTimeout(showPost, 1050);
+    }
+    function showPost() {
+      const postLines = [`<strong>Computer Museum BIOS</strong>`, '', 'Memory Test...', '4096 KB OK', `${hardware.memory} OK`, `CPU detected  ${hardware.cpu}`, `Primary Master detected  ${hardware.hdd}`, 'Primary Slave  None', `Floppy Drive  ${hardware.floppy}`, `Keyboard detected  ${hardware.keyboard}`, '', 'Press DEL to enter Setup', '', 'Booting Virtual System...'];
+      postLines.forEach((_, index) => setTimeout(() => renderPost(postLines.slice(0, index + 1)), index * 145));
+      setTimeout(exitSetup, 2600);
+    }
+    function renderPost(lines) { app.innerHTML = `<section class="post-screen">${Array.isArray(lines) ? lines.join('<br>') : lines}</section>`; }
 
-    function openEditor() { const item = currentItem(); if (!editable[item]) return; appState.dialog = 'editor'; appState.dialogSelection = 0; appState.editorPart = 0; render(); }
+    function openEditor() {
+      const item = currentItem(); if (!editable[item]) return;
+      const ed = editable[item];
+      appState.dialog = 'editor';
+      appState.dialogSelection = ed.type === 'choice' ? Math.max(0, ed.choices.findIndex(choice => choice[1] === biosConfig[ed.key])) : 0;
+      appState.editorPart = 0; render();
+    }
     function adjustEditor(delta) { const item = currentItem(), ed = editable[item]; if (!ed) return; if (ed.type === 'choice') appState.dialogSelection = (appState.dialogSelection + delta + ed.choices.length) % ed.choices.length; else {
         const parts = biosConfig[ed.key].split(ed.type === 'date' ? '-' : ':').map(Number); const max = ed.type === 'date' ? [2099,12,31] : [23,59,59]; const min = ed.type === 'date' ? [1980,1,1] : [0,0,0]; parts[appState.editorPart] += delta; if (parts[appState.editorPart] > max[appState.editorPart]) parts[appState.editorPart] = min[appState.editorPart]; if (parts[appState.editorPart] < min[appState.editorPart]) parts[appState.editorPart] = max[appState.editorPart]; biosConfig[ed.key] = parts.map((n,i)=>String(n).padStart(i===0&&ed.type==='date'?4:2,'0')).join(ed.type === 'date' ? '-' : ':'); appState.dirty = true; }
       render(); }
     function acceptEditor() { const item = currentItem(), ed = editable[item]; if (ed?.type === 'choice') { biosConfig[ed.key] = ed.choices[appState.dialogSelection][1]; appState.dirty = true; } appState.dialog = null; render(); }
 
-    function dialogHtml() { if (!appState.dialog) return ''; if (appState.dialog === 'exit') return `<div class="dialog-backdrop"><section class="dialog" role="dialog" aria-modal="true"><h2>Exit Setup?</h2><p>${appState.dirty ? 'Discard unsaved configuration changes?' : 'Return to Computer Museum BIOS page?'}</p><div class="dialog-options"><div class="dialog-option" aria-selected="${appState.dialogSelection===0}">Yes</div><div class="dialog-option" aria-selected="${appState.dialogSelection===1}">No</div></div><p>Enter Accept&nbsp;&nbsp; Esc Cancel</p></section></div>`;
-      if (appState.dialog === 'save') return `<div class="dialog-backdrop"><section class="dialog" role="dialog" aria-modal="true"><h2>Save configuration?</h2><div class="dialog-options"><div class="dialog-option" aria-selected="${appState.dialogSelection===0}">Yes</div><div class="dialog-option" aria-selected="${appState.dialogSelection===1}">No</div></div><p>Enter Accept&nbsp;&nbsp; Esc Cancel</p></section></div>`;
+    function dialogHtml() { if (!appState.dialog) return ''; if (appState.dialog === 'exit') return `<div class="dialog-backdrop"><section class="dialog" role="dialog" aria-modal="true"><h2>Exit Setup?</h2><p>${appState.dirty ? 'Discard unsaved configuration changes?' : 'Return to Computer Museum BIOS page?'}</p><div class="dialog-options"><div class="dialog-option" aria-selected="${appState.dialogSelection===0}">Yes</div><div class="dialog-option" aria-selected="${appState.dialogSelection===1}">No</div></div><p class="dialog-keys">Enter Accept&nbsp;&nbsp; Esc Cancel</p></section></div>`;
+      if (appState.dialog === 'save') return `<div class="dialog-backdrop"><section class="dialog" role="dialog" aria-modal="true"><h2>Save configuration?</h2><div class="dialog-options"><div class="dialog-option" aria-selected="${appState.dialogSelection===0}">Yes</div><div class="dialog-option" aria-selected="${appState.dialogSelection===1}">No</div></div><p class="dialog-keys">Enter Accept&nbsp;&nbsp; Esc Cancel</p></section></div>`;
       const item=currentItem(), ed=editable[item]; let body=''; if (ed.type==='choice') body=`<div class="dialog-options">${ed.choices.map((c,i)=>`<div class="dialog-option" aria-selected="${appState.dialogSelection===i}">${c[0]}</div>`).join('')}</div>`; else { const sep=ed.type==='date'?' / ':' : '; const vals=biosConfig[ed.key].split(ed.type==='date'?'-':':').map((v,i)=>`<span class="${appState.editorPart===i?'active':''}">${ed.type==='date'&&i===0?v.slice(2):v}</span>`); body=`<div class="editor-values">${vals.join(sep)}</div>`; }
-      return `<div class="dialog-backdrop"><section class="dialog" role="dialog" aria-modal="true"><h2>${item}</h2>${body}<p>PgUp / PgDn Change Value<br>← → Select Field<br>Enter Accept<br>Esc Cancel</p></section></div>`; }
+      return `<div class="dialog-backdrop"><section class="dialog" role="dialog" aria-modal="true"><h2>${item}</h2>${body}<p class="dialog-keys">PgUp / PgDn Change Value<br>← → Select Field<br>Enter Accept<br>Esc Cancel</p></section></div>`; }
 
     function render() { if (appState.rebooting) return; clampRow(); const menu = menus()[appState.currentMenu]; const item = menu.rows[appState.selectedRow][0]; app.innerHTML = `
         <header class="bios-header"><div class="bios-title">Computer Museum BIOS Setup Utility</div><div>Version 1.0</div><div>Copyright (C) Dennis Hilk</div></header>
@@ -306,7 +318,13 @@
 
     document.addEventListener('keydown', event => { const keys=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Escape','Home','End','PageUp','PageDown','Tab','F10','y','Y','n','N']; if(!keys.includes(event.key)) return; event.preventDefault();
       if (appState.dialog === 'editor') { if(event.key==='Escape'){appState.dialog=null; render();} else if(event.key==='Enter') acceptEditor(); else if(event.key==='ArrowLeft') {appState.editorPart=Math.max(0,appState.editorPart-1); render();} else if(event.key==='ArrowRight') {appState.editorPart=Math.min(2,appState.editorPart+1); render();} else if(event.key==='PageUp'||event.key==='ArrowUp') adjustEditor(1); else if(event.key==='PageDown'||event.key==='ArrowDown') adjustEditor(-1); return; }
-      if (appState.dialog === 'exit' || appState.dialog === 'save') { if(event.key==='Escape'||event.key.toLowerCase()==='n'){appState.dialog=null; render();} else if(event.key==='ArrowLeft'||event.key==='ArrowRight'||event.key==='Tab') {appState.dialogSelection=1-appState.dialogSelection; render();} else if(event.key.toLowerCase()==='y') appState.dialogSelection=0, event.key==='y'; if(event.key==='Enter'||event.key.toLowerCase()==='y'){ if(appState.dialogSelection===0){ if(appState.dialog==='save'){ saveConfig(); beginReboot(); } else exitSetup(); } else { appState.dialog=null; render(); } } return; }
+      if (appState.dialog === 'exit' || appState.dialog === 'save') {
+        if(event.key==='Escape'||event.key.toLowerCase()==='n'){appState.dialog=null; render();}
+        else if(event.key==='ArrowLeft'||event.key==='ArrowRight'||event.key==='Tab') {appState.dialogSelection=1-appState.dialogSelection; render();}
+        else if(event.key.toLowerCase()==='y') appState.dialogSelection=0;
+        if(event.key==='Enter'||event.key.toLowerCase()==='y'){ if(appState.dialogSelection===0){ if(appState.dialog==='save'){ saveConfig(); beginReboot(); } else exitSetup(); } else { appState.dialog=null; render(); } }
+        return;
+      }
       if(event.key==='ArrowUp'||(event.key==='Tab'&&event.shiftKey)) setRow(appState.selectedRow-1); else if(event.key==='ArrowDown'||event.key==='Tab') setRow(appState.selectedRow+1); else if(event.key==='ArrowLeft'||event.key==='PageUp') setMenu(appState.currentMenu-1); else if(event.key==='ArrowRight'||event.key==='PageDown') setMenu(appState.currentMenu+1); else if(event.key==='Home') setRow(0); else if(event.key==='End') setRow(menus()[appState.currentMenu].rows.length-1); else if(event.key==='Escape') openExitDialog(); else if(event.key==='F10') openSaveDialog(); else if(event.key==='Enter') openEditor(); });
 
     render();
