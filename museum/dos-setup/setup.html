@@ -5,22 +5,23 @@
 <title>Computer Museum DOS Setup Utility</title>
 <meta name="description" content="Guided browser-only DOS game setup wizard for the Computer Museum.">
 <style>
-:root{--desk:#1b252b;--desk2:#162027;--blue:#001f78;--blue-hi:#00a8d8;--panel:#b8b8b8;--panel-dark:#7f7f7f;--panel-light:#e2e2e2;--ink:#101010;--dim:#d0d0d0;--white:#f4f4f4;--cyan:#55ffff;--yellow:#ffff77;--black:#000;--warn:#ff6b6b;--green:#45e67a}
+:root{--desk:#000;--blue:#001a8a;--blue-deep:#000f44;--blue-hi:#00a8d8;--panel:#b8b8b8;--panel-dark:#606060;--panel-light:#e2e2e2;--ink:#101010;--dim:#d0d0d0;--white:#f4f4f4;--cyan:#55ffff;--yellow:#ffff77;--black:#000;--warn:#ff6b6b;--green:#45e67a}
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden;background-color:var(--desk);background-image:radial-gradient(var(--desk2) 1px,transparent 1px),radial-gradient(#26343b 1px,transparent 1px);background-position:0 0,2px 2px;background-size:4px 4px;color:var(--white);font-family:"Lucida Console","Courier New",monospace}
-body{display:grid;place-items:center;padding:clamp(22px,5vw,64px)}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--desk);color:var(--white);font-family:"Lucida Console","Courier New",monospace}
+body{display:grid;place-items:center;padding:clamp(14px,3vw,40px);padding-bottom:clamp(30px,7vh,72px)}
 button{font:inherit}
-.dos-screen{width:clamp(620px,64vw,860px);height:min(620px,72vh);min-height:500px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;background:var(--blue);border:4px double var(--cyan);box-shadow:none;outline:2px solid #000;outline-offset:3px;color:var(--white);position:relative}
-.dos-screen:before{content:"";position:absolute;inset:6px;border:2px solid var(--panel);pointer-events:none}
+.dos-screen{width:clamp(720px,76vw,1020px);height:min(730px,84vh);min-height:575px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;background:var(--blue);border:4px double var(--cyan);box-shadow:none;outline:3px solid var(--black);outline-offset:4px;color:var(--white);position:relative}
+.dos-screen:before{content:"";position:absolute;inset:6px;border:2px solid var(--white);pointer-events:none}
+.dos-screen:after{content:"";position:absolute;inset:12px;border:2px solid var(--panel-dark);pointer-events:none}
 .dos-screen:focus{outline-color:var(--yellow)}
-.dos-header{text-align:center;line-height:1.18;padding:10px 18px 7px;border-bottom:2px solid var(--panel);background:var(--blue);position:relative;z-index:1}
+.dos-header{text-align:center;line-height:1.18;padding:8px 18px 6px;border-bottom:2px solid var(--white);background:var(--blue);position:relative;z-index:1}
 .dos-title{color:var(--yellow);font-weight:700;font-size:1.08rem;letter-spacing:.02em}
 .dos-subtitle{color:var(--cyan)}
 .dos-header div:last-child{color:var(--dim);font-size:.82rem}
-.progress{padding:4px 18px 5px;border-bottom:2px solid var(--panel-dark);color:var(--black);background:var(--panel);display:flex;justify-content:space-between;gap:12px;position:relative;z-index:1}
-.dos-window{margin:16px 20px 12px;border:4px double var(--white);background:var(--panel);color:var(--ink);min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);box-shadow:inset 0 0 0 2px var(--panel-dark)}
+.progress{padding:4px 16px 5px;border-top:2px solid var(--panel-dark);border-bottom:2px solid var(--black);color:var(--black);background:var(--panel);display:flex;justify-content:space-between;gap:12px;position:relative;z-index:1}
+.dos-window{margin:12px 16px 10px;border:4px double var(--white);background:var(--panel);color:var(--ink);min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);box-shadow:inset 0 0 0 2px var(--panel-dark)}
 .window-title{justify-self:center;position:relative;top:-.82em;background:var(--panel);color:var(--blue);padding:0 10px;font-weight:700}
-.content{margin-top:-.45em;padding:0 20px 14px;overflow:auto;line-height:1.28;scrollbar-color:var(--blue) var(--panel)}
+.content{margin-top:-.45em;padding:0 18px 12px;overflow:auto;line-height:1.28;scrollbar-color:var(--blue) var(--panel)}
 .content h3{color:var(--blue);font-size:1rem;margin:8px 0 3px}
 .lead{white-space:pre-line;margin:4px 0 0}
 .explain{color:#202020;margin:6px 0 10px;white-space:pre-line}
