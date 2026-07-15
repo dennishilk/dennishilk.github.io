@@ -321,6 +321,38 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
   animation: joshua-rocket-flight var(--rocket-duration) linear var(--rocket-delay) forwards;
 }
 
+.joshua-rocket::before,
+.joshua-rocket::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.joshua-rocket::before {
+  top: calc(100% - (var(--rocket-size) * 0.08));
+  width: calc(var(--rocket-size) * 0.22);
+  height: var(--rocket-trail-length);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 245, 154, 0.95) 0 12%, rgba(255, 176, 48, 0.78) 24%, rgba(255, 111, 35, 0.34) 52%, transparent 78%),
+    linear-gradient(180deg, rgba(255, 217, 84, 0.84), rgba(255, 131, 28, 0.36) 46%, transparent 100%);
+  box-shadow: 0 0 10px rgba(255, 169, 41, 0.5), 0 0 18px rgba(255, 100, 24, 0.26);
+  opacity: 0.86;
+  animation: joshua-rocket-flame 0.14s steps(2, end) infinite;
+}
+
+.joshua-rocket::after {
+  top: calc(100% + (var(--rocket-trail-length) * 0.32));
+  width: calc(var(--rocket-size) * 0.12);
+  height: calc(var(--rocket-trail-length) * 0.64);
+  border-radius: 999px;
+  background: repeating-linear-gradient(180deg, rgba(255, 188, 75, 0.52) 0 2px, transparent 2px 7px);
+  filter: blur(0.4px);
+  opacity: 0.52;
+}
+
 body.joshua-alarm-active {
   animation: joshua-terminal-alert-pulse 0.46s linear infinite;
 }
@@ -391,6 +423,11 @@ body.joshua-alarm-active {
   to { opacity: 0; transform: translate3d(var(--rocket-end-x), var(--rocket-end-y), 0) rotate(var(--rocket-flight-rotation)); }
 }
 
+@keyframes joshua-rocket-flame {
+  0%, 100% { transform: translateX(-50%) scaleY(0.94); opacity: 0.74; }
+  50% { transform: translateX(-50%) scaleY(1.06); opacity: 0.9; }
+}
+
 @keyframes joshua-terminal-alert-pulse {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.04); }
@@ -405,6 +442,12 @@ body.joshua-alarm-active {
     top: 72vh;
     left: var(--rocket-start-x);
     animation: joshua-rocket-fade var(--rocket-duration) ease-in-out var(--rocket-delay) forwards;
+  }
+
+  .joshua-rocket-layer.reduced-motion .joshua-rocket::before,
+  .joshua-rocket-layer.reduced-motion .joshua-rocket::after {
+    animation: none;
+    opacity: 0.36;
   }
 }
 
