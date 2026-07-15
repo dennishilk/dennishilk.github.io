@@ -3175,6 +3175,104 @@ button.technology-observer-card {
   text-shadow: none;
 }
 
+
+.pcxt-editor {
+  background: #050505;
+  color: #e7e1d5;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font: 17px/1.35 "Courier New", Courier, monospace;
+  min-height: 0;
+  padding: 1rem;
+  text-align: left;
+}
+
+.pcxt-editor-header,
+.pcxt-editor footer {
+  align-items: center;
+  border: 1px solid #343434;
+  display: flex;
+  gap: .8rem;
+  justify-content: space-between;
+  padding: .65rem .75rem;
+}
+
+.pcxt-editor-header div {
+  display: grid;
+  gap: .18rem;
+  min-width: 0;
+}
+
+.pcxt-editor-header strong {
+  color: #fff7df;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pcxt-editor-header span {
+  overflow-wrap: anywhere;
+}
+
+.pcxt-editor-header b {
+  color: #a8f0a8;
+  white-space: nowrap;
+}
+
+.pcxt-editor-header b.is-dirty {
+  color: #ffe08a;
+}
+
+.pcxt-editor-label {
+  margin: .7rem 0 .35rem;
+}
+
+.pcxt-editor textarea {
+  background: #080808;
+  border: 1px solid #555;
+  color: #f3eddf;
+  flex: 1;
+  font: inherit;
+  min-height: 42vh;
+  outline: none;
+  overflow: auto;
+  padding: .85rem;
+  resize: none;
+  tab-size: 2;
+  white-space: pre;
+  width: 100%;
+}
+
+.pcxt-editor textarea:focus,
+.pcxt-editor button:focus-visible {
+  box-shadow: 0 0 0 2px rgba(231,225,213,.48);
+}
+
+.pcxt-editor footer {
+  flex-wrap: wrap;
+  margin-top: .7rem;
+}
+
+.pcxt-editor output {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.pcxt-editor button {
+  background: #111;
+  border: 1px solid #e7e1d5;
+  color: #e7e1d5;
+  cursor: pointer;
+  font: inherit;
+  min-height: 44px;
+  min-width: 76px;
+  padding: .45rem .8rem;
+}
+
+.pcxt-editor button:hover {
+  background: #1f1f1f;
+}
+
 .pcxt-hidden-input {
   bottom: 0;
   height: 1px;
@@ -3222,6 +3320,30 @@ button.technology-observer-card {
 
   .pcxt-keyboard-help {
     font-size: 12px;
+  }
+
+  .pcxt-editor {
+    font-size: 14px;
+    padding: .65rem;
+  }
+
+  .pcxt-editor textarea {
+    min-height: 46vh;
+  }
+
+  .pcxt-editor footer,
+  .pcxt-editor-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pcxt-editor footer div {
+    display: flex;
+    gap: .5rem;
+  }
+
+  .pcxt-editor button {
+    flex: 1;
   }
 
   .museum-exhibit-layout {
