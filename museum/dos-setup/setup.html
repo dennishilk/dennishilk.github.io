@@ -70,7 +70,8 @@ body{padding:0;background:#000}
 .axis{grid-template-columns:1fr}
 .play-button{width:100%}
 }
-</style></head><body><main id="dosApp" class="dos-screen" tabindex="0" role="application" aria-label="Computer Museum DOS Setup Utility"></main><script>
+</style>
+</head><body><main id="dosApp" class="dos-screen" tabindex="0" role="application" aria-label="Computer Museum DOS Setup Utility"></main><script>
 const STORAGE_KEY='computerMuseumDOSSetup',OLD_KEY='computerMuseumDOSSetup.v1',RETURN_URL='/museum/dos-setup/';
 const choices={digitalAudio:['Sound Blaster 16','Sound Blaster Pro','Sound Blaster','Gravis Ultrasound','PC Speaker','No Digital Audio'],port:['210h','220h','230h','240h','250h','260h'],irq:['2','5','7','10'],dma:['0','1','3','5'],music:['General MIDI','Roland MT-32 Compatible','AdLib / FM Synth','Sound Blaster FM','Gravis Ultrasound','PC Speaker','No Music'],input:['Keyboard Only','Two-Button Joystick','Four-Button Joystick','Gamepad','Mouse and Keyboard'],display:['VGA 320×200','VGA 640×480','SVGA 800×600','VESA Compatible','Text Mode','Automatic'],memoryMode:['Automatic','Prefer XMS','Prefer EMS','Conventional Only'],difficulty:['Easy','Normal','Hard'],subtitles:['Enabled','Disabled'],demoPlayback:['Enabled','Disabled'],language:['English','German'],mouseSensitivity:['Low','Medium','High']};
 const defaults={digitalAudio:'Sound Blaster 16',port:'220h',irq:'5',dma:'1',music:'AdLib / FM Synth',input:'Keyboard Only',display:'VGA 640×480',memoryMode:'Automatic',difficulty:'Normal',subtitles:'Enabled',demoPlayback:'Enabled',language:'English',mouseSensitivity:'Medium'};
