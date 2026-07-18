@@ -6,7 +6,8 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>WOPR Security Intelligence</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-  <link rel="stylesheet" href="/wopr/wopr.css?v=2" />
+  <link rel="stylesheet" href="/wopr/wopr.css?v=3" />
+  <script defer src="/wopr/dashboard/security/security.js?v=1"></script>
 </head>
 <body>
   <main class="wopr-shell">
@@ -18,29 +19,46 @@
       </div>
       <div class="wopr-screen">
         <a class="wopr-terminal-return-link" href="/wopr/dashboard/">← WOPR DASHBOARD</a>
-
         <header class="wopr-header">
           <p class="kicker">PRIVATE OPERATOR CONSOLE</p>
           <h1>WOPR SECURITY INTELLIGENCE</h1>
-          <p class="classification">DEFENSIVE MONITORING CONSOLE</p>
+          <p class="classification">DEFENSIVE MONITORING · AUTHENTICATED DATA ONLY</p>
         </header>
 
-        <section class="staging-preview" aria-labelledby="security-console-title">
+        <section class="staging-preview security-overview" aria-labelledby="system-status-title">
           <div class="ops-card">
             <div>
-              <h2 id="security-console-title">SECURITY MONITORING</h2>
-              <p><strong>MODULES NOT YET ACTIVE</strong></p>
+              <h2 id="system-status-title">SYSTEM STATUS</h2>
+              <p><strong id="security-status" class="status-pill secure">SECURE</strong></p>
             </div>
           </div>
+          <div class="security-metrics" aria-label="Last 24 hours">
+            <article><span>LAST 24 HOURS</span><strong id="scanner-requests">0</strong><p>SCANNER REQUESTS</p></article>
+            <article><span>LAST 24 HOURS</span><strong id="sensitive-successes">0</strong><p>SUCCESSFUL SENSITIVE REQUESTS</p></article>
+            <article><span>CURRENT</span><strong id="active-findings">0</strong><p>ACTIVE FINDINGS</p></article>
+            <article><span>LAST SELF-CHECK</span><strong id="self-check-at">ON DEMAND</strong><p>DENNISHILK.COM</p></article>
+          </div>
+        </section>
 
-          <p>This private operator/security console contains no live security data yet.</p>
-          <p>This private console will later summarize:</p>
-          <ul class="wopr-placeholder-list">
-            <li>scanner intent</li>
-            <li>blocked exposure attempts</li>
-            <li>defensive self-check results</li>
-            <li>security findings and remediation status</li>
-          </ul>
+        <section class="staging-preview" aria-labelledby="intent-title">
+          <h2 id="intent-title">SCANNER INTENT</h2>
+          <div id="scanner-intent-list" class="security-list"></div>
+        </section>
+
+        <section class="staging-preview" aria-labelledby="findings-title">
+          <h2 id="findings-title">SECURITY FINDINGS</h2>
+          <div id="findings-list" class="findings-list"></div>
+        </section>
+
+        <section class="staging-preview" aria-labelledby="self-check-title">
+          <h2 id="self-check-title">SELF-CHECK</h2>
+          <p>Allowlisted HTTPS status checks against dennishilk.com only. Secure sensitive-path result is 403 or 404.</p>
+          <div id="self-check-list" class="security-list"></div>
+        </section>
+
+        <section class="staging-preview" aria-labelledby="history-title">
+          <h2 id="history-title">HISTORY</h2>
+          <p>July 18, 2026 Git Exposure incident is retained as a remediated historical finding. No source IPs, user agents, tokens, request bodies, or secret contents are shown.</p>
         </section>
       </div>
     </section>

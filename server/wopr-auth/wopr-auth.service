@@ -15,7 +15,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/tmp /var/lib/wopr/transmissions
+ReadWritePaths=/tmp /var/lib/wopr/transmissions /var/lib/wopr/security
 
 [Install]
 WantedBy=multi-user.target

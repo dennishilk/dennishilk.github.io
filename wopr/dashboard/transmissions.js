@@ -105,3 +105,21 @@ reviewButton.addEventListener("click", () => {
 });
 
 loadPending(false);
+
+async function loadCompactSecurity() {
+  const status = document.getElementById("compact-security-status");
+  const findings = document.getElementById("compact-security-findings");
+  if (!status || !findings) return;
+  try {
+    const response = await fetch("/wopr/api/security/summary", { credentials: "same-origin", headers: { Accept: "application/json" } });
+    if (response.status === 401) return;
+    if (!response.ok) throw new Error("security unavailable");
+    const data = await response.json();
+    status.textContent = data.summary?.system_status || "SECURE";
+    findings.textContent = String(data.summary?.active_findings || 0);
+  } catch {
+    status.textContent = "ATTENTION";
+  }
+}
+
+loadCompactSecurity();

@@ -18,6 +18,7 @@ const CONFIG = {
   sameSite: process.env.WOPR_COOKIE_SAMESITE || "Strict",
   allowedOrigin: process.env.WOPR_ALLOWED_ORIGIN || "https://dennishilk.com",
   transmissionsDir: process.env.WOPR_TRANSMISSIONS_DIR || "/var/lib/wopr/transmissions",
+  securityStateFile: process.env.WOPR_SECURITY_STATE_FILE || "/var/lib/wopr/security/security-state.json",
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
@@ -319,6 +320,73 @@ function handleLogout(req, res) {
   return sendJson(res, 200, { ok: true }, { "Set-Cookie": cookieHeader("", 0) });
 }
 
+const SELF_CHECK_HOST = "dennishilk.com";
+const SELF_CHECK_PATHS = Object.freeze([
+  { path: "/.git/HEAD", expected: [403, 404] },
+  { path: "/.git/config", expected: [403, 404] },
+  { path: "/.env", expected: [403, 404] },
+  { path: "/.env.production", expected: [403, 404] },
+  { path: "/.aws/credentials", expected: [403, 404] },
+  { path: "/", expected: [200] },
+  { path: "/sitemap.xml", expected: [200] },
+]);
+
+function assertAllowedSelfCheckUrl(target) {
+  const url = new URL(target, `https://${SELF_CHECK_HOST}`);
+  if (url.protocol !== "https:" || url.hostname !== SELF_CHECK_HOST || !SELF_CHECK_PATHS.some((entry) => entry.path === url.pathname)) {
+    throw Object.assign(new Error("self-check target not allowlisted"), { status: 400 });
+  }
+  return url;
+}
+
+async function probeSelfCheckPath(entry) {
+  const url = assertAllowedSelfCheckUrl(entry.path);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    let response = await fetch(url, { method: "HEAD", redirect: "manual", signal: controller.signal });
+    if (response.status === 405) response = await fetch(url, { method: "GET", redirect: "manual", signal: controller.signal });
+    return { path: entry.path, status: response.status, expected: entry.expected, result: entry.expected.includes(response.status) ? (response.status === 200 ? "OK" : "SECURE") : "ATTENTION" };
+  } catch {
+    return { path: entry.path, status: null, expected: entry.expected, result: "UNKNOWN" };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function runSelfCheck() {
+  const checks = [];
+  for (const entry of SELF_CHECK_PATHS) checks.push(await probeSelfCheckPath(entry));
+  return { host: SELF_CHECK_HOST, generated_at: new Date().toISOString(), checks };
+}
+
+async function readSecurityState() {
+  try {
+    const data = JSON.parse(await fs.readFile(CONFIG.securityStateFile, "utf8"));
+    return data && typeof data === "object" ? data : {};
+  } catch (error) {
+    if (error.code !== "ENOENT") console.error(`WOPR security state unavailable: ${error.message}`);
+    return { generated_at: null, window_hours: 24, scanner_requests: 0, successful_sensitive_requests: 0, active_findings: 0, system_status: "SECURE", scanner_intent: {}, findings: [] };
+  }
+}
+
+async function handleSecuritySummary(req, res) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  const state = await readSecurityState();
+  return sendJson(res, 200, { ok: true, summary: { generated_at: state.generated_at, window_hours: state.window_hours || 24, scanner_requests: state.scanner_requests || 0, successful_sensitive_requests: state.successful_sensitive_requests || 0, active_findings: state.active_findings || 0, system_status: state.system_status || "SECURE", scanner_intent: state.scanner_intent || {}, last_self_check: state.self_check?.generated_at || null } });
+}
+
+async function handleSecurityFindings(req, res) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  const state = await readSecurityState();
+  return sendJson(res, 200, { ok: true, findings: Array.isArray(state.findings) ? state.findings : [] });
+}
+
+async function handleSecuritySelfCheck(req, res) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  return sendJson(res, 200, { ok: true, self_check: await runSelfCheck() });
+}
+
 function handleHealth(_req, res) {
   return sendJson(res, 200, { ok: true });
 }
@@ -334,6 +402,9 @@ async function route(req, res) {
     if (req.method === "POST" && url.pathname === "/api/transmissions") return await handleSubmitTransmission(req, res);
     if (req.method === "GET" && url.pathname === "/api/transmissions") return await handlePublicTransmissions(req, res);
     if (req.method === "GET" && url.pathname === "/wopr/api/transmissions/pending") return await handlePendingTransmissions(req, res);
+    if (req.method === "GET" && url.pathname === "/wopr/api/security/summary") return await handleSecuritySummary(req, res);
+    if (req.method === "GET" && url.pathname === "/wopr/api/security/findings") return await handleSecurityFindings(req, res);
+    if (req.method === "GET" && url.pathname === "/wopr/api/security/self-check") return await handleSecuritySelfCheck(req, res);
     const approveMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/approve$/);
     if (req.method === "POST" && approveMatch) return await updateTransmissionStatus(req, res, approveMatch[1], "APPROVED");
     const rejectMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/reject$/);
@@ -344,6 +415,7 @@ async function route(req, res) {
   }
 }
 
+if (require.main === module) {
 requireConfig();
 ensureTransmissionStore().catch((error) => {
   console.error(`WOPR transmission store unavailable: ${error.message}`);
@@ -353,3 +425,6 @@ ensureTransmissionStore().catch((error) => {
     console.log(`WOPR auth service listening on ${CONFIG.host}:${CONFIG.port}`);
   });
 });
+}
+
+module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession };
