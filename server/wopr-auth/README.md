@@ -173,20 +173,34 @@ The authenticated security endpoints read generated private state from:
 
 - `/var/lib/wopr/security/security-state.json`
 
-The file is not served by nginx as static content. Generate it locally from nginx access logs with the defensive analyzer, for example:
+The file is not served by nginx as static content. The analyzer runs separately from `wopr-auth` so the web backend does not receive direct access to nginx logs. The ownership model is:
+
+- `wopr-auth`: existing web backend user/group; reads the generated security state only. Do not add this user to `adm`.
+- `wopr-security`: dedicated analyzer user; runs with primary group `wopr-auth` so new state files are group-readable by the web backend.
+- `adm`: supplementary group for `wopr-security` only, allowing reads of `/var/log/nginx/access.log` while preserving the existing `www-data:adm` `0640` nginx log permissions.
+- `/var/lib/wopr/security`: owned by `wopr-security:wopr-auth` with mode `0750`. This keeps the directory private while permitting `wopr-auth` to traverse it.
+- `/var/lib/wopr/security/security-state.json`: owned by `wopr-security:wopr-auth` with mode `0640`. This keeps the generated state readable by `wopr-auth` and not publicly readable.
+
+Worldnode analyzer deployment steps from a current checkout at `/srv/www/dennishilk.github.io`:
 
 ```sh
-sudo install -d -m 0750 -o wopr -g wopr /var/lib/wopr/security
-WOPR_SECURITY_STATE_FILE=/var/lib/wopr/security/security-state.json node /path/to/dennishilk.github.io/scripts/wopr-security-analyzer.mjs /var/log/nginx/access.log /var/log/nginx/access.log.1
-sudo chown wopr:wopr /var/lib/wopr/security/security-state.json
-sudo chmod 0640 /var/lib/wopr/security/security-state.json
+sudo useradd --system --home /nonexistent --shell /usr/sbin/nologin wopr-security || true
+sudo usermod -g wopr-auth -a -G adm wopr-security
+sudo install -d -m 0750 -o wopr-security -g wopr-auth /var/lib/wopr/security
+sudo cp /srv/www/dennishilk.github.io/server/wopr-auth/wopr-security-analyzer.service /etc/systemd/system/wopr-security-analyzer.service
+sudo cp /srv/www/dennishilk.github.io/server/wopr-auth/wopr-security-analyzer.timer /etc/systemd/system/wopr-security-analyzer.timer
+sudo systemctl daemon-reload
+sudo systemctl enable --now wopr-security-analyzer.timer
+sudo systemctl start wopr-security-analyzer.service
+sudo stat -c '%U:%G %a %n' /var/lib/wopr/security /var/lib/wopr/security/security-state.json
+sudo systemctl status wopr-security-analyzer.timer
+systemctl list-timers wopr-security-analyzer.timer
 ```
 
-Recommended worldnode deployment steps:
+The timer runs at boot after two minutes and then every 10 minutes with `Persistent=true`, so missed runs are triggered after downtime. The service executes:
 
-1. Create `/var/lib/wopr/security` with owner/group readable by the WOPR auth service account and mode `0750`.
-2. Run `scripts/wopr-security-analyzer.mjs` on a schedule as the WOPR service account, passing only this site's nginx access logs.
-3. Set `WOPR_SECURITY_STATE_FILE` only if the state file is moved from `/var/lib/wopr/security/security-state.json`.
-4. Keep nginx dotfile blocking in place; the self-check expects sensitive paths such as `/.git/HEAD`, `/.git/config`, and `/.env` to return `403` or `404`.
+```sh
+/usr/bin/node /srv/www/dennishilk.github.io/scripts/wopr-security-analyzer.mjs /var/log/nginx/access.log
+```
 
-The security state intentionally stores aggregate counts and findings only. It must not contain raw IP addresses, user agents, request bodies, cookies, tokens, credentials, secret contents, or private filesystem paths.
+The service hardening intentionally keeps `/var/log/nginx` read-only and `/var/lib/wopr/security` writable by combining `ProtectSystem=strict`, `ReadOnlyPaths=/var/log/nginx`, and `ReadWritePaths=/var/lib/wopr/security`. Keep nginx dotfile blocking in place; the security state intentionally stores aggregate counts and findings only. It must not contain raw IP addresses, user agents, request bodies, cookies, tokens, credentials, secret contents, or private filesystem paths.
