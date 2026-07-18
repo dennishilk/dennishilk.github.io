@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modem &amp; Acoustic Coupler Lab</title>
+<meta name="description" content="Initial Computer Museum shell for an original browser-only modem and acoustic coupler communication lab.">
+<style>
+:root{--bg:#070909;--bench:#111819;--panel:#182223;--panel2:#202b2c;--edge:#3c5556;--cyan:#7defff;--green:#8cffb0;--amber:#ffd98a;--red:#ff766f;--text:#e7f6f4;--muted:#96aaa9;--shadow:#000}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 8%,#172326 0,#080b0c 58%,#030404 100%);color:var(--text);font-family:"Courier New",Courier,monospace;-webkit-text-size-adjust:100%}
+body{padding:clamp(12px,2.4vw,30px);overflow-x:hidden}
+a,button{font:inherit}.lab-shell{width:min(1180px,100%);min-height:calc(100vh - clamp(24px,4.8vw,60px));margin:0 auto;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:clamp(12px,2vw,22px)}
+.lab-topbar{align-items:center;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}.museum-return,.utility-button,.begin-button{align-items:center;border:1px solid rgba(125,239,255,.45);background:rgba(13,31,34,.82);border-radius:10px;color:#d8fbff;display:inline-flex;font-weight:700;justify-content:center;min-height:44px;padding:.68rem .9rem;text-decoration:none;touch-action:manipulation}.museum-return:hover,.museum-return:focus-visible,.utility-button:hover,.utility-button:focus-visible,.begin-button:hover,.begin-button:focus-visible{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(125,239,255,.18),0 0 16px rgba(125,239,255,.22);outline:0}.utility-group{display:flex;flex-wrap:wrap;gap:8px}.utility-button{cursor:pointer;color:var(--muted)}.utility-button[aria-pressed="false"] .safe{color:var(--amber)}
+.lab-header{background:linear-gradient(180deg,rgba(32,43,44,.94),rgba(14,22,23,.96));border:1px solid var(--edge);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.035);padding:clamp(18px,3vw,28px)}.lab-kicker{color:var(--green);font-size:.8rem;font-weight:700;letter-spacing:.16em;margin:0 0 .55rem;text-transform:uppercase}.lab-header h1{color:var(--cyan);font-size:clamp(1.7rem,5vw,3.5rem);letter-spacing:.06em;line-height:1;margin:.1rem 0 .85rem;text-transform:uppercase}.lab-header p{color:#c4d6d5;line-height:1.55;margin:0;max-width:780px}
+.era-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.era-item{border:1px solid rgba(150,170,169,.28);background:rgba(14,23,24,.76);border-radius:12px;color:var(--muted);min-height:58px;padding:.8rem;text-align:left}.era-item strong{display:block;color:inherit;font-size:.78rem;letter-spacing:.14em}.era-item span{display:block;font-size:.92rem;margin-top:.25rem}.era-item[aria-current="step"]{border-color:rgba(140,255,176,.62);box-shadow:inset 0 0 20px rgba(140,255,176,.08);color:var(--green)}
+.workbench{background:linear-gradient(135deg,rgba(24,34,35,.95),rgba(9,14,15,.98));border:1px solid var(--edge);border-radius:18px;box-shadow:0 28px 70px rgba(0,0,0,.65),inset 0 0 0 1px rgba(255,255,255,.04);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:clamp(14px,2vw,22px);min-height:430px;padding:clamp(14px,2.5vw,26px)}.instrument-panel,.terminal-panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid rgba(125,239,255,.18);border-radius:14px;box-shadow:inset 0 0 22px rgba(0,0,0,.45);padding:clamp(14px,2vw,22px)}.instrument-panel{display:grid;align-content:center;gap:18px;text-align:center}.link-label{color:var(--amber);font-size:.9rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.speed-readout{background:#050807;border:2px solid rgba(140,255,176,.32);border-radius:12px;color:var(--green);font-size:clamp(2.4rem,9vw,5.4rem);font-weight:700;line-height:1;padding:clamp(18px,4vw,34px);text-shadow:0 0 12px rgba(140,255,176,.35)}.status-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.status-lamp{align-items:center;border:1px solid rgba(150,170,169,.26);border-radius:999px;color:#c9d1d9;display:inline-flex;gap:.5rem;min-height:36px;padding:.45rem .75rem}.status-lamp:before{background:var(--muted);border-radius:50%;content:"";height:.7rem;width:.7rem}.status-lamp.ready:before{background:var(--green);box-shadow:0 0 10px rgba(140,255,176,.65)}.terminal-panel{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px}.terminal-title{color:var(--cyan);font-weight:700;letter-spacing:.12em;text-transform:uppercase}.terminal-screen{background:#020403;border:1px solid rgba(140,255,176,.28);border-radius:10px;color:var(--green);line-height:1.55;min-height:220px;padding:16px;text-shadow:0 0 8px rgba(140,255,176,.25);white-space:pre-line}.terminal-screen .muted{color:var(--muted);text-shadow:none}.begin-button{background:rgba(255,217,138,.1);border-color:rgba(255,217,138,.55);color:var(--amber);cursor:pointer;width:100%}.begin-button[aria-disabled="true"]{cursor:not-allowed;opacity:.88}.lab-note{color:var(--muted);font-size:.88rem;line-height:1.45;margin:0;text-align:center}
+@media(max-width:820px){body{padding:10px}.lab-shell{min-height:calc(100vh - 20px)}.workbench{grid-template-columns:1fr}.era-nav{grid-template-columns:1fr}.lab-header h1{font-size:clamp(1.55rem,9vw,2.4rem)}.speed-readout{font-size:clamp(2.2rem,15vw,4rem)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="lab-shell" aria-labelledby="labTitle">
+  <nav class="lab-topbar" aria-label="Museum navigation and lab utilities">
+    <a class="museum-return" href="/museum/">← COMPUTER MUSEUM</a>
+    <div class="utility-group" aria-label="Lab controls">
+      <button class="utility-button" type="button" aria-pressed="false"><span class="safe">SOUND OFF</span></button>
+      <button class="utility-button" type="button">INFO</button>
+    </div>
+  </nav>
+  <header class="lab-header">
+    <p class="lab-kicker">Computer Museum / Data Communications Lab</p>
+    <h1 id="labTitle">Modem &amp; Acoustic Coupler Lab</h1>
+    <p>Initial workbench shell for a future browser-only exhibit about connecting computers through ordinary telephone networks. No audio, dialing, terminal session or modem negotiation is active yet.</p>
+  </header>
+  <section class="era-nav" aria-label="Communication eras">
+    <div class="era-item" aria-current="step"><strong>01</strong><span>ACOUSTIC</span></div>
+    <div class="era-item"><strong>02</strong><span>DIAL-UP</span></div>
+    <div class="era-item"><strong>03</strong><span>SPEED LAB</span></div>
+  </section>
+  <section class="workbench" aria-label="Initial acoustic coupler workspace">
+    <div class="instrument-panel" aria-labelledby="acousticTitle">
+      <div class="link-label" id="acousticTitle">ACOUSTIC LINK</div>
+      <div class="speed-readout" aria-label="300 bits per second">300 BIT/S</div>
+      <div class="status-row" aria-label="Current lab state">
+        <span class="status-lamp ready">REMOTE DATA COMMUNICATION</span>
+        <span class="status-lamp ready">READY</span>
+      </div>
+    </div>
+    <aside class="terminal-panel" aria-label="Connection preview">
+      <div class="terminal-title">NEBUNIX REMOTE COMPUTING SERVICE</div>
+      <div class="terminal-screen">REMOTE DATA COMMUNICATION
+READY
+
+<span class="muted">Awaiting future handset, coupler and carrier-detect steps.</span></div>
+      <button class="begin-button" type="button" aria-disabled="true" title="Connection flow will be implemented in a later phase">BEGIN CONNECTION</button>
+      <p class="lab-note">Placeholder control only. The acoustic-coupler simulation will be added in a later implementation phase.</p>
+    </aside>
+  </section>
+</main>
+</body>
+</html>
