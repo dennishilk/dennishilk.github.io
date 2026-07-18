@@ -166,3 +166,27 @@ curl -i https://dennishilk.com/wopr/api/transmissions/pending
 ```
 
 The wrong login must return `401`, pending messages must not appear in the public API, and private moderation endpoints must reject requests without a valid WOPR session.
+
+## WOPR Security Intelligence private state
+
+The authenticated security endpoints read generated private state from:
+
+- `/var/lib/wopr/security/security-state.json`
+
+The file is not served by nginx as static content. Generate it locally from nginx access logs with the defensive analyzer, for example:
+
+```sh
+sudo install -d -m 0750 -o wopr -g wopr /var/lib/wopr/security
+WOPR_SECURITY_STATE_FILE=/var/lib/wopr/security/security-state.json node /path/to/dennishilk.github.io/scripts/wopr-security-analyzer.mjs /var/log/nginx/access.log /var/log/nginx/access.log.1
+sudo chown wopr:wopr /var/lib/wopr/security/security-state.json
+sudo chmod 0640 /var/lib/wopr/security/security-state.json
+```
+
+Recommended worldnode deployment steps:
+
+1. Create `/var/lib/wopr/security` with owner/group readable by the WOPR auth service account and mode `0750`.
+2. Run `scripts/wopr-security-analyzer.mjs` on a schedule as the WOPR service account, passing only this site's nginx access logs.
+3. Set `WOPR_SECURITY_STATE_FILE` only if the state file is moved from `/var/lib/wopr/security/security-state.json`.
+4. Keep nginx dotfile blocking in place; the self-check expects sensitive paths such as `/.git/HEAD`, `/.git/config`, and `/.env` to return `403` or `404`.
+
+The security state intentionally stores aggregate counts and findings only. It must not contain raw IP addresses, user agents, request bodies, cookies, tokens, credentials, secret contents, or private filesystem paths.

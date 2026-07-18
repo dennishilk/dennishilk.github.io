@@ -7,7 +7,7 @@
   <title>WOPR Dashboard – Incoming Transmissions</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
   <link rel="stylesheet" href="/wopr/wopr.css?v=2" />
-  <script defer src="/wopr/dashboard/transmissions.js?v=1"></script>
+  <script defer src="/wopr/dashboard/transmissions.js?v=2"></script>
 </head>
 <body>
   <main class="wopr-shell">
@@ -46,8 +46,8 @@
           <div class="ops-card">
             <div>
               <h2 id="security-intelligence-title">SECURITY INTELLIGENCE</h2>
-              <p>STATUS<br /><strong>SECURE</strong></p>
-              <p>FINDINGS<br /><strong>0</strong> ACTIVE</p>
+              <p>STATUS<br /><strong id="compact-security-status">SECURE</strong></p>
+              <p>FINDINGS<br /><strong id="compact-security-findings">0</strong> ACTIVE</p>
             </div>
             <a class="secondary-button" href="/wopr/dashboard/security/">SECURITY</a>
           </div>
