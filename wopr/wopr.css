@@ -150,7 +150,13 @@ h2 { font-size: clamp(1rem, 2.8vw, 1.65rem); letter-spacing: 0.08em; }
   transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 .login-panel button { grid-column: 2; justify-self: start; }
-button:hover { transform: translateY(-1px); border-color: var(--amber); background: rgba(255, 191, 95, 0.18); }
+
+.secondary-button {
+  display: inline-block;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+button:hover, .secondary-button:hover, .secondary-button:focus-visible { transform: translateY(-1px); border-color: var(--amber); background: rgba(255, 191, 95, 0.18); }
 .auth-message { grid-column: 2; margin: 0; color: var(--muted); font-size: 0.85rem; }
 .auth-message.error, .warning-line { color: var(--danger); }
 .auth-message.success { color: var(--green); }
@@ -269,6 +275,12 @@ button:hover { transform: translateY(-1px); border-color: var(--amber); backgrou
 }
 
 .ops-card p { margin: 0.55rem 0 0; color: var(--amber); letter-spacing: 0.08em; }
+
+.wopr-placeholder-list {
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
 #pending-count { color: var(--green); font-size: 1.6rem; }
 .review-panel { margin-top: 1.2rem; }
 .pending-list { display: grid; gap: 0.85rem; margin-top: 0.85rem; }
