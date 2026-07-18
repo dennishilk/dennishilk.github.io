@@ -43,11 +43,39 @@ function historicalFinding() {
   return { id:'hist-2026-07-18-git-exposure', type:'git_exposure', severity:'CRITICAL', title:'Git metadata exposure blocked', first_seen:'2026-07-18T03:00:00.000Z', last_seen:'2026-07-18T03:59:59.000Z', status:'remediated', request_count:5718, http_statuses:[200], summary:'Historical incident: 5718 scanner requests occurred during the hour, including 5683 classified as Git exposure probing. Sensitive Git paths returned HTTP 200 before dotfile blocking was added in nginx.', remediation_status:'Dotfile access blocked in nginx; current self-checks return secure statuses.' };
 }
 
+function selfCheckCategories(selfCheck) {
+  const checked = new Set();
+  const exposed = new Set();
+  for (const check of selfCheck?.checks || []) {
+    if (!isSensitivePath(check?.path)) continue;
+    const category = classifySecurityIntent({ path: check.path });
+    checked.add(category);
+    if (SENSITIVE_STATUS.has(check?.status)) exposed.add(category);
+  }
+  return { checked, exposed };
+}
+
+function currentExposureVerified(selfCheck, finding) {
+  if (!Array.isArray(selfCheck?.checks)) return true;
+  const { checked, exposed } = selfCheckCategories(selfCheck);
+  return !checked.has(finding.type) || exposed.has(finding.type);
+}
+
+function markRemediated(finding) {
+  return {
+    ...finding,
+    id: finding.id.replace(/^active-/, 'remediated-'),
+    status: 'remediated',
+    title: finding.title.replace(' returned HTTP 200', ' returned HTTP 200 historically'),
+    remediation_status: 'Current defensive self-check no longer reproduces HTTP 200 exposure for this sensitive path category.',
+  };
+}
+
 export function buildSecurityState(lines, { now = new Date(), selfCheck = null } = {}) {
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const intent = Object.fromEntries(INTENT_CATEGORIES.map(c => [c, 0]));
   const findings = [historicalFinding()];
-  const activeByType = new Map();
+  const findingsByType = new Map();
   let scannerRequests = 0, successfulSensitiveRequests = 0;
   for (const line of lines) {
     const req = parseLogLine(line); if (!req?.time || req.time < since || req.time > now) continue;
@@ -57,14 +85,14 @@ export function buildSecurityState(lines, { now = new Date(), selfCheck = null }
       successfulSensitiveRequests++;
       const severity = severityForSensitivePath(req.path);
       const id = `active-${category}-${severity.toLowerCase()}`;
-      const existing = activeByType.get(id) || { id, type:category, severity, title:`Sensitive ${category.replaceAll('_',' ')} returned HTTP 200`, first_seen:req.time.toISOString(), last_seen:req.time.toISOString(), status:'active', request_count:0, http_statuses:[], summary:'One or more requests to a sensitive path returned HTTP 200. Review nginx rules and deployed files without exposing file contents.', remediation_status:'Needs operator review.' };
+      const existing = findingsByType.get(id) || { id, type:category, severity, title:`Sensitive ${category.replaceAll('_',' ')} returned HTTP 200`, first_seen:req.time.toISOString(), last_seen:req.time.toISOString(), status:'active', request_count:0, http_statuses:[], summary:'One or more requests to a sensitive path returned HTTP 200. Review nginx rules and deployed files without exposing file contents.', remediation_status:'Needs operator review.' };
       existing.request_count += 1;
       existing.last_seen = req.time.toISOString();
       if (!existing.http_statuses.includes(req.status)) existing.http_statuses.push(req.status);
-      activeByType.set(id, existing);
+      findingsByType.set(id, existing);
     }
   }
-  findings.unshift(...activeByType.values());
+  findings.unshift(...Array.from(findingsByType.values(), finding => currentExposureVerified(selfCheck, finding) ? finding : markRemediated(finding)));
   const activeFindings = findings.filter(f => f.status === 'active').length;
   return { generated_at: now.toISOString(), window_hours:24, scanner_requests: scannerRequests, successful_sensitive_requests: successfulSensitiveRequests, active_findings: activeFindings, system_status: activeFindings ? (findings.some(f => f.status === 'active' && f.severity === 'CRITICAL') ? 'CRITICAL' : 'ATTENTION') : 'SECURE', scanner_intent:intent, findings, self_check:selfCheck };
 }
