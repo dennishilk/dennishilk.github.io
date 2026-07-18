@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSecurityState, classifySecurityIntent, containsRawIp, severityForSensitivePath } from '../scripts/wopr-security-analyzer.mjs';
+import { buildSecurityState, classifySecurityIntent, containsRawIp, generateSecurityState, severityForSensitivePath } from '../scripts/wopr-security-analyzer.mjs';
 
 const line = ({ ip = '203.0.113.42', at = '18/Jul/2026:04:00:00 +0000', path = '/', status = 404, ua = 'zgrab/0.x' }) =>
   `${ip} - - [${at}] "GET ${path} HTTP/1.1" ${status} 123 "-" "${ua}"`;
@@ -94,4 +94,31 @@ test('active_findings only counts currently active findings', () => {
   assert.equal(state.findings.filter(f => f.status === 'remediated').length >= 2, true);
   assert.equal(state.active_findings, 0);
   assert.equal(state.system_status, 'SECURE');
+});
+
+
+test('state generation path runs allowlisted self-check before building state', async () => {
+  const originalFetch = globalThis.fetch;
+  const requested = [];
+  globalThis.fetch = async (url, options) => {
+    requested.push({ url: String(url), method: options?.method });
+    const { hostname, pathname } = new URL(String(url));
+    assert.equal(hostname, 'dennishilk.com');
+    const secureSensitive = new Set(['/.git/HEAD', '/.git/config', '/.env', '/.env.production', '/.aws/credentials']);
+    return { status: secureSensitive.has(pathname) ? 404 : 200 };
+  };
+
+  try {
+    const state = await generateSecurityState([line({ path: '/.git/HEAD', status: 200 })], { now });
+    const selfCheckPaths = state.self_check.checks.map(check => check.path);
+    assert.deepEqual(selfCheckPaths, ['/.git/HEAD', '/.git/config', '/.env', '/.env.production', '/.aws/credentials', '/', '/sitemap.xml']);
+    assert(requested.every(request => request.url.startsWith('https://dennishilk.com/')));
+    assert(requested.every(request => request.method === 'HEAD'));
+    assert.equal(state.successful_sensitive_requests, 1);
+    assert.equal(state.active_findings, 0);
+    assert.equal(state.system_status, 'SECURE');
+    assert.equal(state.findings.find(f => f.type === 'git_exposure' && f.request_count === 1).status, 'remediated');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

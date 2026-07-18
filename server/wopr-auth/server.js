@@ -427,4 +427,4 @@ ensureTransmissionStore().catch((error) => {
 });
 }
 
-module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession };
+module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, runSelfCheck };
