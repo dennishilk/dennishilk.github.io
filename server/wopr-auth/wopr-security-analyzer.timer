@@ -1,0 +1,12 @@
+[Unit]
+Description=Run WOPR security analyzer every 10 minutes
+Documentation=file:/srv/www/dennishilk.github.io/server/wopr-auth/README.md
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Persistent=true
+Unit=wopr-security-analyzer.service
+
+[Install]
+WantedBy=timers.target
