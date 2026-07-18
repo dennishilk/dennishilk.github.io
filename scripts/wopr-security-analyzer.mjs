@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { parseLogLine } from './site-traffic-observer.mjs';
+
+const require = createRequire(import.meta.url);
+const { runSelfCheck } = require('../server/wopr-auth/server.js');
 
 export const INTENT_CATEGORIES = Object.freeze(['git_exposure','secret_hunting','wordpress_probing','path_traversal','admin_discovery','credential_file_probing','backup_file_probing','exploit_probe','unknown']);
 const SENSITIVE_STATUS = new Set([200]);
@@ -99,11 +103,16 @@ export function buildSecurityState(lines, { now = new Date(), selfCheck = null }
 
 export function containsRawIp(value) { return /\b(?:\d{1,3}\.){3}\d{1,3}\b/.test(JSON.stringify(value)); }
 
+export async function generateSecurityState(lines, { now = new Date(), selfCheck = undefined } = {}) {
+  const currentSelfCheck = selfCheck === undefined ? await runSelfCheck() : selfCheck;
+  return buildSecurityState(lines, { now, selfCheck: currentSelfCheck });
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const out = process.env.WOPR_SECURITY_STATE_FILE || '/var/lib/wopr/security/security-state.json';
   const logs = process.argv.slice(2);
   const lines = logs.flatMap(file => fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []);
-  const state = buildSecurityState(lines);
+  const state = await generateSecurityState(lines);
   if (containsRawIp(state)) throw new Error('privacy guard blocked raw IP persistence');
   fs.mkdirSync(path.dirname(out), { recursive:true, mode:0o750 });
   fs.writeFileSync(out, `${JSON.stringify(state, null, 2)}\n`, { mode:0o640 });
