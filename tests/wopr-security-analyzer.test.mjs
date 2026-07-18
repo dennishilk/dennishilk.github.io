@@ -38,3 +38,60 @@ test('historical Git exposure incident is represented as remediated without inve
   assert.equal(historical.request_count, 5718);
   assert.match(historical.summary, /5683 classified as Git exposure probing/);
 });
+
+const secureGitSelfCheck = {
+  generated_at: '2026-07-18T05:00:00.000Z',
+  checks: [
+    { path: '/.git/HEAD', status: 404, expected: [403, 404], result: 'SECURE' },
+    { path: '/.git/config', status: 404, expected: [403, 404], result: 'SECURE' },
+    { path: '/.env', status: 404, expected: [403, 404], result: 'SECURE' },
+  ],
+};
+
+const exposedGitSelfCheck = {
+  generated_at: '2026-07-18T05:00:00.000Z',
+  checks: [
+    { path: '/.git/HEAD', status: 200, expected: [403, 404], result: 'ATTENTION' },
+    { path: '/.git/config', status: 404, expected: [403, 404], result: 'SECURE' },
+    { path: '/.env', status: 404, expected: [403, 404], result: 'SECURE' },
+  ],
+};
+
+test('marks historical HTTP 200 Git exposure as remediated when current self-check is secure', () => {
+  const state = buildSecurityState([line({ path: '/.git/HEAD', status: 200 })], { now, selfCheck: secureGitSelfCheck });
+  const gitFinding = state.findings.find(f => f.type === 'git_exposure' && f.request_count === 1);
+  assert.equal(gitFinding.status, 'remediated');
+  assert.equal(state.active_findings, 0);
+  assert.equal(state.system_status, 'SECURE');
+});
+
+test('keeps historical HTTP 200 Git exposure active when current self-check is exposed', () => {
+  const state = buildSecurityState([line({ path: '/.git/HEAD', status: 200 })], { now, selfCheck: exposedGitSelfCheck });
+  const gitFinding = state.findings.find(f => f.type === 'git_exposure' && f.request_count === 1);
+  assert.equal(gitFinding.status, 'active');
+  assert.equal(state.active_findings, 1);
+  assert.equal(state.system_status, 'CRITICAL');
+});
+
+test('keeps historical sensitive request counts visible after remediation', () => {
+  const state = buildSecurityState([
+    line({ path: '/.git/HEAD', status: 200 }),
+    line({ path: '/.git/objects/aa/bb', status: 200 }),
+    line({ path: '/.git/config', status: 404 }),
+  ], { now, selfCheck: secureGitSelfCheck });
+  const gitFinding = state.findings.find(f => f.type === 'git_exposure' && f.request_count === 2);
+  assert.equal(state.successful_sensitive_requests, 2);
+  assert.equal(state.scanner_intent.git_exposure, 3);
+  assert.equal(gitFinding.status, 'remediated');
+  assert.deepEqual(gitFinding.http_statuses, [200]);
+});
+
+test('active_findings only counts currently active findings', () => {
+  const state = buildSecurityState([
+    line({ path: '/.git/HEAD', status: 200 }),
+    line({ path: '/.env', status: 200 }),
+  ], { now, selfCheck: secureGitSelfCheck });
+  assert.equal(state.findings.filter(f => f.status === 'remediated').length >= 2, true);
+  assert.equal(state.active_findings, 0);
+  assert.equal(state.system_status, 'SECURE');
+});
