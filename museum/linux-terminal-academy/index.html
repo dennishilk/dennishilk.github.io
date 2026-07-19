@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://dennishilk.com/museum/linux-terminal-academy/">
   <title>Linux Terminal Academy – Computer Museum</title>
-  <meta name="description" content="A planned browser-only Linux learning environment from the Computer Museum, designed for safe, hands-on terminal exploration.">
+  <meta name="description" content="A planned browser-only Linux learning environment from the Computer Museum.">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
-  <link rel="stylesheet" href="/style.css?v=43">
+  <link rel="stylesheet" href="/style.css?v=44">
   <script defer src="/stars.js"></script>
-  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
   <meta property="og:title" content="Linux Terminal Academy – Computer Museum">
-  <meta property="og:description" content="A planned browser-only Linux learning environment designed for safe, hands-on terminal exploration.">
+  <meta property="og:description" content="A planned browser-only Linux learning environment.">
   <meta property="og:url" content="https://dennishilk.com/museum/linux-terminal-academy/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Linux Terminal Academy – Computer Museum">
-  <meta name="twitter:description" content="A planned browser-only Linux learning environment designed for safe, hands-on terminal exploration.">
+  <meta name="twitter:description" content="A planned browser-only Linux learning environment.">
   <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "CreativeWork",
   "name": "Linux Terminal Academy – Computer Museum",
-  "description": "A planned browser-only Linux learning environment designed for safe, hands-on terminal exploration.",
+  "description": "A planned browser-only Linux learning environment.",
   "url": "https://dennishilk.com/museum/linux-terminal-academy/",
   "isPartOf": {"@type": "CollectionPage", "name": "Computer Museum", "url": "https://dennishilk.com/museum/"}
 }
@@ -42,58 +41,32 @@
       <p class="linux-academy-kicker">BROWSER-ONLY EDUCATIONAL ENVIRONMENT</p>
       <h1><span class="prompt">museum@linux:~$</span> <span class="name">LINUX TERMINAL ACADEMY</span></h1>
       <p class="linux-academy-subtitle">LEARN LINUX BY BREAKING A COMPUTER YOU CANNOT ACTUALLY BREAK</p>
-      <p class="museum-exhibit-summary">A safe browser-only Linux training environment where visitors will eventually learn the terminal, filesystem, permissions, processes, pipes, system administration and recovery through hands-on missions. No prior Linux knowledge is assumed.</p>
-      <div class="linux-academy-statuses" aria-label="Academy development status">
-        <p><span>ACADEMY ARCHITECTURE</span><strong>OPEN / PREPARED</strong></p>
-        <p><span>INTERACTIVE LABS</span><strong>PLANNED</strong></p>
-      </div>
+      <p class="museum-exhibit-summary">A planned, safe place to learn how Linux fits together—one fictional system and eight guided labs.</p>
+      <div class="linux-academy-statuses" aria-label="Academy development status"><p><span>ACADEMY SYSTEM</span><strong>PREPARED</strong></p><p><span>INTERACTIVE LABS</span><strong>PLANNED</strong></p></div>
     </header>
 
     <main class="museum-exhibit-layout linux-academy-layout">
       <section class="observer-notice museum-notice linux-academy-reassurance" aria-labelledby="real-computer-title">
-        <h2 id="real-computer-title">YOU CANNOT BREAK YOUR REAL COMPUTER.</h2>
-        <p>Everything will happen inside a fictional virtual Linux environment in the browser. This Academy is for experimenting, making mistakes and understanding what happened—not for touching your actual machine.</p>
+        <h2 id="real-computer-title">YOUR COMPUTER STAYS UNTOUCHED.</h2>
+        <p>Every future exercise will run only in a fictional browser environment. No real shell, files, processes, services, network, or sudo access.</p>
       </section>
 
       <section class="linux-academy-section" aria-labelledby="labs-title">
-        <div class="linux-academy-heading"><div><p class="linux-academy-kicker">CURRICULUM PREVIEW</p><h2 id="labs-title">EIGHT PLANNED LABS</h2></div><span class="museum-status planned">ALL PLANNED</span></div>
-        <p class="linux-academy-lead">Each future lab will build on one shared fictional Linux system, so the skills and consequences make sense from one mission to the next.</p>
+        <div class="linux-academy-heading"><div><p class="linux-academy-kicker">PLANNED EXPERIENCES</p><h2 id="labs-title">CHOOSE A LAB</h2></div><span class="museum-status planned">8 LABS</span></div>
+        <p class="linux-academy-lead">All future labs will share one consistent fictional Linux system state.</p>
         <div class="linux-lab-grid">
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>01</span><span class="museum-status planned">PLANNED</span></div><h3>TERMINAL FIRST STEPS</h3><p>Remove the fear from the command line: it is simply another interface to the operating system.</p><p class="linux-prompt">museum@linux:~$ _</p><p class="linux-command-list">FUTURE: <code>pwd</code> <code>whoami</code> <code>uname</code> <code>date</code> <code>ls</code> <code>cd</code> <code>clear</code> <code>help</code></p><p class="linux-mission">WHERE AM I? · WHO AM I? · WHAT FILES ARE HERE?</p></article>
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>02</span><span class="museum-status planned">PLANNED</span></div><h3>FILESYSTEM EXPLORER</h3><p>Learn relative and absolute paths in a filesystem tree rooted at <code>/</code>, rather than primarily around drive letters.</p><pre class="linux-tree" aria-label="Conceptual filesystem tree">/
-├── bin
-├── etc
-├── home
-│   └── museum
-├── tmp
-└── var</pre><p>Linux can still mount multiple devices and filesystems into that tree. A future <code>cd /var/log</code> will highlight the current location.</p></article>
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>03</span><span class="museum-status planned">PLANNED</span></div><h3>FILES &amp; DIRECTORIES LAB</h3><p>Future commands such as <code>mkdir</code>, <code>touch</code>, <code>cp</code>, <code>mv</code>, <code>rm</code>, <code>cat</code>, <code>less</code>, <code>head</code> and <code>tail</code> will modify real fictional virtual filesystem state.</p><p class="linux-mission">CREATE <code>projects/</code> · CREATE <code>notes.txt</code> · COPY · RENAME · DELETE</p><p class="linux-amber">GOOD. YOU DELETED IT. NOW RECOVER IT.</p><p>Mistakes are allowed; experimentation is the point.</p></article>
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>04</span><span class="museum-status planned">PLANNED</span></div><h3>PERMISSIONS &amp; USERS LAB</h3><p>Explore users, groups, ownership and <code>rwx</code> permissions with <code>whoami</code>, <code>id</code>, <code>users</code>, <code>groups</code> and <code>ls -l</code>.</p><p>A fictional script cannot run. Inspect why, then make the smallest appropriate fix with the <code>chmod</code> concept.</p><p class="linux-amber">NOT “JUST PUT SUDO IN FRONT.” UNDERSTAND THE DENIAL FIRST.</p><p>Root and sudo remain fictional; there is no real privilege escalation.</p></article>
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>05</span><span class="museum-status planned">PLANNED</span></div><h3>PROCESS CONTROL ROOM</h3><p>See the difference between a program on disk and a running process. Explore PIDs, <code>ps</code>, a top-like view, foreground/background work, signals and the <code>kill</code> concept.</p><pre class="linux-table" aria-label="Fictional process table">PID   COMMAND         CPU
-101   museum-shell     1%
-205   archive-index    3%
-319   runaway-job     99%</pre><p class="linux-mission">SYSTEM SLOW → FIND IT → INSPECT IT → STOP IT</p><p>No browser or operating-system processes are accessed.</p></article>
-          <article class="linux-lab-card linux-lab-card-featured"><div class="linux-lab-top"><span>06</span><span class="museum-status planned">PLANNED</span></div><h3>PIPES &amp; SHELL POWER</h3><p class="linux-command-line">cat system.log | grep ERROR | wc -l</p><div class="linux-pipeline" aria-label="Conceptual command pipeline"><span>system.log</span><b>↓</b><span>cat</span><b>↓ text stream</b><span>grep ERROR</span><b>↓ matching lines</b><span>wc -l</span><b>↓</b><strong>17</strong></div><p>The output of one program can become the input of another. This composability is one of the shell’s major strengths.</p><p>Future concepts: <code>|</code>, <code>&gt;</code>, <code>&gt;&gt;</code>, wildcards, <code>grep</code>, <code>find</code>, <code>sort</code> and <code>wc</code>. Nothing executes on a real machine.</p></article>
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>07</span><span class="museum-status planned">PLANNED</span></div><h3>SYSTEM ADMIN CRASH LAB</h3><p><strong class="linux-error">MUSEUM WEB SERVICE — STATUS: FAILED</strong></p><p>Trace a fictional failure: service status → logs → configuration → fix → restart → <span class="linux-green">ACTIVE (RUNNING)</span>.</p><p>Future concepts include services, logs, configuration, package-management ideas, and systemctl- and journalctl-style diagnostics.</p><p class="linux-amber">READ · DIAGNOSE · UNDERSTAND · FIX</p><p>No real services or system commands are involved.</p></article>
-          <article class="linux-lab-card"><div class="linux-lab-top"><span>08</span><span class="museum-status planned">PLANNED</span></div><h3>BREAK IT &amp; RECOVER</h3><p>The eventual integrated challenge: a deleted configuration, wrong permission, runaway process, broken service, full virtual filesystem, bad environment variable, missing file or symbolic-link mistake.</p><p class="linux-error">SYSTEM DEGRADED. FIND OUT WHY.</p><p>There will be no immediate step-by-step answer—only the concepts learned in earlier labs and a reversible environment.</p><p class="linux-amber">RESET VIRTUAL MACHINE</p><p class="linux-mission">YOU BROKE IT. YOU UNDERSTOOD WHY. YOU FIXED IT. THAT IS HOW YOU LEARN LINUX.</p></article>
+          <a class="linux-lab-card" href="terminal-first-steps/"><span class="linux-lab-top"><b>01</b><i class="museum-status planned">PLANNED</i></span><h3>TERMINAL FIRST STEPS</h3><p>Meet the command line as another interface to the operating system—no prior Linux knowledge required.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="filesystem-explorer/"><span class="linux-lab-top"><b>02</b><i class="museum-status planned">PLANNED</i></span><h3>FILESYSTEM EXPLORER</h3><p>Navigate the Linux tree, understand paths, and see why everything begins at <code>/</code>.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="files-directories/"><span class="linux-lab-top"><b>03</b><i class="museum-status planned">PLANNED</i></span><h3>FILES &amp; DIRECTORIES</h3><p>Create, move, inspect, delete, and recover work inside a fictional filesystem.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="permissions-users/"><span class="linux-lab-top"><b>04</b><i class="museum-status planned">PLANNED</i></span><h3>PERMISSIONS &amp; USERS</h3><p>Learn why access is denied—and how to make the smallest appropriate fix.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="process-control/"><span class="linux-lab-top"><b>05</b><i class="museum-status planned">PLANNED</i></span><h3>PROCESS CONTROL ROOM</h3><p>Find out what programs are doing while they run, then diagnose a slow system.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="pipes-shell-power/"><span class="linux-lab-top"><b>06</b><i class="museum-status planned">PLANNED</i></span><h3>PIPES &amp; SHELL POWER</h3><p>Connect simple tools into useful workflows and follow data through a pipeline.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="system-admin-crash-lab/"><span class="linux-lab-top"><b>07</b><i class="museum-status planned">PLANNED</i></span><h3>SYSTEM ADMIN CRASH LAB</h3><p>Read clues, diagnose a failed fictional service, and restore it with care.</p><strong>VIEW PLANNED LAB →</strong></a>
+          <a class="linux-lab-card" href="break-it-recover/"><span class="linux-lab-top"><b>08</b><i class="museum-status planned">PLANNED</i></span><h3>BREAK IT &amp; RECOVER</h3><p>Bring every earlier idea together in one resettable, integrated challenge.</p><strong>VIEW PLANNED LAB →</strong></a>
         </div>
       </section>
 
-      <section class="linux-academy-two-column" aria-label="Linux beginner context">
-        <article class="detail-card"><h2>WINDOWS → LINUX: A MENTAL BRIDGE</h2><p>These are orientation points, not exact one-to-one translations.</p><dl class="linux-bridge"><div><dt>Windows <code>C:\Users\Name</code></dt><dd>Linux <code>/home/name</code></dd></div><div><dt>Task Manager</dt><dd><code>ps</code>, <code>top</code> and process tools</dd></div><div><dt>Administrator</dt><dd>root / sudo model</dd></div><div><dt>Drive letters</dt><dd>filesystem tree rooted at <code>/</code></dd></div><div><dt>Shortcut</dt><dd>symbolic link concept</dd></div></dl></article>
-        <article class="detail-card"><h2>LINUX IS NOT ONE DESKTOP</h2><pre class="linux-tree" aria-label="Linux system layers">LINUX SYSTEM
-├── Kernel
-├── Userspace
-├── Shell
-├── Display system / Wayland or X
-└── Desktop environment / compositor / window manager</pre><p>Linux is not synonymous with Ubuntu, GNOME, KDE or the terminal. Desktop environments, compositors and window managers are different layers and options; GNOME, KDE Plasma and sway are small examples, not a comparison chart.</p></article>
-      </section>
-
-      <section class="detail-card linux-architecture" aria-labelledby="architecture-title"><h2 id="architecture-title">FUTURE SHARED VIRTUAL-SYSTEM ARCHITECTURE</h2><p>All eight labs are planned around <strong>one consistent browser-side fictional Linux state model</strong>, not eight unrelated fake terminals.</p><div class="linux-component-grid"><span>VirtualFileSystem</span><span>Shell / CommandParser</span><span>VirtualUsers</span><span>PermissionsModel</span><span>ProcessManager</span><span>ServiceManager</span><span>EnvironmentVariables</span><span>MissionEngine</span><span>TerminalUI</span><span>Optional Persistence</span></div><p>A future sequence like <code>mkdir test</code>, <code>cd test</code>, <code>touch hello.txt</code>, <code>mv hello.txt ../</code> will consistently change fictional browser-side state. Later lessons can reuse current directory, files, users/groups, permissions, processes, services, logs and environment variables. Optional progress or virtual-machine persistence is deferred; <strong>RESET VIRTUAL MACHINE</strong> will always remain available.</p></section>
-
-      <section class="observer-notice museum-notice linux-safety" aria-labelledby="safety-title"><h2 id="safety-title">SAFETY &amp; TRANSPARENCY</h2><p>Commands may resemble Unix/Linux commands for educational purposes, but their future behavior will exist only inside an original fictional browser-side virtual environment.</p><ul><li>No real shell or Linux commands.</li><li>No access to your files, processes, services or operating system.</li><li>No real sudo/root access, SSH, external network access or package installation.</li><li>No modification of your computer.</li></ul><p><strong>YOU CANNOT BREAK YOUR REAL COMPUTER.</strong></p></section>
-
-      <section class="detail-card" aria-labelledby="accessibility-title"><h2 id="accessibility-title">BUILT FOR LEARNING, ON ANY DEVICE</h2><p>Future labs are being planned for semantic controls, keyboard-first operation, visible focus states, readable 100% zoom text and status labels that do not depend on color alone. Touch/mobile helper controls will support visitors without a physical keyboard, and no essential information will require hover. Motion will respect reduced-motion preferences.</p></section>
+      <section class="detail-card linux-academy-note" aria-labelledby="context-title"><h2 id="context-title">A LITTLE CONTEXT</h2><p>Coming from Windows? <code>C:\Users\Name</code> and <code>/home/name</code> are useful orientation points, not exact equivalents. Linux is also not one desktop: the shell, kernel, display system, and environments such as GNOME, KDE Plasma, or sway are separate layers.</p></section>
     </main>
   </div>
   <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; academy roadmap --phase=1<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
