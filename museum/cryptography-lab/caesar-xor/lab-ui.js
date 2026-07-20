@@ -4,7 +4,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const stages = { caesar: ['letters','mapping'], rot13: ['letters','mapping'], substitution: ['mapping'], xor: ['codes','bits','xor'] };
   function show(tab) { $$('.crypto-station').forEach(p => p.hidden = p.id !== tab); $$('.crypto-tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab)); $$('.crypto-progress span').forEach(s => s.classList.toggle('active', stages[tab].includes(s.dataset.stage))); }
   $$('.crypto-tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
-  function caesarUpdate() { const shift = +$('#shift').value, mode = +$('input[name="caesar-mode"]:checked').value; $('#shift-value').textContent = shift; $('#shifted-alphabet').textContent = C.caesar(C.ALPHABET, shift); $('#caesar-output').textContent = C.caesar($('#caesar-input').value, shift * mode); $('#cipher-wheel').style.setProperty('--wheel-turn', `${shift * 13.846}deg`); }
+  const wheel = $('#cipher-wheel'), wheelStep = 360 / C.ALPHABET.length;
+  function createWheelRing(selector, className) {
+    const ring = $(selector);
+    [...C.ALPHABET].forEach((letter, index) => {
+      const slot = document.createElement('span'), item = document.createElement('span');
+      const angle = index * wheelStep;
+      slot.className = 'wheel-slot';
+      slot.style.setProperty('--letter-angle', `${angle}deg`);
+      item.className = `wheel-letter ${className}`;
+      item.textContent = letter;
+      item.style.setProperty('--letter-upright', `${-angle}deg`);
+      slot.append(item);
+      ring.append(slot);
+    });
+  }
+  createWheelRing('.wheel-ring-outer', 'wheel-plain');
+  createWheelRing('.wheel-ring-inner', 'wheel-shifted');
+  function caesarUpdate() { const shift = +$('#shift').value, mode = +$('input[name="caesar-mode"]:checked').value, shifted = C.caesar(C.ALPHABET, shift); $('#shift-value').textContent = shift; $('#wheel-shift-value').textContent = shift; $('#shifted-alphabet').textContent = shifted; $('#caesar-output').textContent = C.caesar($('#caesar-input').value, shift * mode); wheel.style.setProperty('--wheel-turn', `${-shift * wheelStep}deg`); wheel.setAttribute('aria-label', `Caesar cipher wheel. Plain A maps to shifted ${shifted[0]} at shift ${shift}.`); $('.wheel-plain.reference').classList.remove('reference'); $('.wheel-shifted.reference')?.classList.remove('reference'); $('.wheel-plain').classList.add('reference'); $$('.wheel-shifted')[shift].classList.add('reference'); }
   ['input','change'].forEach(e => { $('#shift').addEventListener(e, caesarUpdate); $('#caesar-input').addEventListener(e, caesarUpdate); $$('input[name="caesar-mode"]').forEach(x => x.addEventListener(e, caesarUpdate)); });
   $('#shift-minus').onclick = () => { $('#shift').value = Math.max(0, +$('#shift').value - 1); caesarUpdate(); }; $('#shift-plus').onclick = () => { $('#shift').value = Math.min(25, +$('#shift').value + 1); caesarUpdate(); };
   function rotUpdate() { const one = C.rot13($('#rot-input').value); $('#rot-output').textContent = one; $('#rot-twice').textContent = C.rot13(one); } $('#rot-input').addEventListener('input', rotUpdate); $('#rot-again').onclick = () => { $('#rot-input').value = C.rot13($('#rot-input').value); rotUpdate(); };

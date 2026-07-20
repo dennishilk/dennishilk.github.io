@@ -3907,10 +3907,22 @@ button.technology-observer-card {
 .crypto-result b { color: #83dff5; display: block; font: clamp(.8rem, .18vw + .74rem, .9rem) "Courier New", monospace; }
 .crypto-result output { color: #e6fff3; display: block; font: clamp(1.05rem, .25vw + .97rem, 1.16rem)/1.6 "Courier New", monospace; min-height: 1.6em; white-space: pre-wrap; }
 .cipher-wheel-wrap { display: flex; flex-direction: column; justify-content: center; }
-.cipher-wheel { align-items: center; border: 2px dashed #83dff5; border-radius: 50%; color: #83dff5; display: flex; height: min(250px, 55vw); justify-content: center; margin: auto; max-width: 250px; position: relative; text-align: center; width: 100%; }
-.cipher-wheel:before { border: 2px solid #ffd08a; border-radius: 50%; content: ""; inset: 18%; position: absolute; transform: rotate(var(--wheel-turn)); transition: transform .35s ease; }
-.cipher-wheel span { font: .74rem/1.4 "Courier New", monospace; max-width: 75%; overflow-wrap: anywhere; transform: rotate(var(--wheel-turn)); transition: transform .35s ease; }
-.cipher-wheel strong { background: #061318; color: #ffd08a; font: .72rem "Courier New", monospace; padding: .4rem; position: absolute; }
+.cipher-wheel { --wheel-turn: 0deg; aspect-ratio: 1; isolation: isolate; margin: auto; max-width: 300px; position: relative; width: min(100%, 300px); }
+.cipher-wheel::before, .cipher-wheel::after { border-radius: 50%; content: ""; inset: 0; pointer-events: none; position: absolute; }
+.cipher-wheel::before { border: 2px dashed rgba(131, 223, 245, .8); box-shadow: inset 0 0 24px rgba(0, 180, 255, .06), 0 0 16px rgba(0, 180, 255, .06); }
+.cipher-wheel::after { border: 1px solid rgba(255, 208, 138, .58); inset: 22%; }
+.wheel-ring { border: 1px solid; border-radius: 50%; inset: 0; position: absolute; }
+.wheel-ring-outer { border-color: rgba(131, 223, 245, .38); }
+.wheel-ring-inner { border-color: rgba(255, 208, 138, .56); inset: 17%; transform: rotate(var(--wheel-turn)); transition: transform .35s ease; }
+.wheel-slot { inset: 0; pointer-events: none; position: absolute; transform: rotate(var(--letter-angle)); }
+.wheel-letter { align-items: center; display: flex; font: 700 clamp(.57rem, .34vw + .46rem, .72rem)/1 "Courier New", monospace; height: 1.35rem; justify-content: center; left: 50%; position: absolute; top: -.68rem; transform: translateX(-50%) rotate(var(--letter-upright)); width: 1.35rem; }
+.wheel-ring-outer .wheel-letter { color: #9ceaff; }
+.wheel-ring-inner .wheel-letter { color: #ffd08a; transform: translateX(-50%) rotate(calc(var(--letter-upright) - var(--wheel-turn))); }
+.wheel-letter.reference { background: #08242d; border: 1px solid currentColor; border-radius: 50%; box-shadow: 0 0 10px currentColor; color: #eaffff; z-index: 1; }
+.wheel-ring-inner .wheel-letter.reference { background: #3b2a13; color: #fff0cc; }
+.wheel-hub { align-items: center; background: #061318; border: 1px solid rgba(255, 208, 138, .65); border-radius: 50%; display: flex; flex-direction: column; height: 29%; justify-content: center; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 29%; z-index: 2; }
+.wheel-hub strong { color: #83dff5; font: 700 clamp(.56rem, .22vw + .48rem, .68rem) "Courier New", monospace; letter-spacing: .08em; }
+.wheel-hub output { color: #ffd08a; font: 700 clamp(1rem, .8vw + .75rem, 1.35rem) "Courier New", monospace; margin-top: .12rem; }
 .alphabet-map { display: grid; gap: .42rem; margin-top: 1.1rem; }
 .alphabet-map b { color: #83dff5; font: clamp(.78rem, .18vw + .72rem, .88rem) "Courier New", monospace; }
 .alphabet-map code { color: #e3faff; font-size: clamp(.75rem, .35vw + .64rem, .98rem); letter-spacing: .08em; overflow-wrap: anywhere; }
@@ -3943,7 +3955,7 @@ button.technology-observer-card {
   .crypto-grid, .crypto-lesson-grid { grid-template-columns: 1fr; }
   .station-heading { align-items: stretch; flex-direction: column; }
   .crypto-info-link { float: none; margin-left: 1rem; }
-  .cipher-wheel { height: min(250px, 72vw); width: min(100%, 250px); }
+  .cipher-wheel { width: min(100%, 300px, 72vw); }
 }
 
-@media (prefers-reduced-motion: reduce) { .cipher-wheel:before, .cipher-wheel span { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .wheel-ring-inner { transition: none; } }
