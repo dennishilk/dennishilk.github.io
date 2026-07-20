@@ -373,6 +373,32 @@ test('Lab 08 hidden certificate preview remains undocumented and cannot replace 
   assert.doesNotMatch(labPage, /academy-cert/);
 });
 
+test('certificate mode gives earned graduation precedence over preview across reloads', () => {
+  const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
+  const storageFor = entries => {
+    const store = new Map(entries);
+    return { store, getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value), removeItem: key => store.delete(key) };
+  };
+
+  assert.equal(graduation.certificateMode(storageFor([])), null, 'no state leaves the certificate locked');
+  assert.equal(graduation.certificateMode(storageFor([[graduation.previewKey, 'true']])), 'preview', 'preview remains available before graduation');
+  assert.equal(graduation.certificateMode(storageFor([[graduation.eligibilityKey, 'true']])), 'earned', 'earned-only state is clean');
+
+  const persistedDualState = storageFor([[graduation.previewKey, 'true'], [graduation.eligibilityKey, 'true']]);
+  assert.equal(graduation.certificateMode(persistedDualState), 'earned', 'existing dual state renders earned immediately after reload');
+
+  const sequence = storageFor([]);
+  assert.equal(graduation.runPreviewCommand('academy-cert Dennis Hilk', sequence).success, true);
+  assert.equal(graduation.certificateMode(sequence), 'preview');
+  const recovered = new VirtualSystem().setupRecoveryScenario();
+  recovered.recoveryHealthy = () => true;
+  assert.equal(graduation.createAttempt(sequence).recordCompletion(recovered), true);
+  assert.equal(sequence.getItem(graduation.previewKey), null, 'a new earned completion retires active preview mode');
+  assert.equal(graduation.certificateMode(sequence), 'earned');
+  assert.equal(graduation.certificateMode(sequence), 'earned', 'the persisted earned state remains authoritative on reload');
+  assert.equal(graduation.previewName(sequence), 'Dennis Hilk', 'the editable preview name is retained');
+});
+
 test('Certificate V2 keeps earned, preview, editable-name, reset, and locked states distinct', () => {
   const fs = require('node:fs'), path = require('node:path'); const certificate = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/certificate.html'), 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.match(certificate, /TEST CERTIFICATE — PREVIEW MODE/); assert.match(certificate, /NOT A GRADUATION RECORD/); assert.match(certificate, /preview\.hidden=mode!=='preview'/); assert.match(certificate, /\.preview-marker\{[^}]*display:block!important/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);

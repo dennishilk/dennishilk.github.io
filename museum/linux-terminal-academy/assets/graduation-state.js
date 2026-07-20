@@ -32,11 +32,26 @@
       get hintUsed() { return hintUsed; },
       useHint() { hintUsed = true; },
       reset() { hintUsed = false; },
-      recordCompletion(system) { if (system.recoveryHealthy() && !hintUsed && storage) storage.setItem(eligibilityKey, 'true'); return system.recoveryHealthy() && !hintUsed; }
+      recordCompletion(system) {
+        const earned = system.recoveryHealthy() && !hintUsed;
+        if (earned) markEarned(storage);
+        return earned;
+      }
     };
   }
   function eligible(storage) { return !!storage && storage.getItem(eligibilityKey) === 'true'; }
-  function certificateMode(storage) { return eligible(storage) ? 'earned' : storage && storage.getItem(previewKey) === 'true' ? 'preview' : null; }
+  // This is the single certificate-state resolver: graduation always wins over a preview.
+  function certificateMode(storage) {
+    if (eligible(storage)) return 'earned';
+    if (storage && storage.getItem(previewKey) === 'true') return 'preview';
+    return null;
+  }
+  function markEarned(storage) {
+    if (!storage) return;
+    storage.setItem(eligibilityKey, 'true');
+    // Preserve the preview name for the editable certificate field, but retire its mode.
+    if (typeof storage.removeItem === 'function') storage.removeItem(previewKey);
+  }
   function unlockPreview(storage, name) {
     if (!storage || certificateMode(storage) === 'earned') return certificateMode(storage);
     storage.setItem(previewKey, 'true');
@@ -63,5 +78,5 @@
     return date;
   }
   function clearGraduationState(storage) { if (storage && typeof storage.removeItem === 'function') graduationKeys.forEach(key => storage.removeItem(key)); }
-  return { eligibilityKey, certificateIdKey, previewKey, previewNameKey, displayNameKey, earnedIssueDateKey, previewIssueDateKey, graduationKeys, recoveryHint, createAttempt, eligible, certificateMode, unlockPreview, previewName, displayName, saveDisplayName, runPreviewCommand, certificateId, issueDate, clearGraduationState };
+  return { eligibilityKey, certificateIdKey, previewKey, previewNameKey, displayNameKey, earnedIssueDateKey, previewIssueDateKey, graduationKeys, recoveryHint, createAttempt, eligible, certificateMode, markEarned, unlockPreview, previewName, displayName, saveDisplayName, runPreviewCommand, certificateId, issueDate, clearGraduationState };
 });
