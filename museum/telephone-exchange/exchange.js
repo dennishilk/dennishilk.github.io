@@ -1,15 +1,15 @@
 (function(root,factory){const api=factory();if(typeof module!=='undefined')module.exports=api;root.ExchangeCore=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 const NUMBERS=['201','204','214','225','301','318','381','402','417','503','537','612'];
 const GUIDE={
-  INCOMING_CALL:{step:'STEP 01 — INCOMING CALL',instruction:'CLICK ANSWER A\nTHEN CLICK JACK 214',detail:'Subscriber 214 is calling. The yellow calling lamp above 214 is lit.',highlight:['plug:A:answer']},
-  ANSWER_JACK:{step:'STEP 01 — INCOMING CALL',instruction:'THEN CLICK JACK 214',detail:'Plug ANSWER A into caller 214 so you can speak to the caller.',highlight:['jack:214']},
-  CALLER_ANSWERED:{step:'STEP 02 — CONNECT DESTINATION',instruction:'CLICK CALL A\nTHEN CLICK JACK 537',detail:'CALL ANSWERED\n\nCALLER 214 REQUESTS:\n537',highlight:['plug:A:calling']},
-  DESTINATION_JACK:{step:'STEP 02 — CONNECT DESTINATION',instruction:'THEN CLICK JACK 537',detail:'CALL ANSWERED\n\nCALLER 214 REQUESTS:\n537',highlight:['jack:537']},
+  INCOMING_CALL:{step:'STEP 01 — ANSWER THE CALL',instruction:'TAKE THE GLOWING ANSWER PLUG A\nAND INSERT IT INTO JACK 214.',detail:'214 IS CALLING. The yellow calling lamp is lit.',highlight:['plug:A:answer']},
+  ANSWER_JACK:{step:'STEP 01 — ANSWER THE CALL',instruction:'INSERT THE LIFTED ANSWER PLUG A\nINTO JACK 214.',detail:'214 IS CALLING. Insert the physical plug into the highlighted jack.',highlight:['jack:214']},
+  CALLER_ANSWERED:{step:'STEP 02 — CALLER REQUESTS 537',instruction:'TAKE CALL PLUG A\nAND INSERT IT INTO JACK 537.',detail:'“NUMBER 537, PLEASE.”\n\nThe answer-side cord is seated in 214.',highlight:['plug:A:calling']},
+  DESTINATION_JACK:{step:'STEP 02 — CALLER REQUESTS 537',instruction:'INSERT THE LIFTED CALL PLUG A\nINTO JACK 537.',detail:'“NUMBER 537, PLEASE.”\n\nSeat the second physical plug.',highlight:['jack:537']},
   DESTINATION_CONNECTED:{step:'STEP 03 — RING SUBSCRIBER 537',instruction:'PRESS RING',detail:'Subscriber 537 is READY TO RING.',highlight:['ring:A']},
   RINGING:{step:'STEP 03 — RING SUBSCRIBER 537',instruction:'RINGING SUBSCRIBER 537...',detail:'Waiting for subscriber 537 to answer.',highlight:[]},
-  CONNECTED:{step:'STEP 04 — CONNECTION ESTABLISHED',instruction:'CALL CONNECTED',detail:'214 ↔ 537\n\nThe two plugs and cord circuit now form the physical connection path.',highlight:[]},
-  DISCONNECT:{step:'STEP 05 — CLEAR THE CONNECTION',instruction:'CALL ENDED\nPRESS CLEAR',detail:'Disconnect supervision is shown. Release cord circuit A and return both lines to idle.',highlight:['clear:A']},
-  COMPLETE:{step:'MISSION COMPLETE',instruction:'YOU JUST ROUTED A TELEPHONE CALL BY HAND.',detail:'You answered the caller, selected the destination, rang it, and cleared the cord circuit.',highlight:[]}
+  CONNECTED:{step:'CALL CONNECTED',instruction:'214 ↔ CORD A ↔ 537',detail:'The visible cord pair physically connects both telephones.',highlight:[]},
+  DISCONNECT:{step:'STEP 04 — CLEAR THE CORD',instruction:'THE CALL HAS ENDED.\nPRESS CLEAR A TO REMOVE BOTH PLUGS.',detail:'Release cord circuit A and return both lines to idle.',highlight:['clear:A']},
+  COMPLETE:{step:'MISSION COMPLETE',instruction:'YOU JUST CONNECTED TWO TELEPHONES BY HAND.',detail:'You answered the caller, selected the destination, rang it, and cleared the physical cord circuit.',highlight:[]}
 };
 function fresh(){return {subscribers:Object.fromEntries(NUMBERS.map(n=>[n,{state:'IDLE',busy:false}])),trunks:{'TRUNK 01':'IDLE','TRUNK 02':'IDLE','TRUNK 03':'IDLE'},cords:['A','B','C'].map(id=>({id,answer:null,calling:null,state:'IDLE'})),mission:0,step:'READY',message:'SYSTEM READY — BEGIN TRAINING.',completed:0};}
 function cord(s,id){return s.cords.find(c=>c.id===id)}function target(s,x){return s.subscribers[x]||null}
