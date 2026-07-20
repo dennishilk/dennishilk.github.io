@@ -3679,6 +3679,10 @@ button.technology-observer-card {
 .linux-academy-note { text-align: left; }
 .linux-academy-note h2 { color: #83dff5; font-size: .9rem; margin-top: 0; }
 .linux-academy-note p { color: #c9d1d9; font-size: .84rem; line-height: 1.6; margin-bottom: 0; }
+.linux-academy-command-context { border-color: rgba(255, 190, 92, .42); box-shadow: inset 0 0 22px rgba(255, 190, 92, .035); }
+.linux-academy-command-context h2 { color: #ffd08a; }
+.linux-academy-command-context p + p { margin-top: .7rem; }
+.linux-academy-command-context .linux-academy-command-stats { color: #8cffb0; font: 700 .72rem/1.6 "Courier New", monospace; letter-spacing: .055em; }
 .linux-academy-note code, .linux-lab-page code { background: rgba(0, 180, 255, .12); border-radius: 3px; color: #d8f5ff; padding: .06rem .22rem; }
 .linux-lab-page .linux-academy-hero { padding-bottom: 1.5rem; }
 .linux-lab-page .linux-academy-hero h1 { margin-bottom: .55rem; }
