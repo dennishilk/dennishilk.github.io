@@ -8,6 +8,8 @@
   const certificateIdKey = 'linuxTerminalAcademy.certificateId';
   const previewKey = 'linuxTerminalAcademy.certificatePreview';
   const previewNameKey = 'linuxTerminalAcademy.certificatePreviewName';
+  const displayNameKey = 'linuxTerminalAcademy.certificateDisplayName';
+  const localGraduationKeys = [eligibilityKey, certificateIdKey, previewKey, previewNameKey, displayNameKey];
   function recoveryHint(system) {
     const evidence = system.recovery.evidence;
     const runaway = system.processByPid(733);
@@ -40,6 +42,19 @@
     return 'preview';
   }
   function previewName(storage) { return storage && storage.getItem(previewNameKey) || ''; }
+  function displayName(storage) { return storage && storage.getItem(displayNameKey) || ''; }
+  function saveDisplayName(storage, name) {
+    if (!storage) return '';
+    const value = typeof name === 'string' ? name.trim().slice(0, 80) : '';
+    if (value) storage.setItem(displayNameKey, value);
+    else storage.removeItem(displayNameKey);
+    return value;
+  }
+  function resetLocalGraduationState(storage) {
+    if (!storage) return false;
+    localGraduationKeys.forEach(key => storage.removeItem(key));
+    return true;
+  }
   function runPreviewCommand(raw, storage) {
     const text = String(raw || '').trim();
     if (!text || text.includes('|')) return null;
@@ -50,5 +65,5 @@
     return { input: { raw: text, command, args }, output, success: true, command };
   }
   function certificateId(storage) { let id = storage && storage.getItem(certificateIdKey); if (!id) { id = `LTA-2026-${Math.random().toString(36).slice(2, 10).toUpperCase()}`; if (storage) storage.setItem(certificateIdKey, id); } return id; }
-  return { eligibilityKey, previewKey, previewNameKey, recoveryHint, createAttempt, eligible, certificateMode, unlockPreview, previewName, runPreviewCommand, certificateId };
+  return { eligibilityKey, certificateIdKey, previewKey, previewNameKey, displayNameKey, localGraduationKeys, recoveryHint, createAttempt, eligible, certificateMode, unlockPreview, previewName, displayName, saveDisplayName, resetLocalGraduationState, runPreviewCommand, certificateId };
 });

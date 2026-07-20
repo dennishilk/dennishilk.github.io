@@ -380,3 +380,45 @@ test('Certificate handoff keeps earned, preview, editable-name, and locked state
   const labPage = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.html'), 'utf8');
   assert.match(labPage, /id="graduation" hidden[\s\S]*?href="\.\.\/certificate\.html">OPEN CERTIFICATE →/);
 });
+
+test('local graduation reset clears only Academy certificate state for another visitor', () => {
+  const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
+  const makeStorage = entries => {
+    const store = new Map(entries);
+    return { store, getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value), removeItem: key => store.delete(key) };
+  };
+
+  const earnedStorage = makeStorage([[graduation.eligibilityKey, 'true'], ['unrelated.site.preference', 'keep']]);
+  graduation.saveDisplayName(earnedStorage, 'Visitor A');
+  const earnedId = graduation.certificateId(earnedStorage);
+  assert.equal(graduation.certificateMode(earnedStorage), 'earned');
+  assert.equal(graduation.displayName(earnedStorage), 'Visitor A');
+  assert.match(earnedId, /^LTA-2026-/);
+  assert.equal(graduation.resetLocalGraduationState(earnedStorage), true);
+  assert.equal(graduation.certificateMode(earnedStorage), null, 'earned state is explicitly cleared and the certificate is locked again');
+  assert.equal(graduation.eligible(earnedStorage), false);
+  assert.equal(graduation.displayName(earnedStorage), '');
+  assert.equal(earnedStorage.getItem(graduation.certificateIdKey), null, 'decorative local certificate ID is cleared');
+  assert.equal(earnedStorage.getItem('unrelated.site.preference'), 'keep', 'unrelated local state is untouched');
+  assert.equal(graduation.createAttempt(earnedStorage).hintUsed, false, 'Lab 08 begins a fresh certificate attempt');
+
+  const previewStorage = makeStorage([['unrelated.site.preference', 'keep']]);
+  assert.equal(graduation.runPreviewCommand('academy-cert Preview Visitor', previewStorage).success, true);
+  graduation.saveDisplayName(previewStorage, 'Saved Preview Name');
+  graduation.certificateId(previewStorage);
+  assert.equal(graduation.certificateMode(previewStorage), 'preview');
+  assert.equal(graduation.resetLocalGraduationState(previewStorage), true);
+  assert.equal(graduation.certificateMode(previewStorage), null, 'preview state is explicitly cleared');
+  assert.equal(graduation.previewName(previewStorage), '');
+  assert.equal(graduation.displayName(previewStorage), '');
+  assert.equal(previewStorage.getItem(graduation.certificateIdKey), null);
+  assert.equal(previewStorage.getItem('unrelated.site.preference'), 'keep');
+
+  const fs = require('node:fs'), path = require('node:path');
+  const certificate = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/certificate.html'), 'utf8');
+  assert.match(certificate, /START FRESH FOR ANOTHER VISITOR/);
+  assert.match(certificate, /This removes the locally stored graduation\/certificate state and saved display name from this browser only\./);
+  assert.match(certificate, /Downloaded or printed certificates are not affected\./);
+  assert.match(certificate, /g\.resetLocalGraduationState\(storage\)/);
+  assert.match(certificate, /if\(!mode\)\{locked\.hidden=false;return\}/);
+});
