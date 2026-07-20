@@ -81,3 +81,43 @@ test('Lab 01 parsing, manuals, and clear preserve the expected shell behavior', 
   assert.equal(system.cwd, '/');
   assert.deepEqual(shell.execute('pwd').output, ['/']);
 });
+
+test('Lab 02 profile explores the shared filesystem without expanding Lab 01 commands', () => {
+  const system = new VirtualSystem();
+  const lab02 = new Shell(system, { allowedCommands: ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man', 'cat'] });
+  assert.equal(system.cwd, '/home/museum');
+  assert.deepEqual(system.fileSystem.list('/', system.cwd, system.homeDirectory).entries, ['bin', 'etc', 'home', 'tmp', 'var']);
+  assert.equal(lab02.execute('cd /').success, true);
+  assert.equal(lab02.execute('cd home').success, true);
+  assert.equal(lab02.execute('cd museum').success, true);
+  assert.equal(lab02.execute('cd Documents').success, true);
+  assert.equal(system.cwd, '/home/museum/Documents');
+  assert.equal(lab02.execute('cd /var/log').success, true);
+  assert.deepEqual(lab02.execute('pwd').output, ['/var/log']);
+  assert.deepEqual(lab02.execute('ls').output, ['system.log']);
+  assert.equal(lab02.execute('cd ~').success, true);
+  assert.equal(system.cwd, '/home/museum');
+  assert.equal(lab02.execute('cd /home/museum/../museum').success, true);
+  assert.equal(lab02.execute('cd nowhere').success, false);
+  assert.equal(system.cwd, '/home/museum');
+  lab02.execute('cd /'); lab02.execute('cd ..'); assert.equal(system.cwd, '/');
+  assert.match(lab02.execute('cat /etc/hostname').output[0], /^linux/);
+  lab02.execute('cd ~');
+  assert.match(lab02.execute('cat README.txt').output[0], /Welcome, museum/);
+  assert.match(lab02.execute('cat Documents').output[0], /Is a directory/);
+  assert.match(lab02.execute('cat nowhere.txt').output[0], /No such file/);
+  assert.match(lab02.execute('help').output.join('\n'), /cat/);
+  assert.equal(lab02.execute('man cat').success, true);
+  const lab01 = new Shell(new VirtualSystem());
+  assert.equal(lab01.execute('cat README.txt').success, false);
+  assert.doesNotMatch(lab01.execute('help').output.join('\n'), /cat/);
+});
+
+test('Lab 02 tree UI derives nodes from the shared filesystem and routes helpers through run', () => {
+  const source = require('node:fs').readFileSync(require('node:path').join(__dirname, '../museum/linux-terminal-academy/filesystem-explorer/lab.js'), 'utf8');
+  assert.match(source, /system\.fileSystem\.root/);
+  assert.match(source, /run\(`cd \$\{button\.dataset\.path\}`\)/);
+  assert.match(source, /button\.dataset\.command/);
+  assert.match(source, /system\.cwd === '\/var\/log'/);
+  assert.match(source, /system = new VirtualSystem\(\)/);
+});
