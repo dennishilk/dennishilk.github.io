@@ -361,14 +361,22 @@ test('Lab 08 hidden certificate preview remains undocumented and cannot replace 
   const system = new VirtualSystem().setupRecoveryScenario(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
   const preview = graduation.runPreviewCommand('academy-cert Dennis Hilk', storage);
   assert.equal(preview.success, true); assert.match(preview.output.join('\n'), /GRADUATION PREVIEW UNLOCKED/); assert.equal(graduation.certificateMode(storage), 'preview'); assert.equal(graduation.eligible(storage), false); assert.equal(graduation.previewName(storage), 'Dennis Hilk');
+  const unnamedStore = new Map(); const unnamedStorage = { getItem: key => unnamedStore.get(key) || null, setItem: (key, value) => unnamedStore.set(key, value) };
+  assert.equal(graduation.runPreviewCommand('academy-cert', unnamedStorage).success, true); assert.equal(graduation.previewName(unnamedStorage), '', 'unnamed previews leave the certificate name editable');
   assert.doesNotMatch(shell.execute('help').output.join('\n'), /academy-cert/); assert.equal(shell.execute('man academy-cert').success, false);
   const earnedStore = new Map([[graduation.eligibilityKey, 'true']]); const earnedStorage = { getItem: key => earnedStore.get(key) || null, setItem: (key, value) => earnedStore.set(key, value) };
   assert.equal(graduation.unlockPreview(earnedStorage, 'Preview Name'), 'earned'); assert.equal(graduation.certificateMode(earnedStorage), 'earned'); assert.equal(graduation.previewName(earnedStorage), '');
-  const fs = require('node:fs'), path = require('node:path'); const lab = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.js'), 'utf8');
+  const fs = require('node:fs'), path = require('node:path'); const lab = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.js'), 'utf8'); const labPage = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.html'), 'utf8');
   assert.match(lab, /graduation\.runPreviewCommand\(raw, window\.localStorage\)/);
+  assert.match(lab, /#previewCertificate.*certificateMode\(window\.localStorage\) !== 'preview'/);
+  assert.match(labPage, /id="previewCertificate" hidden[\s\S]*?href="\.\.\/certificate\.html">OPEN TEST CERTIFICATE →/);
+  assert.doesNotMatch(labPage, /academy-cert/);
 });
 
-test('Certificate page is local, noindex, safely uses textContent, and is absent from sitemap', () => {
+test('Certificate handoff keeps earned, preview, editable-name, and locked states distinct', () => {
   const fs = require('node:fs'), path = require('node:path'); const certificate = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/certificate.html'), 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.match(certificate, /TEST CERTIFICATE — PREVIEW MODE/); assert.match(certificate, /NOT A GRADUATION RECORD/); assert.match(certificate, /preview\.hidden=mode!=='preview'/); assert.match(certificate, /\.preview-marker\{[^}]*display:block!important/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);
+  assert.match(certificate, /id="visitorName" maxlength="80"/); assert.match(certificate, /input\.addEventListener\('input',sync\)/); assert.match(certificate, /if\(!mode\)\{locked\.hidden=false;return\}/);
+  const labPage = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.html'), 'utf8');
+  assert.match(labPage, /id="graduation" hidden[\s\S]*?href="\.\.\/certificate\.html">OPEN CERTIFICATE →/);
 });
