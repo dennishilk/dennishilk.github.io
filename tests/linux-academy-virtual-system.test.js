@@ -213,3 +213,29 @@ test('Lab 04 is cumulative and permissions derive from virtual metadata', () => 
   const fresh = new VirtualSystem();
   assert.equal(fresh.fileSystem.resolve('/home/museum/Projects/permissions-lab/notes.txt', fresh.cwd, fresh.homeDirectory).node.mode, '-w-------');
 });
+
+test('Lab 05 cumulative process controls use one deterministic fictional process model', () => {
+  assert.deepEqual(commandProfiles.lab05, [...commandProfiles.lab04, 'ps', 'top', 'kill']);
+  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab05 });
+  assert.deepEqual(system.processes.map(process => process.pid), [1, 120, 241, 314, 427]);
+  assert.match(shell.execute('ps').output.join('\n'), /241/);
+  const ps = shell.execute('ps aux'); assert.match(ps.output.join('\n'), /427/); assert.match(ps.output.join('\n'), /96\.7/);
+  assert.match(shell.execute('top').output.join('\n'), /runaway-indexer/);
+  assert.equal(shell.execute('kill 999').success, false); assert.equal(system.processByPid(427).terminated, false);
+  assert.equal(shell.execute('kill -HUP 427').success, false); assert.equal(system.processByPid(427).terminated, false);
+  assert.equal(shell.execute('kill -KILL 1').success, false); assert.equal(system.processByPid(1).terminated, false);
+  assert.equal(shell.execute('kill 427').success, true); assert.equal(system.processByPid(427).signal, 'TERM');
+  assert.doesNotMatch(shell.execute('ps aux').output.join('\n'), /runaway-indexer/);
+  assert.equal(shell.execute('kill 427').success, false);
+  const fresh = new VirtualSystem(); assert.equal(fresh.processByPid(427).terminated, false); assert.equal(fresh.processByPid(427).cpu, 96.7);
+  for (const command of commandProfiles.lab05) assert.equal(shell.execute(`man ${command}`).success, true, `Lab 05 manual for ${command}`);
+});
+
+test('Lab 05 public routes and Academy availability metadata remain scoped', () => {
+  const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
+  const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const process = fs.readFileSync(`${root}/linux-terminal-academy/process-control/index.html`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
+  assert.match(academy, /5 AVAILABLE \/ 3 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/);
+  ['pipes-shell-power', 'system-admin-crash-lab', 'break-it-recover'].forEach(route => assert.match(academy, new RegExp(`${route}/.*?planned`, 's')));
+  assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status planned/);
+  assert.match(sitemap, /linux-terminal-academy\/process-control\//); assert.doesNotMatch(sitemap, /process-control\/lab\.html/);
+});
