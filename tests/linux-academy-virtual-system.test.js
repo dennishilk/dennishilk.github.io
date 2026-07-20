@@ -95,7 +95,7 @@ test('Lab 02 profile explores the shared filesystem without expanding Lab 01 com
   assert.equal(system.cwd, '/home/museum/Documents');
   assert.equal(lab02.execute('cd /var/log').success, true);
   assert.deepEqual(lab02.execute('pwd').output, ['/var/log']);
-  assert.deepEqual(lab02.execute('ls').output, ['system.log']);
+  assert.deepEqual(lab02.execute('ls').output, ['academy.log  system.log']);
   assert.equal(lab02.execute('cd ~').success, true);
   assert.equal(system.cwd, '/home/museum');
   assert.equal(lab02.execute('cd /home/museum/../museum').success, true);
@@ -231,11 +231,29 @@ test('Lab 05 cumulative process controls use one deterministic fictional process
   for (const command of commandProfiles.lab05) assert.equal(shell.execute(`man ${command}`).success, true, `Lab 05 manual for ${command}`);
 });
 
-test('Lab 05 public routes and Academy availability metadata remain scoped', () => {
+test('Lab 06 public routes and Academy availability metadata remain scoped', () => {
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const process = fs.readFileSync(`${root}/linux-terminal-academy/process-control/index.html`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
-  assert.match(academy, /5 AVAILABLE \/ 3 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/);
-  ['pipes-shell-power', 'system-admin-crash-lab', 'break-it-recover'].forEach(route => assert.match(academy, new RegExp(`${route}/.*?planned`, 's')));
+  const pipes = fs.readFileSync(`${root}/linux-terminal-academy/pipes-shell-power/index.html`, 'utf8');
+  assert.match(academy, /6 AVAILABLE \/ 2 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
+  ['system-admin-crash-lab', 'break-it-recover'].forEach(route => assert.match(academy, new RegExp(`${route}/.*?planned`, 's')));
   assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status planned/);
-  assert.match(sitemap, /linux-terminal-academy\/process-control\//); assert.doesNotMatch(sitemap, /process-control\/lab\.html/);
+  assert.match(sitemap, /linux-terminal-academy\/pipes-shell-power\//); assert.doesNotMatch(sitemap, /pipes-shell-power\/lab\.html/);
+});
+
+test('Lab 06 cumulatively composes safe literal text pipelines', () => {
+  assert.deepEqual(commandProfiles.lab06, [...commandProfiles.lab05, 'grep', 'wc', 'head', 'tail', 'echo']);
+  assert.ok(commandProfiles.lab05.every(command => commandProfiles.lab06.includes(command)));
+  const system = new VirtualSystem(), shell = new Shell(system, { allowedCommands: commandProfiles.lab06 });
+  const log = system.fileSystem.resolve('/var/log/academy.log', system.cwd, system.homeDirectory).node.content.trim();
+  assert.equal(log.split('\n').filter(line => line.includes('ERROR')).length, 4);
+  assert.deepEqual(shell.execute('grep ERROR /var/log/academy.log').output, [log.split('\n').filter(line => line.includes('ERROR')).join('\n')]);
+  assert.deepEqual(shell.execute('cat /var/log/academy.log|grep ERROR|wc -l').output, ['4']);
+  const pipeline = shell.execute('cat /var/log/academy.log | grep ERROR | head -n 2');
+  assert.equal(pipeline.success, true); assert.equal(pipeline.pipeline.length, 3); assert.deepEqual(pipeline.pipeline.map(stage => stage.outputLines), [23, 4, 2]);
+  assert.match(shell.execute('head -n 2 /var/log/academy.log').output[0], /INFO academy-service started/);
+  assert.match(shell.execute('tail -n 2 /var/log/academy.log').output[0], /academy-service steady/);
+  ['| grep ERROR', 'cat academy.log |', 'cat academy.log || grep ERROR', 'cat academy.log > file', 'echo $(something)', 'command && command'].forEach(command => assert.equal(shell.execute(command).success, false, command));
+  assert.equal(shell.execute('man pipe').success, true); shell.execute('cd /var/log'); shell.execute('clear'); assert.equal(system.cwd, '/var/log');
+  const fresh = new VirtualSystem(); assert.equal(fresh.fileSystem.resolve('/var/log/academy.log', fresh.cwd, fresh.homeDirectory).node.content, system.fileSystem.resolve('/var/log/academy.log', system.cwd, system.homeDirectory).node.content);
 });
