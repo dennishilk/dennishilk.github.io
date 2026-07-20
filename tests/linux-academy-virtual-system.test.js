@@ -311,3 +311,41 @@ test('Lab 08 recovery is cumulative, stateful, resettable, and publicly routed',
   assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/index.html`)); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/recovery`), false);
   assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /break-it-recover\/[\s\S]*?museum-status available/); assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/break-it-recover\//); assert.doesNotMatch(sitemap, /break-it-recover\/lab\.html/);
 });
+
+test('Lab 08 distinguishes unreadable, readable-overpermissive, and exact minimum recovery permissions', () => {
+  const system = new VirtualSystem().setupRecoveryScenario();
+  const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
+  assert.equal(system.recoveryPermissionState(), 'unreadable');
+  assert.equal(shell.execute('chmod u+x /srv/museum/exhibit-index.txt').success, true);
+  assert.equal(system.recoveryPermissionState(), 'unreadable');
+  assert.equal(shell.execute('chmod u+r /srv/museum/exhibit-index.txt').success, true);
+  assert.equal(system.recoveryPermissionState(), 'overpermissive');
+  assert.equal(shell.execute('cat /srv/museum/exhibit-index.txt').success, true);
+  const refusal = shell.execute('systemctl restart museum-exhibit.service').output.join('\n');
+  assert.match(refusal, /minimum recovery mode/); assert.doesNotMatch(refusal, /cannot be read/);
+  assert.equal(shell.execute('chmod 600 /srv/museum/exhibit-index.txt').success, true);
+  assert.equal(system.recoveryPermissionState(), 'minimum');
+  assert.equal(shell.execute('systemctl restart museum-exhibit.service').success, true);
+  const reset = new VirtualSystem().setupRecoveryScenario();
+  assert.equal(reset.recoveryPermissionState(), 'unreadable');
+});
+
+test('Lab 08 state-aware hints and no-hint certificate state remain browser-local and attempt-scoped', () => {
+  const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
+  const store = new Map(); const storage = { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) };
+  const system = new VirtualSystem().setupRecoveryScenario(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
+  assert.match(graduation.recoveryHint(system), /ps aux/);
+  shell.execute('ps aux'); shell.execute('kill 733'); shell.execute('systemctl status museum-exhibit.service'); shell.execute('journalctl -u museum-exhibit.service'); shell.execute('chmod u+x /srv/museum/exhibit-index.txt'); shell.execute('chmod u+r /srv/museum/exhibit-index.txt');
+  assert.match(graduation.recoveryHint(system), /chmod 600/);
+  const noHint = graduation.createAttempt(storage); shell.execute('chmod 600 /srv/museum/exhibit-index.txt'); shell.execute('systemctl restart museum-exhibit.service'); shell.execute('systemctl status museum-exhibit.service');
+  assert.equal(system.recoveryHealthy(), true); assert.equal(noHint.recordCompletion(system), true); assert.equal(graduation.eligible(storage), true);
+  const assisted = graduation.createAttempt(storage); assisted.useHint(); assert.equal(assisted.hintUsed, true); assisted.reset(); assert.equal(assisted.hintUsed, false);
+  const hintedSystem = new VirtualSystem().setupRecoveryScenario(); const hintedShell = new Shell(hintedSystem, { allowedCommands: commandProfiles.lab08 }); const hintedAttempt = graduation.createAttempt({ getItem: () => null, setItem: () => { throw new Error('hinted completion must not persist eligibility'); } });
+  hintedAttempt.useHint(); ['ps aux', 'kill 733', 'systemctl status museum-exhibit.service', 'journalctl -u museum-exhibit.service', 'ls -l /srv/museum/exhibit-index.txt', 'chmod 600 /srv/museum/exhibit-index.txt', 'systemctl restart museum-exhibit.service', 'systemctl status museum-exhibit.service'].forEach(command => hintedShell.execute(command));
+  assert.equal(hintedSystem.recoveryHealthy(), true); assert.equal(hintedAttempt.recordCompletion(hintedSystem), false);
+});
+
+test('Certificate page is local, noindex, safely uses textContent, and is absent from sitemap', () => {
+  const fs = require('node:fs'), path = require('node:path'); const certificate = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/certificate.html'), 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
+  assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);
+});
