@@ -1,0 +1,15 @@
+(function(root, factory) { const api = factory(); if (typeof module !== 'undefined') module.exports = api; root.EnigmaCore = api; })(this, function() {
+  const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ'; const n=x=>((x%26)+26)%26; const ix=c=>A.indexOf(c); const chr=x=>A[n(x)];
+  const specs={I:['EKMFLGDQVZNTOWYHXUSPAIBRCJ','Q'],II:['AJDKSIRUXBLHWTMCQGZNPYFVOE','E'],III:['BDFHJLCPRTXVZNYEIWGAKMUSQO','V'],IV:['ESOVPZJAYQUIRHXLNFTGKDCMWB','J'],V:['VZBRGITYUPSDNHLXAWMJQOFECK','Z']};
+  const refs={B:'YRUHQSLDPXNGOKMIEBFZCWVJAT',C:'FVPJIAOYEDRZXWGCTKUQSBNMHL'};
+  class Rotor { constructor(name, pos=0, ring=0) { const s=specs[name]; if(!s) throw Error('Unknown rotor'); this.name=name; this.wiring=[...s[0]].map(ix); this.reverse=Array(26); this.wiring.forEach((v,i)=>this.reverse[v]=i); this.notch=ix(s[1]); this.pos=n(pos); this.ring=n(ring); } forward(x){return n(this.wiring[n(x+this.pos-this.ring)]-this.pos+this.ring)} backward(x){return n(this.reverse[n(x+this.pos-this.ring)]-this.pos+this.ring)} atNotch(){return this.pos===n(this.notch-this.ring)} step(){this.pos=n(this.pos+1)} }
+  class Enigma { constructor(opts={}) { this.order=opts.order||['I','II','III']; this.rings=(typeof opts.rings==='string'?[...opts.rings]:(opts.rings||[0,0,0])).map(v=>typeof v==='string'?ix(v):v); this.starts=(typeof opts.positions==='string'?[...opts.positions]:(opts.positions||[0,0,0])).map(v=>typeof v==='string'?ix(v):v); this.reflector=opts.reflector||'B'; this.pairs=[]; this.setPlugboard(opts.pairs||[]); this.reset(); }
+    reset(){this.rotors=this.order.map((x,i)=>new Rotor(x,this.starts[i],this.rings[i]));}
+    positions(){return this.rotors.map(r=>chr(r.pos)).join('')}
+    setPositions(p){ [...p].forEach((c,i)=>this.rotors[i].pos=ix(c)); }
+    setPlugboard(pairs){const used=new Set(); if(pairs.length>10) throw Error('Maximum ten pairs'); pairs.forEach(p=>{p=typeof p==='string'?p:[p[0],p[1]].join(''); if(p.length!==2||ix(p[0])<0||p[0]===p[1]||used.has(p[0])||used.has(p[1])) throw Error('Invalid plugboard pair'); used.add(p[0]);used.add(p[1]);}); this.pairs=pairs.map(p=>typeof p==='string'?p:p.join('')); this.plug=Array.from({length:26},(_,i)=>i);this.pairs.forEach(p=>{this.plug[ix(p[0])]=ix(p[1]);this.plug[ix(p[1])]=ix(p[0]);});}
+    step(){const [l,m,r]=this.rotors;const mid=m.atNotch(), right=r.atNotch();if(mid)l.step();if(mid||right)m.step();r.step();return {middle:mid||right,left:mid,double:mid};}
+    encipher(letter, trace=false){let x=ix(letter);if(x<0)return null;const stepped=this.step(), route=[]; const go=(stage,fn)=>{x=fn(x);route.push({stage,letter:chr(x)});};go('Plugboard',x=>this.plug[x]);go('Entry wheel',x=>x);go('Right rotor',x=>this.rotors[2].forward(x));go('Middle rotor',x=>this.rotors[1].forward(x));go('Left rotor',x=>this.rotors[0].forward(x));go('Reflector',x=>ix(refs[this.reflector][x]));go('Left rotor reverse',x=>this.rotors[0].backward(x));go('Middle rotor reverse',x=>this.rotors[1].backward(x));go('Right rotor reverse',x=>this.rotors[2].backward(x));go('Plugboard return',x=>this.plug[x]);return {input:letter,output:chr(x),route,stepped};}
+  }
+  return {Enigma,Rotor,specs,refs,alphabet:A};
+});

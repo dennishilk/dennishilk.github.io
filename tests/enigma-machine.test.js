@@ -1,0 +1,6 @@
+const test=require('node:test'), assert=require('node:assert/strict');const {Enigma,Rotor,refs}=require('../museum/cryptography-lab/enigma-machine/enigma.js');
+test('rotor and reflector wiring is deterministic',()=>{assert.equal(new Rotor('I').forward(0),4);assert.equal(new Rotor('I').backward(4),0);assert.equal(refs.B[0],'Y')});
+test('plugboard is symmetric and rejects invalid pairs',()=>{let e=new Enigma({pairs:['AM','FI']});assert.equal(e.plug[0],12);assert.equal(e.plug[12],0);assert.throws(()=>e.setPlugboard(['AA']));assert.throws(()=>e.setPlugboard(['AM','AZ']))});
+test('right rotor steps and carries at notch',()=>{let e=new Enigma({positions:'AAU'});e.encipher('A');assert.equal(e.positions(),'AAV');e.encipher('A');assert.equal(e.positions(),'ABW')});
+test('double stepping advances middle twice on consecutive presses',()=>{let e=new Enigma({positions:'ADV'});e.encipher('A');assert.equal(e.positions(),'AEW');e.encipher('A');assert.equal(e.positions(),'BFX')});
+test('reciprocal encryption and reset',()=>{let a=new Enigma({order:['I','II','III'],positions:'AAA',pairs:['AM','FI']});let c=[...'HELLOWORLD'].map(x=>a.encipher(x).output).join('');a.reset();assert.equal([...c].map(x=>a.encipher(x).output).join(''),'HELLOWORLD');assert.notEqual(c,'HELLOWORLD')});
