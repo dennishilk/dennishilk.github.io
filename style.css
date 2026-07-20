@@ -3702,3 +3702,80 @@ button.technology-observer-card {
 .linux-lab-route a:hover, .linux-lab-route a:focus-visible { color: #d8f5ff; text-decoration: underline; }
 @media (max-width: 700px) { .linux-lab-card { min-height: 0; } }
 @media (prefers-reduced-motion: reduce) { .linux-lab-card { transition: none; } .linux-lab-card:hover, .linux-lab-card:focus-visible { transform: none; } }
+
+/* Computer Museum landing page collections */
+.museum-featured,
+.museum-collection {
+  margin: 1.5rem 0 2rem;
+  text-align: left;
+}
+
+.museum-section-label {
+  color: #ffd08a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.65rem;
+  text-transform: uppercase;
+}
+
+.museum-collection > h2 {
+  color: var(--accent);
+  font-size: 1.15rem;
+  margin: 0 0 1rem;
+}
+
+.museum-featured-card {
+  background: linear-gradient(135deg, rgba(7, 23, 28, 0.96), rgba(8, 33, 37, 0.92));
+  border-color: rgba(103, 241, 170, 0.48);
+  box-shadow: inset 0 0 28px rgba(108, 237, 185, 0.06);
+  gap: 1.15rem;
+}
+
+.museum-featured-card:hover,
+.museum-featured-card:focus-within {
+  border-color: rgba(103, 241, 170, 0.8);
+}
+
+.museum-featured-content {
+  align-items: start;
+  display: grid;
+  gap: 1rem 2rem;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.7fr);
+}
+
+.museum-featured-card h2 {
+  color: var(--accent);
+  margin: 0 0 1rem;
+}
+
+.museum-featured-details {
+  align-content: start;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.museum-featured-details span {
+  border-left: 2px solid rgba(255, 190, 92, 0.6);
+  color: #ffd08a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding-left: 0.65rem;
+}
+
+.museum-featured-card .card-button {
+  align-self: flex-start;
+  min-width: 190px;
+}
+
+@media (max-width: 600px) {
+  .museum-featured-content {
+    grid-template-columns: 1fr;
+  }
+
+  .museum-featured-card .card-button {
+    align-self: stretch;
+    min-width: 0;
+  }
+}
