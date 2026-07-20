@@ -12,7 +12,7 @@
   const commandProfiles = {
     lab01: ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man'],
     lab02: null,
-    lab03: null, lab04: null, lab05: null, lab06: null, lab07: null
+    lab03: null, lab04: null, lab05: null, lab06: null, lab07: null, lab08: null
   };
   commandProfiles.lab02 = [...commandProfiles.lab01, 'cat'];
   commandProfiles.lab03 = [...commandProfiles.lab02, 'mkdir', 'touch', 'cp', 'mv', 'rm'];
@@ -20,6 +20,7 @@
   commandProfiles.lab05 = [...commandProfiles.lab04, 'ps', 'top', 'kill'];
   commandProfiles.lab06 = [...commandProfiles.lab05, 'grep', 'wc', 'head', 'tail', 'echo'];
   commandProfiles.lab07 = [...commandProfiles.lab06, 'systemctl', 'journalctl', 'config-set'];
+  commandProfiles.lab08 = [...commandProfiles.lab07];
   Object.values(commandProfiles).forEach(Object.freeze);
   Object.freeze(commandProfiles);
   const defaultCommands = commandProfiles.lab01;
@@ -103,11 +104,25 @@
         { pid: 314, user: 'museum', command: 'gallery-backup', state: 'S', cpu: 1.5, memory: 2.4, critical: false, terminated: false },
         { pid: 427, user: 'museum', command: 'runaway-indexer', state: 'R', cpu: 96.7, memory: 8.6, critical: false, terminated: false }
       ];
+      this.recovery = null;
     }
+    setupRecoveryScenario() {
+      this.reset();
+      const exhibit = this.fileSystem.resolve('/srv/museum', this.cwd, this.homeDirectory).node;
+      exhibit.children['exhibit-index.txt'] = file('EXHIBIT INDEX\n01 — Computing Before Screens\n02 — The Terminal Gallery\n', { owner: 'museum', group: 'museum', mode: '-w-------' });
+      this.services['museum-exhibit.service'] = { state: 'failed', reason: 'required exhibit index cannot be read' };
+      this.journal['museum-exhibit.service'] = ['2042-04-07 09:10:01 museum-exhibit.service: service start requested', '2042-04-07 09:10:02 museum-exhibit.service: loading /srv/museum/exhibit-index.txt', '2042-04-07 09:10:03 museum-exhibit.service: Permission denied: cannot read /srv/museum/exhibit-index.txt', '2042-04-07 09:10:04 museum-exhibit.service: service entered failed state'];
+      this.processes = this.processes.filter(process => process.pid !== 427);
+      this.processes.push({ pid: 733, user: 'museum', command: 'museum-render-worker', state: 'R', cpu: 96.4, memory: 8.6, critical: false, terminated: false });
+      this.recovery = { active: true, evidence: { processInspected: false, processIdentified: false, serviceInspected: false, journalRead: false, permissionInspected: false, permissionIdentified: false, safeProcessStopped: false, minimumPermissionRepaired: false, serviceRestarted: false, serviceVerified: false } };
+      return this;
+    }
+    recoveryFile() { return this.fileSystem.resolve('/srv/museum/exhibit-index.txt', this.cwd, this.homeDirectory); }
+    recoveryHealthy() { const runaway = this.processByPid(733), exhibit = this.recoveryFile(), service = this.serviceByName('museum-exhibit.service'); return !!(this.recovery && runaway && runaway.terminated && exhibit && exhibit.node.mode === 'rw-------' && service && service.state === 'active' && this.processes.filter(process => process.critical).every(process => !process.terminated)); }
     serviceByName(name) { return this.services[name] || null; }
     galleryConfig() { const reading = this.fileSystem.readFile('/etc/museum/gallery.conf', this.cwd, this.homeDirectory, this.currentUser); return reading.error ? '' : reading.content; }
     appendJournal(name, message) { const stamp = `2042-04-07 09:01:${String(this.journalSequence++).padStart(2, '0')}`; this.journal[name].push(`${stamp} ${name}: ${message}`); }
-    controlService(action, name) { const service = this.serviceByName(name); if (!service) return { error: `systemctl: unknown fictional service: ${name}` }; if (!['start', 'restart', 'stop'].includes(action)) return { error: 'systemctl: supported actions are status, start, restart, and stop' }; if (action === 'stop') { service.state = 'inactive'; service.reason = 'stopped in Academy'; this.appendJournal(name, 'service stopped'); return { service }; } if (name === 'museum-gallery.service') { this.appendJournal(name, 'service start requested'); const match = this.galleryConfig().match(/^CONTENT_PATH=(.+)$/m); const path = match && match[1]; const target = path && this.fileSystem.resolve(path, this.cwd, this.homeDirectory); if (!target || target.node.type !== 'directory') { service.state = 'failed'; service.reason = 'configuration validation failed'; this.appendJournal(name, `content path validation failed: ${path || '(missing CONTENT_PATH)'} does not exist`); this.appendJournal(name, 'service entered failed state'); return { service, error: 'configuration validation failed' }; } service.state = 'active'; service.reason = 'running normally'; this.appendJournal(name, 'configuration validation passed'); this.appendJournal(name, 'service started successfully'); return { service }; } service.state = 'active'; service.reason = 'running normally'; this.appendJournal(name, 'service started successfully'); return { service }; }
+    controlService(action, name) { const service = this.serviceByName(name); if (!service) return { error: `systemctl: unknown fictional service: ${name}` }; if (!['start', 'restart', 'stop'].includes(action)) return { error: 'systemctl: supported actions are status, start, restart, and stop' }; if (action === 'stop') { service.state = 'inactive'; service.reason = 'stopped in Academy'; this.appendJournal(name, 'service stopped'); return { service }; } if (name === 'museum-exhibit.service') { this.appendJournal(name, 'service start requested'); const exhibit = this.recoveryFile(); if (!exhibit || exhibit.node.mode !== 'rw-------') { service.state = 'failed'; service.reason = 'required exhibit index cannot be read'; this.appendJournal(name, 'Permission denied: cannot read /srv/museum/exhibit-index.txt'); this.appendJournal(name, 'service entered failed state'); return { service, error: 'required exhibit index cannot be read' }; } service.state = 'active'; service.reason = 'running normally'; this.appendJournal(name, 'exhibit index read successfully'); this.appendJournal(name, 'service started successfully'); if (this.recovery) this.recovery.evidence.serviceRestarted = true; return { service }; } if (name === 'museum-gallery.service') { this.appendJournal(name, 'service start requested'); const match = this.galleryConfig().match(/^CONTENT_PATH=(.+)$/m); const path = match && match[1]; const target = path && this.fileSystem.resolve(path, this.cwd, this.homeDirectory); if (!target || target.node.type !== 'directory') { service.state = 'failed'; service.reason = 'configuration validation failed'; this.appendJournal(name, `content path validation failed: ${path || '(missing CONTENT_PATH)'} does not exist`); this.appendJournal(name, 'service entered failed state'); return { service, error: 'configuration validation failed' }; } service.state = 'active'; service.reason = 'running normally'; this.appendJournal(name, 'configuration validation passed'); this.appendJournal(name, 'service started successfully'); return { service }; } service.state = 'active'; service.reason = 'running normally'; this.appendJournal(name, 'service started successfully'); return { service }; }
     runningProcesses() { return this.processes.filter(process => !process.terminated); }
     processByPid(pid) { return this.processes.find(process => process.pid === Number(pid)); }
     terminateProcess(pid, signal = 'TERM') {
@@ -116,6 +131,7 @@
       if (process.terminated) return { error: `kill: (${pid}) - Process already terminated in this Academy` };
       if (process.critical) return { error: `kill: (${pid}) - Academy safety protection: PID ${pid} is essential and cannot be stopped here.` };
       process.terminated = true; process.state = 'X'; process.cpu = 0; process.signal = signal;
+      if (this.recovery && process.pid === 733 && signal === 'TERM' && this.recovery.evidence.processIdentified) this.recovery.evidence.safeProcessStopped = true;
       return { process, signal };
     }
   }
@@ -157,6 +173,11 @@
     _executeSingle(input, stdin = null) {
       const { command, args } = input, system = this.system, fs = system.fileSystem;
       const success = output => ({ input, output: Array.isArray(output) ? output : [output], success: true, command }); const failure = output => ({ input, output: Array.isArray(output) ? output : [output], success: false, command });
+      const evidence = system.recovery && system.recovery.evidence;
+      if (evidence && ((command === 'ps' && (!args.length || args[0] === 'aux')) || command === 'top')) { evidence.processInspected = true; evidence.processIdentified = true; }
+      if (evidence && command === 'systemctl' && args[0] === 'status' && args[1] === 'museum-exhibit.service') { evidence.serviceInspected = true; if (system.serviceByName('museum-exhibit.service').state === 'active') evidence.serviceVerified = true; }
+      if (evidence && command === 'journalctl' && args[0] === '-u' && args[1] === 'museum-exhibit.service') evidence.journalRead = true;
+      if (evidence && command === 'ls' && args[0] === '-l' && (args[1] === '/srv/museum/exhibit-index.txt' || args[1] === '/srv/museum')) { evidence.permissionInspected = true; evidence.permissionIdentified = true; }
       if (!this.allowedCommands.has(command)) return failure([`${command}: command not found`, 'Type help to see available commands.']);
       if (command === 'pwd') return args.length ? failure('pwd: this Lab 01 command does not use options yet') : success(system.cwd);
       if (command === 'whoami') return args.length ? failure('whoami: this Lab 01 command does not use options yet') : success(system.currentUser);
@@ -196,7 +217,7 @@
         if (result.error) return failure(result.error);
         return success(signal === 'KILL' ? [`kill: sent SIGKILL to fictional PID ${pid}. It stopped, but TERM is normally the safer first request.`] : [`kill: sent SIGTERM to fictional PID ${pid}. The process ended normally in this Academy.`]);
       }
-      if (command === 'chmod') { if (args.length !== 2) return failure('chmod: try chmod u+r FILE'); const target = fs.resolve(args[1], system.cwd, system.homeDirectory); if (!target) return failure(`chmod: ${args[1]}: No such file or directory`); if (target.node.owner !== system.currentUser) return failure(`chmod: ${args[1]}: Operation not permitted`); let mode = target.node.mode; if (/^[0-7]{3}$/.test(args[0])) { const symbols = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx']; mode = args[0].split('').map(n => symbols[Number(n)]).join(''); } else { const match = args[0].match(/^([ugo])([+-])([rwx])$/); if (!match) return failure(`chmod: invalid mode: ${args[0]}`); const offsets = { u: 0, g: 3, o: 6 }; const index = offsets[match[1]] + 'rwx'.indexOf(match[3]); mode = mode.slice(0, index) + (match[2] === '+' ? match[3] : '-') + mode.slice(index + 1); } fs.chmod(args[1], mode, system.cwd, system.homeDirectory); const warning = args[0] === '777' ? ['chmod: warning: 777 grants more access than this repair needs.'] : []; return success(warning); }
+      if (command === 'chmod') { if (args.length !== 2) return failure('chmod: try chmod u+r FILE'); const target = fs.resolve(args[1], system.cwd, system.homeDirectory); if (!target) return failure(`chmod: ${args[1]}: No such file or directory`); if (target.node.owner !== system.currentUser) return failure(`chmod: ${args[1]}: Operation not permitted`); let mode = target.node.mode; if (/^[0-7]{3}$/.test(args[0])) { const symbols = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx']; mode = args[0].split('').map(n => symbols[Number(n)]).join(''); } else { const match = args[0].match(/^([ugo])([+-])([rwx])$/); if (!match) return failure(`chmod: invalid mode: ${args[0]}`); const offsets = { u: 0, g: 3, o: 6 }; const index = offsets[match[1]] + 'rwx'.indexOf(match[3]); mode = mode.slice(0, index) + (match[2] === '+' ? match[3] : '-') + mode.slice(index + 1); } fs.chmod(args[1], mode, system.cwd, system.homeDirectory); if (evidence && fs.resolve(args[1], system.cwd, system.homeDirectory).path === '/srv/museum/exhibit-index.txt' && mode === 'rw-------') evidence.minimumPermissionRepaired = true; const warning = args[0] === '777' ? ['chmod: warning: 777 grants more access than this repair needs.'] : []; return success(warning); }
       if (command === 'chown') { const maintenance = args[0] === '--academy-maintenance'; const owner = maintenance ? args[1] : args[0], path = maintenance ? args[2] : args[1]; if ((!maintenance && args.length !== 2) || (maintenance && args.length !== 3)) return failure('chown: try chown OWNER FILE (or Academy maintenance demo)'); const target = fs.resolve(path, system.cwd, system.homeDirectory); if (!target) return failure(`chown: ${path}: No such file or directory`); if (!maintenance) return failure(['chown: Operation not permitted for museum.', 'Real Linux ownership changes normally require appropriate privilege; this Academy does not grant it.']); target.node.owner = owner; target.node.group = owner; return success(['Academy maintenance changed fictional ownership only.', 'Real Linux requires appropriate privilege for chown.']); }
       if (command === 'systemctl') {
         if (args.length !== 2) return failure('systemctl: try systemctl status SERVICE, or systemctl start|restart|stop SERVICE');
