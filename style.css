@@ -3632,9 +3632,11 @@ button.technology-observer-card {
 .linux-academy-heading { align-items: end; display: flex; gap: 1rem; justify-content: space-between; }
 .linux-academy-heading h2, .linux-academy-two-column h2, .linux-architecture h2 { color: var(--accent); margin: 0; }
 .linux-academy-lead { color: #c9d1d9; line-height: 1.6; max-width: 770px; }
-.linux-academy-graduation { background: rgba(36, 30, 16, .72); border-left: 3px solid #ffd08a; color: #ffe8b4; margin: 1rem 0; max-width: 900px; padding: .75rem 1rem; }
+.linux-academy-graduation { align-items: start; background: rgba(36, 30, 16, .72); border-left: 3px solid #ffd08a; color: #ffe8b4; display: grid; gap: .75rem 1.5rem; grid-template-columns: minmax(0, 1.4fr) minmax(220px, .9fr); margin: 0; max-width: 100%; padding: .75rem 1rem; }
 .linux-academy-graduation strong { color: #ffd08a; font-size: .78rem; letter-spacing: .1em; }
 .linux-academy-graduation p { margin: .35rem 0 0; }
+.linux-academy-graduation ul { list-style: '✓  '; margin: 0; padding-left: 1.25rem; }
+.linux-academy-graduation li { margin: .15rem 0; }
 .linux-lab-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .linux-lab-card { background: linear-gradient(145deg, rgba(7, 23, 28, .94), rgba(5, 14, 19, .94)); border: 1px solid rgba(0, 180, 255, .34); box-shadow: inset 0 0 22px rgba(0, 180, 255, .025); display: flex; flex-direction: column; min-width: 0; padding: 1rem; }
 .linux-lab-card-featured { border-color: rgba(112, 237, 190, .5); box-shadow: inset 0 0 30px rgba(82, 244, 178, .055); }
@@ -3663,7 +3665,7 @@ button.technology-observer-card {
 .linux-safety { border-color: rgba(255, 190, 92, .5); text-align: left; }
 .linux-safety h2 { color: #ffd08a; }
 .linux-safety li { color: #d4e3e5; line-height: 1.55; }
-@media (max-width: 700px) { .linux-lab-grid, .linux-academy-two-column { grid-template-columns: 1fr; } .linux-component-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .linux-academy-heading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 700px) { .linux-lab-grid, .linux-academy-two-column, .linux-academy-graduation { grid-template-columns: 1fr; } .linux-component-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .linux-academy-heading { align-items: flex-start; flex-direction: column; } }
 @media (max-width: 460px) { .linux-component-grid { grid-template-columns: 1fr; } .linux-lab-top { align-items: flex-start; flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { .linux-lab-card { transition: none; } }
 
