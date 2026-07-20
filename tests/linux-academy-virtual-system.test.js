@@ -332,7 +332,7 @@ test('Lab 08 distinguishes unreadable, readable-overpermissive, and exact minimu
   assert.equal(reset.recoveryPermissionState(), 'unreadable');
 });
 
-test('Lab 08 state-aware hints and no-hint certificate state remain browser-local and attempt-scoped', () => {
+test('Lab 08 keeps earned graduation separate from fresh replay attempts', () => {
   const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
   const store = new Map(); const storage = { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) };
   const system = new VirtualSystem().setupRecoveryScenario(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
@@ -352,6 +352,12 @@ test('Lab 08 state-aware hints and no-hint certificate state remain browser-loca
   const earnedId = graduation.certificateId(storage), earnedDate = graduation.issueDate(storage);
   assert.equal(graduation.certificateId(storage), earnedId, 'certificate ID stays stable after earning'); assert.equal(graduation.issueDate(storage), earnedDate, 'issue date stays stable after earning');
   noHint.reset(); assert.equal(noHint.hintUsed, false); assert.equal(graduation.eligible(storage), true, 'resetting after earning never removes eligibility');
+  const replay = graduation.createAttempt(storage);
+  replay.useHint();
+  assert.equal(replay.recordCompletion(new VirtualSystem().setupRecoveryScenario()), false, 'an incomplete assisted replay does not change graduation');
+  assert.equal(graduation.eligible(storage), true, 'a later hint-assisted replay never revokes graduation');
+  assert.equal(graduation.certificateId(storage), earnedId, 'certificate ID survives replay');
+  assert.equal(graduation.issueDate(storage), earnedDate, 'issue date survives replay');
   const hintedSystem = new VirtualSystem().setupRecoveryScenario(); const hintedShell = new Shell(hintedSystem, { allowedCommands: commandProfiles.lab08 }); const hintedAttempt = graduation.createAttempt({ getItem: () => null, setItem: () => { throw new Error('hinted completion must not persist eligibility'); } });
   hintedAttempt.useHint(); ['ps aux', 'kill 733', 'systemctl status museum-exhibit.service', 'journalctl -u museum-exhibit.service', 'ls -l /srv/museum/exhibit-index.txt', 'chmod 600 /srv/museum/exhibit-index.txt', 'systemctl restart museum-exhibit.service', 'systemctl status museum-exhibit.service'].forEach(command => hintedShell.execute(command));
   assert.equal(hintedSystem.recoveryHealthy(), true); assert.equal(hintedAttempt.recordCompletion(hintedSystem), false);
@@ -382,6 +388,10 @@ test('Academy certificate state is earned or locked and removes obsolete legacy 
   assert.equal(shell.execute('man academy-cert').success, false);
   assert.doesNotMatch(lab, /academy-cert|PreviewCommand|previewCertificate/);
   assert.doesNotMatch(labPage, /academy-cert|OPEN TEST CERTIFICATE|previewCertificate/);
+  assert.match(labPage, /id="certificateChallenge"[\s\S]*?CERTIFICATE CHALLENGE/);
+  assert.match(labPage, /ACADEMY GRADUATION EARNED[\s\S]*?You may repeat this lab for practice[\s\S]*?href="\.\.\/certificate\.html">OPEN CERTIFICATE →/);
+  assert.match(lab, /const earned = graduation\.eligible\(window\.localStorage\);[\s\S]*?certificateChallenge'\)\.hidden = earned;[\s\S]*?graduation'\)\.hidden = !earned/);
+  assert.match(lab, /assistedNote'\)\.hidden = !complete \|\| !attempt\.hintUsed \|\| earned/);
 });
 
 test('Certificate V2 keeps earned and locked states, editable name, reset, and print appearance', () => {
