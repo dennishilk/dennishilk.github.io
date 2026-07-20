@@ -12,15 +12,16 @@
   const commandProfiles = {
     lab01: ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man'],
     lab02: null,
-    lab03: null, lab04: null
+    lab03: null, lab04: null, lab05: null
   };
   commandProfiles.lab02 = [...commandProfiles.lab01, 'cat'];
   commandProfiles.lab03 = [...commandProfiles.lab02, 'mkdir', 'touch', 'cp', 'mv', 'rm'];
   commandProfiles.lab04 = [...commandProfiles.lab03, 'chmod', 'chown', 'id', 'sudo'];
+  commandProfiles.lab05 = [...commandProfiles.lab04, 'ps', 'top', 'kill'];
   Object.values(commandProfiles).forEach(Object.freeze);
   Object.freeze(commandProfiles);
   const defaultCommands = commandProfiles.lab01;
-  const descriptions = { mkdir: 'create a virtual directory', touch: 'create a virtual file', cp: 'copy a virtual file', mv: 'rename or move a virtual node', rm: 'remove a virtual file', pwd: 'show current directory', whoami: 'show current user', uname: 'show virtual system information', date: 'show date and time', ls: 'list directory contents (-l shows permissions)', cd: 'change directory', cat: 'display a virtual file', chmod: 'change fictional permission bits', chown: 'explain fictional ownership changes', id: 'show fictional user and group', sudo: 'explain why sudo is unavailable', clear: 'clear terminal', help: 'show available commands', man: 'read command help' };
+  const descriptions = { mkdir: 'create a virtual directory', touch: 'create a virtual file', cp: 'copy a virtual file', mv: 'rename or move a virtual node', rm: 'remove a virtual file', pwd: 'show current directory', whoami: 'show current user', uname: 'show virtual system information', date: 'show date and time', ls: 'list directory contents (-l shows permissions)', cd: 'change directory', cat: 'display a virtual file', chmod: 'change fictional permission bits', chown: 'explain fictional ownership changes', id: 'show fictional user and group', sudo: 'explain why sudo is unavailable', ps: 'inspect fictional processes (ps aux for details)', top: 'show a fictional process snapshot', kill: 'send TERM or KILL to a fictional process', clear: 'clear terminal', help: 'show available commands', man: 'read command help' };
 
   class VirtualFileSystem {
     constructor() {
@@ -73,13 +74,36 @@
     remove(path, cwd, home) { const target = this.resolve(path, cwd, home); if (!target) return { error: 'No such file or directory' }; if (target.path === '/') return { error: 'Cannot remove the root directory' }; if (target.node.type === 'directory') return { error: 'Is a directory; directory removal is intentionally outside this beginner lab' }; const parent = this.resolve(target.path.slice(0, target.path.lastIndexOf('/')) || '/', cwd, home); delete parent.node.children[target.path.split('/').pop()]; return { path: target.path, removed: true }; }
     walk(callback, node = this.root, path = '/') { callback(node, path); if (node.type === 'directory') Object.keys(node.children).sort((a, b) => a.localeCompare(b)).forEach(name => this.walk(callback, node.children[name], path === '/' ? `/${name}` : `${path}/${name}`)); }
   }
-  class VirtualSystem { constructor() { this.reset(); } reset() { this.fileSystem = new VirtualFileSystem(); this.currentUser = 'museum'; this.homeDirectory = '/home/museum'; this.cwd = this.homeDirectory; } }
+  class VirtualSystem {
+    constructor() { this.reset(); }
+    reset() {
+      this.fileSystem = new VirtualFileSystem(); this.currentUser = 'museum'; this.homeDirectory = '/home/museum'; this.cwd = this.homeDirectory;
+      // Deliberately small, deterministic browser-memory-only process table.
+      this.processes = [
+        { pid: 1, user: 'root', command: 'init (academy system)', state: 'S', cpu: 0.1, memory: 0.2, critical: true, terminated: false },
+        { pid: 120, user: 'root', command: 'museum-service', state: 'S', cpu: 0.4, memory: 1.1, critical: true, terminated: false },
+        { pid: 241, user: 'museum', command: 'museum-shell', state: 'R', cpu: 0.8, memory: 1.8, critical: false, terminated: false },
+        { pid: 314, user: 'museum', command: 'gallery-backup', state: 'S', cpu: 1.5, memory: 2.4, critical: false, terminated: false },
+        { pid: 427, user: 'museum', command: 'runaway-indexer', state: 'R', cpu: 96.7, memory: 8.6, critical: false, terminated: false }
+      ];
+    }
+    runningProcesses() { return this.processes.filter(process => !process.terminated); }
+    processByPid(pid) { return this.processes.find(process => process.pid === Number(pid)); }
+    terminateProcess(pid, signal = 'TERM') {
+      const process = this.processByPid(pid);
+      if (!process) return { error: `kill: (${pid}) - No such fictional process` };
+      if (process.terminated) return { error: `kill: (${pid}) - Process already terminated in this Academy` };
+      if (process.critical) return { error: `kill: (${pid}) - Academy safety protection: PID ${pid} is essential and cannot be stopped here.` };
+      process.terminated = true; process.state = 'X'; process.cpu = 0; process.signal = signal;
+      return { process, signal };
+    }
+  }
   class CommandParser { parse(raw) { const text = String(raw || '').trim(); if (!text) return null; const [command, ...args] = text.split(/\s+/); return { raw: text, command, args }; } }
   const manuals = {
     pwd: ['PWD(1) — ACADEMY MANUAL', 'NAME', '    pwd — print the current working directory', 'DESCRIPTION', '    Shows where you are in the virtual filesystem.'],
     whoami: ['WHOAMI(1) — ACADEMY MANUAL', 'NAME', '    whoami — show the current virtual user'], uname: ['UNAME(1) — ACADEMY MANUAL', 'NAME', '    uname — show virtual system information'], date: ['DATE(1) — ACADEMY MANUAL', 'NAME', '    date — show browser-side virtual terminal time'],
     ls: ['LS(1) — ACADEMY MANUAL', 'NAME', '    ls — list directory contents', 'TRY', '    ls /'], cd: ['CD(1) — ACADEMY MANUAL', 'NAME', '    cd — change directory', 'DESCRIPTION', '    Use .. for parent, . for current directory, and ~ for home.'],
-    mkdir: ['MKDIR(1) — ACADEMY MANUAL', 'NAME', '    mkdir — create a virtual directory', 'TRY', '    mkdir playground'], touch: ['TOUCH(1) — ACADEMY MANUAL', 'NAME', '    touch — create an empty virtual file', 'TRY', '    touch notes.txt'], cp: ['CP(1) — ACADEMY MANUAL', 'NAME', '    cp — copy a virtual file', 'TRY', '    cp notes.txt backup.txt'], mv: ['MV(1) — ACADEMY MANUAL', 'NAME', '    mv — rename or move a virtual node', 'TRY', '    mv notes.txt ideas.txt'], rm: ['RM(1) — ACADEMY MANUAL', 'NAME', '    rm — remove a virtual file', 'DESCRIPTION', '    Directory removal is intentionally outside this beginner lab.'], cat: ['CAT(1) — ACADEMY MANUAL', 'NAME', '    cat — display a virtual file', 'DESCRIPTION', '    Reads a small Academy file only; it never reads your computer.', 'TRY', '    cat README.txt'], chmod: ['CHMOD(1) — ACADEMY MANUAL', 'NAME', '    chmod — change fictional permission bits', 'TRY', '    chmod u+r notes.txt', '    chmod u+x script.sh', 'DESCRIPTION', '    u, g, and o mean owner, group, and others. Use the smallest useful change.'], chown: ['CHOWN(1) — ACADEMY MANUAL', 'NAME', '    chown — explain fictional ownership changes', 'DESCRIPTION', '    In this Academy, only the maintenance example may change ownership. Real Linux normally requires appropriate privilege.'], id: ['ID(1) — ACADEMY MANUAL', 'NAME', '    id — show the fictional user and group'], sudo: ['SUDO(1) — ACADEMY MANUAL', 'NAME', '    sudo — unavailable in this browser-only Academy lab'], clear: ['CLEAR(1) — ACADEMY MANUAL', 'NAME', '    clear — clear visible terminal output'], help: ['HELP(1) — ACADEMY MANUAL', 'NAME', '    help — list commands available in this lab'], man: ['MAN(1) — ACADEMY MANUAL', 'NAME', '    man — read an Academy manual entry']
+    mkdir: ['MKDIR(1) — ACADEMY MANUAL', 'NAME', '    mkdir — create a virtual directory', 'TRY', '    mkdir playground'], touch: ['TOUCH(1) — ACADEMY MANUAL', 'NAME', '    touch — create an empty virtual file', 'TRY', '    touch notes.txt'], cp: ['CP(1) — ACADEMY MANUAL', 'NAME', '    cp — copy a virtual file', 'TRY', '    cp notes.txt backup.txt'], mv: ['MV(1) — ACADEMY MANUAL', 'NAME', '    mv — rename or move a virtual node', 'TRY', '    mv notes.txt ideas.txt'], rm: ['RM(1) — ACADEMY MANUAL', 'NAME', '    rm — remove a virtual file', 'DESCRIPTION', '    Directory removal is intentionally outside this beginner lab.'], cat: ['CAT(1) — ACADEMY MANUAL', 'NAME', '    cat — display a virtual file', 'DESCRIPTION', '    Reads a small Academy file only; it never reads your computer.', 'TRY', '    cat README.txt'], chmod: ['CHMOD(1) — ACADEMY MANUAL', 'NAME', '    chmod — change fictional permission bits', 'TRY', '    chmod u+r notes.txt', '    chmod u+x script.sh', 'DESCRIPTION', '    u, g, and o mean owner, group, and others. Use the smallest useful change.'], chown: ['CHOWN(1) — ACADEMY MANUAL', 'NAME', '    chown — explain fictional ownership changes', 'DESCRIPTION', '    In this Academy, only the maintenance example may change ownership. Real Linux normally requires appropriate privilege.'], id: ['ID(1) — ACADEMY MANUAL', 'NAME', '    id — show the fictional user and group'], ps: ['PS(1) — ACADEMY MANUAL', 'NAME', '    ps — inspect the Academy process table', 'TRY', '    ps aux', '    Process rows are fictional browser-memory data only.'], top: ['TOP(1) — ACADEMY MANUAL', 'NAME', '    top — show one educational snapshot of active fictional processes', 'DESCRIPTION', '    This Academy version does not stay open or refresh forever.'], kill: ['KILL(1) — ACADEMY MANUAL', 'NAME', '    kill — send a safe fictional signal to one PID', 'TRY', '    kill 427', '    kill -TERM 427', '    TERM is a polite request; KILL is forceful and should not be the first reflex.'], sudo: ['SUDO(1) — ACADEMY MANUAL', 'NAME', '    sudo — unavailable in this browser-only Academy lab'], clear: ['CLEAR(1) — ACADEMY MANUAL', 'NAME', '    clear — clear visible terminal output'], help: ['HELP(1) — ACADEMY MANUAL', 'NAME', '    help — list commands available in this lab'], man: ['MAN(1) — ACADEMY MANUAL', 'NAME', '    man — read an Academy manual entry']
   };
   class Shell {
     constructor(system, options = {}) { this.system = system; this.parser = new CommandParser(); this.allowedCommands = new Set(options.allowedCommands || defaultCommands); }
@@ -102,6 +126,26 @@
       if (command === 'rm') { if (args.length !== 1 || args[0].startsWith('-')) return failure('rm: this beginner lab removes one file at a time; recursive options are not available'); const result = fs.remove(args[0], system.cwd, system.homeDirectory); return result.error ? failure(`rm: ${args[0]}: ${result.error}`) : success([]); }
       if (command === 'id') return args.length ? failure('id: no options in this Academy lab') : success('uid=1000(museum) gid=1000(museum) groups=1000(museum)');
       if (command === 'sudo') return failure(['sudo: unavailable in this browser-only Academy lab.', 'This fictional system teaches permissions without granting real privileges.']);
+      if (command === 'ps') {
+        if (!args.length) return success(['PID   STAT COMMAND', ...system.runningProcesses().filter(process => process.user === system.currentUser).map(process => `${String(process.pid).padEnd(5)} ${process.state.padEnd(4)} ${process.command}`)]);
+        if (args.length === 1 && args[0] === 'aux') return success(['USER     PID  %CPU %MEM STAT COMMAND', ...system.runningProcesses().map(process => `${process.user.padEnd(8)} ${String(process.pid).padEnd(4)} ${String(process.cpu.toFixed(1)).padStart(4)} ${String(process.memory.toFixed(1)).padStart(4)} ${process.state.padEnd(4)} ${process.command}`)]);
+        return failure('ps: supported forms are ps and ps aux in this Academy lab');
+      }
+      if (command === 'top') {
+        if (args.length) return failure('top: this Academy snapshot takes no options');
+        return success(['ACADEMY TOP SNAPSHOT — fictional browser-memory processes', 'PID   USER     %CPU STAT COMMAND', ...system.runningProcesses().slice().sort((a, b) => b.cpu - a.cpu).map(process => `${String(process.pid).padEnd(5)} ${process.user.padEnd(8)} ${String(process.cpu.toFixed(1)).padStart(4)} ${process.state.padEnd(4)} ${process.command}`), '', 'R = running · S = sleeping. This is one snapshot, not a live host-system tool.']);
+      }
+      if (command === 'kill') {
+        let signal = 'TERM', pid;
+        if (args.length === 1) pid = args[0];
+        else if (args.length === 2 && /^-(TERM|KILL)$/.test(args[0])) { signal = args[0].slice(1); pid = args[1]; }
+        else if (args.length && args[0].startsWith('-')) return failure(`kill: unsupported signal ${args[0]}; use -TERM or -KILL`);
+        else return failure('kill: try kill PID, kill -TERM PID, or kill -KILL PID');
+        if (!/^\d+$/.test(pid)) return failure(`kill: invalid PID: ${pid}`);
+        const result = system.terminateProcess(pid, signal);
+        if (result.error) return failure(result.error);
+        return success(signal === 'KILL' ? [`kill: sent SIGKILL to fictional PID ${pid}. It stopped, but TERM is normally the safer first request.`] : [`kill: sent SIGTERM to fictional PID ${pid}. The process ended normally in this Academy.`]);
+      }
       if (command === 'chmod') { if (args.length !== 2) return failure('chmod: try chmod u+r FILE'); const target = fs.resolve(args[1], system.cwd, system.homeDirectory); if (!target) return failure(`chmod: ${args[1]}: No such file or directory`); if (target.node.owner !== system.currentUser) return failure(`chmod: ${args[1]}: Operation not permitted`); let mode = target.node.mode; if (/^[0-7]{3}$/.test(args[0])) { const symbols = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx']; mode = args[0].split('').map(n => symbols[Number(n)]).join(''); } else { const match = args[0].match(/^([ugo])([+-])([rwx])$/); if (!match) return failure(`chmod: invalid mode: ${args[0]}`); const offsets = { u: 0, g: 3, o: 6 }; const index = offsets[match[1]] + 'rwx'.indexOf(match[3]); mode = mode.slice(0, index) + (match[2] === '+' ? match[3] : '-') + mode.slice(index + 1); } fs.chmod(args[1], mode, system.cwd, system.homeDirectory); const warning = args[0] === '777' ? ['chmod: warning: 777 grants more access than this repair needs.'] : []; return success(warning); }
       if (command === 'chown') { const maintenance = args[0] === '--academy-maintenance'; const owner = maintenance ? args[1] : args[0], path = maintenance ? args[2] : args[1]; if ((!maintenance && args.length !== 2) || (maintenance && args.length !== 3)) return failure('chown: try chown OWNER FILE (or Academy maintenance demo)'); const target = fs.resolve(path, system.cwd, system.homeDirectory); if (!target) return failure(`chown: ${path}: No such file or directory`); if (!maintenance) return failure(['chown: Operation not permitted for museum.', 'Real Linux ownership changes normally require appropriate privilege; this Academy does not grant it.']); target.node.owner = owner; target.node.group = owner; return success(['Academy maintenance changed fictional ownership only.', 'Real Linux requires appropriate privilege for chown.']); }
       if (command === 'clear') return args.length ? failure('clear: this Lab 01 command does not use options yet') : { input, output: [], success: true, command, clear: true };
