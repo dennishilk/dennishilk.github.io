@@ -1,0 +1,2 @@
+(function(root){const toy=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,'0')};const work=n=>({login:n,mass:n*n*100});root.PasswordCore={toy,stored:(p,s='')=>toy(s+'|'+p),rainbow:d=>({sunshine:'c1a3e4b5',dragon:'9b88c10a'})[d]||null,work,initial:()=>({salted:false,cost:2,leaked:false})};})(typeof window !== "undefined" ? window : globalThis);
+if(typeof module==='object')module.exports=globalThis.PasswordCore;
