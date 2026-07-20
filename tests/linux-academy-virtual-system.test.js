@@ -190,3 +190,26 @@ test('Lab 03 cumulative profile exposes earlier commands, manuals, and mutations
   assert.ok(system.fileSystem.resolve('/home/museum/Projects/playground/ideas.txt', system.cwd, system.homeDirectory));
   assert.equal(system.fileSystem.resolve('/home/museum/Projects/playground/backup.txt', system.cwd, system.homeDirectory), null);
 });
+
+test('Lab 04 is cumulative and permissions derive from virtual metadata', () => {
+  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab04 });
+  assert.ok(commandProfiles.lab03.every(command => commandProfiles.lab04.includes(command)));
+  ['chmod', 'chown', 'id', 'sudo'].forEach(command => assert.ok(commandProfiles.lab04.includes(command)));
+  shell.execute('cd Projects/permissions-lab');
+  const before = shell.execute('ls -l').output.join('\n');
+  assert.match(before, /-rw------- root\s+root\s+private\.txt/);
+  assert.match(before, /--w------- museum\s+museum\s+notes\.txt/);
+  assert.match(shell.execute('cat private.txt').output[0], /Permission denied/);
+  assert.match(shell.execute('cat notes.txt').output[0], /Permission denied/);
+  assert.equal(shell.execute('chmod u+r notes.txt').success, true);
+  assert.equal(shell.execute('cat notes.txt').success, true);
+  assert.match(shell.execute('ls -l').output.join('\n'), /-rw------- museum\s+museum\s+notes\.txt/);
+  const mode = system.fileSystem.resolve('notes.txt', system.cwd, system.homeDirectory).node.mode;
+  assert.equal(shell.execute('chmod nonsense notes.txt').success, false);
+  assert.equal(system.fileSystem.resolve('notes.txt', system.cwd, system.homeDirectory).node.mode, mode);
+  assert.equal(shell.execute('chown root private.txt').success, false);
+  assert.equal(shell.execute('chown --academy-maintenance curator public.txt').success, true);
+  assert.match(shell.execute('ls -l').output.join('\n'), /curator\s+curator\s+public\.txt/);
+  const fresh = new VirtualSystem();
+  assert.equal(fresh.fileSystem.resolve('/home/museum/Projects/permissions-lab/notes.txt', fresh.cwd, fresh.homeDirectory).node.mode, '-w-------');
+});
