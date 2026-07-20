@@ -121,3 +121,33 @@ test('Lab 02 tree UI derives nodes from the shared filesystem and routes helpers
   assert.match(source, /system\.cwd === '\/var\/log'/);
   assert.match(source, /system = new VirtualSystem\(\)/);
 });
+
+test('Lab 03 mutations change only the shared virtual filesystem', () => {
+  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: ['pwd', 'ls', 'cd', 'cat', 'mkdir', 'touch', 'cp', 'mv', 'rm', 'clear', 'help', 'man'] }); const fs = system.fileSystem;
+  assert.equal(shell.execute('mkdir Projects/playground').success, true);
+  assert.match(shell.execute('mkdir Projects/playground').output[0], /Already exists/);
+  assert.equal(shell.execute('mkdir missing/child').success, false);
+  assert.equal(shell.execute('cd Projects/playground').success, true);
+  assert.equal(shell.execute('touch notes.txt').success, true);
+  const notes = fs.resolve('notes.txt', system.cwd, system.homeDirectory).node; notes.content = 'original';
+  assert.equal(shell.execute('touch notes.txt').success, true); assert.equal(notes.content, 'original');
+  assert.equal(shell.execute('cp notes.txt backup.txt').success, true);
+  const backup = fs.resolve('backup.txt', system.cwd, system.homeDirectory).node; backup.content = 'copy'; assert.equal(notes.content, 'original');
+  assert.equal(shell.execute('mv notes.txt ideas.txt').success, true); assert.equal(fs.resolve('notes.txt', system.cwd, system.homeDirectory), null);
+  assert.equal(shell.execute('mv ideas.txt /home/museum/Documents/').success, true); assert.ok(fs.resolve('/home/museum/Documents/ideas.txt', system.cwd, system.homeDirectory));
+  assert.equal(shell.execute('touch ./ideas.txt').success, true); assert.equal(shell.execute('rm ./ideas.txt').success, true);
+  assert.match(shell.execute('rm nowhere.txt').output[0], /No such file/); assert.match(shell.execute('rm ..').output[0], /Is a directory/);
+  assert.equal(shell.execute('touch /home/museum/Projects/playground/notes.txt').success, true); assert.equal(shell.execute('mv ./notes.txt ../playground/ideas.txt').success, true);
+  assert.match(shell.execute('cat Readme.txt').output[0], /No such file/);
+  assert.equal(shell.execute('mkdir ../other').success, true); assert.equal(shell.execute('mkdir ../other/child').success, true); assert.match(shell.execute('mv ../other ../other/child').output[0], /descendants/);
+  const fresh = new VirtualSystem(); assert.equal(fresh.fileSystem.resolve('/home/museum/Projects/playground', fresh.cwd, fresh.homeDirectory), null);
+});
+
+test('Lab 03 profile adds only its intended mutation commands and mission sequence reaches final state', () => {
+  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: ['pwd', 'ls', 'cd', 'cat', 'mkdir', 'touch', 'cp', 'mv', 'rm', 'clear', 'help', 'man'] });
+  for (const command of ['mkdir', 'touch', 'cp', 'mv', 'rm']) assert.equal(shell.execute(`man ${command}`).success, true);
+  assert.equal(shell.execute('whoami').success, false); assert.equal(shell.execute('chmod foo').success, false);
+  ['cd Projects', 'mkdir playground', 'cd playground', 'touch notes.txt', 'cp notes.txt backup.txt', 'mv notes.txt ideas.txt', 'rm backup.txt'].forEach(command => assert.equal(shell.execute(command).success, true, command));
+  assert.ok(system.fileSystem.resolve('/home/museum/Projects/playground/ideas.txt', system.cwd, system.homeDirectory));
+  assert.equal(system.fileSystem.resolve('/home/museum/Projects/playground/backup.txt', system.cwd, system.homeDirectory), null);
+});
