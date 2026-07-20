@@ -29,7 +29,7 @@ test('Lab 01 virtual filesystem resolves relative, absolute, and normalized path
 
   shell.execute('cd /');
   assert.deepEqual(shell.execute('pwd').output, ['/']);
-  assert.deepEqual(shell.execute('ls').output, ['bin  etc  home  tmp  var']);
+  assert.deepEqual(shell.execute('ls').output, ['bin  etc  home  srv  tmp  var']);
   shell.execute('cd home');
   shell.execute('cd museum');
   assert.equal(system.cwd, '/home/museum');
@@ -87,7 +87,7 @@ test('Lab 02 profile explores the shared filesystem without expanding Lab 01 com
   const system = new VirtualSystem();
   const lab02 = new Shell(system, { allowedCommands: commandProfiles.lab02 });
   assert.equal(system.cwd, '/home/museum');
-  assert.deepEqual(system.fileSystem.list('/', system.cwd, system.homeDirectory).entries, ['bin', 'etc', 'home', 'tmp', 'var']);
+  assert.deepEqual(system.fileSystem.list('/', system.cwd, system.homeDirectory).entries, ['bin', 'etc', 'home', 'srv', 'tmp', 'var']);
   assert.equal(lab02.execute('cd /').success, true);
   assert.equal(lab02.execute('cd home').success, true);
   assert.equal(lab02.execute('cd museum').success, true);
@@ -235,8 +235,8 @@ test('Lab 06 public routes and Academy availability metadata remain scoped', () 
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const process = fs.readFileSync(`${root}/linux-terminal-academy/process-control/index.html`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   const pipes = fs.readFileSync(`${root}/linux-terminal-academy/pipes-shell-power/index.html`, 'utf8');
-  assert.match(academy, /6 AVAILABLE \/ 2 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
-  ['system-admin-crash-lab', 'break-it-recover'].forEach(route => assert.match(academy, new RegExp(`${route}/.*?planned`, 's')));
+  assert.match(academy, /7 AVAILABLE \/ 1 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
+  assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?planned/);
   assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status planned/);
   assert.match(sitemap, /linux-terminal-academy\/pipes-shell-power\//); assert.doesNotMatch(sitemap, /pipes-shell-power\/lab\.html/);
 });
@@ -256,4 +256,34 @@ test('Lab 06 cumulatively composes safe literal text pipelines', () => {
   ['| grep ERROR', 'cat academy.log |', 'cat academy.log || grep ERROR', 'cat academy.log > file', 'echo $(something)', 'command && command'].forEach(command => assert.equal(shell.execute(command).success, false, command));
   assert.equal(shell.execute('man pipe').success, true); shell.execute('cd /var/log'); shell.execute('clear'); assert.equal(system.cwd, '/var/log');
   const fresh = new VirtualSystem(); assert.equal(fresh.fileSystem.resolve('/var/log/academy.log', fresh.cwd, fresh.homeDirectory).node.content, system.fileSystem.resolve('/var/log/academy.log', system.cwd, system.homeDirectory).node.content);
+});
+
+test('Lab 07 cumulatively models deterministic browser-only service administration', () => {
+  assert.deepEqual(commandProfiles.lab07, [...commandProfiles.lab06, 'systemctl', 'journalctl', 'config-set']);
+  assert.ok(commandProfiles.lab06.every(command => commandProfiles.lab07.includes(command)));
+  const system = new VirtualSystem(), shell = new Shell(system, { allowedCommands: commandProfiles.lab07 });
+  ['whoami', 'ls', 'cat README.txt', 'ps', 'cat /var/log/academy.log | grep ERROR | wc -l'].forEach(command => assert.equal(shell.execute(command).success, true, command));
+  assert.equal(system.services['museum-gallery.service'].state, 'failed');
+  assert.equal(system.services['museum-indexer.service'].state, 'active');
+  assert.equal(system.services['museum-backup.service'].state, 'inactive');
+  assert.match(shell.execute('systemctl status museum-gallery.service').output.join('\n'), /Active: failed/);
+  assert.match(shell.execute('journalctl -u museum-gallery.service').output.join('\n'), /\/srv\/musuem does not exist/);
+  assert.equal(shell.execute('systemctl restart museum-gallery.service').success, false);
+  assert.equal(system.services['museum-gallery.service'].state, 'failed');
+  assert.equal(shell.execute('config-set museum-gallery CONTENT_PATH /srv/museum').success, true);
+  assert.match(system.galleryConfig(), /CONTENT_PATH=\/srv\/museum/);
+  assert.equal(shell.execute('systemctl restart museum-gallery.service').success, true);
+  assert.equal(system.services['museum-gallery.service'].state, 'active');
+  assert.match(shell.execute('systemctl status museum-gallery.service').output.join('\n'), /active \(running\)/);
+  assert.match(shell.execute('journalctl -u museum-gallery.service').output.join('\n'), /configuration validation passed/);
+  ['systemctl status unknown.service', 'systemctl --type=service', 'journalctl -n 10'].forEach(command => assert.equal(shell.execute(command).success, false, command));
+  const fresh = new VirtualSystem(); assert.equal(fresh.services['museum-gallery.service'].state, 'failed'); assert.match(fresh.galleryConfig(), /\/srv\/musuem/);
+});
+
+test('Lab 07 routes, availability metadata, and shared service monitor integration are scoped', () => {
+  const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
+  const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const info = fs.readFileSync(`${root}/linux-terminal-academy/system-admin-crash-lab/index.html`, 'utf8'); const lab = fs.readFileSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.js`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
+  assert.match(academy, /7 AVAILABLE \/ 1 PLANNED/); assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?planned/);
+  assert.match(info, /AVAILABLE/); assert.match(info, /href="lab\.html">START LAB/); assert.match(lab, /commandProfiles\.lab07/); assert.match(lab, /Object\.entries\(system\.services\)/); assert.match(lab, /system\.galleryConfig\(\)/);
+  assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status planned/); assert.match(sitemap, /linux-terminal-academy\/system-admin-crash-lab\//); assert.doesNotMatch(sitemap, /system-admin-crash-lab\/lab\.html/); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/system-administration`), false);
 });
