@@ -235,7 +235,7 @@ test('Lab 06 public routes and Academy availability metadata remain scoped', () 
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const process = fs.readFileSync(`${root}/linux-terminal-academy/process-control/index.html`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   const pipes = fs.readFileSync(`${root}/linux-terminal-academy/pipes-shell-power/index.html`, 'utf8');
-  assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
+  assert.doesNotMatch(academy, /ACADEMY SYSTEM|8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /GRADUATION CHALLENGE/); assert.match(academy, /help/, 'hub explains that help is allowed'); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
   assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?available/);
   assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/);
   assert.match(sitemap, /linux-terminal-academy\/pipes-shell-power\//); assert.doesNotMatch(sitemap, /pipes-shell-power\/lab\.html/);
@@ -283,7 +283,7 @@ test('Lab 07 cumulatively models deterministic browser-only service administrati
 test('Lab 07 routes, availability metadata, and shared service monitor integration are scoped', () => {
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const info = fs.readFileSync(`${root}/linux-terminal-academy/system-admin-crash-lab/index.html`, 'utf8'); const lab = fs.readFileSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.js`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
-  assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?available/);
+  assert.doesNotMatch(academy, /ACADEMY SYSTEM|8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?available/);
   assert.match(info, /AVAILABLE/); assert.match(info, /href="lab\.html">START LAB/); assert.match(lab, /commandProfiles\.lab07/); assert.match(lab, /Object\.entries\(system\.services\)/); assert.match(lab, /system\.galleryConfig\(\)/);
   assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/system-admin-crash-lab\//); assert.doesNotMatch(sitemap, /system-admin-crash-lab\/lab\.html/); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/system-administration`), false);
 });
@@ -309,7 +309,9 @@ test('Lab 08 recovery is cumulative, stateful, resettable, and publicly routed',
   const reset = new VirtualSystem().setupRecoveryScenario(); assert.equal(reset.processByPid(733).terminated, false); assert.equal(reset.recoveryFile().node.mode, '-w-------'); assert.equal(reset.serviceByName('museum-exhibit.service').state, 'failed');
   const fs = require('node:fs'), path = require('node:path'), root = path.join(__dirname, '../museum'); const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'), catalog = fs.readFileSync(`${root}/index.html`, 'utf8'), sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/index.html`)); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/recovery`), false);
-  assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /break-it-recover\/[\s\S]*?museum-status available/); assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/break-it-recover\//); assert.doesNotMatch(sitemap, /break-it-recover\/lab\.html/);
+  const labPage = fs.readFileSync(`${root}/linux-terminal-academy/break-it-recover/lab.html`, 'utf8');
+  assert.match(labPage, /CERTIFICATE CHALLENGE/); assert.match(labPage, /Wrong commands and experimentation are allowed/); assert.match(labPage, /<code>help<\/code>, <code>man<\/code>/);
+  assert.doesNotMatch(academy, /ACADEMY SYSTEM|8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /break-it-recover\/[\s\S]*?museum-status available/); assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/break-it-recover\//); assert.doesNotMatch(sitemap, /break-it-recover\/lab\.html/);
 });
 
 test('Lab 08 distinguishes unreadable, readable-overpermissive, and exact minimum recovery permissions', () => {
@@ -337,7 +339,7 @@ test('Lab 08 state-aware hints and no-hint certificate state remain browser-loca
   assert.match(graduation.recoveryHint(system), /ps aux/);
   shell.execute('ps aux'); shell.execute('kill 733'); shell.execute('systemctl status museum-exhibit.service'); shell.execute('journalctl -u museum-exhibit.service'); shell.execute('chmod u+x /srv/museum/exhibit-index.txt'); shell.execute('chmod u+r /srv/museum/exhibit-index.txt');
   assert.match(graduation.recoveryHint(system), /chmod 600/);
-  const noHint = graduation.createAttempt(storage); shell.execute('chmod 600 /srv/museum/exhibit-index.txt'); shell.execute('systemctl restart museum-exhibit.service'); shell.execute('systemctl status museum-exhibit.service');
+  const noHint = graduation.createAttempt(storage); shell.execute('help'); shell.execute('man chmod'); shell.execute('mistyped-command'); shell.execute('chmod 600 /srv/museum/exhibit-index.txt'); shell.execute('systemctl restart museum-exhibit.service'); shell.execute('systemctl status museum-exhibit.service');
   assert.equal(system.recoveryHealthy(), true); assert.equal(noHint.recordCompletion(system), true); assert.equal(graduation.eligible(storage), true);
   const assisted = graduation.createAttempt(storage); assisted.useHint(); assert.equal(assisted.hintUsed, true); assisted.reset(); assert.equal(assisted.hintUsed, false);
   const hintedSystem = new VirtualSystem().setupRecoveryScenario(); const hintedShell = new Shell(hintedSystem, { allowedCommands: commandProfiles.lab08 }); const hintedAttempt = graduation.createAttempt({ getItem: () => null, setItem: () => { throw new Error('hinted completion must not persist eligibility'); } });
@@ -345,7 +347,20 @@ test('Lab 08 state-aware hints and no-hint certificate state remain browser-loca
   assert.equal(hintedSystem.recoveryHealthy(), true); assert.equal(hintedAttempt.recordCompletion(hintedSystem), false);
 });
 
+test('Lab 08 hidden certificate preview remains undocumented and cannot replace earned eligibility', () => {
+  const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
+  const store = new Map(); const storage = { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) };
+  const system = new VirtualSystem().setupRecoveryScenario(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
+  const preview = graduation.runPreviewCommand('academy-cert Dennis Hilk', storage);
+  assert.equal(preview.success, true); assert.match(preview.output.join('\n'), /GRADUATION PREVIEW UNLOCKED/); assert.equal(graduation.certificateMode(storage), 'preview'); assert.equal(graduation.eligible(storage), false); assert.equal(graduation.previewName(storage), 'Dennis Hilk');
+  assert.doesNotMatch(shell.execute('help').output.join('\n'), /academy-cert/); assert.equal(shell.execute('man academy-cert').success, false);
+  const earnedStore = new Map([[graduation.eligibilityKey, 'true']]); const earnedStorage = { getItem: key => earnedStore.get(key) || null, setItem: (key, value) => earnedStore.set(key, value) };
+  assert.equal(graduation.unlockPreview(earnedStorage, 'Preview Name'), 'earned'); assert.equal(graduation.certificateMode(earnedStorage), 'earned'); assert.equal(graduation.previewName(earnedStorage), '');
+  const fs = require('node:fs'), path = require('node:path'); const lab = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.js'), 'utf8');
+  assert.match(lab, /graduation\.runPreviewCommand\(raw, window\.localStorage\)/);
+});
+
 test('Certificate page is local, noindex, safely uses textContent, and is absent from sitemap', () => {
   const fs = require('node:fs'), path = require('node:path'); const certificate = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/certificate.html'), 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
-  assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);
+  assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.match(certificate, /TEST CERTIFICATE — PREVIEW MODE/); assert.match(certificate, /NOT A GRADUATION RECORD/); assert.match(certificate, /preview\.hidden=mode!=='preview'/); assert.match(certificate, /\.preview-marker\{[^}]*display:block!important/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);
 });
