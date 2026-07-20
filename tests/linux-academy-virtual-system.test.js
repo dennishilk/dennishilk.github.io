@@ -235,9 +235,9 @@ test('Lab 06 public routes and Academy availability metadata remain scoped', () 
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const process = fs.readFileSync(`${root}/linux-terminal-academy/process-control/index.html`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   const pipes = fs.readFileSync(`${root}/linux-terminal-academy/pipes-shell-power/index.html`, 'utf8');
-  assert.match(academy, /7 AVAILABLE \/ 1 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
-  assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?planned/);
-  assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status planned/);
+  assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
+  assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?available/);
+  assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/);
   assert.match(sitemap, /linux-terminal-academy\/pipes-shell-power\//); assert.doesNotMatch(sitemap, /pipes-shell-power\/lab\.html/);
 });
 
@@ -283,7 +283,31 @@ test('Lab 07 cumulatively models deterministic browser-only service administrati
 test('Lab 07 routes, availability metadata, and shared service monitor integration are scoped', () => {
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const info = fs.readFileSync(`${root}/linux-terminal-academy/system-admin-crash-lab/index.html`, 'utf8'); const lab = fs.readFileSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.js`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
-  assert.match(academy, /7 AVAILABLE \/ 1 PLANNED/); assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?planned/);
+  assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?available/);
   assert.match(info, /AVAILABLE/); assert.match(info, /href="lab\.html">START LAB/); assert.match(lab, /commandProfiles\.lab07/); assert.match(lab, /Object\.entries\(system\.services\)/); assert.match(lab, /system\.galleryConfig\(\)/);
-  assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status planned/); assert.match(sitemap, /linux-terminal-academy\/system-admin-crash-lab\//); assert.doesNotMatch(sitemap, /system-admin-crash-lab\/lab\.html/); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/system-administration`), false);
+  assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/system-admin-crash-lab\//); assert.doesNotMatch(sitemap, /system-admin-crash-lab\/lab\.html/); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/system-admin-crash-lab/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/system-administration`), false);
+});
+
+test('Lab 08 recovery is cumulative, stateful, resettable, and publicly routed', () => {
+  assert.deepEqual(commandProfiles.lab08, [...commandProfiles.lab07]);
+  const system = new VirtualSystem().setupRecoveryScenario(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
+  assert.equal(system.processByPid(733).cpu, 96.4); assert.equal(system.processByPid(733).state, 'R');
+  assert.equal(system.processByPid(1).critical, true); assert.equal(shell.execute('kill 1').success, false);
+  assert.equal(system.recoveryFile().node.mode, '-w-------');
+  assert.match(shell.execute('cat /srv/museum/exhibit-index.txt').output.join('\n'), /Permission denied/);
+  assert.match(shell.execute('ls -l /srv/museum/exhibit-index.txt').output.join('\n'), /--w-------/);
+  assert.match(shell.execute('systemctl status museum-exhibit.service').output.join('\n'), /Active: failed/);
+  assert.match(shell.execute('journalctl -u museum-exhibit.service').output.join('\n'), /Permission denied/);
+  assert.equal(shell.execute('systemctl restart museum-exhibit.service').success, false);
+  shell.execute('ps aux'); assert.equal(shell.execute('kill 733').success, true); assert.equal(system.recovery.evidence.safeProcessStopped, true);
+  shell.execute('chmod 777 /srv/museum/exhibit-index.txt'); assert.equal(system.recoveryHealthy(), false); assert.equal(shell.execute('systemctl restart museum-exhibit.service').success, false);
+  assert.equal(shell.execute('chmod 600 /srv/museum/exhibit-index.txt').success, true); assert.equal(system.recovery.evidence.minimumPermissionRepaired, true);
+  assert.equal(shell.execute('cat /srv/museum/exhibit-index.txt').success, true);
+  assert.equal(shell.execute('systemctl restart museum-exhibit.service').success, true);
+  assert.match(shell.execute('systemctl status museum-exhibit.service').output.join('\n'), /active \(running\)/);
+  assert.equal(system.recoveryHealthy(), true); assert.equal(system.recovery.evidence.serviceVerified, true);
+  const reset = new VirtualSystem().setupRecoveryScenario(); assert.equal(reset.processByPid(733).terminated, false); assert.equal(reset.recoveryFile().node.mode, '-w-------'); assert.equal(reset.serviceByName('museum-exhibit.service').state, 'failed');
+  const fs = require('node:fs'), path = require('node:path'), root = path.join(__dirname, '../museum'); const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'), catalog = fs.readFileSync(`${root}/index.html`, 'utf8'), sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
+  assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/index.html`)); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/recovery`), false);
+  assert.match(academy, /8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /break-it-recover\/[\s\S]*?museum-status available/); assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/break-it-recover\//); assert.doesNotMatch(sitemap, /break-it-recover\/lab\.html/);
 });
