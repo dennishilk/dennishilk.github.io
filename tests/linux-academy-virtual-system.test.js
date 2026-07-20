@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { VirtualSystem, Shell } = require('../museum/linux-terminal-academy/assets/virtual-system.js');
+const { VirtualSystem, Shell, commandProfiles } = require('../museum/linux-terminal-academy/assets/virtual-system.js');
 
 function lab() { const system = new VirtualSystem(); return { system, shell: new Shell(system) }; }
 
@@ -44,6 +44,7 @@ test('Lab 01 virtual filesystem resolves relative, absolute, and normalized path
 
 test('Lab 01 commands safely reject invalid input without changing virtual state', () => {
   const { system, shell } = lab();
+  assert.deepEqual(shell.execute('pwd').output, ['/home/museum']);
   assert.deepEqual(shell.execute('whoami').output, ['museum']);
   assert.match(shell.execute('uname -a').output[0], /Browser Virtual Machine/);
   assert.equal(shell.execute('uname --something-invalid').success, false);
@@ -84,7 +85,7 @@ test('Lab 01 parsing, manuals, and clear preserve the expected shell behavior', 
 
 test('Lab 02 profile explores the shared filesystem without expanding Lab 01 commands', () => {
   const system = new VirtualSystem();
-  const lab02 = new Shell(system, { allowedCommands: ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man', 'cat'] });
+  const lab02 = new Shell(system, { allowedCommands: commandProfiles.lab02 });
   assert.equal(system.cwd, '/home/museum');
   assert.deepEqual(system.fileSystem.list('/', system.cwd, system.homeDirectory).entries, ['bin', 'etc', 'home', 'tmp', 'var']);
   assert.equal(lab02.execute('cd /').success, true);
@@ -123,7 +124,7 @@ test('Lab 02 tree UI derives nodes from the shared filesystem and routes helpers
 });
 
 test('Lab 03 mutations change only the shared virtual filesystem', () => {
-  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: ['pwd', 'ls', 'cd', 'cat', 'mkdir', 'touch', 'cp', 'mv', 'rm', 'clear', 'help', 'man'] }); const fs = system.fileSystem;
+  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab03 }); const fs = system.fileSystem;
   assert.equal(shell.execute('mkdir Projects/playground').success, true);
   assert.match(shell.execute('mkdir Projects/playground').output[0], /Already exists/);
   assert.equal(shell.execute('mkdir missing/child').success, false);
@@ -143,10 +144,48 @@ test('Lab 03 mutations change only the shared virtual filesystem', () => {
   const fresh = new VirtualSystem(); assert.equal(fresh.fileSystem.resolve('/home/museum/Projects/playground', fresh.cwd, fresh.homeDirectory), null);
 });
 
-test('Lab 03 profile adds only its intended mutation commands and mission sequence reaches final state', () => {
-  const system = new VirtualSystem(); const shell = new Shell(system, { allowedCommands: ['pwd', 'ls', 'cd', 'cat', 'mkdir', 'touch', 'cp', 'mv', 'rm', 'clear', 'help', 'man'] });
-  for (const command of ['mkdir', 'touch', 'cp', 'mv', 'rm']) assert.equal(shell.execute(`man ${command}`).success, true);
-  assert.equal(shell.execute('whoami').success, false); assert.equal(shell.execute('chmod foo').success, false);
+test('Academy command profiles are cumulative and preserve each lab boundary', () => {
+  const lab01Commands = ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man'];
+  const lab02Additions = ['cat'];
+  const lab03Additions = ['mkdir', 'touch', 'cp', 'mv', 'rm'];
+  assert.deepEqual(commandProfiles.lab01, lab01Commands);
+  assert.deepEqual(commandProfiles.lab02, [...lab01Commands, ...lab02Additions]);
+  assert.deepEqual(commandProfiles.lab03, [...lab01Commands, ...lab02Additions, ...lab03Additions]);
+  assert.ok(commandProfiles.lab01.every(command => commandProfiles.lab02.includes(command)));
+  assert.ok(commandProfiles.lab02.every(command => commandProfiles.lab03.includes(command)));
+
+  const lab01 = new Shell(new VirtualSystem(), { allowedCommands: commandProfiles.lab01 });
+  for (const command of lab01Commands) assert.ok(lab01.allowedCommands.has(command), `Lab 01 exposes ${command}`);
+  for (const command of [...lab02Additions, ...lab03Additions]) assert.equal(lab01.execute(command).success, false, `Lab 01 excludes ${command}`);
+
+  const lab02 = new Shell(new VirtualSystem(), { allowedCommands: commandProfiles.lab02 });
+  for (const command of [...lab01Commands, ...lab02Additions]) assert.ok(lab02.allowedCommands.has(command), `Lab 02 exposes ${command}`);
+  for (const command of lab03Additions) assert.equal(lab02.execute(command).success, false, `Lab 02 excludes ${command}`);
+
+  const root = require('node:path').join(__dirname, '../museum/linux-terminal-academy');
+  assert.match(require('node:fs').readFileSync(`${root}/terminal-first-steps/lab.js`, 'utf8'), /commandProfiles\.lab01/);
+  assert.match(require('node:fs').readFileSync(`${root}/filesystem-explorer/lab.js`, 'utf8'), /commandProfiles\.lab02/);
+  assert.match(require('node:fs').readFileSync(`${root}/files-directories/lab.js`, 'utf8'), /commandProfiles\.lab03/);
+});
+
+test('Lab 03 cumulative profile exposes earlier commands, manuals, and mutations', () => {
+  const system = new VirtualSystem();
+  const shell = new Shell(system, { allowedCommands: commandProfiles.lab03 });
+  const expectedCommands = commandProfiles.lab03;
+  for (const command of expectedCommands) assert.equal(shell.execute(`man ${command}`).success, true, `man ${command}`);
+  assert.deepEqual(shell.execute('help').output.slice(2).map(line => line.trim().split(/\s+/)[0]), expectedCommands);
+
+  assert.deepEqual(shell.execute('pwd').output, ['/home/museum']);
+  assert.deepEqual(shell.execute('whoami').output, ['museum']);
+  assert.deepEqual(shell.execute('uname').output, ['Linux']);
+  assert.match(shell.execute('date').output[0], /UTC \(browser-side time\)$/);
+  assert.match(shell.execute('cat README.txt').output[0], /Welcome, museum/);
+  ['mkdir test', 'touch test/file.txt', 'cp test/file.txt test/copy.txt', 'mv test/copy.txt test/moved.txt', 'rm test/moved.txt'].forEach(command => assert.equal(shell.execute(command).success, true, command));
+  assert.ok(system.fileSystem.resolve('/home/museum/test/file.txt', system.cwd, system.homeDirectory));
+  assert.equal(system.fileSystem.resolve('/home/museum/test/copy.txt', system.cwd, system.homeDirectory), null);
+  assert.equal(system.fileSystem.resolve('/home/museum/test/moved.txt', system.cwd, system.homeDirectory), null);
+  assert.equal(shell.execute('chmod foo').success, false);
+
   ['cd Projects', 'mkdir playground', 'cd playground', 'touch notes.txt', 'cp notes.txt backup.txt', 'mv notes.txt ideas.txt', 'rm backup.txt'].forEach(command => assert.equal(shell.execute(command).success, true, command));
   assert.ok(system.fileSystem.resolve('/home/museum/Projects/playground/ideas.txt', system.cwd, system.homeDirectory));
   assert.equal(system.fileSystem.resolve('/home/museum/Projects/playground/backup.txt', system.cwd, system.homeDirectory), null);

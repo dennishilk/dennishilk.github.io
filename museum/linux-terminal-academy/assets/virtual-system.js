@@ -6,7 +6,18 @@
 })(typeof window !== 'undefined' ? window : globalThis, function () {
   const directory = (children = {}) => ({ type: 'directory', children });
   const file = (content = '') => ({ type: 'file', content });
-  const defaultCommands = ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man'];
+  // Academy labs share one progressively expanding virtual system. Keep each lab's
+  // profile composed from the prior profile so earlier concepts cannot be dropped.
+  const commandProfiles = {
+    lab01: ['pwd', 'whoami', 'uname', 'date', 'ls', 'cd', 'clear', 'help', 'man'],
+    lab02: null,
+    lab03: null
+  };
+  commandProfiles.lab02 = [...commandProfiles.lab01, 'cat'];
+  commandProfiles.lab03 = [...commandProfiles.lab02, 'mkdir', 'touch', 'cp', 'mv', 'rm'];
+  Object.values(commandProfiles).forEach(Object.freeze);
+  Object.freeze(commandProfiles);
+  const defaultCommands = commandProfiles.lab01;
   const descriptions = { mkdir: 'create a virtual directory', touch: 'create a virtual file', cp: 'copy a virtual file', mv: 'rename or move a virtual node', rm: 'remove a virtual file', pwd: 'show current directory', whoami: 'show current user', uname: 'show virtual system information', date: 'show date and time', ls: 'list directory contents', cd: 'change directory', cat: 'display a virtual file', clear: 'clear terminal', help: 'show available commands', man: 'read command help' };
 
   class VirtualFileSystem {
@@ -84,5 +95,5 @@
       return failure([`${command}: command not found`, 'Type help to see available commands.']);
     }
   }
-  return { VirtualFileSystem, VirtualSystem, CommandParser, Shell, manuals, defaultCommands };
+  return { VirtualFileSystem, VirtualSystem, CommandParser, Shell, manuals, commandProfiles, defaultCommands };
 });
