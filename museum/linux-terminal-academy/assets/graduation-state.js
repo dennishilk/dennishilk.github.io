@@ -8,6 +8,10 @@
   const certificateIdKey = 'linuxTerminalAcademy.certificateId';
   const previewKey = 'linuxTerminalAcademy.certificatePreview';
   const previewNameKey = 'linuxTerminalAcademy.certificatePreviewName';
+  const displayNameKey = 'linuxTerminalAcademy.certificateDisplayName';
+  const earnedIssueDateKey = 'linuxTerminalAcademy.earnedCertificateIssueDate';
+  const previewIssueDateKey = 'linuxTerminalAcademy.previewCertificateIssueDate';
+  const graduationKeys = [eligibilityKey, certificateIdKey, previewKey, previewNameKey, displayNameKey, earnedIssueDateKey, previewIssueDateKey];
   function recoveryHint(system) {
     const evidence = system.recovery.evidence;
     const runaway = system.processByPid(733);
@@ -40,6 +44,8 @@
     return 'preview';
   }
   function previewName(storage) { return storage && storage.getItem(previewNameKey) || ''; }
+  function displayName(storage) { return storage && storage.getItem(displayNameKey) || ''; }
+  function saveDisplayName(storage, name) { if (storage) storage.setItem(displayNameKey, String(name || '').slice(0, 80)); }
   function runPreviewCommand(raw, storage) {
     const text = String(raw || '').trim();
     if (!text || text.includes('|')) return null;
@@ -50,5 +56,12 @@
     return { input: { raw: text, command, args }, output, success: true, command };
   }
   function certificateId(storage) { let id = storage && storage.getItem(certificateIdKey); if (!id) { id = `LTA-2026-${Math.random().toString(36).slice(2, 10).toUpperCase()}`; if (storage) storage.setItem(certificateIdKey, id); } return id; }
-  return { eligibilityKey, previewKey, previewNameKey, recoveryHint, createAttempt, eligible, certificateMode, unlockPreview, previewName, runPreviewCommand, certificateId };
+  function issueDate(storage, mode) {
+    const key = mode === 'preview' ? previewIssueDateKey : earnedIssueDateKey;
+    let date = storage && storage.getItem(key);
+    if (!date) { date = new Date().toISOString().slice(0, 10); if (storage) storage.setItem(key, date); }
+    return date;
+  }
+  function clearGraduationState(storage) { if (storage && typeof storage.removeItem === 'function') graduationKeys.forEach(key => storage.removeItem(key)); }
+  return { eligibilityKey, certificateIdKey, previewKey, previewNameKey, displayNameKey, earnedIssueDateKey, previewIssueDateKey, graduationKeys, recoveryHint, createAttempt, eligible, certificateMode, unlockPreview, previewName, displayName, saveDisplayName, runPreviewCommand, certificateId, issueDate, clearGraduationState };
 });
