@@ -235,7 +235,7 @@ test('Lab 06 public routes and Academy availability metadata remain scoped', () 
   const fs = require('node:fs'), path = require('node:path'); const root = path.join(__dirname, '../museum');
   const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'); const process = fs.readFileSync(`${root}/linux-terminal-academy/process-control/index.html`, 'utf8'); const catalog = fs.readFileSync(`${root}/index.html`, 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   const pipes = fs.readFileSync(`${root}/linux-terminal-academy/pipes-shell-power/index.html`, 'utf8');
-  assert.doesNotMatch(academy, /ACADEMY SYSTEM|8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /GRADUATION CHALLENGE/); assert.match(academy, /help/, 'hub explains that help is allowed'); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
+  assert.doesNotMatch(academy, /ACADEMY SYSTEM|8 AVAILABLE \/ 0 PLANNED|Complete all eight labs, then/); assert.match(academy, /GRADUATION CHALLENGE · OPTIONAL CERTIFICATE/); assert.match(academy, /final recovery challenge in Lab 08/); assert.match(academy, /Hints in Labs 01–07 are fine/); assert.match(academy, /One hint-free Lab 08 attempt earns the certificate/); assert.match(process, /AVAILABLE/); assert.match(process, /href="lab\.html">START LAB/); assert.match(pipes, /AVAILABLE/); assert.match(pipes, /href="lab\.html">START LAB/);
   assert.match(academy, /system-admin-crash-lab\/[\s\S]*?available/); assert.match(academy, /break-it-recover\/[\s\S]*?available/);
   assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/);
   assert.match(sitemap, /linux-terminal-academy\/pipes-shell-power\//); assert.doesNotMatch(sitemap, /pipes-shell-power\/lab\.html/);
@@ -310,7 +310,7 @@ test('Lab 08 recovery is cumulative, stateful, resettable, and publicly routed',
   const fs = require('node:fs'), path = require('node:path'), root = path.join(__dirname, '../museum'); const academy = fs.readFileSync(`${root}/linux-terminal-academy/index.html`, 'utf8'), catalog = fs.readFileSync(`${root}/index.html`, 'utf8'), sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
   assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/index.html`)); assert.ok(fs.existsSync(`${root}/linux-terminal-academy/break-it-recover/lab.html`)); assert.equal(fs.existsSync(`${root}/linux-terminal-academy/recovery`), false);
   const labPage = fs.readFileSync(`${root}/linux-terminal-academy/break-it-recover/lab.html`, 'utf8');
-  assert.match(labPage, /CERTIFICATE CHALLENGE/); assert.match(labPage, /Wrong commands and experimentation are allowed/); assert.match(labPage, /<code>help<\/code>, <code>man<\/code>/);
+  assert.match(labPage, /CERTIFICATE CHALLENGE/); assert.match(labPage, /Wrong commands and experimentation are allowed/); assert.match(labPage, /<code>help<\/code>, <code>man<\/code>/); assert.match(labPage, /RESET LAB starts a fresh certificate attempt/);
   assert.doesNotMatch(academy, /ACADEMY SYSTEM|8 AVAILABLE \/ 0 PLANNED/); assert.match(academy, /break-it-recover\/[\s\S]*?museum-status available/); assert.match(catalog, /museum-card-linux-academy[\s\S]*?museum-status available/); assert.match(sitemap, /linux-terminal-academy\/break-it-recover\//); assert.doesNotMatch(sitemap, /break-it-recover\/lab\.html/);
 });
 
@@ -339,9 +339,17 @@ test('Lab 08 state-aware hints and no-hint certificate state remain browser-loca
   assert.match(graduation.recoveryHint(system), /ps aux/);
   shell.execute('ps aux'); shell.execute('kill 733'); shell.execute('systemctl status museum-exhibit.service'); shell.execute('journalctl -u museum-exhibit.service'); shell.execute('chmod u+x /srv/museum/exhibit-index.txt'); shell.execute('chmod u+r /srv/museum/exhibit-index.txt');
   assert.match(graduation.recoveryHint(system), /chmod 600/);
-  const noHint = graduation.createAttempt(storage); shell.execute('help'); shell.execute('man chmod'); shell.execute('mistyped-command'); shell.execute('chmod 600 /srv/museum/exhibit-index.txt'); shell.execute('systemctl restart museum-exhibit.service'); shell.execute('systemctl status museum-exhibit.service');
-  assert.equal(system.recoveryHealthy(), true); assert.equal(noHint.recordCompletion(system), true); assert.equal(graduation.eligible(storage), true);
-  const assisted = graduation.createAttempt(storage); assisted.useHint(); assert.equal(assisted.hintUsed, true); assisted.reset(); assert.equal(assisted.hintUsed, false);
+  const assisted = graduation.createAttempt(storage);
+  assisted.useHint(); assert.equal(assisted.hintUsed, true, 'only NEED A HINT? marks the current attempt assisted');
+  assisted.reset(); assert.equal(assisted.hintUsed, false, 'RESET LAB starts a fresh hint-eligible attempt');
+  assisted.useHint(); assisted.reset(); assert.equal(assisted.hintUsed, false, 'multiple assisted attempts can each be reset');
+  const noHint = graduation.createAttempt(storage);
+  shell.execute('help'); assert.equal(noHint.hintUsed, false, 'help does not assist an attempt');
+  shell.execute('man chmod'); assert.equal(noHint.hintUsed, false, 'man does not assist an attempt');
+  shell.execute('mistyped-command'); assert.equal(noHint.hintUsed, false, 'invalid commands do not assist an attempt');
+  shell.execute('chmod 600 /srv/museum/exhibit-index.txt'); shell.execute('systemctl restart museum-exhibit.service'); shell.execute('systemctl status museum-exhibit.service');
+  assert.equal(system.recoveryHealthy(), true); assert.equal(noHint.recordCompletion(system), true, 'a later hint-free recovery earns the certificate'); assert.equal(graduation.eligible(storage), true);
+  noHint.reset(); assert.equal(noHint.hintUsed, false); assert.equal(graduation.eligible(storage), true, 'resetting after earning never removes eligibility');
   const hintedSystem = new VirtualSystem().setupRecoveryScenario(); const hintedShell = new Shell(hintedSystem, { allowedCommands: commandProfiles.lab08 }); const hintedAttempt = graduation.createAttempt({ getItem: () => null, setItem: () => { throw new Error('hinted completion must not persist eligibility'); } });
   hintedAttempt.useHint(); ['ps aux', 'kill 733', 'systemctl status museum-exhibit.service', 'journalctl -u museum-exhibit.service', 'ls -l /srv/museum/exhibit-index.txt', 'chmod 600 /srv/museum/exhibit-index.txt', 'systemctl restart museum-exhibit.service', 'systemctl status museum-exhibit.service'].forEach(command => hintedShell.execute(command));
   assert.equal(hintedSystem.recoveryHealthy(), true); assert.equal(hintedAttempt.recordCompletion(hintedSystem), false);
