@@ -349,72 +349,55 @@ test('Lab 08 state-aware hints and no-hint certificate state remain browser-loca
   shell.execute('mistyped-command'); assert.equal(noHint.hintUsed, false, 'invalid commands do not assist an attempt');
   shell.execute('chmod 600 /srv/museum/exhibit-index.txt'); shell.execute('systemctl restart museum-exhibit.service'); shell.execute('systemctl status museum-exhibit.service');
   assert.equal(system.recoveryHealthy(), true); assert.equal(noHint.recordCompletion(system), true, 'a later hint-free recovery earns the certificate'); assert.equal(graduation.eligible(storage), true);
+  const earnedId = graduation.certificateId(storage), earnedDate = graduation.issueDate(storage);
+  assert.equal(graduation.certificateId(storage), earnedId, 'certificate ID stays stable after earning'); assert.equal(graduation.issueDate(storage), earnedDate, 'issue date stays stable after earning');
   noHint.reset(); assert.equal(noHint.hintUsed, false); assert.equal(graduation.eligible(storage), true, 'resetting after earning never removes eligibility');
   const hintedSystem = new VirtualSystem().setupRecoveryScenario(); const hintedShell = new Shell(hintedSystem, { allowedCommands: commandProfiles.lab08 }); const hintedAttempt = graduation.createAttempt({ getItem: () => null, setItem: () => { throw new Error('hinted completion must not persist eligibility'); } });
   hintedAttempt.useHint(); ['ps aux', 'kill 733', 'systemctl status museum-exhibit.service', 'journalctl -u museum-exhibit.service', 'ls -l /srv/museum/exhibit-index.txt', 'chmod 600 /srv/museum/exhibit-index.txt', 'systemctl restart museum-exhibit.service', 'systemctl status museum-exhibit.service'].forEach(command => hintedShell.execute(command));
   assert.equal(hintedSystem.recoveryHealthy(), true); assert.equal(hintedAttempt.recordCompletion(hintedSystem), false);
 });
 
-test('Lab 08 hidden certificate preview remains undocumented and cannot replace earned eligibility', () => {
-  const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
-  const store = new Map(); const storage = { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) };
-  const system = new VirtualSystem().setupRecoveryScenario(); const shell = new Shell(system, { allowedCommands: commandProfiles.lab08 });
-  const preview = graduation.runPreviewCommand('academy-cert Dennis Hilk', storage);
-  assert.equal(preview.success, true); assert.match(preview.output.join('\n'), /GRADUATION PREVIEW UNLOCKED/); assert.equal(graduation.certificateMode(storage), 'preview'); assert.equal(graduation.eligible(storage), false); assert.equal(graduation.previewName(storage), 'Dennis Hilk');
-  const unnamedStore = new Map(); const unnamedStorage = { getItem: key => unnamedStore.get(key) || null, setItem: (key, value) => unnamedStore.set(key, value) };
-  assert.equal(graduation.runPreviewCommand('academy-cert', unnamedStorage).success, true); assert.equal(graduation.previewName(unnamedStorage), '', 'unnamed previews leave the certificate name editable');
-  assert.doesNotMatch(shell.execute('help').output.join('\n'), /academy-cert/); assert.equal(shell.execute('man academy-cert').success, false);
-  const earnedStore = new Map([[graduation.eligibilityKey, 'true']]); const earnedStorage = { getItem: key => earnedStore.get(key) || null, setItem: (key, value) => earnedStore.set(key, value) };
-  assert.equal(graduation.unlockPreview(earnedStorage, 'Preview Name'), 'earned'); assert.equal(graduation.certificateMode(earnedStorage), 'earned'); assert.equal(graduation.previewName(earnedStorage), '');
-  const fs = require('node:fs'), path = require('node:path'); const lab = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.js'), 'utf8'); const labPage = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.html'), 'utf8');
-  assert.match(lab, /graduation\.runPreviewCommand\(raw, window\.localStorage\)/);
-  assert.match(lab, /#previewCertificate.*certificateMode\(window\.localStorage\) !== 'preview'/);
-  assert.match(labPage, /id="previewCertificate" hidden[\s\S]*?href="\.\.\/certificate\.html">OPEN TEST CERTIFICATE →/);
-  assert.doesNotMatch(labPage, /academy-cert/);
-});
-
-test('certificate mode gives earned graduation precedence over preview across reloads', () => {
+test('Academy certificate state is earned or locked and removes obsolete legacy state', () => {
   const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
   const storageFor = entries => {
     const store = new Map(entries);
     return { store, getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value), removeItem: key => store.delete(key) };
   };
+  const previewOnly = storageFor([['linuxTerminalAcademy.certificatePreview', 'true'], ['linuxTerminalAcademy.certificatePreviewName', 'Test Visitor'], ['linuxTerminalAcademy.previewCertificateIssueDate', '2026-07-19'], ['unrelated.local', 'keep']]);
+  assert.equal(graduation.certificateMode(previewOnly), 'locked');
+  graduation.obsoleteKeys.forEach(key => assert.equal(previewOnly.getItem(key), null));
+  assert.equal(previewOnly.getItem('unrelated.local'), 'keep');
 
-  assert.equal(graduation.certificateMode(storageFor([])), null, 'no state leaves the certificate locked');
-  assert.equal(graduation.certificateMode(storageFor([[graduation.previewKey, 'true']])), 'preview', 'preview remains available before graduation');
-  assert.equal(graduation.certificateMode(storageFor([[graduation.eligibilityKey, 'true']])), 'earned', 'earned-only state is clean');
+  const earnedWithObsoleteState = storageFor([[graduation.eligibilityKey, 'true'], ['linuxTerminalAcademy.certificatePreview', 'true']]);
+  assert.equal(graduation.certificateMode(earnedWithObsoleteState), 'earned');
+  graduation.obsoleteKeys.forEach(key => assert.equal(earnedWithObsoleteState.getItem(key), null));
+  assert.equal(graduation.certificateMode(earnedWithObsoleteState), 'earned', 'earned eligibility persists across reloads');
 
-  const persistedDualState = storageFor([[graduation.previewKey, 'true'], [graduation.eligibilityKey, 'true']]);
-  assert.equal(graduation.certificateMode(persistedDualState), 'earned', 'existing dual state renders earned immediately after reload');
-
-  const sequence = storageFor([]);
-  assert.equal(graduation.runPreviewCommand('academy-cert Dennis Hilk', sequence).success, true);
-  assert.equal(graduation.certificateMode(sequence), 'preview');
-  const recovered = new VirtualSystem().setupRecoveryScenario();
-  recovered.recoveryHealthy = () => true;
-  assert.equal(graduation.createAttempt(sequence).recordCompletion(recovered), true);
-  assert.equal(sequence.getItem(graduation.previewKey), null, 'a new earned completion retires active preview mode');
-  assert.equal(graduation.certificateMode(sequence), 'earned');
-  assert.equal(graduation.certificateMode(sequence), 'earned', 'the persisted earned state remains authoritative on reload');
-  assert.equal(graduation.previewName(sequence), 'Dennis Hilk', 'the editable preview name is retained');
+  const fs = require('node:fs'), path = require('node:path');
+  const lab = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.js'), 'utf8');
+  const labPage = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.html'), 'utf8');
+  const shell = new Shell(new VirtualSystem().setupRecoveryScenario(), { allowedCommands: commandProfiles.lab08 });
+  assert.equal(graduation.runPreviewCommand, undefined); assert.equal(shell.execute('academy-cert Dennis Hilk').success, false);
+  assert.doesNotMatch(shell.execute('help').output.join('\n'), /academy-cert/);
+  assert.equal(shell.execute('man academy-cert').success, false);
+  assert.doesNotMatch(lab, /academy-cert|PreviewCommand|previewCertificate/);
+  assert.doesNotMatch(labPage, /academy-cert|OPEN TEST CERTIFICATE|previewCertificate/);
 });
 
-test('Certificate V2 keeps earned, preview, editable-name, reset, and locked states distinct', () => {
+test('Certificate V2 keeps earned and locked states, editable name, reset, and print appearance', () => {
   const fs = require('node:fs'), path = require('node:path'); const certificate = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/certificate.html'), 'utf8'); const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
-  assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.match(certificate, /TEST CERTIFICATE — PREVIEW MODE/); assert.match(certificate, /NOT A GRADUATION RECORD/); assert.match(certificate, /preview\.hidden=mode!=='preview'/); assert.match(certificate, /\.preview-marker\{[^}]*display:block!important/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);
-  assert.match(certificate, /id="visitorName" maxlength="80"/); assert.match(certificate, /input\.addEventListener\('input',sync\)/); assert.match(certificate, /if\(!mode\)\{locked\.hidden=false\}/); assert.match(certificate, /8-LAB CURRICULUM/); assert.match(certificate, /FINAL RECOVERY: SUCCESSFUL/); assert.match(certificate, /HINTS USED: 0/); assert.doesNotMatch(certificate, /8 \/ 8 LABS COMPLETED/); assert.match(certificate, /class="seal"/); assert.match(certificate, /@page\{size:A4 portrait/); assert.match(certificate, /START FRESH FOR ANOTHER VISITOR/); assert.match(certificate, /<dialog class="modal"/); assert.match(certificate, /\.controls,\.name-editor,\.modal,\.cleared\{display:none!important\}/);
+  assert.match(certificate, /name="robots" content="noindex"/); assert.match(certificate, /window\.print\(\)/); assert.match(certificate, /\.textContent/); assert.doesNotMatch(certificate, /innerHTML/); assert.doesNotMatch(certificate, /TEST CERTIFICATE|PREVIEW MODE|NOT A GRADUATION RECORD|preview-marker|previewMarker/); assert.doesNotMatch(sitemap, /linux-terminal-academy\/certificate\.html/);
+  assert.match(certificate, /id="visitorName" maxlength="80"/); assert.match(certificate, /input\.addEventListener\('input',sync\)/); assert.match(certificate, /if\(mode==='locked'\)\{locked\.hidden=false/); assert.match(certificate, /8-LAB CURRICULUM/); assert.match(certificate, /FINAL RECOVERY: SUCCESSFUL/); assert.match(certificate, /HINTS USED: 0/); assert.doesNotMatch(certificate, /8 \/ 8 LABS COMPLETED/); assert.match(certificate, /class="seal"/); assert.match(certificate, /@page\{size:A4 portrait/); assert.match(certificate, /START FRESH FOR ANOTHER VISITOR/); assert.match(certificate, /<dialog class="modal"/); assert.match(certificate, /\.controls,\.name-editor,\.modal,\.cleared\{display:none!important\}/);
   const labPage = fs.readFileSync(path.join(__dirname, '../museum/linux-terminal-academy/break-it-recover/lab.html'), 'utf8');
   assert.match(labPage, /id="graduation" hidden[\s\S]*?href="\.\.\/certificate\.html">OPEN CERTIFICATE →/);
 });
 
-test('shared-browser graduation reset removes only Academy certificate state', () => {
+test('shared-browser graduation reset removes Academy certificate and obsolete legacy state only', () => {
   const graduation = require('../museum/linux-terminal-academy/assets/graduation-state.js');
-  const store = new Map([[graduation.eligibilityKey, 'true'], [graduation.previewKey, 'true'], [graduation.previewNameKey, 'Preview Visitor'], [graduation.displayNameKey, 'Saved Visitor'], [graduation.certificateIdKey, 'LTA-2026-ABCDEFGH'], [graduation.earnedIssueDateKey, '2026-07-20'], [graduation.previewIssueDateKey, '2026-07-19'], ['unrelated.local', 'keep']]);
+  const store = new Map([[graduation.eligibilityKey, 'true'], ['linuxTerminalAcademy.certificatePreview', 'true'], ['linuxTerminalAcademy.certificatePreviewName', 'Preview Visitor'], [graduation.displayNameKey, 'Saved Visitor'], [graduation.certificateIdKey, 'LTA-2026-ABCDEFGH'], [graduation.earnedIssueDateKey, '2026-07-20'], ['linuxTerminalAcademy.previewCertificateIssueDate', '2026-07-19'], ['unrelated.local', 'keep']]);
   const storage = { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value), removeItem: key => store.delete(key) };
-  const session = new Map([['unrelated.session', 'keep']]); const cookies = 'unrelated=keep';
-  assert.equal(graduation.certificateMode(storage), 'earned'); assert.equal(graduation.certificateId(storage), 'LTA-2026-ABCDEFGH'); assert.equal(graduation.issueDate(storage, 'earned'), '2026-07-20');
+  assert.equal(graduation.certificateMode(storage), 'earned'); assert.equal(graduation.certificateId(storage), 'LTA-2026-ABCDEFGH'); assert.equal(graduation.issueDate(storage), '2026-07-20');
   graduation.clearGraduationState(storage);
   graduation.graduationKeys.forEach(key => assert.equal(storage.getItem(key), null));
-  assert.equal(graduation.certificateMode(storage), null); assert.equal(graduation.displayName(storage), ''); assert.equal(graduation.previewName(storage), ''); assert.equal(storage.getItem('unrelated.local'), 'keep'); assert.equal(session.get('unrelated.session'), 'keep'); assert.equal(cookies, 'unrelated=keep');
-  const fresh = graduation.createAttempt(storage); assert.equal(fresh.hintUsed, false); assert.equal(graduation.eligible(storage), false);
+  assert.equal(graduation.certificateMode(storage), 'locked'); assert.equal(graduation.displayName(storage), ''); assert.equal(storage.getItem('unrelated.local'), 'keep');
 });
