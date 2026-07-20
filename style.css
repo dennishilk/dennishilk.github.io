@@ -3800,3 +3800,40 @@ button.technology-observer-card {
     min-width: 0;
   }
 }
+
+/* Cryptography Lab — Phase 1 planned catalog */
+.museum-card-cryptography { box-shadow: inset 0 0 20px rgba(255, 190, 92, .055); }
+.cryptography-lab-page { background: radial-gradient(circle at 14% 4%, rgba(255, 190, 92, .08), transparent 26%), radial-gradient(circle at 86% 22%, rgba(0, 180, 255, .06), transparent 28%); }
+.cryptography-hero { text-align: left; }
+.cryptography-hero > .museum-status { margin-top: 1rem; }
+.cryptography-kicker { color: #83dff5; font-size: .75rem; font-weight: 700; letter-spacing: .13em; margin: .85rem 0 .45rem; text-transform: uppercase; }
+.cryptography-subtitle { color: #ffd08a; font-size: clamp(.86rem, 2vw, 1.04rem); font-weight: 700; letter-spacing: .1em; line-height: 1.5; margin: .25rem 0 1rem; text-transform: uppercase; }
+.cryptography-layout { gap: 1.25rem; }
+.cryptography-safety { background: linear-gradient(135deg, rgba(255, 190, 92, .08), rgba(0, 180, 255, .05)); border-color: rgba(255, 190, 92, .48); text-align: left; }
+.cryptography-safety h2, .cryptography-boundary h2 { color: #ffd08a; }
+.cryptography-section { text-align: left; }
+.cryptography-heading { align-items: end; display: flex; gap: 1rem; justify-content: space-between; }
+.cryptography-heading h2 { color: var(--accent); margin: 0; }
+.cryptography-lead { color: #c9d1d9; line-height: 1.6; max-width: 760px; }
+.crypto-lab-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.crypto-lab-card { background: linear-gradient(145deg, rgba(7, 23, 28, .94), rgba(5, 14, 19, .94)); border: 1px solid rgba(0, 180, 255, .34); box-shadow: inset 0 0 22px rgba(0, 180, 255, .025); color: inherit; display: flex; flex-direction: column; min-height: 190px; padding: 1rem; text-decoration: none; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
+.crypto-lab-card:hover, .crypto-lab-card:focus-visible { background: linear-gradient(145deg, rgba(39, 31, 15, .9), rgba(5, 17, 22, .96)); border-color: rgba(255, 208, 138, .72); outline: 0; transform: translateY(-2px); }
+.crypto-lab-top, .cryptography-route { align-items: center; display: flex; gap: .7rem; justify-content: space-between; }
+.crypto-lab-top b { color: #83dff5; font-size: .8rem; letter-spacing: .12em; }
+.crypto-lab-top i { font-style: normal; }
+.crypto-lab-card h3 { color: #d9f8ff; font-size: 1rem; letter-spacing: .045em; margin: .9rem 0 .2rem; }
+.crypto-lab-card p { color: #c9d1d9; font-size: .84rem; line-height: 1.55; margin: .35rem 0; }
+.crypto-lab-card .crypto-era { color: #ffd08a; font: 700 .7rem/1.45 "Courier New", monospace; letter-spacing: .04em; }
+.crypto-lab-card > strong { color: #ffd08a; font: 700 .72rem "Courier New", monospace; letter-spacing: .06em; margin-top: auto; padding-top: .7rem; }
+.cryptography-detail-layout { gap: 1rem; }
+.cryptography-detail-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cryptography-detail-grid .detail-card, .cryptography-boundary { margin: 0; text-align: left; }
+.cryptography-detail-grid h2, .cryptography-boundary h2 { font-size: 1rem; margin-top: 0; }
+.cryptography-route { border-bottom: 1px solid rgba(0, 180, 255, .28); font: 700 .7rem "Courier New", monospace; letter-spacing: .05em; padding: 0 0 .7rem; }
+.cryptography-route, .cryptography-route a { color: #a9dfe9; }
+.cryptography-route a:hover, .cryptography-route a:focus-visible { color: #ffd08a; }
+.cryptography-route-bottom { border-bottom: 0; border-top: 1px solid rgba(0, 180, 255, .28); padding: .7rem 0 0; }
+.cryptography-boundary { border-color: rgba(255, 190, 92, .42); }
+@media (max-width: 700px) { .crypto-lab-grid, .cryptography-detail-grid { grid-template-columns: 1fr; } .cryptography-heading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 460px) { .crypto-lab-top, .cryptography-route { align-items: flex-start; flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .crypto-lab-card { transition: none; } }
