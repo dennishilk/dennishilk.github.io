@@ -18,8 +18,11 @@
     const complete = healthy && checks.every(([key]) => evidence[key]);
     if (complete) attempt.recordCompletion(system);
     $('#completion').hidden = !complete;
-    $('#graduation').hidden = !complete || attempt.hintUsed;
-    $('#assistedNote').hidden = !complete || !attempt.hintUsed;
+    // The replayable recovery attempt is intentionally independent from browser-local graduation.
+    const earned = graduation.eligible(window.localStorage);
+    $('#certificateChallenge').hidden = earned;
+    $('#graduation').hidden = !earned;
+    $('#assistedNote').hidden = !complete || !attempt.hintUsed || earned;
   }
   function run(raw) { const result = shell.execute(raw); write([`${promptText()} ${raw}`, ...result.output]); if (result.clear) output.replaceChildren(); if (raw.trim()) { history.push(raw); historyIndex = history.length; } render(); $('#announcer').textContent = result.success ? 'Command completed.' : result.output.join(' '); input.value = ''; input.focus(); }
   function reset() { system = new VirtualSystem().setupRecoveryScenario(); shell = new Shell(system, { allowedCommands: commandProfiles.lab08 }); history = []; historyIndex = 0; attempt = graduation.createAttempt(window.localStorage); output.replaceChildren(); write(['LINUX TERMINAL ACADEMY', 'LAB 08 — SYSTEM RECOVERY', '', 'The fictional museum workstation did not start correctly.', 'Three symptoms are reported: a failed service, an unreadable required file, and a process consuming excessive CPU.', '', 'MISSION: Diagnose the system. Repair only what is necessary. Verify that it is healthy again.', 'Everything here exists only in browser memory; nothing touches your computer.']); render(); input.focus(); }
