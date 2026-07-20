@@ -3839,5 +3839,111 @@ button.technology-observer-card {
 @media (prefers-reduced-motion: reduce) { .crypto-lab-card { transition: none; } }
 /* Cryptography Lab 01 — Caesar to XOR workbench */
 .museum-status.available { background: rgba(63, 210, 149, .13); border-color: rgba(63, 210, 149, .68); color: #80f3b5; }
-.crypto-workbench { max-width: 1220px; }.crypto-info-link { float:right; }.crypto-lab-layout { display:grid; grid-template-columns: 170px minmax(0,1fr); gap:1.2rem; }.crypto-progress { align-self:start; background:rgba(5,18,23,.87); border:1px solid rgba(0,180,255,.25); display:flex; flex-direction:column; font:700 .7rem/1.5 "Courier New",monospace; gap:.3rem; letter-spacing:.05em; padding:1rem; position:sticky; text-align:left; top:1rem; }.crypto-progress b { color:#ffd08a; margin-bottom:.25rem; }.crypto-progress span { color:#587581; }.crypto-progress span.active { color:#82f7bb; text-shadow:0 0 9px rgba(130,247,187,.35); }.crypto-progress i { color:#ffd08a; font-style:normal; }.crypto-tabs { border-bottom:1px solid rgba(0,180,255,.28); display:flex; gap:.45rem; overflow-x:auto; padding-bottom:.7rem; }.crypto-tabs button, .crypto-preset, .crypto-panel button { background:#092129; border:1px solid rgba(0,180,255,.45); color:#bdeff9; cursor:pointer; font:700 .7rem "Courier New",monospace; letter-spacing:.04em; min-height:38px; padding:.55rem .7rem; }.crypto-tabs button[aria-selected="true"], .crypto-tabs button:hover, .crypto-tabs button:focus-visible, .crypto-panel button:hover, .crypto-panel button:focus-visible { background:rgba(255,190,92,.14); border-color:#ffd08a; color:#ffd08a; outline:0; }.crypto-secret-note { border-left:3px solid #ffd08a; color:#b8c9cf; font:700 .7rem/1.5 "Courier New",monospace; letter-spacing:.03em; margin:1rem 0; padding:.55rem .8rem; }.crypto-station { text-align:left; }.station-heading { align-items:start; display:flex; gap:1rem; justify-content:space-between; }.station-heading h2 { color:#d9f8ff; margin:.15rem 0 1rem; }.crypto-preset { color:#ffd08a; flex:0 0 auto; }.crypto-grid { display:grid; gap:1rem; grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr); }.crypto-panel, .crypto-callout, .crypto-lesson-grid article { background:linear-gradient(145deg,rgba(7,23,28,.95),rgba(5,14,19,.95)); border:1px solid rgba(0,180,255,.3); padding:1rem; }.crypto-panel label { color:#83dff5; display:block; font:700 .72rem "Courier New",monospace; letter-spacing:.07em; margin-bottom:.8rem; }.crypto-panel textarea, .crypto-panel input[type="text"], .crypto-panel input:not([type]) { box-sizing:border-box; margin-top:.4rem; width:100%; }.crypto-panel textarea, .crypto-panel input { background:#061318; border:1px solid rgba(131,223,245,.42); color:#e3faff; font:1rem/1.5 "Courier New",monospace; padding:.65rem; }.crypto-panel textarea { min-height:76px; resize:vertical; }.crypto-control { align-items:center; display:flex; gap:.55rem; margin:.8rem 0; }.crypto-control button { border-radius:50%; font-size:1.2rem; min-width:38px; padding:.2rem; }.crypto-control label { align-items:center; display:flex; flex:1; gap:.5rem; margin:0; }.crypto-control input { accent-color:#82f7bb; flex:1; }.crypto-control output { color:#ffd08a; min-width:1.3rem; } fieldset { border:0; color:#bdeff9; font:700 .72rem "Courier New",monospace; margin:.8rem 0; padding:0; } fieldset label { display:inline; margin-right:.8rem; }.crypto-result { border-left:3px solid #82f7bb; margin-top:.8rem; overflow-wrap:anywhere; padding:.5rem .7rem; }.crypto-result b { color:#83dff5; display:block; font:.7rem "Courier New",monospace; }.crypto-result output { color:#e6fff3; display:block; font:1rem/1.55 "Courier New",monospace; min-height:1.55em; white-space:pre-wrap; }.cipher-wheel-wrap { display:flex; flex-direction:column; justify-content:center; }.cipher-wheel { align-items:center; border:2px dashed #83dff5; border-radius:50%; color:#83dff5; display:flex; height:min(230px,55vw); justify-content:center; margin:auto; max-width:230px; position:relative; text-align:center; width:100%; }.cipher-wheel:before { border:2px solid #ffd08a; border-radius:50%; content:""; inset:18%; position:absolute; transform:rotate(var(--wheel-turn)); transition:transform .35s ease; }.cipher-wheel span { font:.66rem/1.4 "Courier New",monospace; max-width:75%; overflow-wrap:anywhere; transform:rotate(var(--wheel-turn)); transition:transform .35s ease; }.cipher-wheel strong { background:#061318; color:#ffd08a; font:.65rem "Courier New",monospace; padding:.4rem; position:absolute; }.alphabet-map { display:grid; gap:.35rem; margin-top:1rem; }.alphabet-map b { color:#83dff5; font:.66rem "Courier New",monospace; }.alphabet-map code { color:#e3faff; font-size:clamp(.63rem,2vw,.9rem); letter-spacing:.08em; overflow-wrap:anywhere; }.amber { border-color:rgba(255,190,92,.5); }.crypto-callout h3, .crypto-panel h3 { color:#ffd08a; font-size:.86rem; margin-top:0; }.crypto-callout p, .crypto-panel p { color:#c9d1d9; line-height:1.6; }.frequency div { align-items:center; display:grid; gap:.45rem; grid-template-columns:1.2rem minmax(20px,1fr) 1.5rem; margin:.4rem 0; }.frequency b,.frequency em { color:#d9f8ff; font:.8rem "Courier New",monospace; }.frequency span { background:#82f7bb; box-shadow:0 0 8px rgba(130,247,187,.35); height:.75rem; width:calc(var(--bar) * 14%); }.small-note { font-size:.8rem; } table { border-collapse:collapse; width:100%; } th,td { border:1px solid rgba(131,223,245,.3); color:#d9f8ff; padding:.35rem; text-align:center; } th { color:#ffd08a; }.bit-visual { overflow-x:auto; }.bit-visual > div { margin:.7rem 0; min-width:300px; }.bit-visual b { color:#83dff5; display:block; font:.68rem "Courier New",monospace; margin-bottom:.3rem; }.bit-visual code { display:flex; gap:.25rem; }.bit { border:1px solid rgba(131,223,245,.4); color:#c9d1d9; font-style:normal; padding:.22rem .38rem; }.bit-1 { background:rgba(130,247,187,.2); border-color:#82f7bb; color:#dfffee; }.crypto-lesson-grid { display:grid; gap:1rem; grid-template-columns:repeat(3,1fr); margin-top:1rem; }.crypto-lesson-grid h3 { color:#83dff5; font-size:.76rem; margin-top:0; }.crypto-lesson-grid p { color:#c9d1d9; font-size:.88rem; line-height:1.55; margin-bottom:0; }
-@media (max-width:760px) { .crypto-lab-layout { display:block; }.crypto-progress { flex-direction:row; flex-wrap:wrap; margin-bottom:1rem; position:static; }.crypto-progress b { flex-basis:100%; }.crypto-progress i { display:none; }.crypto-grid,.crypto-lesson-grid { grid-template-columns:1fr; }.station-heading { align-items:stretch; flex-direction:column; }.crypto-info-link { float:none; margin-left:1rem; } } @media (prefers-reduced-motion:reduce) { .cipher-wheel:before,.cipher-wheel span { transition:none; } }
+
+/* Keep the path, stations, and lessons together as one readable workbench. */
+.cryptography-lab-page .crypto-workbench {
+  margin-inline: auto;
+  max-width: 1280px;
+  width: min(calc(100% - 2rem), 1280px);
+}
+
+.cryptography-lab-page main.crypto-lab-layout {
+  max-width: none;
+  padding: 0 0 2rem;
+}
+
+.crypto-info-link { float: right; }
+.crypto-lab-layout { display: grid; gap: 1.35rem; grid-template-columns: 185px minmax(0, 1fr); }
+.crypto-progress {
+  align-self: start;
+  background: rgba(5, 18, 23, .87);
+  border: 1px solid rgba(0, 180, 255, .25);
+  display: flex;
+  flex-direction: column;
+  font: 700 clamp(.8rem, .25vw + .72rem, .9rem)/1.55 "Courier New", monospace;
+  gap: .38rem;
+  letter-spacing: .05em;
+  padding: 1.1rem;
+  position: sticky;
+  text-align: left;
+  top: 1rem;
+}
+.crypto-progress b { color: #ffd08a; margin-bottom: .3rem; }
+.crypto-progress span { color: #587581; }
+.crypto-progress span.active { color: #82f7bb; text-shadow: 0 0 9px rgba(130, 247, 187, .35); }
+.crypto-progress i { color: #ffd08a; font-style: normal; }
+.crypto-tabs { border-bottom: 1px solid rgba(0, 180, 255, .28); display: flex; gap: .55rem; overflow-x: auto; padding-bottom: .8rem; }
+.crypto-tabs button, .crypto-preset, .crypto-panel button {
+  background: #092129;
+  border: 1px solid rgba(0, 180, 255, .45);
+  color: #bdeff9;
+  cursor: pointer;
+  font: 700 clamp(.78rem, .2vw + .72rem, .88rem) "Courier New", monospace;
+  letter-spacing: .04em;
+  min-height: 42px;
+  padding: .6rem .8rem;
+}
+.crypto-tabs button[aria-selected="true"], .crypto-tabs button:hover, .crypto-tabs button:focus-visible, .crypto-panel button:hover, .crypto-panel button:focus-visible { background: rgba(255, 190, 92, .14); border-color: #ffd08a; color: #ffd08a; outline: 0; }
+.crypto-secret-note { border-left: 3px solid #ffd08a; color: #b8c9cf; font: 700 clamp(.82rem, .22vw + .75rem, .94rem)/1.6 "Courier New", monospace; letter-spacing: .03em; margin: 1.1rem 0; padding: .65rem .9rem; }
+.crypto-station { text-align: left; }
+.crypto-station > p { font-size: clamp(1rem, .22vw + .93rem, 1.1rem); line-height: 1.65; margin-bottom: 1rem; }
+.station-heading { align-items: start; display: flex; gap: 1rem; justify-content: space-between; }
+.station-heading h2 { color: #d9f8ff; font-size: clamp(1.45rem, .65vw + 1.2rem, 1.8rem); margin: .15rem 0 1rem; }
+.crypto-preset { color: #ffd08a; flex: 0 0 auto; }
+.crypto-grid { display: grid; gap: 1.15rem; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); }
+.crypto-panel, .crypto-callout, .crypto-lesson-grid article { background: linear-gradient(145deg, rgba(7, 23, 28, .95), rgba(5, 14, 19, .95)); border: 1px solid rgba(0, 180, 255, .3); padding: 1.15rem; }
+.crypto-panel label { color: #83dff5; display: block; font: 700 clamp(.8rem, .18vw + .74rem, .9rem) "Courier New", monospace; letter-spacing: .07em; margin-bottom: .9rem; }
+.crypto-panel textarea, .crypto-panel input[type="text"], .crypto-panel input:not([type]) { box-sizing: border-box; margin-top: .45rem; width: 100%; }
+.crypto-panel textarea, .crypto-panel input { background: #061318; border: 1px solid rgba(131, 223, 245, .42); color: #e3faff; font: clamp(1rem, .2vw + .94rem, 1.1rem)/1.5 "Courier New", monospace; padding: .7rem; }
+.crypto-panel textarea { min-height: 86px; resize: vertical; }
+.crypto-control { align-items: center; display: flex; gap: .6rem; margin: .9rem 0; }
+.crypto-control button { border-radius: 50%; font-size: 1.3rem; min-width: 42px; padding: .2rem; }
+.crypto-control label { align-items: center; display: flex; flex: 1; gap: .55rem; margin: 0; }
+.crypto-control input { accent-color: #82f7bb; flex: 1; }
+.crypto-control output { color: #ffd08a; min-width: 1.4rem; }
+.crypto-station fieldset { border: 0; color: #bdeff9; font: 700 clamp(.8rem, .18vw + .74rem, .9rem) "Courier New", monospace; margin: .9rem 0; padding: 0; }
+.crypto-station fieldset label { display: inline; margin-right: .9rem; }
+.crypto-result { border-left: 3px solid #82f7bb; margin-top: .9rem; overflow-wrap: anywhere; padding: .6rem .8rem; }
+.crypto-result b { color: #83dff5; display: block; font: clamp(.8rem, .18vw + .74rem, .9rem) "Courier New", monospace; }
+.crypto-result output { color: #e6fff3; display: block; font: clamp(1.05rem, .25vw + .97rem, 1.16rem)/1.6 "Courier New", monospace; min-height: 1.6em; white-space: pre-wrap; }
+.cipher-wheel-wrap { display: flex; flex-direction: column; justify-content: center; }
+.cipher-wheel { align-items: center; border: 2px dashed #83dff5; border-radius: 50%; color: #83dff5; display: flex; height: min(250px, 55vw); justify-content: center; margin: auto; max-width: 250px; position: relative; text-align: center; width: 100%; }
+.cipher-wheel:before { border: 2px solid #ffd08a; border-radius: 50%; content: ""; inset: 18%; position: absolute; transform: rotate(var(--wheel-turn)); transition: transform .35s ease; }
+.cipher-wheel span { font: .74rem/1.4 "Courier New", monospace; max-width: 75%; overflow-wrap: anywhere; transform: rotate(var(--wheel-turn)); transition: transform .35s ease; }
+.cipher-wheel strong { background: #061318; color: #ffd08a; font: .72rem "Courier New", monospace; padding: .4rem; position: absolute; }
+.alphabet-map { display: grid; gap: .42rem; margin-top: 1.1rem; }
+.alphabet-map b { color: #83dff5; font: clamp(.78rem, .18vw + .72rem, .88rem) "Courier New", monospace; }
+.alphabet-map code { color: #e3faff; font-size: clamp(.75rem, .35vw + .64rem, .98rem); letter-spacing: .08em; overflow-wrap: anywhere; }
+.amber { border-color: rgba(255, 190, 92, .5); }
+.crypto-callout h3, .crypto-panel h3 { color: #ffd08a; font-size: clamp(1rem, .25vw + .92rem, 1.12rem); margin-top: 0; }
+.crypto-callout p, .crypto-panel p { color: #c9d1d9; font-size: clamp(.98rem, .18vw + .92rem, 1.06rem); line-height: 1.65; }
+.frequency div { align-items: center; display: grid; gap: .5rem; grid-template-columns: 1.35rem minmax(20px, 1fr) 1.8rem; margin: .48rem 0; }
+.frequency b, .frequency em { color: #d9f8ff; font: .9rem "Courier New", monospace; }
+.frequency span { background: #82f7bb; box-shadow: 0 0 8px rgba(130, 247, 187, .35); height: .82rem; width: calc(var(--bar) * 14%); }
+.small-note { font-size: clamp(.88rem, .18vw + .82rem, .98rem) !important; }
+.crypto-station table { border-collapse: collapse; font-size: 1rem; width: 100%; }
+.crypto-station th, .crypto-station td { border: 1px solid rgba(131, 223, 245, .3); color: #d9f8ff; padding: .45rem; text-align: center; }
+.crypto-station th { color: #ffd08a; }
+.bit-visual { overflow-x: auto; }
+.bit-visual > div { margin: .8rem 0; min-width: 300px; }
+.bit-visual b { color: #83dff5; display: block; font: .8rem "Courier New", monospace; margin-bottom: .35rem; }
+.bit-visual code { display: flex; gap: .3rem; }
+.bit { border: 1px solid rgba(131, 223, 245, .4); color: #c9d1d9; font-size: .95rem; font-style: normal; padding: .25rem .42rem; }
+.bit-1 { background: rgba(130, 247, 187, .2); border-color: #82f7bb; color: #dfffee; }
+.crypto-lesson-grid { display: grid; gap: 1.15rem; grid-template-columns: repeat(3, 1fr); margin-top: 1.15rem; }
+.crypto-lesson-grid h3 { color: #83dff5; font-size: clamp(.9rem, .2vw + .84rem, 1rem); margin-top: 0; }
+.crypto-lesson-grid p { color: #c9d1d9; font-size: clamp(.98rem, .18vw + .92rem, 1.05rem); line-height: 1.6; margin-bottom: 0; }
+
+@media (max-width: 760px) {
+  .cryptography-lab-page .crypto-workbench { width: min(calc(100% - 1.5rem), 1280px); }
+  .crypto-lab-layout { display: block; }
+  .crypto-progress { flex-direction: row; flex-wrap: wrap; margin-bottom: 1rem; position: static; }
+  .crypto-progress b { flex-basis: 100%; }
+  .crypto-progress i { display: none; }
+  .crypto-grid, .crypto-lesson-grid { grid-template-columns: 1fr; }
+  .station-heading { align-items: stretch; flex-direction: column; }
+  .crypto-info-link { float: none; margin-left: 1rem; }
+  .cipher-wheel { height: min(250px, 72vw); width: min(100%, 250px); }
+}
+
+@media (prefers-reduced-motion: reduce) { .cipher-wheel:before, .cipher-wheel span { transition: none; } }
