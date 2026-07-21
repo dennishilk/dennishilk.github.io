@@ -1,6 +1,13 @@
+'use strict';
 const assert = require('node:assert/strict');
 const S = require('../museum/linux-game-install/games/nebu-strike/highscores.js');
-assert.equal(S.normalizeCallsign(' ace-42 '),'ACE-42'); assert.ok(S.validCallsign('NEBU')); assert.ok(!S.validCallsign('x!'));
+assert.equal(S.normalizeCallsign(' ace-42 '), 'ACE-42'); assert.ok(S.validCallsign('NEBU')); assert.ok(!S.validCallsign('x!'));
 const ordered=S.scoreEntries([{callsign:'ace',score:10,wave:1},{callsign:'NEBU',score:20,wave:1},...Array.from({length:12},(_,i)=>({callsign:`AAA${i}`,score:i,wave:1}))]); assert.equal(ordered[0].callsign,'NEBU'); assert.equal(ordered.length,S.MAX);
-const db=new Map(), local=S.createScores({storage:{getItem:k=>db.get(k),setItem:(k,v)=>db.set(k,v)}}); assert.equal(local.saveBest(55),55); assert.equal(local.getBest(),55);
-local.submit('NEBU',5,1).then(()=>assert.fail('missing endpoint must fail'),e=>assert.match(e.message,/UNAVAILABLE/)).then(()=>console.log('Nebu Strike local score validation and failure tests passed'));
+const db=new Map(), storage={getItem:k=>db.get(k),setItem:(k,v)=>db.set(k,v)};
+const local=S.createScores({storage}); assert.equal(local.saveBest(55),55);
+assert.throws(()=>local.save('x!', 5, 1), /INVALID/);
+for(let i=0;i<12;i++) local.save(`ACE${i}`,i * 100, i + 1);
+assert.equal(local.getEntries().length, S.MAX); assert.equal(local.getEntries()[0].score, 1100);
+const reloaded=S.createScores({storage}); assert.deepEqual(reloaded.getEntries(),local.getEntries());
+assert.equal(typeof reloaded.submit, 'undefined', 'local scores never expose a network submission path');
+console.log('Nebu Strike local score persistence tests passed');
