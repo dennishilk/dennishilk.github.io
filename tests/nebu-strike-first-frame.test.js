@@ -14,16 +14,16 @@ function context() {
     return key in target ? target[key] : () => {};
   } });
 }
-function fixture(loadBeforeFirstFrame) {
+function fixture(loadBeforeFirstFrame, dimensions = () => ({ width: 800, height: 500 }), failCache = false) {
   const main = context(), offscreen = [];
   const canvas = { ...events(), style: {}, getContext: () => main, getBoundingClientRect: () => ({ left: 0, top: 0 }) };
-  const screen = { getBoundingClientRect: () => ({ width: 800, height: 500 }), requestFullscreen() {} };
+  const screen = { getBoundingClientRect: dimensions, requestFullscreen() {} };
   const controls = { ...events() }, elements = { '#gameCanvas': canvas, '#gameScreen': screen, '#gameRestart': controls, '#gameFullscreen': controls };
   let image, next = 1; const frames = new Map();
   function Image() { this.width = 1200; this.height = 600; image = this; }
   Object.defineProperty(Image.prototype, 'src', { set() { if (loadBeforeFirstFrame) this.onload(); } });
   const win = { ...events(), Image, devicePixelRatio: 1, requestAnimationFrame(fn) { const id = next++; frames.set(id, fn); return id; }, cancelAnimationFrame(id) { frames.delete(id); } };
-  const doc = { querySelector: selector => elements[selector], createElement: () => { const c = context(); offscreen.push(c); return { width: 0, height: 0, getContext: () => c }; } };
+  const doc = { querySelector: selector => elements[selector], createElement: () => { const c = context(); if (failCache) c.drawImage = () => { throw new Error('optional cache failure'); }; offscreen.push(c); return { width: 0, height: 0, getContext: () => c }; } };
   const view = createGameView({ window: win, document: doc, Core });
   const frame = time => { const [id, fn] = frames.entries().next().value; frames.delete(id); fn(time); };
   return { view, frame, get image() { return image; }, main, offscreen };
@@ -55,3 +55,25 @@ assert.deepEqual(delayed.view.getLastRenderLayers(), scene, 'the post-load frame
 assert.equal(delayed.main.globalCompositeOperation, 'source-over');
 assert.equal(delayed.main.globalAlpha, 1);
 console.log('Nebu Strike first-frame background regression tests passed');
+
+
+// The live lab reveals its fixed wrapper immediately before launch.  Launch must
+// measure after that reveal rather than waiting for a resize event.
+let visible = false;
+const hidden = fixture(false, () => visible ? ({ width: 960, height: 540 }) : ({ width: 0, height: 0 }));
+visible = true;
+assert.equal(hidden.view.launch(), true);
+assert.ok(hidden.view.getCounts().canvasWidth > 0, 'revealed wrapper creates a non-zero canvas backing width');
+assert.ok(hidden.view.getCounts().canvasHeight > 0, 'revealed wrapper creates a non-zero canvas backing height');
+assert.equal(hidden.view.getCounts().rafScheduledCount, 1, 'launch schedules the first RAF without a resize event');
+hidden.frame(16);
+assert.equal(hidden.view.getCounts().rafCallbackCount, 1, 'first RAF callback runs');
+assert.equal(hidden.view.getCounts().renderFrameCount, 1, 'first RAF invokes renderFrame');
+assert.deepEqual(hidden.view.getLastRenderLayers(), scene, 'hidden-wrapper launch draws title, fallback background, ground, turret, and HUD');
+
+// A throwing optional background cache may not stop the mandatory world render.
+const cacheFailure = fixture(true, undefined, true);
+cacheFailure.view.launch(); cacheFailure.frame(16);
+assert.deepEqual(cacheFailure.view.getLastRenderLayers(), scene, 'cache failure degrades to the procedural fallback without aborting the frame');
+assert.equal(cacheFailure.view.getCounts().renderFrameCount, 1);
+console.log('Nebu Strike hidden-wrapper and cache-fallback regression tests passed');
