@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS } from '../scripts/site-traffic-observer.mjs';
+import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS, SITE_TRAFFIC_INITIAL_TOTAL } from '../scripts/site-traffic-observer.mjs';
 
 const line = ({ ip = '203.0.113.10', at, method = 'GET', path = '/', status = 200, ref = '-', ua = 'Mozilla/5.0' }) =>
   `${ip} - - [${at}] "${method} ${path} HTTP/1.1" ${status} 123 "${ref}" "${ua}"`;
@@ -98,6 +98,57 @@ test('writer output derives live stream from supplied logs instead of stale outp
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('persistent total starts at 50000, increments appended pageviews once, and survives reloads', async () => {
+  const { mkdtemp, readFile, writeFile, appendFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-total-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    await writeFile(log, `${line({ at, path: '/before-migration.html' })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).total_pageviews, SITE_TRAFFIC_INITIAL_TOTAL);
+    await appendFile(log, `${line({ at: '08/Jul/2026:11:45:00 +0200', path: '/first.html' })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).total_pageviews, 50001);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).total_pageviews, 50001);
+    await appendFile(log, `${line({ at: '09/Jul/2026:00:05:00 +0200', path: '/after-midnight.html' })}\n`);
+    const reloaded = writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:00:00.000Z'), stateFile });
+    assert.equal(reloaded.total_pageviews, 50002);
+    assert.equal(JSON.parse(await readFile(output, 'utf8')).total_pageviews, 50002);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('traffic dashboard navigation remains a pageview while its polling payload is observer-internal noise', () => {
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/traffic.html' }),
+    line({ ip: '8.8.8.8', at, path: '/data/site-traffic.json' }),
+    line({ ip: '1.1.1.1', at, path: '/about.html' }),
+    line({ ip: '9.9.9.9', at, path: '/data/site-traffic.json', ua: 'Googlebot/2.1' }),
+    line({ ip: '9.9.9.8', at, path: '/data/site-traffic.json', ua: 'zgrab/0.x' }),
+  ], { now, countryResolver: () => 'US' });
+  assert.equal(payload.pageviews_today, 2);
+  assert.equal(payload.human_requests_today, 2);
+  assert.equal(payload.estimated_unique_visitors, 4);
+  assert(payload.live_requests.some(request => request.path === '/traffic.html' && request.kind === 'HUMAN'));
+  assert(payload.live_requests.some(request => request.path === '/about.html'));
+  assert.equal(payload.live_requests.some(request => request.path === '/data/site-traffic.json' && request.kind === 'HUMAN'), false);
+  assert(payload.live_requests.some(request => request.path === '/data/site-traffic.json' && request.kind === 'BOT'));
+  assert(payload.live_requests.some(request => request.path === '/data/site-traffic.json' && request.kind === 'SCANNER'));
+  assert.equal(payload.top_paths.some(row => row.path === '/data/site-traffic.json'), true);
+});
+
+test('traffic frontend has no all-time pageview baseline', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const source = await readFile(new URL('../traffic.html', import.meta.url), 'utf8');
+  assert.equal(source.includes('TOTAL_PAGEVIEWS_BASELINE'), false);
+  assert.equal(source.includes('totalPageviewsWithBaseline'), false);
+  assert.equal(source.includes('45000'), false);
 });
 
 test('requests_total remains a backward-compatible alias for requests_24h', () => {
