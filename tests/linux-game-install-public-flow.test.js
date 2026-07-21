@@ -31,3 +31,4 @@ console.log('linux game installation public flow regression tests passed');
 
 const fs = require('fs'); const lab = fs.readFileSync(require.resolve('../museum/linux-game-install/lab.js'), 'utf8'); const page = fs.readFileSync(require.resolve('../museum/linux-game-install/lab.html'), 'utf8');
 assert.match(page, /lab-controller\.js/); assert.match(lab, /run\(command, 'helper'\)/); assert.match(lab, /controller\.submit\(command, source\)/);
+assert.match(lab, /gameView\.launch\(\)/); assert.match(lab, /gameView\.stop\(\)/);
