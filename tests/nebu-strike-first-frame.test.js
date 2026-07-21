@@ -14,21 +14,21 @@ function context() {
     return key in target ? target[key] : () => {};
   } });
 }
-function fixture(dimensions = () => ({ width: 800, height: 500 }), failCache = false) {
+function fixture(dimensions = () => ({ width: 800, height: 500 })) {
   const main = context();
   const canvas = { ...events(), style: {}, getContext: () => main, getBoundingClientRect: () => ({ left: 0, top: 0 }) };
   const screen = { getBoundingClientRect: dimensions, requestFullscreen() {} };
   const controls = { ...events() }, elements = { '#gameCanvas': canvas, '#gameScreen': screen, '#gameRestart': controls, '#gameFullscreen': controls };
   let next = 1; const frames = new Map();
   const win = { ...events(), devicePixelRatio: 1, requestAnimationFrame(fn) { const id = next++; frames.set(id, fn); return id; }, cancelAnimationFrame(id) { frames.delete(id); } };
-  const doc = { querySelector: selector => elements[selector], createElement: () => { const c = context(); if (failCache) c.fillRect = () => { throw new Error('cache unavailable'); }; return { width: 0, height: 0, getContext: () => c }; } };
+  const doc = { querySelector: selector => elements[selector] };
   const view = createGameView({ window: win, document: doc, Core });
   const frame = time => { const [id, fn] = frames.entries().next().value; frames.delete(id); fn(time); };
   return { view, frame, main };
 }
 const f = fixture();
 assert.equal(f.view.launch(), true);
-assert.equal(f.view.getBackgroundMetrics().buildCount, 1, 'launch builds the cached procedural background synchronously');
+assert.equal(f.view.getBackgroundMetrics().buildCount, 0, 'launch creates no offscreen background cache');
 f.frame(16);
 assert.deepEqual(f.view.getLastRenderLayers(), scene, 'the first visible frame renders the complete title battlefield');
 assert.equal(f.view.getGame().state, 'TITLE');
@@ -47,8 +47,5 @@ assert.equal(hidden.view.getCounts().rafScheduledCount, 1);
 hidden.frame(16);
 assert.deepEqual(hidden.view.getLastRenderLayers(), scene);
 
-const cacheFailure = fixture(undefined, true);
-cacheFailure.view.launch(); cacheFailure.frame(16);
-assert.deepEqual(cacheFailure.view.getLastRenderLayers(), scene, 'a cache failure falls back to the same procedural world background');
-assert.equal(cacheFailure.view.getCounts().renderFrameCount, 1);
+assert.equal(f.view.getBackgroundMetrics().cacheWidth, 0, 'procedural space has no secondary canvas');
 console.log('Nebu Strike first-frame procedural background regression tests passed');
