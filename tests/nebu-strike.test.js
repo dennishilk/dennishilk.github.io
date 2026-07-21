@@ -70,4 +70,26 @@ play(turretStates, 4);
 assert.equal(turretStates.turret.deployment, 1, 'later playing frames cannot collapse turret height');
 turretStates.state = 'GAMEOVER'; G.update(turretStates, {}, .01);
 assert.equal(turretStates.turret.deployment, 1, 'game-over keeps the turret deployed');
+
+// Exercise the public title -> start -> countdown -> playing transition and
+// verify the geometry that the canvas renderer consumes for a sustained wave.
+const transition = G.createGame(800, 500, 144);
+const assertTurretGeometry = (label) => {
+  const t = transition.turret, geometry = G.turretGeometry(transition);
+  for (const [name, value] of Object.entries({ x: t.x, y: t.y, aimAngle: t.angle, deployment: t.deployment, recoil: t.recoil, heat: t.heat, barrelLength: geometry.barrelLength, muzzleX: geometry.muzzleX, muzzleY: geometry.muzzleY, scale: geometry.scale })) assert.ok(Number.isFinite(value), `${label}: ${name} is finite`);
+  assert.ok(t.deployment > 0, `${label}: deployment remains positive`);
+  assert.ok(geometry.barrelLength > 0, `${label}: barrel has positive length`);
+  assert.ok(t.x >= 0 && t.x <= transition.width && t.y >= 0 && t.y <= transition.height, `${label}: pivot remains in the viewport`);
+  assert.ok(geometry.muzzleY < transition.groundY, `${label}: muzzle remains above ground`);
+  assert.ok(t.y - geometry.baseHeight / 2 < transition.groundY, `${label}: turret body is not fully below ground`);
+};
+assertTurretGeometry('title');
+G.start(transition); assertTurretGeometry('countdown');
+while (transition.state === 'COUNTDOWN') G.update(transition, {}, .05);
+assert.equal(transition.state, 'PLAYING'); assertTurretGeometry('first playing frame');
+for (let frame = 1; frame <= 120; frame++) {
+  const keys = { aimX: frame % 2 ? 0 : 800, aimY: 30, fire: frame === 12 || frame === 72 };
+  G.update(transition, keys, .05);
+  assertTurretGeometry(`playing frame ${frame}`);
+}
 console.log('Nebu Strike turret deployment regression tests passed');
