@@ -10,6 +10,11 @@ const SCANNER_PATH = /(?:wp-admin|wp-login|xmlrpc\.php|\.env|phpmyadmin|cgi-bin|
 const BOT_UA = /bot|crawler|spider|slurp|bingpreview|facebookexternalhit|preview|monitor|uptime|curl|wget|python-requests|go-http-client|httpclient|headless/i;
 const SCANNER_UA = /zgrab|masscan|nmap|nikto|sqlmap|acunetix|nessus|openvas|dirbuster|gobuster|wpscan|botnet|scanner/i;
 const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 308]);
+// This is intentionally exact: traffic.html only polls this generated payload.  A
+// direct browser navigation is still a normal request, but the polling request is
+// not useful observation data.  Bot and scanner classification takes precedence.
+const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
+export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
 
 const SCANNER_INTENT_PRIORITY = [
   'path_traversal',
@@ -100,6 +105,7 @@ export function classifyRequest(req) {
   const ua = req.userAgent || '';
   if (SCANNER_PATH.test(req.path) || SCANNER_UA.test(ua)) return 'scanner';
   if (BOT_UA.test(ua)) return 'bot';
+  if (['GET', 'HEAD'].includes(req.method) && OBSERVER_INTERNAL_PATHS.has(req.path)) return 'observer_internal';
   return 'human';
 }
 
@@ -184,6 +190,9 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
     if (!req?.time) continue;
     const kind = classifyRequest(req);
     const pageview = isPageview(req, kind);
+    // Dashboard polling is deliberately excluded from every aggregate.  Keep
+    // scanners and bots visible even when they target this path (see classifier).
+    if (kind === 'observer_internal') continue;
     const isToday = berlinDateKey(req.time) === todayKey;
     const in24h = req.time >= since24h && req.time <= now;
     inc(topPaths, req.path);
@@ -250,7 +259,100 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
 export function writeTrafficPayload(inputFiles, outputFile, options) {
   const lines = inputFiles.flatMap(file => fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean));
   const payload = buildTrafficPayload(lines, options);
+  const stateFile = options?.stateFile || path.resolve(path.dirname(outputFile), '..', 'state', 'site-traffic-total.json');
+  const state = updatePersistentPageviewTotal(inputFiles, stateFile);
+  payload.total_pageviews = state.total_pageviews;
   fs.mkdirSync(path.dirname(outputFile), { recursive: true });
   fs.writeFileSync(outputFile, `${JSON.stringify(payload, null, 2)}\n`);
   return payload;
+}
+
+function sourceCheckpoint(file) {
+  const stat = fs.statSync(file);
+  return { dev: stat.dev, ino: stat.ino, offset: stat.size };
+}
+
+function readState(stateFile) {
+  try {
+    const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+    if (!Number.isSafeInteger(state.total_pageviews) || state.total_pageviews < SITE_TRAFFIC_INITIAL_TOTAL || !state.sources || typeof state.sources !== 'object') throw new Error('invalid state');
+    return state;
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw new Error(`Cannot read Site Traffic counter state ${stateFile}: ${error.message}`);
+  }
+}
+
+function atomicWriteJson(file, value) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const temp = `${file}.${process.pid}.${Date.now()}.tmp`;
+  const fd = fs.openSync(temp, 'w', 0o600);
+  try {
+    fs.writeFileSync(fd, `${JSON.stringify(value, null, 2)}\n`);
+    fs.fsyncSync(fd);
+  } finally {
+    fs.closeSync(fd);
+  }
+  fs.renameSync(temp, file);
+  // Persist the rename as well where the platform supports directory fsync.
+  try {
+    const dir = fs.openSync(path.dirname(file), 'r');
+    try { fs.fsyncSync(dir); } finally { fs.closeSync(dir); }
+  } catch { /* Directory fsync is unavailable on some platforms. */ }
+}
+
+function qualifyingPageviewsInNewBytes(file, offset) {
+  const bytes = fs.readFileSync(file);
+  const tail = bytes.subarray(offset);
+  const newline = tail.lastIndexOf(0x0a);
+  if (newline < 0) return { count: 0, offset };
+  const complete = tail.subarray(0, newline + 1).toString('utf8').split(/\r?\n/).filter(Boolean);
+  const count = complete.reduce((total, line) => {
+    const req = parseLogLine(line);
+    return total + (req && isPageview(req) ? 1 : 0);
+  }, 0);
+  return { count, offset: offset + newline + 1 };
+}
+
+/**
+ * Update only bytes appended since the durable inode/offset checkpoint.  A new
+ * inode is a normal nginx rename rotation and is read from byte zero.  A
+ * copytruncate shrink is conservatively checkpointed without counting, which
+ * prefers missing an in-flight line to ever recounting retained old content.
+ */
+export function updatePersistentPageviewTotal(inputFiles, stateFile) {
+  let state = readState(stateFile);
+  if (!state) {
+    state = {
+      total_pageviews: SITE_TRAFFIC_INITIAL_TOTAL,
+      initialized_at: new Date().toISOString(),
+      sources: Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)])),
+    };
+    atomicWriteJson(stateFile, state);
+    return state;
+  }
+
+  for (const file of inputFiles) {
+    const key = path.resolve(file);
+    const current = sourceCheckpoint(file);
+    const previous = state.sources[key];
+    if (!previous) {
+      // A newly configured source starts at its current end, like migration.
+      state.sources[key] = current;
+      continue;
+    }
+    if (previous.dev === current.dev && previous.ino === current.ino && current.offset >= previous.offset) {
+      const added = qualifyingPageviewsInNewBytes(file, previous.offset);
+      state.total_pageviews += added.count;
+      state.sources[key] = { ...current, offset: added.offset };
+    } else if (previous.dev !== current.dev || previous.ino !== current.ino) {
+      const added = qualifyingPageviewsInNewBytes(file, 0);
+      state.total_pageviews += added.count;
+      state.sources[key] = { ...current, offset: added.offset };
+    } else {
+      state.sources[key] = current;
+    }
+  }
+  atomicWriteJson(stateFile, state);
+  return state;
 }
