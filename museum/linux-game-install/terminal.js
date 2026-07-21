@@ -56,17 +56,18 @@
   function academyResult(command, state) {
     const shell = new Academy.Shell(state.system, { allowedCommands: academyCommands });
     const result = shell.execute(command);
-    return { output: result.output.join('\n'), action: result.clear ? 'clear' : '' };
+    return { handled: true, output: result.output.join('\n'), action: result.clear ? 'clear' : '' };
   }
   function execute(input, state) {
     const command = clean(input); const next = { ...state }; let output = ''; let action = '';
+    const done = () => ({ handled: true, state: next, output, action });
     if (next.awaitingConfirmation) {
-      if (/^(y|yes)$/i.test(command)) { next.awaitingConfirmation = false; next.installed = true; addNebuStrike(next); output = 'Selecting previously unselected package nebustrike.\nPreparing to unpack ...\nUnpacking nebustrike ...\nSetting up nebustrike ... done\n\nSOURCE: Computer Museum Interactive Repository\nNebu Strike is installed in this browser-only virtual environment.'; return { state: next, output, action: 'installed' }; }
-      next.awaitingConfirmation = false; return { state: next, output: 'Installation cancelled.', action };
+      if (/^(y|yes)$/i.test(command)) { next.awaitingConfirmation = false; next.installed = true; addNebuStrike(next); output = 'Selecting previously unselected package nebustrike.\nPreparing to unpack ...\nUnpacking nebustrike ...\nSetting up nebustrike ... done\n\nSOURCE: Computer Museum Interactive Repository\nNebu Strike is installed in this browser-only virtual environment.'; action = 'installed'; return done(); }
+      next.awaitingConfirmation = false; output = 'Installation cancelled.'; return done();
     }
-    if (!command) return { state: next, output, action };
+    if (!command) return done();
     if (command === 'help') output = help();
-    else if (command === 'reset') { const reset = freshState(); removeNebuStrike(reset); return { state: reset, output: 'Virtual environment reset. No real system state was changed.', action: 'reset' }; }
+    else if (command === 'reset') { const reset = freshState(); removeNebuStrike(reset); return { handled: true, state: reset, output: 'Virtual environment reset. No real system state was changed.', action: 'reset' }; }
     else if (command === 'sudo apt update') { next.updated = true; output = 'Hit:1 museum://nebunix stable InRelease\nGet:2 museum://nebunix stable/main Packages [4,096 B]\nFetched 4,096 B in 0s (local educational catalog)\nReading package lists... Done\n\nPackage information updated from the fixed local exhibit catalog. No Debian mirror was contacted.'; action = 'updated'; }
     else if (/^apt search\s+nebustrike$/i.test(command)) { output = linesForPackages(['nebustrike']); action = 'searched'; }
     else if (/^apt search\s+games$/i.test(command)) { output = linesForPackages(gameSearchResults); action = 'searched'; }
@@ -74,7 +75,7 @@
     else if (command === 'which nebustrike') output = next.installed ? '/usr/games/nebustrike' : '';
     else if (command === 'nebustrike' || command === '/usr/games/nebustrike') { if (!next.installed) output = 'nebustrike: command not found\n\nTry: apt search games'; else { next.launched = true; output = 'STARTING NEBU STRIKE...\nINITIALIZING DISPLAY :0...\nLOADING LOCAL GAME DATA...\n\nMISSION COMPLETE\nYOU INSTALLED AND LAUNCHED A REAL GAME FROM THE TERMINAL.'; action = 'launch'; } }
     else ({ output, action } = academyResult(command, next));
-    return { state: next, output, action };
+    return done();
   }
   return { freshState, execute, packages, gameSearchResults, academyCommands };
 });
