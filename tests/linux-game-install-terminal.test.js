@@ -5,7 +5,7 @@ r=terminal.execute('ls /usr/games',state);assert.equal(r.output,'');state=r.stat
 r=terminal.execute('nebustrike',state);assert.match(r.output,/command not found/);state=r.state;
 r=terminal.execute('vectorstrike',state);assert.match(r.output,/command not found/);state=r.state;
 r=terminal.execute('sudo apt update',state);assert.match(r.output,/local exhibit catalog/);state=r.state;
-r=terminal.execute('apt search games',state);assert.match(r.output,/nebustrike/);assert.match(r.output,/Computer Museum Interactive Repository/);assert.match(r.output,/PLAYABLE/);state=r.state;
+const searchStarted=process.hrtime.bigint();r=terminal.execute('apt search games',state);const searchElapsedMs=Number(process.hrtime.bigint()-searchStarted)/1e6;assert.ok(searchElapsedMs<100,'apt search games must terminate promptly');assert.equal(r.action,'searched');assert.match(r.output,/nebustrike/);assert.match(r.output,/Computer Museum Interactive Repository/);assert.match(r.output,/PLAYABLE/);assert.ok(r.output.length<500,'apt search games output must remain bounded');assert.ok(r.output.split('\n').length<=6,'apt search games output must remain bounded');assert.doesNotMatch(r.output,/openttd/i);state=r.state;
 r=terminal.execute('apt search nebustrike',state);assert.match(r.output,/Deep-space vector combat arcade game/);state=r.state;
 r=terminal.execute('sudo apt install nebustrike',state);assert.equal(r.action,'confirm');assert.equal(r.state.awaitingConfirmation,true);assert.match(r.output,/\[Y\/n\]/);state=r.state;
 r=terminal.execute('y',state);assert.equal(r.action,'installed');assert.equal(r.state.installed,true);assert.match(r.output,/Setting up nebustrike/);state=r.state;

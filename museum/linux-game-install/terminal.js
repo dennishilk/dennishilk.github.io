@@ -7,14 +7,12 @@
   'use strict';
   const packages = {
     nebustrike: { description: 'Computer Museum Interactive Repository\n  Deep-space vector combat arcade game\n  Runtime: Browser-native Canvas / Web Audio\n  Status: PLAYABLE', museum: true },
-    openttd: { description: 'Open source transport simulation game (browser runtime unavailable in this exhibit)', installed: true },
-    'openttd-opengfx': { description: 'Free graphics base set', installed: true },
-    'openttd-opensfx': { description: 'Free sound effects base set', installed: true },
-    'openttd-openmsx': { description: 'Free music base set', installed: true },
     freeciv: { description: 'Turn-based strategy game (future catalog entry; unavailable in this exhibit)', unavailable: true },
     nethack: { description: 'Dungeon exploration game (future catalog entry; unavailable in this exhibit)', unavailable: true }
   };
-  const installSet = ['openttd', 'openttd-opengfx', 'openttd-opensfx', 'openttd-openmsx'];
+  // Keep this search intentionally finite. It is rendered directly in the browser
+  // terminal, so package discovery must never delegate to a general shell/catalog scan.
+  const gameSearchResults = Object.freeze(['nebustrike']);
   const academyCommands = Academy.commandProfiles.lab08;
   const node = (type, children, content, mode) => type === 'directory'
     ? { type, children: children || {}, owner: 'visitor', group: 'visitor', mode: mode || 'rwxr-xr-x' }
@@ -45,8 +43,6 @@
   const linesForPackages = names => names.map(name => `${name}\n  ${packages[name].description}`).join('\n\n');
   const addNebuStrike = state => { state.system.fileSystem.root.children.usr.children.games.children.nebustrike = node('file', null, '#!/bin/sh\n# Computer Museum Interactive Repository browser game\n', 'rwxr-xr-x'); };
   const removeNebuStrike = state => { delete state.system.fileSystem.root.children.usr.children.games.children.nebustrike; };
-  const addOpenTTD = state => { state.system.fileSystem.root.children.usr.children.games.children.openttd = node('file', null, '#!/bin/sh\n# Browser-only OpenTTD launch adapter\n', 'rwxr-xr-x'); };
-  const removeOpenTTD = state => { delete state.system.fileSystem.root.children.usr.children.games.children.openttd; };
   const help = () => [
     'NAVIGATION: pwd, ls [-l] [PATH], cd [PATH]',
     'FILES: cat, touch, mkdir, cp, mv, rm',
@@ -70,20 +66,15 @@
     }
     if (!command) return { state: next, output, action };
     if (command === 'help') output = help();
-    else if (command === 'reset') { const reset = freshState(); removeOpenTTD(reset); removeNebuStrike(reset); return { state: reset, output: 'Virtual environment reset. No real system state was changed.', action: 'reset' }; }
+    else if (command === 'reset') { const reset = freshState(); removeNebuStrike(reset); return { state: reset, output: 'Virtual environment reset. No real system state was changed.', action: 'reset' }; }
     else if (command === 'sudo apt update') { next.updated = true; output = 'Hit:1 museum://nebunix stable InRelease\nGet:2 museum://nebunix stable/main Packages [4,096 B]\nFetched 4,096 B in 0s (local educational catalog)\nReading package lists... Done\n\nPackage information updated from the fixed local exhibit catalog. No Debian mirror was contacted.'; action = 'updated'; }
     else if (/^apt search\s+nebustrike$/i.test(command)) { output = linesForPackages(['nebustrike']); action = 'searched'; }
-    else if (/^apt search\s+openttd$/i.test(command)) { output = linesForPackages(installSet) + '\n\nThese names mirror Debian/OpenTTD ecosystem concepts; this browser catalog is local and educational.'; action = 'searched'; }
-    else if (/^apt search\s+games$/i.test(command)) output = linesForPackages(['nebustrike', 'openttd', 'freeciv', 'nethack']) + '\n\nFuture catalog entries are shown for discovery only and cannot be installed here.';
-    else if (/^apt show\s+openttd$/i.test(command)) output = 'Package: openttd\nDescription: Open source transport simulation game\nBase sets: openttd-opengfx, openttd-opensfx, openttd-openmsx\nRepository: nebunix local educational catalog\nNetwork: disabled';
+    else if (/^apt search\s+games$/i.test(command)) { output = linesForPackages(gameSearchResults); action = 'searched'; }
     else if (/^sudo apt install\s+nebustrike$/i.test(command)) { next.awaitingConfirmation = true; output = 'Reading package lists... Done\nBuilding dependency tree... Done\nSOURCE: Computer Museum Interactive Repository\nThe following NEW packages will be installed:\n  nebustrike\n0 upgraded, 1 newly installed, 0 to remove.\nNeed to get 0 B of archives.\n\nDo you want to continue? [Y/n]'; action = 'confirm'; }
     else if (command === 'which nebustrike') output = next.installed ? '/usr/games/nebustrike' : '';
-    else if (command === 'which openttd') output = '';
-    else if (command === 'dpkg -l | grep openttd') output = next.installed ? installSet.map(name => `ii  ${name.padEnd(18)} 13.4-1  all  ${packages[name].description}`).join('\n') : '';
     else if (command === 'nebustrike' || command === '/usr/games/nebustrike') { if (!next.installed) output = 'nebustrike: command not found\n\nTry: apt search games'; else { next.launched = true; output = 'STARTING NEBU STRIKE...\nINITIALIZING DISPLAY :0...\nLOADING LOCAL GAME DATA...\n\nMISSION COMPLETE\nYOU INSTALLED AND LAUNCHED A REAL GAME FROM THE TERMINAL.'; action = 'launch'; } }
-    else if (command === 'openttd') output = 'openttd: Browser runtime unavailable in this exhibit.';
     else ({ output, action } = academyResult(command, next));
     return { state: next, output, action };
   }
-  return { freshState, execute, packages, installSet, academyCommands };
+  return { freshState, execute, packages, gameSearchResults, academyCommands };
 });
