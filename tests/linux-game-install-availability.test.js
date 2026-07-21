@@ -1,0 +1,20 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const catalog = fs.readFileSync('museum/index.html', 'utf8');
+const exhibit = fs.readFileSync('museum/linux-game-install/index.html', 'utf8');
+const lab = fs.readFileSync('museum/linux-game-install/lab.html', 'utf8');
+
+assert.match(catalog, /museum-card-linux-game[\s\S]*?museum-status available[\s\S]*?AVAILABLE/);
+assert.match(catalog, /museum-card-linux-game[\s\S]*?ENTER SYSTEM/);
+assert.match(exhibit, /museum-status available">AVAILABLE/);
+assert.match(exhibit, /INSTALL AND RUN →/);
+assert.doesNotMatch(exhibit, /PLANNED|OpenTTD|CREDITS\.md|Licensing and runtime decision notes/i);
+assert.match(exhibit, /NEBU STRIKE is an original Computer Museum browser game/);
+assert.match(exhibit, /No proprietary game ROMs or commercial game assets are included/);
+assert.equal(fs.existsSync(path.join('museum/linux-game-install', 'CREDITS.md')), false);
+assert.match(lab, /NEW TO THE TERMINAL\?/);
+assert.match(lab, /visitor@nebunix:~\$/);
+assert.match(lab, /do not type the prompt itself/);
+console.log('linux game installation availability and newcomer guidance tests passed');
