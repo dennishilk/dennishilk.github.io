@@ -11,11 +11,8 @@ const canvas = { ...canvasEvents, style: {}, width: 0, height: 0, getContext: ()
 const screen = { getBoundingClientRect: () => ({ width: 800, height: 500 }), requestFullscreen() {} };
 const restart = { ...restartEvents }, fullscreen = { ...fullscreenEvents };
 const elements = { '#gameCanvas': canvas, '#gameScreen': screen, '#gameRestart': restart, '#gameFullscreen': fullscreen };
-let imageLoads = 0;
-function LocalImage() { this.width = 1200; this.height = 600; }
-Object.defineProperty(LocalImage.prototype, 'src', { set(value) { this.value = value; imageLoads++; this.onload(); } });
 let nextId = 1; const frames = new Map();
-const win = { ...windowEvents, Image: LocalImage, devicePixelRatio: 1, localStorage: {}, requestAnimationFrame(fn) { const id = nextId++; frames.set(id, fn); return id; }, cancelAnimationFrame(id) { frames.delete(id); } };
+const win = { ...windowEvents, devicePixelRatio: 1, localStorage: {}, requestAnimationFrame(fn) { const id = nextId++; frames.set(id, fn); return id; }, cancelAnimationFrame(id) { frames.delete(id); } };
 const view = createGameView({ window: win, document: { querySelector: selector => elements[selector], createElement: tag => tag === 'canvas' ? { width: 0, height: 0, getContext: () => context } : null }, Core });
 function runFrame(time) { assert.equal(frames.size, 1, 'one RAF callback is pending'); const [id, callback] = frames.entries().next().value; frames.delete(id); callback(time); }
 
@@ -28,23 +25,20 @@ assert.equal(view.launch(), true, 'returning to the terminal permits one clean r
 const hud = view.getHudDescriptor();
 assert.deepEqual(hud, { state: 'TITLE', score: true, wave: true, base: true, combo: true, terminal: true, music: true, sfx: true, restart: true, fullscreen: true }, 'persistent HUD descriptor includes canvas stats and terminal controls');
 const background = view.getBackgroundMetrics();
-assert.equal(background.asset, '/assets/horizon/milky-way-overlay.webp', 'the reused Milky Way asset is local to this site');
-assert.ok(!/^https?:\/\//.test(background.asset), 'no remote background URL is introduced');
-assert.equal(imageLoads, 1, 'the local Milky Way asset is decoded once across relaunches');
+assert.equal(background.procedural, true, 'the cached background is fully procedural');
 assert.deepEqual({ width: background.cacheWidth, height: background.cacheHeight }, { width: 800, height: 500 }, 'background cache is bounded to one viewport-sized canvas');
-assert.deepEqual({ width: background.layerWidth, height: background.layerHeight }, { width: 800, height: 500 }, 'masked Milky Way layer is bounded to the viewport');
-assert.deepEqual(background.composite.edgeFade, { left: .22, right: .22, top: .20, bottom: .24 }, 'Milky Way cache uses a non-zero fade on all image edges');
-assert.equal(background.composite.blend, 'screen', 'Milky Way cache uses a controlled blend mode');
+assert.ok(background.buildCount >= 2, 'launch and relaunch build the cached procedural background');
 
-const expectedSceneLayers = ['clear', 'background', 'ground', 'baseStructures', 'turretPlatform', 'gameplayEntities', 'turret', 'effects', 'hud', 'stateOverlay'];
+const expectedSceneLayers = ['clear', 'background', 'ground', 'baseStructures', 'gameplayEntities', 'turret', 'effects', 'hud', 'stateOverlay'];
 function assertPersistentBattlefield(state, time) {
   view.getGame().state = state;
+  const drawCallsBefore = view.getTurretRenderMetrics().drawCalls;
   runFrame(time);
   assert.deepEqual(view.getLastRenderLayers(), expectedSceneLayers, `${state} uses the common battlefield render order`);
   const layers = view.getLastRenderLayers();
   assert.ok(layers.includes('ground'), `${state} renders ground`);
   assert.ok(layers.includes('turret'), `${state} renders turret`);
-  assert.ok(view.getTurretRenderMetrics().drawCalls > 0, `${state} calls drawTurret`);
+  assert.equal(view.getTurretRenderMetrics().drawCalls, drawCallsBefore + 1, `${state} calls drawTurret exactly once`);
   assert.ok(layers.indexOf('clear') < layers.indexOf('ground'), `${state} clears only before world rendering`);
 }
 assertPersistentBattlefield('TITLE', 80);
