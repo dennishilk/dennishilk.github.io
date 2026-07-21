@@ -27,3 +27,17 @@ for (let i = split.enemies.length - 1; i >= 0; i--) G.destroy(split, i);
 assert.ok(split.enemies.every(a => a.tier === 'small'), 'only one child generation is permitted');
 const base = G.createGame(800, 500); G.start(base); play(base, 3); base.base = 1; base.enemies = base.asteroids = [{ x: 400, y: base.groundY, size: 14, tier: 'small', vx: 0, vy: 0, angle: 0, spin: 0, shape: [] }]; G.update(base, {}, .01); assert.equal(base.state, 'GAMEOVER', 'base damage ends the game at zero integrity');
 console.log('Nebu Strike bounded ground-defense regression tests passed');
+
+// Ground is a persistent gameplay layer and the first incoming is never delayed after countdown.
+const visible = G.createGame(900, 600, 17);
+assert.equal(visible.ground.visible, true, 'ground is present on the title screen');
+G.start(visible);
+assert.equal(visible.ground.visible, true, 'ground survives countdown start');
+play(visible, 3);
+assert.equal(visible.state, 'PLAYING');
+assert.equal(visible.ground.visible, true, 'ground remains present during play');
+play(visible, .5);
+assert.ok(visible.pending > 0 || visible.enemies.length > 0, 'first wave has active or queued incoming asteroids promptly');
+assert.ok(visible.enemies.length > 0, 'first enemy enters the upper battlefield without a stall');
+visible.state = 'GAMEOVER'; G.update(visible, {}, .01);
+assert.equal(visible.ground.visible, true, 'ground remains present after game over');
