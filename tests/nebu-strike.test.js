@@ -51,3 +51,23 @@ for (let i = 0; i < 30; i++) { visual.enemies = visual.asteroids = [{ x: 200, y:
 assert.ok(visual.decals.length <= G.MAX_IMPACT_DECALS, 'impact decals are strictly bounded');
 assert.equal(G.MAX_ACTIVE_ENEMIES, 24, 'visual polish does not raise enemy cap');
 console.log('Nebu Strike visual-state regression tests passed');
+
+// The weapon is a common-world object: no state transition can retract it.
+const turretStates = G.createGame(800, 500, 88);
+assert.equal(turretStates.turret.deployment, 1, 'title turret starts fully deployed');
+G.update(turretStates, {}, .01);
+assert.equal(turretStates.turret.deployment, 1, 'title updates preserve turret deployment');
+G.start(turretStates);
+assert.equal(turretStates.turret.deployment, 1, 'countdown reset preserves turret deployment');
+G.update(turretStates, {}, .01);
+assert.equal(turretStates.turret.deployment, 1, 'countdown turret remains deployed');
+play(turretStates, 3);
+assert.equal(turretStates.state, 'PLAYING');
+assert.equal(turretStates.turret.deployment, 1, 'first playing frame keeps the turret deployed');
+turretStates.turret.deployment = 0; G.update(turretStates, {}, .05);
+assert.equal(turretStates.turret.deployment, 1, 'playing updates repair any collapsed deployment value');
+play(turretStates, 4);
+assert.equal(turretStates.turret.deployment, 1, 'later playing frames cannot collapse turret height');
+turretStates.state = 'GAMEOVER'; G.update(turretStates, {}, .01);
+assert.equal(turretStates.turret.deployment, 1, 'game-over keeps the turret deployed');
+console.log('Nebu Strike turret deployment regression tests passed');
