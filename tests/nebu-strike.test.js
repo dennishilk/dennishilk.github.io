@@ -41,3 +41,13 @@ assert.ok(visible.pending > 0 || visible.enemies.length > 0, 'first wave has act
 assert.ok(visible.enemies.length > 0, 'first enemy enters the upper battlefield without a stall');
 visible.state = 'GAMEOVER'; G.update(visible, {}, .01);
 assert.equal(visible.ground.visible, true, 'ground remains present after game over');
+
+// Visual state is created once per asteroid and impact decoration remains bounded.
+const visual = G.createGame(800, 500, 77); G.start(visual); play(visual, 3);
+visual.enemies = visual.asteroids = [G.asteroid(300, 150, 34, (() => { let n = 0; return () => (n++ % 7) / 7; })())];
+assert.ok(visual.enemies[0].visual.facets.length >= 6, 'large asteroids retain finite precomputed visual facets');
+assert.ok(visual.enemies[0].visual.craters.length >= 4, 'large asteroids retain precomputed crater detail');
+for (let i = 0; i < 30; i++) { visual.enemies = visual.asteroids = [{ x: 200, y: 150, size: 14, tier: 'small', generation: 1, hp: 1, vx: 0, vy: 0, angle: 0, spin: 0, shape: [], visual: { facets: [], craters: [], ridge: false } }]; G.destroy(visual, 0); }
+assert.ok(visual.decals.length <= G.MAX_IMPACT_DECALS, 'impact decals are strictly bounded');
+assert.equal(G.MAX_ACTIVE_ENEMIES, 24, 'visual polish does not raise enemy cap');
+console.log('Nebu Strike visual-state regression tests passed');
