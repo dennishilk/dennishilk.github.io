@@ -44,13 +44,14 @@
   const addNebuStrike = state => { state.system.fileSystem.root.children.usr.children.games.children.nebustrike = node('file', null, '#!/bin/sh\n# Computer Museum Interactive Repository browser game\n', 'rwxr-xr-x'); };
   const removeNebuStrike = state => { delete state.system.fileSystem.root.children.usr.children.games.children.nebustrike; };
   const help = () => [
-    'NAVIGATION: pwd, ls [-l] [PATH], cd [PATH]',
-    'FILES: cat, touch, mkdir, cp, mv, rm',
-    'PERMISSIONS: chmod, chown, id, sudo',
-    'SYSTEM: whoami, uname, date, ps, top, kill, systemctl, journalctl, config-set',
-    'TEXT: echo, grep, wc, head, tail; use | between supported text commands',
-    'HELP: help, man COMMAND, clear',
-    'PACKAGES: apt search, apt show, sudo apt update, sudo apt install nebustrike, which nebustrike, nebustrike, reset',
+    'COMMAND HELP — type only after visitor@nebunix:~$ (do not type the prompt).',
+    'apt update — refresh the virtual package catalog; it does not install the game.',
+    'apt search nebustrike — search the virtual catalog for NEBU STRIKE.',
+    'apt install nebustrike — install it in this browser-only virtual Linux environment.',
+    'which nebustrike — show where the installed command is found.',
+    'cd = change directory: cd /usr, then cd games; or use cd /usr/games.',
+    'A path beginning with / starts at the virtual filesystem root. ls = list directory contents.',
+    'nebustrike — start the installed game.',
     '', 'All commands are locally simulated in browser memory; no host shell, sudo, filesystem, package manager, or network is used.'
   ].join('\n');
   function academyResult(command, state) {
@@ -68,10 +69,10 @@
     if (!command) return done();
     if (command === 'help') output = help();
     else if (command === 'reset') { const reset = freshState(); removeNebuStrike(reset); return { handled: true, state: reset, output: 'Virtual environment reset. No real system state was changed.', action: 'reset' }; }
-    else if (command === 'sudo apt update') { next.updated = true; output = 'Hit:1 museum://nebunix stable InRelease\nGet:2 museum://nebunix stable/main Packages [4,096 B]\nFetched 4,096 B in 0s (local educational catalog)\nReading package lists... Done\n\nPackage information updated from the fixed local exhibit catalog. No Debian mirror was contacted.'; action = 'updated'; }
+    else if (/^(?:sudo )?apt update$/i.test(command)) { next.updated = true; output = 'Hit:1 museum://nebunix stable InRelease\nGet:2 museum://nebunix stable/main Packages [4,096 B]\nFetched 4,096 B in 0s (local educational catalog)\nReading package lists... Done\n\nPackage information updated from the fixed local exhibit catalog. No Debian mirror was contacted.'; action = 'updated'; }
     else if (/^apt search\s+nebustrike$/i.test(command)) { output = linesForPackages(['nebustrike']); action = 'searched'; }
     else if (/^apt search\s+games$/i.test(command)) { output = linesForPackages(gameSearchResults); action = 'searched'; }
-    else if (/^sudo apt install\s+nebustrike$/i.test(command)) { next.awaitingConfirmation = true; output = 'Reading package lists... Done\nBuilding dependency tree... Done\nSOURCE: Computer Museum Interactive Repository\nThe following NEW packages will be installed:\n  nebustrike\n0 upgraded, 1 newly installed, 0 to remove.\nNeed to get 0 B of archives.\n\nDo you want to continue? [Y/n]'; action = 'confirm'; }
+    else if (/^(?:sudo )?apt install\s+nebustrike$/i.test(command)) { next.awaitingConfirmation = true; output = 'Reading package lists... Done\nBuilding dependency tree... Done\nSOURCE: Computer Museum Interactive Repository\nThe following NEW packages will be installed:\n  nebustrike\n0 upgraded, 1 newly installed, 0 to remove.\nNeed to get 0 B of archives.\n\nDo you want to continue? [Y/n]'; action = 'confirm'; }
     else if (command === 'which nebustrike') output = next.installed ? '/usr/games/nebustrike' : '';
     else if (command === 'nebustrike' || command === '/usr/games/nebustrike') { if (!next.installed) output = 'nebustrike: command not found\n\nTry: apt search games'; else { next.launched = true; output = 'STARTING NEBU STRIKE...\nINITIALIZING DISPLAY :0...\nLOADING LOCAL GAME DATA...\n\nMISSION COMPLETE\nYOU INSTALLED AND LAUNCHED A REAL GAME FROM THE TERMINAL.'; action = 'launch'; } }
     else ({ output, action } = academyResult(command, next));

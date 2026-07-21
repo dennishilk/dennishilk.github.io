@@ -2,7 +2,7 @@
 const assert = require('assert');
 const terminal = require('../museum/linux-game-install/terminal.js');
 const { createController } = require('../museum/linux-game-install/lab-controller.js');
-const commands = ['sudo apt update', 'apt search games', 'sudo apt install nebustrike', 'y', 'which nebustrike', 'nebustrike'];
+const commands = ['apt update', 'apt search nebustrike', 'apt install nebustrike', 'y', 'which nebustrike', 'cd /usr', 'cd games', 'ls', 'nebustrike'];
 
 function run(source) {
   const events = []; let maxDepth = 0;
@@ -31,4 +31,5 @@ console.log('linux game installation public flow regression tests passed');
 
 const fs = require('fs'); const lab = fs.readFileSync(require.resolve('../museum/linux-game-install/lab.js'), 'utf8'); const page = fs.readFileSync(require.resolve('../museum/linux-game-install/lab.html'), 'utf8');
 assert.match(page, /lab-controller\.js/); assert.match(lab, /run\(command, 'helper'\)/); assert.match(lab, /controller\.submit\(command, source\)/);
-assert.match(lab, /gameView\.launch\(\)/); assert.match(lab, /gameView\.stop\(\)/);
+assert.match(page, /NEW TO THE TERMINAL\?/); assert.match(page, /Type commands <b>after<\/b> the <b>\$<\/b>/); assert.match(page, /data-command="help"/);
+assert.match(lab, /cd \/usr\/games/); assert.match(lab, /gameView\.launch\(\)/); assert.match(lab, /gameView\.stop\(\)/);
