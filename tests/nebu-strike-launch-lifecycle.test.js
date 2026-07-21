@@ -6,7 +6,7 @@ const { createGameView, Lifecycle } = require('../museum/linux-game-install/game
 function listeners() { const map = new Map(); return { addEventListener(type, fn) { map.set(type, [...(map.get(type) || []), fn]); }, removeEventListener(type, fn) { map.set(type, (map.get(type) || []).filter(item => item !== fn)); }, count(type) { return (map.get(type) || []).length; } }; }
 const canvasEvents = listeners(), restartEvents = listeners(), fullscreenEvents = listeners(), windowEvents = listeners();
 const gradient = { addColorStop() {} };
-const context = new Proxy({}, { get: (_, key) => key === 'createRadialGradient' ? () => gradient : () => {} });
+const context = new Proxy({}, { get: (_, key) => (key === 'createRadialGradient' || key === 'createLinearGradient') ? () => gradient : () => {} });
 const canvas = { ...canvasEvents, style: {}, width: 0, height: 0, getContext: () => context };
 const screen = { getBoundingClientRect: () => ({ width: 800, height: 500 }), requestFullscreen() {} };
 const restart = { ...restartEvents }, fullscreen = { ...fullscreenEvents };
@@ -32,6 +32,9 @@ assert.equal(background.asset, '/assets/horizon/milky-way-overlay.webp', 'the re
 assert.ok(!/^https?:\/\//.test(background.asset), 'no remote background URL is introduced');
 assert.equal(imageLoads, 1, 'the local Milky Way asset is decoded once across relaunches');
 assert.deepEqual({ width: background.cacheWidth, height: background.cacheHeight }, { width: 800, height: 500 }, 'background cache is bounded to one viewport-sized canvas');
+assert.deepEqual({ width: background.layerWidth, height: background.layerHeight }, { width: 800, height: 500 }, 'masked Milky Way layer is bounded to the viewport');
+assert.deepEqual(background.composite.edgeFade, { left: .22, right: .22, top: .20, bottom: .24 }, 'Milky Way cache uses a non-zero fade on all image edges');
+assert.equal(background.composite.blend, 'screen', 'Milky Way cache uses a controlled blend mode');
 
 const expectedSceneLayers = ['clear', 'background', 'ground', 'baseStructures', 'turretPlatform', 'gameplayEntities', 'turret', 'effects', 'hud', 'stateOverlay'];
 function assertPersistentBattlefield(state, time) {
