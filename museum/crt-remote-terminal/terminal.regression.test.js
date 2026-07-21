@@ -30,3 +30,35 @@ test('audio uses one compressed master chain with controlled, audible layers', (
   assert.match(js, /keySound\('break'\)/);
   assert.doesNotMatch(js, /gain\.value=[1-9]\d/);
 });
+
+test('CRT typing focus suppresses the browser frame without removing control focus visibility', () => {
+  assert.match(css, /\.terminal-buffer:focus-visible\{outline:none;box-shadow:inset 0 0 0 1px #78e9a0aa/);
+  assert.match(css, /button:focus-visible,select:focus-visible,input:focus-visible\{outline:2px solid #8cffad/);
+  assert.doesNotMatch(css, /\.terminal-buffer:focus-visible\{outline:3px solid #dce889/);
+});
+
+test('terminal history is authoritative while input remains separate', () => {
+  assert.match(js, /out\.textContent=lines\.join\('\\n'\)\+\(lines\.length\?'\\n':''\)\+current/);
+  assert.match(js, /function appendText\(text\)\{for\(const character of text\)/);
+  assert.match(js, /if\(character==='\\n'\)lines\.push\(''\);else if\(lines\.length\)lines\[lines\.length-1\]\+=character/);
+  assert.match(js, /function stream\(text,done\).*?done\?\.\(\).*?appendText\(text\[i\+\+\]\)/);
+  assert.doesNotMatch(js, /else \{current\+=c;render\(\)\}/);
+  assert.match(js, /function prompt\(\)\{current='GUEST> ';render\(\)\}/);
+  assert.match(js, /function trim\(\)\{if\(lines\.length>MAX_SCROLLBACK_LINES\)lines\.splice\(0,lines\.length-MAX_SCROLLBACK_LINES\)\}/);
+});
+
+test('startup is staged, paced, and invalidated when a power cycle changes generation', () => {
+  assert.match(js, /STARTUP_TIMING=\{wake:320,selfTest:900,video:1300,keyboard:1650,line:2000,connect:2600,host:3700,status:4150,login:4750\}/);
+  assert.match(js, /STARTUP_TIMING\.wake\*pacing.*STARTUP_TIMING\.selfTest\*pacing.*STARTUP_TIMING\.connect\*pacing.*STARTUP_TIMING\.login\*pacing/);
+  assert.match(js, /const session=\+\+generation,pacing=reduced\?0:1/);
+  assert.match(js, /function later\(fn,ms,session=generation\).*?if\(session===generation\)fn\(\)/);
+  assert.match(js, /function powerOff\(\)\{powered=false;starting=false;generation\+\+;clearTimers\(\)/);
+  assert.match(js, /screen\.classList\.remove\('off'\).*?add\('TERMINAL SELF TEST'\).*?add\('CONNECTING TO REMOTE HOST\.\.\.'\).*?add\('NEBUNIX REMOTE HOST'\).*?current='login: '/);
+});
+
+test('HELP and later commands stream into retained scrollback rather than the prompt input', () => {
+  assert.match(js, /help:'COMMANDS: HELP DATE WHO USERS LS CAT WELCOME\.TXT CAT HISTORY\.TXT/);
+  assert.match(js, /stream\('\\n'\+response\+'\\n\\n',\(\)=>loggedIn\?prompt\(\)/);
+  assert.match(js, /function submit\(\).*?add\(current\);current='';.*?hostReply\(typed\)/);
+  assert.match(js, /appendText\(text\[i\+\+\]\);flash\('rx'\);later\(step,reduced\?0:delay,session\)/);
+});
