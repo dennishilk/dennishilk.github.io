@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>WordPress Administration — Still Searching | Dennis Hilk</title>
+  <style>
+    :root { color-scheme: dark; --bg: #050505; --panel: rgba(20, 20, 25, .9); --border: #2f2f2f; --text: #e6edf3; --muted: #b9c4ce; --cyan: #00b4ff; }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; overflow-x: hidden; background: radial-gradient(circle at 82% 8%, #092331 0, var(--bg) 44rem), var(--bg); color: var(--text); font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    main { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; padding: clamp(2rem, 6vw, 5rem) 0; }
+    .terminal { overflow: hidden; border: 1px solid rgba(0, 180, 255, .42); border-radius: .8rem; background: var(--panel); box-shadow: 0 0 34px rgba(0, 180, 255, .11); }
+    header { padding: 1.25rem 1.4rem; border-bottom: 1px solid var(--border); }
+    h1, h2 { margin: 0; color: var(--cyan); letter-spacing: .07em; text-transform: uppercase; }
+    h1 { font-size: clamp(1.2rem, 3vw, 1.75rem); } h2 { font-size: .88rem; }
+    .status { margin: .55rem 0 0; color: #d8f5ff; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; }
+    .status::before { display: inline-block; width: .52rem; height: .52rem; margin-right: .55rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); content: ""; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .92fr); }
+    .diagnostic { padding: clamp(1.4rem, 4vw, 2.4rem); text-align: left; }
+    .diagnostic h2 { margin-bottom: 1.1rem; } .diagnostic dl { margin: 0; } .diagnostic div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; padding: .42rem 0; border-bottom: 1px dashed rgba(185, 196, 206, .22); font-size: clamp(.76rem, 2vw, .92rem); } .diagnostic dt, .diagnostic dd { margin: 0; } .diagnostic dd { color: var(--cyan); font-weight: 700; } .scanner { margin: 1.2rem 0 0; color: var(--muted); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+    figure { display: flex; flex-direction: column; margin: 0; border-left: 1px solid var(--border); background: #0a0c0e; } figure img { display: block; width: 100%; min-height: 0; height: 100%; object-fit: cover; } figcaption { padding: .75rem 1rem; color: var(--muted); font-size: .72rem; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+    .conclusion { max-width: 58rem; margin: clamp(2rem, 5vw, 3.5rem) auto 0; text-align: center; } .conclusion h2 { font-size: clamp(1.2rem, 3vw, 1.75rem); line-height: 1.35; } .conclusion p { color: var(--muted); line-height: 1.7; } .translation { margin: 1.5rem auto; padding: 1rem; border-left: 2px solid var(--cyan); background: rgba(0, 180, 255, .08); color: #d8f5ff; font-size: .9rem; text-align: left; } .translation strong { color: var(--cyan); }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; margin-top: 1.5rem; } nav a { border: 1px solid rgba(0, 180, 255, .42); border-radius: .55rem; padding: .75rem 1rem; color: #d8f5ff; font-size: .82rem; font-weight: 700; letter-spacing: .04em; text-decoration: none; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; } nav a:first-child { background: rgba(0, 180, 255, .16); color: #fff; } nav a:hover { border-color: var(--cyan); background: rgba(0, 180, 255, .2); transform: translateY(-2px); } a:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } figure { border-top: 1px solid var(--border); border-left: 0; } figure img { height: auto; max-height: 75vh; object-fit: contain; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <article class="terminal" aria-labelledby="page-title">
+      <header><h1 id="page-title">WordPress administration</h1><p class="status">Still searching…</p></header>
+      <div class="grid">
+        <section class="diagnostic" aria-labelledby="diagnostic-title">
+          <h2 id="diagnostic-title">Diagnostic output</h2>
+          <dl>
+            <div><dt>WordPress</dt><dd>NOT FOUND</dd></div><div><dt>wp-admin</dt><dd>NOT FOUND</dd></div><div><dt>Database</dt><dd>NOT FOUND</dd></div><div><dt>Plugins</dt><dd>0</dd></div><div><dt>Themes</dt><dd>0</dd></div><div><dt>Static HTML</dt><dd>FOUND</dd></div><div><dt>nginx</dt><dd>FOUND</dd></div>
+          </dl>
+          <p class="scanner">Automated scanner status: confused</p>
+        </section>
+        <figure><img src="assets/wordpress-kant-hochkant.jpg" alt="Dennis Hilk looking suspiciously toward two hallway portraits, the setting for the Kant and Hochkant joke."><figcaption>Deeper analysis: Kant / Hochkant</figcaption></figure>
+      </div>
+    </article>
+    <section class="conclusion" aria-labelledby="conclusion-title">
+      <h2 id="conclusion-title">Conclusion: this website does not use WordPress.</h2>
+      <p>Emanuel Kant cannot find WordPress.<br>Emanuel Hochkant also cannot find WordPress.</p>
+      <p class="translation"><strong>“Hochkant”</strong> means portrait / vertical orientation in German.<br>Yes. This joke has been hanging in the hallway for years.</p>
+      <p>The joke works only in German.<br>The WordPress installation works in neither language.</p>
+      <nav aria-label="Leave this page"><a href="/">Back to dennishilk.com</a><a href="/museum/">Visit the computer museum</a></nav>
+    </section>
+  </main>
+</body>
+</html>
