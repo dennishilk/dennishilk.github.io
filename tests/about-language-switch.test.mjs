@@ -21,7 +21,11 @@ assert.equal(contentTags.filter(({ tagName }) => ['html', 'body', 'main', 'nav',
 assert.ok(html.includes('.language-content[hidden] { display:none }'), 'only explicit language nodes may be hidden');
 assert.doesNotMatch(html, /(?:^|[\s}])\[lang(?:=|\])/m, 'CSS must not hide arbitrary lang elements');
 assert.doesNotMatch(html, /body\.is-de|visibility\s*:\s*hidden|opacity\s*:\s*0/, 'no page-level language visibility gate is allowed');
-assert.equal((html.match(/<details class="side-quest">/g) ?? []).length, 7, 'all seven Side Quests must remain');
+assert.doesNotMatch(html, /<details\b|<summary\b|side-quest/, 'Side Quest UI must be fully removed');
+assert.equal((html.match(/class="anecdote"/g) ?? []).length, 2, 'integrated inset anecdotes must remain visible');
+for (const anecdote of ['rubbish bag alight', '166847991', 'whole DSL era', 'sewing-kit needles', 'RTL-SDR stick', 'hyperfocus had already moved on', 'sudo shutdown now']) {
+  assert.ok(html.includes(anecdote), `integrated anecdote must retain: ${anecdote}`);
+}
 
 function runPage(storedValue, storageThrows = false) {
   const nodes = contentTags.map(({ attributes }) => ({
