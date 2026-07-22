@@ -1,91 +1,61 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>404 – Seite nicht gefunden | Dennis Hilk</title>
-
-  <meta name="description" content="Die angeforderte Seite konnte nicht gefunden werden. Zurück zur Startseite von Dennis Hilk – Linux Developer und Open-Source Creator.">
-  <meta name="robots" content="noindex, follow">
-
-  <!-- OG -->
-  <meta property="og:title" content="404 – Seite nicht gefunden">
-  <meta property="og:description" content="Die angeforderte Seite existiert nicht. Zurück zur Startseite.">
-  <meta property="og:image" content="https://dennishilk.com/avatar.png">
-  <meta property="og:url" content="https://dennishilk.com/404.html">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="404 – Seite nicht gefunden">
-  <meta name="twitter:description" content="Diese Seite existiert nicht. Zurück zur Startseite.">
-  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
-
-  <!-- Styles & Scripts -->
-  <link rel="stylesheet" href="style.css?v=1">
-  <script defer src="stars.js"></script>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>404 — Page Not Found | Dennis Hilk</title>
   <style>
-    .error-box {
-      max-width: 700px;
-      margin: 4rem auto;
-      text-align: center;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .error-box img {
-      width: 140px;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 0 10px rgba(0,180,255,0.4));
-    }
-    .error-title {
-      font-size: 2.2rem;
-      color: #00b4ff;
-      text-shadow: 0 0 12px rgba(0,180,255,0.5);
-      margin-bottom: 1rem;
-    }
-    .error-text {
-      font-size: 1.1rem;
-      color: #b9c4ce;
-      margin-bottom: 2rem;
-    }
-    .back-button {
-      display: inline-block;
-      padding: 0.8rem 1.5rem;
-      border-radius: 10px;
-      background: rgba(0,180,255,0.12);
-      color: #00b4ff;
-      font-size: 1rem;
-      border: 1px solid rgba(0,180,255,0.4);
-      transition: 0.25s ease;
-      text-decoration: none;
-    }
-    .back-button:hover {
-      background: rgba(0,180,255,0.22);
-      transform: translateY(-2px);
-      box-shadow: 0 0 12px rgba(0,180,255,0.4);
-    }
+    :root { color-scheme: dark; --bg: #050505; --panel: rgba(20, 20, 25, .86); --border: #2f2f2f; --text: #e6edf3; --muted: #b9c4ce; --cyan: #00b4ff; }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; overflow-x: hidden; background: radial-gradient(circle at 78% 20%, #092331 0, var(--bg) 42rem), var(--bg); color: var(--text); font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    main { width: min(1120px, calc(100% - 2rem)); min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .9fr); align-items: center; gap: clamp(2rem, 7vw, 6rem); margin: 0 auto; padding: 3rem 0; }
+    .eyebrow, .status, .photo-caption { color: var(--cyan); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .eyebrow { margin: 0 0 1.1rem; }
+    h1 { margin: 0; font-size: clamp(4.8rem, 14vw, 9rem); line-height: .82; letter-spacing: -.08em; color: var(--cyan); text-shadow: 0 0 24px rgba(0, 180, 255, .34); }
+    h2 { margin: .9rem 0 1.75rem; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: .04em; text-transform: uppercase; }
+    .copy { max-width: 34rem; color: var(--muted); font-size: 1.02rem; line-height: 1.75; }
+    .copy p { margin: 0; }
+    .status { display: flex; align-items: center; gap: .55rem; margin: 1.75rem 0 1.4rem; }
+    .status::before { width: .52rem; height: .52rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); content: ""; }
+    .cursor { display: inline-block; width: .58em; height: 1.05em; margin-left: .2em; vertical-align: -.16em; background: var(--cyan); animation: blink 1s steps(1) infinite; }
+    .actions { display: flex; flex-wrap: wrap; gap: .7rem; }
+    .actions a { border: 1px solid rgba(0, 180, 255, .42); border-radius: .55rem; padding: .75rem 1rem; color: #d8f5ff; font-size: .82rem; font-weight: 700; letter-spacing: .04em; text-decoration: none; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+    .actions a:first-child { background: rgba(0, 180, 255, .16); color: #fff; }
+    .actions a:hover { border-color: var(--cyan); background: rgba(0, 180, 255, .2); transform: translateY(-2px); }
+    a:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+    figure { position: relative; margin: 0; padding: .8rem; border: 1px solid rgba(0, 180, 255, .4); border-radius: .8rem; background: var(--panel); box-shadow: 0 0 32px rgba(0, 180, 255, .12); }
+    figure::before { position: absolute; top: -.6rem; left: 1.1rem; padding: 0 .45rem; background: var(--bg); color: var(--cyan); content: "404 / FIELD NOTE"; font-size: .7rem; letter-spacing: .1em; }
+    figure img { display: block; width: 100%; max-height: 68vh; object-fit: cover; border-radius: .35rem; }
+    figcaption { display: flex; justify-content: space-between; gap: 1rem; padding: .85rem .2rem .1rem; color: var(--muted); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+    .photo-caption { font-size: inherit; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (max-width: 760px) { main { grid-template-columns: 1fr; gap: 2.5rem; padding: 2.5rem 0; } h1 { font-size: clamp(4.6rem, 25vw, 7rem); } figure { width: min(100%, 34rem); margin: 0 auto; } figure img { max-height: none; aspect-ratio: 4 / 5; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
-
 <body>
-  <canvas id="stars"></canvas>
-
-  <div class="content">
-    <div class="error-box">
-
-      <!-- Nebby Mascot -->
-      <img src="nebby.png" alt="Nebby – Space Penguin Mascot">
-
-      <h1 class="error-title"><span class="prompt">404:</span> Seite nicht gefunden</h1>
-
-      <p class="error-text">
-        Die angeforderte Seite existiert leider nicht.<br>
-        Vielleicht wurde sie verschoben oder nie erstellt.<br><br>
-        <span class="prompt">user@nebunix:~$</span> <span class="cursor">|</span>
-      </p>
-
-      <a href="/" class="back-button">← Zurück zur Startseite</a>
-    </div>
-  </div>
+  <main>
+    <section aria-labelledby="page-title">
+      <p class="eyebrow">System response / 404</p>
+      <h1>404</h1>
+      <h2 id="page-title">Page not found</h2>
+      <div class="copy">
+        <p>Hmm.</p>
+        <p>I could have sworn there was a page here.</p>
+        <p>Maybe it moved.<br>Maybe it never existed.<br>Maybe I should stop touching things.</p>
+      </div>
+      <p class="status">Current status: still thinking<span class="cursor" aria-hidden="true"></span></p>
+      <nav class="actions" aria-label="Helpful destinations">
+        <a href="/">Back to home</a>
+        <a href="/museum/">Computer museum</a>
+        <a href="/world-observer.html">World observer</a>
+      </nav>
+    </section>
+    <figure>
+      <img src="assets/404-kermit-dennis.jpg" alt="Dennis Hilk in a Kermit shirt, pausing thoughtfully during error analysis.">
+      <figcaption><span class="photo-caption">Error analysis in progress</span><span>Still thinking</span></figcaption>
+    </figure>
+  </main>
 </body>
 </html>
