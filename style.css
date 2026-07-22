@@ -2885,6 +2885,29 @@ button.technology-observer-card {
   padding: 0 1rem 2rem;
 }
 
+.museum-easter-egg {
+  font-size: 0.68rem;
+  margin: 0.85rem 0;
+  opacity: 0.58;
+}
+
+.museum-easter-egg a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.museum-easter-egg a:hover,
+.museum-easter-egg a:focus-visible {
+  color: var(--accent);
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.museum-easter-egg a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .museum-hero {
   position: relative;
 }
