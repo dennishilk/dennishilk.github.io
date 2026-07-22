@@ -8,7 +8,7 @@
   <meta name="description" content="Interactive educational computer museum exhibits and planned browser simulations.">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
-  <link rel="stylesheet" href="/style.css?v=43">
+  <link rel="stylesheet" href="/style.css?v=46">
   <script defer src="/stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
   <meta property="og:title" content="Computer Museum – Dennis Hilk">
@@ -46,30 +46,39 @@
       <p>These exhibits are independently created educational simulations. No proprietary ROM images, operating-system files or original software are distributed.</p>
       <p>They are inspired by historically significant or fictional computer interfaces and are not exact archival emulations unless explicitly stated.</p>
     </section>
-    <section class="museum-featured" aria-labelledby="featured-experience-title">
-      <p class="museum-section-label">Featured experience</p>
-      <article class="museum-card museum-card-linux-academy museum-featured-card">
+    <section class="museum-featured" aria-labelledby="featured-project-title">
+      <p class="museum-section-label">Featured project</p>
+      <article class="museum-card museum-card-wopr museum-featured-card">
         <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
         <div class="museum-featured-content">
           <div>
-            <h2 id="featured-experience-title">Linux Terminal Academy</h2>
-            <dl class="museum-meta"><div><dt>Era</dt><dd>1991 – Present</dd></div><div><dt>Type</dt><dd>Interactive Linux Learning Environment</dd></div></dl>
+            <h2 id="featured-project-title">WOPR</h2>
+            <dl class="museum-meta"><div><dt>Era</dt><dd>1983-inspired fictional system</dd></div><div><dt>Type</dt><dd>Interactive terminal simulation</dd></div></dl>
           </div>
-          <div class="museum-featured-details" aria-label="Academy details"><span>8 INTERACTIVE LABS</span><span>OPTIONAL CERTIFICATE</span></div>
+          <div class="museum-featured-details" aria-label="WOPR details"><span>STRATEGIC COMMAND TERMINAL</span><span>INTERACTIVE SYSTEM SIMULATION</span></div>
         </div>
-        <a class="card-button" href="/museum/linux-terminal-academy/">ENTER ACADEMY <span aria-hidden="true">→</span></a>
+        <a class="card-button" href="/museum/wopr/">ENTER SYSTEM <span aria-hidden="true">→</span></a>
+      </article>
+    </section>
+
+    <section class="museum-behind" aria-labelledby="behind-museum-title">
+      <p class="museum-section-label">Behind the Museum</p>
+      <article class="museum-card museum-card-author-lab">
+        <div class="museum-card-top"><span class="museum-status planned">PLANNED EXHIBIT</span><span class="museum-real-systems">REAL SYSTEMS</span></div>
+        <div class="museum-behind-content">
+          <div>
+            <h2 id="behind-museum-title">The Author's Computing Lab</h2>
+            <p>The real computers and infrastructure behind this website and museum — connecting a Windows 98 workstation, modern Linux, a private homelab and the remote systems serving the project.</p>
+          </div>
+          <p class="museum-behind-path">WINDOWS 98 <span aria-hidden="true">→</span> LINUX <span aria-hidden="true">→</span> HOMELAB <span aria-hidden="true">→</span> WORLDNODE</p>
+        </div>
+        <a class="card-button" href="/museum/home-computing-lab/">EXPLORE THE REAL SETUP <span aria-hidden="true">→</span></a>
       </article>
     </section>
 
     <section class="museum-collection" aria-labelledby="interactive-computing-title">
       <h2 id="interactive-computing-title">Interactive Computing</h2>
       <div class="museum-grid">
-        <article class="museum-card museum-card-wopr">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>WOPR</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1983-inspired fictional system</dd></div><div><dt>Type</dt><dd>Interactive terminal simulation</dd></div></dl>
-          <a class="card-button" href="/museum/wopr/">ENTER SYSTEM</a>
-        </article>
         <article class="museum-card museum-card-c64">
           <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
           <h3>8-Bit BASIC Terminal</h3>
@@ -151,18 +160,7 @@
       </div>
     </section>
 
-    <section class="museum-collection" aria-labelledby="planned-exhibits-title">
-      <h2 id="planned-exhibits-title">Planned Exhibits</h2>
-      <div class="museum-grid">
-        <article class="museum-card museum-card-home-computing-lab">
-          <div class="museum-card-top"><span class="museum-status planned">PLANNED</span></div>
-          <h3>Home Computing Lab</h3>
-          <p>A real computing environment connecting Windows 98, modern Linux, a private homelab and internet infrastructure across more than 25 years of computer history.</p>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1998–Present</dd></div><div><dt>Type</dt><dd>Personal Computing / Homelab</dd></div></dl>
-          <a class="card-button" href="/museum/home-computing-lab/">VIEW PLANNED EXHIBIT <span aria-hidden="true">→</span></a>
-        </article>
-      </div>
-    </section>
+
   </main>
   <footer>
     <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div>
