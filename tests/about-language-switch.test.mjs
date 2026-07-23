@@ -34,7 +34,12 @@ for (const narrative of [
   ['lime-sand-brickworks', 'Kalksandsteinwerk'],
   ['RTL-SDR stick', 'RTL-SDR-Stick'],
   ['hyperfocus had already moved on', 'Hyperfokus längst weitergezogen'],
-  ['sudo shutdown now', 'sudo shutdown now']
+  ['sudo shutdown now', 'sudo shutdown now'],
+  ['connected by SSH in a terminal to the production website server', 'per SSH im Terminal des Produktiv-Webservers'],
+  ['server in Braunschweig', 'Server in Braunschweig'],
+  ['Windows XP in a virtual machine, 2013', 'Windows XP in einer virtuellen Maschine, 2013'],
+  ['Children’s shooting king with two queens, 1997', 'Kinderschützenkönig mit zwei Königinnen, 1997'],
+  ['shooting target still hangs above the workbench today', 'Schützenscheibe von 1997 hängt heute noch über der Werkbank']
 ]) {
   assert.ok(html.includes(narrative[0]), `English narrative must retain: ${narrative[0]}`);
   assert.ok(html.includes(narrative[1]), `German narrative must retain: ${narrative[1]}`);
