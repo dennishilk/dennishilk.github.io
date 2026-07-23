@@ -23,9 +23,29 @@ assert.doesNotMatch(html, /(?:^|[\s}])\[lang(?:=|\])/m, 'CSS must not hide arbit
 assert.doesNotMatch(html, /body\.is-de|visibility\s*:\s*hidden|opacity\s*:\s*0/, 'no page-level language visibility gate is allowed');
 assert.doesNotMatch(html, /<details\b|<summary\b|side-quest/, 'Side Quest UI must be fully removed');
 assert.equal((html.match(/class="anecdote"/g) ?? []).length, 2, 'integrated inset anecdotes must remain visible');
-for (const anecdote of ['rubbish bag alight', '166847991', 'whole DSL era', 'sewing-kit needles', 'RTL-SDR stick', 'hyperfocus had already moved on', 'sudo shutdown now']) {
-  assert.ok(html.includes(anecdote), `integrated anecdote must retain: ${anecdote}`);
+for (const narrative of [
+  ['Borkum returns immediately', 'Borkum sofort wieder da'],
+  ['children’s shooting king', 'Kinderschützenkönig'],
+  ['Monkey Island', 'Monkey Island'],
+  ['thrown away does not mean erased', 'Weggeworfen heißt nicht gelöscht'],
+  ['166847991', '166847991'],
+  ['Nothing lasts longer than a working temporary solution', 'Nichts hält länger als ein funktionierendes Provisorium'],
+  ['Try and error eventually got its own infrastructure', 'Try and error bekam irgendwann eine eigene Infrastruktur'],
+  ['lime-sand-brickworks', 'Kalksandsteinwerk'],
+  ['RTL-SDR stick', 'RTL-SDR-Stick'],
+  ['hyperfocus had already moved on', 'Hyperfokus längst weitergezogen'],
+  ['sudo shutdown now', 'sudo shutdown now']
+]) {
+  assert.ok(html.includes(narrative[0]), `English narrative must retain: ${narrative[0]}`);
+  assert.ok(html.includes(narrative[1]), `German narrative must retain: ${narrative[1]}`);
 }
+
+const imageSources = [...html.matchAll(/<img\b[^>]*\bsrc="(\/assets\/me\/[^"]+)"/g)].map(([, source]) => source.replace(/%20/g, ' '));
+assert.ok(imageSources.includes('/assets/me/kinderschuetzenkoenig-1997.jpg'), 'shooting-king archive image must be used');
+assert.ok(imageSources.includes('/assets/me/lost-place-lime-sand-brickworks.jpg'), 'lost-place lead image must be used');
+assert.ok(imageSources.includes('/assets/me/linux-virtualbox-xp.jpg'), 'Linux archival image must be used');
+assert.ok(!imageSources.includes('/assets/me/lost-place-newspaper-feature.jpg'), 'newspaper artifact should remain a non-primary supporting image');
+assert.equal(new Set(imageSources).size, imageSources.length, 'images should not be repeated as a gallery');
 
 function runPage(storedValue, storageThrows = false) {
   const nodes = contentTags.map(({ attributes }) => ({
