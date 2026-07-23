@@ -46,11 +46,29 @@ for (const narrative of [
   ['server in Braunschweig', 'Server in Braunschweig'],
   ['Windows XP in a virtual machine, 2013', 'Windows XP in einer virtuellen Maschine, 2013'],
   ['Children’s shooting king with two queens, 1997', 'Kinderschützenkönig mit zwei Königinnen, 1997'],
-  ['shooting target still hangs above the workbench today', 'Schützenscheibe von 1997 hängt heute noch über der Werkbank']
+  ['shooting target still hangs above the workbench today', 'Schützenscheibe von 1997 hängt heute noch über der Werkbank'],
+  ['After that, the path led into youth services', 'Danach führte der Weg in die Jugendhilfe'],
+  ['That’s two', 'Das sind aber zwei'],
+  ['I can’t decide and I don’t want one of them to be sad', 'ich kann mich nicht entscheiden und möchte nicht, dass eine traurig ist']
 ]) {
   assert.ok(html.includes(narrative[0]), `English narrative must retain: ${narrative[0]}`);
   assert.ok(html.includes(narrative[1]), `German narrative must retain: ${narrative[1]}`);
 }
+
+const securityIndex = html.indexOf('Security was its own way of looking');
+const civilEngineeringIndex = html.indexOf('From security to civil engineering');
+const youthServicesIndex = html.indexOf('After that, the path led into youth services');
+assert.ok(securityIndex >= 0 && civilEngineeringIndex > securityIndex && youthServicesIndex > civilEngineeringIndex,
+  'career chronology must be security -> Tiefbau -> youth services');
+const germanSecurityIndex = html.indexOf('Sicherheitsarbeit war eine eigene Art zu schauen');
+const germanCivilEngineeringIndex = html.indexOf('Von der Sicherheitsarbeit in den Tiefbau');
+const germanYouthServicesIndex = html.indexOf('Danach führte der Weg in die Jugendhilfe');
+assert.ok(germanSecurityIndex >= 0 && germanCivilEngineeringIndex > germanSecurityIndex && germanYouthServicesIndex > germanCivilEngineeringIndex,
+  'German career chronology must be security -> Tiefbau -> Jugendhilfe');
+assert.doesNotMatch(html, /friends from playing there|kannte ich vom Spielen dort/,
+  'two-queens story must not claim Dennis knew the sisters from playing at Eurostrand');
+assert.match(html, /…working there\./, 'forensic psychiatry anecdote must explicitly clarify that Dennis worked there');
+assert.match(html, /…zum Arbeiten\./, 'forensic psychiatry anecdote must explicitly clarify that Dennis worked there in German');
 
 const imageSources = [...html.matchAll(/<img\b[^>]*\bsrc="(\/assets\/me\/[^"]+)"/g)].map(([, source]) => source.replace(/%20/g, ' '));
 assert.ok(imageSources.includes('/assets/me/kinderschuetzenkoenig-1997.jpg'), 'shooting-king archive image must be used');
