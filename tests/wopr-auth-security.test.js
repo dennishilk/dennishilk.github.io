@@ -10,6 +10,7 @@ const securityTestDir = path.join(os.tmpdir(), `wopr-security-test-${process.pid
 process.env.WOPR_SESSION_SECRET = 'x'.repeat(40);
 process.env.WOPR_SECURITY_STATE_FILE = path.join(securityTestDir, 'security-state.json');
 process.env.WOPR_SECURITY_REVIEWS_FILE = path.join(securityTestDir, 'operator-reviews.json');
+process.env.WOPR_SECURITY_CASES_FILE = path.join(securityTestDir, 'case-ledger.json');
 const { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route } = require('../server/wopr-auth/server.js');
 
 test('self-check allows only dennishilk.com allowlisted paths', () => {
@@ -59,8 +60,9 @@ test('operator review persists independently across analyzer state changes and c
   assert.equal(before.findings[0].operator_review.note, 'nginx rule verified');
   assert.equal(after.activeFindings, 1);
   assert.equal(after.findings[0].operator_review.recurrence, true);
-  const historical = presentSecurityState({ findings: [{ id: 'hist-2026-07-18-git-exposure', status: 'remediated' }] }, { reviews: {} });
-  assert.equal(historical.findings[0].operator_review.status, 'UNREVIEWED');
+  const historical = presentSecurityState({ findings: [{ id: 'hist-2026-07-18-git-exposure', status: 'inactive', currently_detected: false }] }, { reviews: {} });
+  assert.equal(historical.findings[0].operator_review.status, 'OPEN');
+  assert.equal(historical.activeFindings, 0);
 });
 
 
@@ -72,7 +74,8 @@ function sessionCookie() {
 
 test('authenticated review API stores acknowledged, resolved, expected, and reopened notes separately', async () => {
   await fs.mkdir(securityTestDir, { recursive: true });
-  await fs.writeFile(process.env.WOPR_SECURITY_STATE_FILE, JSON.stringify({ findings: [{ id: 'finding-secret_hunting-high', status: 'active', last_seen: '2026-07-24T06:00:00.000Z' }] }));
+  await fs.writeFile(process.env.WOPR_SECURITY_STATE_FILE, JSON.stringify({ findings: [{ id: 'finding-secret_hunting-high', status: 'active', first_seen: '2026-07-24T06:00:00.000Z', last_seen: '2026-07-24T06:00:00.000Z' }] }));
+  await fs.writeFile(process.env.WOPR_SECURITY_CASES_FILE, JSON.stringify({ version: 1, cases: { 'finding-secret_hunting-high': { id: 'finding-secret_hunting-high', type: 'secret_hunting', category: 'secret_hunting', severity: 'HIGH', title: 'Sensitive secret hunting returned HTTP 200', first_seen: '2026-07-24T06:00:00.000Z', last_seen: '2026-07-24T06:00:00.000Z', currently_detected: true, automated_status: 'ACTIVE' } } }));
   const server = http.createServer(route);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const url = `http://127.0.0.1:${server.address().port}/wopr/api/security/reviews/finding-secret_hunting-high`;

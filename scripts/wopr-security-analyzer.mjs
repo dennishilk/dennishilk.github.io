@@ -6,6 +6,7 @@ import { parseLogLine } from './site-traffic-observer.mjs';
 
 const require = createRequire(import.meta.url);
 const { runSelfCheck } = require('../server/wopr-auth/server.js');
+const { readCaseLedger, writeCaseLedger, reconcileCaseLedger } = require('../server/wopr-auth/security-case-ledger.cjs');
 
 export const INTENT_CATEGORIES = Object.freeze(['git_exposure','secret_hunting','wordpress_probing','path_traversal','admin_discovery','credential_file_probing','backup_file_probing','exploit_probe','unknown']);
 const SENSITIVE_STATUS = new Set([200]);
@@ -53,10 +54,6 @@ export function severityForSensitivePath(pathname) {
   return 'INFORMATIONAL';
 }
 
-function historicalFinding() {
-  return { id:'hist-2026-07-18-git-exposure', type:'git_exposure', severity:'CRITICAL', title:'Git metadata exposure blocked', first_seen:'2026-07-18T03:00:00.000Z', last_seen:'2026-07-18T03:59:59.000Z', status:'remediated', request_count:5718, http_statuses:[200], summary:'Historical incident: 5718 scanner requests occurred during the hour, including 5683 classified as Git exposure probing. Sensitive Git paths returned HTTP 200 before dotfile blocking was added in nginx.', remediation_status:'Dotfile access blocked in nginx; current self-checks return secure statuses.' };
-}
-
 function selfCheckCategories(selfCheck) {
   const checked = new Set();
   const exposed = new Set();
@@ -87,7 +84,7 @@ function markRemediated(finding) {
 export function buildSecurityState(lines, { now = new Date(), selfCheck = null } = {}) {
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const intent = Object.fromEntries(INTENT_CATEGORIES.map(c => [c, 0]));
-  const findings = [historicalFinding()];
+  const findings = [];
   const findingsByType = new Map();
   let scannerRequests = 0, successfulSensitiveRequests = 0, decoyHits = 0;
   for (const line of lines) {
@@ -123,10 +120,14 @@ export async function generateSecurityState(lines, { now = new Date(), selfCheck
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const out = process.env.WOPR_SECURITY_STATE_FILE || '/var/lib/wopr/security/security-state.json';
+  const cases = process.env.WOPR_SECURITY_CASES_FILE || '/var/lib/wopr/security/case-ledger.json';
   const logs = process.argv.slice(2);
   const lines = logs.flatMap(file => fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []);
   const state = await generateSecurityState(lines);
   if (containsRawIp(state)) throw new Error('privacy guard blocked raw IP persistence');
   fs.mkdirSync(path.dirname(out), { recursive:true, mode:0o750 });
-  fs.writeFileSync(out, `${JSON.stringify(state, null, 2)}\n`, { mode:0o640 });
+  const tmp = `${out}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, `${JSON.stringify(state, null, 2)}\n`, { mode:0o640 });
+  fs.renameSync(tmp, out);
+  writeCaseLedger(cases, reconcileCaseLedger(readCaseLedger(cases), state.findings));
 }
