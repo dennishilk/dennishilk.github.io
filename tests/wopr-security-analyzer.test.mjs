@@ -156,3 +156,10 @@ test('state generation path runs allowlisted self-check before building state', 
     globalThis.fetch = originalFetch;
   }
 });
+
+test('finding identity is stable across request counts, timestamps, and input order', () => {
+  const later = new Date('2026-07-18T06:00:00.000Z');
+  const one = buildSecurityState([line({ path: '/.env', status: 200 })], { now: later });
+  const many = buildSecurityState([line({ path: '/.env', status: 200 }), line({ path: '/.env', status: 200, at: '18/Jul/2026:05:30:00 +0000' })], { now: later });
+  assert.equal(one.findings.find(f => f.type === 'secret_hunting').id, many.findings.find(f => f.type === 'secret_hunting').id);
+});
