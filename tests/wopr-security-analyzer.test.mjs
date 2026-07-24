@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildSecurityState, classifySecurityIntent, containsRawIp, generateSecurityState, isKnownDecoyRoute, severityForSensitivePath } from '../scripts/wopr-security-analyzer.mjs';
+import ledger from '../server/wopr-auth/security-case-ledger.cjs';
 
 const line = ({ ip = '203.0.113.42', at = '18/Jul/2026:04:00:00 +0000', path = '/', status = 404, ua = 'zgrab/0.x' }) =>
   `${ip} - - [${at}] "GET ${path} HTTP/1.1" ${status} 123 "-" "${ua}"`;
@@ -66,11 +67,22 @@ test('generated security state does not leak raw IPs', () => {
   assert.equal(JSON.stringify(state).includes('198.51.100.7'), false);
 });
 
-test('historical Git exposure incident is represented as remediated without invented IPs', () => {
-  const historical = buildSecurityState([], { now }).findings.find(f => f.id === 'hist-2026-07-18-git-exposure');
-  assert.equal(historical.status, 'remediated');
-  assert.equal(historical.request_count, 5718);
-  assert.match(historical.summary, /5683 classified as Git exposure probing/);
+test('historical Git exposure is retained by the case ledger, not injected into raw analyzer output', () => {
+  assert.equal(buildSecurityState([], { now }).findings.some(f => f.id === 'hist-2026-07-18-git-exposure'), false);
+  const cases = ledger.reconcileCaseLedger({ version: 1, cases: {} }, []);
+  assert.equal(cases.cases['hist-2026-07-18-git-exposure'].automated_status, 'REMEDIATED');
+});
+
+test('case ledger retains inactive cases and reuses their stable identity on recurrence', () => {
+  const active = buildSecurityState([line({ path: '/.env', status: 200 })], { now });
+  const first = ledger.reconcileCaseLedger({ version: 1, cases: {} }, active.findings);
+  const id = active.findings[0].id;
+  const inactive = ledger.reconcileCaseLedger(first, []);
+  assert.equal(inactive.cases[id].currently_detected, false);
+  assert.equal(inactive.cases[id].first_seen, active.findings[0].first_seen);
+  const again = ledger.reconcileCaseLedger(inactive, active.findings);
+  assert.equal(Object.keys(again.cases).filter(key => key === id).length, 1);
+  assert.equal(again.cases[id].currently_detected, true);
 });
 
 const secureGitSelfCheck = {

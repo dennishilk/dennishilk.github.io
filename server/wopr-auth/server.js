@@ -5,6 +5,7 @@ const crypto = require("node:crypto");
 const fs = require("node:fs/promises");
 const http = require("node:http");
 const path = require("node:path");
+const { readCaseLedger, caseFindings } = require("./security-case-ledger.cjs");
 
 const CONFIG = {
   host: process.env.WOPR_AUTH_HOST || "127.0.0.1",
@@ -20,6 +21,7 @@ const CONFIG = {
   transmissionsDir: process.env.WOPR_TRANSMISSIONS_DIR || "/var/lib/wopr/transmissions",
   securityStateFile: process.env.WOPR_SECURITY_STATE_FILE || "/var/lib/wopr/security/security-state.json",
   securityReviewsFile: process.env.WOPR_SECURITY_REVIEWS_FILE || "/var/lib/wopr/security/operator-reviews.json",
+  securityCasesFile: process.env.WOPR_SECURITY_CASES_FILE || "/var/lib/wopr/security/case-ledger.json",
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
@@ -392,23 +394,30 @@ async function writeOperatorReviews(data) {
 
 function operatorReviewFor(finding, saved) {
   const review = saved && typeof saved === "object" ? { ...saved } : null;
-  if (!review) return finding.status === "active" ? { status: "OPEN", reviewed_at: null, note: "", recurrence: false } : { status: "UNREVIEWED", reviewed_at: null, note: "", recurrence: false };
+  if (!review) return { status: "OPEN", reviewed_at: null, note: "", recurrence: false };
   const recurrence = (review.status === "RESOLVED" || review.status === "EXPECTED") && review.resolved_at && finding.status === "active" && finding.last_seen && new Date(finding.last_seen) > new Date(review.resolved_at);
   return { status: review.status, note: review.note || "", reviewed_at: review.reviewed_at || null, resolved_at: review.resolved_at || null, history: Array.isArray(review.history) ? review.history : [], recurrence };
 }
 
 function presentSecurityState(state, reviewData) {
-  const findings = (Array.isArray(state.findings) ? state.findings : []).map((finding) => ({ ...finding, operator_review: operatorReviewFor(finding, reviewData.reviews[finding.id]) }));
+  const findings = (Array.isArray(state.findings) ? state.findings : []).map((finding) => {
+    const operator_review = operatorReviewFor(finding, reviewData.reviews[finding.id]);
+    return { ...finding, automated_status: operator_review.recurrence ? "REOCCURRED" : finding.automated_status, operator_review };
+  });
   const activeFindings = findings.filter((finding) => {
     const review = finding.operator_review;
-    return finding.status === "active" && (!review || review.status === "OPEN" || review.status === "ACKNOWLEDGED" || review.recurrence);
+    return finding.currently_detected !== false && finding.status === "active" && (!review || review.status === "OPEN" || review.status === "ACKNOWLEDGED" || review.recurrence);
   }).length;
   return { findings, activeFindings };
 }
 
 async function securityPresentation() {
   const [state, reviews] = await Promise.all([readSecurityState(), readOperatorReviews()]);
-  return { state, reviews, ...presentSecurityState(state, reviews) };
+  // Analyzer state is raw/current only. Reconciliation projects it into the durable,
+  // sanitized case ledger without ever inserting old cases back into analyzer output.
+  const ledger = readCaseLedger(CONFIG.securityCasesFile);
+  const caseState = { ...state, findings: caseFindings(ledger) };
+  return { state, reviews, ...presentSecurityState(caseState, reviews) };
 }
 
 async function handleSecuritySummary(req, res) {
@@ -438,7 +447,8 @@ async function updateSecurityReview(req, res, findingId) {
   const value = validateOperatorReview(await readJson(req));
   if (!value) return sendJson(res, 400, { ok: false });
   const state = await readSecurityState();
-  if (!(state.findings || []).some(finding => finding.id === findingId)) return sendJson(res, 404, { ok: false });
+  const ledger = readCaseLedger(CONFIG.securityCasesFile);
+  if (!ledger.cases[findingId]) return sendJson(res, 404, { ok: false });
   const data = await readOperatorReviews();
   const previous = data.reviews[findingId];
   const reviewedAt = new Date().toISOString();
