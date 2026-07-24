@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSecurityState, classifySecurityIntent, containsRawIp, generateSecurityState, severityForSensitivePath } from '../scripts/wopr-security-analyzer.mjs';
+import { buildSecurityState, classifySecurityIntent, containsRawIp, generateSecurityState, isKnownDecoyRoute, severityForSensitivePath } from '../scripts/wopr-security-analyzer.mjs';
 
 const line = ({ ip = '203.0.113.42', at = '18/Jul/2026:04:00:00 +0000', path = '/', status = 404, ua = 'zgrab/0.x' }) =>
   `${ip} - - [${at}] "GET ${path} HTTP/1.1" ${status} 123 "-" "${ua}"`;
@@ -24,6 +24,40 @@ test('detects successful sensitive requests and severity', () => {
   assert.equal(state.findings[0].severity, 'CRITICAL');
   assert.equal(severityForSensitivePath('/.env'), 'HIGH');
   assert.equal(severityForSensitivePath('/debug/'), 'MEDIUM');
+});
+
+test('records only exact intentional WordPress Easter eggs as known decoys', () => {
+  const state = buildSecurityState([
+    line({ path: '/wp-login.php', status: 200 }),
+    line({ path: '/wp-login.php?something=1', status: 200 }),
+    line({ path: '/wp-admin/', status: 200 }),
+  ], { now });
+  assert.equal(state.scanner_requests, 3);
+  assert.equal(state.scanner_intent.wordpress_probing, 3);
+  assert.equal(state.decoy_hits, 3);
+  assert.equal(state.successful_sensitive_requests, 0);
+  assert.equal(state.active_findings, 0);
+  assert.equal(state.system_status, 'SECURE');
+  assert.equal(state.findings.some(finding => finding.type === 'wordpress_probing' && finding.status === 'active'), false);
+  assert.equal(isKnownDecoyRoute('/wp-login.php?something=1'), true);
+  assert.equal(isKnownDecoyRoute('/wp-admin//'), true);
+});
+
+test('does not whitelist real WordPress or other sensitive paths', () => {
+  const state = buildSecurityState([
+    line({ path: '/wp-admin/install.php', status: 200 }),
+    line({ path: '/wp-config.php', status: 200 }),
+    line({ path: '/.env', status: 200 }),
+  ], { now });
+  assert.equal(state.decoy_hits, 0);
+  assert.equal(state.successful_sensitive_requests, 3);
+  assert.equal(state.scanner_intent.wordpress_probing, 2);
+  assert.equal(state.scanner_intent.secret_hunting, 1);
+  assert.equal(state.active_findings, 2);
+  assert.equal(state.findings.some(finding => finding.type === 'wordpress_probing' && finding.status === 'active' && finding.request_count === 2), true);
+  assert.equal(isKnownDecoyRoute('/wp-admin/install.php'), false);
+  assert.equal(isKnownDecoyRoute('/wp-config.php'), false);
+  assert.equal(isKnownDecoyRoute('/.env'), false);
 });
 
 test('generated security state does not leak raw IPs', () => {

@@ -16,6 +16,16 @@ function decodePath(value) {
   return out.toLowerCase();
 }
 
+// These are the only WordPress-looking endpoints intentionally served by the
+// static site. Keep this exact: nested wp-admin paths and all other WordPress
+// probes must remain eligible for sensitive-response findings.
+export function isKnownDecoyRoute(pathname) {
+  let normalized = String(pathname || '/').replace(/[?#].*$/, '').replace(/\\/g, '/');
+  for (let i = 0; i < 3; i++) { try { const decoded = decodeURIComponent(normalized); if (decoded === normalized) break; normalized = decoded; } catch { break; } }
+  normalized = normalized.replace(/\/{2,}/g, '/');
+  return normalized === '/wp-login.php' || normalized === '/wp-admin/';
+}
+
 export function classifySecurityIntent(req) {
   const p = decodePath(req?.path);
   const f = p.split('/').pop() || '';
@@ -23,7 +33,7 @@ export function classifySecurityIntent(req) {
   if (/(\.\.)(\/|$)/.test(p) || /(^|\/)(etc\/passwd|proc\/self|boot\.ini|win\.ini)/.test(p) || /windows\/system32/.test(p)) return 'path_traversal';
   if (/(^|\/)\.env([._-]|$|\/)/.test(p) || /(^|\/)\.aws(\/|$)/.test(p) || /(secret|token|api[-_]?key|access[-_]?key)/.test(f)) return 'secret_hunting';
   if (/(credential|credentials|passwd|shadow|htpasswd|id_rsa|id_dsa|id_ecdsa|id_ed25519|private[-_]?key|authorized_keys)/.test(f) || /(^|\/)\.ssh(\/|$)/.test(p)) return 'credential_file_probing';
-  if (/(^|\/)(wp-admin|wp-login\.php|xmlrpc\.php|wp-content|wp-includes)(\/|$)/.test(p)) return 'wordpress_probing';
+  if (/(^|\/)(wp-admin|wp-login\.php|wp-config\.php(?:[._-][^/]+)?|xmlrpc\.php|wp-content|wp-includes)(\/|$)/.test(p)) return 'wordpress_probing';
   if (/^\/(admin|administrator|login|panel|phpmyadmin|manager|console|debug|dashboard)(\/|$)/.test(p)) return 'admin_discovery';
   if (/(~|\.(bak|backup|old|orig|save|swp|sql|dump|tar|tgz|gz|zip|7z))$/.test(f) || /(config|database|db|backup).*(\.|_)(json|ya?ml|ini|sql|dump|bak)$/.test(f)) return 'backup_file_probing';
   if (/(cmd=|exec=|command=|shell_exec|system\(|vendor\/phpunit|eval-stdin|webshell|c99|r57|(shell|upload|cmd)\.php|cgi-bin|boaform|setup\.cgi)/.test(p)) return 'exploit_probe';
@@ -80,11 +90,15 @@ export function buildSecurityState(lines, { now = new Date(), selfCheck = null }
   const intent = Object.fromEntries(INTENT_CATEGORIES.map(c => [c, 0]));
   const findings = [historicalFinding()];
   const findingsByType = new Map();
-  let scannerRequests = 0, successfulSensitiveRequests = 0;
+  let scannerRequests = 0, successfulSensitiveRequests = 0, decoyHits = 0;
   for (const line of lines) {
     const req = parseLogLine(line); if (!req?.time || req.time < since || req.time > now) continue;
     const category = classifySecurityIntent(req); if (category !== 'unknown') scannerRequests++;
     intent[category]++;
+    if (SENSITIVE_STATUS.has(req.status) && isKnownDecoyRoute(req.path)) {
+      decoyHits++;
+      continue;
+    }
     if (SENSITIVE_STATUS.has(req.status) && isSensitivePath(req.path)) {
       successfulSensitiveRequests++;
       const severity = severityForSensitivePath(req.path);
@@ -98,7 +112,7 @@ export function buildSecurityState(lines, { now = new Date(), selfCheck = null }
   }
   findings.unshift(...Array.from(findingsByType.values(), finding => currentExposureVerified(selfCheck, finding) ? finding : markRemediated(finding)));
   const activeFindings = findings.filter(f => f.status === 'active').length;
-  return { generated_at: now.toISOString(), window_hours:24, scanner_requests: scannerRequests, successful_sensitive_requests: successfulSensitiveRequests, active_findings: activeFindings, system_status: activeFindings ? (findings.some(f => f.status === 'active' && f.severity === 'CRITICAL') ? 'CRITICAL' : 'ATTENTION') : 'SECURE', scanner_intent:intent, findings, self_check:selfCheck };
+  return { generated_at: now.toISOString(), window_hours:24, scanner_requests: scannerRequests, successful_sensitive_requests: successfulSensitiveRequests, decoy_hits: decoyHits, active_findings: activeFindings, system_status: activeFindings ? (findings.some(f => f.status === 'active' && f.severity === 'CRITICAL') ? 'CRITICAL' : 'ATTENTION') : 'SECURE', scanner_intent:intent, findings, self_check:selfCheck };
 }
 
 export function containsRawIp(value) { return /\b(?:\d{1,3}\.){3}\d{1,3}\b/.test(JSON.stringify(value)); }
