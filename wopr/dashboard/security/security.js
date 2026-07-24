@@ -1,6 +1,7 @@
 const statusEl = document.getElementById("security-status");
 const scannerEl = document.getElementById("scanner-requests");
 const sensitiveEl = document.getElementById("sensitive-successes");
+const decoyEl = document.getElementById("decoy-hits");
 const activeEl = document.getElementById("active-findings");
 const selfCheckAtEl = document.getElementById("self-check-at");
 const intentEl = document.getElementById("scanner-intent-list");
@@ -38,6 +39,7 @@ function renderSummary(summary) {
   statusEl.className = `status-pill ${(summary.system_status || "SECURE").toLowerCase()}`;
   setText(scannerEl, summary.scanner_requests || 0);
   setText(sensitiveEl, summary.successful_sensitive_requests || 0);
+  setText(decoyEl, summary.decoy_hits || 0);
   setText(activeEl, summary.active_findings || 0);
   setText(selfCheckAtEl, summary.last_self_check ? formatTime(summary.last_self_check) : "ON DEMAND");
   intentEl.innerHTML = "";

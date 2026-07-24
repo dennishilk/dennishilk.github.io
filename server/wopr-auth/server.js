@@ -366,14 +366,14 @@ async function readSecurityState() {
     return data && typeof data === "object" ? data : {};
   } catch (error) {
     if (error.code !== "ENOENT") console.error(`WOPR security state unavailable: ${error.message}`);
-    return { generated_at: null, window_hours: 24, scanner_requests: 0, successful_sensitive_requests: 0, active_findings: 0, system_status: "SECURE", scanner_intent: {}, findings: [] };
+    return { generated_at: null, window_hours: 24, scanner_requests: 0, successful_sensitive_requests: 0, decoy_hits: 0, active_findings: 0, system_status: "SECURE", scanner_intent: {}, findings: [] };
   }
 }
 
 async function handleSecuritySummary(req, res) {
   if (!requireSession(req)) return sendJson(res, 401, { ok: false });
   const state = await readSecurityState();
-  return sendJson(res, 200, { ok: true, summary: { generated_at: state.generated_at, window_hours: state.window_hours || 24, scanner_requests: state.scanner_requests || 0, successful_sensitive_requests: state.successful_sensitive_requests || 0, active_findings: state.active_findings || 0, system_status: state.system_status || "SECURE", scanner_intent: state.scanner_intent || {}, last_self_check: state.self_check?.generated_at || null } });
+  return sendJson(res, 200, { ok: true, summary: { generated_at: state.generated_at, window_hours: state.window_hours || 24, scanner_requests: state.scanner_requests || 0, successful_sensitive_requests: state.successful_sensitive_requests || 0, decoy_hits: state.decoy_hits || 0, active_findings: state.active_findings || 0, system_status: state.system_status || "SECURE", scanner_intent: state.scanner_intent || {}, last_self_check: state.self_check?.generated_at || null } });
 }
 
 async function handleSecurityFindings(req, res) {
