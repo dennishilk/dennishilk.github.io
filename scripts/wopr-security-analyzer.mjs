@@ -78,7 +78,6 @@ function currentExposureVerified(selfCheck, finding) {
 function markRemediated(finding) {
   return {
     ...finding,
-    id: finding.id.replace(/^active-/, 'remediated-'),
     status: 'remediated',
     title: finding.title.replace(' returned HTTP 200', ' returned HTTP 200 historically'),
     remediation_status: 'Current defensive self-check no longer reproduces HTTP 200 exposure for this sensitive path category.',
@@ -102,7 +101,7 @@ export function buildSecurityState(lines, { now = new Date(), selfCheck = null }
     if (SENSITIVE_STATUS.has(req.status) && isSensitivePath(req.path)) {
       successfulSensitiveRequests++;
       const severity = severityForSensitivePath(req.path);
-      const id = `active-${category}-${severity.toLowerCase()}`;
+      const id = `finding-${category}-${severity.toLowerCase()}`;
       const existing = findingsByType.get(id) || { id, type:category, severity, title:`Sensitive ${category.replaceAll('_',' ')} returned HTTP 200`, first_seen:req.time.toISOString(), last_seen:req.time.toISOString(), status:'active', request_count:0, http_statuses:[], summary:'One or more requests to a sensitive path returned HTTP 200. Review nginx rules and deployed files without exposing file contents.', remediation_status:'Needs operator review.' };
       existing.request_count += 1;
       existing.last_seen = req.time.toISOString();

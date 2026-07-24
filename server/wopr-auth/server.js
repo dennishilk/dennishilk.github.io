@@ -19,9 +19,12 @@ const CONFIG = {
   allowedOrigin: process.env.WOPR_ALLOWED_ORIGIN || "https://dennishilk.com",
   transmissionsDir: process.env.WOPR_TRANSMISSIONS_DIR || "/var/lib/wopr/transmissions",
   securityStateFile: process.env.WOPR_SECURITY_STATE_FILE || "/var/lib/wopr/security/security-state.json",
+  securityReviewsFile: process.env.WOPR_SECURITY_REVIEWS_FILE || "/var/lib/wopr/security/operator-reviews.json",
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
+const MAX_OPERATOR_NOTE_LENGTH = 1000;
+const OPERATOR_STATUSES = new Set(["OPEN", "ACKNOWLEDGED", "RESOLVED", "EXPECTED"]);
 const TRANSMISSION_FILE = "transmissions.jsonl";
 const MAX_CALLSIGN_LENGTH = 40;
 const MAX_ORIGIN_LENGTH = 80;
@@ -370,16 +373,79 @@ async function readSecurityState() {
   }
 }
 
+async function readOperatorReviews() {
+  try {
+    const data = JSON.parse(await fs.readFile(CONFIG.securityReviewsFile, "utf8"));
+    return data && typeof data === "object" && data.reviews && typeof data.reviews === "object" ? data : { version: 1, reviews: {} };
+  } catch (error) {
+    if (error.code !== "ENOENT") console.error(`WOPR operator reviews unavailable: ${error.message}`);
+    return { version: 1, reviews: {} };
+  }
+}
+
+async function writeOperatorReviews(data) {
+  await fs.mkdir(path.dirname(CONFIG.securityReviewsFile), { recursive: true, mode: 0o750 });
+  const tmpPath = `${CONFIG.securityReviewsFile}.${process.pid}.tmp`;
+  await fs.writeFile(tmpPath, `${JSON.stringify(data, null, 2)}\n`, { mode: 0o640 });
+  await fs.rename(tmpPath, CONFIG.securityReviewsFile);
+}
+
+function operatorReviewFor(finding, saved) {
+  const review = saved && typeof saved === "object" ? { ...saved } : null;
+  if (!review) return finding.status === "active" ? { status: "OPEN", reviewed_at: null, note: "", recurrence: false } : { status: "UNREVIEWED", reviewed_at: null, note: "", recurrence: false };
+  const recurrence = (review.status === "RESOLVED" || review.status === "EXPECTED") && review.resolved_at && finding.status === "active" && finding.last_seen && new Date(finding.last_seen) > new Date(review.resolved_at);
+  return { status: review.status, note: review.note || "", reviewed_at: review.reviewed_at || null, resolved_at: review.resolved_at || null, history: Array.isArray(review.history) ? review.history : [], recurrence };
+}
+
+function presentSecurityState(state, reviewData) {
+  const findings = (Array.isArray(state.findings) ? state.findings : []).map((finding) => ({ ...finding, operator_review: operatorReviewFor(finding, reviewData.reviews[finding.id]) }));
+  const activeFindings = findings.filter((finding) => {
+    const review = finding.operator_review;
+    return finding.status === "active" && (!review || review.status === "OPEN" || review.status === "ACKNOWLEDGED" || review.recurrence);
+  }).length;
+  return { findings, activeFindings };
+}
+
+async function securityPresentation() {
+  const [state, reviews] = await Promise.all([readSecurityState(), readOperatorReviews()]);
+  return { state, reviews, ...presentSecurityState(state, reviews) };
+}
+
 async function handleSecuritySummary(req, res) {
   if (!requireSession(req)) return sendJson(res, 401, { ok: false });
-  const state = await readSecurityState();
-  return sendJson(res, 200, { ok: true, summary: { generated_at: state.generated_at, window_hours: state.window_hours || 24, scanner_requests: state.scanner_requests || 0, successful_sensitive_requests: state.successful_sensitive_requests || 0, decoy_hits: state.decoy_hits || 0, active_findings: state.active_findings || 0, system_status: state.system_status || "SECURE", scanner_intent: state.scanner_intent || {}, last_self_check: state.self_check?.generated_at || null } });
+  const { state, findings, activeFindings } = await securityPresentation();
+  const systemStatus = activeFindings ? findings.some(f => f.status === "active" && f.severity === "CRITICAL" && (!f.operator_review || f.operator_review.status === "OPEN" || f.operator_review.status === "ACKNOWLEDGED" || f.operator_review.recurrence)) ? "CRITICAL" : "ATTENTION" : "SECURE";
+  return sendJson(res, 200, { ok: true, summary: { generated_at: state.generated_at, window_hours: state.window_hours || 24, scanner_requests: state.scanner_requests || 0, successful_sensitive_requests: state.successful_sensitive_requests || 0, decoy_hits: state.decoy_hits || 0, active_findings: activeFindings, system_status: systemStatus, scanner_intent: state.scanner_intent || {}, last_self_check: state.self_check?.generated_at || null } });
 }
 
 async function handleSecurityFindings(req, res) {
   if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  const { findings } = await securityPresentation();
+  return sendJson(res, 200, { ok: true, findings });
+}
+
+function validateOperatorReview(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body) || Object.keys(body).some(key => key !== "status" && key !== "note")) return null;
+  if (!OPERATOR_STATUSES.has(body.status) || (body.note !== undefined && (typeof body.note !== "string" || body.note.length > MAX_OPERATOR_NOTE_LENGTH))) return null;
+  return { status: body.status, note: body.note || "" };
+}
+
+async function updateSecurityReview(req, res, findingId) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
+  if (!requireJsonContent(req)) return sendJson(res, 415, { ok: false });
+  if (!/^[-_a-z0-9]{3,160}$/i.test(findingId)) return sendJson(res, 400, { ok: false });
+  const value = validateOperatorReview(await readJson(req));
+  if (!value) return sendJson(res, 400, { ok: false });
   const state = await readSecurityState();
-  return sendJson(res, 200, { ok: true, findings: Array.isArray(state.findings) ? state.findings : [] });
+  if (!(state.findings || []).some(finding => finding.id === findingId)) return sendJson(res, 404, { ok: false });
+  const data = await readOperatorReviews();
+  const previous = data.reviews[findingId];
+  const reviewedAt = new Date().toISOString();
+  const record = { status: value.status, note: value.note, reviewed_at: reviewedAt, resolved_at: value.status === "RESOLVED" || value.status === "EXPECTED" ? reviewedAt : null, history: [...(Array.isArray(previous?.history) ? previous.history : []), { status: value.status, note: value.note, at: reviewedAt }] };
+  data.reviews[findingId] = record;
+  await writeOperatorReviews(data);
+  return sendJson(res, 200, { ok: true, review: record });
 }
 
 async function handleSecuritySelfCheck(req, res) {
@@ -405,6 +471,8 @@ async function route(req, res) {
     if (req.method === "GET" && url.pathname === "/wopr/api/security/summary") return await handleSecuritySummary(req, res);
     if (req.method === "GET" && url.pathname === "/wopr/api/security/findings") return await handleSecurityFindings(req, res);
     if (req.method === "GET" && url.pathname === "/wopr/api/security/self-check") return await handleSecuritySelfCheck(req, res);
+    const reviewMatch = url.pathname.match(/^\/wopr\/api\/security\/reviews\/([^/]+)$/);
+    if ((req.method === "PUT" || req.method === "POST") && reviewMatch) return await updateSecurityReview(req, res, reviewMatch[1]);
     const approveMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/approve$/);
     if (req.method === "POST" && approveMatch) return await updateTransmissionStatus(req, res, approveMatch[1], "APPROVED");
     const rejectMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/reject$/);
@@ -427,4 +495,4 @@ ensureTransmissionStore().catch((error) => {
 });
 }
 
-module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, runSelfCheck };
+module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview };

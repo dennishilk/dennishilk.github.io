@@ -204,3 +204,9 @@ The timer runs at boot after two minutes and then every 10 minutes with `Persist
 ```
 
 The service hardening intentionally keeps `/var/log/nginx` read-only and `/var/lib/wopr/security` writable by combining `ProtectSystem=strict`, `ReadOnlyPaths=/var/log/nginx`, and `ReadWritePaths=/var/lib/wopr/security`. Keep nginx dotfile blocking in place; the security state intentionally stores aggregate counts and findings only. It must not contain raw IP addresses, user agents, request bodies, cookies, tokens, credentials, secret contents, or private filesystem paths.
+
+### Operator review annotations
+
+Operator decisions are stored independently from analyzer output in `/var/lib/wopr/security/operator-reviews.json` (override with `WOPR_SECURITY_REVIEWS_FILE`). It is a private, mode-`0640` JSON document with a `reviews` map keyed by deterministic finding ID. Each entry contains the current status (`OPEN`, `ACKNOWLEDGED`, `RESOLVED`, or `EXPECTED`), plain-text note, review timestamps, and append-only status history. The analyzer never reads or rewrites this file.
+
+Generated findings use IDs based on their stable category and severity, such as `finding-secret_hunting-high`; historical incidents retain their fixed historical IDs. Counts and `last_seen` are deliberately excluded. The authenticated API decorates analyzer findings at read time. If a `RESOLVED` or `EXPECTED` finding is active and its `last_seen` is later than `resolved_at`, it is marked as recurrence and once again counts in **ACTIVE FINDINGS**. Active `OPEN`, `ACKNOWLEDGED`, and recurrent findings count; closed non-recurrent findings do not. Historical remediated findings without annotations remain visible and are not invented as open alerts.
