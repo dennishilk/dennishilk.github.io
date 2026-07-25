@@ -1155,9 +1155,9 @@ function getPackageCompactHint(observer, series, trendDelta) {
   return formattedDelta === "—" ? `${series.length} observations` : `Trend ${formattedDelta}`;
 }
 
-function renderTechnologyCard(container, { title, status, description, metrics = [], planned = false, unavailable = false, onClick = null, href = null }) {
+function renderTechnologyCard(container, { title, status, description, metrics = [], planned = false, unavailable = false, onClick = null, href = null, cardClass = "", activeStatus = false }) {
   const card = document.createElement(href ? "a" : onClick ? "button" : "article");
-  card.className = `card observer-category technology-observer-card${planned ? " planned" : " active"}${unavailable ? " signal-unavailable" : ""}`;
+  card.className = `card observer-category technology-observer-card${planned ? " planned" : " active"}${unavailable ? " signal-unavailable" : ""}${cardClass ? ` ${cardClass}` : ""}`;
   if (href) {
     card.href = href;
   }
@@ -1169,7 +1169,16 @@ function renderTechnologyCard(container, { title, status, description, metrics =
   const heading = document.createElement("h3");
   heading.textContent = title;
   const statusLine = document.createElement("p");
-  statusLine.innerHTML = `<strong>Status:</strong> ${status}`;
+  if (activeStatus) {
+    const statusLabel = document.createElement("strong");
+    const statusValue = document.createElement("span");
+    statusLabel.textContent = "Status:";
+    statusValue.className = "hometown-live-indicator";
+    statusValue.textContent = status;
+    statusLine.append(statusLabel, document.createElement("br"), statusValue);
+  } else {
+    statusLine.innerHTML = `<strong>Status:</strong> ${status}`;
+  }
   const descriptionLine = document.createElement("p");
   descriptionLine.textContent = description;
   card.append(heading, statusLine, descriptionLine);
@@ -1725,6 +1734,15 @@ function renderEnvironmentOverviewCards(environmentData) {
     ],
     unavailable: normalizeStatusValue(statusValue) !== "ok",
     href: "/world-observer/geomagnetic-storm-observer.html",
+  });
+
+  renderTechnologyCard(container, {
+    title: "Earthquake Observer",
+    status: "● ACTIVE",
+    description: "Global earthquake observations from the USGS for the past 24 hours.",
+    href: "/world-observer/earthquake-observer.html",
+    cardClass: "hometown-observer-card",
+    activeStatus: true,
   });
 
 }
@@ -2917,12 +2935,6 @@ async function initWorldObserver() {
       renderOptional("Earth & Space observers", () => renderEnvironmentObservers(environment));
       renderPlannedCards("environment-planned-cards", [
         "Cosmic Ray Observer",
-        {
-          title: "Earthquake Observer",
-          status: "PARTIAL",
-          description: "Frontend observation exhibit prepared for a future local earthquake dashboard export.",
-          href: "/world-observer/earthquake-observer.html",
-        },
         "Ionosphere Observer",
       ]);
       showDashboard();
