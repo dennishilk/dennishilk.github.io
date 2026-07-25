@@ -20,6 +20,7 @@ function fakeElement(id = '') {
     id, listeners, attributes, children: [], style: {}, className: '', textContent: '',
     classList: { values: new Set(), add(value) { this.values.add(value); }, remove(value) { this.values.delete(value); }, toggle(value, force) { if (force) this.values.add(value); else this.values.delete(value); } },
     addEventListener(name, callback) { listeners[name] = callback; },
+    click() { listeners.click?.({ preventDefault() {} }); },
     setAttribute(name, value) { attributes[name] = String(value); },
     replaceChildren(...children) { this.children = children; this.textContent = children.map((child) => child.textContent).join(' '); },
     getBoundingClientRect() { return { left: 100, top: 80, width: id === 'earthquake-tooltip' ? 220 : 14, height: id === 'earthquake-tooltip' ? 140 : 14 }; },
@@ -132,11 +133,12 @@ test('marker and tooltip form one interactive hover and focus region', async () 
   assert.match(tooltip.textContent, /82 km W of Sola, Vanuatu/);
   assert.match(tooltip.textContent, /Depth: 18 km/);
   assert.match(tooltip.textContent, /2026-07-25 14:54 UTC/);
-  assert.match(tooltip.textContent, /View on USGS/);
+  assert.match(tooltip.textContent, /Open on USGS/);
   const link = tooltip.children.at(-1);
   assert.equal(link.href, event.event_url);
   assert.equal(link.target, '_blank');
   assert.equal(link.rel, 'noopener noreferrer');
+  assert.equal(link.className, 'earthquake-tooltip-action');
   assert.equal(opened.length, 0);
   assert.ok(parseFloat(tooltip.style.left) <= 372, 'tooltip is clamped to map width');
   assert.ok(parseFloat(tooltip.style.top) <= 252, 'tooltip is clamped to map height');
@@ -145,7 +147,7 @@ test('marker and tooltip form one interactive hover and focus region', async () 
   await new Promise((resolve) => setTimeout(resolve, 100));
   assert.equal(tooltip.attributes['aria-hidden'], 'false', 'entering tooltip keeps it open');
   tooltip.listeners.pointerleave();
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 180));
   assert.equal(tooltip.attributes['aria-hidden'], 'true');
   marker.listeners.focus();
   assert.equal(tooltip.attributes['aria-hidden'], 'false');
@@ -154,9 +156,30 @@ test('marker and tooltip form one interactive hover and focus region', async () 
   await new Promise((resolve) => setTimeout(resolve, 100));
   assert.equal(tooltip.attributes['aria-hidden'], 'false', 'tabbing to the tooltip link keeps it open');
   tooltip.listeners.focusout();
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 180));
   assert.equal(tooltip.attributes['aria-hidden'], 'true');
   assert.match(marker.attributes['aria-label'], /82 km W of Sola, Vanuatu.*18 kilometres.*UTC/);
+});
+
+test('tooltip action delivers a normal left click before any delayed close', async () => {
+  const { context } = load();
+  const marker = fakeElement('marker'); const tooltip = fakeElement('earthquake-tooltip'); const map = fakeElement('map');
+  const event = completePayload().events[0];
+  context.makeMarkerInteractive(marker, event, tooltip, map);
+  marker.listeners.pointerenter({ clientX: 100, clientY: 100 });
+  const action = tooltip.children.at(-1);
+  let prevented = false;
+  marker.listeners.pointerleave();
+  action.listeners.pointerdown();
+  action.listeners.click({ preventDefault() { prevented = true; }, button: 0 });
+  assert.equal(prevented, false, 'left click must retain native link navigation');
+  assert.equal(action.href, event.event_url, 'the action keeps the exact event URL');
+  assert.equal(tooltip.attributes['aria-hidden'], 'false', 'the tooltip remains alive while the click is delivered');
+  await new Promise((resolve) => setTimeout(resolve, 180));
+  assert.equal(tooltip.attributes['aria-hidden'], 'false', 'action activation cancels the pending close');
+  let spacePrevented = false;
+  action.listeners.keydown({ key: ' ', preventDefault() { spacePrevented = true; } });
+  assert.equal(spacePrevented, true, 'Space activates the native link');
 });
 
 test('marker activation opens exact event-specific USGS URL safely', () => {
