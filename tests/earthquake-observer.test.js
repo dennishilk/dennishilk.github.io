@@ -17,7 +17,7 @@ function fakeElement(id = '') {
   const attributes = {};
   return {
     id, listeners, attributes, children: [], style: {}, className: '', textContent: '',
-    classList: { values: new Set(), add(value) { this.values.add(value); }, remove(value) { this.values.delete(value); } },
+    classList: { values: new Set(), add(value) { this.values.add(value); }, remove(value) { this.values.delete(value); }, toggle(value, force) { if (force) this.values.add(value); else this.values.delete(value); } },
     addEventListener(name, callback) { listeners[name] = callback; },
     setAttribute(name, value) { attributes[name] = String(value); },
     replaceChildren(...children) { this.children = children; this.textContent = children.map((child) => child.textContent).join(' '); },
@@ -28,7 +28,7 @@ function fakeElement(id = '') {
 function load() {
   const opened = [];
   const document = { createElement: () => fakeElement() };
-  const context = vm.createContext({ document, window: { open: (...args) => opened.push(args) }, console, Date, Number, Math, Array, String, Error, Set });
+  const context = vm.createContext({ document, window: { open: (...args) => opened.push(args), addEventListener() {} }, console, Date, Number, Math, Array, String, Error, Set });
   vm.runInContext(source, context);
   return { context, opened };
 }
@@ -152,6 +152,42 @@ test('marker activation opens exact event-specific USGS URL safely', () => {
   assert.deepEqual(opened[0], ['https://earthquake.usgs.gov/earthquakes/eventpage/test-event', '_blank', 'noopener,noreferrer']);
   marker.listeners.keydown({ key: 'Enter', preventDefault() {} });
   assert.deepEqual(opened[1], ['https://earthquake.usgs.gov/earthquakes/eventpage/test-event', '_blank', 'noopener,noreferrer']);
+});
+
+test('zoom, pan, and Reset View restore the exact initial navigation transform', () => {
+  const { context } = load();
+  const mapContainer = fakeElement('earthquake-map');
+  const mapCanvas = fakeElement('earthquake-map-canvas');
+  const svg = fakeElement('map-svg');
+  const resetButton = fakeElement('earthquake-reset-view');
+  mapCanvas.getBoundingClientRect = () => ({ left: 0, top: 0, width: 800, height: 500 });
+  svg.offsetWidth = 800; svg.offsetHeight = 500;
+  const frames = [];
+  context.requestAnimationFrame = (callback) => { frames.push(callback); return frames.length; };
+  const flushFrame = () => { const callback = frames.shift(); if (callback) callback(); };
+
+  const navigation = context.createMapNavigation(mapContainer, mapCanvas, svg, resetButton);
+  const initialState = { ...navigation.state };
+  const initialTransform = svg.style.transform;
+
+  mapContainer.listeners.wheel({ preventDefault() {}, deltaY: -500, clientX: 650, clientY: 150 });
+  flushFrame();
+  mapContainer.listeners.pointerdown({ pointerId: 1, button: 0, clientX: 400, clientY: 250 });
+  mapContainer.listeners.pointermove({ pointerId: 1, clientX: 300, clientY: 325 });
+  mapContainer.listeners.pointerup({ pointerId: 1 });
+  flushFrame();
+  assert.notEqual(svg.style.transform, initialTransform);
+
+  resetButton.listeners.click();
+  flushFrame();
+  assert.deepEqual({ ...navigation.state }, initialState);
+  assert.equal(svg.style.transform, initialTransform);
+  assert.equal(mapContainer.classList.values.has('is-navigated'), false);
+
+  resetButton.listeners.click();
+  flushFrame();
+  assert.deepEqual({ ...navigation.state }, initialState, 'repeated resets remain idempotent');
+  assert.equal(svg.style.transform, initialTransform);
 });
 
 test('all six statistic cards use local inline line icons and the complete legend', () => {
