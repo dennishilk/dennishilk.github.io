@@ -29,6 +29,16 @@ assert.match(css, /max-width:1180px/);
 assert.match(css, /@media\(max-width:760px\)/);
 assert.match(page, /UTC DISPLAY · DERIVED FROM DEVICE CLOCK/);
 assert.match(page, /NO NETWORK REQUEST/);
+[
+  'GPS TIME vs UTC',
+  'HOW YOUR COMPUTER REACHES A REFERENCE CLOCK',
+  'NTP vs PTP',
+  'WHY UTC EXISTS',
+  'WHY ATOMIC CLOCKS ARE NOT ENOUGH',
+  'WHERE SYNCHRONIZED TIME MATTERS'
+].forEach(heading => assert.match(page, new RegExp(heading)));
+['Linux servers', 'Windows', 'Smartphones', 'Cloud infrastructure', 'Financial markets', 'Power grids', 'Telecommunications', 'GPS navigation', 'Scientific laboratories', 'Emergency services'].forEach(use => assert.match(page, new RegExp(use)));
+assert.match(css, /\.guide-grid/);
 assert.equal((tech.match(/>Time Observer</g) || []).length, 1, 'Technology page must expose one Time Observer card');
 assert.match(tech, /Time &amp; Synchronization[\s\S]*time-observer\.html[\s\S]*AVAILABLE/);
 assert.match(fs.readFileSync('sitemap.xml', 'utf8'), /world-observer\/time-observer\.html/);
