@@ -1,6 +1,11 @@
 {
-  "observer": {
-    "generated_at": "2026-07-25T14:37:42Z"
-  },
-  "stations": []
+  "observer": { "generated_at": "2026-07-25T14:37:42Z" },
+  "stations": [
+    { "station_id": "KDEN", "station_name": "Denver International Airport", "latitude": 39.846, "longitude": -104.656, "operating_authority": "Partner meteorological station", "region": "central North America" },
+    { "station_id": "KTUL", "station_name": "Tulsa International Airport", "latitude": 36.199, "longitude": -95.888, "operating_authority": "Partner meteorological station", "region": "central North America" },
+    { "station_id": "45007", "station_name": "Southern Lake Michigan", "latitude": 42.674, "longitude": -87.026, "operating_authority": "NDBC", "region": "Great Lakes" },
+    { "station_id": "TPLM2", "station_name": "Thomas Point Light", "latitude": 38.899, "longitude": -76.436, "operating_authority": "NDBC", "region": "Chesapeake Bay" },
+    { "station_id": "44065", "station_name": "New York Harbor Entrance", "latitude": 40.369, "longitude": -73.703, "operating_authority": "NDBC", "region": "coastal" },
+    { "station_id": "46042", "station_name": "Monterey Bay", "latitude": 36.785, "longitude": -122.398, "operating_authority": "NDBC", "region": "offshore" }
+  ]
 }

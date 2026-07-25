@@ -13,11 +13,20 @@ function loadPureFunctions() {
     .replaceAll("export ", "")
     .split("let all =")[0];
   const module = { exports: {} };
-  Function("module", `${source}\nmodule.exports = { filterStations, generationTime, conditionColor };`)(module);
+  Function("module", `${source}\nmodule.exports = { field, stationCoordinates, normalizeStations, filterStations, generationTime, conditionColor };`)(module);
   return module.exports;
 }
 
-const { filterStations, generationTime, conditionColor } = loadPureFunctions();
+const { field, stationCoordinates, normalizeStations, filterStations, generationTime, conditionColor } = loadPureFunctions();
+
+function loadProjection() {
+  const source = fs.readFileSync("assets/maps/world/projection.js", "utf8").replaceAll("export ", "");
+  const module = { exports: {} };
+  Function("module", `${source}\nmodule.exports = { MAP_WIDTH, MAP_HEIGHT, projectCoordinates };`)(module);
+  return module.exports;
+}
+
+const projection = loadProjection();
 
 test("Ocean Buoy Observer production route and data source are wired", () => {
   assert.match(script, /dashboard\/latest\/ocean-buoy-observer\.json/);
@@ -48,6 +57,46 @@ test("observer generation time comes from observer.generated_at and is formatted
   assert.equal(generationTime(fixture), "2026-07-25 14:37 UTC");
   assert.equal(generationTime({ generated_at: "2020-01-01T00:00:00Z" }), "Not reported");
   assert.equal(generationTime({ observer: null }), "Not reported");
+});
+
+test("station coordinates preserve the production schema's order, sign, and validation", () => {
+  const western = { station_id: "west", latitude: 39.846, longitude: -104.656, coordinates: { latitude: -10, longitude: 120 } };
+  assert.deepEqual(stationCoordinates(western), { latitude: 39.846, longitude: -104.656 });
+  assert.equal(field(western, "longitude"), -104.656, "a western longitude must remain negative");
+  assert.deepEqual(normalizeStations({ stations: [western, { latitude: -104.656, longitude: 39.846 }, { latitude: "39", longitude: -104 }, { latitude: 39, longitude: Infinity }] }), [western]);
+  assert.deepEqual(stationCoordinates({ coordinates: { latitude: 42.674, longitude: -87.026 } }), { latitude: 42.674, longitude: -87.026 }, "documented nested compatibility fields remain supported");
+});
+
+test("Ocean Buoy and Earthquake observers share the canonical 1800 by 900 projection", () => {
+  assert.match(script, /map\.projectCoordinates\(latitude,longitude\)/);
+  assert.match(fs.readFileSync("world-observer/earthquake-observer.js", "utf8"), /map\.add(?:Pulse|Ring)?Marker\(\{[\s\S]{0,180}latitude:[\s\S]{0,180}longitude:/);
+  assert.match(fs.readFileSync("assets/maps/world/world-map.js", "utf8"), /projectCoordinates\(latitude, longitude\) \{ return projectCoordinates\(latitude, longitude\); \}/);
+  assert.match(fs.readFileSync("assets/maps/world/world-observer-basemap.svg", "utf8"), /viewBox="0 0 1800 900"/);
+  const denver = projection.projectCoordinates(39.846, -104.656);
+  const newYork = projection.projectCoordinates(40.369, -73.703);
+  assert.ok(denver.x > 300 && denver.x < 500 && denver.y > 200 && denver.y < 350, "Denver projects to western North America");
+  assert.ok(newYork.x > 500 && newYork.x < 600 && newYork.y > 200 && newYork.y < 350, "New York projects to eastern North America");
+  assert.ok(denver.x < newYork.x, "negative longitudes are ordered west to east");
+  assert.throws(() => projection.projectCoordinates(-104.656, 39.846), /Latitude/);
+});
+
+test("land and station markers share one SVG and one navigation transform", () => {
+  assert.match(script, /map\.layers\.markers\.append\(fragment\)/);
+  assert.match(script, /createNavigation\(map\.svgElement/);
+  assert.match(script, /svg\.style\.transform=`translate3d/);
+  assert.doesNotMatch(script, /layers\.markers\.style\.transform|landLayer\.style\.transform/);
+});
+
+test("representative fixture stations project into expected broad North American regions", () => {
+  const stations = normalizeStations(JSON.parse(fs.readFileSync("tests/fixtures/ocean-buoy-observer.json", "utf8")));
+  assert.equal(stations.length, 6);
+  const byId = Object.fromEntries(stations.map(station => [station.station_id, { ...station, ...projection.projectCoordinates(station.latitude, station.longitude) }]));
+  assert.ok(byId.KDEN.x < byId.KTUL.x && byId.KTUL.x < byId["45007"].x && byId["45007"].x < byId["44065"].x);
+  assert.ok(byId["46042"].x < byId.KDEN.x, "the offshore Pacific station plots west of Denver");
+  assert.ok(byId["45007"].y < byId.TPLM2.y, "Lake Michigan plots north of Chesapeake Bay");
+  for (const station of Object.values(byId)) {
+    assert.ok(station.x > 250 && station.x < 550 && station.y > 200 && station.y < 300, `${station.station_id} remains in North America`);
+  }
 });
 
 test("remaining filters synchronize markers, count, and table", () => {
