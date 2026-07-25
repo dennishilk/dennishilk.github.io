@@ -32,7 +32,9 @@ test("Ocean Buoy Observer production route and data source are wired", () => {
   assert.match(script, /dashboard\/latest\/ocean-buoy-observer\.json/);
   assert.match(page, /id="buoy-map"/);
   assert.match(page, /NOAA National Data Buoy Center/);
-  assert.match(page, /not a complete worldwide buoy inventory/);
+  assert.match(page, /GLOBAL COVERAGE[\s\S]*PLANNED/);
+  assert.match(page, /Current coverage is centered on NOAA\/NDBC and partner stations, especially around North America\. Broader global buoy coverage is planned\./);
+  assert.doesNotMatch(page, /not a complete worldwide buoy (?:catalogue|inventory)/i);
   assert.match(sitemap, /world-observer\/ocean-buoy-observer\.html/);
 });
 
@@ -41,6 +43,14 @@ test("overview promotes the observer as active", () => {
   assert.match(card, /● ACTIVE/);
   assert.match(card, /ocean-buoy-observer\.html/);
   assert.doesNotMatch(card, /PLANNED/i);
+});
+
+test("observer availability and planned global coverage are presented as separate statuses", () => {
+  const hero = page.match(/<section class="buoy-hero"[\s\S]*?<\/section>/)?.[0] || "";
+  assert.match(hero, /id="buoy-status" class="status-badge loading">LOADING/);
+  assert.match(hero, /class="buoy-coverage-status">GLOBAL COVERAGE[\s\S]*?<strong>PLANNED<\/strong>/);
+  assert.match(script, /badge\.textContent=partial\?"PARTIAL":stale\?"STALE":all\.length\?"AVAILABLE":"NO DATA"/);
+  assert.doesNotMatch(hero, /observer[^<]*planned/i);
 });
 
 test("details and accessibility affordances are present", () => {
