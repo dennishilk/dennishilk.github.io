@@ -6,20 +6,68 @@
 <title>Time Observer — Atomic Time, Earth Rotation, UTC &amp; NTP</title>
 <meta name="description" content="Follow the system that defines, maintains and distributes the time on your screen: atomic time, Earth rotation, UTC and NTP.">
 <meta property="og:title" content="Time Observer — Atomic Time, Earth Rotation, UTC & NTP"><meta property="og:description" content="A World Observer field guide to the international system behind computer time."><meta property="og:url" content="https://dennishilk.com/world-observer/time-observer.html"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/style.css?v=42"><link rel="stylesheet" href="/world-observer/time-observer.css?v=2"><script defer src="/stars.js"></script><script defer src="/world-observer/time-observer.js?v=2"></script>
+<link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/style.css?v=42"><link rel="stylesheet" href="/world-observer/time-observer.css?v=3"><script defer src="/stars.js"></script><script defer src="/world-observer/time-observer.js?v=2"></script>
 </head>
 <body class="time-observer-page"><canvas id="stars"></canvas>
 <div class="content time-observer-shell">
 <header class="dashboard-header wo-page-header time-header"><h1><span class="prompt">root@nebunix:~$</span><span class="name">Time Observer</span></h1><p class="time-subtitle">EARTH ROTATION · ATOMIC TIME · UTC · NTP</p><p class="time-opening">You asked what time it is. The answer is more complicated than it looks.</p><div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a><a href="/world-observer.html">World Observer</a></div></div></header>
 <main>
-<nav class="time-nav" aria-label="Time Observer experience"><a href="#now">01 NOW</a><a href="#follow">02 FOLLOW THE SECOND</a><a href="#earth">03 EARTH IS NOT A CLOCK</a><a href="#machine">04 TIME MACHINE</a><a href="#ntp">05 NTP JOURNEY</a><a href="#sources">06 SOURCE / METHOD</a></nav>
+<nav class="time-nav" aria-label="Time Observer experience"><a href="#now">01 NOW</a><a href="#follow">02 FOLLOW THE SECOND</a><a href="#earth">03 EARTH IS NOT A CLOCK</a><a href="#machine">04 TIME MACHINE</a><a href="#ntp">05 NTP JOURNEY</a><a href="#field-guides">06 FIELD GUIDES</a><a href="#sources">07 SOURCE / METHOD</a></nav>
 <section id="now" class="time-hero" aria-labelledby="time-title"><div class="instrument-grid" aria-hidden="true"></div><div class="orbit-field" aria-hidden="true"><i></i><i></i><i></i></div><div class="hero-center"><p class="eyebrow">PRECISION TIME CONSOLE / 01 NOW</p><p class="channel-label"><span></span> LOCAL OSC · DEVICE CLOCK</p><h2 id="time-title">LOCAL SYSTEM CLOCK</h2><output id="local-time" class="clock-value" aria-live="off">--:--:--.---</output><span class="clock-caption">LOCAL TIME REPORTED BY YOUR DEVICE</span><div class="second-scale" aria-hidden="true"></div><output id="utc-time" class="utc-value" aria-live="off">--:--:--.---</output><span class="clock-caption">UTC DISPLAY · DERIVED FROM DEVICE CLOCK</span><p id="timezone" class="zone">TIMEZONE — · UTC OFFSET —</p></div><aside class="reference-panel" aria-label="Authoritative scientific reference snapshot"><p class="panel-title"><span class="lamp"></span> REFERENCE DATA <span id="data-state">LOADING SNAPSHOT</span></p><dl><div><dt>TAI − UTC</dt><dd id="tai-value">DATA UNAVAILABLE</dd></div><div><dt id="ut1-label">IERS UT1 − UTC</dt><dd id="ut1-value">DATA UNAVAILABLE</dd><small id="ut1-meta">SCIENTIFIC REFERENCE DATA UNAVAILABLE</small></div><div><dt>SNAPSHOT</dt><dd id="generated-at" class="generated">DATA UNAVAILABLE</dd></div></dl><p class="reference-caption">REFERENCE DATA LOADED HERE IS NOT A LOCK OR ACCURACY MEASUREMENT OF YOUR DEVICE CLOCK.</p></aside></section>
 <p class="clock-truth">This display uses the time reported by your device. Time Observer does not measure your device’s actual offset from UTC. Scientific reference values are authoritative World Observer snapshots, not a claim about this browser’s synchronization.</p>
 <section id="follow" class="time-section" aria-labelledby="follow-title"><p class="eyebrow">02 / FOLLOW THE SECOND</p><h2 id="follow-title">FROM A DEFINITION TO THIS DISPLAY</h2><p class="lead">This is a conceptual chain of definition, realization and distribution—not one literal “second packet” travelling to your browser.</p><div id="signal-chain" class="signal-chain" aria-live="polite"></div><div class="stage-detail"><p id="stage-number" class="eyebrow">STAGE 01</p><h3 id="stage-title">CESIUM-133 TRANSITION</h3><p id="stage-copy">The SI second is defined using a specified cesium-133 hyperfine transition.</p><dl id="stage-facts"></dl><button id="next-stage" type="button">FOLLOW SIGNAL →</button></div></section>
 <section id="earth" class="time-section earth-section" aria-labelledby="earth-title"><p class="eyebrow">03 / EARTH IS NOT A CLOCK</p><h2 id="earth-title">THE ROTATION REFERENCE DRIFTS IRREGULARLY</h2><p class="lead">Atomic time is regular. UT1 tracks Earth’s rotational angle, which varies with atmosphere, oceans, mass redistribution and long-term rotational change.</p><div class="trace-instrument"><div><b>ATOMIC TIME / UTC REFERENCE</b><span class="trace atomic"></span></div><div><b>EARTH ROTATION / UT1</b><span class="trace rotation"></span></div><button id="magnify-difference" type="button" aria-pressed="false">MAGNIFY DIFFERENCE</button><p>VISUAL SCALE: <strong>EXAGGERATED FOR CLARITY</strong> — the traces are not geometrically proportional.</p></div><div class="earth-readout"><p id="earth-offset">REAL OFFSET: DATA UNAVAILABLE</p><p id="earth-status">SCIENTIFIC REFERENCE DATA UNAVAILABLE</p><p>Earth-orientation services publish predictions because navigation, astronomy and timing systems need values beyond the latest observation.</p></div></section>
 <section id="machine" class="time-section" aria-labelledby="machine-title"><p class="eyebrow">04 / TIME MACHINE</p><h2 id="machine-title">UTC HAS A HISTORY OF ADJUSTMENTS</h2><p class="lead">UTC already differed from TAI by 10 seconds when the modern leap-second system began in 1972. Subsequent increases represent positive leap-second adjustments.</p><div id="leap-unavailable" class="unavailable-note">SCIENTIFIC REFERENCE DATA UNAVAILABLE — the timeline needs the published leap-second snapshot.</div><div id="leap-machine" hidden><input id="leap-slider" type="range" min="0" max="0" value="0" aria-label="Select a leap-second effective date"><div id="leap-ticks" class="leap-ticks" aria-label="Leap-second timeline"></div><output id="leap-detail" class="leap-detail"></output><p id="leap-summary"></p></div></section>
 <section id="ntp" class="time-section ntp-section" aria-labelledby="ntp-title"><p class="eyebrow">05 / NTP JOURNEY</p><h2 id="ntp-title">HOW A COMPUTER ASKS FOR TIME</h2><p class="lead">Stratum is distance from a reference clock, not a simple quality or accuracy score.</p><div class="ntp-layout"><div class="strata" aria-label="NTP strata diagram"><div>REFERENCE CLOCK <small>STRATUM 0</small></div><i>↓ DIRECT REFERENCE</i><div>TIME SERVER <small>STRATUM 1</small></div><i>↓ NETWORK</i><div>UPSTREAM SERVER <small>STRATUM 2</small></div><i>↓ NETWORK</i><div>YOUR SYSTEM <small>NTP CLIENT</small></div><i>↓ LOCAL DISPLAY</i><div>BROWSER / DISPLAY <small>THIS PAGE</small></div></div><div class="exchange"><p class="simulation-label">EDUCATIONAL SIMULATION</p><p id="ntp-message">EDUCATIONAL SIMULATION · NO NETWORK REQUEST · DOES NOT MEASURE YOUR CLOCK.</p><dl><div><dt>T1 client sends</dt><dd id="t1">—</dd></div><div><dt>T2 server receives</dt><dd id="t2">—</dd></div><div><dt>T3 server sends</dt><dd id="t3">—</dd></div><div><dt>T4 client receives</dt><dd id="t4">—</dd></div></dl><button id="ntp-send" type="button">SEND NTP REQUEST</button><output id="ntp-result">ROUND-TRIP DELAY — · CLOCK OFFSET ESTIMATE —</output><p class="formula">delay = (T4 − T1) − (T3 − T2) · offset = ((T2 − T1) + (T3 − T4)) / 2</p></div></div></section>
-<section id="sources" class="time-section sources" aria-labelledby="sources-title"><p class="eyebrow">06 / SOURCE / METHOD</p><h2 id="sources-title">THE INSTITUTIONS BEHIND THE REFERENCE</h2><div><article><b>IERS</b><p>Earth rotation and UT1−UTC.</p></article><article><b>BIPM</b><p>International atomic time and UTC coordination context.</p></article><article><b>NIST / PTB</b><p>National metrology, realization and distribution context.</p></article><article><b>IETF / RFC 5905</b><p>The NTP protocol specification.</p></article></div><p id="provenance">Published World Observer snapshot provenance will appear when data is available.</p></section>
+<section id="field-guides" class="time-section" aria-labelledby="guides-title">
+<p class="eyebrow">06 / COMPACT FIELD GUIDES</p>
+<h2 id="guides-title">WHY SHARED TIME WORKS</h2>
+<p class="lead">Six short exhibits connect the reference timescale to navigation, networks and everyday infrastructure.</p>
+
+<div class="guide-grid">
+<article class="guide-card" aria-labelledby="gps-title">
+<p class="guide-number">06.1 / NAVIGATION</p><h3 id="gps-title">GPS TIME vs UTC</h3>
+<div class="parallel-time" aria-label="GPS Time and UTC comparison"><span><b>GPS TIME</b><i>CONTINUOUS ─────────→</i></span><span><b>UTC</b><i>────────┊+1s┊────→</i></span></div>
+<p>GPS Time runs continuously; UTC has occasionally inserted leap seconds. Receivers convert between them internally, so modern navigation systems need current leap-second information.</p>
+</article>
+
+<article class="guide-card" aria-labelledby="path-title">
+<p class="guide-number">06.2 / SYNCHRONIZATION PATH</p><h3 id="path-title">HOW YOUR COMPUTER REACHES A REFERENCE CLOCK</h3>
+<ol class="path-diagram" aria-label="Typical clock synchronization chain"><li>Your browser</li><li>Operating system</li><li>NTP client</li><li>Home router / ISP</li><li>Stratum 2</li><li>Stratum 1</li><li>Reference clock</li></ol>
+<p>This is one typical example only. Configurations, providers and actual synchronization paths vary.</p>
+</article>
+
+<article class="guide-card" aria-labelledby="protocol-title">
+<p class="guide-number">06.3 / PROTOCOLS</p><h3 id="protocol-title">NTP vs PTP</h3>
+<div class="compare-panel"><div><b>NTP</b><span>Internet</span><span>Milliseconds</span><span>Operating systems</span><span>General purpose</span></div><div><b>PTP</b><span>Local industrial networks</span><span>Microseconds or better</span><span>Labs · finance</span><span>Industrial automation</span></div></div>
+<p>Both synchronize clocks, but they target different environments and precision needs.</p>
+</article>
+
+<article class="guide-card" aria-labelledby="utc-title">
+<p class="guide-number">06.4 / HISTORY</p><h3 id="utc-title">WHY UTC EXISTS</h3>
+<ol class="history-line" aria-label="Development toward UTC"><li>Local solar time</li><li>Railways</li><li>Time zones</li><li>GMT</li><li>UTC</li><li>Global synchronized computing</li></ol>
+<p>Travel, communication and computing outgrew town-by-town solar time. A worldwide shared reference lets distant systems agree on when events happen.</p>
+</article>
+
+<article class="guide-card" aria-labelledby="clocks-title">
+<p class="guide-number">06.5 / CIVIL TIME</p><h3 id="clocks-title">WHY ATOMIC CLOCKS ARE NOT ENOUGH</h3>
+<p>Atomic clocks are extremely stable; Earth’s rotation is not perfectly constant. Modern civil time therefore considers both.</p>
+<div class="scale-combine" aria-label="TAI and UT1 inform UTC"><span><b>TAI</b><small>ATOMIC TIME</small></span><i aria-hidden="true">+</i><span><b>UT1</b><small>EARTH ROTATION</small></span><i aria-hidden="true">→</i><span class="result"><b>UTC</b><small>CIVIL TIME</small></span></div>
+<p class="guide-note">UTC uses the atomic second and has historically used leap seconds to remain close to observed Earth rotation.</p>
+</article>
+
+<article class="guide-card guide-card-wide" aria-labelledby="matters-title">
+<p class="guide-number">06.6 / APPLICATIONS</p><h3 id="matters-title">WHERE SYNCHRONIZED TIME MATTERS</h3>
+<div class="use-grid">
+<div><b aria-hidden="true">⌁</b><span>Linux servers<small>logs &amp; jobs</small></span></div><div><b aria-hidden="true">⊞</b><span>Windows<small>sign-in &amp; domains</small></span></div><div><b aria-hidden="true">▯</b><span>Smartphones<small>apps &amp; messages</small></span></div>
+<div><b aria-hidden="true">☁</b><span>Cloud infrastructure<small>distributed events</small></span></div><div><b aria-hidden="true">↗</b><span>Financial markets<small>order sequence</small></span></div><div><b aria-hidden="true">ϟ</b><span>Power grids<small>phase &amp; faults</small></span></div>
+<div><b aria-hidden="true">⌁</b><span>Telecommunications<small>network coordination</small></span></div><div><b aria-hidden="true">⌖</b><span>GPS navigation<small>position timing</small></span></div><div><b aria-hidden="true">⚗</b><span>Scientific laboratories<small>measurements</small></span></div><div><b aria-hidden="true">✚</b><span>Emergency services<small>incident records</small></span></div>
+</div>
+<p>Accurate shared timestamps establish order, coordinate systems and make records trustworthy.</p>
+</article>
+</div>
+</section>
+<section id="sources" class="time-section sources" aria-labelledby="sources-title"><p class="eyebrow">07 / SOURCE / METHOD</p><h2 id="sources-title">THE INSTITUTIONS BEHIND THE REFERENCE</h2><div><article><b>IERS</b><p>Earth rotation and UT1−UTC.</p></article><article><b>BIPM</b><p>International atomic time and UTC coordination context.</p></article><article><b>NIST / PTB</b><p>National metrology, realization and distribution context.</p></article><article><b>IETF / RFC 5905</b><p>The NTP protocol specification.</p></article></div><p id="provenance">Published World Observer snapshot provenance will appear when data is available.</p></section>
 </main>
 <footer><div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; time is a global agreement<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
 </div></body></html>
