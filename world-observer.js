@@ -1179,9 +1179,12 @@ function renderTechnologyCard(container, { title, status, description, metrics =
   } else {
     statusLine.innerHTML = `<strong>Status:</strong> ${status}`;
   }
-  const descriptionLine = document.createElement("p");
-  descriptionLine.textContent = description;
-  card.append(heading, statusLine, descriptionLine);
+  card.append(heading, statusLine);
+  if (description) {
+    const descriptionLine = document.createElement("p");
+    descriptionLine.textContent = description;
+    card.appendChild(descriptionLine);
+  }
 
   metrics.forEach((metric) => {
     if (metric.value === null || metric.value === undefined || metric.value === "") {
@@ -1718,28 +1721,17 @@ function renderEnvironmentOverviewCards(environmentData) {
   }
   container.textContent = "";
 
-  const observer = findEnvironmentObserver(environmentData, GEOMAGNETIC_OBSERVER_ID);
-  const statusValue = getEnvironmentObserverStatus(observer);
-  const collectedAt = getGeomagneticObservationTimestamp(observer);
-  const latestKp = firstNumber(observer, ["latest_kp", "latestKp", "kp", "kp_index", "primary_metric.value", "primary_metric_value"]);
-
   renderTechnologyCard(container, {
     title: "Geomagnetic Storm Observer",
-    status: formatInternetStatusLabel(statusValue),
-    description: "Public NOAA SWPC-derived geomagnetic observation dashboard. Observations only; no predictions or aurora guarantees.",
-    metrics: [
-      { label: "Status", value: formatInternetStatusLabel(statusValue) },
-      { label: "latest Kp", value: formatKp(latestKp) },
-      { label: "Last collected", value: formatDateTimeUtc(collectedAt) },
-    ],
-    unavailable: normalizeStatusValue(statusValue) !== "ok",
+    status: "● ACTIVE",
     href: "/world-observer/geomagnetic-storm-observer.html",
+    cardClass: "hometown-observer-card",
+    activeStatus: true,
   });
 
   renderTechnologyCard(container, {
     title: "Earthquake Observer",
     status: "● ACTIVE",
-    description: "Global earthquake observations from the USGS for the past 24 hours.",
     href: "/world-observer/earthquake-observer.html",
     cardClass: "hometown-observer-card",
     activeStatus: true,
