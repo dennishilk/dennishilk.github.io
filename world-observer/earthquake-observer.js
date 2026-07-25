@@ -5,7 +5,6 @@ const STALE_AFTER_MS = 6 * 60 * 60 * 1000;
 const valueIds = ["window", "latest", "largest", "count", "collected"];
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
-const INITIAL_NAVIGATION_STATE = Object.freeze({ zoom: MIN_ZOOM, x: 0, y: 0 });
 
 function setState(state, message, label = state) {
   const status = document.getElementById("earthquake-data-status");
@@ -116,7 +115,10 @@ function tooltipContent(tooltip, event) {
   const depth = document.createElement("span"); depth.textContent = `Depth: ${Number.isFinite(event.depth_km) ? `${Math.round(event.depth_km)} km` : "Unavailable"}`;
   const time = document.createElement("span"); time.textContent = formatUtc(eventTime(event));
   const children = [magnitude, place, depth, time];
-  if (event.event_url) { const link = document.createElement("span"); link.className = "earthquake-tooltip-link"; link.textContent = "View on USGS ↗"; children.push(link); }
+  if (event.event_url) {
+    const link = document.createElement("a"); link.className = "earthquake-tooltip-link"; link.textContent = "View on USGS ↗";
+    link.href = event.event_url; link.target = "_blank"; link.rel = "noopener noreferrer"; children.push(link);
+  }
   tooltip.replaceChildren(...children);
 }
 
@@ -124,7 +126,8 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
   marker.classList.add("earthquake-marker"); marker.setAttribute("aria-hidden", "false");
   const accessible = `${formatEvent(event)}, depth ${Number.isFinite(event.depth_km) ? `${Math.round(event.depth_km)} kilometres` : "unavailable"}, ${formatUtc(eventTime(event))}`;
   marker.setAttribute("aria-label", accessible); marker.setAttribute("aria-describedby", tooltip.id); marker.setAttribute("role", event.event_url ? "link" : "img"); marker.setAttribute("tabindex", "0");
-  let lastPointerType = "mouse"; let touchPrimed = false;
+  let lastPointerType = "mouse"; let touchPrimed = false; let markerHovered = false; let markerFocused = false;
+  const hover = tooltip.earthquakeHover || (tooltip.earthquakeHover = { tooltipHovered: false, tooltipFocused: false, activeMarker: null, closeTimer: 0 });
   const position = (clientX, clientY) => {
     const bounds = mapContainer.getBoundingClientRect(); const tip = tooltip.getBoundingClientRect(); const gap = 12;
     const x = Math.max(8, Math.min(bounds.width - tip.width - 8, clientX - bounds.left + gap));
@@ -133,13 +136,27 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
     tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
   };
   const show = (pointerEvent) => {
+    clearTimeout(hover.closeTimer); hover.activeMarker = marker; hover.activeClose = closeIfInactive;
     tooltipContent(tooltip, event); tooltip.classList.add("visible"); tooltip.setAttribute("aria-hidden", "false");
     const markerBounds = marker.getBoundingClientRect(); position(pointerEvent?.clientX ?? markerBounds.left + markerBounds.width / 2, pointerEvent?.clientY ?? markerBounds.top + markerBounds.height / 2);
   };
   const hide = () => { tooltip.classList.remove("visible"); tooltip.setAttribute("aria-hidden", "true"); };
+  const closeIfInactive = () => {
+    clearTimeout(hover.closeTimer);
+    hover.closeTimer = setTimeout(() => {
+      if (hover.activeMarker === marker && !markerHovered && !markerFocused && !hover.tooltipHovered && !hover.tooltipFocused) { hide(); hover.activeMarker = null; }
+    }, 80);
+  };
+  if (!hover.listenersAdded) {
+    tooltip.addEventListener("pointerenter", () => { hover.tooltipHovered = true; clearTimeout(hover.closeTimer); });
+    tooltip.addEventListener("pointerleave", () => { hover.tooltipHovered = false; hover.activeClose?.(); });
+    tooltip.addEventListener("focusin", () => { hover.tooltipFocused = true; clearTimeout(hover.closeTimer); });
+    tooltip.addEventListener("focusout", () => { hover.tooltipFocused = false; hover.activeClose?.(); });
+    hover.listenersAdded = true;
+  }
   marker.addEventListener("pointerdown", (e) => { lastPointerType = e.pointerType || "mouse"; });
-  marker.addEventListener("pointerenter", show); marker.addEventListener("pointermove", (e) => position(e.clientX, e.clientY)); marker.addEventListener("pointerleave", hide);
-  marker.addEventListener("focus", show); marker.addEventListener("blur", hide);
+  marker.addEventListener("pointerenter", (e) => { markerHovered = true; show(e); }); marker.addEventListener("pointermove", (e) => position(e.clientX, e.clientY)); marker.addEventListener("pointerleave", () => { markerHovered = false; closeIfInactive(); });
+  marker.addEventListener("focus", (e) => { markerFocused = true; show(e); }); marker.addEventListener("blur", () => { markerFocused = false; closeIfInactive(); });
   marker.addEventListener("click", (e) => {
     if (!event.event_url) return;
     if (lastPointerType === "touch" && !touchPrimed) { e.preventDefault(); touchPrimed = true; show(e); return; }
@@ -149,8 +166,8 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
 }
 
 /** Add lightweight navigation to the already-rendered SVG without replotting markers. */
-export function createMapNavigation(mapContainer, mapCanvas, svg, resetButton) {
-  const state = { ...INITIAL_NAVIGATION_STATE };
+export function createMapNavigation(mapContainer, mapCanvas, svg) {
+  const state = { zoom: MIN_ZOOM, x: 0, y: 0 };
   const pointers = new Map();
   let frame = 0; let dragOrigin = null; let pinchOrigin = null; let moved = false;
   const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
@@ -160,18 +177,13 @@ export function createMapNavigation(mapContainer, mapCanvas, svg, resetButton) {
     return { canvas, maxX: Math.max(0, baseWidth * (state.zoom - 1) / 2), maxY: Math.max(0, baseHeight * (state.zoom - 1) / 2) };
   };
   const constrain = () => { const { maxX, maxY } = bounds(); state.x = clamp(state.x, -maxX, maxX); state.y = clamp(state.y, -maxY, maxY); };
-  const paint = () => { frame = 0; svg.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) scale(${state.zoom})`; mapContainer.classList.toggle("is-navigated", state.zoom !== MIN_ZOOM || state.x !== 0 || state.y !== 0); };
+  const paint = () => { frame = 0; svg.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) scale(${state.zoom})`; };
   const render = () => { if (!frame) frame = requestAnimationFrame(paint); };
   const zoomAt = (nextZoom, clientX, clientY) => {
     const { canvas } = bounds(); const zoom = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM); const ratio = zoom / state.zoom;
     const px = clientX - canvas.left - canvas.width / 2; const py = clientY - canvas.top - canvas.height / 2;
     state.x = px - ratio * (px - state.x); state.y = py - ratio * (py - state.y); state.zoom = zoom;
     constrain(); render();
-  };
-  const reset = () => {
-    Object.assign(state, INITIAL_NAVIGATION_STATE);
-    pointers.clear(); dragOrigin = null; pinchOrigin = null; moved = false;
-    render();
   };
   const distance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   const midpoint = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
@@ -191,10 +203,9 @@ export function createMapNavigation(mapContainer, mapCanvas, svg, resetButton) {
   const endPointer = (event) => { pointers.delete(event.pointerId); dragOrigin = pointers.size === 1 ? { ...[...pointers.values()][0], x: state.x, y: state.y } : null; pinchOrigin = null; };
   mapContainer.addEventListener("pointerup", endPointer); mapContainer.addEventListener("pointercancel", endPointer);
   mapContainer.addEventListener("click", (event) => { if (moved) { event.preventDefault(); event.stopPropagation(); moved = false; } }, true);
-  resetButton.addEventListener("click", reset);
   window.addEventListener("resize", () => { constrain(); render(); });
   paint();
-  return { state, reset, zoomAt };
+  return { state, zoomAt };
 }
 
 export async function renderExport(data, map) {
@@ -216,7 +227,7 @@ export async function renderExport(data, map) {
 
 async function initialize() {
   unavailable(); setState("loading", "Loading the local dashboard export."); const map = new WorldObserverMap({ container: "#earthquake-map-canvas" });
-  try { await map.ready; createMapNavigation(document.getElementById("earthquake-map"), document.getElementById("earthquake-map-canvas"), map.svgElement, document.getElementById("earthquake-reset-view")); document.getElementById("earthquake-map-caption").textContent = "Canonical World Observer basemap. No observations are plotted without a valid local export."; }
+  try { await map.ready; createMapNavigation(document.getElementById("earthquake-map"), document.getElementById("earthquake-map-canvas"), map.svgElement); document.getElementById("earthquake-map-caption").textContent = "Canonical World Observer basemap. No observations are plotted without a valid local export."; }
   catch { document.getElementById("earthquake-map-caption").textContent = "Canonical basemap is not available."; setState("error", "The canonical basemap could not be loaded.", "ERROR"); return; }
   try {
     const response = await fetch(DASHBOARD_URL, { cache: "no-store" });
