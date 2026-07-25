@@ -198,6 +198,9 @@ export function createMapNavigation(mapContainer, mapCanvas, svg) {
   mapContainer.addEventListener("dblclick", (event) => { event.preventDefault(); zoomAt(state.zoom * 1.6, event.clientX, event.clientY); });
   mapContainer.addEventListener("pointerdown", (event) => {
     if (event.button !== undefined && event.button !== 0) return;
+    // Pointer capture retargets the ensuing click to the map. Never start a
+    // drag when the pointer went down in the tooltip's interactive layer.
+    if (event.target?.closest?.(".earthquake-tooltip")) return;
     pointers.set(event.pointerId, event); mapContainer.setPointerCapture?.(event.pointerId); moved = false;
     if (pointers.size === 1) dragOrigin = { clientX: event.clientX, clientY: event.clientY, x: state.x, y: state.y };
     if (pointers.size === 2) { const pair = [...pointers.values()]; pinchOrigin = { distance: distance(...pair), zoom: state.zoom, center: midpoint(...pair) }; }

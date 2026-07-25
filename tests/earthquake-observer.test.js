@@ -182,6 +182,26 @@ test('tooltip action delivers a normal left click before any delayed close', asy
   assert.equal(spacePrevented, true, 'Space activates the native link');
 });
 
+test('visible tooltip wins hit testing and map navigation does not capture its left click', () => {
+  const { context } = load();
+  const mapContainer = fakeElement('earthquake-map'); const mapCanvas = fakeElement('earthquake-map-canvas'); const svg = fakeElement('map-svg');
+  const tooltip = fakeElement('earthquake-tooltip'); const action = fakeElement('tooltip-action');
+  action.className = 'earthquake-tooltip-action'; action.href = completePayload().events[0].event_url;
+  action.closest = (selector) => selector === '.earthquake-tooltip' ? tooltip : null;
+  let captures = 0; mapContainer.setPointerCapture = () => { captures += 1; };
+  svg.offsetWidth = 800; svg.offsetHeight = 500;
+  mapCanvas.getBoundingClientRect = () => ({ left: 0, top: 0, width: 800, height: 500 });
+  context.requestAnimationFrame = (callback) => { callback(); return 1; };
+  context.createMapNavigation(mapContainer, mapCanvas, svg);
+
+  const document = { elementFromPoint: () => action };
+  const hit = document.elementFromPoint(240, 180);
+  assert.equal(hit, action, 'browser hit testing must resolve the action above the SVG marker layer');
+  mapContainer.listeners.pointerdown({ target: hit, pointerId: 7, button: 0, clientX: 240, clientY: 180 });
+  assert.equal(captures, 0, 'the map must not capture a pointer that starts inside the tooltip');
+  assert.equal(hit.href, 'https://earthquake.usgs.gov/earthquakes/eventpage/test-event', 'normal left-click navigation keeps the exact event-specific URL');
+});
+
 test('marker activation opens exact event-specific USGS URL safely', () => {
   const { context, opened } = load();
   const marker = fakeElement('marker'); const tooltip = fakeElement('earthquake-tooltip'); const map = fakeElement('map');
@@ -213,7 +233,7 @@ test('zoom, pan, double-click, and pinch navigation remain available without Res
   assert.doesNotMatch(html, /earthquake-reset-view|>🌍 Reset</);
   assert.doesNotMatch(source, /earthquake-reset-view|resetButton/);
   assert.doesNotMatch(css, /earthquake-reset-view/);
-  assert.match(css, /\.earthquake-tooltip \{[^}]*pointer-events: auto/);
+  assert.match(css, /\.earthquake-tooltip\.visible \{[^}]*pointer-events: auto/);
 });
 
 test('all six statistic cards use local inline line icons and the complete legend', () => {
