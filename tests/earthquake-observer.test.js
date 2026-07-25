@@ -35,6 +35,25 @@ function load() {
   return { context, opened };
 }
 
+test('stage errors retain their exception and stack while development displays the cause', () => {
+  const elements = new Map([
+    ['earthquake-data-status', fakeElement('earthquake-data-status')],
+    ['earthquake-loading-status', fakeElement('earthquake-loading-status')],
+  ]);
+  const entries = [];
+  const document = { createElement: () => fakeElement(), getElementById: (id) => elements.get(id) };
+  const console = { error: (...args) => entries.push(args) };
+  const window = { location: { hostname: 'localhost' } };
+  const context = vm.createContext({ document, window, console, Date, Number, Math, Array, String, Error, Set, setTimeout, clearTimeout });
+  vm.runInContext(source, context);
+  vm.runInContext('reportStageError("Dashboard rendering", new Error("marker layer missing"))', context);
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0][0], 'Earthquake Observer Dashboard rendering failed');
+  assert.equal(entries[0][1].message, 'marker layer missing');
+  assert.match(entries[0][1].stack, /marker layer missing/);
+  assert.equal(elements.get('earthquake-loading-status').textContent, 'Dashboard rendering failed: marker layer missing');
+});
+
 function completePayload(overrides = {}) {
   return {
     status: 'partial', data_status: 'partial', collected_at: '2026-07-25T14:54:08Z',

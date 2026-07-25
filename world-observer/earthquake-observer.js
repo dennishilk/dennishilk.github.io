@@ -17,6 +17,20 @@ function unavailable() {
   valueIds.forEach((id) => { document.getElementById(`earthquake-${id}`).textContent = "Awaiting export"; });
 }
 
+function errorDetails(error) {
+  if (error instanceof Error) return { message: error.message, stack: error.stack || "Stack trace unavailable", error };
+  return { message: String(error), stack: "Stack trace unavailable", error };
+}
+
+function reportStageError(stage, error) {
+  const details = errorDetails(error);
+  console.error(`Earthquake Observer ${stage} failed`, details);
+  const hostname = window.location?.hostname || "";
+  const development = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]" || hostname.endsWith(".test");
+  const message = development ? `${stage} failed: ${details.message}` : `The earthquake dashboard could not be loaded (${stage.toLowerCase()} failed).`;
+  setState("error", message, "ERROR");
+}
+
 function validCoordinate(value, minimum, maximum) { return Number.isFinite(value) && value >= minimum && value <= maximum; }
 
 export function validateExport(data) {
@@ -239,12 +253,23 @@ async function initialize() {
   unavailable(); setState("loading", "Loading the local dashboard export."); const map = new WorldObserverMap({ container: "#earthquake-map-canvas" });
   try { await map.ready; createMapNavigation(document.getElementById("earthquake-map"), document.getElementById("earthquake-map-canvas"), map.svgElement); document.getElementById("earthquake-map-caption").textContent = "Canonical World Observer basemap. No observations are plotted without a valid local export."; }
   catch { document.getElementById("earthquake-map-caption").textContent = "Canonical basemap is not available."; setState("error", "The canonical basemap could not be loaded.", "ERROR"); return; }
+  let response;
   try {
-    const response = await fetch(DASHBOARD_URL, { cache: "no-store" });
+    response = await fetch(DASHBOARD_URL, { cache: "no-store" });
     if (response.status === 404) { setState("error", "No local dashboard export is available yet.", "ERROR"); return; }
-    if (!response.ok) throw new Error(`Dashboard request failed (${response.status})`);
-    await renderExport(validateExport(await response.json()), map);
-  } catch (error) { console.warn("Earthquake Observer export unavailable", error); setState("error", "The local dashboard export could not be validated.", "ERROR"); }
+    if (!response.ok) throw new Error(`Dashboard request failed (${response.status} ${response.statusText || "Unknown status"})`);
+  } catch (error) { reportStageError("Fetch", error); return; }
+
+  let parsed;
+  try { parsed = await response.json(); }
+  catch (error) { reportStageError("JSON parsing", error); return; }
+
+  let validated;
+  try { validated = validateExport(parsed); }
+  catch (error) { reportStageError("Export validation", error); return; }
+
+  try { await renderExport(validated, map); }
+  catch (error) { reportStageError("Dashboard rendering", error); }
 }
 
 initialize();
