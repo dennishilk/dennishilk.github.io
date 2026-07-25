@@ -40,28 +40,38 @@
         </div>
         <div class="earthquake-hero-grid">
           <figure class="earthquake-map-panel">
-            <div id="earthquake-map" class="earthquake-map" role="img" aria-label="World map showing earthquake observations when a valid local export is available"></div>
+            <div id="earthquake-map" class="earthquake-map" aria-label="Interactive world map of earthquake observations">
+              <aside class="earthquake-legend" aria-label="Earthquake magnitude legend">
+                <strong>Magnitude</strong>
+                <span><i class="magnitude-6"></i>M ≥ 6.0</span>
+                <span><i class="magnitude-5"></i>M 5.0–5.9</span>
+                <span><i class="magnitude-4"></i>M 4.0–4.9</span>
+                <span><i class="magnitude-3"></i>M 3.0–3.9</span>
+                <span><i class="magnitude-low"></i>M &lt; 3.0</span>
+              </aside>
+              <div id="earthquake-tooltip" class="earthquake-tooltip" role="tooltip" aria-hidden="true"></div>
+            </div>
             <figcaption id="earthquake-map-caption">Loading the canonical World Observer basemap.</figcaption>
           </figure>
           <aside class="earthquake-status-card" aria-labelledby="earthquake-status-title">
             <h3 id="earthquake-status-title">Observation status</h3>
             <dl>
               <div><dt>Data status</dt><dd aria-describedby="earthquake-loading-status">Local export</dd></div>
-              <div><dt>Observation window</dt><dd id="earthquake-window">Not yet available</dd></div>
-              <div><dt>Latest event</dt><dd id="earthquake-latest">Not yet available</dd></div>
-              <div><dt>Largest event</dt><dd id="earthquake-largest">Not yet available</dd></div>
-              <div><dt>Event count</dt><dd id="earthquake-count">Not yet available</dd></div>
-              <div><dt>Last collected</dt><dd id="earthquake-collected">Not yet available</dd></div>
+              <div><dt>Observation window</dt><dd id="earthquake-window">Awaiting export</dd></div>
+              <div><dt>Latest event</dt><dd id="earthquake-latest">Awaiting export</dd></div>
+              <div><dt>Largest event</dt><dd id="earthquake-largest">Awaiting export</dd></div>
+              <div><dt>Event count</dt><dd id="earthquake-count">Awaiting export</dd></div>
+              <div><dt>Last collected</dt><dd id="earthquake-collected">Awaiting export</dd></div>
             </dl>
           </aside>
         </div>
       </section>
       <section class="earthquake-panel-grid" aria-label="Earthquake observation panels">
-        <article><h3>Latest Earthquakes</h3><p>Not yet available</p></article>
-        <article><h3>Seismic Activity</h3><p>Not yet available</p></article>
-        <article><h3>Magnitude Distribution</h3><p>Not yet available</p></article>
-        <article><h3>Depth Distribution</h3><p>Not yet available</p></article>
-        <article><h3>Today's Context</h3><p>Not yet available</p></article>
+        <article><h3>Latest Earthquakes</h3><div id="earthquake-card-latest" class="earthquake-card-value">Loading observations…</div></article>
+        <article><h3>Seismic Activity</h3><div id="earthquake-card-activity" class="earthquake-card-value">Loading observations…</div></article>
+        <article><h3>Magnitude Distribution</h3><div id="earthquake-card-magnitude" class="earthquake-card-value">Loading observations…</div></article>
+        <article><h3>Depth Distribution</h3><div id="earthquake-card-depth" class="earthquake-card-value">Loading observations…</div></article>
+        <article><h3>Today's Context</h3><div id="earthquake-card-context" class="earthquake-card-value">Loading observations…</div></article>
       </section>
       <section class="observer-section earthquake-learning" aria-labelledby="earthquake-learning-title">
         <h2 id="earthquake-learning-title">Reading the observations</h2>
