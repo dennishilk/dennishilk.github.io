@@ -57,6 +57,50 @@ test('current local export keeps all 215 valid event observations and event-spec
   assert.ok(currentExport.events.every((event) => event.event_url.includes(`/earthquakes/eventpage/${event.id}`)));
 });
 
+test('successful render keeps LIVE status, legend, and every marker after map initialization', async () => {
+  const elements = new Map([
+    ['earthquake-data-status', fakeElement('earthquake-data-status')],
+    ['earthquake-loading-status', fakeElement('earthquake-loading-status')],
+    ['earthquake-window', fakeElement('earthquake-window')],
+    ['earthquake-latest', fakeElement('earthquake-latest')],
+    ['earthquake-largest', fakeElement('earthquake-largest')],
+    ['earthquake-count', fakeElement('earthquake-count')],
+    ['earthquake-collected', fakeElement('earthquake-collected')],
+    ['earthquake-card-latest', fakeElement('earthquake-card-latest')],
+    ['earthquake-card-activity', fakeElement('earthquake-card-activity')],
+    ['earthquake-card-magnitude', fakeElement('earthquake-card-magnitude')],
+    ['earthquake-card-depth', fakeElement('earthquake-card-depth')],
+    ['earthquake-card-context', fakeElement('earthquake-card-context')],
+    ['earthquake-tooltip', fakeElement('earthquake-tooltip')],
+    ['earthquake-map', fakeElement('earthquake-map')],
+    ['earthquake-map-caption', fakeElement('earthquake-map-caption')],
+  ]);
+  elements.get('earthquake-map').getBoundingClientRect = () => ({ left: 0, top: 0, width: 800, height: 500 });
+  const statuses = [];
+  const document = {
+    createElement: () => fakeElement(),
+    getElementById(id) {
+      assert.notEqual(id, 'earthquake-map-canvas', 'render must not replace the map canvas or its overlay siblings');
+      return elements.get(id);
+    },
+  };
+  const context = vm.createContext({ document, window: { open() {} }, console, Date, Number, Math, Array, String, Error, Set });
+  vm.runInContext(source.replace('status.textContent = label.toUpperCase();', 'status.textContent = label.toUpperCase(); statuses.push(status.textContent);'), context);
+  context.statuses = statuses;
+  const markers = [];
+  const map = {
+    layers: { markers: fakeElement('marker-layer') },
+    async addMarker() { const marker = fakeElement('marker'); markers.push(marker); return marker; },
+  };
+  await context.renderExport(currentExport, map);
+  assert.deepEqual(statuses, ['LIVE'], 'a successful render must not transition from LIVE to ERROR');
+  assert.equal(elements.get('earthquake-data-status').className, 'status-badge live');
+  assert.equal(markers.length, 215);
+  assert.ok(markers.every((marker) => marker.classList.values.has('earthquake-marker')));
+  assert.match(html, /id="earthquake-map-canvas"[\s\S]*class="earthquake-legend"/, 'legend remains outside the replaceable map canvas');
+  assert.match(html, /class="earthquake-legend"[\s\S]*id="earthquake-tooltip"/, 'tooltip remains alongside the map canvas');
+});
+
 test('status derivation retains honest partial and error states', () => {
   const { context } = load();
   assert.equal(context.deriveStatus(completePayload({ window: null })).label, 'PARTIAL');
