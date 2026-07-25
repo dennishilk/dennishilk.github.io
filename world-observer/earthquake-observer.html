@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.com/world-observer/earthquake-observer.html">
+  <script>if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") location.replace("https://" + location.hostname + location.pathname + location.search);</script>
+  <title>Earthquake Observer – World Observer</title>
+  <meta name="description" content="A scientific exhibit of earthquake observations from a future local dashboard export. Observations, not predictions.">
+  <meta property="og:title" content="Earthquake Observer – World Observer">
+  <meta property="og:description" content="A quiet scientific view of earthquake observations. Observations, not predictions.">
+  <meta property="og:url" content="https://dennishilk.com/world-observer/earthquake-observer.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css?v=42">
+  <script defer src="/stars.js"></script>
+  <script type="module" src="/world-observer/earthquake-observer.js"></script>
+</head>
+<body data-observer-page="earthquake-observer">
+<canvas id="stars"></canvas>
+<div class="content world-observer-page">
+  <header class="dashboard-header wo-page-header">
+    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Earthquake Observer</span></h1>
+    <p>A scientific observation exhibit. Earthquakes are observed continuously; they are not predicted here.</p>
+    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
+    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Media</a><a href="/world-observer/society.html">Society</a><a href="/world-observer/hometown.html">Hometown</a><a href="/world-observer/environment.html" class="active" aria-current="page">Earth &amp; Space</a><a href="/world-observer/technology.html">Technology</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
+    </nav>
+  </header>
+  <main>
+    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/environment.html">← Back to Earth &amp; Space</a></p>
+    <section class="observer-dashboard earthquake-dashboard" aria-labelledby="earthquake-title">
+      <section class="observer-section earthquake-observer-section">
+        <div class="observer-title-row">
+          <div><h2 id="earthquake-title">Global seismic observations</h2><p id="earthquake-loading-status" class="observer-limitation" aria-live="polite">Loading the future local dashboard export.</p></div>
+          <span id="earthquake-data-status" class="status-badge loading">LOADING</span>
+        </div>
+        <div class="earthquake-hero-grid">
+          <aside class="earthquake-status-card" aria-labelledby="earthquake-status-title">
+            <h3 id="earthquake-status-title">Observation status</h3>
+            <dl>
+              <div><dt>Data status</dt><dd aria-describedby="earthquake-loading-status">Local export</dd></div>
+              <div><dt>Observation window</dt><dd id="earthquake-window">Not yet available</dd></div>
+              <div><dt>Latest event</dt><dd id="earthquake-latest">Not yet available</dd></div>
+              <div><dt>Largest event</dt><dd id="earthquake-largest">Not yet available</dd></div>
+              <div><dt>Event count</dt><dd id="earthquake-count">Not yet available</dd></div>
+              <div><dt>Last collected</dt><dd id="earthquake-collected">Not yet available</dd></div>
+            </dl>
+          </aside>
+          <figure class="earthquake-map-panel">
+            <div id="earthquake-map" class="earthquake-map" role="img" aria-label="World map showing earthquake observations when a valid local export is available"></div>
+            <figcaption id="earthquake-map-caption">Loading the canonical World Observer basemap.</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section class="earthquake-panel-grid" aria-label="Earthquake observation panels">
+        <article><h3>Latest Earthquakes</h3><p>Not yet available</p></article>
+        <article><h3>Seismic Activity</h3><p>Not yet available</p></article>
+        <article><h3>Magnitude Distribution</h3><p>Not yet available</p></article>
+        <article><h3>Depth Distribution</h3><p>Not yet available</p></article>
+        <article><h3>Today's Context</h3><p>Not yet available</p></article>
+      </section>
+      <section class="observer-section earthquake-learning" aria-labelledby="earthquake-learning-title">
+        <h2 id="earthquake-learning-title">Reading the observations</h2>
+        <div>
+          <article><h3>Constant motion</h3><p>Earthquakes occur constantly around the planet. Most are small and may never be felt.</p></article>
+          <article><h3>Magnitude</h3><p>Magnitude is logarithmic: each whole-number step represents a much larger release of energy.</p></article>
+          <article><h3>Depth</h3><p>Depth describes where rupture begins below the surface and helps give an observation its geological context.</p></article>
+          <article><h3>Observe, don't speculate</h3><p>This exhibit describes recorded events. Earthquake observations are not earthquake predictions.</p></article>
+        </div>
+      </section>
+    </section>
+  </main>
+  <footer>
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; cat world-observer/earthquake-observer.html<span class="cursor"></span></span></div>
+    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</div>
+</body>
+</html>
