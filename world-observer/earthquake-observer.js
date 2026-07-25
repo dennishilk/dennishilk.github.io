@@ -33,8 +33,8 @@ function formatEvent(event) {
 }
 
 const MAGNITUDE_STYLES = [
-  { minimum: 6, color: "#ed7770" }, { minimum: 5, color: "#e9a15d" }, { minimum: 4, color: "#e5cf68" },
-  { minimum: 3, color: "#77c98a" }, { minimum: 2, color: "#55cbd5" }, { minimum: -Infinity, color: "#9bdde2" },
+  { minimum: 6, color: "#e5484d" }, { minimum: 5, color: "#ff8a3d" }, { minimum: 4, color: "#ffd34e" },
+  { minimum: 3, color: "#43d69c" }, { minimum: 2, color: "#42e8ff" }, { minimum: -Infinity, color: "#e6fbff" },
 ];
 
 function eventTime(event) { return event?.time || event?.observed_at; }

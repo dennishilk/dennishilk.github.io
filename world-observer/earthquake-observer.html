@@ -40,17 +40,17 @@
         </div>
         <div class="earthquake-hero-grid">
           <figure class="earthquake-map-panel">
+            <aside class="earthquake-legend" aria-label="Earthquake magnitude legend">
+              <strong>Magnitude</strong>
+              <span><i class="magnitude-6"></i>M ≥ 6.0</span>
+              <span><i class="magnitude-5"></i>M 5.0–5.9</span>
+              <span><i class="magnitude-4"></i>M 4.0–4.9</span>
+              <span><i class="magnitude-3"></i>M 3.0–3.9</span>
+              <span><i class="magnitude-2"></i>M 2.0–2.9</span>
+              <span><i class="magnitude-low"></i>M &lt; 2.0</span>
+            </aside>
             <div id="earthquake-map" class="earthquake-map" aria-label="Interactive world map of earthquake observations">
               <div id="earthquake-map-canvas" class="earthquake-map-canvas"></div>
-              <aside class="earthquake-legend" aria-label="Earthquake magnitude legend">
-                <strong>Magnitude</strong>
-                <span><i class="magnitude-6"></i>M ≥ 6.0</span>
-                <span><i class="magnitude-5"></i>M 5.0–5.9</span>
-                <span><i class="magnitude-4"></i>M 4.0–4.9</span>
-                <span><i class="magnitude-3"></i>M 3.0–3.9</span>
-                <span><i class="magnitude-2"></i>M 2.0–2.9</span>
-                <span><i class="magnitude-low"></i>M &lt; 2.0</span>
-              </aside>
               <div id="earthquake-tooltip" class="earthquake-tooltip" role="tooltip" aria-hidden="true"></div>
             </div>
             <figcaption id="earthquake-map-caption">Loading the canonical World Observer basemap.</figcaption>

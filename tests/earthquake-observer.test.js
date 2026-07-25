@@ -97,8 +97,8 @@ test('successful render keeps LIVE status, legend, and every marker after map in
   assert.equal(elements.get('earthquake-data-status').className, 'status-badge live');
   assert.equal(markers.length, 215);
   assert.ok(markers.every((marker) => marker.classList.values.has('earthquake-marker')));
-  assert.match(html, /id="earthquake-map-canvas"[\s\S]*class="earthquake-legend"/, 'legend remains outside the replaceable map canvas');
-  assert.match(html, /class="earthquake-legend"[\s\S]*id="earthquake-tooltip"/, 'tooltip remains alongside the map canvas');
+  assert.match(html, /class="earthquake-legend"[\s\S]*id="earthquake-map"/, 'legend is placed before and outside the map');
+  assert.doesNotMatch(html, /id="earthquake-map"[^>]*>[\s\S]*class="earthquake-legend"/, 'legend never overlays the map');
 });
 
 test('status derivation retains honest partial and error states', () => {
