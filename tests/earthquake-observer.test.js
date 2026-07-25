@@ -1,0 +1,119 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+const vm = require('node:vm');
+
+const root = path.join(__dirname, '..');
+const html = fs.readFileSync(path.join(root, 'world-observer/earthquake-observer.html'), 'utf8');
+const source = fs.readFileSync(path.join(root, 'world-observer/earthquake-observer.js'), 'utf8')
+  .replace(/^import .*;$/m, '')
+  .replace(/\bexport\s+/g, '')
+  .replace(/\ninitialize\(\);\s*$/, '\n');
+const currentExport = JSON.parse(fs.readFileSync(path.join(root, 'world-observer/dashboard/latest/earthquake-observer.json'), 'utf8'));
+
+function fakeElement(id = '') {
+  const listeners = {};
+  const attributes = {};
+  return {
+    id, listeners, attributes, children: [], style: {}, className: '', textContent: '',
+    classList: { values: new Set(), add(value) { this.values.add(value); }, remove(value) { this.values.delete(value); } },
+    addEventListener(name, callback) { listeners[name] = callback; },
+    setAttribute(name, value) { attributes[name] = String(value); },
+    replaceChildren(...children) { this.children = children; this.textContent = children.map((child) => child.textContent).join(' '); },
+    getBoundingClientRect() { return { left: 100, top: 80, width: id === 'earthquake-tooltip' ? 220 : 14, height: id === 'earthquake-tooltip' ? 140 : 14 }; },
+  };
+}
+
+function load() {
+  const opened = [];
+  const document = { createElement: () => fakeElement() };
+  const context = vm.createContext({ document, window: { open: (...args) => opened.push(args) }, console, Date, Number, Math, Array, String, Error, Set });
+  vm.runInContext(source, context);
+  return { context, opened };
+}
+
+function completePayload(overrides = {}) {
+  return {
+    status: 'partial', data_status: 'partial', collected_at: '2026-07-25T14:54:08Z',
+    diagnostics: { http_status: 200 }, source: { name: 'USGS Earthquake Hazards Program' },
+    window: { label: 'Past 24 hours', start: '2026-07-24T14:53:19Z', end: '2026-07-25T14:53:19Z' },
+    events: [{ magnitude: 6, latitude: -13.8, longitude: 167.5, depth_km: 18, place: '82 km W of Sola, Vanuatu', time: '2026-07-25T14:54:00Z', event_url: 'https://earthquake.usgs.gov/earthquakes/eventpage/test-event' }],
+    ...overrides,
+  };
+}
+
+test('complete seismic payload derives LIVE despite optional contextual baseline being unavailable', () => {
+  const { context } = load();
+  const result = context.deriveStatus(completePayload(), Date.parse('2026-07-25T15:00:00Z'));
+  assert.equal(result.label, 'LIVE');
+  assert.match(result.message, /1 recorded event/);
+});
+
+test('current local export keeps all 215 valid event observations and event-specific links', () => {
+  const { context } = load();
+  assert.equal(context.validateExport(currentExport).events.length, 215);
+  assert.equal(context.deriveStatus(currentExport, Date.parse('2026-07-25T15:00:00Z')).label, 'LIVE');
+  assert.ok(currentExport.events.every((event) => event.event_url.includes(`/earthquakes/eventpage/${event.id}`)));
+});
+
+test('status derivation retains honest partial and error states', () => {
+  const { context } = load();
+  assert.equal(context.deriveStatus(completePayload({ window: null })).label, 'PARTIAL');
+  assert.match(context.deriveStatus(completePayload({ window: null })).message, /observation window/);
+  assert.equal(context.deriveStatus(completePayload({ status: 'error' })).label, 'ERROR');
+  assert.equal(context.deriveStatus(completePayload({ events: [] })).label, 'ERROR');
+});
+
+test('activity classification uses the broader distribution and has no VERY HIGH label', () => {
+  const { context } = load();
+  const currentShape = [6, ...Array(8).fill(5), ...Array(10).fill(4), ...Array(196).fill(1)].map((magnitude) => ({ magnitude }));
+  assert.equal(context.classifyActivity(currentShape).label, 'ELEVATED');
+  assert.equal(context.classifyActivity([{ magnitude: 6 }, ...Array(20).fill({ magnitude: 1 })]).label, 'ELEVATED');
+  assert.equal(context.classifyActivity(Array(20).fill({ magnitude: 1 })).label, 'LOW');
+});
+
+test('marker pointer hover and keyboard focus expose human-readable tooltip without navigation', () => {
+  const { context, opened } = load();
+  const marker = fakeElement('marker');
+  const tooltip = fakeElement('earthquake-tooltip');
+  const map = fakeElement('map'); map.getBoundingClientRect = () => ({ left: 0, top: 0, width: 600, height: 400 });
+  const event = completePayload().events[0];
+  context.makeMarkerInteractive(marker, event, tooltip, map);
+  assert.equal(typeof marker.listeners.pointerenter, 'function');
+  assert.equal(typeof marker.listeners.focus, 'function');
+  marker.listeners.pointerenter({ clientX: 590, clientY: 390 });
+  assert.match(tooltip.textContent, /M 6\.0/);
+  assert.match(tooltip.textContent, /82 km W of Sola, Vanuatu/);
+  assert.match(tooltip.textContent, /Depth: 18 km/);
+  assert.match(tooltip.textContent, /2026-07-25 14:54 UTC/);
+  assert.match(tooltip.textContent, /View on USGS/);
+  assert.equal(opened.length, 0);
+  assert.ok(parseFloat(tooltip.style.left) <= 372, 'tooltip is clamped to map width');
+  assert.ok(parseFloat(tooltip.style.top) <= 252, 'tooltip is clamped to map height');
+  marker.listeners.pointerleave();
+  assert.equal(tooltip.attributes['aria-hidden'], 'true');
+  marker.listeners.focus();
+  assert.equal(tooltip.attributes['aria-hidden'], 'false');
+  marker.listeners.blur();
+  assert.equal(tooltip.attributes['aria-hidden'], 'true');
+  assert.match(marker.attributes['aria-label'], /82 km W of Sola, Vanuatu.*18 kilometres.*UTC/);
+});
+
+test('marker activation opens exact event-specific USGS URL safely', () => {
+  const { context, opened } = load();
+  const marker = fakeElement('marker'); const tooltip = fakeElement('earthquake-tooltip'); const map = fakeElement('map');
+  context.makeMarkerInteractive(marker, completePayload().events[0], tooltip, map);
+  marker.listeners.click({ preventDefault() {} });
+  assert.deepEqual(opened[0], ['https://earthquake.usgs.gov/earthquakes/eventpage/test-event', '_blank', 'noopener,noreferrer']);
+  marker.listeners.keydown({ key: 'Enter', preventDefault() {} });
+  assert.deepEqual(opened[1], ['https://earthquake.usgs.gov/earthquakes/eventpage/test-event', '_blank', 'noopener,noreferrer']);
+});
+
+test('all six statistic cards use local inline line icons and the complete legend', () => {
+  assert.equal((html.match(/class="earthquake-card-icon(?: latest)?"/g) || []).length, 6);
+  for (const heading of ['Latest Earthquakes', 'Seismic Activity', 'Magnitude Distribution', 'Depth Distribution', "Today's Context", 'Data Source']) assert.match(html, new RegExp(`<h3>${heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h3>`));
+  assert.match(html, /USGS Earthquake API/);
+  for (const label of ['M ≥ 6.0', 'M 5.0–5.9', 'M 4.0–4.9', 'M 3.0–3.9', 'M 2.0–2.9', 'M &lt; 2.0']) assert.ok(html.includes(label));
+  assert.doesNotMatch(html, /font-awesome|cdnjs|unpkg|jsdelivr/i);
+});
