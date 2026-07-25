@@ -13,11 +13,11 @@ function loadPureFunctions() {
     .replaceAll("export ", "")
     .split("let all =")[0];
   const module = { exports: {} };
-  Function("module", `${source}\nmodule.exports = { field, stationCoordinates, normalizeStations, filterStations, generationTime, conditionColor };`)(module);
+  Function("module", `${source}\nmodule.exports = { field, stationCoordinates, normalizeStations, filterStations, generationTime, conditionColor, PROJECTION_REFERENCES };`)(module);
   return module.exports;
 }
 
-const { field, stationCoordinates, normalizeStations, filterStations, generationTime, conditionColor } = loadPureFunctions();
+const { field, stationCoordinates, normalizeStations, filterStations, generationTime, conditionColor, PROJECTION_REFERENCES } = loadPureFunctions();
 
 function loadProjection() {
   const source = fs.readFileSync("assets/maps/world/projection.js", "utf8").replaceAll("export ", "");
@@ -80,11 +80,44 @@ test("Ocean Buoy and Earthquake observers share the canonical 1800 by 900 projec
   assert.throws(() => projection.projectCoordinates(-104.656, 39.846), /Latitude/);
 });
 
+test("diagnostic reference locations follow the production station projection", () => {
+  const points = Object.fromEntries(PROJECTION_REFERENCES.map(([name, latitude, longitude]) => [name, projection.projectCoordinates(latitude, longitude)]));
+  assert.ok(points["San Francisco"].x < points["Los Angeles"].x && points["Los Angeles"].x < points["Las Vegas"].x);
+  assert.ok(points["San Diego"].x < points["Las Vegas"].x, "San Diego stays west of Las Vegas");
+  assert.ok(points["Las Vegas"].x < points.Denver.x && points.Denver.x < points["New York"].x);
+  assert.ok(Math.abs(points.London.x - projection.MAP_WIDTH / 2) < 1, "London is by the prime meridian");
+  assert.ok(points.Tokyo.x > 1500, "Tokyo is in East Asia");
+  assert.match(script, /PROJECTION_REFERENCES\.forEach[\s\S]*map\.projectCoordinates\(latitude,longitude\)/, "the diagnostic calls the same map projection as station markers");
+});
+
+test("reference coast cities coincide with vertices in the equirectangular land geometry", () => {
+  const basemap = fs.readFileSync("assets/maps/world/world-observer-basemap.svg", "utf8");
+  assert.match(basemap, /data-projection="equirectangular"/);
+  assert.match(basemap, /data-geographic-bounds="-180 -90 180 90"/);
+  const vertices = [...basemap.matchAll(/[ML](-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g)].map(match => ({ x: Number(match[1]), y: Number(match[2]) }));
+  const nearestLandVertex = point => Math.min(...vertices.map(vertex => Math.hypot(point.x - vertex.x, point.y - vertex.y)));
+  for (const name of ["San Francisco", "Los Angeles", "San Diego", "New York", "London", "Tokyo"]) {
+    const [,, longitude] = PROJECTION_REFERENCES.find(reference => reference[0] === name);
+    const [, latitude] = PROJECTION_REFERENCES.find(reference => reference[0] === name);
+    const distance = nearestLandVertex(projection.projectCoordinates(latitude, longitude));
+    assert.ok(distance < 3, `${name} is within 3 viewBox units of its expected coastline (actual ${distance.toFixed(2)})`);
+  }
+});
+
 test("land and station markers share one SVG and one navigation transform", () => {
   assert.match(script, /map\.layers\.markers\.append\(fragment\)/);
   assert.match(script, /createNavigation\(map\.svgElement/);
   assert.match(script, /svg\.style\.transform=`translate3d/);
   assert.doesNotMatch(script, /layers\.markers\.style\.transform|landLayer\.style\.transform/);
+  assert.doesNotMatch(fs.readFileSync("assets/maps/world/world-observer-basemap.svg", "utf8"), /<g class="land"[^>]*transform=/);
+});
+
+test("visible buoy symbols no longer exaggerate inland extent while retaining a large hit target", () => {
+  assert.match(script, /class="buoy-hit-area" r="10"/);
+  assert.match(script, /class="buoy-halo" r="5"/);
+  assert.match(script, /class="buoy-ring" r="3"/);
+  assert.match(fs.readFileSync("style.css", "utf8"), /\.buoy-hit-area\{fill:transparent;pointer-events:all\}/);
+  assert.ok(3 / 5 < 1, "the visible ring radius covers less than one degree of longitude");
 });
 
 test("representative fixture stations project into expected broad North American regions", () => {
