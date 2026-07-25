@@ -5,6 +5,7 @@ const STALE_AFTER_MS = 6 * 60 * 60 * 1000;
 const valueIds = ["window", "latest", "largest", "count", "collected"];
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
+const INITIAL_NAVIGATION_STATE = Object.freeze({ zoom: MIN_ZOOM, x: 0, y: 0 });
 
 function setState(state, message, label = state) {
   const status = document.getElementById("earthquake-data-status");
@@ -149,7 +150,7 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
 
 /** Add lightweight navigation to the already-rendered SVG without replotting markers. */
 export function createMapNavigation(mapContainer, mapCanvas, svg, resetButton) {
-  const state = { zoom: MIN_ZOOM, x: 0, y: 0 };
+  const state = { ...INITIAL_NAVIGATION_STATE };
   const pointers = new Map();
   let frame = 0; let dragOrigin = null; let pinchOrigin = null; let moved = false;
   const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
@@ -167,7 +168,11 @@ export function createMapNavigation(mapContainer, mapCanvas, svg, resetButton) {
     state.x = px - ratio * (px - state.x); state.y = py - ratio * (py - state.y); state.zoom = zoom;
     constrain(); render();
   };
-  const reset = () => { state.zoom = MIN_ZOOM; state.x = 0; state.y = 0; render(); };
+  const reset = () => {
+    Object.assign(state, INITIAL_NAVIGATION_STATE);
+    pointers.clear(); dragOrigin = null; pinchOrigin = null; moved = false;
+    render();
+  };
   const distance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   const midpoint = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
   mapContainer.addEventListener("wheel", (event) => { event.preventDefault(); zoomAt(state.zoom * Math.exp(-event.deltaY * .0015), event.clientX, event.clientY); }, { passive: false });
