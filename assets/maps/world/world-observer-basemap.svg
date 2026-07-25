@@ -4,6 +4,8 @@
      height="900"
      role="img"
      aria-labelledby="map-title map-description"
+     data-projection="equirectangular"
+     data-geographic-bounds="-180 -90 180 90"
      preserveAspectRatio="xMidYMid meet">
   <title id="map-title">World Observer world basemap</title>
   <desc id="map-description">A non-political world basemap derived from Natural Earth 1:50m land polygons.</desc>

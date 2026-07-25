@@ -52,9 +52,10 @@ test('complete seismic payload derives LIVE despite optional contextual baseline
   assert.match(result.message, /1 recorded event/);
 });
 
-test('current local export keeps all 215 valid event observations and event-specific links', () => {
+test('current local export keeps every valid event observation and event-specific link', () => {
   const { context } = load();
-  assert.equal(context.validateExport(currentExport).events.length, 215);
+  assert.equal(context.validateExport(currentExport).events.length, currentExport.events.length);
+  assert.ok(currentExport.events.length > 200, 'the generated global snapshot remains complete enough for the observer');
   assert.equal(context.deriveStatus(currentExport, Date.parse('2026-07-25T15:00:00Z')).label, 'LIVE');
   assert.ok(currentExport.events.every((event) => event.event_url.includes(`/earthquakes/eventpage/${event.id}`)));
 });
@@ -97,7 +98,7 @@ test('successful render keeps LIVE status, legend, and every marker after map in
   await context.renderExport(currentExport, map);
   assert.deepEqual(statuses, ['LIVE'], 'a successful render must not transition from LIVE to ERROR');
   assert.equal(elements.get('earthquake-data-status').className, 'status-badge live');
-  assert.equal(markers.length, 215);
+  assert.equal(markers.length, currentExport.events.length);
   assert.ok(markers.every((marker) => marker.classList.values.has('earthquake-marker')));
   assert.match(html, /class="earthquake-legend"[\s\S]*id="earthquake-map"/, 'legend is placed before and outside the map');
   assert.doesNotMatch(html, /id="earthquake-map"[^>]*>[\s\S]*class="earthquake-legend"/, 'legend never overlays the map');
