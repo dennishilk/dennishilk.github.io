@@ -2878,8 +2878,11 @@ function renderPlannedCards(id, items) {
   container.textContent = "";
   items.forEach((item) => {
     const config = typeof item === "string" ? { title: item } : item;
-    const card = document.createElement("article");
+    const card = document.createElement(config.href ? "a" : "article");
     card.className = "card observer-category technology-observer-card planned";
+    if (config.href) {
+      card.href = config.href;
+    }
     const title = document.createElement("h3");
     title.textContent = config.title;
     const status = document.createElement("p");
@@ -2889,13 +2892,6 @@ function renderPlannedCards(id, items) {
     const description = document.createElement("p");
     description.textContent = config.description || "Observer card planned. Data will appear here once a public export is available.";
     card.append(title, status, description);
-    if (config.href) {
-      const link = document.createElement("a");
-      link.className = "observer-card-link";
-      link.href = config.href;
-      link.textContent = config.linkLabel || `Open ${config.title}`;
-      card.append(link);
-    }
     container.appendChild(card);
   });
 }
