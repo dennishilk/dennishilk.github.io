@@ -3,6 +3,8 @@ import { WorldObserverMap } from "/assets/maps/world/world-map.js";
 const DASHBOARD_URL = "/world-observer/dashboard/latest/earthquake-observer.json";
 const STALE_AFTER_MS = 6 * 60 * 60 * 1000;
 const valueIds = ["window", "latest", "largest", "count", "collected"];
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 4;
 
 function setState(state, message, label = state) {
   const status = document.getElementById("earthquake-data-status");
@@ -145,6 +147,51 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
   marker.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && event.event_url) { e.preventDefault(); window.open(event.event_url, "_blank", "noopener,noreferrer"); } });
 }
 
+/** Add lightweight navigation to the already-rendered SVG without replotting markers. */
+export function createMapNavigation(mapContainer, mapCanvas, svg, resetButton) {
+  const state = { zoom: MIN_ZOOM, x: 0, y: 0 };
+  const pointers = new Map();
+  let frame = 0; let dragOrigin = null; let pinchOrigin = null; let moved = false;
+  const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
+  const bounds = () => {
+    const canvas = mapCanvas.getBoundingClientRect();
+    const baseWidth = svg.offsetWidth || canvas.width; const baseHeight = svg.offsetHeight || canvas.height;
+    return { canvas, maxX: Math.max(0, baseWidth * (state.zoom - 1) / 2), maxY: Math.max(0, baseHeight * (state.zoom - 1) / 2) };
+  };
+  const constrain = () => { const { maxX, maxY } = bounds(); state.x = clamp(state.x, -maxX, maxX); state.y = clamp(state.y, -maxY, maxY); };
+  const paint = () => { frame = 0; svg.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) scale(${state.zoom})`; mapContainer.classList.toggle("is-navigated", state.zoom !== MIN_ZOOM || state.x !== 0 || state.y !== 0); };
+  const render = () => { if (!frame) frame = requestAnimationFrame(paint); };
+  const zoomAt = (nextZoom, clientX, clientY) => {
+    const { canvas } = bounds(); const zoom = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM); const ratio = zoom / state.zoom;
+    const px = clientX - canvas.left - canvas.width / 2; const py = clientY - canvas.top - canvas.height / 2;
+    state.x = px - ratio * (px - state.x); state.y = py - ratio * (py - state.y); state.zoom = zoom;
+    constrain(); render();
+  };
+  const reset = () => { state.zoom = MIN_ZOOM; state.x = 0; state.y = 0; render(); };
+  const distance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  const midpoint = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
+  mapContainer.addEventListener("wheel", (event) => { event.preventDefault(); zoomAt(state.zoom * Math.exp(-event.deltaY * .0015), event.clientX, event.clientY); }, { passive: false });
+  mapContainer.addEventListener("dblclick", (event) => { event.preventDefault(); zoomAt(state.zoom * 1.6, event.clientX, event.clientY); });
+  mapContainer.addEventListener("pointerdown", (event) => {
+    if (event.button !== undefined && event.button !== 0) return;
+    pointers.set(event.pointerId, event); mapContainer.setPointerCapture?.(event.pointerId); moved = false;
+    if (pointers.size === 1) dragOrigin = { clientX: event.clientX, clientY: event.clientY, x: state.x, y: state.y };
+    if (pointers.size === 2) { const pair = [...pointers.values()]; pinchOrigin = { distance: distance(...pair), zoom: state.zoom, center: midpoint(...pair) }; }
+  });
+  mapContainer.addEventListener("pointermove", (event) => {
+    if (!pointers.has(event.pointerId)) return; pointers.set(event.pointerId, event);
+    if (pointers.size === 2 && pinchOrigin) { const pair = [...pointers.values()]; const center = midpoint(...pair); zoomAt(pinchOrigin.zoom * distance(...pair) / Math.max(1, pinchOrigin.distance), center.x, center.y); moved = true; }
+    else if (dragOrigin) { const dx = event.clientX - dragOrigin.clientX; const dy = event.clientY - dragOrigin.clientY; if (Math.hypot(dx, dy) > 3) moved = true; state.x = dragOrigin.x + dx; state.y = dragOrigin.y + dy; constrain(); render(); }
+  });
+  const endPointer = (event) => { pointers.delete(event.pointerId); dragOrigin = pointers.size === 1 ? { ...[...pointers.values()][0], x: state.x, y: state.y } : null; pinchOrigin = null; };
+  mapContainer.addEventListener("pointerup", endPointer); mapContainer.addEventListener("pointercancel", endPointer);
+  mapContainer.addEventListener("click", (event) => { if (moved) { event.preventDefault(); event.stopPropagation(); moved = false; } }, true);
+  resetButton.addEventListener("click", reset);
+  window.addEventListener("resize", () => { constrain(); render(); });
+  paint();
+  return { state, reset, zoomAt };
+}
+
 export async function renderExport(data, map) {
   const derived = deriveStatus(data);
   const chronological = [...data.events].sort((a, b) => Date.parse(eventTime(b)) - Date.parse(eventTime(a)));
@@ -164,7 +211,7 @@ export async function renderExport(data, map) {
 
 async function initialize() {
   unavailable(); setState("loading", "Loading the local dashboard export."); const map = new WorldObserverMap({ container: "#earthquake-map-canvas" });
-  try { await map.ready; document.getElementById("earthquake-map-caption").textContent = "Canonical World Observer basemap. No observations are plotted without a valid local export."; }
+  try { await map.ready; createMapNavigation(document.getElementById("earthquake-map"), document.getElementById("earthquake-map-canvas"), map.svgElement, document.getElementById("earthquake-reset-view")); document.getElementById("earthquake-map-caption").textContent = "Canonical World Observer basemap. No observations are plotted without a valid local export."; }
   catch { document.getElementById("earthquake-map-caption").textContent = "Canonical basemap is not available."; setState("error", "The canonical basemap could not be loaded.", "ERROR"); return; }
   try {
     const response = await fetch(DASHBOARD_URL, { cache: "no-store" });
