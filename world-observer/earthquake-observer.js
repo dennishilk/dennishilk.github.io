@@ -109,15 +109,21 @@ function populateCards(data, chronological, byMagnitude) {
   setCard("context", [formatWindow(data.window), context]);
 }
 
-function tooltipContent(tooltip, event) {
+function tooltipContent(tooltip, event, keepOpen) {
   const magnitude = document.createElement("strong"); magnitude.className = "earthquake-tooltip-magnitude"; magnitude.textContent = Number.isFinite(event.magnitude) ? `M ${event.magnitude.toFixed(1)}` : "Magnitude unavailable";
   const place = document.createElement("span"); place.className = "earthquake-tooltip-place"; place.textContent = event.place || `${event.latitude.toFixed(2)}, ${event.longitude.toFixed(2)}`;
   const depth = document.createElement("span"); depth.textContent = `Depth: ${Number.isFinite(event.depth_km) ? `${Math.round(event.depth_km)} km` : "Unavailable"}`;
   const time = document.createElement("span"); time.textContent = formatUtc(eventTime(event));
   const children = [magnitude, place, depth, time];
   if (event.event_url) {
-    const link = document.createElement("a"); link.className = "earthquake-tooltip-link"; link.textContent = "View on USGS ↗";
+    const link = document.createElement("a"); link.className = "earthquake-tooltip-action"; link.textContent = "Open on USGS ↗";
     link.href = event.event_url; link.target = "_blank"; link.rel = "noopener noreferrer"; children.push(link);
+    link.addEventListener("pointerdown", keepOpen);
+    link.addEventListener("click", keepOpen);
+    link.addEventListener("keydown", (e) => {
+      if (e.key !== " ") return;
+      e.preventDefault(); keepOpen(); link.click();
+    });
   }
   tooltip.replaceChildren(...children);
 }
@@ -136,8 +142,9 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
     tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
   };
   const show = (pointerEvent) => {
-    clearTimeout(hover.closeTimer); hover.activeMarker = marker; hover.activeClose = closeIfInactive;
-    tooltipContent(tooltip, event); tooltip.classList.add("visible"); tooltip.setAttribute("aria-hidden", "false");
+    const keepOpen = () => clearTimeout(hover.closeTimer);
+    keepOpen(); hover.activeMarker = marker; hover.activeClose = closeIfInactive;
+    tooltipContent(tooltip, event, keepOpen); tooltip.classList.add("visible"); tooltip.setAttribute("aria-hidden", "false");
     const markerBounds = marker.getBoundingClientRect(); position(pointerEvent?.clientX ?? markerBounds.left + markerBounds.width / 2, pointerEvent?.clientY ?? markerBounds.top + markerBounds.height / 2);
   };
   const hide = () => { tooltip.classList.remove("visible"); tooltip.setAttribute("aria-hidden", "true"); };
@@ -145,7 +152,7 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
     clearTimeout(hover.closeTimer);
     hover.closeTimer = setTimeout(() => {
       if (hover.activeMarker === marker && !markerHovered && !markerFocused && !hover.tooltipHovered && !hover.tooltipFocused) { hide(); hover.activeMarker = null; }
-    }, 80);
+    }, 160);
   };
   if (!hover.listenersAdded) {
     tooltip.addEventListener("pointerenter", () => { hover.tooltipHovered = true; clearTimeout(hover.closeTimer); });
