@@ -50,28 +50,53 @@ test("observer generation time comes from observer.generated_at and is formatted
   assert.equal(generationTime({ observer: null }), "Not reported");
 });
 
-test("each capability filter includes only stations with a finite measurement", () => {
+test("remaining filters synchronize markers, count, and table", () => {
   const stations = [
-    { station_id: "all", latitude: 1, longitude: 1, significant_wave_height_m: 0, wind_speed_m_s: 4, sea_surface_temperature_c: 12 },
-    { station_id: "wave", latitude: 2, longitude: 2, significant_wave_height_m: 1.2, wind_speed_m_s: null, sea_surface_temperature_c: null },
-    { station_id: "wind", latitude: 3, longitude: 3, significant_wave_height_m: null, wind_speed_m_s: 0, sea_surface_temperature_c: null },
-    { station_id: "temp", latitude: 4, longitude: 4, significant_wave_height_m: null, wind_speed_m_s: null, sea_surface_temperature_c: 0 }
+    { station_id: "alpha", station_name: "North Point", wave_condition: "calm", freshness_status: "fresh" },
+    { station_id: "bravo", station_name: "South Point", wave_condition: "rough", freshness_status: "stale" }
   ];
-  const base = { search: "", condition: "", freshness: "", waves: false, wind: false, temperature: false };
-  assert.deepEqual(filterStations(stations, { ...base, waves: true }).map(s => s.station_id), ["all", "wave"]);
-  assert.deepEqual(filterStations(stations, { ...base, wind: true }).map(s => s.station_id), ["all", "wind"]);
-  assert.deepEqual(filterStations(stations, { ...base, temperature: true }).map(s => s.station_id), ["all", "temp"]);
+  const base = { search: "", condition: "", freshness: "" };
+  assert.deepEqual(filterStations(stations, { ...base, search: "north" }).map(s => s.station_id), ["alpha"]);
+  assert.deepEqual(filterStations(stations, { ...base, condition: "rough" }).map(s => s.station_id), ["bravo"]);
+  assert.deepEqual(filterStations(stations, { ...base, freshness: "fresh" }).map(s => s.station_id), ["alpha"]);
   assert.match(script, /markers\.forEach\(\(node,s\)=>node\.hidden=!ids\.has\(s\)\)/);
   assert.match(script, /Showing \$\{visible\.length\} of \$\{all\.length\} stations/);
   assert.match(script, /renderTable\(\)/);
 });
 
-test("checkboxes and categorical marker palette remain explicit and accessible", () => {
+test("capability checkboxes, state, and handlers are removed", () => {
   const css = fs.readFileSync("style.css", "utf8");
-  assert.equal((page.match(/class="buoy-checkbox"/g) || []).length, 3);
-  assert.match(css, /\.buoy-checkbox input:checked/);
-  assert.match(css, /\.buoy-checkbox input:focus-visible/);
-  assert.match(css, /background-image:url/);
+  for (const id of ["buoy-waves", "buoy-wind", "buoy-temperature"]) {
+    assert.doesNotMatch(page, new RegExp(`id="${id}"`));
+    assert.doesNotMatch(script, new RegExp(`#${id}`));
+  }
+  assert.doesNotMatch(page, /class="buoy-checkbox"|type="checkbox"/);
+  assert.doesNotMatch(css, /buoy-checkbox/);
+  assert.doesNotMatch(script, /filters\.(waves|wind|temperature)|\.checked|type==="checkbox"/);
+});
+
+test("remaining filter controls and reset handler are present", () => {
+  for (const id of ["buoy-search", "buoy-condition", "buoy-freshness", "buoy-reset-filters", "buoy-count"]) {
+    assert.match(page, new RegExp(`id="${id}"`));
+  }
+  assert.match(script, /\.buoy-toolbar input,\.buoy-toolbar select/);
+  assert.match(script, /#buoy-reset-filters/);
+  assert.match(script, /control=>control\.value=""/);
+});
+
+test("wave-condition legend is outside the map viewport and retains the marker palette", () => {
+  const css = fs.readFileSync("style.css", "utf8");
+  const legend = page.match(/<aside class="buoy-legend"[\s\S]*?<\/aside>/)?.[0];
+  const map = page.match(/<div id="buoy-map"[\s\S]*?<\/div><\/div>/)?.[0];
+  assert.ok(legend);
+  assert.ok(map);
+  assert.ok(page.indexOf(legend) < page.indexOf(map));
+  assert.doesNotMatch(map, /buoy-legend/);
+  assert.doesNotMatch(css.match(/\.buoy-legend\{[^}]*\}/)?.[0] || "", /position:absolute/);
+  for (const label of ["calm", "slight", "moderate", "rough", "very rough", "high", "phenomenal", "unknown"]) {
+    assert.match(legend, new RegExp(`>${label}<|[●○] ${label}`));
+  }
+  assert.match(legend, /Dashed or faded ring: stale station/);
   assert.deepEqual(["calm", "slight", "moderate", "rough", "very_rough", "high", "phenomenal"].map(conditionColor), ["#45b8ad", "#16d9ee", "#3478f6", "#f1cc45", "#f39a32", "#f05a32", "#e53434"]);
   assert.equal(conditionColor(null), "#566873");
 });
