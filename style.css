@@ -4070,16 +4070,16 @@ button.technology-observer-card {
 
 /* Earthquake Observer — quiet scientific dashboard */
 .earthquake-observer-section { background: linear-gradient(160deg, rgba(3, 15, 24, .96), rgba(2, 9, 15, .94)); }
-.earthquake-hero-grid { display: grid; gap: 1rem; grid-template-columns: minmax(240px, .62fr) minmax(0, 1.7fr); margin-top: 1rem; }
+.earthquake-hero-grid { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); margin-top: 1rem; }
 .earthquake-status-card, .earthquake-map-panel, .earthquake-panel-grid article, .earthquake-learning article { background: rgba(1, 10, 17, .78); border: 1px solid rgba(0, 180, 255, .24); border-radius: 12px; }
 .earthquake-status-card { padding: 1rem; }
 .earthquake-status-card h3, .earthquake-panel-grid h3, .earthquake-learning h3 { color: var(--accent); font-size: .9rem; letter-spacing: .06em; margin: 0 0 .8rem; text-transform: uppercase; }
-.earthquake-status-card dl { display: grid; gap: 0; margin: 0; }
+.earthquake-status-card dl { display: grid; gap: 0 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
 .earthquake-status-card dl div { border-top: 1px solid rgba(0, 180, 255, .13); padding: .67rem 0; }
 .earthquake-status-card dt { color: #8fb3c1; font-size: .72rem; text-transform: uppercase; }
 .earthquake-status-card dd { color: #dff8ff; font-size: .82rem; line-height: 1.35; margin: .22rem 0 0; overflow-wrap: anywhere; }
-.earthquake-map-panel { display: flex; flex-direction: column; margin: 0; min-height: 390px; overflow: hidden; padding: .75rem; }
-.earthquake-map { align-items: center; display: flex; flex: 1; justify-content: center; min-height: 320px; }
+.earthquake-map-panel { display: flex; flex-direction: column; margin: 0; min-height: 560px; overflow: hidden; padding: .75rem; }
+.earthquake-map { align-items: center; display: flex; flex: 1; justify-content: center; min-height: 490px; }
 .earthquake-map .world-observer-map { display: block; width: 100%; }
 .earthquake-map .world-observer-map:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .earthquake-map-panel figcaption { color: #8fb3c1; font-size: .72rem; line-height: 1.4; padding: .55rem .25rem .1rem; }
@@ -4091,5 +4091,5 @@ button.technology-observer-card {
 .earthquake-learning article p { color: #c9d1d9; font-size: .85rem; line-height: 1.55; margin-bottom: 0; }
 .status-badge.loading, .status-badge.stale, .status-badge.invalid, .status-badge.unavailable { border-color: rgba(0, 180, 255, .32); color: #9fcbd8; }
 .observer-card-link { color: var(--accent); display: inline-block; margin-top: auto; padding-top: .45rem; }
-@media (max-width: 900px) { .earthquake-hero-grid { grid-template-columns: 1fr; } .earthquake-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .earthquake-learning > div { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .earthquake-panel-grid, .earthquake-learning > div { grid-template-columns: 1fr; } .earthquake-map-panel { min-height: 280px; } .earthquake-map { min-height: 220px; } }
+@media (max-width: 900px) { .earthquake-status-card dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } .earthquake-map-panel { min-height: 460px; } .earthquake-map { min-height: 390px; } .earthquake-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .earthquake-learning > div { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .earthquake-status-card dl, .earthquake-panel-grid, .earthquake-learning > div { grid-template-columns: 1fr; } .earthquake-map-panel { min-height: 320px; } .earthquake-map { min-height: 250px; } }
