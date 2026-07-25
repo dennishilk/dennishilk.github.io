@@ -4080,10 +4080,14 @@ button.technology-observer-card {
 .earthquake-status-card dt { color: #8fb3c1; font-size: .72rem; text-transform: uppercase; }
 .earthquake-status-card dd { color: #dff8ff; font-size: .82rem; line-height: 1.35; margin: .22rem 0 0; overflow-wrap: anywhere; }
 .earthquake-map-panel { display: flex; flex-direction: column; margin: 0; min-height: 560px; overflow: hidden; padding: .75rem; }
-.earthquake-map { align-items: center; display: flex; flex: 1; justify-content: center; min-height: 490px; position: relative; }
-.earthquake-map-canvas { align-items: center; display: flex; height: 100%; justify-content: center; width: 100%; }
-.earthquake-map .world-observer-map { display: block; width: 100%; }
+.earthquake-map { align-items: center; cursor: grab; display: flex; flex: 1; justify-content: center; min-height: 490px; overflow: hidden; position: relative; touch-action: none; user-select: none; }
+.earthquake-map:active { cursor: grabbing; }
+.earthquake-map-canvas { align-items: center; display: flex; height: 100%; justify-content: center; overflow: hidden; width: 100%; }
+.earthquake-map .world-observer-map { display: block; transform-origin: center; width: 100%; will-change: transform; }
 .earthquake-map .world-observer-map:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.earthquake-reset-view { background: rgba(2, 15, 23, .88); border: 1px solid rgba(119, 214, 226, .4); border-radius: 999px; color: #c9e9ef; cursor: pointer; font: 600 .62rem/1 JetBrains Mono, monospace; opacity: .78; padding: .48rem .65rem; position: absolute; right: .55rem; top: .55rem; z-index: 20; }
+.earthquake-reset-view:hover, .earthquake-reset-view:focus-visible { border-color: var(--accent); color: #fff; opacity: 1; outline: none; }
+.earthquake-map:not(.is-navigated) .earthquake-reset-view { opacity: .55; }
 .earthquake-map-panel figcaption { color: #8fb3c1; font-size: .72rem; line-height: 1.4; padding: .55rem .25rem .1rem; }
 .earthquake-panel-grid { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 1rem 0; }
 .earthquake-panel-grid article { align-items: flex-start; display: grid; gap: 1rem; grid-template-columns: 70px minmax(0, 1fr); min-height: 168px; padding: 1.25rem; }
@@ -4109,4 +4113,4 @@ button.technology-observer-card {
 .observer-card-link { color: var(--accent); display: inline-block; margin-top: auto; padding-top: .45rem; }
 @media (max-width: 900px) { .earthquake-status-card dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } .earthquake-map-panel { min-height: 460px; } .earthquake-map { min-height: 390px; } .earthquake-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .earthquake-learning > div { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .earthquake-status-card dl, .earthquake-panel-grid, .earthquake-learning > div { grid-template-columns: 1fr; } .earthquake-panel-grid article { grid-template-columns: 58px minmax(0, 1fr); min-height: 0; padding: 1rem; }.earthquake-card-icon { height: 52px; width: 52px; } .earthquake-map-panel { min-height: 340px; } .earthquake-map { min-height: 270px; } .earthquake-legend { gap: .38rem .75rem; padding: .1rem .1rem .65rem; }.earthquake-legend span { font-size: .56rem; }.earthquake-tooltip { max-width: min(220px, calc(100% - 16px)); } }
-@media (prefers-reduced-motion: reduce) { .earthquake-tooltip, .earthquake-map .earthquake-marker__dot { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .earthquake-tooltip, .earthquake-map .earthquake-marker__dot, .earthquake-reset-view { transition: none; } }
