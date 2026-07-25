@@ -5,6 +5,7 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 const root = path.join(__dirname, '..');
+const css = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'world-observer/earthquake-observer.html'), 'utf8');
 const source = fs.readFileSync(path.join(root, 'world-observer/earthquake-observer.js'), 'utf8')
   .replace(/^import .*;$/m, '')
@@ -28,7 +29,7 @@ function fakeElement(id = '') {
 function load() {
   const opened = [];
   const document = { createElement: () => fakeElement() };
-  const context = vm.createContext({ document, window: { open: (...args) => opened.push(args), addEventListener() {} }, console, Date, Number, Math, Array, String, Error, Set });
+  const context = vm.createContext({ document, window: { open: (...args) => opened.push(args), addEventListener() {} }, console, Date, Number, Math, Array, String, Error, Set, setTimeout, clearTimeout });
   vm.runInContext(source, context);
   return { context, opened };
 }
@@ -84,7 +85,7 @@ test('successful render keeps LIVE status, legend, and every marker after map in
       return elements.get(id);
     },
   };
-  const context = vm.createContext({ document, window: { open() {} }, console, Date, Number, Math, Array, String, Error, Set });
+  const context = vm.createContext({ document, window: { open() {} }, console, Date, Number, Math, Array, String, Error, Set, setTimeout, clearTimeout });
   vm.runInContext(source.replace('status.textContent = label.toUpperCase();', 'status.textContent = label.toUpperCase(); statuses.push(status.textContent);'), context);
   context.statuses = statuses;
   const markers = [];
@@ -117,7 +118,7 @@ test('activity classification uses the broader distribution and has no VERY HIGH
   assert.equal(context.classifyActivity(Array(20).fill({ magnitude: 1 })).label, 'LOW');
 });
 
-test('marker pointer hover and keyboard focus expose human-readable tooltip without navigation', () => {
+test('marker and tooltip form one interactive hover and focus region', async () => {
   const { context, opened } = load();
   const marker = fakeElement('marker');
   const tooltip = fakeElement('earthquake-tooltip');
@@ -132,14 +133,28 @@ test('marker pointer hover and keyboard focus expose human-readable tooltip with
   assert.match(tooltip.textContent, /Depth: 18 km/);
   assert.match(tooltip.textContent, /2026-07-25 14:54 UTC/);
   assert.match(tooltip.textContent, /View on USGS/);
+  const link = tooltip.children.at(-1);
+  assert.equal(link.href, event.event_url);
+  assert.equal(link.target, '_blank');
+  assert.equal(link.rel, 'noopener noreferrer');
   assert.equal(opened.length, 0);
   assert.ok(parseFloat(tooltip.style.left) <= 372, 'tooltip is clamped to map width');
   assert.ok(parseFloat(tooltip.style.top) <= 252, 'tooltip is clamped to map height');
   marker.listeners.pointerleave();
+  tooltip.listeners.pointerenter();
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  assert.equal(tooltip.attributes['aria-hidden'], 'false', 'entering tooltip keeps it open');
+  tooltip.listeners.pointerleave();
+  await new Promise((resolve) => setTimeout(resolve, 100));
   assert.equal(tooltip.attributes['aria-hidden'], 'true');
   marker.listeners.focus();
   assert.equal(tooltip.attributes['aria-hidden'], 'false');
   marker.listeners.blur();
+  tooltip.listeners.focusin();
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  assert.equal(tooltip.attributes['aria-hidden'], 'false', 'tabbing to the tooltip link keeps it open');
+  tooltip.listeners.focusout();
+  await new Promise((resolve) => setTimeout(resolve, 100));
   assert.equal(tooltip.attributes['aria-hidden'], 'true');
   assert.match(marker.attributes['aria-label'], /82 km W of Sola, Vanuatu.*18 kilometres.*UTC/);
 });
@@ -154,40 +169,28 @@ test('marker activation opens exact event-specific USGS URL safely', () => {
   assert.deepEqual(opened[1], ['https://earthquake.usgs.gov/earthquakes/eventpage/test-event', '_blank', 'noopener,noreferrer']);
 });
 
-test('zoom, pan, and Reset View restore the exact initial navigation transform', () => {
+test('zoom, pan, double-click, and pinch navigation remain available without Reset View', () => {
   const { context } = load();
-  const mapContainer = fakeElement('earthquake-map');
-  const mapCanvas = fakeElement('earthquake-map-canvas');
-  const svg = fakeElement('map-svg');
-  const resetButton = fakeElement('earthquake-reset-view');
+  const mapContainer = fakeElement('earthquake-map'); const mapCanvas = fakeElement('earthquake-map-canvas'); const svg = fakeElement('map-svg');
   mapCanvas.getBoundingClientRect = () => ({ left: 0, top: 0, width: 800, height: 500 });
   svg.offsetWidth = 800; svg.offsetHeight = 500;
-  const frames = [];
-  context.requestAnimationFrame = (callback) => { frames.push(callback); return frames.length; };
+  const frames = []; context.requestAnimationFrame = (callback) => { frames.push(callback); return frames.length; };
   const flushFrame = () => { const callback = frames.shift(); if (callback) callback(); };
-
-  const navigation = context.createMapNavigation(mapContainer, mapCanvas, svg, resetButton);
-  const initialState = { ...navigation.state };
+  context.createMapNavigation(mapContainer, mapCanvas, svg);
   const initialTransform = svg.style.transform;
-
-  mapContainer.listeners.wheel({ preventDefault() {}, deltaY: -500, clientX: 650, clientY: 150 });
-  flushFrame();
+  mapContainer.listeners.wheel({ preventDefault() {}, deltaY: -500, clientX: 650, clientY: 150 }); flushFrame();
   mapContainer.listeners.pointerdown({ pointerId: 1, button: 0, clientX: 400, clientY: 250 });
-  mapContainer.listeners.pointermove({ pointerId: 1, clientX: 300, clientY: 325 });
-  mapContainer.listeners.pointerup({ pointerId: 1 });
-  flushFrame();
+  mapContainer.listeners.pointermove({ pointerId: 1, clientX: 300, clientY: 325 }); mapContainer.listeners.pointerup({ pointerId: 1 }); flushFrame();
   assert.notEqual(svg.style.transform, initialTransform);
-
-  resetButton.listeners.click();
-  flushFrame();
-  assert.deepEqual({ ...navigation.state }, initialState);
-  assert.equal(svg.style.transform, initialTransform);
-  assert.equal(mapContainer.classList.values.has('is-navigated'), false);
-
-  resetButton.listeners.click();
-  flushFrame();
-  assert.deepEqual({ ...navigation.state }, initialState, 'repeated resets remain idempotent');
-  assert.equal(svg.style.transform, initialTransform);
+  assert.equal(typeof mapContainer.listeners.dblclick, 'function');
+  mapContainer.listeners.pointerdown({ pointerId: 1, button: 0, clientX: 300, clientY: 200 });
+  mapContainer.listeners.pointerdown({ pointerId: 2, button: 0, clientX: 500, clientY: 300 });
+  mapContainer.listeners.pointermove({ pointerId: 2, clientX: 600, clientY: 350 }); flushFrame();
+  assert.match(svg.style.transform, /scale\(/);
+  assert.doesNotMatch(html, /earthquake-reset-view|>🌍 Reset</);
+  assert.doesNotMatch(source, /earthquake-reset-view|resetButton/);
+  assert.doesNotMatch(css, /earthquake-reset-view/);
+  assert.match(css, /\.earthquake-tooltip \{[^}]*pointer-events: auto/);
 });
 
 test('all six statistic cards use local inline line icons and the complete legend', () => {
