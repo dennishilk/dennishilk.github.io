@@ -14,6 +14,10 @@ assert.match(script, /\/world-observer\/dashboard\/latest\/time-observer\.json/)
 assert.match(script, /earth_orientation/); assert.match(script, /leap_seconds/); assert.match(script, /DATA UNAVAILABLE/);
 assert.doesNotMatch(script, /https?:\/\/(?:[^"']*\.)?(?:iers|bipm|nist|ptb)/i);
 assert.match(script, /renderLeap\(d\?\.leap_seconds\)/);
+assert.match(script, /provenanceSummary\(d\?\.provenance\)/);
+assert.match(script, /IERS — Earth Orientation Parameters \(UT1−UTC\)/);
+assert.doesNotMatch(script, /JSON\.stringify\(d\.provenance\)/);
+assert.match(css, /#provenance\{white-space:pre-line\}/);
 assert.match(script, /String\(eo.status/); assert.match(css, /prefers-reduced-motion/);
 assert.match(tech, /time-observer\.html[\s\S]*AVAILABLE/);
 assert.equal(snapshot.earth_orientation.status, 'predicted');
