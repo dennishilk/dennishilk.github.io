@@ -145,8 +145,8 @@ export function makeMarkerInteractive(marker, event, tooltip, mapContainer) {
   marker.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && event.event_url) { e.preventDefault(); window.open(event.event_url, "_blank", "noopener,noreferrer"); } });
 }
 
-async function renderExport(data, map) {
-  const derived = deriveStatus(data); setState(derived.state, derived.message, derived.label);
+export async function renderExport(data, map) {
+  const derived = deriveStatus(data);
   const chronological = [...data.events].sort((a, b) => Date.parse(eventTime(b)) - Date.parse(eventTime(a)));
   const byMagnitude = data.events.filter((event) => Number.isFinite(event.magnitude)).sort((a, b) => b.magnitude - a.magnitude);
   document.getElementById("earthquake-window").textContent = formatWindow(data.window);
@@ -159,10 +159,11 @@ async function renderExport(data, map) {
     makeMarkerInteractive(marker, event, tooltip, mapContainer);
   }
   document.getElementById("earthquake-map-caption").textContent = `${data.events.length} events from ${formatWindow(data.window).toLowerCase()}. Hover or focus a marker for details; activate it to open its USGS event page.`;
+  setState(derived.state, derived.message, derived.label);
 }
 
 async function initialize() {
-  unavailable(); setState("loading", "Loading the local dashboard export."); const map = new WorldObserverMap({ container: "#earthquake-map" });
+  unavailable(); setState("loading", "Loading the local dashboard export."); const map = new WorldObserverMap({ container: "#earthquake-map-canvas" });
   try { await map.ready; document.getElementById("earthquake-map-caption").textContent = "Canonical World Observer basemap. No observations are plotted without a valid local export."; }
   catch { document.getElementById("earthquake-map-caption").textContent = "Canonical basemap is not available."; setState("error", "The canonical basemap could not be loaded.", "ERROR"); return; }
   try {

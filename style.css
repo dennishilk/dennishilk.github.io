@@ -4081,6 +4081,7 @@ button.technology-observer-card {
 .earthquake-status-card dd { color: #dff8ff; font-size: .82rem; line-height: 1.35; margin: .22rem 0 0; overflow-wrap: anywhere; }
 .earthquake-map-panel { display: flex; flex-direction: column; margin: 0; min-height: 560px; overflow: hidden; padding: .75rem; }
 .earthquake-map { align-items: center; display: flex; flex: 1; justify-content: center; min-height: 490px; position: relative; }
+.earthquake-map-canvas { align-items: center; display: flex; height: 100%; justify-content: center; width: 100%; }
 .earthquake-map .world-observer-map { display: block; width: 100%; }
 .earthquake-map .world-observer-map:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .earthquake-map-panel figcaption { color: #8fb3c1; font-size: .72rem; line-height: 1.4; padding: .55rem .25rem .1rem; }
