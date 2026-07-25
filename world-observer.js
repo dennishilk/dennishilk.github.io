@@ -1737,6 +1737,14 @@ function renderEnvironmentOverviewCards(environmentData) {
     activeStatus: true,
   });
 
+  renderTechnologyCard(container, {
+    title: "Ocean Buoy Observer",
+    status: "● ACTIVE",
+    href: "/world-observer/ocean-buoy-observer.html",
+    cardClass: "hometown-observer-card",
+    activeStatus: true,
+  });
+
 }
 
 function renderEnvironmentObservers(environmentData) {
