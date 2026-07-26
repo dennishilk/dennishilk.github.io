@@ -4114,3 +4114,17 @@ button.technology-observer-card {
 @media(max-width:650px){.buoy-hero{gap:1rem}.buoy-toolbar{align-items:stretch;display:grid;grid-template-columns:1fr 1fr}.buoy-toolbar h2,.buoy-toolbar output{grid-column:1/-1;margin:0}.buoy-toolbar label:first-of-type{grid-column:1/-1}.buoy-map{height:360px}.buoy-legend{gap:.3rem .65rem}.buoy-legend small{flex-basis:100%}.buoy-map-controls{right:.7rem;top:.7rem}.buoy-map-controls button[data-map-action=reset]{font-size:0}.buoy-map-controls button[data-map-action=reset]::after{content:"⌂";font-size:1rem}.buoy-detail{border-radius:14px 14px 0 0;bottom:0;left:0;max-height:70vh;position:fixed;right:0;top:auto;width:auto}.buoy-table-wrap th:nth-child(4),.buoy-table-wrap td:nth-child(4),.buoy-table-wrap th:nth-child(5),.buoy-table-wrap td:nth-child(5){display:none}}
 @media(prefers-reduced-motion:reduce){.buoy-map .world-observer-map,.buoy-marker{transition:none!important}}
 .buoy-legend span{color:var(--legend-color);font-weight:700}.buoy-legend small{color:#a9c9d1}
+
+/* Cthulhu workstation documentation */
+.cthulhu-documentation { margin: .4rem 0 1rem; }
+.cthulhu-photo-records { display: grid; gap: 1rem; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.cthulhu-documentation figure { background: rgba(7,22,27,.88); border: 1px solid rgba(137,185,191,.46); margin: 0; padding: 1rem; }
+.cthulhu-documentation img { display: block; height: auto; width: 100%; }
+.cthulhu-documentation figcaption { color: #9fb7bb; font: .82rem/1.5 "Courier New", monospace; padding-top: .7rem; }
+.cthulhu-documentation figcaption strong, .cthulhu-documentation figcaption span { display: block; }
+.cthulhu-documentation figcaption strong { color: #9de4ef; font-size: .8rem; letter-spacing: .09em; margin-bottom: .2rem; }
+.cthulhu-terminal-evidence { margin: 1rem auto 0 !important; max-width: 780px; }
+.cthulhu-terminal-evidence > div { background: #050d10; border: 1px solid rgba(137,185,191,.55); padding: clamp(.5rem, 1.5vw, 1rem); }
+@media (max-width: 700px) {
+  .cthulhu-photo-records { grid-template-columns: 1fr; }
+}
