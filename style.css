@@ -4123,6 +4123,11 @@ button.technology-observer-card {
 .cthulhu-documentation figcaption { color: #9fb7bb; font: .82rem/1.5 "Courier New", monospace; padding-top: .7rem; }
 .cthulhu-documentation figcaption strong, .cthulhu-documentation figcaption span { display: block; }
 .cthulhu-documentation figcaption strong { color: #9de4ef; font-size: .8rem; letter-spacing: .09em; margin-bottom: .2rem; }
+.cthulhu-image-link { cursor: pointer; display: block; }
+.cthulhu-full-resolution { color: #58d6e6; display: inline-block; font: 700 .7rem/1.4 "Courier New", monospace; letter-spacing: .06em; margin-top: .35rem; padding: .15rem 0; text-decoration: none; }
+.cthulhu-image-link:hover img { filter: brightness(1.06); }
+.cthulhu-full-resolution:hover { color: #b7f7ff; text-decoration: underline; text-underline-offset: .2em; }
+.cthulhu-image-link:focus-visible, .cthulhu-full-resolution:focus-visible { outline: 2px solid #9de4ef; outline-offset: 3px; }
 .cthulhu-terminal-evidence { margin: 1rem auto 0 !important; max-width: 780px; }
 .cthulhu-terminal-evidence > div { background: #050d10; border: 1px solid rgba(137,185,191,.55); padding: clamp(.5rem, 1.5vw, 1rem); }
 @media (max-width: 700px) {
