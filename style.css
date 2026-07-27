@@ -4203,5 +4203,17 @@ button.technology-observer-card {
 .hcl-field-photo { align-content: center; border: 1px dashed rgba(157,228,239,.4); display: grid; gap: .35rem; justify-items: center; margin-top: .9rem; min-height: 120px; padding: .75rem; text-align: center; }
 .hcl-field-photo strong { color: #9de4ef; font: 700 .7rem "Courier New",monospace; letter-spacing: .1em; }
 .hcl-field-photo small { color: #91abb0; }
+.hcl-field-grid .hcl-field-note-published { border-style: solid; grid-column: 1 / -1; }
+.hcl-field-note-published > h4 { color: #fff0d2; font-size: clamp(1.35rem,3vw,2rem); margin: 1rem 0; }
+.hcl-field-note-photo { background: rgba(7,22,27,.88); border: 1px solid rgba(137,185,191,.46); margin: 0 0 1.25rem; max-width: 560px; padding: .8rem; }
+.hcl-field-note-photo img { display: block; height: auto; width: 100%; }
+.hcl-field-note-photo figcaption { color: #9fb7bb; font: .78rem/1.55 "Courier New",monospace; padding-top: .7rem; }
+.hcl-field-note-record { display: grid; gap: 0 1.5rem; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.hcl-field-note-record section { border-top: 1px solid rgba(137,185,191,.22); padding: .9rem 0; }
+.hcl-field-note-record h5 { color: #9de4ef; font: 700 .72rem "Courier New",monospace; letter-spacing: .09em; margin: 0 0 .55rem; text-transform: uppercase; }
+.hcl-field-note-record p { color: #c7d8dc; font-size: .88rem; line-height: 1.7; margin: 0 0 .7rem; }
+.hcl-field-note-record p:last-child { margin-bottom: 0; }
+.hcl-field-note-record .hcl-field-note-lesson { grid-column: 1 / -1; }
+.hcl-field-note-lesson p { color: #fff0d2; font: 700 1rem/1.5 "Courier New",monospace; margin: 0; }
 .hcl-growing-collection { border-left: 3px solid #ffd08a; margin-top: 2rem; padding: .2rem 1rem; }
-@media (max-width: 700px) { .hcl-field-grid { grid-template-columns: 1fr; } .hcl-field-grid dl div { gap: .2rem; grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .hcl-field-grid { grid-template-columns: 1fr; } .hcl-field-grid dl div { gap: .2rem; grid-template-columns: 1fr; } .hcl-field-note-record { grid-template-columns: 1fr; } .hcl-field-note-record .hcl-field-note-lesson { grid-column: auto; } }
