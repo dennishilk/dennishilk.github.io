@@ -4143,3 +4143,15 @@ button.technology-observer-card {
 /* Retro Internet Workstation evidence record */
 .retro-evidence{display:grid;gap:1rem;grid-template-columns:minmax(0,1.65fr) minmax(260px,.75fr);margin:.4rem 0 1.2rem}.retro-photo-record,.retro-evidence-record{background:rgba(7,22,27,.88);border:1px solid rgba(137,185,191,.46);margin:0;padding:1rem}.retro-photo-record img{display:block;height:auto;width:100%}.retro-photo-record figcaption{color:#9fb7bb;font:.82rem/1.55 "Courier New",monospace;padding-top:.7rem}.retro-photo-record figcaption strong,.retro-photo-record figcaption span{display:block}.retro-photo-record figcaption strong{color:#9de4ef;font-size:.8rem;letter-spacing:.09em;margin-bottom:.2rem}.retro-photo-record figcaption span+span{color:#d6e7e9;margin-top:.45rem}.retro-evidence-record h2{color:#e9fcfd;margin:.2rem 0 .8rem}.retro-evidence-record dl{margin:0}.retro-evidence-record dl div{border-top:1px solid rgba(137,185,191,.18);padding:.55rem 0}.retro-evidence-record dt{color:#8fb2b8;font:700 .67rem "Courier New",monospace;text-transform:uppercase}.retro-evidence-record dd{color:#d8e7e8;font-size:.78rem;line-height:1.6;margin:.18rem 0 0}.retro-photo-record[data-evidence-id]{position:relative}
 @media(max-width:800px){.retro-evidence{grid-template-columns:1fr}}
+
+/* Home Computing Lab artifact photography */
+.hcl-documentation { margin: .4rem 0 1.2rem; }
+.hcl-photo-records { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hcl-photo-records-single { grid-template-columns: minmax(0, 1fr); }
+.hcl-documentation figure { background: rgba(7,22,27,.88); border: 1px solid rgba(137,185,191,.46); margin: 0; padding: 1rem; }
+.hcl-documentation img { display: block; height: auto; width: 100%; }
+.hcl-documentation figcaption { color: #9fb7bb; font: .82rem/1.55 "Courier New", monospace; padding-top: .7rem; }
+.hcl-documentation figcaption strong, .hcl-documentation figcaption span { display: block; }
+.hcl-documentation figcaption strong { color: #9de4ef; font-size: .8rem; letter-spacing: .09em; margin-bottom: .2rem; }
+.retro-evidence-record > p:not(.museum-section-label) { color: #b9cdd0; font-size: .86rem; line-height: 1.7; }
+@media (max-width: 700px) { .hcl-photo-records { grid-template-columns: 1fr; } }
