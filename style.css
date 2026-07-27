@@ -4131,8 +4131,24 @@ button.technology-observer-card {
 .cthulhu-image-link:focus-visible, .cthulhu-full-resolution:focus-visible { outline: 2px solid #9de4ef; outline-offset: 3px; }
 .cthulhu-terminal-evidence { margin: 0 !important; }
 .cthulhu-terminal-evidence > div { background: #050d10; border: 1px solid rgba(137,185,191,.55); padding: clamp(.5rem, 1.5vw, 1rem); }
+
+/* Supporting records stay visually subordinate to the workstation exhibit. */
+.cthulhu-evidence-layout { align-items: start; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); }
+.cthulhu-evidence-gallery { align-items: start; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cthulhu-evidence-layout > .hcl-object-layout { grid-template-columns: 1fr; }
+.cthulhu-evidence { align-self: start; background: rgba(5,17,22,.9); border: 1px solid rgba(137,185,191,.4); box-sizing: border-box; margin: 0; padding: .8rem; width: 100%; }
+.cthulhu-evidence .cthulhu-image-link { align-items: center; display: flex; justify-content: center; }
+.cthulhu-evidence img { display: block; height: auto; margin: 0 auto; max-height: 400px; max-width: 100%; object-fit: contain; width: auto; }
+.cthulhu-packaging-evidence img { max-height: 380px; }
+.cthulhu-evidence figcaption { color: #9fb7bb; font: .78rem/1.5 "Courier New", monospace; padding-top: .65rem; }
+.cthulhu-evidence figcaption strong, .cthulhu-evidence figcaption span { display: block; }
+.cthulhu-evidence figcaption strong { color: #9de4ef; font-size: .75rem; letter-spacing: .08em; margin-bottom: .2rem; }
+.cthulhu-rotate-180 img { transform: rotate(180deg); }
 @media (max-width: 700px) {
   .cthulhu-photo-records { grid-template-columns: 1fr; }
+  .cthulhu-evidence-gallery, .cthulhu-evidence-layout { grid-template-columns: 1fr; }
+  .cthulhu-evidence { justify-self: center; max-width: 520px; }
+  .cthulhu-evidence img, .cthulhu-packaging-evidence img { max-height: min(400px, 70vh); }
 }
 
 /* Home Computing Lab — living archive records */
