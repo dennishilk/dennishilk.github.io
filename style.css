@@ -4219,3 +4219,29 @@ button.technology-observer-card {
 .hcl-archive-return:hover { color: #fff; text-decoration: underline; text-underline-offset: .2em; }
 .hcl-archive-return:focus-visible { outline: 2px solid #8fe8f4; outline-offset: 3px; }
 @media (max-width: 700px) { .hcl-field-grid { grid-template-columns: 1fr; } .hcl-field-grid dl div { gap: .2rem; grid-template-columns: 1fr; } }
+
+/* Compact Field Notes and Artifacts archive */
+.hcl-archive-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hcl-field-grid .hcl-archive-card{display:flex;flex-direction:column;padding:.8rem}
+.hcl-archive-card>h3,.hcl-archive-card-link h3{font-size:.95rem;margin:.65rem 0 .35rem}
+.hcl-archive-card>p,.hcl-archive-card-link p{color:#aebfc2;font-size:.76rem;line-height:1.5;margin:0}
+.hcl-archive-card .hcl-field-photo,.hcl-archive-image{aspect-ratio:16/9;margin-top:.7rem;overflow:hidden}
+.hcl-archive-image{border:1px solid rgba(157,228,239,.4)}
+.hcl-archive-image img{display:block;height:100%;object-fit:cover;width:100%}
+.hcl-field-grid .hcl-archive-card-documented{border-style:solid;padding:0}
+.hcl-archive-card-link{box-sizing:border-box;color:inherit;display:flex;flex:1;flex-direction:column;padding:.8rem;text-decoration:none}
+.hcl-archive-card-link small{color:#7cecf5;font:700 .64rem "Courier New",monospace;letter-spacing:.06em;margin-top:auto;padding-top:.7rem}
+.hcl-archive-card-documented:hover{border-color:#7cecf5;box-shadow:0 0 15px rgba(0,180,255,.2)}
+.hcl-archive-card-link:focus-visible{outline:2px solid #8fe8f4;outline-offset:3px}
+.hcl-field-story{background:rgba(7,22,27,.8);border:1px solid rgba(137,185,191,.34);margin:0 auto;max-width:900px;padding:clamp(1rem,3vw,2rem)}
+.hcl-field-story section{border-top:1px solid rgba(137,185,191,.22);padding:1rem 0}
+.hcl-field-story h2{color:#9de4ef;font:700 .82rem "Courier New",monospace;letter-spacing:.09em;text-transform:uppercase}
+.hcl-field-story p{color:#c7d8dc;line-height:1.7}
+.hcl-story-evidence{background:rgba(2,13,18,.7);border:1px solid rgba(137,185,191,.46);margin:0 0 1.5rem;padding:.7rem}
+.hcl-story-evidence a{display:block}.hcl-story-evidence a:focus-visible{outline:2px solid #8fe8f4;outline-offset:3px}
+.hcl-story-evidence img{display:block;height:auto;max-width:100%;object-fit:contain;width:100%}
+.hcl-story-evidence figcaption{color:#9fb7bb;font:.78rem/1.55 "Courier New",monospace;padding-top:.7rem}.hcl-story-evidence figcaption span{color:#7cecf5}
+.hcl-field-story .hcl-story-lesson{background:rgba(255,208,138,.06);border-left:2px solid #ffd08a;padding-left:1rem}
+.hcl-story-lesson p{color:#fff0d2;font:700 1rem/1.35 "Courier New",monospace;margin:.25rem 0}
+@media(max-width:900px){.hcl-archive-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.hcl-archive-card-grid{grid-template-columns:1fr}}
