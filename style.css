@@ -4175,6 +4175,13 @@ button.technology-observer-card {
 
 /* Home Computing Lab — Field Notes and Artifacts */
 .hcl-field-archive { border-top: 1px solid rgba(0,180,255,.3); margin-top: 2rem; padding-top: 2rem; }
+.hcl-field-teaser { background: rgba(7,22,27,.9); border: 1px solid rgba(255,208,138,.45); display: grid; gap: .8rem; margin-top: 2rem; min-width: 0; padding: clamp(1rem,2vw,1.5rem); }
+.hcl-field-teaser h2 { overflow-wrap: anywhere; }
+.hcl-field-teaser .museum-status { justify-self: start; }
+.hcl-field-teaser > p { color: #c7d8dc; line-height: 1.7; margin: 0; max-width: 800px; }
+.hcl-archive-link { border: 1px solid rgba(0,180,255,.55); color: #b9eaf4; font: 700 .78rem "Courier New",monospace; justify-self: start; letter-spacing: .07em; padding: .65rem .8rem; text-decoration: none; }
+.hcl-archive-link:hover, .hcl-archive-link:focus-visible { background: rgba(0,180,255,.15); color: #fff; outline: 2px solid #8fe8f4; outline-offset: 2px; }
+.hcl-breadcrumbs { color: #8fb2b8; font: 700 .72rem "Courier New",monospace; letter-spacing: .06em; margin: 0 auto 1rem; max-width: 1240px; overflow-wrap: anywhere; text-transform: uppercase; }
 .hcl-field-archive-intro { background: rgba(7,22,27,.9); border: 1px solid rgba(255,208,138,.45); display: grid; gap: .8rem; padding: clamp(1rem,2vw,1.5rem); }
 .hcl-field-archive-intro > div { min-width: 0; }
 .hcl-field-archive-intro h2 { overflow-wrap: anywhere; }
