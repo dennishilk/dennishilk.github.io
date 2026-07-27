@@ -4172,3 +4172,29 @@ button.technology-observer-card {
 .hcl-documentation figcaption strong { color: #9de4ef; font-size: .8rem; letter-spacing: .09em; margin-bottom: .2rem; }
 .retro-evidence-record > p:not(.museum-section-label) { color: #b9cdd0; font-size: .86rem; line-height: 1.7; }
 @media (max-width: 700px) { .hcl-photo-records { grid-template-columns: 1fr; } }
+
+/* Home Computing Lab — Field Notes and Artifacts */
+.hcl-field-archive { border-top: 1px solid rgba(0,180,255,.3); margin-top: 2rem; padding-top: 2rem; }
+.hcl-field-archive-intro { background: rgba(7,22,27,.9); border: 1px solid rgba(255,208,138,.45); display: grid; gap: .8rem; padding: clamp(1rem,2vw,1.5rem); }
+.hcl-field-archive-intro > div { min-width: 0; }
+.hcl-field-archive-intro h2 { overflow-wrap: anywhere; }
+.hcl-field-archive-intro .museum-status { justify-self: start; }
+.hcl-field-archive-intro p, .hcl-growing-collection p { color: #c7d8dc; line-height: 1.7; margin: 0; max-width: 900px; }
+.hcl-field-archive-intro strong { color: #fff0d2; }
+.hcl-field-collection { margin-top: 2rem; }
+.hcl-field-collection > h3, .hcl-growing-collection h3 { color: #c9f4f7; }
+.hcl-field-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.hcl-field-grid article { background: rgba(2,13,18,.7); border: 1px dashed rgba(88,214,230,.38); min-width: 0; padding: 1rem; }
+.hcl-field-grid header { align-items: center; display: flex; gap: .7rem; justify-content: space-between; }
+.hcl-field-grid header span { color: #ffd08a; font: 700 .7rem "Courier New",monospace; letter-spacing: .06em; }
+.hcl-field-grid header b { border: 1px solid rgba(255,208,138,.5); color: #ffd08a; font: 700 .64rem "Courier New",monospace; letter-spacing: .08em; padding: .25rem .4rem; }
+.hcl-field-grid h4 { color: #dff9fb; font-size: 1rem; overflow-wrap: anywhere; }
+.hcl-field-grid dl { margin: 0; }
+.hcl-field-grid dl div { border-top: 1px solid rgba(137,185,191,.18); display: grid; gap: .5rem; grid-template-columns: minmax(8rem,.7fr) 1.3fr; padding: .45rem 0; }
+.hcl-field-grid dt { color: #8fb2b8; font: 700 .67rem "Courier New",monospace; text-transform: uppercase; }
+.hcl-field-grid dd, .hcl-artifact-placeholders article > p { color: #aebfc2; font-size: .78rem; line-height: 1.55; margin: 0; }
+.hcl-field-photo { align-content: center; border: 1px dashed rgba(157,228,239,.4); display: grid; gap: .35rem; justify-items: center; margin-top: .9rem; min-height: 120px; padding: .75rem; text-align: center; }
+.hcl-field-photo strong { color: #9de4ef; font: 700 .7rem "Courier New",monospace; letter-spacing: .1em; }
+.hcl-field-photo small { color: #91abb0; }
+.hcl-growing-collection { border-left: 3px solid #ffd08a; margin-top: 2rem; padding: .2rem 1rem; }
+@media (max-width: 700px) { .hcl-field-grid { grid-template-columns: 1fr; } .hcl-field-grid dl div { gap: .2rem; grid-template-columns: 1fr; } }
