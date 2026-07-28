@@ -1,4 +1,4 @@
-import { baseName, normalizePath, parentPath } from './path-utils.mjs';
+import { baseName, normalizePath, parentPath } from './path-utils.js';
 
 export const LIMITS = { objects: 500, depth: 16, fileSize: 65536, outputLines: 500 };
 const STAMP = '2026-07-28T09:00:00.000Z';

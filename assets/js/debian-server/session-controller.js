@@ -1,6 +1,6 @@
-import { ShellEngine } from './shell-engine.mjs';
-import { clearState, loadState, saveState } from './session-state.mjs';
-import { TerminalRenderer } from './terminal-renderer.mjs';
+import { ShellEngine } from './shell-engine.js';
+import { clearState, loadState, saveState } from './session-state.js';
+import { TerminalRenderer } from './terminal-renderer.js';
 
 const initializedDocuments = new WeakSet();
 

@@ -1,6 +1,6 @@
-import { parseCommand } from './command-parser.mjs';
-import { commands } from './command-registry.mjs';
-import { VirtualFilesystem, LIMITS } from './virtual-filesystem.mjs';
+import { parseCommand } from './command-parser.js';
+import { commands } from './command-registry.js';
+import { VirtualFilesystem, LIMITS } from './virtual-filesystem.js';
 
 export class ShellEngine {
   constructor(state) { this.state=state; this.fs=new VirtualFilesystem(state.filesystem); }
