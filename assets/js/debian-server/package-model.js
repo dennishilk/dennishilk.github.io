@@ -1,0 +1,3 @@
+const names=['adduser','apt','base-files','bash','coreutils','cron','dash','debianutils','diffutils','fastfetch','findutils','grep','gzip','hostname','init-system-helpers','iproute2','less','login','mount','nano','ncurses-base','nginx','openssh-server','procps','sed','systemd','systemd-sysv','tar','util-linux','vim-tiny'];
+export const createPackages=()=>Object.fromEntries(names.map((name,i)=>[name,{name,version:name==='base-files'?'13.8':name==='fastfetch'?'2.49.0-1':`1:${i+1}.0-1`,arch:name==='base-files'?'all':'amd64',installed:true,description:`Debian ${name} package`} ]));
+export const installedPackages=s=>Object.values(s.packages).filter(p=>p.installed).sort((a,b)=>a.name.localeCompare(b.name));
