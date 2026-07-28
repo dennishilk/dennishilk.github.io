@@ -4288,13 +4288,14 @@ button.technology-observer-card {
 .debian-session-heading { align-items: center; display: flex; gap: 1rem; justify-content: space-between; margin-bottom: 1rem; }
 .debian-session-heading h1 { color: #d8f5ff; font: 700 clamp(.78rem, 2vw, .95rem) "Courier New", monospace; letter-spacing: .12em; margin: 0; }
 .debian-session-status { border: 1px solid rgba(103, 241, 170, .55); color: #b8e8ce; font: 700 .68rem "Courier New", monospace; letter-spacing: .09em; padding: .35rem .5rem; }
-.debian-terminal { background: #080d10; border: 1px solid rgba(174, 183, 192, .35); box-sizing: border-box; color: #e1e6e8; cursor: text; font: clamp(.82rem, 2vw, .95rem)/1.65 "Courier New", monospace; min-height: clamp(300px, 52vh, 560px); overflow: auto; padding: clamp(1rem, 2.5vw, 1.5rem); width: 100%; }
+.debian-terminal { background: #080d10; border: 1px solid rgba(174, 183, 192, .35); box-sizing: border-box; color: #e1e6e8; cursor: text; font: clamp(.82rem, 2vw, .95rem)/1.45 "Courier New", monospace; min-height: clamp(300px, 52vh, 560px); overflow: auto; padding: clamp(1rem, 2.5vw, 1.5rem); text-align: left; width: 100%; }
 .debian-terminal:focus-within { border-color: rgba(184, 211, 220, .72); outline: 2px solid rgba(143, 232, 244, .55); outline-offset: 2px; }
-.debian-terminal-command, .debian-terminal-message { overflow-wrap: anywhere; white-space: pre-wrap; }
-.debian-terminal-message { color: #c5cdd0; }
-.debian-terminal-prompt { align-items: baseline; display: flex; gap: .55rem; }
+.debian-terminal-history { text-align: left; }
+.debian-terminal-command, .debian-terminal-message { overflow-wrap: anywhere; text-align: left; white-space: pre-wrap; }
+.debian-terminal-message { color: #c5cdd0; margin-bottom: 1em; }
+.debian-terminal-prompt { align-items: baseline; display: flex; gap: .55rem; text-align: left; width: 100%; }
 .debian-terminal-prompt span { flex: 0 0 auto; }
-.debian-terminal-prompt input { background: transparent; border: 0; caret-color: #fff; color: inherit; flex: 1 1 auto; font: inherit; min-width: 2rem; outline: 0; padding: 0; }
+.debian-terminal-prompt input { background: transparent; border: 0; caret-color: #fff; color: inherit; flex: 1 1 auto; font: inherit; min-width: 0; outline: 0; padding: 0; text-align: left; }
 .debian-session-exit { border: 1px solid rgba(174, 183, 192, .45); color: #c9d3d6; display: inline-block; font: 700 .72rem "Courier New", monospace; letter-spacing: .09em; margin-top: 1.25rem; padding: .65rem .8rem; text-decoration: none; }
 .debian-session-exit:hover, .debian-session-exit:focus-visible { border-color: #8fe8f4; color: #fff; outline: 2px solid #8fe8f4; outline-offset: 3px; }
 .visually-hidden { height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
