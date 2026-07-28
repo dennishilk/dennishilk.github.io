@@ -25,7 +25,7 @@
     <main class="debian-session-main">
       <div class="debian-session-heading">
         <h1>DEBIAN SESSION</h1>
-        <span class="debian-session-status">SESSION ACTIVE</span>
+        <span class="debian-session-status" id="session-status">SESSION ACTIVE</span>
       </div>
 
       <section class="debian-terminal" id="debian-terminal" aria-label="Debian session terminal">
@@ -38,6 +38,22 @@
       </section>
 
       <a class="debian-session-exit" id="session-exit" href="/museum/debian-server-experiment/">EXIT SESSION</a>
+
+      <section class="debian-session-result" id="session-result" aria-labelledby="result-title" hidden>
+        <p class="debian-result-kicker">SESSION COMPLETE</p>
+        <h2 id="result-title">You were not connected to a real Debian server.</h2>
+        <p>This exhibit is an original browser-based reconstruction. No real Debian server, virtual machine, container, SSH connection, backend, or remote system was used.</p>
+        <p>Every command and all system state existed only inside this browser as a deterministic educational system model. No command reached your computer or its filesystem.</p>
+        <dl class="debian-result-stats" id="result-stats"></dl>
+        <details class="debian-result-transcript" open>
+          <summary>COMMAND TRANSCRIPT</summary>
+          <ol id="result-transcript"></ol>
+        </details>
+        <div class="debian-result-actions">
+          <button type="button" id="session-restart">START NEW SESSION</button>
+          <a href="/museum/debian-server-experiment/">RETURN TO EXHIBIT</a>
+        </div>
+      </section>
     </main>
   </div>
   <footer>
