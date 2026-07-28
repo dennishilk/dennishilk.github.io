@@ -4,6 +4,7 @@ import { TerminalRenderer } from './terminal-renderer.js';
 import { commands } from './command-registry.js';
 import { normalizePath, parentPath } from './path-utils.js';
 import { createFilesystem } from './virtual-filesystem.js';
+import { submitAnonymousCompletedSession } from './exploration-statistics.js';
 
 const initializedDocuments = new WeakSet();
 
@@ -35,7 +36,7 @@ export function initializeSession(doc = document, view = window, storage = view.
     const transcript=doc.querySelector('#result-transcript'); transcript?.replaceChildren();
     nonEmpty.forEach(entry=>{const li=doc.createElement('li');li.textContent=entry.text;transcript?.append(li);});
   };
-  const completeSession = () => { const now=new Date();state.session.status='completed';state.session.completedAt=now.toISOString();state.session.durationMs=Math.max(0,now-Date.parse(state.session.startedAt));saveState(state,storage);input.disabled=true;showResult(); };
+  const completeSession = () => { const now=new Date();state.session.status='completed';state.session.completedAt=now.toISOString();state.session.durationMs=Math.max(0,now-Date.parse(state.session.startedAt));saveState(state,storage);submitAnonymousCompletedSession(state.session,view.fetch?.bind(view),view.sessionStorage);input.disabled=true;showResult(); };
   const clear = () => {
     renderer.clear();
     input.value = '';
