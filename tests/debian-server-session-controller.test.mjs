@@ -45,7 +45,7 @@ test('session controller keeps the first prompt interactive and executes pwd', a
   globalThis.document = document;
   globalThis.window = window;
 
-  const { initializeSession } = await import('../assets/js/debian-server/session-controller.mjs');
+  const { initializeSession } = await import('../assets/js/debian-server/session-controller.js');
   assert.doesNotThrow(() => initializeSession(document, window, sessionStorage));
 
   const terminal = elements.get('#debian-terminal');

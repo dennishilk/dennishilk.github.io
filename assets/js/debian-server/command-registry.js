@@ -1,5 +1,5 @@
-import { HOME, baseName, normalizePath, parentPath } from './path-utils.mjs';
-import { LIMITS, cloneNode, newDirectory, newFile } from './virtual-filesystem.mjs';
+import { HOME, baseName, normalizePath, parentPath } from './path-utils.js';
+import { LIMITS, cloneNode, newDirectory, newFile } from './virtual-filesystem.js';
 
 const result = (stdout = [], stderr = [], extra = {}) => ({ stdout, stderr, exitCode: stderr.length ? 1 : 0, ...extra });
 const reason = (fs, path, cwd) => fs.denied(normalizePath(path, cwd)) ? 'Permission denied' : 'No such file or directory';

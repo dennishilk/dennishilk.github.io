@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseCommand, MAX_COMMAND_LENGTH } from '../assets/js/debian-server/command-parser.mjs';
-import { ShellEngine } from '../assets/js/debian-server/shell-engine.mjs';
-import { clearState, defaultState, loadState, saveState, STORAGE_KEY } from '../assets/js/debian-server/session-state.mjs';
+import { parseCommand, MAX_COMMAND_LENGTH } from '../assets/js/debian-server/command-parser.js';
+import { ShellEngine } from '../assets/js/debian-server/shell-engine.js';
+import { clearState, defaultState, loadState, saveState, STORAGE_KEY } from '../assets/js/debian-server/session-state.js';
 
 const setup = () => { const state=defaultState(); return {state,engine:new ShellEngine(state)}; };
 const run = (engine, state, command) => { if(command.trim())state.commandHistory.push(command.trim()); return engine.execute(command); };

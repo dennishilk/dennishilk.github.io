@@ -1,4 +1,4 @@
-import { promptPath } from './path-utils.mjs';
+import { promptPath } from './path-utils.js';
 export class TerminalRenderer {
   constructor(terminal, history, prompt) { this.terminal=terminal;this.history=history;this.prompt=prompt; }
   promptText(cwd) { return `visitor@lab-node:${promptPath(cwd)}$`; }

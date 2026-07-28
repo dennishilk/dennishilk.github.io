@@ -1,5 +1,5 @@
-import { createFilesystem, LIMITS, VirtualFilesystem } from './virtual-filesystem.mjs';
-import { HOME } from './path-utils.mjs';
+import { createFilesystem, LIMITS, VirtualFilesystem } from './virtual-filesystem.js';
+import { HOME } from './path-utils.js';
 export const STORAGE_KEY = 'debian-server-experiment-session';
 export const SCHEMA_VERSION = 1;
 export const defaultState = () => ({ schemaVersion: SCHEMA_VERSION, currentDirectory: HOME, filesystem: createFilesystem(), commandHistory: [], sessionStartedAt: new Date().toISOString() });
