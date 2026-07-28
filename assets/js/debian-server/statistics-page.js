@@ -1,4 +1,4 @@
-const dataUrl = '/assets/data/debian-exploration-statistics.json';
+const dataUrl = '/api/debian-exploration/statistics';
 const duration = milliseconds => {
   const minutes = Math.round(milliseconds / 60000);
   if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'}`;
@@ -17,4 +17,4 @@ function render(data) {
   const observations=document.querySelector('#observations'); data.observations.forEach(item=>{const li=node('li','',item.text);if(item.command)li.append(node('code','',item.command));observations.append(li);}); document.querySelector('#observations-section').hidden=!data.observations.length;
   const patterns=document.querySelector('#patterns');data.patterns.forEach((pattern,index)=>{const card=node('article','pattern-card');card.append(node('h3','',`Exploration pattern ${index+1}`));const flow=node('ol','pattern-flow');pattern.commands.forEach(command=>flow.append(node('li','',command)));card.append(flow,node('p','pattern-support',`Observed in ${pattern.count} completed sessions.`));patterns.append(card);});document.querySelector('#patterns-section').hidden=!data.patterns.length;
 }
-fetch(dataUrl).then(response => { if (!response.ok) throw new Error('unavailable'); return response.json(); }).then(render).catch(() => { document.querySelector('#statistics-empty').hidden=false;document.querySelector('#statistics-empty').textContent='The archive is temporarily unavailable. No estimates are shown.'; });
+fetch(dataUrl, { credentials: 'omit', referrerPolicy: 'no-referrer' }).then(response => { if (!response.ok) throw new Error('unavailable'); return response.json(); }).then(render).catch(() => { const empty=document.querySelector('#statistics-empty');empty.hidden=false;empty.replaceChildren(node('h2','','The public archive is temporarily unavailable.'),node('p','','No statistics have been invented.')); });

@@ -20,8 +20,9 @@ test('aggregation calculates themes, percentages, durations, observations, and s
 });
 test('empty aggregation is honest and finite', () => { const data=aggregateSessions([]); assert.equal(data.completedSessions,0);assert.equal(data.averageDurationMs,0);assert.deepEqual(data.observations,[]); });
 test('submission omits credentials and only marks successful completed sessions', async () => {
-  const storage=new Map();let request;
-  const ok=await submitAnonymousCompletedSession(completed([['uname -a']]), async (...args)=>{request=args;return {ok:true};},{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)});
-  assert.equal(ok,true);assert.equal(request[1].credentials,'omit');assert.equal(request[1].referrerPolicy,'no-referrer');assert.equal(JSON.parse(request[1].body).commands[0].command,'uname -a');
+  const storage=new Map();let request,calls=0;const sessionStorage={getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)};
+  const ok=await submitAnonymousCompletedSession(completed([['uname -a']]), async (...args)=>{calls++;request=args;return {ok:true};},sessionStorage);
+  assert.equal(ok,true);assert.equal(request[0],'/api/debian-exploration/session');assert.equal(request[1].credentials,'omit');assert.equal(request[1].referrerPolicy,'no-referrer');assert.equal(JSON.parse(request[1].body).schema_version,1);assert.equal(JSON.parse(request[1].body).commands[0].command,'uname -a');
+  assert.equal(await submitAnonymousCompletedSession(completed([['uname -a']]), async()=>{calls++;return {ok:true};},sessionStorage),false);assert.equal(calls,1);
 });
 test('command normalization retains only allowlisted statistics', () => { assert.equal(anonymizeCommand('  SUDO   shutdown now '),'sudo shutdown now');assert.equal(anonymizeCommand('curl https://personal.example/a'),'curl'); });
