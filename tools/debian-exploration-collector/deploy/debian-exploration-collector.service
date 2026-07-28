@@ -1,0 +1,26 @@
+[Unit]
+Description=Debian Exploration anonymous statistics collector
+After=network.target
+
+[Service]
+Type=simple
+User=debian-exploration
+Group=debian-exploration
+WorkingDirectory=/opt/debian-exploration-collector
+ExecStart=/usr/bin/python3 /opt/debian-exploration-collector/collector.py --host 127.0.0.1 --port 8765 --state /var/lib/debian-exploration/statistics.json
+Restart=on-failure
+RestartSec=3
+StateDirectory=debian-exploration
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

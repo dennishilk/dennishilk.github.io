@@ -22,11 +22,11 @@ export function anonymizeCommand(source) {
 export function createAnonymousSession(session) {
   if (session?.status !== 'completed') return null;
   return {
-    schemaVersion: 1,
-    durationMs: Math.max(0, Number(session.durationMs) || 0),
+    schema_version: 1,
+    duration_seconds: Math.floor(Math.max(0, Number(session.durationMs) || 0) / 1000),
     commands: (session.commands || []).filter(entry => !entry.empty).map(entry => ({
       command: anonymizeCommand(entry.text),
-      elapsedMs: Math.max(0, Number(entry.elapsedMs) || 0)
+      elapsed_seconds: Math.floor(Math.max(0, Number(entry.elapsedMs) || 0) / 1000)
     })).filter(entry => entry.command)
   };
 }
@@ -34,7 +34,7 @@ export function createAnonymousSession(session) {
 export function submitAnonymousCompletedSession(session, fetcher = globalThis.fetch, storage = globalThis.sessionStorage) {
   const record = createAnonymousSession(session);
   if (!record || storage?.getItem('debian-exploration-submitted') === '1' || typeof fetcher !== 'function') return Promise.resolve(false);
-  return fetcher('/api/debian-exploration-sessions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(record), credentials: 'omit', referrerPolicy: 'no-referrer' })
+  return fetcher('/api/debian-exploration/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(record), credentials: 'omit', referrerPolicy: 'no-referrer' })
     .then(response => { if (!response.ok) return false; storage?.setItem('debian-exploration-submitted', '1'); return true; })
     .catch(() => false);
 }
@@ -42,7 +42,7 @@ export function submitAnonymousCompletedSession(session, fetcher = globalThis.fe
 const percent = (count, total) => total ? Math.round(count * 100 / total) : 0;
 const ranked = counts => [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([command, count]) => ({ command, count }));
 export function aggregateSessions(sessions = []) {
-  const valid = sessions.filter(session => session?.schemaVersion === 1 && Array.isArray(session.commands) && Number.isFinite(session.durationMs));
+  const valid = sessions.filter(session => session?.schema_version === 1 && Array.isArray(session.commands) && Number.isFinite(session.duration_seconds));
   const total = valid.length;
   const commandCounts = new Map();
   let commandTotal = 0;
@@ -67,13 +67,13 @@ export function aggregateSessions(sessions = []) {
   if (topFirst) observations.push({ text: 'The most common first command was', command: topFirst.command, support: topFirst.count });
   if (topLast) observations.push({ text: 'The most common final command before exiting was', command: topLast.command, support: topLast.count });
   const danger = valid.filter(s => s.commands.some(e => e.command === 'rm -rf /'));
-  const early = danger.filter(s => s.commands.find(e => e.command === 'rm -rf /')?.elapsedMs <= 120000).length;
+  const early = danger.filter(s => s.commands.find(e => e.command === 'rm -rf /')?.elapsed_seconds <= 120).length;
   if (danger.length && early > danger.length / 2) observations.push({ text: 'Most visitors who attempted “rm -rf /” did so within the first two minutes.', support: early });
   return {
     completedSessions: total,
-    averageDurationMs: total ? Math.round(valid.reduce((sum, s) => sum + s.durationMs, 0) / total) : 0,
+    averageDurationMs: total ? Math.round(valid.reduce((sum, s) => sum + s.duration_seconds * 1000, 0) / total) : 0,
     averageCommands: total ? Math.round(commandTotal / total) : 0,
-    longestDurationMs: total ? Math.max(...valid.map(s => s.durationMs)) : 0,
+    longestDurationMs: total ? Math.max(...valid.map(s => s.duration_seconds * 1000)) : 0,
     themes, observations,
     patterns: ranked(sequences).filter(item => item.count >= 2).slice(0, 4).map(item => ({ commands: item.command.split('\u001f'), count: item.count }))
   };
