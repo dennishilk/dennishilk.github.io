@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="stylesheet" href="/style.css?v=59">
   <script defer src="/stars.js"></script>
-  <script defer src="/assets/js/debian-server-session.js"></script>
+  <script type="module" src="/assets/js/debian-server/session-controller.mjs"></script>
 </head>
 <body>
 <canvas id="stars"></canvas>
@@ -31,13 +31,13 @@
       <section class="debian-terminal" id="debian-terminal" aria-label="Debian session terminal">
         <div class="debian-terminal-history" id="terminal-history" role="log" aria-live="polite" aria-relevant="additions"></div>
         <div class="debian-terminal-prompt">
-          <span aria-hidden="true">visitor@lab-node:~$</span>
+          <span id="terminal-prompt-text" aria-hidden="true">visitor@lab-node:~$</span>
           <label class="visually-hidden" for="terminal-input">Terminal command</label>
           <input id="terminal-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false">
         </div>
       </section>
 
-      <a class="debian-session-exit" href="/museum/debian-server-experiment/">EXIT SESSION</a>
+      <a class="debian-session-exit" id="session-exit" href="/museum/debian-server-experiment/">EXIT SESSION</a>
     </main>
   </div>
   <footer>
