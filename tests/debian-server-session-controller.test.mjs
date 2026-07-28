@@ -13,7 +13,7 @@ class Element {
   }
   addEventListener(type, listener) { this.listeners.set(type, listener); }
   dispatchEvent(event) { event.target = this; this.listeners.get(event.type)?.(event); return !event.defaultPrevented; }
-  append(child) { this.children.push(child); }
+  append(...children) { this.children.push(...children); }
   replaceChildren() { this.children = []; }
   focus() { this.ownerDocument.activeElement = this; }
   set className(value) { this._className = value; }
@@ -31,22 +31,22 @@ test('session controller keeps the first prompt interactive and executes pwd', a
     createElement: () => new Element(document),
     addEventListener(type, listener) { this.listeners.set(type, listener); }
   };
-  for (const selector of ['#debian-terminal', '#terminal-history', '#terminal-input', '#terminal-prompt-text', '#session-exit']) {
+  for (const selector of ['#debian-terminal', '#terminal-history', '#terminal-input', '#terminal-prompt-text', '#session-exit', '#session-result', '#session-status', '#session-restart', '#result-stats', '#result-transcript']) {
     elements.set(selector, new Element(document));
   }
   const data = new Map();
-  const sessionStorage = {
+  const localStorage = {
     getItem: key => data.get(key) ?? null,
     setItem: (key, value) => data.set(key, value),
     removeItem: key => data.delete(key)
   };
   let destination = null;
-  const window = { sessionStorage, location: { assign(value) { destination = value; } } };
+  const window = { localStorage, location: { reload() {}, assign(value) { destination = value; } } };
   globalThis.document = document;
   globalThis.window = window;
 
   const { initializeSession } = await import('../assets/js/debian-server/session-controller.js');
-  assert.doesNotThrow(() => initializeSession(document, window, sessionStorage));
+  assert.doesNotThrow(() => initializeSession(document, window, localStorage));
 
   const terminal = elements.get('#debian-terminal');
   const history = elements.get('#terminal-history');
@@ -65,7 +65,7 @@ test('session controller keeps the first prompt interactive and executes pwd', a
   assert.equal(prompt.textContent, 'visitor@lab-node:~$');
   assert.equal(input.isConnected, true);
   assert.equal(document.activeElement, input);
-  assert.ok(data.size > 0, 'command state is persisted in sessionStorage');
+  assert.ok(data.size > 0, 'command state is persisted in localStorage');
 
   terminal.dispatchEvent({ type: 'click', defaultPrevented: false });
   assert.equal(document.activeElement, input);
@@ -73,6 +73,11 @@ test('session controller keeps the first prompt interactive and executes pwd', a
   assert.equal(history.children.length, 0);
 
   elements.get('#session-exit').dispatchEvent({ type: 'click', defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } });
-  assert.equal(data.size, 0);
-  assert.equal(destination, '/museum/debian-server-experiment/');
+  assert.equal(input.disabled, true);
+  assert.equal(elements.get('#session-result').hidden, false);
+  assert.ok(history.children.some(line => line.textContent === 'logout'));
+  const saved = JSON.parse([...data.values()][0]);
+  assert.equal(saved.session.status, 'completed');
+  assert.deepEqual(saved.session.commands.map(entry => entry.text), ['pwd', 'exit']);
+  assert.equal(destination, null);
 });
