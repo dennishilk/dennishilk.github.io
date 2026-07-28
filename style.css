@@ -4291,8 +4291,9 @@ button.technology-observer-card {
 .debian-terminal { background: #080d10; border: 1px solid rgba(174, 183, 192, .35); box-sizing: border-box; color: #e1e6e8; cursor: text; font: clamp(.82rem, 2vw, .95rem)/1.45 "Courier New", monospace; min-height: clamp(300px, 52vh, 560px); overflow: auto; padding: clamp(1rem, 2.5vw, 1.5rem); text-align: left; width: 100%; }
 .debian-terminal:focus-within { border-color: rgba(184, 211, 220, .72); outline: 2px solid rgba(143, 232, 244, .55); outline-offset: 2px; }
 .debian-terminal-history { text-align: left; }
-.debian-terminal-command, .debian-terminal-message { overflow-wrap: anywhere; text-align: left; white-space: pre-wrap; }
+.debian-terminal-command, .debian-terminal-message, .debian-terminal-output, .debian-terminal-error { overflow-wrap: anywhere; text-align: left; white-space: pre-wrap; }
 .debian-terminal-message { color: #c5cdd0; margin-bottom: 1em; }
+.debian-terminal-error { color: #e1b4ae; }
 .debian-terminal-prompt { align-items: baseline; display: flex; gap: .55rem; text-align: left; width: 100%; }
 .debian-terminal-prompt span { flex: 0 0 auto; }
 .debian-terminal-prompt input { background: transparent; border: 0; caret-color: #fff; color: inherit; flex: 1 1 auto; font: inherit; min-width: 0; outline: 0; padding: 0; text-align: left; }
