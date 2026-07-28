@@ -4318,3 +4318,34 @@ button.technology-observer-card {
 .visually-hidden { height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 600px) { .debian-session-heading { align-items: flex-start; flex-direction: column; } .debian-terminal { min-height: 55vh; } .debian-result-stats { grid-template-columns: 1fr; } .debian-result-stats dd { padding-top: 0; text-align: left; } }
 @media (prefers-reduced-motion: reduce) { .debian-session-page *, .debian-session-page *::before, .debian-session-page *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+
+/* Debian exploration archive */
+.statistics-page { margin: 0 auto; max-width: 1440px; }
+.statistics-hero, .statistics-layout { margin-inline: auto; max-width: 1000px; }
+.statistics-hero { text-align: left; }
+.statistics-hero h1 { color: #e4f8fb; font: 700 clamp(1.8rem, 5vw, 3rem)/1.15 "Courier New", monospace; }
+.statistics-hero blockquote { border-left: 2px solid #8fe8f4; margin: 2rem 0; max-width: 65ch; padding: .4rem 0 .4rem 1.25rem; }
+.statistics-hero blockquote p { color: #d8f5ff; font: clamp(1rem, 2.5vw, 1.3rem)/1.65 Georgia, serif; margin: 0 0 .5rem; }
+.statistics-hero cite { color: #91a2a7; font: .78rem "Courier New", monospace; }
+.statistics-introduction { line-height: 1.75; max-width: 70ch; }
+.statistics-introduction .shell-line { color: #8fe8f4; font: 700 1.15rem "Courier New", monospace; }
+.statistics-layout { display: grid; gap: 2.5rem; padding: 1rem 0 3rem; text-align: left; }
+.statistics-layout section { margin: 0; }
+.statistics-layout h2:not(.museum-section-label) { color: #d8f5ff; font-family: "Courier New", monospace; }
+.statistics-overview { display: grid; gap: .75rem; grid-template-columns: repeat(4, 1fr); }
+.statistics-number, .curiosity-card, .pattern-card, .archive-empty, .transparency { background: rgba(8, 13, 16, .88); border: 1px solid rgba(143, 232, 244, .25); padding: 1.15rem; }
+.statistics-number strong { color: #e4f8fb; display: block; font: 700 clamp(1.35rem, 3vw, 2rem) "Courier New", monospace; }
+.statistics-label, .pattern-support { color: #91a2a7; font: .72rem/1.5 "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.curiosity-grid, .patterns-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.curiosity-card h3, .pattern-card h3 { color: #d8f5ff; font: 700 1rem "Courier New", monospace; margin-top: 0; }
+.curiosity-measure { color: #b8e8ce; }
+.curiosity-card h4 { color: #91a2a7; font: .7rem "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.command-list { list-style: none; margin: 0; padding: 0; }
+.command-list li, .observation-list code, .pattern-flow li { color: #e4f8fb; font-family: "Courier New", monospace; }
+.command-list li::before { color: #8fe8f4; content: "$ "; }
+.observation-list { display: grid; gap: .8rem; padding-left: 1.4rem; }
+.observation-list code { background: #05090b; display: table; margin-top: .5rem; padding: .35rem .55rem; }
+.pattern-flow { list-style: none; margin: 0; padding: 0; }
+.pattern-flow li:not(:last-child)::after { color: #8fe8f4; content: "↓"; display: block; padding: .25rem 0; }
+.transparency { border-color: rgba(103, 241, 170, .35); line-height: 1.7; }
+@media (max-width: 760px) { .statistics-overview, .curiosity-grid, .patterns-grid { grid-template-columns: 1fr; } .statistics-hero { text-align: left; } }
