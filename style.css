@@ -4038,6 +4038,34 @@ button.technology-observer-card {
 .museum-card-author-lab p { color: #c9d1d9; line-height: 1.6; }
 .museum-behind-path { border-left: 2px solid rgba(255, 190, 92, .6); color: #ffd08a !important; font: 700 .78rem/1.7 "Courier New", monospace; letter-spacing: .075em; margin: 0; padding-left: .8rem; }
 .museum-behind-path span { color: #8cffb0; }
+.museum-experiments { margin: 1.5rem 0 2rem; text-align: left; }
+.museum-card-debian-experiment { background: linear-gradient(135deg, rgba(7, 20, 27, .94), rgba(9, 27, 32, .9)); box-shadow: inset 0 0 24px rgba(0, 180, 255, .045); }
+.museum-card-debian-experiment h2 { color: var(--accent); margin: 0 0 .55rem; }
+.museum-card-debian-experiment p { margin-bottom: 0; }
+.museum-experiment-content { align-items: center; display: grid; gap: 1rem 2rem; grid-template-columns: minmax(0, 1fr) minmax(250px, .7fr); }
+.museum-experiment-details { display: grid; gap: .4rem; }
+.museum-experiment-details span { border-left: 2px solid rgba(0, 180, 255, .45); color: #b9dce5; font-size: .75rem; font-weight: 700; letter-spacing: .075em; padding-left: .65rem; }
+.museum-card-debian-experiment .card-button { align-self: flex-start; }
+
+/* Try a Debian Server — public experiment plan */
+.debian-experiment-page { margin: 0 auto; max-width: 1440px; }
+.debian-experiment-hero { margin-left: auto; margin-right: auto; max-width: 1100px; text-align: left; }
+.debian-experiment-hero .museum-section-label { margin-top: 1.25rem; }
+.debian-experiment-hero .museum-status { margin: .35rem 0 .85rem; }
+.debian-experiment-layout { gap: 1.5rem; max-width: 1000px; }
+.debian-experiment-layout > section { margin: 0; }
+.debian-experiment-layout > section > h2 { margin-top: 0; }
+.debian-session-flow { align-items: stretch; display: grid; gap: 1.6rem; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0 !important; padding: 0; }
+.debian-session-flow li { align-items: center; background: var(--card-bg); border: 1px solid var(--border); color: #d8f5ff !important; display: flex; font-size: .76rem; font-weight: 700; justify-content: center; letter-spacing: .07em; min-height: 76px; padding: .75rem; position: relative; text-align: center; }
+.debian-session-flow li:not(:last-child)::after { color: #ffd08a; content: "→"; font-size: 1.1rem; position: absolute; right: -1.1rem; }
+.debian-capability-grid { display: grid; gap: .8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.debian-capability-grid article { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+.debian-capability-grid h3 { color: #d8f5ff; font-size: .92rem; margin: 0 0 .4rem; }
+.debian-capability-grid p { font-size: .86rem; margin: 0; }
+.debian-privacy { border-color: rgba(103, 241, 170, .34); }
+.debian-launch { border-top: 1px solid rgba(0, 180, 255, .3); padding: 1.5rem 0 .5rem; text-align: center; }
+.debian-disabled-action { background: rgba(139, 148, 158, .08); border: 1px solid rgba(139, 148, 158, .4); border-radius: 10px; color: #aeb7c0; cursor: not-allowed; display: inline-flex; font-size: .82rem; font-weight: 700; letter-spacing: .08em; margin: .5rem 0; min-height: 44px; padding: .75rem 1rem; place-items: center; }
+.debian-launch > p:last-child { color: #8b949e; font-size: .82rem; }
 .hcl-page { margin: 0 auto; max-width: 1440px; }
 .hcl-page .hcl-hero { margin-left: auto; margin-right: auto; max-width: 1240px; text-align: left; }
 .hcl-nav { max-width: 1240px; }
@@ -4053,10 +4081,15 @@ button.technology-observer-card {
 .hcl-photo-placeholder > div { min-height: clamp(230px, 24vw, 340px); }
 @media (max-width: 820px) {
   .museum-behind-content { grid-template-columns: 1fr; }
+  .museum-experiment-content { grid-template-columns: 1fr; }
+  .debian-session-flow { grid-template-columns: 1fr; gap: 1.6rem; }
+  .debian-session-flow li:not(:last-child)::after { bottom: -1.4rem; left: 50%; right: auto; transform: rotate(90deg) translateY(50%); }
 }
 @media (max-width: 700px) {
   .hcl-page .hcl-hero { text-align: center; }
   .museum-real-systems { padding-top: 0; }
+  .debian-experiment-hero { text-align: center; }
+  .debian-capability-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 700px) {
   .hcl-photo-placeholder > div { min-height: 165px; }
