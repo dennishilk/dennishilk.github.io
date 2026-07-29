@@ -4356,6 +4356,9 @@ button.technology-observer-card {
 @media (max-width: 600px) { .debian-session-heading { align-items: flex-start; flex-direction: column; } .debian-terminal { min-height: 55vh; } .debian-result-stats { grid-template-columns: 1fr; } .debian-result-stats dd { padding-top: 0; text-align: left; } }
 @media (prefers-reduced-motion: reduce) { .debian-session-page *, .debian-session-page *::before, .debian-session-page *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 
+/* The Lost Administrator — Michael's workstation */
+.workstation-context{color:#aebcc0;font:italic .9rem/1.6 Georgia,serif;margin:-.35rem 0 1rem}.workstation-page .debian-terminal{min-height:clamp(420px,64vh,680px)}.workstation-actions{display:flex;flex-wrap:wrap;gap:.75rem}.workstation-actions button{background:transparent;cursor:pointer}.workstation-disclosure{color:#7f9297;font:.68rem/1.6 "Courier New",monospace;letter-spacing:.03em;margin-top:1rem}.lost-admin-workstation-link{display:inline-block;margin-top:.8rem}.lost-admin-roadmap li.available{border-color:rgba(103,241,170,.55)}.lost-admin-roadmap li.available strong{color:#8fe5b9;float:right;font:700 .65rem "Courier New",monospace;letter-spacing:.09em;margin-left:1rem}
+
 /* Debian exploration archive */
 .statistics-page { margin: 0 auto; max-width: 1440px; }
 .statistics-hero, .statistics-layout { margin-inline: auto; max-width: 1000px; }

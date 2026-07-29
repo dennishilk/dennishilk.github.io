@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { ShellEngine } from '../assets/js/debian-server/shell-engine.js';
+import { defaultWorkstationState } from '../assets/js/lost-administrator/workstation-state.js';
+
+const run=(engine,state,source)=>{state.commandHistory.push(source);return engine.execute(source);};
+test('Michael has an independent Debian identity and home',()=>{const state=defaultWorkstationState(),engine=new ShellEngine(state);assert.equal(run(engine,state,'whoami').stdout[0],'michael');assert.equal(run(engine,state,'hostname').stdout[0],'workstation');assert.equal(run(engine,state,'pwd').stdout[0],'/home/michael');assert.match(run(engine,state,'uname -a').stdout[0],/Linux workstation/);});
+test('the starter archive is small, coherent, and explorable',()=>{const state=defaultWorkstationState(),engine=new ShellEngine(state);const listing=run(engine,state,'ls').stdout.join('\n');for(const name of ['Desktop','Documents','Downloads','Mail','Notes','Projects','Scripts','Photos','Emma','Arthur','Tickets','Archive','Books','Research'])assert.match(listing,new RegExp(name));assert.match(run(engine,state,'cat Notes/terminal-cheatsheet.md').stdout.join('\n'),/Future Michael/);assert.match(run(engine,state,'tree Projects/monitoring -L 2').stdout.join('\n'),/README\.md/);assert.match(run(engine,state,'cat Scripts/cleanup.sh').stdout.join('\n'),/does not delete automatically/);assert.equal(run(engine,state,'find Tickets -type f').stdout.length,1);});
+test('workstation writes stay in Michael home',()=>{const state=defaultWorkstationState(),engine=new ShellEngine(state);assert.equal(run(engine,state,'touch Notes/today.txt').exitCode,0);assert.equal(run(engine,state,'touch /etc/nope').exitCode,1);run(engine,state,'cd Projects');run(engine,state,'cd');assert.equal(state.currentDirectory,'/home/michael');});

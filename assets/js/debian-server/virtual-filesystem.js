@@ -43,9 +43,9 @@ export function createFilesystem() {
 }
 
 export class VirtualFilesystem {
-  constructor(root) { this.root = root; }
+  constructor(root, options = {}) { this.root = root; this.home = options.home || '/home/visitor'; }
   get(path, cwd = '/') { let node = this.root; const absolute = normalizePath(path, cwd); for (const part of absolute.split('/').filter(Boolean)) { if (node.type !== 'directory' || !node.children[part]) return null; node = node.children[part]; } return node; }
-  denied(path, write = false) { const p = normalizePath(path); if (p === '/root' || p.startsWith('/root/') || (!write && p === '/etc/shadow')) return true; if (!write) return false; return !(p === '/tmp' || p.startsWith('/tmp/') || p === '/home/visitor' || p.startsWith('/home/visitor/'));
+  denied(path, write = false) { const p = normalizePath(path); if (p === '/root' || p.startsWith('/root/') || (!write && p === '/etc/shadow')) return true; if (!write) return false; return !(p === '/tmp' || p.startsWith('/tmp/') || p === this.home || p.startsWith(`${this.home}/`));
   }
   count() { let count = 0, stack = [this.root]; while (stack.length) { const n = stack.pop(); count++; if (n.type === 'directory') stack.push(...Object.values(n.children)); } return count; }
   bytes() { let total=0,stack=[this.root];while(stack.length){const n=stack.pop();if(n.type==='file')total+=new TextEncoder().encode(n.content).length;else stack.push(...Object.values(n.children));}return total; }
