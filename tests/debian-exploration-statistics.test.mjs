@@ -37,6 +37,16 @@ test('observation presentation uses compact, sample-size-honest labels and clean
   assert.doesNotMatch(source, /createTextNode\([^)]*['"](?:[,.]|, which|\.)/);
   assert.match(source, /detail\.append\(node\('code','',item\.command\)\)/);
 });
+test('archive results use sibling panels in logical order and suppress empty panels', async () => {
+  const html = await readFile(new URL('../museum/debian-server-experiment/statistics/index.html', import.meta.url), 'utf8');
+  const source = await readFile(new URL('../assets/js/debian-server/statistics-page.js', import.meta.url), 'utf8');
+  assert.match(html, /<div class="archive-results-grid"><section id="curiosity-section" class="archive-results-panel" hidden[^>]*><h2 id="curiosity-title">Visitor Curiosity<\/h2>/);
+  assert.match(html, /<\/section>\s*<section id="observations-section" class="archive-results-panel" hidden[^>]*><h2 id="observations-title">Interesting Observations<\/h2>/);
+  assert.ok(html.indexOf('id="curiosity-section"') < html.indexOf('id="observations-section"'));
+  assert.match(source, /querySelector\('#curiosity-section'\)\.hidden = !visibleThemes\.length/);
+  assert.match(source, /querySelector\('#observations-section'\)\.hidden=!data\.observations\.length/);
+  assert.match(source, /explainCommand\(item\.command\)/);
+});
 test('submission omits credentials and only marks successful completed sessions', async () => {
   const storage=new Map();let request,calls=0;const sessionStorage={getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)};
   const ok=await submitAnonymousCompletedSession(completed([['uname -a']]), async (...args)=>{calls++;request=args;return {ok:true};},sessionStorage);

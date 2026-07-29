@@ -4338,10 +4338,15 @@ button.technology-observer-card {
 .statistics-layout section { margin: 0; }
 .statistics-layout h2:not(.museum-section-label) { color: #d8f5ff; font-family: "Courier New", monospace; }
 .statistics-overview { display: grid; gap: .75rem; grid-template-columns: repeat(4, 1fr); }
-.statistics-number, .curiosity-card, .pattern-card, .archive-empty, .transparency { background: rgba(8, 13, 16, .88); border: 1px solid rgba(143, 232, 244, .25); padding: 1.15rem; }
+.statistics-number, .archive-results-panel, .pattern-card, .archive-empty, .transparency { background: rgba(8, 13, 16, .88); border: 1px solid rgba(143, 232, 244, .25); padding: 1.15rem; }
 .statistics-number strong { color: #e4f8fb; display: block; font: 700 clamp(1.35rem, 3vw, 2rem) "Courier New", monospace; }
 .statistics-label, .pattern-support { color: #91a2a7; font: .72rem/1.5 "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.archive-results-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr)); }
+.archive-results-panel { min-width: 0; }
+.archive-results-panel > h2 { font-size: 1.15rem; margin: 0 0 1rem; }
 .curiosity-grid, .patterns-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.curiosity-card { min-width: 0; }
+.curiosity-card + .curiosity-card { border-top: 1px solid rgba(143, 232, 244, .16); padding-top: 1rem; }
 .curiosity-card h3, .pattern-card h3 { color: #d8f5ff; font: 700 1rem "Courier New", monospace; margin-top: 0; }
 .curiosity-measure { color: #b8e8ce; }
 .curiosity-card h4 { color: #91a2a7; font: .7rem "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase; }
@@ -4351,13 +4356,15 @@ button.technology-observer-card {
 .command-list code::before { color: #8fe8f4; content: "$ "; }
 .command-explanation { color: #b9cbd0; font: .8rem/1.5 system-ui, sans-serif; overflow-wrap: anywhere; }
 .early-archive-note { border-left: 2px solid #ffd08a; color: #b9cbd0; font-size: .8rem; margin: 1rem 0 0; padding: .35rem .75rem; }
-.observation-list { display: grid; gap: .75rem; margin: 0; }
-.observation-row { border-left: 2px solid rgba(143, 232, 244, .35); padding: .2rem 0 .2rem .8rem; }
+.observation-list { display: grid; margin: 0; }
+.observation-row { padding: .2rem 0 .85rem; }
+.observation-row + .observation-row { border-top: 1px solid rgba(143, 232, 244, .16); padding-top: .85rem; }
 .observation-label { color: #d8f5ff; font: 700 .78rem/1.4 "Courier New", monospace; letter-spacing: .03em; }
 .observation-detail { align-items: baseline; display: flex; flex-wrap: wrap; gap: .3rem .65rem; margin: .25rem 0 0; }
 .observation-list code { background: #05090b; border: 1px solid rgba(143, 232, 244, .2); display: inline-block; padding: .2rem .45rem; }
+.observation-list code::before { color: #8fe8f4; content: "$ "; }
 .observation-detail .command-explanation { flex-basis: 100%; }
 .pattern-flow { list-style: none; margin: 0; padding: 0; }
 .pattern-flow li:not(:last-child)::after { color: #8fe8f4; content: "↓"; display: block; padding: .25rem 0; }
 .transparency { border-color: rgba(103, 241, 170, .35); line-height: 1.7; }
-@media (max-width: 760px) { .statistics-overview, .curiosity-grid, .patterns-grid { grid-template-columns: 1fr; } .statistics-hero { text-align: left; } }
+@media (max-width: 760px) { .statistics-overview, .archive-results-grid, .curiosity-grid, .patterns-grid { grid-template-columns: 1fr; } .statistics-hero { text-align: left; } }
