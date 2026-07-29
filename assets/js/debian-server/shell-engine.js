@@ -3,7 +3,7 @@ import { commands } from './command-registry.js';
 import { VirtualFilesystem, LIMITS } from './virtual-filesystem.js';
 
 export class ShellEngine {
-  constructor(state) { this.state=state; this.fs=new VirtualFilesystem(state.filesystem); }
+  constructor(state) { this.state=state; this.fs=new VirtualFilesystem(state.filesystem, { home: state.environment?.HOME }); }
   execute(source) { const parsed=parseShell(source);if(parsed.error)return {stdout:[],stderr:[parsed.error],exitCode:2};if(!parsed.tokens.length)return {stdout:[],stderr:[],exitCode:0};
     const stages=[[]];let inputFile=null,outputFile=null,append=false;
     for(let i=0;i<parsed.tokens.length;i++){const t=parsed.tokens[i];if(t.type==='op'){if(t.value==='|'){if(!stages.at(-1).length)return {stdout:[],stderr:['bash: syntax error near unexpected token `|\''],exitCode:2};stages.push([]);}else{const next=parsed.tokens[++i];if(!next||next.type!=='word')return {stdout:[],stderr:[`bash: syntax error near unexpected token '${t.value}'`],exitCode:2};if(t.value==='<')inputFile=next.value;else{outputFile=next.value;append=t.value==='>>';}}}else stages.at(-1).push(t.value);}
