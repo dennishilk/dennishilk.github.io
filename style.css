@@ -4404,3 +4404,5 @@ button.technology-observer-card {
 .pattern-flow li:not(:last-child)::after { color: #8fe8f4; content: "↓"; display: block; padding: .25rem 0; }
 .transparency { border-color: rgba(103, 241, 170, .35); line-height: 1.7; }
 @media (max-width: 760px) { .statistics-overview, .archive-results-grid, .curiosity-grid, .patterns-grid { grid-template-columns: 1fr; } .statistics-hero { text-align: left; } }
+
+.workstation-body{background:#05090b;margin:0;min-height:100vh}.workstation-viewport{box-sizing:border-box;display:flex;margin:0 auto;min-height:100vh;padding:clamp(.5rem,2vw,1.5rem);width:min(100%,1440px)}.workstation-viewport .debian-terminal{flex:1;min-height:calc(100vh - clamp(1rem,4vw,3rem));max-height:calc(100vh - clamp(1rem,4vw,3rem))}@media(max-width:600px){.workstation-viewport{padding:.35rem}.workstation-viewport .debian-terminal{min-height:calc(100vh - .7rem);max-height:calc(100vh - .7rem);padding:.8rem}}
