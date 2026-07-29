@@ -11,7 +11,10 @@ export function initializeWorkstation(doc=document, view=window, storage=view.lo
   renderer.line('Debian GNU/Linux 13 (trixie)','debian-terminal-message');
   renderer.line('Last login: session record unavailable on tty1','debian-terminal-message');
   renderer.updatePrompt(state.currentDirectory);
-  const submit=()=>{const source=input.value;input.value='';renderer.command(state.currentDirectory,source);if(!source.trim()){renderer.scroll();input.focus();return;}state.commandHistory.push(source);const result=engine.execute(source);if(result.clear)renderer.clear();else renderer.output(result);if(result.exit)renderer.line('This workstation remains available in the browser. Use “Leave workstation” to return.','debian-terminal-message');renderer.updatePrompt(state.currentDirectory);saveWorkstationState(state,storage);renderer.scroll();input.focus();};
+  let awaitingResetConfirmation=false;
+  const submit=()=>{const source=input.value;input.value='';renderer.command(state.currentDirectory,source);if(!source.trim()){renderer.scroll();input.focus();return;}state.commandHistory.push(source);
+    if(awaitingResetConfirmation){awaitingResetConfirmation=false;if(source==='YES'){resetWorkstationState(storage);view.location.reload();return;}renderer.line('Reset cancelled. The workstation was not changed.','debian-terminal-message');saveWorkstationState(state,storage);renderer.updatePrompt(state.currentDirectory);renderer.scroll();input.focus();return;}
+    const result=engine.execute(source);if(result.clear)renderer.clear();else renderer.output(result);if(result.resetWorkstation){awaitingResetConfirmation=true;renderer.line("This will restore Michael's workstation to its initial state.",'debian-terminal-message');renderer.line('Type YES to continue:','debian-terminal-message');}renderer.updatePrompt(state.currentDirectory);saveWorkstationState(state,storage);renderer.scroll();if(result.exit){view.location.assign('/lost-administrator/');return;}input.focus();};
   let historyIndex=state.commandHistory.length;
   input.addEventListener('keydown',event=>{
     if(event.key==='Enter'){event.preventDefault();historyIndex=state.commandHistory.length+1;submit();}
@@ -22,7 +25,6 @@ export function initializeWorkstation(doc=document, view=window, storage=view.lo
     else if(event.ctrlKey&&event.key.toLowerCase()==='l'){event.preventDefault();renderer.clear();renderer.updatePrompt(state.currentDirectory);renderer.scroll();}
   });
   terminal.addEventListener('click',()=>input.focus());
-  doc.querySelector('#workstation-reset')?.addEventListener('click',()=>{resetWorkstationState(storage);view.location.reload();});
   input.focus();
 }
 if(typeof document!=='undefined')initializeWorkstation();
