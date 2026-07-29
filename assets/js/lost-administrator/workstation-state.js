@@ -3,8 +3,8 @@ import { createProcesses } from '../debian-server/process-model.js';
 import { createServices } from '../debian-server/service-model.js';
 import { createPackages } from '../debian-server/package-model.js';
 
-export const WORKSTATION_STORAGE_KEY = 'lost-administrator:michael-workstation:phase-3';
-export const WORKSTATION_SCHEMA_VERSION = 1;
+export const WORKSTATION_STORAGE_KEY = 'lost-administrator:michael-workstation:phase-4';
+export const WORKSTATION_SCHEMA_VERSION = 2;
 export function defaultWorkstationState() {
   const started = new Date().toISOString(), home='/home/michael';
   return { schemaVersion:WORKSTATION_SCHEMA_VERSION, currentDirectory:home, filesystem:createWorkstationFilesystem(), commandHistory:[], sessionStartedAt:started,
