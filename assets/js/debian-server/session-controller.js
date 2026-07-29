@@ -5,6 +5,7 @@ import { commands } from './command-registry.js';
 import { normalizePath, parentPath } from './path-utils.js';
 import { createFilesystem } from './virtual-filesystem.js';
 import { submitAnonymousCompletedSession } from './exploration-statistics.js';
+import { completeTerminalInput } from './tab-completion.js';
 
 const initializedDocuments = new WeakSet();
 
@@ -44,7 +45,7 @@ export function initializeSession(doc = document, view = window, storage = view.
     renderer.scroll();
   };
   let historyIndex=state.commandHistory.length;
-  const complete=()=>{const before=input.value.slice(0,input.selectionStart??input.value.length),parts=before.split(/\s+/),needle=parts.at(-1)||'';let choices=[];if(parts.length===1){choices=Object.keys(commands).filter(x=>x.startsWith(needle));}else{const slash=needle.lastIndexOf('/'),dirPart=slash>=0?needle.slice(0,slash+1):'',base=slash>=0?needle.slice(slash+1):needle,p=normalizePath(dirPart||'.',state.currentDirectory),node=engine.fs.get(p);if(node?.type==='directory'&&!engine.fs.denied(p))choices=Object.keys(node.children).filter(x=>x.startsWith(base)).map(x=>dirPart+x+(node.children[x].type==='directory'?'/':''));}if(choices.length===1){const start=before.length-needle.length;input.value=input.value.slice(0,start)+choices[0]+input.value.slice(before.length);input.selectionStart=input.selectionEnd=start+choices[0].length;}else if(choices.length>1){renderer.output({stdout:[choices.join('  ')],stderr:[]});renderer.scroll();}};
+  const complete=()=>completeTerminalInput(input,state,engine.fs,Object.keys(commands),choices=>{renderer.output({stdout:[choices.join('  ')],stderr:[]});renderer.scroll();});
   const submit = () => {
     const source = input.value;
     const cwd = state.currentDirectory;

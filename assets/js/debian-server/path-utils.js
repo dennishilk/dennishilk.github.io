@@ -1,7 +1,8 @@
 export const HOME = '/home/visitor';
 
 export function normalizePath(input, cwd = HOME) {
-  let value = input === '~' || input.startsWith('~/') ? HOME + input.slice(1) : input;
+  const contextualHome=cwd.match(/^\/home\/[^/]+/)?.[0]||HOME;
+  let value = input === '~' || input.startsWith('~/') ? contextualHome + input.slice(1) : input;
   if (!value.startsWith('/')) value = `${cwd}/${value}`;
   const parts = [];
   for (const part of value.split('/')) {
