@@ -8,6 +8,17 @@ const duration = milliseconds => {
   return `${hours} hour${hours === 1 ? '' : 's'}${rest ? ` ${rest} minutes` : ''}`;
 };
 const node = (tag, className, text) => { const element = document.createElement(tag); if (className) element.className = className; if (text !== undefined) element.textContent = text; return element; };
+export function observationPresentation(item) {
+  const text = String(item?.text || '');
+  const lowerText = text.toLowerCase();
+  if (item?.command && lowerText.includes('first command')) return { label: 'Most common first command so far', explanation: explainCommand(item.command) };
+  if (item?.command && lowerText.includes('final command')) return { label: 'Most common final command so far', explanation: ['exit', 'logout'].includes(item.command) ? 'Ended the simulated session.' : explainCommand(item.command) };
+  if (lowerText.includes('rm -rf /') && Number.isFinite(item?.support)) {
+    const sessions = `${item.support} completed session${item.support === 1 ? '' : 's'}`;
+    return { label: 'Early root-removal attempts so far', explanation: `The command appeared within the first two minutes in ${sessions}.` };
+  }
+  return { label: 'Observation from completed sessions', explanation: text };
+}
 function render(data) {
   const empty = document.querySelector('#statistics-empty');
   if (!data.completedSessions) { empty.hidden = false; return; }
@@ -17,7 +28,7 @@ function render(data) {
   [['Completed sessions', data.completedSessions.toLocaleString()], ['Average session', duration(data.averageDurationMs)], ['Average commands', data.averageCommands.toLocaleString()], ['Longest session', duration(data.longestDurationMs)]].forEach(([label, value]) => { const card=node('article','statistics-number');card.append(node('p','statistics-label',label),node('strong','',value));overview.append(card); });
   const themes = document.querySelector('#curiosity-themes');
   data.themes.filter(theme => theme.visitors > 0).forEach(theme => { const card=node('article','curiosity-card');card.append(node('h3','',theme.title),node('p','curiosity-measure',`${theme.percentage}% of visitors ${theme.description}.`));if(theme.common.length){card.append(node('h4','','Most common commands'));const list=node('ul','command-list');theme.common.forEach(item=>{const entry=node('li');entry.append(node('code','',item.command),node('span','command-explanation',explainCommand(item.command)));list.append(entry);});card.append(list);}themes.append(card); });
-  const observations=document.querySelector('#observations'); data.observations.forEach(item=>{const li=node('li');if(item.command){const isFirst=item.text.toLowerCase().includes('first command');const isFinal=item.text.toLowerCase().includes('final command');const lead=isFirst?'Among the completed sessions so far, the most common first command is ':isFinal?'The most common final command so far is ':item.text;li.append(document.createTextNode(lead),node('code','',item.command),document.createTextNode(isFinal && ['exit','logout'].includes(item.command)?', which ended the simulated session.':'.'));}else li.textContent=item.text;observations.append(li);}); document.querySelector('#observations-section').hidden=!data.observations.length;
+  const observations=document.querySelector('#observations'); data.observations.forEach(item=>{const presentation=observationPresentation(item);const row=node('div','observation-row');const label=node('dt','observation-label',presentation.label);const detail=node('dd','observation-detail');if(item.command)detail.append(node('code','',item.command));if(presentation.explanation)detail.append(node('span','command-explanation',presentation.explanation));row.append(label,detail);observations.append(row);}); document.querySelector('#observations-section').hidden=!data.observations.length;
   const patterns=document.querySelector('#patterns');data.patterns.forEach((pattern,index)=>{const card=node('article','pattern-card');card.append(node('h3','',`Exploration pattern ${index+1}`));const flow=node('ol','pattern-flow');pattern.commands.forEach(command=>flow.append(node('li','',command)));card.append(flow,node('p','pattern-support',`Observed in ${pattern.count} completed sessions.`));patterns.append(card);});document.querySelector('#patterns-section').hidden=!data.patterns.length;
 }
-fetch(dataUrl, { credentials: 'omit', referrerPolicy: 'no-referrer' }).then(response => { if (!response.ok) throw new Error('unavailable'); return response.json(); }).then(render).catch(() => { const empty=document.querySelector('#statistics-empty');empty.hidden=false;empty.replaceChildren(node('h2','','The public archive is temporarily unavailable.'),node('p','','No statistics have been invented.')); });
+if (typeof document !== 'undefined') fetch(dataUrl, { credentials: 'omit', referrerPolicy: 'no-referrer' }).then(response => { if (!response.ok) throw new Error('unavailable'); return response.json(); }).then(render).catch(() => { const empty=document.querySelector('#statistics-empty');empty.hidden=false;empty.replaceChildren(node('h2','','The public archive is temporarily unavailable.'),node('p','','No statistics have been invented.')); });

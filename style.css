@@ -4351,8 +4351,12 @@ button.technology-observer-card {
 .command-list code::before { color: #8fe8f4; content: "$ "; }
 .command-explanation { color: #b9cbd0; font: .8rem/1.5 system-ui, sans-serif; overflow-wrap: anywhere; }
 .early-archive-note { border-left: 2px solid #ffd08a; color: #b9cbd0; font-size: .8rem; margin: 1rem 0 0; padding: .35rem .75rem; }
-.observation-list { display: grid; gap: .8rem; padding-left: 1.4rem; }
-.observation-list code { background: #05090b; display: table; margin-top: .5rem; padding: .35rem .55rem; }
+.observation-list { display: grid; gap: .75rem; margin: 0; }
+.observation-row { border-left: 2px solid rgba(143, 232, 244, .35); padding: .2rem 0 .2rem .8rem; }
+.observation-label { color: #d8f5ff; font: 700 .78rem/1.4 "Courier New", monospace; letter-spacing: .03em; }
+.observation-detail { align-items: baseline; display: flex; flex-wrap: wrap; gap: .3rem .65rem; margin: .25rem 0 0; }
+.observation-list code { background: #05090b; border: 1px solid rgba(143, 232, 244, .2); display: inline-block; padding: .2rem .45rem; }
+.observation-detail .command-explanation { flex-basis: 100%; }
 .pattern-flow { list-style: none; margin: 0; padding: 0; }
 .pattern-flow li:not(:last-child)::after { color: #8fe8f4; content: "↓"; display: block; padding: .25rem 0; }
 .transparency { border-color: rgba(103, 241, 170, .35); line-height: 1.7; }
