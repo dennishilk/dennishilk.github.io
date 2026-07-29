@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { aggregateSessions, anonymizeCommand, createAnonymousSession, submitAnonymousCompletedSession } from '../assets/js/debian-server/exploration-statistics.js';
+import { COMMAND_EXPLANATIONS, UNKNOWN_COMMAND_EXPLANATION, explainCommand } from '../assets/js/debian-server/command-interpretations.js';
 
 const completed = (commands, durationMs = 60000) => ({ status: 'completed', durationMs, commands: commands.map(([text, elapsedMs = 0]) => ({ text, elapsedMs, empty: false })) });
 test('anonymous records discard free-form arguments and reject incomplete sessions', () => {
@@ -26,3 +28,20 @@ test('submission omits credentials and only marks successful completed sessions'
   assert.equal(await submitAnonymousCompletedSession(completed([['uname -a']]), async()=>{calls++;return {ok:true};},sessionStorage),false);assert.equal(calls,1);
 });
 test('command normalization retains only allowlisted statistics', () => { assert.equal(anonymizeCommand('  SUDO   shutdown now '),'sudo shutdown now');assert.equal(anonymizeCommand('curl https://personal.example/a'),'curl'); });
+test('archive command interpretations use exact entries, safe families, and a neutral fallback', () => {
+  for (const command of ['ls', 'cd', 'mkdir']) assert.match(explainCommand(command), /visitor/i);
+  for (const command of ['rm -rf /', 'rm -rf --no-preserve-root /', 'sudo shutdown now', 'sudo reboot']) assert.match(explainCommand(command), /browser simulation does not affect a real computer/i);
+  for (const command of ['ssh private.example', 'curl https://private.example', 'export SECRET=value', 'echo secret']) {
+    assert.equal(explainCommand(command), COMMAND_EXPLANATIONS[command.split(' ')[0]]);
+    assert.doesNotMatch(explainCommand(command), /private|secret/i);
+  }
+  assert.equal(explainCommand('not-in-catalog argument'), UNKNOWN_COMMAND_EXPLANATION);
+  assert.equal(explainCommand(null), UNKNOWN_COMMAND_EXPLANATION);
+});
+test('experiment landing page has one linked session start and retains the archive invitation', async () => {
+  const html = await readFile(new URL('../museum/debian-server-experiment/index.html', import.meta.url), 'utf8');
+  assert.equal(html.match(/START SESSION/g)?.length, 1);
+  assert.match(html, /<li><a href="\/museum\/debian-server-experiment\/session\/">START SESSION<\/a><\/li>/);
+  assert.doesNotMatch(html, /class="debian-launch"|>SESSION<\/h2>/);
+  assert.match(html, /VIEW THE PUBLIC EXPLORATION ARCHIVE/);
+});
