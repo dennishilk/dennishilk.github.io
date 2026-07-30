@@ -43,7 +43,15 @@
 .guestbook-hero-line span + span::before { margin-right: 1rem; color: #42616c; content: "//"; }
 .transmissions-page .guestbook-intro { margin: .65rem auto 0; font-size: .78rem; }
 
-.transmissions-page .transmissions { padding: .55rem 1rem .85rem; }
+.transmissions-page main { --transmission-panel-max-width: 1000px; }
+.transmissions-page .transmissions { padding: .55rem 0 .85rem; }
+.transmissions-page .transmission-uplink-terminal,
+.transmissions-page .public-transmission-archive {
+  width: calc(100% - 2rem);
+  max-width: var(--transmission-panel-max-width);
+  margin-right: auto;
+  margin-left: auto;
+}
 .transmissions-page .transmission-terminal,
 .transmissions-page .public-transmission-archive { border-radius: 0; border-color: rgba(84, 217, 245, .42); background: var(--uplink-panel); box-shadow: inset 1px 1px rgba(255,255,255,.06), inset -1px -1px #000, 0 8px 26px rgba(0,0,0,.35); }
 .transmissions-page .transmission-terminal { padding: 0; }
@@ -62,7 +70,7 @@
 .load-more-transmissions:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .transmissions-page .transmission-status { grid-column: auto; justify-self: end; font-size: .67rem; }
 
-.transmissions-page .public-transmission-archive { margin: 0 1rem 1rem; padding: 0; max-width: none; }
+.transmissions-page .public-transmission-archive { margin-top: 0; margin-bottom: 1rem; padding: 0; }
 .transmissions-page .archive-heading { margin: 0; padding: .58rem .7rem; border-bottom-color: rgba(84,217,245,.32); align-items: center; }
 .transmissions-page .archive-heading h2 { margin: .1rem 0 0; font-size: 1.12rem; }
 .transmissions-page .archive-heading .transmission-kicker { margin: 0; font-size: .62rem; }
