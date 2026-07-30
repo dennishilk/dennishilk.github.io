@@ -35,6 +35,7 @@ test('CRT typing focus suppresses the browser frame without removing control foc
   assert.match(css, /\.terminal-buffer:focus-visible\{outline:none;box-shadow:inset 0 0 0 1px #78e9a0aa/);
   assert.match(css, /button:focus-visible,select:focus-visible,input:focus-visible\{outline:2px solid #8cffad/);
   assert.doesNotMatch(css, /\.terminal-buffer:focus-visible\{outline:3px solid #dce889/);
+  assert.match(js, /\$\('powerLamp'\)\.textContent='ON';buffer\.focus\(\{preventScroll:true\}\)/);
 });
 
 test('terminal history is authoritative while input remains separate', () => {
