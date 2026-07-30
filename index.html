@@ -134,10 +134,32 @@
 
   <!-- PUBLIC SIGNAL UPLINK -->
   <section class="transmissions transmission-cta" aria-labelledby="transmissions-title">
-    <div class="transmission-terminal transmission-cta-panel">
+    <div class="transmission-cta-panel">
       <h2 id="transmissions-title">PUBLIC SIGNAL UPLINK</h2>
-      <p class="transmission-copy">leave a reviewed signal</p>
-      <a class="transmission-cta-button" href="/transmissions/">LEAVE A TRANSMISSION</a>
+      <p class="transmission-copy">LEAVE A MESSAGE FOR THE WORLDNODE OPERATOR</p>
+      <a class="worldnode-mailbox" href="/transmissions/" aria-label="Leave a message for the Worldnode operator">
+        <svg viewBox="0 0 180 150" role="img" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="mailbox-metal" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#123454"/>
+              <stop offset="0.55" stop-color="#071b30"/>
+              <stop offset="1" stop-color="#020a12"/>
+            </linearGradient>
+          </defs>
+          <path class="mailbox-post" d="M83 105h17v36H83zM66 139h51v7H66z"/>
+          <path class="mailbox-envelope" d="M58 75h66v42H58z"/>
+          <path class="mailbox-envelope-fold" d="m59 76 32 24 32-24"/>
+          <path class="mailbox-shell" d="M31 57c0-25 17-42 42-42h35c24 0 41 17 41 42v51H31z"/>
+          <path class="mailbox-edge" d="M73 15c24 0 41 17 41 42v51"/>
+          <path class="mailbox-slot" d="M49 50h48v7H49z"/>
+          <path class="mailbox-slot-glow" d="M54 53h38"/>
+          <path class="mailbox-door" d="M31 64h83v44H31z"/>
+          <path class="mailbox-door-line" d="M42 96h61"/>
+          <circle class="mailbox-latch" cx="73" cy="77" r="3"/>
+          <path class="mailbox-flag" d="M127 77V29h20v14h-15"/>
+        </svg>
+        <span class="mailbox-command">[ OPEN PUBLIC MAILBOX ]<span class="mailbox-cursor" aria-hidden="true"></span></span>
+      </a>
     </div>
   </section>
 

@@ -7,14 +7,12 @@ function formatTransmissionTime(value) {
   if (Number.isNaN(date.getTime())) return "UTC TIME UNKNOWN";
   return new Intl.DateTimeFormat("en-GB", {
     year: "numeric",
-    month: "2-digit",
+    month: "short",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
     timeZone: "UTC",
-    timeZoneName: "short",
-  }).format(date);
+  }).format(date).replace(",", "") + " UTC";
 }
 
 function setTransmissionStatus(text, mode = "") {
@@ -53,23 +51,27 @@ function renderTransmissions(transmissions) {
     const signal = document.createElement("h3");
     signal.textContent = `SIGNAL ${String(index + 1).padStart(4, "0")}`;
 
-    const time = document.createElement("time");
-    time.dateTime = transmission.receivedAt || "";
-    time.textContent = formatTransmissionTime(transmission.receivedAt);
-
-    header.append(signal, time);
+    header.appendChild(signal);
 
     const meta = document.createElement("div");
     meta.className = "transmission-entry-meta";
     appendDetail(meta, "CALLSIGN", transmission.callsign || "UNKNOWN");
     appendDetail(meta, "ORIGIN", transmission.origin || "UNSPECIFIED");
+    const dateRow = document.createElement("p");
+    const dateLabel = document.createElement("strong");
+    dateLabel.textContent = "DATE:";
+    const time = document.createElement("time");
+    time.dateTime = transmission.receivedAt || "";
+    time.textContent = formatTransmissionTime(transmission.receivedAt);
+    dateRow.append(dateLabel, time);
+    meta.appendChild(dateRow);
 
     const message = document.createElement("blockquote");
     message.textContent = transmission.message || "";
 
     const status = document.createElement("p");
     status.className = "transmission-entry-status";
-    status.textContent = "STATUS RECEIVED";
+    status.innerHTML = "<strong>STATUS:</strong><span>RECEIVED</span>";
 
     article.append(header, meta, message, status);
     transmissionList.appendChild(article);
