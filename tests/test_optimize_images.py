@@ -101,4 +101,44 @@ class ImageWorkflowTests(unittest.TestCase):
         self.assertTrue(opt.apply(self.root)); after={p.relative_to(self.root):p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual({k:v for k,v in after.items() if k!=opt.STATE},before)
 
+    def prepare_pass(self, html='<img class="hero" alt="Plain" src="plain.png" width="2" height="2" loading="lazy" data-x="1">'):
+        (self.root/"index.html").write_text(html)
+        candidate=self.root/opt.candidate_path("plain.png"); candidate.parent.mkdir(parents=True,exist_ok=True); candidate.write_bytes(b"valid-webp")
+        source=self.root/"plain.png"
+        state={"results":[{"source":"plain.png","candidate":opt.candidate_path("plain.png").as_posix(),"status":"PASS","class":"photo",
+          "source_bytes":source.stat().st_size,"candidate_bytes":len(b"valid-webp"),"bytes_saved":10,"source_sha256":opt.hashlib.sha256(source.read_bytes()).hexdigest(),
+          "candidate_sha256":opt.hashlib.sha256(candidate.read_bytes()).hexdigest()}],"references_updated":[]}
+        (self.root/opt.STATE).parent.mkdir(); (self.root/opt.STATE).write_text(json.dumps(state))
+
+    def integrate(self):
+        with mock.patch.object(opt,"verify_pair",return_value=(True,"ok")), mock.patch.object(opt,"verify",return_value=True):
+            return opt.integrate_pass(self.root)
+
+    def test_29_pass_image_integrated_and_fallback_preserved(self):
+        self.prepare_pass(); self.assertTrue(self.integrate()); text=(self.root/"index.html").read_text()
+        self.assertIn('<picture>',text); self.assertIn('assets/generated/images/plain.webp',text)
+        self.assertIn('class="hero" alt="Plain" src="plain.png"',text); self.assertIn('loading="lazy" data-x="1"',text)
+
+    def test_30_manual_and_protected_assets_untouched(self):
+        self.prepare_pass('<img src="plain.png"><img src="favicon.png">'); (self.root/"favicon.png").write_bytes(png())
+        state=json.loads((self.root/opt.STATE).read_text()); state["results"].append({"source":"favicon.png","status":"MANUAL REVIEW"}); (self.root/opt.STATE).write_text(json.dumps(state))
+        self.assertTrue(self.integrate()); self.assertIn('<img src="favicon.png">',(self.root/"index.html").read_text())
+
+    def test_31_existing_picture_upgraded_without_nesting(self):
+        self.prepare_pass('<picture><img src="plain.png" alt="x"></picture>'); self.assertTrue(self.integrate()); text=(self.root/"index.html").read_text()
+        self.assertEqual(text.lower().count("<picture>"),1); self.assertEqual(text.lower().count("<source"),1); self.assertFalse(opt.validate_html(text))
+
+    def test_32_repeated_integration_is_idempotent(self):
+        self.prepare_pass(); self.assertTrue(self.integrate()); once=(self.root/"index.html").read_text()
+        # Git safety is intentionally absent in the isolated temporary repository.
+        self.assertTrue(self.integrate()); self.assertEqual((self.root/"index.html").read_text(),once)
+
+    def test_33_already_integrated_image_unchanged(self):
+        self.prepare_pass('<picture><source srcset="assets/generated/images/plain.webp" type="image/webp"><img src="plain.png"></picture>')
+        before=(self.root/"index.html").read_text(); self.assertTrue(self.integrate()); self.assertEqual((self.root/"index.html").read_text(),before)
+
+    def test_34_restore_recovers_html_after_integration(self):
+        self.prepare_pass(); original=(self.root/"index.html").read_text(); self.assertTrue(self.integrate()); self.assertTrue(opt.restore(self.root))
+        self.assertEqual((self.root/"index.html").read_text(),original); self.assertTrue((self.root/"plain.png").exists())
+
 if __name__=="__main__": unittest.main()

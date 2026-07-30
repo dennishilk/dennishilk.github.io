@@ -2,7 +2,7 @@
 """Non-destructive, repository-local raster image audit/optimization workflow."""
 from __future__ import annotations
 
-import argparse, hashlib, json, math, os, re, shutil, struct, sys
+import argparse, hashlib, html.parser, json, math, os, re, shutil, struct, subprocess, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -396,6 +396,132 @@ def validate_references(root):
                 if local_url(val) and Path(urlsplit(val).path).suffix.lower() in RASTER and not resolve_url(root,p,val).exists(): issues.append(f"{p.relative_to(root)}: broken CSS URL {val}")
     return issues
 
+class MarkupValidator(html.parser.HTMLParser):
+    """Small structural validator for the picture markup that we author."""
+    def __init__(self):
+        super().__init__(convert_charrefs=False); self.picture_depth=0; self.issues=[]
+    def handle_starttag(self, tag, attrs):
+        if tag.lower()=="picture":
+            self.picture_depth += 1
+            if self.picture_depth > 1: self.issues.append("nested picture element")
+    def handle_startendtag(self, tag, attrs): self.handle_starttag(tag,attrs)
+    def handle_endtag(self, tag):
+        if tag.lower()=="picture":
+            if self.picture_depth == 0: self.issues.append("unmatched picture end tag")
+            else: self.picture_depth -= 1
+    def close(self):
+        super().close()
+        if self.picture_depth: self.issues.append("unclosed picture element")
+
+def validate_html(text):
+    parser=MarkupValidator()
+    try: parser.feed(text); parser.close()
+    except Exception as exc: parser.issues.append(str(exc))
+    return parser.issues
+
+def git_safety(root):
+    """Return reasons integration must not edit this checkout."""
+    if not (root/".git").exists(): return [] # Unit-test and library use.
+    reasons=[]
+    status=subprocess.run(["git","status","--porcelain"],cwd=root,text=True,capture_output=True)
+    if status.returncode: reasons.append("unable to inspect Git working tree")
+    elif status.stdout: reasons.append("working tree is dirty")
+    conflicts=subprocess.run(["git","diff","--name-only","--diff-filter=U"],cwd=root,text=True,capture_output=True)
+    if conflicts.stdout.strip(): reasons.append("merge conflict present")
+    return reasons
+
+def _attr(tag,name):
+    match=re.search(rf"\b{name}\s*=\s*(['\"])(.*?)\1",tag,re.I|re.S)
+    return match.group(2) if match else None
+
+def _candidate_url(page, candidate):
+    return Path(os.path.relpath(candidate,page.parent)).as_posix()
+
+def integrate_html(root, text, page, passed):
+    """Return rewritten HTML and per-candidate integration counters."""
+    picture_ranges=[]; stack=[]
+    for match in re.finditer(r"</?picture\b[^>]*>",text,re.I|re.S):
+        if match.group().lower().startswith("</"):
+            if stack: picture_ranges.append((stack.pop(),match.end()))
+        else: stack.append(match.start())
+    counts=Counter(); used=set()
+    edits=[]
+    for match in re.finditer(r"<img\b[^>]*>",text,re.I|re.S):
+        tag=match.group(); value=_attr(tag,"src")
+        if not value or not local_url(value): continue
+        resolved=resolve_url(root,page,value).resolve()
+        item=passed.get(resolved)
+        if not item: continue
+        candidate=(root/item["candidate"]).resolve(); url=_candidate_url(page,candidate)
+        containing=next((r for r in picture_ranges if r[0] < match.start() and match.end() < r[1]),None)
+        if containing:
+            block=text[containing[0]:containing[1]]
+            sources=[_attr(x,"srcset") for x in re.findall(r"<source\b[^>]*>",block,re.I|re.S)]
+            if any(s and urlsplit(s).path==url for s in sources): counts["already"]+=1; used.add(item["source"]); continue
+            insertion=f'<source srcset="{url}" type="image/webp">\n'
+            edits.append((match.start(),match.start(),insertion)); counts["integrated"]+=1; used.add(item["source"])
+        else:
+            replacement=f'<picture>\n<source srcset="{url}" type="image/webp">\n{tag}\n</picture>'
+            edits.append((match.start(),match.end(),replacement)); counts["integrated"]+=1; used.add(item["source"])
+    for start,end,replacement in reversed(edits): text=text[:start]+replacement+text[end:]
+    return text,counts,used
+
+def integrate_pass(root):
+    """Atomically add verified PASS derivatives to visible HTML rendering."""
+    reasons=git_safety(root)
+    if not (root/STATE).exists(): reasons.append("missing state manifest; run --generate first")
+    if reasons:
+        for reason in reasons: print(f"ABORT: {reason}",file=sys.stderr)
+        return False
+    state_text=(root/STATE).read_text()
+    try: state=json.loads(state_text)
+    except (OSError,ValueError) as exc: print(f"ABORT: invalid state manifest: {exc}",file=sys.stderr); return False
+    passed={}; failures=[]
+    inventory={x["path"]:x for x in audit(root)["images"]}
+    for item in state.get("results",[]):
+        if item.get("status")!="PASS": continue
+        src=root/item["source"]; candidate=root/item["candidate"]
+        if not src.exists() or not candidate.exists(): failures.append(f"missing candidate or source: {item.get('source')}"); continue
+        if hashlib.sha256(src.read_bytes()).hexdigest()!=item.get("source_sha256"): failures.append(f"source hash changed: {item['source']}"); continue
+        if hashlib.sha256(candidate.read_bytes()).hexdigest()!=item.get("candidate_sha256"): failures.append(f"candidate hash changed: {item['candidate']}"); continue
+        current=inventory.get(item["source"],{})
+        if current.get("automatic_action")!="ELIGIBLE" or current.get("class") in ("museum evidence image","map/scientific asset","special-consumer icon","external metadata consumer"):
+            failures.append(f"protected PASS entry refused: {item['source']}"); continue
+        ok,msg=verify_pair(src,candidate)
+        if not ok: failures.append(f"failed verification: {item['source']}: {msg}"); continue
+        passed[src.resolve()]=item
+    html_files=sorted(files(root,{".html",".htm"}))
+    for page in html_files:
+        for issue in validate_html(page.read_text("utf-8")): failures.append(f"broken HTML {page.relative_to(root)}: {issue}")
+    if failures:
+        for reason in failures: print(f"ABORT: {reason}",file=sys.stderr)
+        return False
+    originals={p:p.read_text("utf-8") for p in html_files}; totals=Counter(); modified=[]; integrated_items=set()
+    try:
+        for page,old in originals.items():
+            new,counts,used=integrate_html(root,old,page,passed); totals.update(counts); integrated_items.update(used)
+            issues=validate_html(new)
+            if issues: raise ValueError(f"broken HTML {page.relative_to(root)}: {', '.join(issues)}")
+            if new!=old: page.write_text(new,"utf-8"); modified.append(page)
+        if modified:
+            state["references_updated"]=[{"file":p.relative_to(root).as_posix(),"sha256_before":hashlib.sha256(originals[p].encode()).hexdigest(),"content_before":originals[p]} for p in modified]
+        write_if_changed(root/STATE,json.dumps(state,indent=2,sort_keys=True)+"\n")
+        if not verify(root): raise ValueError("automatic --verify failed")
+    except Exception as exc:
+        for page,content in originals.items(): page.write_text(content,"utf-8")
+        (root/STATE).write_text(state_text)
+        print(f"ABORT: {exc}; all HTML changes rolled back",file=sys.stderr); return False
+    referenced=set()
+    for page in html_files:
+        for item in passed.values():
+            if item["source"] in page.read_text("utf-8") or Path(item["source"]).name in page.read_text("utf-8"): referenced.add(item["source"])
+    saved=sum(x["bytes_saved"] for x in passed.values() if x["source"] in integrated_items)
+    original=sum(x["source_bytes"] for x in passed.values() if x["source"] in integrated_items)
+    protected=sum(x.get("automatic_action")=="MANUAL REVIEW" for x in inventory.values())
+    print("\nPASS INTEGRATION RESULT\n")
+    print(f"PASS candidates available: {len(passed)}\n\nIntegrated: {totals['integrated']}\n\nAlready integrated: {totals['already']}\n\nSkipped: {len(passed)-len(referenced)}\n\nProtected: {protected}\n\nModified HTML files: {len(modified)}\n\nEstimated live transfer reduction: {human(saved)}\n{(saved/original*100 if original else 0):.1f} %")
+    return True
+
 def apply(root):
     # Deliberately conservative: applying only records verified PASS candidates. References
     # require explicit maintainer edits, preventing semantic/route changes by automation.
@@ -410,18 +536,22 @@ def apply(root):
 def restore(root):
     if not (root/STATE).exists(): print("Nothing to restore."); return True
     state=json.loads((root/STATE).read_text())
-    if state.get("references_updated"): print("Refusing automatic restore: state contains reference edits",file=sys.stderr); return False
+    for edit in state.get("references_updated",[]):
+        path=root/edit["file"]
+        if "content_before" not in edit: print(f"Cannot restore {edit['file']}: backup absent",file=sys.stderr); return False
+        path.write_text(edit["content_before"],"utf-8")
     for x in state["results"]: (root/x["candidate"]).unlink(missing_ok=True)
     (root/STATE).unlink(missing_ok=True)
-    print("Generated candidates removed; original references were never changed."); return True
+    print("Original HTML restored and generated candidates removed."); return True
 
 def main(argv=None):
     ap=argparse.ArgumentParser(); modes=ap.add_mutually_exclusive_group()
-    for flag in ("audit","dry-run","generate","apply","verify","restore","check-dependencies"): modes.add_argument("--"+flag,action="store_true")
+    for flag in ("audit","dry-run","generate","apply","integrate-pass","verify","restore","check-dependencies"): modes.add_argument("--"+flag,action="store_true")
     ap.add_argument("--path"); ap.add_argument("--top",type=int,default=20); ap.add_argument("--report-json"); ap.add_argument("--report-md"); ap.add_argument("--root",default=".")
     a=ap.parse_args(argv); root=Path(a.root).resolve()
     if a.check_dependencies: dependencies(); return 0
     if a.restore: return 0 if restore(root) else 1
+    if a.integrate_pass: return 0 if integrate_pass(root) else 1
     if a.apply: return 0 if apply(root) else 1
     if a.verify: return 0 if verify(root) else 1
     if a.top < 0: ap.error("--top must be zero or greater")
