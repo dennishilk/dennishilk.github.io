@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse, hashlib, html.parser, json, math, os, re, shutil, struct, subprocess, sys
 from collections import Counter, defaultdict
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import quote, unquote, urlsplit, urlunsplit
 
 RASTER = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"}
 TEXT = {".html", ".htm", ".css", ".js", ".mjs", ".json", ".md", ".webmanifest", ".xml", ".rss", ".atom"}
@@ -367,11 +367,28 @@ def verify(root):
     return not issues and all(x.get("verify_status","PASS")!="FAILED" for x in state["results"])
 
 def local_url(value):
-    value=value.strip(); u=urlsplit(value)
+    value=html.unescape(value).strip(); u=urlsplit(value)
     return not u.scheme and not value.startswith(("data:","#","//"))
 
+def serialize_html_url(value, *, path_only=False):
+    """Return a deterministic, HTML-safe URL without changing its disk path.
+
+    Filesystem-derived values use ``path_only`` so literal ``#`` and ``?`` are
+    encoded as path characters. URL encoding and HTML escaping remain separate.
+    """
+    value=html.unescape(str(value))
+    if path_only:
+        encoded=quote(unquote(value),safe="/-._~!$'()*+,;=:@")
+    else:
+        u=urlsplit(value)
+        encoded=urlunsplit((u.scheme,u.netloc,
+            quote(unquote(u.path),safe="/-._~!$'()*+,;=:@"),
+            quote(unquote(u.query),safe="=&?/:;+,$@-._~!()*'"),
+            quote(unquote(u.fragment),safe="?/:;+,$@-._~!()*'")))
+    return html.escape(encoded,quote=True)
+
 def resolve_url(root,source,value):
-    path=unquote(urlsplit(value).path)
+    path=unquote(urlsplit(html.unescape(value)).path)
     return root/path.lstrip("/") if path.startswith("/") else source.parent/path
 
 def validate_references(root):
@@ -449,7 +466,8 @@ def _attr(tag,name):
     return match.group(2) if match else None
 
 def _candidate_url(page, candidate):
-    return Path(os.path.relpath(candidate,page.parent)).as_posix()
+    raw=Path(os.path.relpath(candidate,page.parent)).as_posix()
+    return serialize_html_url(raw,path_only=True)
 
 def integrate_html(root, text, page, passed):
     """Return rewritten HTML and per-candidate integration counters."""
@@ -471,7 +489,7 @@ def integrate_html(root, text, page, passed):
         if containing:
             block=text[containing[0]:containing[1]]
             sources=[_attr(x,"srcset") for x in re.findall(r"<source\b[^>]*>",block,re.I|re.S)]
-            if any(s and urlsplit(s).path==url for s in sources): counts["already"]+=1; used.add(item["source"]); continue
+            if any(s and resolve_url(root,page,s).resolve()==candidate for s in sources): counts["already"]+=1; used.add(item["source"]); continue
             insertion=f'<source srcset="{url}" type="image/webp">\n'
             edits.append((match.start(),match.start(),insertion)); counts["integrated"]+=1; used.add(item["source"])
         else:

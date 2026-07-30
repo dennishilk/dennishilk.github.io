@@ -51,6 +51,10 @@ A normal image is wrapped in `<picture>` with a WebP `<source>` and its exact or
 `<img>` tag as fallback. Existing pictures receive one source without nesting or
 duplication. Alt text, classes, IDs, dimensions, loading, decoding, fetch priority,
 ARIA, and data attributes remain byte-for-byte intact on the fallback.
+Generated HTML URLs are deterministically percent-encoded (for example, spaces become
+`%20`) while source and generated repository filenames remain unchanged. URL encoding
+and HTML attribute escaping are separate steps, and verification decodes local URLs
+back to filesystem paths before checking them.
 
 Integration permits modified or untracked optimizer candidates under
 `assets/generated/` and the optimizer state manifest at
