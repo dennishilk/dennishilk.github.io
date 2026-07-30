@@ -1,6 +1,11 @@
 const transmissionForm = document.getElementById("transmission-form");
 const transmissionStatus = document.getElementById("transmission-status");
 const transmissionList = document.getElementById("transmission-list");
+const transmissionCount = document.getElementById("transmission-count");
+const loadMoreButton = document.getElementById("load-more-transmissions");
+const TRANSMISSION_BATCH_SIZE = 10;
+let approvedTransmissions = [];
+let visibleTransmissionCount = TRANSMISSION_BATCH_SIZE;
 
 function formatTransmissionTime(value) {
   const date = new Date(value);
@@ -21,19 +26,18 @@ function setTransmissionStatus(text, mode = "") {
   transmissionStatus.className = `transmission-status ${mode}`.trim();
 }
 
-function appendDetail(parent, label, value) {
-  const row = document.createElement("p");
-  const strong = document.createElement("strong");
-  strong.textContent = `${label}: `;
-  const span = document.createElement("span");
-  span.textContent = value;
-  row.append(strong, span);
-  parent.appendChild(row);
+function makeMetaItem(label, value, className = "") {
+  const item = document.createElement("span");
+  item.className = className;
+  const labelElement = document.createElement("b");
+  labelElement.textContent = `${label} `;
+  item.append(labelElement, document.createTextNode(value));
+  return item;
 }
 
-function renderTransmissions(transmissions) {
+function renderTransmissions() {
   transmissionList.innerHTML = "";
-  if (!transmissions.length) {
+  if (!approvedTransmissions.length) {
     const empty = document.createElement("p");
     empty.className = "transmission-empty";
     empty.textContent = "NO APPROVED SIGNALS RECEIVED YET.";
@@ -41,41 +45,44 @@ function renderTransmissions(transmissions) {
     return;
   }
 
-  transmissions.forEach((transmission) => {
+  approvedTransmissions.slice(0, visibleTransmissionCount).forEach((transmission) => {
     const article = document.createElement("article");
     article.className = "transmission-entry";
 
     const header = document.createElement("div");
     header.className = "transmission-entry-header";
 
+    const identity = document.createElement("div");
+    identity.className = "transmission-entry-identity";
     const signal = document.createElement("h3");
-    signal.textContent = `SIGNAL ${String(transmission.signal_number).padStart(4, "0")}`;
+    signal.textContent = `#${String(transmission.signal_number).padStart(4, "0")}`;
+    identity.append(
+      signal,
+      makeMetaItem("CALLSIGN", transmission.callsign || "UNKNOWN", "entry-callsign"),
+      makeMetaItem("ORIGIN", transmission.origin || "UNSPECIFIED", "entry-origin")
+    );
 
-    header.appendChild(signal);
-
-    const meta = document.createElement("div");
-    meta.className = "transmission-entry-meta";
-    appendDetail(meta, "CALLSIGN", transmission.callsign || "UNKNOWN");
-    appendDetail(meta, "ORIGIN", transmission.origin || "UNSPECIFIED");
-    const dateRow = document.createElement("p");
-    const dateLabel = document.createElement("strong");
-    dateLabel.textContent = "DATE:";
     const time = document.createElement("time");
     time.dateTime = transmission.receivedAt || "";
     time.textContent = formatTransmissionTime(transmission.receivedAt);
-    dateRow.append(dateLabel, time);
-    meta.appendChild(dateRow);
+    header.append(identity, time);
 
     const message = document.createElement("blockquote");
     message.textContent = transmission.message || "";
 
-    const status = document.createElement("p");
+    const status = document.createElement("span");
     status.className = "transmission-entry-status";
-    status.innerHTML = "<strong>STATUS:</strong><span>RECEIVED</span>";
+    status.textContent = "● RECEIVED";
 
-    article.append(header, meta, message, status);
+    article.append(header, message, status);
     transmissionList.appendChild(article);
   });
+
+  if (loadMoreButton) {
+    const remaining = approvedTransmissions.length - visibleTransmissionCount;
+    loadMoreButton.hidden = remaining <= 0;
+    loadMoreButton.textContent = `LOAD MORE SIGNALS (${Math.min(remaining, TRANSMISSION_BATCH_SIZE)})`;
+  }
 }
 
 async function loadTransmissions() {
@@ -84,7 +91,11 @@ async function loadTransmissions() {
     const response = await fetch("/api/transmissions", { headers: { "Accept": "application/json" } });
     if (!response.ok) throw new Error("public transmissions unavailable");
     const data = await response.json();
-    renderTransmissions(Array.isArray(data.transmissions) ? data.transmissions : []);
+    approvedTransmissions = (Array.isArray(data.transmissions) ? data.transmissions : [])
+      .slice()
+      .sort((a, b) => Number(b.signal_number) - Number(a.signal_number));
+    if (transmissionCount) transmissionCount.textContent = `${approvedTransmissions.length} SIGNAL${approvedTransmissions.length === 1 ? "" : "S"}`;
+    renderTransmissions();
   } catch (error) {
     transmissionList.innerHTML = '<p class="transmission-empty">SIGNAL ARCHIVE TEMPORARILY UNAVAILABLE.</p>';
   }
@@ -124,6 +135,13 @@ async function submitTransmission(event) {
 
 if (transmissionForm && transmissionStatus) {
   transmissionForm.addEventListener("submit", submitTransmission);
+}
+
+if (loadMoreButton) {
+  loadMoreButton.addEventListener("click", () => {
+    visibleTransmissionCount += TRANSMISSION_BATCH_SIZE;
+    renderTransmissions();
+  });
 }
 
 loadTransmissions();
