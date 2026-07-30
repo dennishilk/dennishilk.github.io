@@ -47,7 +47,7 @@ Records are stored as JSON Lines in:
 /var/lib/wopr/transmissions/transmissions.jsonl
 ```
 
-Each record contains the visitor-provided callsign, optional origin, message, moderation status, generated id, and timestamps. IP addresses are not stored in this file. Do not commit `/var/lib/wopr/transmissions/` or any exported real messages.
+Each record contains the visitor-provided callsign, optional origin, message, moderation status, generated id, timestamps, and a permanent `signal_number` assigned on approval. Existing approved records are migrated oldest-first. The adjacent `signal-state.json` counter prevents deleted numbers from being reused. IP addresses are not stored in these files. Do not commit `/var/lib/wopr/transmissions/` or any exported real messages.
 
 ## Abuse and privacy protections
 

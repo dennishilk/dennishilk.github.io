@@ -41,7 +41,7 @@ function renderTransmissions(transmissions) {
     return;
   }
 
-  transmissions.forEach((transmission, index) => {
+  transmissions.forEach((transmission) => {
     const article = document.createElement("article");
     article.className = "transmission-entry";
 
@@ -49,7 +49,7 @@ function renderTransmissions(transmissions) {
     header.className = "transmission-entry-header";
 
     const signal = document.createElement("h3");
-    signal.textContent = `SIGNAL ${String(index + 1).padStart(4, "0")}`;
+    signal.textContent = `SIGNAL ${String(transmission.signal_number).padStart(4, "0")}`;
 
     header.appendChild(signal);
 
