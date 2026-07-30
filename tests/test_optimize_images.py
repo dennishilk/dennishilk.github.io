@@ -141,4 +141,28 @@ class ImageWorkflowTests(unittest.TestCase):
         self.prepare_pass(); original=(self.root/"index.html").read_text(); self.assertTrue(self.integrate()); self.assertTrue(opt.restore(self.root))
         self.assertEqual((self.root/"index.html").read_text(),original); self.assertTrue((self.root/"plain.png").exists())
 
+class GitSafetyTests(unittest.TestCase):
+    def check(self,status="",conflicts=""):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); (root/".git").mkdir()
+            results=[mock.Mock(returncode=0,stdout=status),mock.Mock(returncode=0,stdout=conflicts)]
+            with mock.patch.object(opt.subprocess,"run",side_effect=results): return opt.git_safety(root)
+
+    def test_clean_tree_passes(self): self.assertEqual(self.check(),[])
+    def test_modified_state_is_allowed(self): self.assertEqual(self.check(" M reports/image-optimization-state.json\0"),[])
+    def test_untracked_generated_file_is_allowed(self): self.assertEqual(self.check("?? assets/generated/images/a.webp\0"),[])
+    def test_both_optimizer_artifacts_are_allowed(self):
+        self.assertEqual(self.check(" M reports/image-optimization-state.json\0?? assets/generated/a.webp\0"),[])
+    def test_modified_html_aborts(self): self.assertTrue(self.check(" M index.html\0"))
+    def test_modified_css_aborts(self): self.assertTrue(self.check(" M style.css\0"))
+    def test_untracked_unrelated_file_aborts(self): self.assertTrue(self.check("?? notes.txt\0"))
+    def test_staged_unrelated_file_aborts(self): self.assertTrue(self.check("M  index.html\0"))
+    def test_merge_conflict_aborts(self):
+        reasons=self.check("UU index.html\0","index.html\n")
+        self.assertTrue(any("merge conflict" in reason for reason in reasons))
+    def test_similar_looking_paths_do_not_bypass_protection(self):
+        reasons=self.check("?? assets/generated-malicious/a.webp\0 M reports/image-optimization-state.json.bak\0")
+        self.assertTrue(any("assets/generated-malicious/a.webp" in reason for reason in reasons))
+        self.assertTrue(any("reports/image-optimization-state.json.bak" in reason for reason in reasons))
+
 if __name__=="__main__": unittest.main()

@@ -52,8 +52,14 @@ A normal image is wrapped in `<picture>` with a WebP `<source>` and its exact or
 duplication. Alt text, classes, IDs, dimensions, loading, decoding, fetch priority,
 ARIA, and data attributes remain byte-for-byte intact on the fallback.
 
-Integration refuses a dirty Git tree, merge conflicts, missing files, hash changes,
-failed image verification, malformed picture structure, and protected classifications.
+Integration permits modified or untracked optimizer candidates under
+`assets/generated/` and the optimizer state manifest at
+`reports/image-optimization-state.json`, since `--generate` creates those inputs.
+Every other repository path must remain clean: unrelated modified, staged, untracked,
+deleted, or conflicted paths cause an abort and are printed. Exact repository-relative
+path matching prevents similarly named paths from bypassing this safeguard.
+Integration also refuses missing files, hash changes, failed image verification,
+malformed picture structure, and protected classifications.
 It never integrates manual-review, failed, skipped, WebP/AVIF, animated, metadata,
 icon, museum-evidence, or scientific assets. Changes roll back if the automatic
 post-integration `--verify` gate fails. State stores the exact prior HTML for each
@@ -108,8 +114,10 @@ retain the original as fallback and validate every URL.
 2. Run `--audit` and review classification/references.
 3. Run `--dry-run`.
 4. Run `--generate` and visually inspect every `PASS` candidate.
-5. Ensure `git status --short` is empty, then run `--integrate-pass`; it executes
-   `--verify` automatically and aborts atomically on any failure.
+5. Ensure `git status --short` contains only generated candidates under
+   `assets/generated/` and/or `reports/image-optimization-state.json`, then run
+   `--integrate-pass`; it executes `--verify` automatically and aborts atomically on
+   any failure.
 6. Load affected routes from `python3 -m http.server 8000` and inspect layout,
    picture selection, and fallback behavior.
 7. Review `git diff`, including binary sizes and museum evidence links.
