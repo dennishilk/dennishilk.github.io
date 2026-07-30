@@ -423,11 +423,25 @@ def git_safety(root):
     """Return reasons integration must not edit this checkout."""
     if not (root/".git").exists(): return [] # Unit-test and library use.
     reasons=[]
-    status=subprocess.run(["git","status","--porcelain"],cwd=root,text=True,capture_output=True)
+    status=subprocess.run(["git","status","--porcelain=v1","-z"],cwd=root,text=True,capture_output=True)
     if status.returncode: reasons.append("unable to inspect Git working tree")
-    elif status.stdout: reasons.append("working tree is dirty")
+    else:
+        records=status.stdout.split("\0"); i=0
+        while i < len(records):
+            record=records[i]; i+=1
+            if not record: continue
+            code,path=record[:2],record[3:]
+            paths=[path]
+            if "R" in code or "C" in code:
+                if i < len(records) and records[i]: paths.append(records[i]); i+=1
+            conflict=code in {"DD","AU","UD","UA","DU","AA","UU"}
+            for changed in paths:
+                allowed=(changed==STATE.as_posix() or changed.startswith("assets/generated/"))
+                if conflict or not allowed:
+                    reasons.append(f"disallowed Git path ({code}): {changed}")
     conflicts=subprocess.run(["git","diff","--name-only","--diff-filter=U"],cwd=root,text=True,capture_output=True)
-    if conflicts.stdout.strip(): reasons.append("merge conflict present")
+    for path in conflicts.stdout.splitlines():
+        if path: reasons.append(f"merge conflict present: {path}")
     return reasons
 
 def _attr(tag,name):
