@@ -141,6 +141,51 @@ class ImageWorkflowTests(unittest.TestCase):
         self.prepare_pass(); original=(self.root/"index.html").read_text(); self.assertTrue(self.integrate()); self.assertTrue(opt.restore(self.root))
         self.assertEqual((self.root/"index.html").read_text(),original); self.assertTrue((self.root/"plain.png").exists())
 
+    def prepare_named_pass(self, name, reference=None, picture=False):
+        source=self.root/name; source.parent.mkdir(parents=True,exist_ok=True); source.write_bytes(png(color=2))
+        reference=reference or opt.serialize_html_url(name,path_only=True)
+        image=f'<img src="{reference}" alt="kept">'
+        (self.root/"index.html").write_text(f"<picture>{image}</picture>" if picture else image)
+        candidate=self.root/opt.candidate_path(name); candidate.parent.mkdir(parents=True,exist_ok=True); candidate.write_bytes(b"webp")
+        state={"results":[{"source":name,"candidate":opt.candidate_path(name).as_posix(),"status":"PASS","class":"photo",
+          "source_bytes":source.stat().st_size,"candidate_bytes":4,"bytes_saved":10,
+          "source_sha256":opt.hashlib.sha256(source.read_bytes()).hexdigest(),
+          "candidate_sha256":opt.hashlib.sha256(candidate.read_bytes()).hexdigest()}],"references_updated":[]}
+        (self.root/opt.STATE).parent.mkdir(exist_ok=True); (self.root/opt.STATE).write_text(json.dumps(state))
+        return candidate
+
+    def test_35_generated_special_paths_are_encoded_and_resolve(self):
+        names=("one space.png","dir space/image.png","many   spaces.png","café.png","hash#.png","percent%.png")
+        for name in names:
+            with self.subTest(name=name):
+                candidate=self.prepare_named_pass(name)
+                self.assertTrue(self.integrate())
+                text=(self.root/"index.html").read_text(); srcset=opt._attr(next(iter(__import__('re').findall(r'<source\b[^>]*>',text))),"srcset")
+                self.assertNotIn(" ",srcset); self.assertEqual(opt.resolve_url(self.root,self.root/"index.html",srcset).resolve(),candidate.resolve())
+                self.assertFalse(opt.validate_references(self.root))
+                self.assertTrue(self.integrate()); self.assertEqual(text,(self.root/"index.html").read_text())
+
+    def test_36_existing_encoded_reference_is_not_double_encoded(self):
+        candidate=self.prepare_named_pass("already encoded.png",reference="already%20encoded.png")
+        self.assertTrue(self.integrate()); text=(self.root/"index.html").read_text()
+        self.assertIn("already%20encoded.webp",text); self.assertNotIn("%2520",text)
+        self.assertEqual(opt.resolve_url(self.root,self.root/"index.html",opt._candidate_url(self.root/"index.html",candidate)),candidate)
+
+    def test_37_existing_picture_with_space_is_upgraded(self):
+        self.prepare_named_pass("picture space.png",picture=True); self.assertTrue(self.integrate()); text=(self.root/"index.html").read_text()
+        self.assertEqual(text.count("<picture>"),1); self.assertIn("picture%20space.webp",text); self.assertFalse(opt.validate_references(self.root))
+
+    def test_38_automatic_verify_failure_rolls_back_html(self):
+        self.prepare_named_pass("rollback space.png"); original=(self.root/"index.html").read_text()
+        with mock.patch.object(opt,"verify_pair",return_value=(True,"ok")), mock.patch.object(opt,"verify",return_value=False):
+            self.assertFalse(opt.integrate_pass(self.root))
+        self.assertEqual((self.root/"index.html").read_text(),original)
+
+    def test_39_url_serialization_is_html_safe_and_normal_paths_unchanged(self):
+        self.assertEqual(opt.serialize_html_url("images/plain.webp",path_only=True),"images/plain.webp")
+        self.assertEqual(opt.serialize_html_url("/caf%C3%A9/a%20b.webp",path_only=True),"/caf%C3%A9/a%20b.webp")
+        self.assertEqual(opt.serialize_html_url("a b.webp?x=1&y=\"q\"#frag"),"a%20b.webp?x=1&amp;y=%22q%22#frag")
+
 class GitSafetyTests(unittest.TestCase):
     def check(self,status="",conflicts=""):
         with tempfile.TemporaryDirectory() as directory:
