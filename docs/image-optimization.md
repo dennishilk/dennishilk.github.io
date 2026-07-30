@@ -4,7 +4,8 @@
 
 `scripts/optimize_images.py` inventories local raster assets and creates optional,
 non-destructive WebP derivatives under `assets/generated/images/`. Originals, SVGs,
-routes, metadata, and references are never overwritten. Animated images, AVIF/WebP,
+routes, and metadata are never overwritten. Optional PASS-only integration changes
+visible HTML rendering while retaining every original as the fallback. Animated images, AVIF/WebP,
 museum evidence, maps/scientific graphics, unreadable files, and files below 20 KB
 are audit-only or manual-review items. A candidate must save both 20 KB and 10%.
 Favicons, Apple touch icons, manifest icons, and other special-consumer icons retain
@@ -27,6 +28,7 @@ python3 scripts/optimize_images.py --audit --report-json reports/audit.json --re
 python3 scripts/optimize_images.py --dry-run
 python3 scripts/optimize_images.py --generate --top 10
 python3 scripts/optimize_images.py --verify
+python3 scripts/optimize_images.py --integrate-pass
 python3 scripts/optimize_images.py --apply
 python3 scripts/optimize_images.py --restore
 python3 scripts/optimize_images.py --audit --path avatar.png --top 20
@@ -41,10 +43,24 @@ verified candidate when its recorded source and candidate hashes are unchanged.
 `--verify` checks readability, dimensions, aspect
 ratio, alpha presence, animation count, and all local HTML `src`/`srcset` raster
 references and CSS `url()` values. `--apply` accepts only recorded `PASS` candidates,
-but deliberately does not rewrite markup: maintainers must visually approve and
-explicitly introduce a derivative. `--restore` removes generated candidates when
-the state confirms that references were never changed. To revert an explicit,
-reviewed markup edit, use Git to restore that edit, then run `--restore`.
+but remains a verification-only compatibility command.
+
+`--integrate-pass` loads only source-hash-matched, candidate-hash-matched, freshly
+verified `PASS` entries and introduces them only for visible HTML `<img>` rendering.
+A normal image is wrapped in `<picture>` with a WebP `<source>` and its exact original
+`<img>` tag as fallback. Existing pictures receive one source without nesting or
+duplication. Alt text, classes, IDs, dimensions, loading, decoding, fetch priority,
+ARIA, and data attributes remain byte-for-byte intact on the fallback.
+
+Integration refuses a dirty Git tree, merge conflicts, missing files, hash changes,
+failed image verification, malformed picture structure, and protected classifications.
+It never integrates manual-review, failed, skipped, WebP/AVIF, animated, metadata,
+icon, museum-evidence, or scientific assets. Changes roll back if the automatic
+post-integration `--verify` gate fails. State stores the exact prior HTML for each
+changed file, so `--restore` restores HTML and removes derivatives while leaving all
+originals in place. Repeated integration is idempotent. Expected output reports PASS
+candidates, integrated/already-integrated/skipped/protected counts, changed HTML files,
+and estimated live byte and percentage reduction.
 
 ## Dependencies
 
@@ -92,18 +108,19 @@ retain the original as fallback and validate every URL.
 2. Run `--audit` and review classification/references.
 3. Run `--dry-run`.
 4. Run `--generate` and visually inspect every `PASS` candidate.
-5. Run `--apply` (verification gate only), then explicitly update selected markup.
-6. Run `--verify` and load affected routes from `python3 -m http.server 8000`.
+5. Ensure `git status --short` is empty, then run `--integrate-pass`; it executes
+   `--verify` automatically and aborts atomically on any failure.
+6. Load affected routes from `python3 -m http.server 8000` and inspect layout,
+   picture selection, and fallback behavior.
 7. Review `git diff`, including binary sizes and museum evidence links.
-8. Commit only after visual inspection. To revert, restore markup with Git and run
-   `python3 scripts/optimize_images.py --restore`.
+8. Commit only after visual inspection. To revert recorded integration and remove
+   generated candidates, run `python3 scripts/optimize_images.py --restore`.
 
 ## Potential versus live savings
 
 Reports distinguish baseline transfer, **potential transfer after approved candidate
-integration**, and potential bytes saved. These are estimates for valid candidates,
-not claims about current production traffic. The tool records `Live references
-changed: 0`; actual live savings remain zero until a maintainer visually inspects a
-candidate and explicitly changes markup in a separate reviewed task. Unreferenced
+integration**, and potential bytes saved. Before integration these are estimates for
+valid candidates, not claims about current production traffic. After integration,
+the terminal live reduction covers only PASS candidates used by visible HTML. Unreferenced
 candidates and special-consumer assets are called out rather than integrated or
 deleted automatically.
