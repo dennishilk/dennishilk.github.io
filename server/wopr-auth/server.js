@@ -28,6 +28,7 @@ const MAX_BODY_BYTES = 16 * 1024;
 const MAX_OPERATOR_NOTE_LENGTH = 1000;
 const OPERATOR_STATUSES = new Set(["OPEN", "ACKNOWLEDGED", "RESOLVED", "EXPECTED"]);
 const TRANSMISSION_FILE = "transmissions.jsonl";
+const SIGNAL_STATE_FILE = "signal-state.json";
 const MAX_CALLSIGN_LENGTH = 40;
 const MAX_ORIGIN_LENGTH = 80;
 const MAX_MESSAGE_LENGTH = 1200;
@@ -191,6 +192,28 @@ function transmissionPath() {
   return path.join(CONFIG.transmissionsDir, TRANSMISSION_FILE);
 }
 
+function signalStatePath() {
+  return path.join(CONFIG.transmissionsDir, SIGNAL_STATE_FILE);
+}
+
+function chronologicalTransmissionOrder(left, right) {
+  const timeDifference = Date.parse(left.receivedAt || "") - Date.parse(right.receivedAt || "");
+  if (Number.isFinite(timeDifference) && timeDifference !== 0) return timeDifference;
+  return String(left.id || "").localeCompare(String(right.id || ""));
+}
+
+function migrateSignalNumbers(records, startingNumber = 1) {
+  let nextSignalNumber = Math.max(
+    startingNumber,
+    ...records.map((record) => Number.isSafeInteger(record.signal_number) ? record.signal_number + 1 : 1),
+  );
+  const legacyApproved = records
+    .filter((record) => record.status === "APPROVED" && !Number.isSafeInteger(record.signal_number))
+    .sort(chronologicalTransmissionOrder);
+  for (const record of legacyApproved) record.signal_number = nextSignalNumber++;
+  return nextSignalNumber;
+}
+
 async function ensureTransmissionStore() {
   await fs.mkdir(CONFIG.transmissionsDir, { recursive: true, mode: 0o750 });
   await fs.appendFile(transmissionPath(), "", { mode: 0o640 });
@@ -200,7 +223,18 @@ async function readTransmissions() {
   await writeQueue;
   await ensureTransmissionStore();
   const content = await fs.readFile(transmissionPath(), "utf8");
-  return content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+  const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+  let state = { next_signal_number: 1 };
+  try { state = JSON.parse(await fs.readFile(signalStatePath(), "utf8")); } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  const hadLegacyRecords = records.some((record) => record.status === "APPROVED" && !Number.isSafeInteger(record.signal_number));
+  const nextSignalNumber = migrateSignalNumbers(records, state.next_signal_number);
+  if (hadLegacyRecords) await writeTransmissions(records);
+  if (state.next_signal_number !== nextSignalNumber) {
+    await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: nextSignalNumber })}\n`, { mode: 0o640 });
+  }
+  return records;
 }
 
 function writeTransmissions(records) {
@@ -251,6 +285,7 @@ function publicTransmission(record) {
     message: record.message,
     receivedAt: record.receivedAt,
     status: record.status,
+    signal_number: record.signal_number,
   };
 }
 
@@ -286,7 +321,8 @@ async function handleSubmitTransmission(req, res) {
 
 async function handlePublicTransmissions(_req, res) {
   const records = await readTransmissions();
-  const approved = records.filter((record) => record.status === "APPROVED").slice(-PUBLIC_TRANSMISSION_LIMIT).reverse().map(publicTransmission);
+  const approved = records.filter((record) => record.status === "APPROVED")
+    .sort(chronologicalTransmissionOrder).slice(-PUBLIC_TRANSMISSION_LIMIT).reverse().map(publicTransmission);
   return sendJson(res, 200, { ok: true, transmissions: approved });
 }
 
@@ -303,8 +339,17 @@ async function updateTransmissionStatus(req, res, id, status) {
   const records = await readTransmissions();
   const record = records.find((entry) => entry.id === id && entry.status === "PENDING");
   if (!record) return sendJson(res, 404, { ok: false });
+  let signalNumber;
+  if (status === "APPROVED") {
+    const state = JSON.parse(await fs.readFile(signalStatePath(), "utf8"));
+    signalNumber = migrateSignalNumbers(records, state.next_signal_number);
+  }
   record.status = status;
   record.reviewedAt = new Date().toISOString();
+  if (status === "APPROVED") {
+    record.signal_number = signalNumber;
+    await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: signalNumber + 1 })}\n`, { mode: 0o640 });
+  }
   await writeTransmissions(records);
   return sendJson(res, 200, { ok: true });
 }
@@ -505,4 +550,4 @@ ensureTransmissionStore().catch((error) => {
 });
 }
 
-module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview };
+module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview, chronologicalTransmissionOrder, migrateSignalNumbers, publicTransmission };
