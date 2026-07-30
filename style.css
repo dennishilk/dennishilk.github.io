@@ -2084,92 +2084,6 @@ button.technology-observer-card {
   font-size: 0.68rem;
   letter-spacing: 0.09em;
 }
-.worldnode-mailbox {
-  display: inline-flex;
-  width: 180px;
-  margin-top: 0.45rem;
-  color: var(--accent);
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-}
-.worldnode-mailbox svg {
-  display: block;
-  width: 150px;
-  height: auto;
-  overflow: visible;
-  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.72));
-}
-.mail-envelope {
-  fill: #071b30;
-  stroke: #20cfff;
-  stroke-width: 3;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 4px rgba(0, 180, 255, 0.72));
-  transition: transform 180ms ease-out;
-}
-.mail-envelope-fold {
-  fill: none;
-  stroke: #d9f8ff;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 2px rgba(0, 180, 255, 0.55));
-  transition: transform 180ms ease-out;
-}
-.mailbox-command {
-  margin-top: -0.1rem;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  text-shadow: 0 0 8px rgba(0, 180, 255, 0.54);
-}
-.mailbox-cursor {
-  display: inline-block;
-  width: 0.48em;
-  height: 0.9em;
-  margin-left: 0.4em;
-  background: var(--accent);
-  box-shadow: 0 0 6px rgba(0, 180, 255, 0.7);
-  vertical-align: -0.08em;
-  animation: blink 1.1s steps(1) infinite;
-}
-.worldnode-mailbox:hover .mail-envelope,
-.worldnode-mailbox:hover .mail-envelope-fold,
-.worldnode-mailbox:focus-visible .mail-envelope,
-.worldnode-mailbox:focus-visible .mail-envelope-fold { transform: translateY(-2px); }
-.worldnode-mailbox:hover .mailbox-command { color: #8bdfff; }
-.worldnode-mailbox:focus-visible { border-radius: 4px; outline: 2px solid var(--accent); outline-offset: 5px; }
-
-/* Use the envelope as the content of a standard homepage navigation button. */
-.buttons .worldnode-mailbox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-}
-.buttons .worldnode-mailbox svg {
-  width: 1.35rem;
-  height: 1.15rem;
-  filter: none;
-}
-.buttons .worldnode-mailbox .mail-envelope {
-  fill: none;
-  stroke: #000;
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.18));
-}
-.buttons .worldnode-mailbox .mail-envelope-fold {
-  stroke: #000;
-  filter: none;
-}
-.buttons .worldnode-mailbox:hover .mail-envelope,
-.buttons .worldnode-mailbox:hover .mail-envelope-fold,
-.buttons .worldnode-mailbox:focus-visible .mail-envelope,
-.buttons .worldnode-mailbox:focus-visible .mail-envelope-fold {
-  transform: none;
-}
-
 .transmission-page-subtitle {
   margin: 0 0 0.8rem;
   color: #8bdfff;
@@ -2239,12 +2153,6 @@ button.technology-observer-card {
 }
 .transmission-entry-status { margin: 0; }
 .transmission-entry-status span { color: #7cff9b; }
-
-@media (prefers-reduced-motion: reduce) {
-  .mail-envelope,
-  .mail-envelope-fold { transition: none; }
-  .mailbox-cursor { animation: none; }
-}
 
 @media (max-width: 700px) {
   .archive-heading { align-items: flex-start; }
