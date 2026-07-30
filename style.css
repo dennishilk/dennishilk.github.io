@@ -87,6 +87,14 @@ h1 {
   transform: translateY(-2px);
   background: #33ccff;
 }
+.buttons a:focus-visible {
+  border-radius: 8px;
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+.buttons a:active {
+  background: #33ccff;
+}
 
 /* Tea Button */
 .tea-button {
@@ -2134,33 +2142,32 @@ button.technology-observer-card {
 .worldnode-mailbox:hover .mailbox-command { color: #8bdfff; }
 .worldnode-mailbox:focus-visible { border-radius: 4px; outline: 2px solid var(--accent); outline-offset: 5px; }
 
-/* Keep the public mailbox compact and aligned with the homepage navigation. */
+/* Use the envelope as the content of a standard homepage navigation button. */
 .buttons .worldnode-mailbox {
   display: inline-flex;
-  width: 44px;
-  height: 39px;
-  margin: 0.3rem;
-  padding: 0;
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  overflow: visible;
-  border: 1px solid rgba(0, 180, 255, 0.55);
-  background: rgba(0, 180, 255, 0.12);
-  box-shadow: 0 0 10px rgba(0, 180, 255, 0.2);
-  cursor: pointer;
 }
 .buttons .worldnode-mailbox svg {
-  width: 43px;
-  height: 36px;
-  filter: drop-shadow(0 0 5px rgba(0, 180, 255, 0.55));
+  width: 1.35rem;
+  height: 1.15rem;
+  filter: none;
 }
-.buttons .worldnode-mailbox:hover {
-  background: rgba(0, 180, 255, 0.2);
-  box-shadow: 0 0 14px rgba(0, 180, 255, 0.42);
+.buttons .worldnode-mailbox .mail-envelope {
+  fill: none;
+  stroke: #000;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.18));
 }
-.buttons .worldnode-mailbox:focus-visible {
-  outline-offset: 3px;
+.buttons .worldnode-mailbox .mail-envelope-fold {
+  stroke: #000;
+  filter: none;
+}
+.buttons .worldnode-mailbox:hover .mail-envelope,
+.buttons .worldnode-mailbox:hover .mail-envelope-fold,
+.buttons .worldnode-mailbox:focus-visible .mail-envelope,
+.buttons .worldnode-mailbox:focus-visible .mail-envelope-fold {
+  transform: none;
 }
 
 .transmission-page-subtitle {
@@ -2240,8 +2247,6 @@ button.technology-observer-card {
 }
 
 @media (max-width: 700px) {
-  .buttons .worldnode-mailbox { width: 44px; }
-  .buttons .worldnode-mailbox svg { width: 43px; }
   .archive-heading { align-items: flex-start; }
   .public-transmission-archive { margin-right: 0.7rem; margin-left: 0.7rem; }
 }
