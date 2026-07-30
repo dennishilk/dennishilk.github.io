@@ -1,16 +1,16 @@
 # Image optimization audit
 
-> Byte figures are inventory/transfer estimates, not browser timings.
+> Byte figures are inventory/transfer estimates, not browser timings. Candidate savings are not live savings.
 
-## Global totals
+## Baseline inventory
 
 - Raster images: **60**
 - Raster bytes: **106876741 (101.9 MiB)**
-- Repository bytes (excluding `.git`): **143045889 (136.4 MiB)**
-- Images / repository: **74.72%**
+- Repository bytes (excluding `.git`): **143106506 (136.5 MiB)**
+- Images / repository: **74.68%**
 - Oversized candidates: **0**
 - Unreferenced candidates: **4**
-- Manual review: **18**
+- Manual review: **24**
 
 ### By extension
 
@@ -20,7 +20,7 @@
 | png | 24223646 (23.1 MiB) |
 | webp | 2761492 (2.6 MiB) |
 
-## Before / after transfer estimate
+## Candidate generation result
 
 | Metric | Value |
 |---|---:|
@@ -28,23 +28,23 @@
 | Current raster count | 60 |
 | Estimated transfer before | 101.9 MiB |
 | Estimated transfer after | 101.9 MiB |
-| Bytes saved | 0 |
-| Percentage saved | 0% |
-| Optimized / converted / resized | 0 / 0 / 0 |
-| Unchanged / skipped / manual / failed | 60 / 18 / 18 / 0 |
+| Potential transfer after approved candidate integration | 101.9 MiB |
+| Potential bytes saved | 0 (0.0 B) |
+| Potential percentage saved (represented sources) | 0% |
+| Live references changed | 0 |
 
-No live references were changed: the environment had no WebP encoder, so the safety gate produced no PASS candidates. Repository growth is limited to reviewable tooling, tests, documentation, state, and reports.
+The potential figure applies only if maintainers visually approve candidates and explicitly integrate them. Actual live savings remain **0 bytes** because this workflow does not edit references.
 
-## Audit findings and root causes
+### Candidate counts by status
 
-- Full-resolution JPEG photographs dominate the raster inventory; evidence and scientific assets require curator/manual review rather than automatic downscaling.
-- The 1024×1024 root `avatar.png` is served at a CSS width of 160 px (120 px on small screens), but no derivative was introduced without an available encoder and visual review.
-- The requested `nebu.png` does not exist. The similarly named 1024×1024 alpha-bearing `nebby.png` exists in two byte-identical copies and is displayed as a small mascot.
-- Existing markup commonly omits intrinsic dimensions and lazy/async hints; these are reported, not bulk-edited, to avoid LCP and semantic regressions.
+| Status | Count |
+|---|---:|
+| MANUAL REVIEW | 24 |
+| SKIPPED | 36 |
 
 ## Top savings
 
-No candidates passed in this environment, so the top-20 savings table is empty (0 bytes saved).
+No valid candidates are available; potential savings are 0 bytes.
 
 ## Largest 20
 
@@ -56,20 +56,39 @@ No candidates passed in this environment, so the top-20 savings table is empty (
 | `assets/wiesmoor/1783513449676.jpg` | 4.2 MiB | 3648×2736 | photo | ELIGIBLE |
 | `assets/wiesmoor/1783513449513.jpg` | 4.1 MiB | 3648×2736 | photo | ELIGIBLE |
 | `assets/home-computing-lab/cthulhu-fastfetch-system-snapshot-2026.png` | 3.8 MiB | 3440×1440 | screenshot | ELIGIBLE |
-| `assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png` | 3.7 MiB | 3440×1440 | museum evidence image | MANUAL REVIEW |
-| `assets/wiesmoor/1783513449947.jpg` | 3.6 MiB | 4080×3060 | photo | ELIGIBLE |
+| `assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png` | 3.7 MiB | 3440×1440 | external metadata consumer | MANUAL REVIEW |
+| `assets/wiesmoor/1783513449947.jpg` | 3.6 MiB | 4080×3060 | external metadata consumer | MANUAL REVIEW |
 | `assets/wiesmoor/1783513449869.jpg` | 3.5 MiB | 3648×2736 | photo | ELIGIBLE |
-| `assets/me/IMG_20260620_070938.jpg` | 3.4 MiB | 4640×3488 | photo | ELIGIBLE |
-| `assets/home-computing-lab/field-notes/windows98-scsi-system.jpg` | 3.4 MiB | 4000×1800 | museum evidence image | MANUAL REVIEW |
-| `assets/home-computing-lab/field-notes/windows98-device-manager-scsi.jpg` | 3.2 MiB | 4000×1800 | museum evidence image | MANUAL REVIEW |
-| `assets/me/admin team.jpg` | 2.8 MiB | 4000×1800 | photo | ELIGIBLE |
-| `assets/geomagnetic-magnetosphere.png` | 2.6 MiB | 1536×1024 | map/scientific asset | MANUAL REVIEW |
-| `assets/home-computing-lab/field-notes/missing-capacitor.jpg` | 2.4 MiB | 4000×1800 | museum evidence image | MANUAL REVIEW |
-| `assets/home-computing-lab/field-notes/scsi-to-ide-upgrade.jpg` | 2.3 MiB | 4000×1800 | museum evidence image | MANUAL REVIEW |
-| `assets/horizon/horizon-landscape.webp` | 2.2 MiB | None×None | map/scientific asset | MANUAL REVIEW |
-| `assets/home-computing-lab/field-notes/windows98-system-properties.jpg` | 2.2 MiB | 1800×4000 | museum evidence image | MANUAL REVIEW |
-| `assets/home-computing-lab/powercolor-rx-9060-xt-hellhound-box-2026-07-27.jpg` | 2.1 MiB | 4000×1800 | photo | ELIGIBLE |
-| `avatar.png` | 2.1 MiB | 1024×1024 | avatar | ELIGIBLE |
+| `assets/me/IMG_20260620_070938.jpg` | 3.4 MiB | 4640×3488 | external metadata consumer | MANUAL REVIEW |
+
+## Excluded special-consumer and protected assets
+
+| Path | Class | Reason |
+|---|---|---|
+| `assets/geomagnetic-magnetosphere.png` | map/scientific asset | curator review required |
+| `assets/home-computing-lab/asus-strix-radeon-r9-380-artifact-2026-07-27.jpg` | museum evidence image | curator review required |
+| `assets/home-computing-lab/field-notes/icq-retro-workstation.png` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/home-computing-lab/field-notes/m2-screw-fall.jpg` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/home-computing-lab/field-notes/missing-capacitor-detail.png` | museum evidence image | curator review required |
+| `assets/home-computing-lab/field-notes/missing-capacitor.jpg` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/home-computing-lab/field-notes/one-line-fix-login.png` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/home-computing-lab/field-notes/scsi-to-ide-upgrade.jpg` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/home-computing-lab/field-notes/windows98-device-manager-scsi.jpg` | museum evidence image | curator review required |
+| `assets/home-computing-lab/field-notes/windows98-scsi-system.jpg` | museum evidence image | curator review required |
+| `assets/home-computing-lab/field-notes/windows98-system-properties.jpg` | museum evidence image | curator review required |
+| `assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/home-computing-lab/gentoo-xmonad-rtx3060ti-ryzen5800x3d-desktop-2026-07-27.png` | screenshot | curator review required |
+| `assets/home-computing-lab/retro-pc-overview-2026-07-27.jpg` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/horizon/horizon-landscape.webp` | map/scientific asset | already optimized input format |
+| `assets/horizon/iss.webp` | map/scientific asset | already optimized input format |
+| `assets/horizon/milky-way-overlay.webp` | map/scientific asset | already optimized input format |
+| `assets/horizon/observatory-footer.webp` | map/scientific asset | already optimized input format |
+| `assets/me/IMG_20260620_070938.jpg` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `assets/traffic-world-map.png` | map/scientific asset | curator review required |
+| `assets/wiesmoor/1783513449947.jpg` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `avatar.png` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
+| `favicon.png` | special-consumer icon | special-consumer icon; retain its broadly supported authored format |
+| `images/avatar.png` | external metadata consumer | Open Graph/Twitter metadata consumer requires authored-format review |
 
 ## Unreferenced candidates
 
@@ -186,13 +205,21 @@ No candidates passed in this environment, so the top-20 savings table is empty (
 - `assets/home-computing-lab/field-notes/windows98-system-properties.jpg`
 - `assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png`
 - `assets/home-computing-lab/gentoo-xmonad-rtx3060ti-ryzen5800x3d-desktop-2026-07-27.png`
+- `assets/home-computing-lab/retro-pc-overview-2026-07-27.jpg`
 - `assets/horizon/horizon-landscape.webp`
 - `assets/horizon/iss.webp`
 - `assets/horizon/milky-way-overlay.webp`
 - `assets/horizon/observatory-footer.webp`
+- `assets/me/IMG_20260620_070938.jpg`
 - `assets/traffic-world-map.png`
+- `assets/wiesmoor/1783513449947.jpg`
+- `avatar.png`
+- `favicon.png`
+- `images/avatar.png`
 
-## Duplicate candidates
+## Duplicate source groups
+
+Byte-identical sources retain separate audit identities and deterministic destination paths. Generation may reuse verified bytes, but references are never redirected.
 
 ### Identical hashes
 
@@ -210,7 +237,7 @@ No candidates passed in this environment, so the top-20 savings table is empty (
 | `blog/posts/when-tinkering-becomes-noise.html` | 4.4 MiB | 4.4 MiB | 0 B | `avatar.png` |
 | `blog/posts/why-i-rolled-back-a-perfect-setup.html` | 4.4 MiB | 4.4 MiB | 0 B | `avatar.png` |
 | `datenschutzerklaerung.html` | 3.5 MiB | 3.5 MiB | 0 B | `avatar.png` |
-| `docs/image-optimization.md` | 3.5 MiB | 3.5 MiB | 0 B | `avatar.png` |
+| `docs/image-optimization.md` | 6.8 MiB | 6.8 MiB | 0 B | `avatar.png` |
 | `impressum.html` | 3.5 MiB | 3.5 MiB | 0 B | `avatar.png` |
 | `index.html` | 7.7 MiB | 7.7 MiB | 0 B | `avatar.png` |
 | `lost-administrator/index.html` | 7.7 MiB | 7.7 MiB | 0 B | `avatar.png` |
