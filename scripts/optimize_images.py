@@ -2,13 +2,13 @@
 """Non-destructive, repository-local raster image audit/optimization workflow."""
 from __future__ import annotations
 
-import argparse, hashlib, json, math, os, re, shutil, struct, sys, time
+import argparse, hashlib, json, math, os, re, shutil, struct, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 RASTER = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"}
-TEXT = {".html", ".htm", ".css", ".js", ".mjs", ".json", ".md", ".webmanifest"}
+TEXT = {".html", ".htm", ".css", ".js", ".mjs", ".json", ".md", ".webmanifest", ".xml", ".rss", ".atom"}
 MIN_BYTES, MIN_RATIO = 20_000, .10
 STATE = Path("reports/image-optimization-state.json")
 GENERATED = Path("assets/generated/images")
@@ -83,7 +83,8 @@ def classify(rel, ext, alpha, animated):
     if any(x in s for x in ("map", "geomagnetic", "horizon", "overlay")): return "map/scientific asset"
     if any(x in s for x in ("field-note", "museum", "artifact", "evidence")): return "museum evidence image"
     if "avatar" in s: return "avatar"
-    if any(x in s for x in ("favicon", "icon", "nebby")): return "icon" if not alpha else "transparent illustration"
+    if any(x in s for x in ("favicon", "apple-touch", "mask-icon")) or re.search(r"(^|[-_/])icon(?:[-_.]|$)",s): return "special-consumer icon"
+    if "nebby" in s: return "transparent illustration" if alpha else "icon"
     if ext in ("jpg","jpeg"): return "photo"
     if alpha: return "transparent illustration"
     if any(x in s for x in ("screen", "terminal", "desktop", "system")): return "screenshot"
@@ -108,6 +109,23 @@ def tag_details(text, name):
             matches.append({"width":attr("width"),"height":attr("height"),"loading":attr("loading"),"decoding":attr("decoding")})
     return matches
 
+def special_consumer(rel, corpus):
+    """Return a reason when an asset appears in non-page image metadata."""
+    names=(rel,"/"+rel,Path(rel).name)
+    for source,text in corpus.items():
+        suffix=source.suffix.lower(); low=text.lower()
+        if not any(n.lower() in low for n in names): continue
+        if suffix in (".xml",".rss",".atom") or "<feed" in low or "<rss" in low:
+            return "feed consumer requires authored-format review"
+        if suffix==".webmanifest" or (suffix==".json" and '"icons"' in low):
+            return "manifest icon consumer requires authored-format review"
+        for tag in re.findall(r"<meta\b[^>]*>",text,re.I|re.S):
+            if any(n.lower() in tag.lower() for n in names) and re.search(r"(?:og:image|twitter:image)",tag,re.I):
+                return "Open Graph/Twitter metadata consumer requires authored-format review"
+    if any(x in rel.lower() for x in ("email","newsletter")):
+        return "email consumer requires authored-format review"
+    return None
+
 def audit(root, selected=None):
     root=root.resolve(); corpus=text_corpus(root); inventory=[]; errors=[]
     candidates=files(root,RASTER)
@@ -130,8 +148,9 @@ def audit(root, selected=None):
         displays=[]
         for t in tags:
             if t["width"] and t["height"] and t["width"].isdigit() and t["height"].isdigit(): displays.append([int(t["width"]),int(t["height"])])
-        cls=classify(rel,p.suffix.lower()[1:],alpha,animated)
-        manual=animated or cls in ("museum evidence image","map/scientific asset") or w is None
+        cls=classify(rel,p.suffix.lower()[1:],alpha,animated); consumer=special_consumer(rel,corpus)
+        if consumer and cls!="special-consumer icon": cls="external metadata consumer"
+        manual=animated or cls in ("museum evidence image","map/scientific asset","special-consumer icon","external metadata consumer") or w is None
         maxdisplay=max((x[0]*x[1] for x in displays),default=None)
         oversized=bool(w and maxdisplay and w*h > 4*maxdisplay)
         inventory.append({"path":rel,"extension":p.suffix.lower()[1:],"bytes":size,"human_size":human(size),
@@ -139,7 +158,8 @@ def audit(root, selected=None):
           "exif_orientation":orient,"referenced":bool(refs),"reference_count":sum(r["count"] for r in refs),
           "referenced_by":refs,"likely_display_dimensions":displays,"explicit_width_height":bool(displays),
           "loading_lazy":any(t["loading"]=="lazy" for t in tags),"decoding_async":any(t["decoding"]=="async" for t in tags),
-          "substantially_oversized":oversized,"class":cls,"automatic_action":"MANUAL REVIEW" if manual else "ELIGIBLE",
+          "substantially_oversized":oversized,"class":cls,"automatic_action":"MANUAL REVIEW" if manual else ("SKIPPED" if p.suffix.lower() in (".webp",".avif") else "ELIGIBLE"),
+          "exclusion_reason": ("special-consumer icon; retain its broadly supported authored format" if cls=="special-consumer icon" else consumer if consumer else "animated input" if animated else "already optimized input format" if p.suffix.lower() in (".webp",".avif") else "curator review required" if manual else None),
           "sha256":hashlib.sha256(p.read_bytes()).hexdigest()})
     repo_bytes=sum(p.stat().st_size for p in root.rglob("*") if p.is_file() and ".git" not in p.parts)
     ext=Counter(); hashes=defaultdict(list); dims=defaultdict(list)
@@ -155,7 +175,7 @@ def audit(root, selected=None):
       "new_derivatives":0,"references_updated":0,"estimated_transfer_bytes_before":total,
       "estimated_transfer_bytes_after":total,"estimated_transfer_bytes_saved":0,"estimated_transfer_percent_saved":0,
       "repository_size_change":0,"bytes_by_class":dict(classes)}
-    return {"schema_version":1,"generated_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),"root":".","summary":summary,
+    return {"schema_version":2,"root":".","summary":summary,
       "largest_20":sorted(inventory,key=lambda x:x["bytes"],reverse=True)[:20],
       "largest_relative_to_display_20":sorted([x for x in inventory if x["likely_display_dimensions"]],key=lambda x:x["bytes"]/max(1,max(a*b for a,b in x["likely_display_dimensions"])),reverse=True)[:20],
       "unreferenced_candidates":[x["path"] for x in inventory if not x["referenced"]],
@@ -178,37 +198,69 @@ def page_estimates(items):
           "largest_image":largest["path"],"above_fold_changed":False,"lazy_loading_changed":False,"width_height_added":False,"likely_lcp_image":"not inferred"})
     return out
 
-def markdown(report):
-    s=report["summary"]; rows=["# Image optimization audit", "", "> Byte figures are inventory/transfer estimates, not browser timings.", "", "## Global totals", "",
+def valid_savings(report):
+    return sorted([x for x in report.get("candidate_results",[]) if x.get("status")=="PASS" and x.get("bytes_saved",0)>0],
+                  key=lambda x:(-x["bytes_saved"],x["source"]))
+
+def add_candidate_data(report, state):
+    """Merge current, source-hash-matched state into an audit report."""
+    current={x["path"]:x for x in report["images"]}; results=[]
+    for item in state.get("results",[]):
+        source=current.get(item.get("source"))
+        if source and item.get("source_sha256")==source["sha256"]:
+            results.append(item)
+    report["candidate_results"]=results
+    good=valid_savings(report); s=report["summary"]
+    represented=sum(x["source_bytes"] for x in good); candidate=sum(x["candidate_bytes"] for x in good)
+    s.update({"candidate_count":len(good),"candidate_original_bytes":represented,"candidate_bytes":candidate,
+      "estimated_transfer_bytes_after_integration":s["raster_bytes"]-sum(x["bytes_saved"] for x in good),
+      "potential_bytes_saved":sum(x["bytes_saved"] for x in good),
+      "potential_percent_saved":round(sum(x["bytes_saved"] for x in good)/represented*100,2) if represented else 0,
+      "references_updated":len(state.get("references_updated",[])),
+      "candidate_status_counts":dict(Counter(x["status"] for x in results))})
+    return report
+
+def markdown(report, top=20):
+    s=report["summary"]; rows=["# Image optimization audit", "", "> Byte figures are inventory/transfer estimates, not browser timings. Candidate savings are not live savings.", "", "## Baseline inventory", "",
       f"- Raster images: **{s['raster_count']}**",f"- Raster bytes: **{s['raster_bytes']} ({human(s['raster_bytes'])})**",f"- Repository bytes (excluding `.git`): **{s['repository_bytes']} ({human(s['repository_bytes'])})**",f"- Images / repository: **{s['image_percentage_of_repository']}%**",
       f"- Oversized candidates: **{s['oversized_count']}**",f"- Unreferenced candidates: **{s['unreferenced_count']}**",f"- Manual review: **{s['manual_review_count']}**", "", "### By extension", "", "| Extension | Bytes |", "|---|---:|"]
     rows += [f"| {k} | {v} ({human(v)}) |" for k,v in sorted(s["bytes_by_extension"].items())]
-    rows += ["", "## Before / after transfer estimate", "", "| Metric | Value |", "|---|---:|",
+    rows += ["", "## Candidate generation result", "", "| Metric | Value |", "|---|---:|",
       f"| Original raster count | {s['raster_count']} |",f"| Current raster count | {s['raster_count']} |",
       f"| Estimated transfer before | {human(s['estimated_transfer_bytes_before'])} |",f"| Estimated transfer after | {human(s['estimated_transfer_bytes_after'])} |",
-      f"| Bytes saved | {s['estimated_transfer_bytes_saved']} |",f"| Percentage saved | {s['estimated_transfer_percent_saved']}% |",
-      f"| Optimized / converted / resized | {s['optimized_count']} / {s['converted_count']} / {s['resized_count']} |",
-      f"| Unchanged / skipped / manual / failed | {s['unchanged_count']} / {s['skipped_count']} / {s['manual_review_count']} / {s['failed_count']} |",
-      "", "No live references were changed: the environment had no WebP encoder, so the safety gate produced no PASS candidates. Repository growth is limited to reviewable tooling, tests, documentation, state, and reports."]
-    rows += ["", "## Audit findings and root causes", "",
-      "- Full-resolution JPEG photographs dominate the raster inventory; evidence and scientific assets require curator/manual review rather than automatic downscaling.",
-      "- The 1024×1024 root `avatar.png` is served at a CSS width of 160 px (120 px on small screens), but no derivative was introduced without an available encoder and visual review.",
-      "- The requested `nebu.png` does not exist. The similarly named 1024×1024 alpha-bearing `nebby.png` exists in two byte-identical copies and is displayed as a small mascot.",
-      "- Existing markup commonly omits intrinsic dimensions and lazy/async hints; these are reported, not bulk-edited, to avoid LCP and semantic regressions.",
-      "", "## Top savings", "", "No candidates passed in this environment, so the top-20 savings table is empty (0 bytes saved)."]
+      f"| Potential transfer after approved candidate integration | {human(s.get('estimated_transfer_bytes_after_integration',s['raster_bytes']))} |",
+      f"| Potential bytes saved | {s.get('potential_bytes_saved',0)} ({human(s.get('potential_bytes_saved',0))}) |",
+      f"| Potential percentage saved (represented sources) | {s.get('potential_percent_saved',0)}% |",
+      f"| Live references changed | {s.get('references_updated',0)} |", "",
+      "The potential figure applies only if maintainers visually approve candidates and explicitly integrate them. Actual live savings remain **0 bytes** because this workflow does not edit references."]
+    counts=s.get("candidate_status_counts",{})
+    rows += ["", "### Candidate counts by status", "", "| Status | Count |", "|---|---:|"]+[f"| {k} | {v} |" for k,v in sorted(counts.items())]
+    rows += ["", "## Top savings", ""]
+    ranked=valid_savings(report)[:top]
+    if ranked:
+        rows += ["| Source | Original | Candidate | Saved | Saved % | Status / class |", "|---|---:|---:|---:|---:|---|"]
+        rows += [f"| `{x['source']}` | {human(x['source_bytes'])} | {human(x['candidate_bytes'])} | {human(x['bytes_saved'])} | {x['percent_saved']}% | {x['status']} / {x['class']} |" for x in ranked]
+    else: rows += ["No valid candidates are available; potential savings are 0 bytes."]
     rows += ["", "## Largest 20", "", "| Path | Size | Dimensions | Class | Status |", "|---|---:|---:|---|---|"]
     rows += [f"| `{x['path']}` | {human(x['bytes'])} | {x['width']}×{x['height']} | {x['class']} | {x['automatic_action']} |" for x in report["largest_20"]]
+    excluded=[x for x in report["images"] if x.get("exclusion_reason")]
+    rows += ["", "## Excluded special-consumer and protected assets", "", "| Path | Class | Reason |", "|---|---|---|"]
+    rows += [f"| `{x['path']}` | {x['class']} | {x['exclusion_reason']} |" for x in excluded] or ["| None | — | — |"]
     for title,key in (("Unreferenced candidates","unreferenced_candidates"),("Oversized relative to explicit display dimensions","oversized_candidates"),("Referenced images missing explicit width/height","missing_dimensions"),("Referenced images missing lazy loading","missing_lazy_loading"),("Must not be touched automatically","must_not_touch_automatically")):
         rows += ["",f"## {title}",""] + ([f"- `{p}`" for p in report[key]] or ["- None detected."])
-    rows += ["", "## Duplicate candidates", "", "### Identical hashes", ""]
+    rows += ["", "## Duplicate source groups", "", "Byte-identical sources retain separate audit identities and deterministic destination paths. Generation may reuse verified bytes, but references are never redirected.", "", "### Identical hashes", ""]
     rows += ["- "+", ".join(f"`{p}`" for p in group) for group in report["duplicates"]["identical_hash"]] or ["- None."]
     rows += ["", "## Page-level estimates", "", "| Page | Before | After | Savings | Largest |", "|---|---:|---:|---:|---|"]
     rows += [f"| `{x['page']}` | {human(x['estimated_image_bytes_before'])} | {human(x['estimated_image_bytes_after'])} | 0 B | `{x['largest_image']}` |" for x in report["page_estimates"]]
     return "\n".join(rows)+"\n"
 
-def write_report(report,jpath=None,mpath=None):
-    if jpath: Path(jpath).parent.mkdir(parents=True,exist_ok=True); Path(jpath).write_text(json.dumps(report,indent=2)+"\n")
-    if mpath: Path(mpath).parent.mkdir(parents=True,exist_ok=True); Path(mpath).write_text(markdown(report))
+def write_if_changed(path, data):
+    path=Path(path); path.parent.mkdir(parents=True,exist_ok=True)
+    if not path.exists() or path.read_text()!=data: path.write_text(data)
+
+def write_report(report,jpath=None,mpath=None,top=20):
+    if jpath: write_if_changed(jpath,json.dumps(report,indent=2,sort_keys=True)+"\n")
+    if mpath: write_if_changed(mpath,markdown(report,top))
 
 def summary(report,label="BASELINE"):
     s=report["summary"]; print(f"IMAGE OPTIMIZATION {label}\n\nRaster images scanned: {s['raster_count']}\nTotal raster size: {human(s['raster_bytes'])}")
@@ -224,30 +276,74 @@ def dependencies():
 
 def candidate_path(rel): return GENERATED / Path(rel).with_suffix(".webp")
 
+def encoder_info():
+    return {"pillow_available":bool(Image),"pillow_version":getattr(Image,"__version__",None) if Image else None,
+            "cwebp_available":bool(shutil.which("cwebp")),"generator":"Pillow" if Image else None}
+
 def generate(root, report, selected=None, dry=False):
-    results=[]
+    results=[]; canonical={}; old={}
+    if (root/STATE).exists():
+        try: old={x["source"]:x for x in json.loads((root/STATE).read_text()).get("results",[])}
+        except (ValueError,KeyError): pass
     for x in report["images"]:
-        status="SKIPPED"; reason="not eligible"
+        status="MANUAL REVIEW" if x["automatic_action"]=="MANUAL REVIEW" else "SKIPPED"
+        reason=x.get("exclusion_reason") or ("below generation threshold" if x["bytes"]<MIN_BYTES else "not eligible")
+        dst_rel=candidate_path(x["path"]); src=root/x["path"]; dst=root/dst_rel; reused=False; duplicate_of=None
         if x["automatic_action"]=="ELIGIBLE" and x["bytes"]>=MIN_BYTES and x["extension"] in ("png","jpg","jpeg"):
             if not Image: reason="Pillow unavailable; install dependency and retry"
             else:
-                src=root/x["path"]; dst=root/candidate_path(x["path"])
                 if dry: status="PROPOSED"; reason="eligible non-destructive WebP candidate"
                 else:
                     dst.parent.mkdir(parents=True,exist_ok=True)
-                    with Image.open(src) as im:
-                        kwargs={"format":"WEBP","method":6}
-                        if x["class"] in ("screenshot","transparent illustration","icon"): kwargs["lossless"]=True
-                        else: kwargs["quality"]=90
-                        im.save(dst,**kwargs)
+                    previous=old.get(x["path"],{})
+                    if previous.get("source_sha256")==x["sha256"] and dst.exists() and verify_pair(src,dst)[0] and hashlib.sha256(dst.read_bytes()).hexdigest()==previous.get("candidate_sha256"):
+                        reused=True
+                    elif x["sha256"] in canonical and canonical[x["sha256"]].exists():
+                        duplicate_of=next(y["source"] for y in results if y.get("source_sha256")==x["sha256"] and y.get("candidate_sha256"))
+                        shutil.copyfile(canonical[x["sha256"]],dst); reused=True
+                    else:
+                        with Image.open(src) as im:
+                            kwargs={"format":"WEBP","method":6}
+                            if x["class"] in ("screenshot","transparent illustration","icon"): kwargs["lossless"]=True
+                            else: kwargs["quality"]=90
+                            im.save(dst,**kwargs)
                     ok,reason=verify_pair(src,dst)
                     saving=x["bytes"]-dst.stat().st_size
                     if ok and saving>=MIN_BYTES and saving/x["bytes"]>=MIN_RATIO: status="PASS"
                     else: status="MANUAL REVIEW" if ok else "FAILED"; dst.unlink(missing_ok=True)
-        results.append({"source":x["path"],"candidate":candidate_path(x["path"]).as_posix(),"status":status,"reason":reason})
+                    if status=="PASS": canonical[x["sha256"]]=dst
+        item={"source":x["path"],"candidate":dst_rel.as_posix(),"status":status,"reason":reason,"class":x["class"],
+              "source_bytes":x["bytes"],"source_sha256":x["sha256"],"verification":"PASS" if status=="PASS" else "NOT APPLICABLE"}
+        if not dry and status=="PASS":
+            item.update({"candidate_bytes":dst.stat().st_size,"candidate_sha256":hashlib.sha256(dst.read_bytes()).hexdigest(),
+              "bytes_saved":x["bytes"]-dst.stat().st_size,"percent_saved":round((x["bytes"]-dst.stat().st_size)/x["bytes"]*100,2),
+              "reused":reused,"duplicate_of":duplicate_of})
+        results.append(item)
     if not dry:
-        STATE.parent.mkdir(parents=True,exist_ok=True); STATE.write_text(json.dumps({"results":results,"references_updated":[]},indent=2)+"\n")
+        groups=report["duplicates"]["identical_hash"]
+        state={"schema_version":2,"root":".","output_directory":GENERATED.as_posix()+"/","encoder":encoder_info(),
+               "duplicate_source_groups":groups,"results":results,"references_updated":[]}
+        write_if_changed(root/STATE,json.dumps(state,indent=2,sort_keys=True)+"\n")
     return results
+
+def print_top(report, top):
+    print("\nTOP SAVINGS")
+    ranked=valid_savings(report)[:top]
+    if not ranked: print("\nNo valid candidates are available for a savings ranking."); return
+    for i,x in enumerate(ranked,1):
+        print(f"\n{i}. {x['source']}\n   {human(x['source_bytes'])} -> {human(x['candidate_bytes'])}\n   saved {human(x['bytes_saved'])} ({x['percent_saved']}%) — {x['status']} / {x['class']}")
+
+def generation_summary(report, top):
+    s=report["summary"]; results=report.get("candidate_results",[]); counts=Counter(x["status"] for x in results)
+    print("\nIMAGE GENERATION RESULT\n")
+    print(f"Generated candidates: {sum(x['status']=='PASS' and not x.get('reused') for x in results)}")
+    print(f"Reused unchanged candidates: {sum(x['status']=='PASS' and bool(x.get('reused')) for x in results)}")
+    print(f"Skipped: {counts['SKIPPED']}\nManual review: {counts['MANUAL REVIEW']}\nFailed: {counts['FAILED']}")
+    print(f"Duplicate source groups: {len(report['duplicates']['identical_hash'])}\nOutput directory: {GENERATED.as_posix()}/")
+    print(f"Original bytes represented: {s.get('candidate_original_bytes',0)} ({human(s.get('candidate_original_bytes',0))})")
+    print(f"Candidate bytes: {s.get('candidate_bytes',0)} ({human(s.get('candidate_bytes',0))})")
+    print(f"Potential savings: {s.get('potential_bytes_saved',0)} bytes ({s.get('potential_percent_saved',0)}%)")
+    print_top(report,top)
 
 def verify_pair(src,dst):
     try:
@@ -328,9 +424,18 @@ def main(argv=None):
     if a.restore: return 0 if restore(root) else 1
     if a.apply: return 0 if apply(root) else 1
     if a.verify: return 0 if verify(root) else 1
+    if a.top < 0: ap.error("--top must be zero or greater")
     report=audit(root,a.path); report["largest_20"]=report["largest_20"][:a.top]
-    write_report(report,a.report_json,a.report_md); summary(report,"BASELINE")
+    if (root/STATE).exists():
+        try: add_candidate_data(report,json.loads((root/STATE).read_text()))
+        except (ValueError,KeyError): pass
+    write_report(report,a.report_json,a.report_md,a.top); summary(report,"BASELINE")
     if a.dry_run: generate(root,report,a.path,True)
-    if a.generate: generate(root,report,a.path,False)
+    if a.generate:
+        results=generate(root,report,a.path,False)
+        state=json.loads((root/STATE).read_text()); add_candidate_data(report,state)
+        write_report(report,a.report_json,a.report_md,a.top); generation_summary(report,a.top)
+    elif (a.audit or (not any((a.dry_run,a.generate)))) and report.get("candidate_results"):
+        print_top(report,a.top)
     return 0
 if __name__=="__main__": raise SystemExit(main())

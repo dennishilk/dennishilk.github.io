@@ -1,365 +1,624 @@
 {
+  "duplicate_source_groups": [
+    [
+      "assets/home-computing-lab/homelab-rack-overview-2026-07-27.jpg",
+      "assets/me/IMG_20251117_171614.jpg"
+    ],
+    [
+      "images/nebby.png",
+      "nebby.png"
+    ]
+  ],
+  "encoder": {
+    "cwebp_available": false,
+    "generator": null,
+    "pillow_available": false,
+    "pillow_version": null
+  },
+  "output_directory": "assets/generated/images/",
+  "references_updated": [],
   "results": [
     {
-      "source": "assets/404-kermit-dennis.jpg",
       "candidate": "assets/generated/images/assets/404-kermit-dennis.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/404-kermit-dennis.jpg",
+      "source_bytes": 59295,
+      "source_sha256": "28f9ebb32314f2acdac7fc921357fc64c03582b83e98e14f69f6557d40594c69",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/geomagnetic-magnetosphere.png",
       "candidate": "assets/generated/images/assets/geomagnetic-magnetosphere.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "map/scientific asset",
+      "reason": "curator review required",
+      "source": "assets/geomagnetic-magnetosphere.png",
+      "source_bytes": 2703776,
+      "source_sha256": "d5271b6434e985cbe75db4185176f9155c53641830f47e5235288d8a5361eb0d",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/amd-ryzen-7-5800x3d-box-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/amd-ryzen-7-5800x3d-box-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/amd-ryzen-7-5800x3d-box-2026-07-27.jpg",
+      "source_bytes": 1737798,
+      "source_sha256": "fe82c4117a4b3c57cd1d31112592fdad7866b8a32510a119358fc9e81b115ae4",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/asus-strix-radeon-r9-380-artifact-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/asus-strix-radeon-r9-380-artifact-2026-07-27.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "museum evidence image",
+      "reason": "curator review required",
+      "source": "assets/home-computing-lab/asus-strix-radeon-r9-380-artifact-2026-07-27.jpg",
+      "source_bytes": 1868572,
+      "source_sha256": "ce9456596a3407312fafcfa299979877ad16c968ba7d657900d64b69caaaeb57",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/cthulhu-case-2026.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/cthulhu-case-2026.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/cthulhu-case-2026.jpg",
+      "source_bytes": 1061457,
+      "source_sha256": "48946f0e9c0b189631c89a708380254771a45d46565c94c9b77c83dcf97f19f0",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/cthulhu-fastfetch-system-snapshot-2026.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/cthulhu-fastfetch-system-snapshot-2026.webp",
+      "class": "screenshot",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/cthulhu-fastfetch-system-snapshot-2026.png",
+      "source_bytes": 4023060,
+      "source_sha256": "91820297945097b76f70c8c8e9d6d399128fe9bece2089343e626d5ba9d19321",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/cthulhu-workstation-overview-2026.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/cthulhu-workstation-overview-2026.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/cthulhu-workstation-overview-2026.jpg",
+      "source_bytes": 1289879,
+      "source_sha256": "7ea407a3358ea2a0261cfb58be38b9cddcb9709ec6ad0e0ea4105c3119802584",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/icq-retro-workstation.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/icq-retro-workstation.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/field-notes/icq-retro-workstation.png",
+      "source_bytes": 882823,
+      "source_sha256": "002d94723566ddf266c69209124457490fe040ac808ed7cbbda8279722afd023",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/m2-screw-fall.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/m2-screw-fall.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/field-notes/m2-screw-fall.jpg",
+      "source_bytes": 1919983,
+      "source_sha256": "4eed03ae1ad6741818764d19a135796ff264e4f052d7909f5b03e8cbacdf3d46",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/missing-capacitor-detail.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/missing-capacitor-detail.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "museum evidence image",
+      "reason": "curator review required",
+      "source": "assets/home-computing-lab/field-notes/missing-capacitor-detail.png",
+      "source_bytes": 391085,
+      "source_sha256": "0070358753e8f8e12f699600c180de87f6f70f1170c77e74974ba83d2f7d9485",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/missing-capacitor.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/missing-capacitor.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/field-notes/missing-capacitor.jpg",
+      "source_bytes": 2538705,
+      "source_sha256": "4ecf2594a8f19d628acb4554b8ff6e33fa7492f28ec281c87c01a7f0962e7586",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/one-line-fix-login.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/one-line-fix-login.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/field-notes/one-line-fix-login.png",
+      "source_bytes": 343674,
+      "source_sha256": "cf515b891c403f590610c8cf4b63513d6c92deaf47f64e55d01f2fd2d44aeb84",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/scsi-to-ide-upgrade.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/scsi-to-ide-upgrade.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/field-notes/scsi-to-ide-upgrade.jpg",
+      "source_bytes": 2387684,
+      "source_sha256": "a9ab9c293efb5ac34aae2551bb9dff7983c32aa6f639315fdf27f2aafdc234f5",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/windows98-device-manager-scsi.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/windows98-device-manager-scsi.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "museum evidence image",
+      "reason": "curator review required",
+      "source": "assets/home-computing-lab/field-notes/windows98-device-manager-scsi.jpg",
+      "source_bytes": 3352938,
+      "source_sha256": "6c2a40402ffefd68b9ef2a287b5be031eba08a9a7b26593173fb1f0e030610de",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/windows98-scsi-system.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/windows98-scsi-system.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "museum evidence image",
+      "reason": "curator review required",
+      "source": "assets/home-computing-lab/field-notes/windows98-scsi-system.jpg",
+      "source_bytes": 3581361,
+      "source_sha256": "818cec20d8daa4c7d1e74f14e1526e5bfb8b49327e0f60f92dcda560155bb2f9",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/windows98-system-properties.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/windows98-system-properties.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "museum evidence image",
+      "reason": "curator review required",
+      "source": "assets/home-computing-lab/field-notes/windows98-system-properties.jpg",
+      "source_bytes": 2282648,
+      "source_sha256": "9949a18864e2acf50c2fe19d654199dfe27c5414c76ba7ff440fc618034a90b6",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png",
+      "source_bytes": 3896293,
+      "source_sha256": "7f6b1ba93f853007fee2e1df1f59e374c604e1d845c78e562ea819e68086dafa",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/gentoo-xmonad-rtx3060ti-ryzen5800x3d-desktop-2026-07-27.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/gentoo-xmonad-rtx3060ti-ryzen5800x3d-desktop-2026-07-27.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "screenshot",
+      "reason": "curator review required",
+      "source": "assets/home-computing-lab/gentoo-xmonad-rtx3060ti-ryzen5800x3d-desktop-2026-07-27.png",
+      "source_bytes": 253407,
+      "source_sha256": "8016f223a3e7ad0a674f910c3a15cd98791312cac36f6c3135d6dc0d0b84ff86",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/homelab-qnap-nas-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/homelab-qnap-nas-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/homelab-qnap-nas-2026-07-27.jpg",
+      "source_bytes": 175897,
+      "source_sha256": "3009a9874eca6b14f0702a606d01932630819f592a92adcb71c8e01434503fbc",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/homelab-rack-overview-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/homelab-rack-overview-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/homelab-rack-overview-2026-07-27.jpg",
+      "source_bytes": 1344895,
+      "source_sha256": "3491c77a42a82fd8f3bcb482cbfda7e59b850d69c5b76a456b42fc605a69a67e",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/msi-gtx-970-gaming-4g-reconstruction-2026.png",
       "candidate": "assets/generated/images/assets/home-computing-lab/msi-gtx-970-gaming-4g-reconstruction-2026.webp",
+      "class": "unknown",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/msi-gtx-970-gaming-4g-reconstruction-2026.png",
+      "source_bytes": 1747625,
+      "source_sha256": "71087b08ac2577bd844df416e7700e8664f42bc1984ca3cee98dd2a2a76810da",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/powercolor-rx-9060-xt-hellhound-box-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/powercolor-rx-9060-xt-hellhound-box-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/powercolor-rx-9060-xt-hellhound-box-2026-07-27.jpg",
+      "source_bytes": 2201392,
+      "source_sha256": "17ede6108a253ed65ba0c587922223edfbace4a4e4e56657475a063868566a1b",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/preserved-operating-system-ssds-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/preserved-operating-system-ssds-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/preserved-operating-system-ssds-2026-07-27.jpg",
+      "source_bytes": 1759692,
+      "source_sha256": "cb6c5c18bf4fb7ca680a456aac6e6755a1bbce306f33a2a061dac1a60e4eb9c3",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/retro-pc-dos-boot-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/retro-pc-dos-boot-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/retro-pc-dos-boot-2026-07-27.jpg",
+      "source_bytes": 210397,
+      "source_sha256": "4ea6f451e192d36fe020186ca6cb9fd00c6a6de902ac065da839fb9fb3bcebdc",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/retro-pc-overview-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/retro-pc-overview-2026-07-27.webp",
-      "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/home-computing-lab/retro-pc-overview-2026-07-27.jpg",
+      "source_bytes": 220901,
+      "source_sha256": "5b7987ad0eb54a75037cc1b3b2c1d8df83d4318b4273a4cdf9f592cc4c4adc15",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/thinkpad-t480-cooling-upgrade-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/thinkpad-t480-cooling-upgrade-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/thinkpad-t480-cooling-upgrade-2026-07-27.jpg",
+      "source_bytes": 532807,
+      "source_sha256": "75df1023b5a66bdda191f4287d9077781441493a7bc26fadeb244eb18800bf7a",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/home-computing-lab/worldnode-1u-server-open-2026-07-27.jpg",
       "candidate": "assets/generated/images/assets/home-computing-lab/worldnode-1u-server-open-2026-07-27.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/home-computing-lab/worldnode-1u-server-open-2026-07-27.jpg",
+      "source_bytes": 1429544,
+      "source_sha256": "f6c01dc2300364321ea9c01ffa47650d7c61c619812becfaad5126d4f52e0509",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/horizon/horizon-landscape.webp",
       "candidate": "assets/generated/images/assets/horizon/horizon-landscape.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "map/scientific asset",
+      "reason": "already optimized input format",
+      "source": "assets/horizon/horizon-landscape.webp",
+      "source_bytes": 2330570,
+      "source_sha256": "f92b35672af1c3d42cba5b4dd301f2801680ac12a791d5f8402e37330f871d4c",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/horizon/iss.webp",
       "candidate": "assets/generated/images/assets/horizon/iss.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "map/scientific asset",
+      "reason": "already optimized input format",
+      "source": "assets/horizon/iss.webp",
+      "source_bytes": 175072,
+      "source_sha256": "df4b9c9987c62abdf2d3f6fc80e39069ca7d388950418e5c8b4e6fe86583e700",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/horizon/milky-way-overlay.webp",
       "candidate": "assets/generated/images/assets/horizon/milky-way-overlay.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "map/scientific asset",
+      "reason": "already optimized input format",
+      "source": "assets/horizon/milky-way-overlay.webp",
+      "source_bytes": 163504,
+      "source_sha256": "2cade63754ed939023ca52eb364e646fa7ae51c944b735a0daa5684400b95a37",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/horizon/observatory-footer.webp",
       "candidate": "assets/generated/images/assets/horizon/observatory-footer.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "map/scientific asset",
+      "reason": "already optimized input format",
+      "source": "assets/horizon/observatory-footer.webp",
+      "source_bytes": 92346,
+      "source_sha256": "16154d4a284ce3fdd699c90f2ad17fc48241fbacdbe8b6ef98ae5533028afae9",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/IMG_20251117_171614.jpg",
       "candidate": "assets/generated/images/assets/me/IMG_20251117_171614.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/IMG_20251117_171614.jpg",
+      "source_bytes": 1344895,
+      "source_sha256": "3491c77a42a82fd8f3bcb482cbfda7e59b850d69c5b76a456b42fc605a69a67e",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/IMG_20260427_102547.jpg",
       "candidate": "assets/generated/images/assets/me/IMG_20260427_102547.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/IMG_20260427_102547.jpg",
+      "source_bytes": 1295629,
+      "source_sha256": "d10a5ae311eda349ade892744e846029f76b9d9814182e7a9048ae4f5e768761",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/IMG_20260427_110045.jpg",
       "candidate": "assets/generated/images/assets/me/IMG_20260427_110045.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/IMG_20260427_110045.jpg",
+      "source_bytes": 1239388,
+      "source_sha256": "afcf35fb420d205feaab0f069842a0eedc0945668234643f0af6e203075dcddb",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/IMG_20260620_070938.jpg",
       "candidate": "assets/generated/images/assets/me/IMG_20260620_070938.webp",
-      "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/me/IMG_20260620_070938.jpg",
+      "source_bytes": 3597928,
+      "source_sha256": "ebd89a73708f1bf5a526505c051ff8bc71ceeecddc3749cd1272123a227a3b9b",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/IMG_20260715_184107.jpg",
       "candidate": "assets/generated/images/assets/me/IMG_20260715_184107.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/IMG_20260715_184107.jpg",
+      "source_bytes": 1674217,
+      "source_sha256": "1fbaa8af39c5df6205cc8663003a3326fc6eda7d9e1db0426b62b258cd2eb6ed",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/admin team.jpg",
       "candidate": "assets/generated/images/assets/me/admin team.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/admin team.jpg",
+      "source_bytes": 2890554,
+      "source_sha256": "78987774f7a0197d1ff796020de2029f070c31c60ec6050ce4c1078019a2d1bc",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/bender.jpg",
       "candidate": "assets/generated/images/assets/me/bender.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/bender.jpg",
+      "source_bytes": 969872,
+      "source_sha256": "f2bfab934d01feaae02f736935abb0eab76c85c4f8efd349f3251fcaffd4ae99",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/hackintosh-experiment.jpg",
       "candidate": "assets/generated/images/assets/me/hackintosh-experiment.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/hackintosh-experiment.jpg",
+      "source_bytes": 90216,
+      "source_sha256": "7e3f6ec9ab0d8d0bfe258115cf493195a529e5cee6a6be6ddb6b92e835dcbba1",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/kind mit oma.jpg",
       "candidate": "assets/generated/images/assets/me/kind mit oma.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/kind mit oma.jpg",
+      "source_bytes": 163590,
+      "source_sha256": "a7f658d784c799d917b58864be280514c6f012a3b0ae33c5c1e943c1f5f18349",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/kinderschuetzenkoenig-1997.jpg",
       "candidate": "assets/generated/images/assets/me/kinderschuetzenkoenig-1997.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/kinderschuetzenkoenig-1997.jpg",
+      "source_bytes": 1903338,
+      "source_sha256": "9b10778772ecf4765c2b06389b5b916f120456827b0cc62e56fe65876e017ed1",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/linux-virtualbox-xp.jpg",
       "candidate": "assets/generated/images/assets/me/linux-virtualbox-xp.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/linux-virtualbox-xp.jpg",
+      "source_bytes": 255441,
+      "source_sha256": "0a1626bf75688ed666c4efec5e9dc75f826f4e7eec950a7a742025c668ab65be",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/lost-place-industrial-control.jpg",
       "candidate": "assets/generated/images/assets/me/lost-place-industrial-control.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/lost-place-industrial-control.jpg",
+      "source_bytes": 346062,
+      "source_sha256": "b602a7b1782e7d03fc1847505300959c91fee0a8097e905354d83d6e899d6e25",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/lost-place-lime-sand-brickworks.jpg",
       "candidate": "assets/generated/images/assets/me/lost-place-lime-sand-brickworks.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/lost-place-lime-sand-brickworks.jpg",
+      "source_bytes": 540426,
+      "source_sha256": "03e64d0e3dc2106b953884ba3ed246ff6c4471e38a4f7dd5440feaf9b8b9fb27",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/lost-place-newspaper-feature.jpg",
       "candidate": "assets/generated/images/assets/me/lost-place-newspaper-feature.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/lost-place-newspaper-feature.jpg",
+      "source_bytes": 412631,
+      "source_sha256": "665016de21c63ecb88168904572874f3c43104b158e7764947defc1acde4569a",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/me/schuetzenscheibe.jpg",
       "candidate": "assets/generated/images/assets/me/schuetzenscheibe.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/me/schuetzenscheibe.jpg",
+      "source_bytes": 258971,
+      "source_sha256": "c7281e631a520c87086164c4100e5ac5fd78bb8d2f6ed1b8cd55e2948bbdeef0",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/traffic-world-map.png",
       "candidate": "assets/generated/images/assets/traffic-world-map.webp",
-      "status": "SKIPPED",
-      "reason": "not eligible"
+      "class": "map/scientific asset",
+      "reason": "curator review required",
+      "source": "assets/traffic-world-map.png",
+      "source_bytes": 1891822,
+      "source_sha256": "67aff20efdb85d30c0b47194f1b339fc5252a1469d7e51c41fef3ec7d2c80578",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449100.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449100.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wiesmoor/1783513449100.jpg",
+      "source_bytes": 6409804,
+      "source_sha256": "eb17525bc392ffcdd3b296b374c88fff32ceb6f60863a8908153b12418f81d29",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449217.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449217.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wiesmoor/1783513449217.jpg",
+      "source_bytes": 5109530,
+      "source_sha256": "853c30417e3870f50b71758ad32fedeafff0c31b01c66a83aad33531e996b36e",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449513.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449513.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wiesmoor/1783513449513.jpg",
+      "source_bytes": 4254203,
+      "source_sha256": "7eb5734c618210d977d764582e3115c66e58709b8f4507fcd21f7fe5e60c4844",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449676.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449676.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wiesmoor/1783513449676.jpg",
+      "source_bytes": 4395960,
+      "source_sha256": "dbef0926a3b30db86fd6a95e39371359ba7ad7092fedd9351d41845510a17bf3",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449869.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449869.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wiesmoor/1783513449869.jpg",
+      "source_bytes": 3674213,
+      "source_sha256": "3e2a1c306fb3a1ab2c05ccf407b294f6fac21ab2d08e7f0c38bc1650fd72924d",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449947.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449947.webp",
-      "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "assets/wiesmoor/1783513449947.jpg",
+      "source_bytes": 3775213,
+      "source_sha256": "c743e1db5740be424c20ca5400612db0a05b919fed1155a98ecc4b16eb891985",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wiesmoor/1783513449999.jpg",
       "candidate": "assets/generated/images/assets/wiesmoor/1783513449999.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wiesmoor/1783513449999.jpg",
+      "source_bytes": 5241671,
+      "source_sha256": "755c33515829d563fb815ec4487ed615f07c29242d22ad819d5f93d4bd5b3c56",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "assets/wordpress-kant-hochkant.jpg",
       "candidate": "assets/generated/images/assets/wordpress-kant-hochkant.webp",
+      "class": "photo",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "assets/wordpress-kant-hochkant.jpg",
+      "source_bytes": 92006,
+      "source_sha256": "d937c2ebfac6a89b2a0d60c189c468fcf4960c24d5f1ed5481a01208126cb3d5",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "avatar.png",
       "candidate": "assets/generated/images/avatar.webp",
-      "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "avatar.png",
+      "source_bytes": 2166481,
+      "source_sha256": "9f3dc5767fcbb72ae6b612b09ea6dd4ef64a46b1b5f7685c2eb00ee014ccecb9",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "favicon.png",
       "candidate": "assets/generated/images/favicon.webp",
-      "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "class": "special-consumer icon",
+      "reason": "special-consumer icon; retain its broadly supported authored format",
+      "source": "favicon.png",
+      "source_bytes": 948664,
+      "source_sha256": "e327362ffbb033238c2b8419936aef74af5f49e36e73ccc1d5eca7cbf7a1c48e",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "images/avatar.png",
       "candidate": "assets/generated/images/images/avatar.webp",
-      "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "class": "external metadata consumer",
+      "reason": "Open Graph/Twitter metadata consumer requires authored-format review",
+      "source": "images/avatar.png",
+      "source_bytes": 1506342,
+      "source_sha256": "98338caade2db59140d76d07e568f39ad94bf22c872887715246db1ed50307b2",
+      "status": "MANUAL REVIEW",
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "images/nebby.png",
       "candidate": "assets/generated/images/images/nebby.webp",
+      "class": "transparent illustration",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "images/nebby.png",
+      "source_bytes": 1734297,
+      "source_sha256": "e71dfe68059ae8f723d38b00d968f9720503efe7a4e7bec278e9333fe200cb33",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     },
     {
-      "source": "nebby.png",
       "candidate": "assets/generated/images/nebby.webp",
+      "class": "transparent illustration",
+      "reason": "Pillow unavailable; install dependency and retry",
+      "source": "nebby.png",
+      "source_bytes": 1734297,
+      "source_sha256": "e71dfe68059ae8f723d38b00d968f9720503efe7a4e7bec278e9333fe200cb33",
       "status": "SKIPPED",
-      "reason": "Pillow unavailable; install dependency and retry"
+      "verification": "NOT APPLICABLE"
     }
   ],
-  "references_updated": []
+  "root": ".",
+  "schema_version": 2
 }
