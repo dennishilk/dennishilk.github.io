@@ -19,6 +19,29 @@ assert.strictEqual(pcxt.renderPromptFormat(state), 'C:\\GAMES>');
 assert.deepStrictEqual(pcxt.splitCommand('TYPE C:\\README.TXT'), { command:'TYPE', args:'C:\\README.TXT' });
 assert.strictEqual(pcxt.validateState({ schemaVersion:1, filesystem:{ type:'file' } }), false);
 
+// DIR treats DOS switches as options rather than accidentally resolving them as paths.
+const dirState = pcxt.defaultState();
+assert.deepStrictEqual(pcxt.parseDirArgs('/W'), { path:'', options:{ wide:true, order:false }, error:'' });
+assert.deepStrictEqual(pcxt.parseDirArgs('/O /W'), { path:'', options:{ wide:true, order:true }, error:'' });
+assert.deepStrictEqual(pcxt.parseDirArgs('/w/o'), { path:'', options:{ wide:true, order:true }, error:'' });
+assert.deepStrictEqual(pcxt.parseDirArgs('C:\\DOS /W'), { path:'C:\\DOS', options:{ wide:true, order:false }, error:'' });
+assert.deepStrictEqual(pcxt.parseDirArgs('/W C:\\DOS'), { path:'C:\\DOS', options:{ wide:true, order:false }, error:'' });
+assert(!pcxt.dirOutput(dirState, '/W').includes('Directory not found'));
+assert(!pcxt.dirOutput(dirState, '/O /W').includes('Directory not found'));
+assert(pcxt.dirOutput(dirState, '/w /o').some(line=>line.includes('README.TXT')));
+assert(pcxt.dirOutput(dirState, 'C:\\DOES-NOT-EXIST').includes('Directory not found'));
+assert.deepStrictEqual(pcxt.dirOutput(dirState, '/Z'), ['Invalid switch - /Z']);
+assert(!pcxt.dirOutput(dirState, '/Z').includes('Directory not found'));
+assert(pcxt.dirOutput(dirState, 'C:\\DOS /W').some(line=>line.includes('HELP.TXT')));
+
+// A submitted command scrolls the dedicated terminal after its output reaches the DOM.
+const overflowingTerminal = { scrollTop:0, scrollHeight:2400 };
+let scheduledScroll;
+pcxt.scrollTerminalAfterCommand(overflowingTerminal, callback=>{ scheduledScroll=callback; });
+assert.strictEqual(overflowingTerminal.scrollTop, 0);
+scheduledScroll();
+assert.strictEqual(overflowingTerminal.scrollTop, 2400);
+
 const autoexec = pcxt.lookup(state.filesystem, ['AUTOEXEC.BAT']);
 const originalCreatedAt = autoexec.createdAt;
 const originalModifiedAt = autoexec.modifiedAt;

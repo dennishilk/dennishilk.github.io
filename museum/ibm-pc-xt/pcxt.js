@@ -28,6 +28,24 @@
   function canonical(parts){ return 'C:\\' + parts.join('\\'); }
   function splitCommand(line){ const t=line.trim(); if(!t) return { command:'', args:'' }; const m=t.match(/^([A-Za-z]+)(.*)$/); return m ? { command:m[1].toUpperCase(), args:m[2].trim() } : { command:t.toUpperCase(), args:'' }; }
   function firstArg(args){ const s=args.trim(); if(!s) return ''; if(s[0]==='"'){ const end=s.indexOf('"',1); return end>=0?s.slice(1,end):s.slice(1); } return s.split(/\s+/)[0]; }
+  function tokenizeArgs(args){ const tokens=[]; String(args||'').replace(/"([^"]*)"|(\S+)/g,(_,quoted,bare)=>{ tokens.push(quoted===undefined?bare:quoted); return ''; }); return tokens; }
+  function parseDirArgs(args){
+    const options={ wide:false, order:false }; let path='';
+    for(const token of tokenizeArgs(args)){
+      if(token.startsWith('/')){
+        const switches=token.slice(1).split('/').filter(Boolean);
+        if(!switches.length) return { path, options, error:'Invalid switch - /' };
+        for(const value of switches){
+          const option=value.toUpperCase();
+          if(option==='W') options.wide=true;
+          else if(option==='O') options.order=true;
+          else return { path, options, error:'Invalid switch - /'+value.toUpperCase() };
+        }
+      } else if(path) return { path, options, error:'Invalid syntax' };
+      else path=token;
+    }
+    return { path, options, error:'' };
+  }
   function normalizePath(input, cwd=[]){ let raw=(input||'').trim(); raw=firstArg(raw); if(!raw) return { parts:[...cwd] }; raw=raw.replace(/\//g,'\\'); raw=raw.replace(/^CD\\/i,'\\'); let base=[...cwd]; if(/^C:/i.test(raw)){ raw=raw.slice(2); base=[]; } if(raw.startsWith('\\')) base=[]; const pieces=raw.split(/\\+/).filter(Boolean); for(const piece of pieces){ if(piece==='.') continue; if(piece==='..') base.pop(); else base.push(piece.toUpperCase()); } return { parts:base }; }
   function lookup(fs, parts){ let node=fs; for(const part of parts){ if(!node || node.type!=='directory') return null; const key=Object.keys(node.children).find(k=>k.toUpperCase()===part.toUpperCase()); if(!key) return null; node=node.children[key]; } return node; }
   function bytes(s){ return new TextEncoder().encode(s).length; }
@@ -37,10 +55,25 @@
   function writeFileContent(node, content, modifiedAt=new Date().toISOString()){ if(!node || node.type!=='file' || typeof content!=='string') return false; node.content=content; node.modifiedAt=modifiedAt; return true; }
   function walk(node, visit, seen=new Set()){ if(!node || seen.has(node)) return; seen.add(node); visit(node); if(node.type==='directory') Object.values(node.children).forEach(child=>walk(child, visit, seen)); }
   function stats(fs){ let files=0, dirs=0, used=0; walk(fs, n=>{ if(n.type==='directory') dirs++; else { files++; used+=bytes(n.content); } }); return {files, dirs, used, free:Math.max(0, DISK_CAPACITY-used)}; }
+  function dirOutput(state,args){
+    const parsed=parseDirArgs(args); if(parsed.error) return [parsed.error];
+    const p=normalizePath(parsed.path,state.cwd), node=lookup(state.filesystem,p.parts);
+    if(!node) return ['Directory not found'];
+    if(node.type!=='directory') return ['Path is not a directory'];
+    const output=[' Directory of '+canonical(p.parts),'']; let fc=0, dc=0, total=0;
+    const names=Object.keys(node.children).sort();
+    if(parsed.options.wide){
+      const entries=names.map(k=>{ const n=node.children[k]; if(n.type==='directory'){dc++; return '['+k+']';} fc++; total+=bytes(n.content); return k; });
+      for(let i=0;i<entries.length;i+=4) output.push(entries.slice(i,i+4).map(name=>name.padEnd(18)).join('').trimEnd());
+    } else names.forEach(k=>{ const n=node.children[k]; if(n.type==='directory'){dc++; output.push(`${k.padEnd(12)} <DIR>`);} else {fc++; const size=bytes(n.content); total+=size; output.push(`${k.padEnd(12)} ${String(size).padStart(8)} bytes`);} });
+    output.push('',`${String(fc).padStart(4)} file(s) ${total} bytes`,`${String(dc).padStart(4)} dir(s)  ${stats(state.filesystem).free} bytes free`);
+    return output;
+  }
   function fmtDate(d=new Date()){ return `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${d.getFullYear()}`; }
   function fmtTime(d=new Date()){ return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`; }
   function renderPromptFormat(state){ return state.promptFormat.slice(0,80).replace(/\$\$/g,'\0').replace(/\$P/gi,canonical(state.cwd)).replace(/\$G/gi,'>').replace(/\$D/gi,fmtDate()).replace(/\$T/gi,fmtTime()).replace(/\$_/gi,'\n').replace(/\0/g,'$'); }
-  const api = { STORAGE_KEY, EDIT_MAX_BYTES, defaultState, validateState, normalizePath, lookup, stats, renderPromptFormat, splitCommand, bytes, isPlainText, canEditNode, isEditorDirty, writeFileContent, saveState };
+  function scrollTerminalAfterCommand(container, schedule){ (schedule||requestAnimationFrame)(()=>{ container.scrollTop=container.scrollHeight; }); }
+  const api = { STORAGE_KEY, EDIT_MAX_BYTES, defaultState, validateState, normalizePath, lookup, stats, dirOutput, renderPromptFormat, splitCommand, parseDirArgs, scrollTerminalAfterCommand, bytes, isPlainText, canEditNode, isEditorDirty, writeFileContent, saveState };
   if(typeof module!=='undefined') module.exports = api;
   if(typeof document==='undefined') return;
   const shell=document.querySelector('.pcxt-shell'), start=document.getElementById('pcxtStart'), term=document.getElementById('pcxtTerminal'), input=document.getElementById('pcxtInput'), stage=document.querySelector('.pcxt-stage');
@@ -51,11 +84,11 @@
   function closeEditor(discard=false){ if(!editor.active) return; if(!discard && isEditorDirty(editor.original, editor.textarea.value) && !confirm('Discard unsaved changes to '+editor.path+'?')){ editor.textarea.focus(); return; } setBeforeUnload(false); editor.wrap.remove(); Object.assign(editor,{ active:false, path:'', node:null, original:'', wrap:null, textarea:null, status:null, dirty:null }); term.hidden=false; input.disabled=false; focus(); }
   function saveEditor(){ if(!editor.active) return; const content=editor.textarea.value; if(bytes(content)>EDIT_MAX_BYTES){ updateEditorDirtyState('File too large for EDIT v1 (64 KiB limit). Not saved.'); return; } if(!writeFileContent(editor.node, content)){ updateEditorDirtyState('File type not supported by EDIT'); return; } persist(); editor.original=content; updateEditorDirtyState('Saved '+editor.path); }
   function openEditor(args){ if(!args.trim()) return out('Usage: EDIT <filename>'); const r=resolve(args); const check=canEditNode(r.node); if(!check.ok) return out(check.reason); term.hidden=true; input.disabled=true; const wrap=document.createElement('section'); wrap.className='pcxt-editor'; wrap.setAttribute('aria-label','PC XT Text Editor v1'); wrap.innerHTML='<header class="pcxt-editor-header"><div><strong>PC XT Text Editor v1</strong><span></span></div><b>Saved</b></header><p class="pcxt-editor-workflow">Press <button type="button" class="pcxt-shortcut-control" data-editor-action="escape" aria-label="Exit editor using Escape shortcut">Esc</button> to return to the DOS prompt and <button type="button" class="pcxt-shortcut-control" data-editor-action="save" aria-label="Save changes using Control S shortcut">Ctrl+S</button> to save your changes.</p><label class="pcxt-editor-label" for="pcxtEditorText">File text</label><textarea id="pcxtEditorText" spellcheck="false" wrap="off"></textarea><footer><span class="pcxt-editor-help"><span>CTRL+S Save</span><span class="pcxt-editor-exit">ESC Exit Editor</span></span><output aria-live="polite">Ready</output><div><button type="button">SAVE</button><button type="button">EXIT</button></div></footer>'; stage.insertBefore(wrap, term); editor.active=true; editor.path=r.path; editor.node=r.node; editor.original=r.node.content; editor.wrap=wrap; editor.textarea=wrap.querySelector('textarea'); editor.status=wrap.querySelector('output'); editor.dirty=wrap.querySelector('b'); wrap.querySelector('span').textContent=r.path; editor.textarea.value=r.node.content; editor.textarea.addEventListener('input',()=>updateEditorDirtyState()); editor.textarea.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); saveEditor(); } else if(e.key==='Escape'){ e.preventDefault(); closeEditor(); } }); const shortcutButtons=wrap.querySelectorAll('.pcxt-shortcut-control'); shortcutButtons[0].addEventListener('click',()=>closeEditor()); shortcutButtons[1].addEventListener('click',saveEditor); const buttons=wrap.querySelectorAll('footer button'); buttons[0].addEventListener('click',saveEditor); buttons[1].addEventListener('click',()=>closeEditor()); updateEditorDirtyState('Ready'); editor.textarea.focus(); }
-  function append(text=''){ term.appendChild(document.createTextNode(String(text)+'\n')); lines += String(text).split('\n').length; while(lines>MAX_RENDERED_LINES && term.firstChild){ term.removeChild(term.firstChild); lines--; } scroll(); }
+  function append(text=''){ term.appendChild(document.createTextNode(String(text)+'\n')); lines += String(text).split('\n').length; while(lines>MAX_RENDERED_LINES && term.firstChild){ term.removeChild(term.firstChild); lines--; } }
   function clear(){ term.textContent=''; lines=0; }
   function scroll(){ term.scrollTop=term.scrollHeight; }
   function live(){ return document.getElementById('pcxtLivePrompt'); }
-  function drawPrompt(){ const old=live(); if(old) old.remove(); const span=document.createElement('span'); span.id='pcxtLivePrompt'; const before=current.slice(0,cursor), at=current[cursor]||' ', after=current.slice(cursor+(current[cursor]?1:0)); span.append(document.createTextNode(renderPromptFormat(state)+before)); const c=document.createElement('span'); c.className='pcxt-cursor'; c.textContent=at; span.append(c, document.createTextNode(after)); term.appendChild(span); scroll(); }
+  function drawPrompt(){ const old=live(); if(old) old.remove(); const span=document.createElement('span'); span.id='pcxtLivePrompt'; const before=current.slice(0,cursor), at=current[cursor]||' ', after=current.slice(cursor+(current[cursor]?1:0)); span.append(document.createTextNode(renderPromptFormat(state)+before)); const c=document.createElement('span'); c.className='pcxt-cursor'; c.textContent=at; span.append(c, document.createTextNode(after)); term.appendChild(span); }
   function redraw(){ const l=live(); if(l) l.remove(); drawPrompt(); }
   function focus(){ if(active) input.focus({preventScroll:true}); }
   function persist(){ saveState(state); }
@@ -64,7 +97,7 @@
   function pad(s,n){ return String(s).padStart(n); }
   const commands = new Map();
   function reg(name, aliases, syntax, desc, fn){ const c={name,aliases,syntax,desc,fn}; [name,...aliases].forEach(a=>commands.set(a,c)); }
-  reg('DIR',[],'DIR [path]','List actual virtual directory contents.',args=>{ const r=resolve(args); if(!r.node) return out('Directory not found'); if(r.node.type!=='directory') return out('Path is not a directory'); out(' Directory of '+r.path); out(''); let fc=0, dc=0, total=0; Object.keys(r.node.children).sort().forEach(k=>{ const n=r.node.children[k]; if(n.type==='directory'){dc++; out(`${k.padEnd(12)} <DIR>`);} else {fc++; const size=bytes(n.content); total+=size; out(`${k.padEnd(12)} ${pad(size,8)} bytes`);} }); out(''); out(`${pad(fc,4)} file(s) ${total} bytes`); out(`${pad(dc,4)} dir(s)  ${stats(state.filesystem).free} bytes free`); });
+  reg('DIR',[],'DIR [path] [/O] [/W]','List actual virtual directory contents.',args=>dirOutput(state,args).forEach(out));
   reg('CD',['CHDIR'],'CD [path]','Show or change the current directory.',args=>{ if(!args.trim()) return out(canonical(state.cwd)); const target=args.toUpperCase().startsWith('CD\\')?args.slice(2):args; const r=resolve(target); if(!r.node) return out('Directory not found'); if(r.node.type!=='directory') return out('Path is not a directory'); state.cwd=r.parts; persist(); });
   reg('TYPE',[],'TYPE file','Display a stored text file.',args=>{ const r=resolve(args); if(!r.node) return out('File not found'); if(r.node.type==='directory') return out('Access not applicable to a directory'); out(r.node.content.replace(/\n$/,'')); });
   reg('TREE',[],'TREE [path]','Display a recursive tree from the actual filesystem.',args=>{ const r=resolve(args); if(!r.node) return out('Directory not found'); if(r.node.type!=='directory') return out('Path is not a directory'); out(r.path); const seen=new Set(); function rec(n,prefix){ if(seen.has(n)) return out(prefix+'[cycle skipped]'); seen.add(n); Object.keys(n.children).sort().forEach((k,i,a)=>{ const last=i===a.length-1, child=n.children[k]; out(prefix+(last?'└── ':'├── ')+k); if(child.type==='directory') rec(child,prefix+(last?'    ':'│   ')); }); } rec(r.node,''); });
@@ -83,7 +116,7 @@
   reg('RESET',[],'RESET','Confirm and restore only PC XT browser-local data.',()=>{ if(confirm('Reset PC XT Command Desk? This will delete only browser-local PC XT changes stored under '+STORAGE_KEY+'. It will not clear BASIC or other site storage.')){ localStorage.removeItem(STORAGE_KEY); state=defaultState(); clear(); BOOT.forEach(out); out('PC XT Command Desk reset complete.'); } else out('Reset cancelled.'); });
   const deferred = new Set('MD MKDIR RD RMDIR COPY DEL ERASE REN RENAME ATTRIB'.split(' '));
   function run(line){ if(editor.active) return; const shown=renderPromptFormat(state)+line; append(shown); const {command,args}=splitCommand(line); if(!command) return drawPrompt(); const c=commands.get(command); if(c) c.fn(args); else if(deferred.has(command)) out('Command not available in PC XT Command Desk Version 1.0'); else out('Bad command or file name'); drawPrompt(); }
-  function enter(){ const line=current; if(line.trim()) { history.push(line); hist=history.length; } current=''; cursor=0; const l=live(); if(l)l.remove(); run(line); persist(); }
-  function startTerminal(){ active=true; shell.classList.add('is-terminal-active'); clear(); BOOT.forEach(out); drawPrompt(); focus(); }
+  function enter(){ const line=current; if(line.trim()) { history.push(line); hist=history.length; } current=''; cursor=0; const l=live(); if(l)l.remove(); run(line); persist(); scrollTerminalAfterCommand(term); focus(); }
+  function startTerminal(){ active=true; shell.classList.add('is-terminal-active'); clear(); BOOT.forEach(out); drawPrompt(); scroll(); focus(); }
   start.addEventListener('click',startTerminal); term.addEventListener('click',focus); input.addEventListener('input',()=>{ if(editor.active){ input.value=''; return; } current=current.slice(0,cursor)+input.value+current.slice(cursor); cursor+=input.value.length; input.value=''; redraw(); }); input.addEventListener('keydown',e=>{ if(editor.active) return; if(e.ctrlKey||e.metaKey||e.altKey) return; if(e.key==='Enter'){e.preventDefault(); enter();} else if(e.key==='Backspace'){e.preventDefault(); if(cursor>0){current=current.slice(0,cursor-1)+current.slice(cursor); cursor--; redraw();}} else if(e.key==='Delete'){e.preventDefault(); current=current.slice(0,cursor)+current.slice(cursor+1); redraw();} else if(e.key==='ArrowLeft'){e.preventDefault(); cursor=Math.max(0,cursor-1); redraw();} else if(e.key==='ArrowRight'){e.preventDefault(); cursor=Math.min(current.length,cursor+1); redraw();} else if(e.key==='Home'){e.preventDefault(); cursor=0; redraw();} else if(e.key==='End'){e.preventDefault(); cursor=current.length; redraw();} else if(e.key==='ArrowUp'){e.preventDefault(); if(history.length){ hist=Math.max(0,hist-1); current=history[hist]||''; cursor=current.length; redraw(); }} else if(e.key==='ArrowDown'){e.preventDefault(); if(history.length){ hist=Math.min(history.length,hist+1); current=history[hist]||''; cursor=current.length; redraw(); }} });
 })();
