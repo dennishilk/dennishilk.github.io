@@ -2093,17 +2093,27 @@ button.technology-observer-card {
   filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.72));
 }
 .mailbox-shell,
-.mailbox-door { fill: url("#mailbox-metal"); stroke: rgba(0, 180, 255, 0.62); stroke-width: 1.5; }
-.mailbox-edge { fill: none; stroke: rgba(139, 223, 255, 0.2); stroke-width: 1.3; }
-.mailbox-post { fill: #06182a; stroke: rgba(0, 180, 255, 0.42); stroke-width: 1.3; }
-.mailbox-slot { fill: #01070c; stroke: rgba(0, 180, 255, 0.65); stroke-width: 1; }
-.mailbox-slot-glow { fill: none; stroke: #8bdfff; stroke-width: 1.2; filter: drop-shadow(0 0 4px var(--accent)); }
-.mailbox-door { transform-box: fill-box; transform-origin: bottom center; transition: transform 180ms ease-out; }
-.mailbox-door-line { fill: none; stroke: rgba(139, 223, 255, 0.24); stroke-width: 1; }
-.mailbox-latch { fill: var(--accent); filter: drop-shadow(0 0 5px var(--accent)); }
-.mailbox-flag { fill: none; stroke: #8bdfff; stroke-width: 4; stroke-linecap: square; stroke-linejoin: round; }
-.mailbox-envelope { fill: #d8f8ff; stroke: var(--accent); stroke-width: 1.4; transform: translateY(19px); transition: transform 180ms ease-out; }
-.mailbox-envelope-fold { fill: none; stroke: #0a668b; stroke-width: 1.5; transform: translateY(19px); transition: transform 180ms ease-out; }
+.mailbox-post {
+  fill: #071b30;
+  stroke: #20cfff;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(0, 180, 255, 0.72));
+}
+.mailbox-slot {
+  fill: #01070c;
+  stroke: #8bdfff;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(0, 180, 255, 0.85));
+}
+.mailbox-door { fill: none; stroke: rgba(139, 223, 255, 0.48); stroke-width: 2; }
+.mailbox-envelope,
+.mailbox-envelope-fold {
+  transition: transform 180ms ease-out;
+}
+.mailbox-envelope { fill: #f5fdff; stroke: #20cfff; stroke-width: 2; }
+.mailbox-envelope-fold { fill: none; stroke: #08678d; stroke-width: 2; stroke-linejoin: round; }
 .mailbox-command {
   margin-top: -0.1rem;
   font-size: 0.65rem;
@@ -2122,12 +2132,10 @@ button.technology-observer-card {
   vertical-align: -0.08em;
   animation: blink 1.1s steps(1) infinite;
 }
-.worldnode-mailbox:hover .mailbox-door,
-.worldnode-mailbox:focus-visible .mailbox-door { transform: perspective(100px) rotateX(-10deg) translateY(3px); }
 .worldnode-mailbox:hover .mailbox-envelope,
 .worldnode-mailbox:hover .mailbox-envelope-fold,
 .worldnode-mailbox:focus-visible .mailbox-envelope,
-.worldnode-mailbox:focus-visible .mailbox-envelope-fold { transform: translateY(3px); }
+.worldnode-mailbox:focus-visible .mailbox-envelope-fold { transform: translateY(-5px); }
 .worldnode-mailbox:hover .mailbox-command { color: #8bdfff; }
 .worldnode-mailbox:focus-visible { border-radius: 4px; outline: 2px solid var(--accent); outline-offset: 5px; }
 
@@ -2231,7 +2239,6 @@ button.technology-observer-card {
 .transmission-entry-status span { color: #7cff9b; }
 
 @media (prefers-reduced-motion: reduce) {
-  .mailbox-door,
   .mailbox-envelope,
   .mailbox-envelope-fold { transition: none; }
   .mailbox-cursor { animation: none; }
