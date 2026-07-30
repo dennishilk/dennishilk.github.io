@@ -11,8 +11,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/style.css?v=43">
+  <link rel="stylesheet" href="/transmissions.css?v=1">
   <script defer src="/stars.js"></script>
-  <script defer src="/transmissions.js?v=3"></script>
+  <script defer src="/transmissions.js?v=4"></script>
   <meta property="og:title" content="Public Signal Uplink – Dennis Hilk">
   <meta property="og:description" content="Public Signal Uplink guestbook for dennishilk.com. Leave an external communication for review before it appears publicly.">
   <meta property="og:url" content="https://dennishilk.com/transmissions/">
@@ -29,23 +30,31 @@
 
 <div class="content transmission-page-shell">
   <header class="transmission-page-header">
-    <a class="terminal-backlink" href="/">← RETURN TO MAIN NODE</a>
-    <p class="transmission-kicker">WORLDNODE / EXTERNAL COMMUNICATION CHANNEL</p>
-    <h1>PUBLIC SIGNAL UPLINK</h1>
-    <h2 class="transmission-page-subtitle">WORLDNODE PUBLIC GUESTBOOK</h2>
-    <p>TRANSMIT A PUBLIC MESSAGE INTO THE WORLDNODE BUFFER. ALL SIGNALS ARE REVIEWED BY WOPR BEFORE BROADCAST.</p>
+    <div class="guestbook-menubar">
+      <a class="terminal-backlink" href="/">← MAIN NODE</a>
+      <span>GUESTBOOK INTERFACE v1.0</span>
+      <span class="system-ready"><i aria-hidden="true"></i>SYSTEM READY</span>
+    </div>
+    <p class="transmission-kicker">WORLDNODE / VISITOR LOG INTERFACE</p>
+    <h1>WORLDNODE GUESTBOOK</h1>
+    <div class="guestbook-hero-line">
+      <span>WELCOME TO THE 90s</span>
+      <span>PUBLIC MESSAGE TERMINAL</span>
+      <span>ARCHIVE ONLINE</span>
+    </div>
+    <p class="guestbook-intro">Sign the public visitor log. Approved messages are assigned a permanent signal number and broadcast below.</p>
   </header>
 
   <main>
     <section class="transmissions" aria-labelledby="uplink-title">
       <div class="transmission-terminal transmission-uplink-terminal">
-        <div class="terminal-window-bar" aria-hidden="true">
-          <span></span><span></span><span></span>
+        <div class="terminal-window-bar">
+          <strong>INPUT MODULE / NEW ENTRY</strong>
+          <span aria-hidden="true">CHANNEL 01 · RECEIVING</span>
         </div>
         <div class="uplink-panel-heading">
-          <p class="transmission-kicker">PUBLIC SIGNAL UPLINK</p>
-          <h2 id="uplink-title">WORLDNODE / EXTERNAL COMMUNICATION CHANNEL</h2>
-          <p class="transmission-copy">IDENTIFY YOUR SIGNAL, WRITE YOUR MESSAGE, AND SEND IT INTO THE MODERATION QUEUE.</p>
+          <h2 id="uplink-title">SIGN THE GUESTBOOK</h2>
+          <p class="transmission-copy">IDENTIFY YOUR SIGNAL · ENTER A MESSAGE · TRANSMIT FOR REVIEW</p>
         </div>
 
         <form id="transmission-form" class="transmission-form" autocomplete="off">
@@ -64,7 +73,7 @@
           <label class="signal-trap" aria-hidden="true">CONTACT CHANNEL
             <input name="contact_channel" tabindex="-1" autocomplete="off">
           </label>
-          <button type="submit">TRANSMIT SIGNAL</button>
+          <button type="submit">TRANSMIT ENTRY</button>
           <p id="transmission-status" class="transmission-status" role="status" aria-live="polite">PENDING SIGNAL INPUT.</p>
         </form>
       </div>
@@ -73,14 +82,16 @@
     <section class="received-transmissions public-transmission-archive" aria-labelledby="received-title">
       <div class="archive-heading">
         <div>
-          <p class="transmission-kicker">WORLDNODE PUBLIC MESSAGE ARCHIVE</p>
-          <h2 id="received-title">RECEIVED TRANSMISSIONS</h2>
+          <p class="transmission-kicker">VISITOR LOG / NEWEST SIGNALS FIRST</p>
+          <h2 id="received-title">PUBLIC SIGNAL ARCHIVE</h2>
         </div>
-        <p class="archive-receiver" aria-hidden="true">RX: LISTENING<span class="mailbox-cursor"></span></p>
+        <p class="archive-receiver"><span id="transmission-count">-- SIGNALS</span> · <span aria-hidden="true">RX: LISTENING</span></p>
       </div>
+      <div class="archive-columns" aria-hidden="true"><span>SIGNAL / IDENTITY / ORIGIN</span><span>RECEIVED UTC</span></div>
       <div id="transmission-list" class="transmission-list" aria-live="polite">
         <p class="transmission-empty">SCANNING APPROVED SIGNALS…</p>
       </div>
+      <button id="load-more-transmissions" class="load-more-transmissions" type="button" hidden>LOAD MORE SIGNALS</button>
     </section>
   </main>
 

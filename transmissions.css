@@ -1,0 +1,99 @@
+/* Page-local 1990s workstation treatment for the Worldnode guestbook. */
+.transmissions-page {
+  --uplink-cyan: #54d9f5;
+  --uplink-green: #74f5a2;
+  --uplink-amber: #ffc45c;
+  --uplink-panel: rgba(2, 14, 22, 0.94);
+  background: #01060b;
+}
+
+.transmissions-page::after {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(120, 220, 240, 0.025) 3px 4px);
+}
+
+.transmissions-page .transmission-page-shell { width: min(100%, 1040px); }
+.transmissions-page .transmission-page-header { padding: 1.1rem 1rem 0.75rem; }
+.guestbook-menubar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(84, 217, 245, 0.42);
+  border-top-color: rgba(167, 239, 255, 0.75);
+  border-left-color: rgba(167, 239, 255, 0.75);
+  background: #071925;
+  box-shadow: inset -1px -1px #001018, inset 1px 1px rgba(255,255,255,.08);
+  padding: .42rem .65rem;
+  color: #91b7c1;
+  font-size: .65rem;
+  letter-spacing: .08em;
+}
+.guestbook-menubar .terminal-backlink { justify-self: start; font-size: inherit; }
+.system-ready { justify-self: end; color: var(--uplink-green); }
+.system-ready i { display: inline-block; width: .55rem; height: .55rem; margin-right: .45rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.transmissions-page .transmission-page-header h1 { margin: .2rem 0 .4rem; font-size: clamp(2rem, 6vw, 3.7rem); line-height: 1; letter-spacing: .04em; }
+.transmissions-page .transmission-page-header p { line-height: 1.4; }
+.guestbook-hero-line { display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem 1rem; color: var(--uplink-amber); font-size: .67rem; letter-spacing: .12em; }
+.guestbook-hero-line span + span::before { margin-right: 1rem; color: #42616c; content: "//"; }
+.transmissions-page .guestbook-intro { margin: .65rem auto 0; font-size: .78rem; }
+
+.transmissions-page .transmissions { padding: .55rem 1rem .85rem; }
+.transmissions-page .transmission-terminal,
+.transmissions-page .public-transmission-archive { border-radius: 0; border-color: rgba(84, 217, 245, .42); background: var(--uplink-panel); box-shadow: inset 1px 1px rgba(255,255,255,.06), inset -1px -1px #000, 0 8px 26px rgba(0,0,0,.35); }
+.transmissions-page .transmission-terminal { padding: 0; }
+.transmissions-page .terminal-window-bar { display: flex; justify-content: space-between; gap: 1rem; margin: 0; background: linear-gradient(90deg, #0c7088, #123a51); padding: .38rem .6rem; color: #e9fdff; font-size: .69rem; letter-spacing: .09em; }
+.transmissions-page .terminal-window-bar span { width: auto; height: auto; border-radius: 0; background: none; box-shadow: none; color: #c1eef6; }
+.transmissions-page .uplink-panel-heading { max-width: none; padding: .65rem .8rem .35rem; text-align: left; }
+.transmissions-page .uplink-panel-heading h2 { margin: 0; font-size: 1rem; letter-spacing: .08em; }
+.transmissions-page .uplink-panel-heading .transmission-copy { margin: .2rem 0 0; font-size: .68rem; line-height: 1.35; }
+.transmissions-page .transmission-uplink-terminal .transmission-form { grid-template-columns: repeat(2,minmax(0,1fr)); max-width: none; margin: 0 .6rem .6rem; border-radius: 0; padding: .65rem; gap: .55rem .7rem; }
+.transmissions-page .transmission-form label { gap: .22rem; font-size: .66rem; }
+.transmissions-page .transmission-form input,
+.transmissions-page .transmission-form textarea { border-radius: 0; padding: .48rem .58rem; font-size: .8rem; }
+.transmissions-page .transmission-form textarea { min-height: 4.4rem; }
+.transmissions-page .transmission-form button { justify-self: start; border-radius: 0; padding: .55rem .85rem; background: #123745; box-shadow: inset 1px 1px rgba(255,255,255,.14), inset -2px -2px #001017; font-size: .73rem; }
+.transmissions-page .transmission-form button:focus-visible,
+.load-more-transmissions:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.transmissions-page .transmission-status { grid-column: auto; justify-self: end; font-size: .67rem; }
+
+.transmissions-page .public-transmission-archive { margin: 0 1rem 1rem; padding: 0; max-width: none; }
+.transmissions-page .archive-heading { margin: 0; padding: .58rem .7rem; border-bottom-color: rgba(84,217,245,.32); align-items: center; }
+.transmissions-page .archive-heading h2 { margin: .1rem 0 0; font-size: 1.12rem; }
+.transmissions-page .archive-heading .transmission-kicker { margin: 0; font-size: .62rem; }
+.archive-columns { display: flex; justify-content: space-between; gap: 1rem; padding: .32rem .7rem; background: rgba(84,217,245,.09); color: #85aab5; font-size: .59rem; letter-spacing: .1em; }
+.transmissions-page .public-transmission-archive .transmission-entry { position: relative; padding: .52rem .7rem .58rem; border-bottom: 1px solid rgba(84,217,245,.19); }
+.transmissions-page .public-transmission-archive .transmission-entry::before,
+.transmissions-page .public-transmission-archive .transmission-entry::after { display: none; }
+.transmissions-page .transmission-entry-header { align-items: center; margin: 0; }
+.transmission-entry-identity { display: flex; min-width: 0; gap: .55rem 1rem; align-items: baseline; flex-wrap: wrap; }
+.transmissions-page .transmission-entry-header h3 { font-size: .8rem; color: var(--uplink-amber); }
+.transmission-entry-identity > span { color: #e6edf3; font-size: .72rem; }
+.transmission-entry-identity b { color: #70a9b8; font-size: .58rem; letter-spacing: .08em; }
+.transmissions-page .transmission-entry time { white-space: nowrap; font-size: .66rem; }
+.transmissions-page .transmission-entry blockquote { margin: .34rem 0 0; border: 0; border-left: 2px solid rgba(84,217,245,.35); padding: .08rem 6.5rem .08rem .55rem; color: #d9e4e8; font-size: .78rem; line-height: 1.42; }
+.transmissions-page .transmission-entry-status { position: absolute; right: .7rem; bottom: .68rem; color: var(--uplink-green); font-size: .56rem; letter-spacing: .08em; }
+.load-more-transmissions { display: block; width: calc(100% - 1.4rem); margin: .65rem .7rem; border: 1px solid rgba(84,217,245,.48); border-radius: 0; background: #0a2633; padding: .55rem; color: var(--uplink-cyan); cursor: pointer; font: 700 .7rem 'JetBrains Mono',monospace; letter-spacing: .1em; }
+.load-more-transmissions[hidden] { display: none; }
+.load-more-transmissions:hover { background: #123b4b; color: #fff; }
+.transmissions-page footer { margin: .8rem 1rem 0; padding-bottom: 1.2rem; }
+
+@media (max-width: 700px) {
+  .guestbook-menubar { grid-template-columns: 1fr auto; }
+  .guestbook-menubar > span:nth-child(2) { display: none; }
+  .guestbook-hero-line { display: grid; gap: .2rem; }
+  .guestbook-hero-line span + span::before { margin-right: .5rem; }
+  .transmissions-page .transmission-uplink-terminal .transmission-form { grid-template-columns: 1fr; }
+  .transmissions-page .transmission-status { grid-column: 1; justify-self: start; }
+  .archive-columns { display: none; }
+  .transmissions-page .transmission-entry-header { flex-direction: row; align-items: baseline; }
+  .transmission-entry-identity { gap: .25rem .65rem; }
+  .transmission-entry-identity .entry-origin { width: 100%; }
+  .transmissions-page .transmission-entry blockquote { padding-right: 0; }
+  .transmissions-page .transmission-entry-status { position: static; display: block; margin-top: .3rem; }
+}
