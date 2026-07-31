@@ -13,7 +13,7 @@ const authorLabSection = html.match(/<section class="museum-behind"[^>]*>([\s\S]
 assert.ok(authorLabSection, 'Behind the Museum section must exist');
 const authorLabCard = authorLabSection.match(/<article class="museum-card museum-card-author-lab">([\s\S]*?)<\/article>/)?.[0];
 assert.equal(authorLabCard, `<article class="museum-card museum-card-author-lab">
-        <div class="museum-card-top"><span class="museum-status planned">PLANNED EXHIBIT</span><span class="museum-real-systems">REAL SYSTEMS</span></div>
+        <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span><span class="museum-real-systems">REAL SYSTEMS</span></div>
         <div class="museum-behind-content">
           <div>
             <h2 id="behind-museum-title">The Author's Computing Lab</h2>
