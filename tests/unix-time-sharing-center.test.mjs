@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { CANONICAL_ACCOUNTS, HISTORICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.mjs';
+import { CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.mjs';
 
 const page = await readFile(new URL('../museum/unix-time-sharing-center/index.html', import.meta.url), 'utf8');
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
 const museum = await readFile(new URL('../museum/index.html', import.meta.url), 'utf8');
 
-test('company identity and planned route remain historically framed', () => {
+test('company identity and planned route remain production framed', () => {
   assert.match(page, /Chesapeake Signal Tech/); assert.match(museum, /Chesapeake Signal Tech's computing room/);
   assert.doesNotMatch(page, /university/i); assert.doesNotMatch(page, /novel|The Lost Administrator|fictional character|Easter egg/i);
   assert.match(page, /PLANNED EXHIBIT/); assert.match(museum, /href="\/museum\/unix-time-sharing-center\/"/);
@@ -25,10 +25,15 @@ test('one session model supplies online users and who output', () => {
   assert.ok(!whoRows(model).some(row => row.username === 'j.miller')); assert.equal(new Set(model.sessions.map(item => item.tty)).size, model.sessions.length);
 });
 
-test('historical clock advances through minute, hour, and date rollovers in UTC', () => {
-  const model = new UnixSimulation({ startTime: Date.UTC(1979, 4, 18, 23, 59, 58) }); assert.equal(formatClock(model.now), '23:59:58');
-  model.advanceTo(model.startTime + 2000); assert.equal(formatClock(model.now), '00:00:00'); assert.equal(formatDate(model.now), 'SAT MAY 19, 1979');
-  assert.equal(new Date(HISTORICAL_START).getUTCFullYear(), 1979); assert.notEqual(new Date(HISTORICAL_START).getUTCFullYear(), new Date().getUTCFullYear());
+test('canonical clock starts on Day Zero and advances through UTC rollovers', () => {
+  const model = new UnixSimulation(); assert.equal(model.startTime, Date.UTC(2026, 6, 31, 12, 49, 13)); assert.equal(formatClock(model.now), '12:49:13'); assert.equal(formatDate(model.now), 'FRI JUL 31, 2026');
+  model.advanceTo(model.startTime + 2000); assert.equal(formatClock(model.now), '12:49:15');
+  const rollover = new UnixSimulation({ startTime: Date.UTC(2026, 6, 31, 23, 59, 58) }); rollover.advanceTo(rollover.startTime + 2000); assert.equal(formatClock(rollover.now), '00:00:00'); assert.equal(formatDate(rollover.now), 'SAT AUG 1, 2026');
+  assert.equal(CANONICAL_START, Date.UTC(2026, 6, 31, 12, 49, 13));
+});
+
+test('production exhibit contains no residual 1979 dates', () => {
+  assert.doesNotMatch(page, /1979|May 18/i); assert.doesNotMatch(controller, /1979|May 18/i); assert.doesNotMatch(museum, /UNIX Time Sharing Center[\s\S]{0,300}1979/i);
 });
 
 test('idle values advance and deterministic activity can reset them', () => {

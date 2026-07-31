@@ -1,4 +1,4 @@
-export const HISTORICAL_START = Date.UTC(1979, 4, 18, 10, 23, 21);
+export const CANONICAL_START = Date.UTC(2026, 6, 31, 12, 49, 13);
 export const MIN_SESSIONS = 5;
 export const MAX_SESSIONS = 8;
 
@@ -12,7 +12,7 @@ const AMBIENT_ACCOUNTS = Object.freeze([
 const STABLE_ACCOUNTS = new Set(['operator', 'visitor']);
 const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
 
-export function seededRandom(seed = 19790518) {
+export function seededRandom(seed = 20260731) {
   let state = seed >>> 0;
   return () => {
     state = (state * 1664525 + 1013904223) >>> 0;
@@ -25,7 +25,7 @@ function session(username, tty, loginOffsetMinutes, idleMinutes, canonical = fal
 }
 
 export class UnixSimulation {
-  constructor({ random = seededRandom(), startTime = HISTORICAL_START } = {}) {
+  constructor({ random = seededRandom(), startTime = CANONICAL_START } = {}) {
     this.random = random;
     this.startTime = startTime;
     this.now = startTime;

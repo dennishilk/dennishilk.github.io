@@ -38,7 +38,7 @@ export function initializeUnixCenter(doc = document, view = window) {
     const lines = whoRows(simulation).map(row =>
       `${row.username.padEnd(12)} ${row.tty.padEnd(7)} ${row.login.padEnd(8)} ${row.idle}`
     );
-    transcript.textContent = `Chesapeake Signal Tech UNIX/32V (cs-vax1)\n\nlogin: visitor\nPassword:\nLast login: Fri May 18 10:15:07 on tty6\nUNIX System VAX-11/780\n\nYou have 2 unread messages.\nType "help" for the exhibit roadmap.\n\n$ who\nUSER         TTY     LOGIN    IDLE\n${lines.join('\n')}\n\n$ mail\nMail version 6.2. Type ? for help.\n  1  m.weber    Printer maintenance complete\n  2  operator   Friday tape rotation\n& q\n\n$ `;
+    transcript.textContent = `Chesapeake Signal Tech UNIX/32V (cs-vax1)\n\nlogin: visitor\nPassword:\nLast login: Fri Jul 31 12:41:07 on tty6\nUNIX System VAX-11/780\n\nYou have 2 unread messages.\nType "help" for the exhibit roadmap.\n\n$ who\nUSER         TTY     LOGIN    IDLE\n${lines.join('\n')}\n\n$ mail\nMail version 6.2. Type ? for help.\n  1  m.weber    Printer maintenance complete\n  2  operator   Friday tape rotation\n& q\n\n$ `;
     const cursor = doc.createElement('span');
     cursor.className = 'cursor';
     cursor.setAttribute('aria-hidden', 'true');
