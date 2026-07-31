@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.mjs';
+import { AMBIENT_HISTORY_LIMIT, AMBIENT_MESSAGES, CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.mjs';
 
 const page = await readFile(new URL('../museum/unix-time-sharing-center/index.html', import.meta.url), 'utf8');
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
@@ -28,6 +28,8 @@ test('one session model supplies online users and who output', () => {
 test('canonical clock starts on Day Zero and advances through UTC rollovers', () => {
   const model = new UnixSimulation(); assert.equal(model.startTime, Date.UTC(2026, 6, 31, 12, 49, 13)); assert.equal(formatClock(model.now), '12:49:13'); assert.equal(formatDate(model.now), 'FRI JUL 31, 2026');
   model.advanceTo(model.startTime + 2000); assert.equal(formatClock(model.now), '12:49:15');
+  const minute = new UnixSimulation({ startTime: Date.UTC(2026, 6, 31, 12, 49, 59) }); minute.advanceTo(minute.startTime + 1000); assert.equal(formatClock(minute.now), '12:50:00');
+  const hour = new UnixSimulation({ startTime: Date.UTC(2026, 6, 31, 12, 59, 59) }); hour.advanceTo(hour.startTime + 1000); assert.equal(formatClock(hour.now), '13:00:00');
   const rollover = new UnixSimulation({ startTime: Date.UTC(2026, 6, 31, 23, 59, 58) }); rollover.advanceTo(rollover.startTime + 2000); assert.equal(formatClock(rollover.now), '00:00:00'); assert.equal(formatDate(rollover.now), 'SAT AUG 1, 2026');
   assert.equal(CANONICAL_START, Date.UTC(2026, 6, 31, 12, 49, 13));
 });
@@ -37,7 +39,7 @@ test('production exhibit contains no residual 1979 dates', () => {
 });
 
 test('idle values advance and deterministic activity can reset them', () => {
-  const values = [0.5, 0.5, 0.5, 0.5, 0.5, 0, 0]; const model = new UnixSimulation({ random: () => values.shift() ?? 0.5 });
+  const model = new UnixSimulation({ random: () => 0 });
   const before = model.sessions[1].idleSeconds; model.advanceTo(model.startTime + 61000); assert.equal(model.sessions[1].idleSeconds, before + 61); assert.equal(formatIdle(61), '0:01');
   model.drift(); assert.ok(model.sessions.some(active => active.idleSeconds === 0));
 });
@@ -47,7 +49,16 @@ test('smoothed loads and status remain finite, bounded, and deterministic', () =
   for (let index = 0; index < 30; index += 1) { first.drift(); second.drift(); }
   assert.deepEqual(first.load, second.load); assert.ok(first.load.every((value, index) => Number.isFinite(value) && value >= 0 && Math.abs(value - previous[index]) < 0.5));
   assert.ok(first.status.cpu >= 0 && first.status.cpu <= 100); assert.ok(first.status.memory >= 0 && first.status.memory <= 100); assert.ok(first.status.swap >= 0 && first.status.swap <= 100);
-  assert.ok(first.status.processes >= 0 && first.status.runQueue >= 0);
+  assert.ok(first.status.processes >= 35 && first.status.processes <= 54); assert.ok(first.status.runQueue >= 0 && first.status.runQueue <= 3);
+  assert.notDeepEqual(first.load, previous); assert.notDeepEqual(first.status, { cpu: 18, memory: 33, swap: 4, processes: 42, runQueue: 1 });
+});
+
+test('one-minute load reacts faster than the smoothed five- and fifteen-minute values', () => {
+  const model = new UnixSimulation({ random: () => 1 });
+  const before = [...model.load]; for (let index = 0; index < 10; index += 1) model.drift();
+  const changes = model.load.map((value, index) => Math.abs(value - before[index]));
+  assert.ok(changes[0] > changes[1]); assert.ok(changes[1] > changes[2]);
+  assert.ok(model.load.every(value => Number.isFinite(value) && value >= 0 && value <= 1.5));
 });
 
 test('ambient session limits, canonical preservation, and unique TTYs hold', () => {
@@ -55,6 +66,40 @@ test('ambient session limits, canonical preservation, and unique TTYs hold', () 
   for (const account of CANONICAL_ACCOUNTS) model.removeSession(account); assert.ok(model.sessions.filter(item => item.canonical).length >= 3);
   while (model.sessions.length > MIN_SESSIONS) { const removable = model.sessions.find(item => !item.canonical && !['operator', 'visitor'].includes(item.username)); if (!removable) break; model.removeSession(removable.username); }
   assert.ok(model.sessions.length >= MIN_SESSIONS && model.sessions.length <= MAX_SESSIONS); assert.equal(new Set(model.sessions.map(item => item.tty)).size, model.sessions.length);
+});
+
+test('session events share state, preserve visitor, and usually make no change', () => {
+  const login = new UnixSimulation({ random: () => 0 });
+  const event = login.considerSessionChange(); assert.equal(event.type, 'user-login');
+  assert.equal(login.sessions.length, 7); assert.equal(whoRows(login).length, login.sessions.length);
+  assert.equal(new Set(login.sessions.map(item => item.username)).size, login.sessions.length);
+  assert.equal(login.removeSession('visitor'), false);
+  const quiet = new UnixSimulation({ random: () => 0.5 }); assert.equal(quiet.considerSessionChange(), null); assert.equal(quiet.sessions.length, 6);
+});
+
+test('ambient messages are deterministic, non-repeating, canonical, and bounded', () => {
+  const first = new UnixSimulation({ random: seededRandom(31) }); const second = new UnixSimulation({ random: seededRandom(31) });
+  const selectedA = []; const selectedB = [];
+  for (let index = 0; index < 80; index += 1) { selectedA.push(first.considerAmbientMessage()?.text); selectedB.push(second.considerAmbientMessage()?.text); }
+  assert.deepEqual(selectedA, selectedB); assert.ok(selectedA.some(Boolean));
+  const emitted = selectedA.filter(Boolean); for (let index = 1; index < emitted.length; index += 1) assert.notEqual(emitted[index], emitted[index - 1]);
+  assert.ok(first.ambientHistory.length <= AMBIENT_HISTORY_LIMIT);
+  const text = AMBIENT_MESSAGES.map(message => message.text).join('\n');
+  assert.match(text, /m\.weber|s\.harper|h\.sullivan|f\.kessler/);
+  assert.doesNotMatch(text, /disappear|Day Zero|Lost Administrator|mystery|novel|investigation|supernatural/i);
+});
+
+test('controller uses one clock lifecycle with calm centralized schedules', () => {
+  assert.match(controller, /CLOCK_INTERVAL_MS = 1000/);
+  assert.match(controller, /minimum: 7000, spread: 5000/);
+  assert.match(controller, /minimum: 45000, spread: 30000/);
+  assert.match(controller, /firstDelay: 120000/);
+  assert.equal((controller.match(/setInterval\(/g) || []).length, 1);
+  assert.match(controller, /view\[LIFECYCLE_KEY\]\?\.destroy\(\)/);
+  assert.match(controller, /clearInterval\(timer\)/);
+  assert.match(controller, /visibilitychange/);
+  assert.match(controller, /simulation\.considerAmbientMessage\(\)/);
+  assert.match(controller, /simulation\.ambientHistory\.length = 0/);
 });
 
 test('CRT controls, fullscreen, static fallback, and unrelated BBS remain intact', async () => {

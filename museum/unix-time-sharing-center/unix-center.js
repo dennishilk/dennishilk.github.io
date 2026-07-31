@@ -1,22 +1,26 @@
 import { UnixSimulation, formatClock, formatDate, whoRows } from './unix-simulation.mjs';
 
 const CLOCK_INTERVAL_MS = 1000;
-const STATUS_INTERVAL_MS = 7000;
-const SESSION_INTERVAL_MS = 30000;
+export const STATUS_INTERVAL = Object.freeze({ minimum: 7000, spread: 5000 });
+export const SESSION_INTERVAL = Object.freeze({ minimum: 45000, spread: 30000 });
+export const AMBIENT_INTERVAL = Object.freeze({ minimum: 45000, spread: 30000, firstDelay: 120000 });
 const LIFECYCLE_KEY = Symbol.for('museum.unixTimeSharingCenter');
 
-export function initializeUnixCenter(doc = document, view = window) {
+export function initializeUnixCenter(doc = document, view = window, options = {}) {
   view[LIFECYCLE_KEY]?.destroy();
   const screen = doc.querySelector('.screen');
   const transcript = screen?.querySelector('pre');
   const usersTable = doc.querySelector('#online-users');
   if (!screen || !transcript || !usersTable) return null;
 
-  const simulation = new UnixSimulation();
-  const startedAt = view.performance?.now?.() ?? Date.now();
-  let lastStatus = 0;
-  let lastSessionCheck = 0;
-  let transcriptCleared = false;
+  const createSimulation = options.createSimulation ?? (() => new UnixSimulation(options.simulationOptions));
+  const monotonicNow = options.now ?? (() => view.performance?.now?.() ?? Date.now());
+  let simulation = createSimulation();
+  let startedAt = monotonicNow();
+  let nextStatus = STATUS_INTERVAL.minimum + simulation.random() * STATUS_INTERVAL.spread;
+  let nextSessionCheck = SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
+  let nextAmbientCheck = AMBIENT_INTERVAL.firstDelay + simulation.random() * AMBIENT_INTERVAL.spread;
+  let showCanonicalTranscript = true;
 
   const renderSessions = () => {
     const rows = whoRows(simulation);
@@ -38,7 +42,9 @@ export function initializeUnixCenter(doc = document, view = window) {
     const lines = whoRows(simulation).map(row =>
       `${row.username.padEnd(12)} ${row.tty.padEnd(7)} ${row.login.padEnd(8)} ${row.idle}`
     );
-    transcript.textContent = `Chesapeake Signal Tech UNIX/32V (cs-vax1)\n\nlogin: visitor\nPassword:\nLast login: Fri Jul 31 12:41:07 on tty6\nUNIX System VAX-11/780\n\nYou have 2 unread messages.\nType "help" for the exhibit roadmap.\n\n$ who\nUSER         TTY     LOGIN    IDLE\n${lines.join('\n')}\n\n$ mail\nMail version 6.2. Type ? for help.\n  1  m.weber    Printer maintenance complete\n  2  operator   Friday tape rotation\n& q\n\n$ `;
+    const canonical = `Chesapeake Signal Tech UNIX/32V (cs-vax1)\n\nlogin: visitor\nPassword:\nLast login: Fri Jul 31 12:41:07 on tty6\nUNIX System VAX-11/780\n\nYou have 2 unread messages.\nType "help" for the exhibit roadmap.\n\n$ who\nUSER         TTY     LOGIN    IDLE\n${lines.join('\n')}\n\n$ mail\nMail version 6.2. Type ? for help.\n  1  m.weber    Printer maintenance complete\n  2  operator   Friday tape rotation\n& q\n`;
+    const ambient = simulation.ambientHistory.map(event => `[${formatClock(event.timestamp)}] ${event.text}`).join('\n');
+    transcript.textContent = `${showCanonicalTranscript ? canonical : ''}${ambient ? `\n${ambient}\n` : ''}\n$ `;
     const cursor = doc.createElement('span');
     cursor.className = 'cursor';
     cursor.setAttribute('aria-hidden', 'true');
@@ -65,29 +71,45 @@ export function initializeUnixCenter(doc = document, view = window) {
   };
 
   const tick = () => {
-    const elapsed = (view.performance?.now?.() ?? Date.now()) - startedAt;
+    const elapsed = monotonicNow() - startedAt;
     simulation.advanceTo(simulation.startTime + elapsed);
-    if (elapsed - lastStatus >= STATUS_INTERVAL_MS) {
+    let sessionsChanged = false;
+    let transcriptChanged = false;
+    if (elapsed >= nextStatus) {
       simulation.drift();
-      lastStatus = elapsed;
-      renderStatus();
+      nextStatus = elapsed + STATUS_INTERVAL.minimum + simulation.random() * STATUS_INTERVAL.spread;
+      if (!doc.hidden) renderStatus();
     }
-    if (elapsed - lastSessionCheck >= SESSION_INTERVAL_MS) {
-      simulation.considerSessionChange();
-      lastSessionCheck = elapsed;
+    if (elapsed >= nextSessionCheck) {
+      sessionsChanged = Boolean(simulation.considerSessionChange());
+      nextSessionCheck = elapsed + SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
+    }
+    if (elapsed >= nextAmbientCheck) {
+      transcriptChanged = Boolean(simulation.considerAmbientMessage());
+      nextAmbientCheck = elapsed + AMBIENT_INTERVAL.minimum + simulation.random() * AMBIENT_INTERVAL.spread;
     }
     if (!doc.hidden) {
       renderClock();
       renderSessions();
-      if (!transcriptCleared) renderTranscript();
+      if (sessionsChanged || transcriptChanged) renderTranscript();
     }
   };
+  const handleVisibility = () => { if (!doc.hidden) { tick(); renderStatus(); renderTranscript(); } };
 
   const brightness = doc.querySelector('#brightness');
   const contrast = doc.querySelector('#contrast');
   const applyDisplay = () => { screen.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%)`; };
-  const clear = () => { transcriptCleared = true; transcript.textContent = ''; };
-  const reset = () => { transcriptCleared = false; brightness.value = 100; contrast.value = 100; applyDisplay(); renderTranscript(); };
+  const clear = () => { showCanonicalTranscript = false; simulation.ambientHistory.length = 0; renderTranscript(); };
+  const reset = () => {
+    simulation = createSimulation();
+    startedAt = monotonicNow();
+    nextStatus = STATUS_INTERVAL.minimum + simulation.random() * STATUS_INTERVAL.spread;
+    nextSessionCheck = SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
+    nextAmbientCheck = AMBIENT_INTERVAL.firstDelay + simulation.random() * AMBIENT_INTERVAL.spread;
+    showCanonicalTranscript = true;
+    brightness.value = 100; contrast.value = 100; applyDisplay();
+    renderClock(); renderSessions(); renderStatus(); renderTranscript();
+  };
   const fullscreen = () => doc.fullscreenElement ? doc.exitFullscreen() : doc.querySelector('.terminal-station').requestFullscreen?.();
   brightness.addEventListener('input', applyDisplay);
   contrast.addEventListener('input', applyDisplay);
@@ -104,11 +126,14 @@ export function initializeUnixCenter(doc = document, view = window) {
     doc.querySelector('#clear').removeEventListener('click', clear);
     doc.querySelector('#reset').removeEventListener('click', reset);
     doc.querySelector('#fullscreen').removeEventListener('click', fullscreen);
+    doc.removeEventListener('visibilitychange', handleVisibility);
     view.removeEventListener('pagehide', destroy);
     if (view[LIFECYCLE_KEY]?.destroy === destroy) delete view[LIFECYCLE_KEY];
   };
   view.addEventListener('pagehide', destroy, { once: true });
-  return (view[LIFECYCLE_KEY] = { simulation, tick, destroy });
+  doc.addEventListener('visibilitychange', handleVisibility);
+  const lifecycle = { get simulation() { return simulation; }, tick, destroy, reset, clear };
+  return (view[LIFECYCLE_KEY] = lifecycle);
 }
 
 if (typeof document !== 'undefined') initializeUnixCenter();
