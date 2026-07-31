@@ -1,4 +1,4 @@
-import { UnixSimulation, formatClock, formatDate, whoRows } from './unix-simulation.js';
+import { UnixSimulation, formatClock, formatDate, formatUptime, whoRows } from './unix-simulation.js';
 
 const CLOCK_INTERVAL_MS = 1000;
 export const STATUS_INTERVAL = Object.freeze({ minimum: 7000, spread: 5000 });
@@ -84,13 +84,12 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     }
     if (elements.processes) elements.processes.textContent = simulation.status.processes;
     if (elements.runQueue) elements.runQueue.textContent = simulation.status.runQueue;
-    const uptimeSeconds = 2 * 86400 + 6 * 3600 + 12 * 60 + Math.floor((simulation.now - simulation.startTime) / 1000);
-    if (elements.uptime) elements.uptime.textContent = `UP ${Math.floor(uptimeSeconds / 86400)} DAYS, ${String(Math.floor(uptimeSeconds % 86400 / 3600)).padStart(2, '0')}:${String(Math.floor(uptimeSeconds % 3600 / 60)).padStart(2, '0')}`;
   };
 
   const renderClock = () => {
     clock.textContent = formatClock(simulation.now);
     if (elements.systemDate) elements.systemDate.textContent = formatDate(simulation.now);
+    if (elements.uptime) elements.uptime.textContent = formatUptime(simulation.now, simulation.startTime);
   };
 
   const tick = () => {
