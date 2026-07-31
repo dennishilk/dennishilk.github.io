@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UNIX Time Sharing Center — Computer Museum</title>
+  <meta name="description" content="A planned museum installation about shared university and engineering UNIX systems, circa 1979.">
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="/museum/unix-time-sharing-center/unix-center.css">
+  <script defer src="/museum/unix-time-sharing-center/unix-center.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#terminal">Skip to terminal transcript</a>
+  <main class="installation">
+    <header class="exhibit-header">
+      <div class="intro">
+        <div class="eyebrow-row"><span class="planned-badge">PLANNED EXHIBIT</span><a href="/museum/">← MUSEUM INDEX</a></div>
+        <h1>UNIX Time Sharing Center</h1>
+        <p class="dek">A shared multi-user UNIX host · 1979</p>
+        <p>Step into a university computing room where one central machine served an entire community. Log in, meet its users, and learn why shared access shaped modern computing.</p>
+      </div>
+      <section class="host-strip" aria-label="Host status">
+        <div><span>HOST</span><strong>cs-vax1</strong><small>Chesapeake Signal Tech</small></div>
+        <div><span>SYSTEM TIME</span><strong id="clock">10:23:21</strong><small>FRI MAY 18, 1979</small></div>
+        <div><span>LOAD AVERAGE</span><strong>0.47&nbsp; 0.31&nbsp; 0.22</strong><small>UP 2 DAYS, 06:12</small></div>
+        <div><span>CURRENT USERS</span><strong>7</strong><small>VAX-11/780 · UNIX/32V</small></div>
+      </section>
+    </header>
+
+    <div class="workstation">
+      <aside class="rail left-rail" aria-label="System information">
+        <section class="panel users"><h2>Online Users</h2><div class="table" role="table" aria-label="Login sessions">
+          <div class="tr head"><span>USER</span><span>TTY</span><span>LOGIN</span><span>IDLE</span></div>
+          <div class="tr"><span>alice</span><span>tty1</span><span>10:21</span><span>0:02</span></div><div class="tr"><span>bob</span><span>tty2</span><span>10:18</span><span>0:05</span></div><div class="tr"><span>operator</span><span>tty3</span><span>07:54</span><span>0:01</span></div><div class="tr"><span>carol</span><span>tty4</span><span>10:19</span><span>0:03</span></div><div class="tr"><span>backup</span><span>tty5</span><span>08:00</span><span>1:44</span></div><div class="tr"><span>visitor</span><span>tty6</span><span>10:22</span><span>0:00</span></div><div class="tr"><span>dave</span><span>tty7</span><span>10:17</span><span>0:06</span></div>
+        </div><p class="panel-note">7 active login sessions</p></section>
+        <section class="panel"><h2>System Status</h2>
+          <dl class="metrics"><div><dt>CPU</dt><dd>18% <i style="--fill:18%"></i></dd></div><div><dt>Memory</dt><dd>33% <i style="--fill:33%"></i></dd></div><div><dt>Swap</dt><dd>04% <i style="--fill:4%"></i></dd></div><div><dt>Processes</dt><dd>42</dd></div><div><dt>Run queue</dt><dd>2</dd></div></dl>
+        </section>
+        <section class="panel"><h2>Network / TTY Lines</h2><dl class="lines"><div><dt>Console</dt><dd>tty0 · active</dd></div><div><dt>Dial-in A</dt><dd>ttyA · idle</dd></div><div><dt>Dial-in B</dt><dd>ttyB · active</dd></div><div><dt>Dial-out</dt><dd>cu1 · idle</dd></div><div><dt>Modem</dt><dd>9600 baud · 8N1</dd></div></dl></section>
+      </aside>
+
+      <section class="terminal-station" aria-labelledby="terminal-title">
+        <h2 id="terminal-title" class="sr-only">UNIX terminal</h2>
+        <div class="crt-shell"><div class="crt-bezel"><div class="screen" id="terminal" tabindex="0" role="region" aria-label="Read-only terminal transcript" aria-describedby="terminal-help"><div class="scanlines"></div><pre>Chesapeake Signal Tech UNIX/32V (cs-vax1)
+
+login: visitor
+Password:
+Last login: Fri May 18 10:15:07 on tty6
+UNIX System VAX-11/780
+
+You have 2 unread messages.
+Type "help" for the exhibit roadmap.
+
+$ who
+alice     tty1    May 18 10:21
+bob       tty2    May 18 10:18
+operator  tty3    May 18 07:54
+carol     tty4    May 18 10:19
+backup    tty5    May 18 08:00
+visitor   tty6    May 18 10:22
+dave      tty7    May 18 10:17
+
+$ mail
+Mail version 6.2. Type ? for help.
+  1  bob       Printer maintenance complete
+  2  operator  Friday tape rotation
+&amp; q
+
+$ <span class="cursor" aria-hidden="true">█</span></pre></div></div></div>
+        <p id="terminal-help" class="terminal-caption"><strong>PHASE 1 · DISPLAY TERMINAL</strong> Commands are shown as an authentic guided transcript. Interactive login, mail, manuals, messaging, and remote dialing are planned for a later installation phase.</p>
+        <div class="console-controls" aria-label="Terminal hardware controls">
+          <div><span>TERMINAL CONTROLS</span><button type="button" id="reset">RESET</button><button type="button" id="clear">CLEAR</button><button type="button" disabled>BELL · PLANNED</button></div>
+          <div class="knobs"><span>DISPLAY</span><label>Brightness <input id="brightness" type="range" min="70" max="130" value="100"></label><label>Contrast <input id="contrast" type="range" min="80" max="140" value="100"></label></div>
+          <div><span>CONNECTION</span><output><i></i> LOCAL LINE CONNECTED</output><button type="button" disabled>DIAL OUT · PLANNED</button><button type="button" id="fullscreen">FULLSCREEN</button></div>
+        </div>
+      </section>
+
+      <aside class="rail right-rail" aria-label="Visitor guide">
+        <section class="panel command-guide"><h2>Command Guide</h2><dl>
+          <div><dt>who / w</dt><dd>See who shares the host</dd></div><div><dt>mail</dt><dd>Read office messages</dd></div><div><dt>write / talk</dt><dd>Contact another user</dd></div><div><dt>man</dt><dd>Open the online manual</dd></div><div><dt>ps</dt><dd>Inspect running work</dd></div><div><dt>ls / cat</dt><dd>List and read files</dd></div><div><dt>find / grep</dt><dd>Search stored information</dd></div><div><dt>tip / cu</dt><dd>Call a remote machine</dd></div>
+        </dl><p class="panel-note">Each future command will explain how people worked—not merely its syntax.</p></section>
+        <section class="panel dial"><div class="title-row"><h2>Dial Out</h2><span>PLANNED</span></div><p>Before the web, terminals reached distant UNIX hosts and information services over serial lines and telephone modems.</p><code>tip research-net</code><code>cu -l /dev/cu1</code><p class="panel-note">A future line will connect to Midnight Relay BBS. No call is placed in Phase 1.</p></section>
+        <section class="panel history"><h2>Why Time Sharing?</h2><p>Computers were expensive institutional resources. A central host rapidly switched among many terminals, giving each person the experience of direct access.</p><p class="maxim">Before most people owned computers,<br><strong>they shared them.</strong></p></section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
