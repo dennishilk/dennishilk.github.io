@@ -45,7 +45,7 @@ function interactiveHarness() {
   doc.querySelector = selector => elements[selectors[selector]] ?? null;
   doc.createElement = () => new Element(doc); doc.createDocumentFragment = () => new Element(doc); doc.createTextNode = textContent => ({ textContent, nodeType: 3 });
   const timeouts = [];
-  const view = Object.assign(new Events(), { performance: { now: () => 0 }, setInterval: () => 1, clearInterval() {}, setTimeout(callback) { timeouts.push(callback); return timeouts.length; }, clearTimeout() {}, Audio: class { play() { return Promise.resolve(); } pause() {} removeAttribute() {} } });
+  const view = Object.assign(new Events(), { performance: { now: () => 0 }, setInterval: () => 1, clearInterval() {}, setTimeout(callback) { timeouts.push(callback); return timeouts.length; }, clearTimeout() {}, Audio: class { addEventListener(type, callback) { if(type==='ended')this.ended=callback; } play() { timeouts.push(()=>this.ended?.()); return Promise.resolve(); } pause() {} removeAttribute() {} } });
   const key = (key, extra = {}) => { let prevented = false; elements['terminal-input'].dispatch('keydown', { key, target: elements['terminal-input'], preventDefault() { prevented = true; }, ...extra }); return prevented; };
   const type = value => { const input = elements['terminal-input']; input.value = value; input.selectionStart = value.length; input.dispatch('input', { target: input }); };
   return { doc, view, elements, timeouts, key, type };
@@ -100,7 +100,7 @@ test('CRT focus and rendered command-line plumbing retain a single visible input
   assert.equal((page.match(/<textarea/g) || []).length, 1);
 });
 
-test('Phase 3B keeps shell input ownership until dialing and restores it afterward', () => {
+test('Phase 3B keeps shell input ownership until dialing and restores it afterward', async () => {
   const app = interactiveHarness();
   const lifecycle = initializeUnixCenter(app.doc, app.view);
   const input = app.elements['terminal-input'];
@@ -120,6 +120,7 @@ test('Phase 3B keeps shell input ownership until dialing and restores it afterwa
   app.type('echo after-cancel'); assert.match(app.elements.transcript.textContent, /echo after-cancel/);
 
   app.type('tip midnight-relay'); app.key('Enter'); app.timeouts.at(-1)();
+  await Promise.resolve(); await Promise.resolve(); app.timeouts.at(-1)(); await Promise.resolve();
   assert.equal(lifecycle.shell.mode, 'remote-bbs');
   app.elements['dial-out'].dispatch('click');
   assert.equal(lifecycle.shell.mode, 'shell');
@@ -130,6 +131,52 @@ test('Phase 3B keeps shell input ownership until dialing and restores it afterwa
   assert.equal(lifecycle.shell.mode, 'shell');
   assert.strictEqual(app.doc.activeElement, input);
   app.type('history'); assert.match(app.elements.transcript.textContent, /history/);
+});
+
+test('modem completion authoritatively precedes CONNECT, pause, and BBS activation', async () => {
+  const app = interactiveHarness();
+  let completeHandshake;
+  let bridgeCreations = 0;
+  const handshake = new Promise(resolve => { completeHandshake = resolve; });
+  const lifecycle = initializeUnixCenter(app.doc, app.view, {
+    createHandshakeAudio: () => ({ start: () => handshake, stop() {} }),
+    createBbsBridge: () => { bridgeCreations++; return { screen: { renderInto() {} }, runtime: {}, input() {}, destroy() {} }; },
+    connectionTiming: { postConnectPauseMs: 650 }
+  });
+  app.elements.screen.dispatch('click'); app.type('tip midnight-relay'); app.key('Enter');
+  assert.equal(lifecycle.shell.mode, 'dialing');
+  assert.equal(lifecycle.simulation.dialState, 'dialing');
+  assert.match(app.elements.transcript.textContent, /Negotiating carrier/);
+  assert.doesNotMatch(app.elements.transcript.textContent, /CONNECT 9600/);
+  assert.equal(bridgeCreations, 0);
+  assert.equal(app.key('G'), false, 'BBS input is not captured while dialing');
+  completeHandshake(); await Promise.resolve(); await Promise.resolve();
+  assert.equal(lifecycle.shell.mode, 'dialing', 'CONNECT pause retains UNIX input ownership');
+  assert.equal(lifecycle.simulation.dialState, 'dialing');
+  assert.match(app.elements.transcript.textContent, /CONNECT 9600/);
+  assert.equal(bridgeCreations, 0);
+  app.timeouts.at(-1)(); await Promise.resolve();
+  assert.equal(lifecycle.shell.mode, 'remote-bbs');
+  assert.equal(lifecycle.simulation.dialState, 'connected');
+  assert.equal(bridgeCreations, 1);
+});
+
+test('cancellation and reset invalidate pending modem completions', async () => {
+  for (const cancel of ['ctrl-c', 'reset']) {
+    const app = interactiveHarness(); let resolveHandshake; let bridges = 0;
+    const lifecycle = initializeUnixCenter(app.doc, app.view, {
+      createHandshakeAudio: () => ({ start: () => new Promise(resolve => { resolveHandshake = resolve; }), stop() {} }),
+      createBbsBridge: () => { bridges++; return {}; }
+    });
+    app.elements.screen.dispatch('click'); app.type('tip midnight-relay'); app.key('Enter');
+    if (cancel === 'ctrl-c') app.key('c', { ctrlKey: true }); else app.elements.reset.dispatch('click');
+    resolveHandshake(); await Promise.resolve(); await Promise.resolve();
+    for (const timeout of app.timeouts) timeout(); await Promise.resolve();
+    assert.equal(lifecycle.shell.mode, 'shell');
+    assert.equal(lifecycle.simulation.dialState, 'idle');
+    assert.equal(bridges, 0, `${cancel} cannot reveal a stale BBS`);
+    lifecycle.destroy();
+  }
 });
 
 test('Clear and Reset restore focus to the terminal input', () => {
