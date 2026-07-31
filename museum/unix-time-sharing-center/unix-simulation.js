@@ -1,3 +1,4 @@
+import { FILES, LOGIN_HISTORY, PRINTER, STORAGE } from './unix-content.js';
 export const CANONICAL_START = Date.UTC(2026, 6, 31, 12, 49, 13);
 export const CANONICAL_UPTIME_SECONDS = 147 * 86400 + 6 * 3600 + 12 * 60;
 export const MIN_SESSIONS = 5;
@@ -55,6 +56,10 @@ export class UnixSimulation {
     ];
     this.load = [0.24, 0.27, 0.23];
     this.status = { cpu: 18, memory: 33, swap: 4, processes: 42, runQueue: 1 };
+    this.printer = structuredClone(PRINTER);
+    this.storage = structuredClone(STORAGE);
+    this.logs = FILES['/var/adm/messages'].content.split('\n');
+    this.loginHistory = structuredClone(LOGIN_HISTORY);
     this.ambientHistory = [];
     this.lastAmbientIndex = -1;
   }
@@ -74,6 +79,7 @@ export class UnixSimulation {
     while (used.has(`tty${ttyNumber}`)) ttyNumber += 1;
     const loginOffsetMinutes = Math.floor((this.now - this.startTime) / 60000);
     this.sessions.push(session(username, `tty${ttyNumber}`, loginOffsetMinutes, 0, CANONICAL_ACCOUNTS.includes(username)));
+    const stamp = new Date(this.now).toUTCString().replace(',','').slice(0,16); this.loginHistory.push({ username, tty:`tty${ttyNumber}`, login:stamp, end:'still logged in' }); if(this.loginHistory.length>20)this.loginHistory.shift();
     return true;
   }
 
@@ -82,6 +88,7 @@ export class UnixSimulation {
     const canonicalCount = this.sessions.filter(item => item.canonical).length;
     if (!candidate || STABLE_ACCOUNTS.has(username) || this.sessions.length <= MIN_SESSIONS || (candidate.canonical && canonicalCount <= 3)) return false;
     this.sessions = this.sessions.filter(item => item !== candidate);
+    const record=[...this.loginHistory].reverse().find(r=>r.username===username&&r.end==='still logged in'); if(record)record.end=formatClock(this.now);
     return true;
   }
 
@@ -137,6 +144,7 @@ export class UnixSimulation {
     if (index === this.lastAmbientIndex) index = (index + 1) % AMBIENT_MESSAGES.length;
     this.lastAmbientIndex = index;
     const event = { ...AMBIENT_MESSAGES[index], timestamp: this.now };
+    if (event.type === 'print-event' && /queue updated/.test(event.text) && this.printer.queue.length) { const done=this.printer.queue.shift(); this.printer.lastCompleted=done.job; this.printer.activeJob=this.printer.queue[0]?.job || null; this.printer.spoolCount=this.printer.queue.length; const d=new Date(this.now); this.logs.push(`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]} ${String(d.getUTCDate()).padStart(2,' ')} ${formatClock(this.now)} cs-vax1 lpd: completed ${done.job}`); if(this.logs.length>40)this.logs.shift(); event.text=`lpd: ${done.job} completed on cst-print1`; }
     this.ambientHistory.push(event);
     if (this.ambientHistory.length > AMBIENT_HISTORY_LIMIT) {
       this.ambientHistory.splice(0, this.ambientHistory.length - AMBIENT_HISTORY_LIMIT);
