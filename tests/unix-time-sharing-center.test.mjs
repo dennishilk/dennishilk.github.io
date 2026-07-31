@@ -7,10 +7,10 @@ const page = await readFile(new URL('../museum/unix-time-sharing-center/index.ht
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
 const museum = await readFile(new URL('../museum/index.html', import.meta.url), 'utf8');
 
-test('company identity and planned route remain production framed', () => {
-  assert.match(page, /Chesapeake Signal Tech/); assert.match(museum, /Chesapeake Signal Tech's computing room/);
+test('company identity and available catalog route remain production framed', () => {
+  assert.match(page, /Chesapeake Signal Tech/); assert.match(museum, /fictional shared UNIX environment/);
   assert.doesNotMatch(page, /university/i); assert.doesNotMatch(page, /novel|The Lost Administrator|fictional character|Easter egg/i);
-  assert.match(page, /PLANNED EXHIBIT/); assert.match(museum, /href="\/museum\/unix-time-sharing-center\/"/);
+  assert.match(page, /PLANNED EXHIBIT/); assert.match(museum, /museum-status available">AVAILABLE[\s\S]{0,500}UNIX Time Sharing Center[\s\S]{0,500}href="\/museum\/unix-time-sharing-center\/">ENTER SYSTEM/);
 });
 
 test('static fallback and canonical session pool use company account names', () => {
