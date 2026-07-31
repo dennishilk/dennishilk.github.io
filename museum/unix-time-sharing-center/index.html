@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>UNIX Time Sharing Center — Computer Museum</title>
-  <meta name="description" content="A planned museum installation about shared university and engineering UNIX systems, circa 1979.">
+  <meta name="description" content="A planned museum installation about a shared Chesapeake Signal Tech UNIX system, circa 1979.">
   <link rel="icon" href="/favicon.png">
   <link rel="stylesheet" href="/museum/unix-time-sharing-center/unix-center.css">
-  <script defer src="/museum/unix-time-sharing-center/unix-center.js"></script>
+  <script type="module" src="/museum/unix-time-sharing-center/unix-center.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#terminal">Skip to terminal transcript</a>
@@ -17,13 +17,13 @@
         <div class="eyebrow-row"><span class="planned-badge">PLANNED EXHIBIT</span><a href="/museum/">← MUSEUM INDEX</a></div>
         <h1>UNIX Time Sharing Center</h1>
         <p class="dek">A shared multi-user UNIX host · 1979</p>
-        <p>Step into a university computing room where one central machine served an entire community. Log in, meet its users, and learn why shared access shaped modern computing.</p>
+        <p>Step into the Chesapeake Signal Tech computing room, where one central machine serves the company's staff. Log in, meet its users, and learn why shared access shaped modern computing.</p>
       </div>
       <section class="host-strip" aria-label="Host status">
         <div><span>HOST</span><strong>cs-vax1</strong><small>Chesapeake Signal Tech</small></div>
-        <div><span>SYSTEM TIME</span><strong id="clock">10:23:21</strong><small>FRI MAY 18, 1979</small></div>
-        <div><span>LOAD AVERAGE</span><strong>0.47&nbsp; 0.31&nbsp; 0.22</strong><small>UP 2 DAYS, 06:12</small></div>
-        <div><span>CURRENT USERS</span><strong>7</strong><small>VAX-11/780 · UNIX/32V</small></div>
+        <div><span>SYSTEM TIME</span><strong id="clock">10:23:21</strong><small id="system-date">FRI MAY 18, 1979</small></div>
+        <div><span>LOAD AVERAGE</span><strong id="load-average">0.24&nbsp; 0.27&nbsp; 0.23</strong><small id="uptime">UP 2 DAYS, 06:12</small></div>
+        <div><span>CURRENT USERS</span><strong id="current-users">6</strong><small>VAX-11/780 · UNIX/32V</small></div>
       </section>
     </header>
 
@@ -31,10 +31,10 @@
       <aside class="rail left-rail" aria-label="System information">
         <section class="panel users"><h2>Online Users</h2><div class="table" role="table" aria-label="Login sessions">
           <div class="tr head"><span>USER</span><span>TTY</span><span>LOGIN</span><span>IDLE</span></div>
-          <div class="tr"><span>alice</span><span>tty1</span><span>10:21</span><span>0:02</span></div><div class="tr"><span>bob</span><span>tty2</span><span>10:18</span><span>0:05</span></div><div class="tr"><span>operator</span><span>tty3</span><span>07:54</span><span>0:01</span></div><div class="tr"><span>carol</span><span>tty4</span><span>10:19</span><span>0:03</span></div><div class="tr"><span>backup</span><span>tty5</span><span>08:00</span><span>1:44</span></div><div class="tr"><span>visitor</span><span>tty6</span><span>10:22</span><span>0:00</span></div><div class="tr"><span>dave</span><span>tty7</span><span>10:17</span><span>0:06</span></div>
-        </div><p class="panel-note">7 active login sessions</p></section>
+          <div id="online-users"><div class="tr"><span>operator</span><span>tty0</span><span>07:54</span><span>0:01</span></div><div class="tr"><span>s.harper</span><span>tty1</span><span>10:12</span><span>0:03</span></div><div class="tr"><span>m.weber</span><span>tty2</span><span>09:48</span><span>0:17</span></div><div class="tr"><span>h.sullivan</span><span>tty3</span><span>10:19</span><span>0:01</span></div><div class="tr"><span>f.kessler</span><span>tty4</span><span>08:56</span><span>0:08</span></div><div class="tr"><span>visitor</span><span>tty6</span><span>10:22</span><span>0:00</span></div></div>
+        </div><p class="panel-note" id="session-count">6 active login sessions</p></section>
         <section class="panel"><h2>System Status</h2>
-          <dl class="metrics"><div><dt>CPU</dt><dd>18% <i style="--fill:18%"></i></dd></div><div><dt>Memory</dt><dd>33% <i style="--fill:33%"></i></dd></div><div><dt>Swap</dt><dd>04% <i style="--fill:4%"></i></dd></div><div><dt>Processes</dt><dd>42</dd></div><div><dt>Run queue</dt><dd>2</dd></div></dl>
+          <dl class="metrics"><div><dt>CPU</dt><dd id="status-cpu">18% <i style="--fill:18%"></i></dd></div><div><dt>Memory</dt><dd id="status-memory">33% <i style="--fill:33%"></i></dd></div><div><dt>Swap</dt><dd id="status-swap">04% <i style="--fill:4%"></i></dd></div><div><dt>Processes</dt><dd id="status-processes">42</dd></div><div><dt>Run queue</dt><dd id="status-run-queue">1</dd></div></dl>
         </section>
         <section class="panel"><h2>Network / TTY Lines</h2><dl class="lines"><div><dt>Console</dt><dd>tty0 · active</dd></div><div><dt>Dial-in A</dt><dd>ttyA · idle</dd></div><div><dt>Dial-in B</dt><dd>ttyB · active</dd></div><div><dt>Dial-out</dt><dd>cu1 · idle</dd></div><div><dt>Modem</dt><dd>9600 baud · 8N1</dd></div></dl></section>
       </aside>
@@ -52,18 +52,18 @@ You have 2 unread messages.
 Type "help" for the exhibit roadmap.
 
 $ who
-alice     tty1    May 18 10:21
-bob       tty2    May 18 10:18
-operator  tty3    May 18 07:54
-carol     tty4    May 18 10:19
-backup    tty5    May 18 08:00
-visitor   tty6    May 18 10:22
-dave      tty7    May 18 10:17
+USER         TTY     LOGIN    IDLE
+operator     tty0    07:54    0:01
+s.harper     tty1    10:12    0:03
+m.weber      tty2    09:48    0:17
+h.sullivan   tty3    10:19    0:01
+f.kessler    tty4    08:56    0:08
+visitor      tty6    10:22    0:00
 
 $ mail
 Mail version 6.2. Type ? for help.
-  1  bob       Printer maintenance complete
-  2  operator  Friday tape rotation
+  1  m.weber    Printer maintenance complete
+  2  operator   Friday tape rotation
 &amp; q
 
 $ <span class="cursor" aria-hidden="true">█</span></pre></div></div></div>
