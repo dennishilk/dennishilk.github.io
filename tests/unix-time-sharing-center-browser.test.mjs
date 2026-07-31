@@ -17,12 +17,38 @@ class Events {
   removeEventListener(type, listener) {
     this.listeners.set(type, (this.listeners.get(type) ?? []).filter(item => item.listener !== listener));
   }
-  dispatch(type) {
+  dispatch(type, event = {}) {
     for (const item of [...(this.listeners.get(type) ?? [])]) {
-      item.listener();
+      item.listener(event);
       if (item.once) this.removeEventListener(type, item.listener);
     }
   }
+}
+
+class Element extends Events {
+  constructor(doc) { super(); this.doc = doc; this.ownerDocument = doc; this.value = ''; this.textContent = ''; this.children = []; this.selectionStart = 0; this.selectionEnd = 0; this.scrollHeight = 0; this.scrollTop = 0; this.clientHeight = 100; this.style = { setProperty() {} }; this.classList = { add() {}, remove() {} }; }
+  focus(options) { this.focusOptions = options; this.doc.activeElement = this; this.dispatch('focus', { target: this }); }
+  setSelectionRange(start, end) { this.selectionStart = start; this.selectionEnd = end; }
+  replaceChildren(...children) { this.children = children; this.textContent = children.map(child => child.textContent ?? '').join(''); }
+  append(...children) { this.children.push(...children); this.textContent += children.map(child => child.textContent ?? '').join(''); }
+  prepend() {}
+  setAttribute() {}
+  querySelector() { return null; }
+  scrollTo() {}
+}
+
+function interactiveHarness() {
+  const doc = Object.assign(new Events(), { readyState: 'complete', hidden: false, documentElement: { dataset: {} }, activeElement: null });
+  const elements = Object.fromEntries(['screen','transcript','terminal-input','terminal-announcer','clock','system-date','load-average','uptime','current-users','session-count','status-cpu','status-memory','status-swap','status-processes','status-run-queue','brightness','contrast','clear','reset','fullscreen','terminal-station','dial-out','dial-line-state','online-users'].map(id => [id, new Element(doc)]));
+  elements.screen.querySelector = selector => selector === 'pre' ? elements.transcript : null;
+  const selectors = { '.screen':'screen', '#terminal-input':'terminal-input', '#terminal-announcer':'terminal-announcer', '#online-users':'online-users', '#clock':'clock', '#system-date':'system-date', '#load-average':'load-average', '#uptime':'uptime', '#current-users':'current-users', '#session-count':'session-count', '#status-cpu':'status-cpu', '#status-memory':'status-memory', '#status-swap':'status-swap', '#status-processes':'status-processes', '#status-run-queue':'status-run-queue', '#brightness':'brightness', '#contrast':'contrast', '#clear':'clear', '#reset':'reset', '#fullscreen':'fullscreen', '.terminal-station':'terminal-station', '#dial-out':'dial-out', '#dial-line-state':'dial-line-state' };
+  doc.querySelector = selector => elements[selectors[selector]] ?? null;
+  doc.createElement = () => new Element(doc); doc.createDocumentFragment = () => new Element(doc); doc.createTextNode = textContent => ({ textContent, nodeType: 3 });
+  const timeouts = [];
+  const view = Object.assign(new Events(), { performance: { now: () => 0 }, setInterval: () => 1, clearInterval() {}, setTimeout(callback) { timeouts.push(callback); return timeouts.length; }, clearTimeout() {}, Audio: class { play() { return Promise.resolve(); } pause() {} removeAttribute() {} } });
+  const key = (key, extra = {}) => { let prevented = false; elements['terminal-input'].dispatch('keydown', { key, target: elements['terminal-input'], preventDefault() { prevented = true; }, ...extra }); return prevented; };
+  const type = value => { const input = elements['terminal-input']; input.value = value; input.selectionStart = value.length; input.dispatch('input', { target: input }); };
+  return { doc, view, elements, timeouts, key, type };
 }
 
 function harness({ readyState = 'complete', hidden = false } = {}) {
@@ -72,6 +98,38 @@ test('CRT focus and rendered command-line plumbing retain a single visible input
   assert.match(controller, /inputValue\.slice\(0, inputCursor\)/);
   assert.match(controller, /inputValue\.slice\(inputCursor/);
   assert.equal((page.match(/<textarea/g) || []).length, 1);
+});
+
+test('Phase 3B keeps shell input ownership until dialing and restores it afterward', () => {
+  const app = interactiveHarness();
+  const lifecycle = initializeUnixCenter(app.doc, app.view);
+  const input = app.elements['terminal-input'];
+  assert.equal(lifecycle.shell.mode, 'shell');
+  app.elements.screen.dispatch('click');
+  assert.strictEqual(app.doc.activeElement, input);
+  assert.deepEqual(input.focusOptions, { preventScroll: true });
+
+  app.type('tip midnight-relay');
+  assert.match(app.elements.transcript.textContent, /visitor@cs-vax1:\/usr\/visitor\$ tip midnight-relay/);
+  assert.equal(app.key('x'), false, 'ordinary shell keys are not prevented by remote routing');
+  assert.equal(app.key('Enter'), true);
+  assert.equal(lifecycle.shell.mode, 'dialing');
+
+  assert.equal(app.key('c', { ctrlKey: true }), true);
+  assert.equal(lifecycle.shell.mode, 'shell');
+  app.type('echo after-cancel'); assert.match(app.elements.transcript.textContent, /echo after-cancel/);
+
+  app.type('tip midnight-relay'); app.key('Enter'); app.timeouts.at(-1)();
+  assert.equal(lifecycle.shell.mode, 'remote-bbs');
+  app.elements['dial-out'].dispatch('click');
+  assert.equal(lifecycle.shell.mode, 'shell');
+  assert.strictEqual(app.doc.activeElement, input);
+  app.type('echo after-disconnect'); assert.match(app.elements.transcript.textContent, /echo after-disconnect/);
+
+  app.elements.reset.dispatch('click');
+  assert.equal(lifecycle.shell.mode, 'shell');
+  assert.strictEqual(app.doc.activeElement, input);
+  app.type('history'); assert.match(app.elements.transcript.textContent, /history/);
 });
 
 test('Clear and Reset restore focus to the terminal input', () => {

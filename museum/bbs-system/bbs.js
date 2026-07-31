@@ -294,4 +294,7 @@ export function createBbsBridge({render=()=>{},write=()=>{},onDisconnect=()=>{},
  app.destroy=()=>{app.abort();app.rt.carrier=false};app.connect();
  return {get runtime(){return app.rt},get screen(){return app.screenBuffer},input:value=>app.input(value),disconnect:()=>app.disconnect(),clear:()=>{app.screenBuffer.clear();render(app.screenBuffer)},destroy:app.destroy};
 }
-if(typeof document!=='undefined'&&document.getElementById('terminal'))new BBSApp(document);
+// `#terminal` is also used by the UNIX exhibit's CRT.  Only bootstrap the
+// standalone workstation when its form is present; bridge instances are
+// created explicitly by the UNIX controller after a modem connection.
+if(typeof document!=='undefined'&&document.getElementById('terminal-form'))new BBSApp(document);
