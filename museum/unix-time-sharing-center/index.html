@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>UNIX Time Sharing Center — Computer Museum</title>
-  <meta name="description" content="A planned museum installation about a shared Chesapeake Signal Tech UNIX system, circa 1979.">
+  <meta name="description" content="A planned museum installation about a shared Chesapeake Signal Tech production UNIX system.">
   <link rel="icon" href="/favicon.png">
   <link rel="stylesheet" href="/museum/unix-time-sharing-center/unix-center.css">
   <script type="module" src="/museum/unix-time-sharing-center/unix-center.js"></script>
@@ -16,12 +16,12 @@
       <div class="intro">
         <div class="eyebrow-row"><span class="planned-badge">PLANNED EXHIBIT</span><a href="/museum/">← MUSEUM INDEX</a></div>
         <h1>UNIX Time Sharing Center</h1>
-        <p class="dek">A shared multi-user UNIX host · 1979</p>
-        <p>Step into the Chesapeake Signal Tech computing room, where one central machine serves the company's staff. Log in, meet its users, and learn why shared access shaped modern computing.</p>
+        <p class="dek">A shared multi-user UNIX host · Chesapeake Signal Tech</p>
+        <p>Step into the Chesapeake Signal Tech computing room, where one central machine serves the company's staff. Log in, meet its users, and see the system at work.</p>
       </div>
       <section class="host-strip" aria-label="Host status">
         <div><span>HOST</span><strong>cs-vax1</strong><small>Chesapeake Signal Tech</small></div>
-        <div><span>SYSTEM TIME</span><strong id="clock">10:23:21</strong><small id="system-date">FRI MAY 18, 1979</small></div>
+        <div><span>SYSTEM TIME</span><strong id="clock">12:49:13</strong><small id="system-date">FRI JUL 31, 2026</small></div>
         <div><span>LOAD AVERAGE</span><strong id="load-average">0.24&nbsp; 0.27&nbsp; 0.23</strong><small id="uptime">UP 2 DAYS, 06:12</small></div>
         <div><span>CURRENT USERS</span><strong id="current-users">6</strong><small>VAX-11/780 · UNIX/32V</small></div>
       </section>
@@ -31,7 +31,7 @@
       <aside class="rail left-rail" aria-label="System information">
         <section class="panel users"><h2>Online Users</h2><div class="table" role="table" aria-label="Login sessions">
           <div class="tr head"><span>USER</span><span>TTY</span><span>LOGIN</span><span>IDLE</span></div>
-          <div id="online-users"><div class="tr"><span>operator</span><span>tty0</span><span>07:54</span><span>0:01</span></div><div class="tr"><span>s.harper</span><span>tty1</span><span>10:12</span><span>0:03</span></div><div class="tr"><span>m.weber</span><span>tty2</span><span>09:48</span><span>0:17</span></div><div class="tr"><span>h.sullivan</span><span>tty3</span><span>10:19</span><span>0:01</span></div><div class="tr"><span>f.kessler</span><span>tty4</span><span>08:56</span><span>0:08</span></div><div class="tr"><span>visitor</span><span>tty6</span><span>10:22</span><span>0:00</span></div></div>
+          <div id="online-users"><div class="tr"><span>operator</span><span>tty0</span><span>10:20</span><span>0:01</span></div><div class="tr"><span>s.harper</span><span>tty1</span><span>12:38</span><span>0:03</span></div><div class="tr"><span>m.weber</span><span>tty2</span><span>12:14</span><span>0:17</span></div><div class="tr"><span>h.sullivan</span><span>tty3</span><span>12:45</span><span>0:01</span></div><div class="tr"><span>f.kessler</span><span>tty4</span><span>11:22</span><span>0:08</span></div><div class="tr"><span>visitor</span><span>tty6</span><span>12:48</span><span>0:00</span></div></div>
         </div><p class="panel-note" id="session-count">6 active login sessions</p></section>
         <section class="panel"><h2>System Status</h2>
           <dl class="metrics"><div><dt>CPU</dt><dd id="status-cpu">18% <i style="--fill:18%"></i></dd></div><div><dt>Memory</dt><dd id="status-memory">33% <i style="--fill:33%"></i></dd></div><div><dt>Swap</dt><dd id="status-swap">04% <i style="--fill:4%"></i></dd></div><div><dt>Processes</dt><dd id="status-processes">42</dd></div><div><dt>Run queue</dt><dd id="status-run-queue">1</dd></div></dl>
@@ -45,7 +45,7 @@
 
 login: visitor
 Password:
-Last login: Fri May 18 10:15:07 on tty6
+Last login: Fri Jul 31 12:41:07 on tty6
 UNIX System VAX-11/780
 
 You have 2 unread messages.
@@ -53,12 +53,12 @@ Type "help" for the exhibit roadmap.
 
 $ who
 USER         TTY     LOGIN    IDLE
-operator     tty0    07:54    0:01
-s.harper     tty1    10:12    0:03
-m.weber      tty2    09:48    0:17
-h.sullivan   tty3    10:19    0:01
-f.kessler    tty4    08:56    0:08
-visitor      tty6    10:22    0:00
+operator     tty0    10:20    0:01
+s.harper     tty1    12:38    0:03
+m.weber      tty2    12:14    0:17
+h.sullivan   tty3    12:45    0:01
+f.kessler    tty4    11:22    0:08
+visitor      tty6    12:48    0:00
 
 $ mail
 Mail version 6.2. Type ? for help.
@@ -80,7 +80,7 @@ $ <span class="cursor" aria-hidden="true">█</span></pre></div></div></div>
           <div><dt>who / w</dt><dd>See who shares the host</dd></div><div><dt>mail</dt><dd>Read office messages</dd></div><div><dt>write / talk</dt><dd>Contact another user</dd></div><div><dt>man</dt><dd>Open the online manual</dd></div><div><dt>ps</dt><dd>Inspect running work</dd></div><div><dt>ls / cat</dt><dd>List and read files</dd></div><div><dt>find / grep</dt><dd>Search stored information</dd></div><div><dt>tip / cu</dt><dd>Call a remote machine</dd></div>
         </dl><p class="panel-note">Each future command will explain how people worked—not merely its syntax.</p></section>
         <section class="panel dial"><div class="title-row"><h2>Dial Out</h2><span>PLANNED</span></div><p>Before the web, terminals reached distant UNIX hosts and information services over serial lines and telephone modems.</p><code>tip research-net</code><code>cu -l /dev/cu1</code><p class="panel-note">A future line will connect to Midnight Relay BBS. No call is placed in Phase 1.</p></section>
-        <section class="panel history"><h2>Why Time Sharing?</h2><p>Computers were expensive institutional resources. A central host rapidly switched among many terminals, giving each person the experience of direct access.</p><p class="maxim">Before most people owned computers,<br><strong>they shared them.</strong></p></section>
+        <section class="panel history"><h2>Why Time Sharing?</h2><p>A central host rapidly switches among many terminals, giving each person the experience of direct access while established internal work continues in one stable environment.</p><p class="maxim">One maintained system,<br><strong>shared across the company.</strong></p></section>
       </aside>
     </div>
   </main>
