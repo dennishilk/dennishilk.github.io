@@ -18,6 +18,10 @@ export const FILES = Object.freeze({
   '/usr/visitor/notes/commands.txt': file('Start with help. Explore with ls, cat, who, w, mail, ps, lpq, df, last, and man.', 'visitor'),
   '/usr/visitor/notes/exhibit-path.txt': file('Try: ls /cst/docs; cat /cst/docs/time-sharing.txt; cat /cst/docs/why-cs-vax1-remains.txt; df.', 'visitor'),
   '/etc/motd': file(MOTD),
+  '/etc/remote': file('midnight-relay:dv=/dev/cu1:br#9600:pa=none:pn=5550194:\nresearch-net:tc=midnight-relay:'),
+  '/cst/operations/dial-out.txt': file('APPROVED DIAL OUT\n\n/dev/cu1 · 9600 baud · 8N1\nDestination: The Midnight Relay BBS (555-0194)\n\nUse: tip midnight-relay\n  or cu -l /dev/cu1 -s 9600 5550194\nAt the beginning of a line, ~. hangs up.\n\nThis browser exhibit makes no real telephone call or network connection.'),
+  '/var/adm/dialout.log': file('Jul 29 22:14 visitor /dev/cu1 midnight-relay CONNECT 9600\nJul 29 22:31 visitor /dev/cu1 midnight-relay HANGUP'),
+
   '/etc/passwd': file('root:*:0:0:System Administrator:/:/bin/sh\noperator:*:10:10:System Operator:/usr/operator:/bin/sh\ns.harper:*:1001:100:Steve Harper:/usr/s.harper:/bin/sh\nm.weber:*:1002:100:Michael Weber:/usr/m.weber:/bin/sh\nh.sullivan:*:1003:100:Henry Sullivan:/usr/h.sullivan:/bin/sh\nf.kessler:*:1004:100:Frank Kessler:/usr/f.kessler:/bin/sh\nvisitor:*:1042:105:Museum Visitor:/usr/visitor:/bin/sh'),
   '/etc/group': file('staff:*:100:s.harper,m.weber,h.sullivan,f.kessler,operator\nguests:*:105:visitor'),
   '/etc/hosts': file('127.0.0.1 localhost\n192.0.2.10 cs-vax1 cst-host'),

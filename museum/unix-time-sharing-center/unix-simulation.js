@@ -43,6 +43,7 @@ function session(username, tty, loginOffsetMinutes, idleMinutes, canonical = fal
 
 export class UnixSimulation {
   constructor({ random = seededRandom(), startTime = CANONICAL_START } = {}) {
+    this.dialState = 'idle'; this.dialProgram = null; this.dialLog = ['Jul 29 22:14 visitor /dev/cu1 midnight-relay CONNECT 9600', 'Jul 29 22:31 visitor /dev/cu1 midnight-relay HANGUP'];
     this.random = random;
     this.startTime = startTime;
     this.now = startTime;

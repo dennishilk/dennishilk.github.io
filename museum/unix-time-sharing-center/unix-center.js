@@ -1,5 +1,6 @@
 import { UnixSimulation, formatClock, formatDate, formatUptime, whoRows } from './unix-simulation.js';
 import { SHELL_LIMITS, UnixShell } from './unix-shell.js';
+import { createBbsBridge, createHandshakeAudio, REMOTE_TARGET } from './unix-remote.js';
 
 const CLOCK_INTERVAL_MS = 1000;
 export const STATUS_INTERVAL = Object.freeze({ minimum: 7000, spread: 5000 });
@@ -33,7 +34,8 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     clear: doc.querySelector('#clear'),
     reset: doc.querySelector('#reset'),
     fullscreen: doc.querySelector('#fullscreen'),
-    terminalStation: doc.querySelector('.terminal-station')
+    terminalStation: doc.querySelector('.terminal-station'),
+    dialOut: doc.querySelector('#dial-out'), dialLine: doc.querySelector('#dial-line-state')
   };
 
   const createSimulation = options.createSimulation ?? (() => new UnixSimulation(options.simulationOptions));
@@ -48,6 +50,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   let inputValue = '';
   let inputCursor = 0;
   let shell;
+  let bbs=null, dialTimers=[], callAudio=null, remoteLine='', escapePending=false;
 
   const renderSessions = () => {
     const rows = whoRows(simulation);
@@ -77,6 +80,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     if (!transcript || !shell) return;
     const wasNearBottom = !screen || screen.scrollHeight - screen.scrollTop - screen.clientHeight < 48;
     transcript.replaceChildren();
+    if (shell.mode === 'remote-bbs' && bbs) { bbs.screen.renderInto(transcript); if (wasNearBottom) screen?.scrollTo?.(0, screen.scrollHeight); return; }
     const body = doc.createTextNode(`${terminalLines.join('\n')}${terminalLines.length ? '\n' : ''}`);
     transcript.append(body);
     if (shell.mode === 'shell' || shell.mode.startsWith('mail')) {
@@ -91,6 +95,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   const applyShellResult = result => {
     if (!result) return;
     if (result.reset) { reset(); return; }
+    if (result.dial) { appendLines(result.lines); inputValue='';inputCursor=0;if(terminalInput)terminalInput.value='';startDial(result.dial);renderTranscript({announce:true});return; }
     if (result.clear) terminalLines = [];
     else appendLines(result.lines);
     inputValue = ''; inputCursor = 0; if (terminalInput) terminalInput.value = '';
@@ -112,6 +117,8 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   };
   const handleTerminalKey = event => {
     if (!shell || doc.activeElement !== terminalInput) return;
+    if (shell.mode === 'dialing') { if(event.ctrlKey&&event.key.toLowerCase()==='c'){event.preventDefault();cancelDial();} return; }
+    if (shell.mode === 'remote-bbs') { event.preventDefault(); handleRemoteKey(event); return; }
     if (shell.mode === 'pager' || shell.mode === 'logged-out') { if ([' ','Enter','q','Q'].includes(event.key)) { event.preventDefault(); applyShellResult(shell.handleMode(event.key)); } return; }
     if (event.key === 'Enter') { event.preventDefault(); runInput(); return; }
     if (event.ctrlKey && event.key.toLowerCase() === 'c') { event.preventDefault(); appendLines([`${shell.prompt()}${inputValue}^C`]); syncInput(''); return; }
@@ -120,6 +127,16 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     if (event.key === 'ArrowDown' && shell.mode === 'shell') { event.preventDefault(); shell.historyIndex = Math.min(shell.history.length, shell.historyIndex + 1); syncInput(shell.history[shell.historyIndex] || ''); return; }
     if (event.key === 'Tab' && shell.mode === 'shell') { event.preventDefault(); const completed=shell.complete(inputValue); if(completed.matches.length>1){appendLines([completed.matches.join('  ')]);renderTranscript();}else syncInput(completed.value); return; }
   };
+  const setDialState=state=>{simulation.dialState=state;const stamp=`${formatDate(simulation.now)} ${formatClock(simulation.now)}`;simulation.dialLog?.push(`${stamp} visitor ${REMOTE_TARGET.device} ${REMOTE_TARGET.name} ${state.toUpperCase()}`);if(simulation.dialLog?.length>20)simulation.dialLog.splice(0,simulation.dialLog.length-20);if(state==='connected')simulation.logs.push(`${stamp} cs-vax1 dialout: visitor connected ${REMOTE_TARGET.name} at ${REMOTE_TARGET.speed}`);if(elements.dialLine)elements.dialLine.textContent=`cu1 · ${state}`;if(elements.dialOut){elements.dialOut.textContent=state==='idle'?'DIAL OUT':'HANG UP';elements.dialOut.setAttribute('aria-label',state==='idle'?'Dial The Midnight Relay BBS':'Hang up Midnight Relay BBS')}};
+  const clearDialTimers=()=>{dialTimers.forEach(id=>(view.clearTimeout||clearTimeout)(id));dialTimers=[]};
+  const finishCall=(reason='Disconnected from midnight-relay.')=>{if(shell.mode!=='remote-bbs'&&shell.mode!=='dialing')return;clearDialTimers();callAudio?.stop();callAudio=null;bbs?.destroy();bbs=null;setDialState('idle');simulation.dialProgram=null;shell.mode='shell';appendLines(['NO CARRIER',reason,'',shell.prompt(),...shell.flushAmbient().slice(0,6)]);if(!shell.notesSeen.has('dial-out')){shell.notesSeen.add('dial-out');appendLines(['','[MUSEUM NOTE]','Dial-out tools let a UNIX terminal reach another computer through a serial line and modem. The local shell remained behind the call and returned when it ended.'])}remoteLine='';if(terminalInput)terminalInput.value='';renderTranscript({announce:true});focusTerminal()};
+  const cancelDial=()=>{if(shell.mode!=='dialing')return;appendLines(['^C','Call cancelled.']);finishCall('Dial attempt cancelled.')};
+  const connectBbs=()=>{if(shell.mode!=='dialing')return;appendLines([`CONNECT ${REMOTE_TARGET.speed}`,`Connected to ${REMOTE_TARGET.service}.`,`Escape character is '~'.`]);setDialState('connected');shell.mode='remote-bbs';bbs=createBbsBridge({render:()=>renderTranscript(),onDisconnect:()=>finishCall('Remote system logged off.')});if(terminalAnnouncer)terminalAnnouncer.textContent='Connected to The Midnight Relay BBS';renderTranscript()};
+  const startDial=dial=>{if(bbs||simulation.dialState!=='idle'){shell.mode='shell';appendLines(['tip: /dev/cu1: Device busy']);return}simulation.dialProgram=dial.program;setDialState('dialing');callAudio=createHandshakeAudio(view);callAudio.start();dialTimers=[view.setTimeout(connectBbs,5200)]};
+  const sendRemoteLine=()=>{const value=remoteLine;remoteLine='';if(terminalInput)terminalInput.value='';bbs?.input(value)};
+  const handleRemoteKey=event=>{const key=event.key;if(key==='Enter'){if(escapePending){escapePending=false;bbs?.input('~')}sendRemoteLine();return}if(key==='Backspace'){remoteLine=remoteLine.slice(0,-1);if(terminalInput)terminalInput.value=remoteLine;return}if(key.length!==1)return;simulation.sessions.find(s=>s.username==='visitor').idleSeconds=0;const atStart=remoteLine.length===0;if(atStart&&key==='~'){escapePending=true;remoteLine='~';return}if(escapePending){escapePending=false;remoteLine='';if(key==='.')return finishCall();if(key==='?'){bbs?.screen.writeTrusted('\r\n~.   disconnect\r\n~?   help\r\n~~   send a literal ~\r\n');renderTranscript();return}if(key==='~'){bbs?.input('~');return}bbs?.input('~');}
+    if(bbs?.runtime.inputMode==='Single-key command'&&!bbs.runtime.pending){bbs.input(key);return}remoteLine+=key;if(terminalInput)terminalInput.value=remoteLine;};
+  const dialButton=()=>{focusTerminal();if(shell.mode==='dialing'||shell.mode==='remote-bbs')finishCall();else if(shell.mode==='shell'){syncInput('tip midnight-relay');runInput()}};
   const focusTerminal = () => terminalInput?.focus({ preventScroll: true });
   const syncCursor = () => { inputCursor = terminalInput?.selectionStart ?? inputValue.length; renderTranscript(); };
   const initializeTerminal = () => {
@@ -195,6 +212,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   };
   const clear = () => { showCanonicalTranscript = false; terminalLines = []; renderTranscript(); focusTerminal(); };
   const reset = () => {
+    clearDialTimers();callAudio?.stop();bbs?.destroy();bbs=null;callAudio=null;
     simulation = createSimulation();
     simulation.ambientHistory.length = 0;
     startedAt = monotonicNow();
@@ -215,6 +233,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   elements.clear?.addEventListener('click', clear);
   elements.reset?.addEventListener('click', reset);
   elements.fullscreen?.addEventListener('click', fullscreen);
+  elements.dialOut?.addEventListener('click', dialButton);
 
   initializeTerminal(); renderClock(); renderSessions(); renderStatus();
   doc.documentElement.dataset.unixSimulation = 'active';
@@ -226,6 +245,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     elements.clear?.removeEventListener('click', clear);
     elements.reset?.removeEventListener('click', reset);
     elements.fullscreen?.removeEventListener('click', fullscreen);
+    elements.dialOut?.removeEventListener('click', dialButton);clearDialTimers();callAudio?.stop();bbs?.destroy();
     screen?.removeEventListener('click', focusTerminal);
     terminalInput?.removeEventListener('keydown', handleTerminalKey);
     terminalInput?.removeEventListener('keyup', syncCursor);

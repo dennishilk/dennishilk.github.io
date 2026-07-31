@@ -36,7 +36,7 @@
         <section class="panel"><h2>System Status</h2>
           <dl class="metrics"><div><dt>CPU</dt><dd id="status-cpu">18% <i style="--fill:18%"></i></dd></div><div><dt>Memory</dt><dd id="status-memory">33% <i style="--fill:33%"></i></dd></div><div><dt>Swap</dt><dd id="status-swap">04% <i style="--fill:4%"></i></dd></div><div><dt>Processes</dt><dd id="status-processes">42</dd></div><div><dt>Run queue</dt><dd id="status-run-queue">1</dd></div></dl>
         </section>
-        <section class="panel"><h2>Network / TTY Lines</h2><dl class="lines"><div><dt>Console</dt><dd>tty0 · active</dd></div><div><dt>Dial-in A</dt><dd>ttyA · idle</dd></div><div><dt>Dial-in B</dt><dd>ttyB · active</dd></div><div><dt>Dial-out</dt><dd>cu1 · idle</dd></div><div><dt>Modem</dt><dd>9600 baud · 8N1</dd></div></dl></section>
+        <section class="panel"><h2>Network / TTY Lines</h2><dl class="lines"><div><dt>Console</dt><dd>tty0 · active</dd></div><div><dt>Dial-in A</dt><dd>ttyA · idle</dd></div><div><dt>Dial-in B</dt><dd>ttyB · active</dd></div><div><dt>Dial-out</dt><dd id="dial-line-state">cu1 · idle</dd></div><div><dt>Modem</dt><dd>9600 baud · 8N1</dd></div></dl></section>
       </aside>
 
       <section class="terminal-station" aria-labelledby="terminal-title">
@@ -72,15 +72,15 @@ $ <span class="cursor" aria-hidden="true">█</span></pre><div id="terminal-anno
         <div class="console-controls" aria-label="Terminal hardware controls">
           <div><span>TERMINAL CONTROLS</span><button type="button" id="reset">RESET</button><button type="button" id="clear">CLEAR</button><button type="button" disabled>BELL · PLANNED</button></div>
           <div class="knobs"><span>DISPLAY</span><label>Brightness <input id="brightness" type="range" min="70" max="130" value="100"></label><label>Contrast <input id="contrast" type="range" min="80" max="140" value="100"></label></div>
-          <div><span>CONNECTION</span><output><i></i> LOCAL LINE CONNECTED</output><button type="button" disabled>DIAL OUT · PLANNED</button><button type="button" id="fullscreen">FULLSCREEN</button></div>
+          <div><span>CONNECTION</span><output><i></i> LOCAL LINE CONNECTED</output><button type="button" id="dial-out" aria-label="Dial The Midnight Relay BBS">DIAL OUT</button><button type="button" id="fullscreen">FULLSCREEN</button></div>
         </div>
       </section>
 
       <aside class="rail right-rail" aria-label="Visitor guide">
         <section class="panel command-guide"><h2>Command Guide</h2><dl>
-          <div><dt>help</dt><dd>roadmap</dd></div><div><dt>who / w</dt><dd>sessions</dd></div><div><dt>mail</dt><dd>notices</dd></div><div><dt>man</dt><dd>manuals</dd></div><div><dt>ps</dt><dd>processes</dd></div><div><dt>ls / cat</dt><dd>files</dd></div><div><dt>lpq</dt><dd>printer</dd></div><div><dt>df</dt><dd>storage</dd></div><div><dt>find / grep</dt><dd>search</dd></div>
+          <div><dt>help</dt><dd>roadmap</dd></div><div><dt>who / w</dt><dd>sessions</dd></div><div><dt>mail</dt><dd>notices</dd></div><div><dt>man</dt><dd>manuals</dd></div><div><dt>ps</dt><dd>processes</dd></div><div><dt>ls / cat</dt><dd>files</dd></div><div><dt>lpq</dt><dd>printer</dd></div><div><dt>df</dt><dd>storage</dd></div><div><dt>find / grep</dt><dd>search</dd></div><div><dt>tip / cu</dt><dd>remote system</dd></div>
         </dl><p>Browser-only simulation. No commands leave this page.</p></section>
-        <section class="panel dial"><div class="title-row"><h2>Dial Out</h2><span>PLANNED</span></div><p>Before the web, terminals reached distant UNIX hosts and information services over serial lines and telephone modems.</p><code>tip research-net</code><code>cu -l /dev/cu1</code><p class="panel-note">A future line will connect to Midnight Relay BBS. No call is placed in Phase 1.</p></section>
+        <section class="panel dial"><div class="title-row"><h2>Dial Out</h2></div><p>Remote systems were reached through serial lines and modems. This line connects to The Midnight Relay BBS.</p><code>tip midnight-relay</code><code>cu -l /dev/cu1 -s 9600 5550194</code><p class="panel-note"><code>~.</code> returns to the local UNIX shell. The connection stays inside this browser.</p></section>
         <section class="panel history"><h2>Why Time Sharing?</h2><p>One central host served many simultaneous terminal sessions. UNIX coordinated accounts, permissions, processes, files, communication, and devices so finite resources could be shared responsibly.</p><p>Chesapeake Signal Tech maintains cs-vax1 because its specialized workflows remain stable, dependable, and well documented.</p><p class="maxim">One maintained system,<br><strong>shared across the company.</strong></p></section>
       </aside>
     </div>
