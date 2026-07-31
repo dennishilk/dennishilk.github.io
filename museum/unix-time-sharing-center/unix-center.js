@@ -53,7 +53,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   const makeHandshakeAudio=options.createHandshakeAudio??(targetView=>createHandshakeAudio(targetView));
   const makeBbsBridge=options.createBbsBridge??createBbsBridge;
   const connectionTiming=options.connectionTiming??CONNECTION_TIMING;
-  let bbs=null, dialTimers=[], callAudio=null, remoteLine='', escapePending=false,callAttempt=0;
+  let bbs=null, dialTimers=[], callAudio=null, escapePending=false,composingRemote=false,callAttempt=0;
 
   const renderSessions = () => {
     const rows = whoRows(simulation);
@@ -132,13 +132,14 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   };
   const setDialState=state=>{simulation.dialState=state;const stamp=`${formatDate(simulation.now)} ${formatClock(simulation.now)}`;simulation.dialLog?.push(`${stamp} visitor ${REMOTE_TARGET.device} ${REMOTE_TARGET.name} ${state.toUpperCase()}`);if(simulation.dialLog?.length>20)simulation.dialLog.splice(0,simulation.dialLog.length-20);if(state==='connected')simulation.logs.push(`${stamp} cs-vax1 dialout: visitor connected ${REMOTE_TARGET.name} at ${REMOTE_TARGET.speed}`);if(elements.dialLine)elements.dialLine.textContent=`cu1 · ${state}`;if(elements.dialOut){elements.dialOut.textContent=state==='idle'?'DIAL OUT':'HANG UP';elements.dialOut.setAttribute('aria-label',state==='idle'?'Dial The Midnight Relay BBS':'Hang up Midnight Relay BBS')}};
   const clearDialTimers=()=>{dialTimers.forEach(id=>(view.clearTimeout||clearTimeout)(id));dialTimers=[]};
-  const finishCall=(reason='Disconnected from midnight-relay.')=>{if(shell.mode!=='remote-bbs'&&shell.mode!=='dialing')return;callAttempt++;clearDialTimers();callAudio?.stop();callAudio=null;bbs?.destroy();bbs=null;setDialState('idle');simulation.dialProgram=null;shell.mode='shell';appendLines(['NO CARRIER',reason,'',shell.prompt(),...shell.flushAmbient().slice(0,6)]);if(!shell.notesSeen.has('dial-out')){shell.notesSeen.add('dial-out');appendLines(['','[MUSEUM NOTE]','Dial-out tools let a UNIX terminal reach another computer through a serial line and modem. The local shell remained behind the call and returned when it ended.'])}remoteLine='';inputValue='';inputCursor=0;if(terminalInput)terminalInput.value='';renderTranscript({announce:true});focusTerminal()};
+  const finishCall=(reason='Disconnected from midnight-relay.')=>{if(shell.mode!=='remote-bbs'&&shell.mode!=='dialing')return;callAttempt++;clearDialTimers();callAudio?.stop();callAudio=null;bbs?.destroy();bbs=null;setDialState('idle');simulation.dialProgram=null;shell.mode='shell';appendLines(['NO CARRIER',reason,'',shell.prompt(),...shell.flushAmbient().slice(0,6)]);if(!shell.notesSeen.has('dial-out')){shell.notesSeen.add('dial-out');appendLines(['','[MUSEUM NOTE]','Dial-out tools let a UNIX terminal reach another computer through a serial line and modem. The local shell remained behind the call and returned when it ended.'])}escapePending=false;inputValue='';inputCursor=0;if(terminalInput)terminalInput.value='';renderTranscript({announce:true});focusTerminal()};
   const cancelDial=()=>{if(shell.mode!=='dialing')return;appendLines(['^C','Call cancelled.']);finishCall('Dial attempt cancelled.')};
   const pause=ms=>new Promise(resolve=>{const id=view.setTimeout(()=>{dialTimers=dialTimers.filter(timer=>timer!==id);resolve()},ms);dialTimers.push(id)});
-  const startDial=async dial=>{if(bbs||simulation.dialState!=='idle'){shell.mode='shell';appendLines(['tip: /dev/cu1: Device busy']);return}const attempt=++callAttempt;simulation.dialProgram=dial.program;setDialState('dialing');appendLines(['Negotiating carrier...']);renderTranscript();callAudio=makeHandshakeAudio(view);await callAudio.start();if(attempt!==callAttempt||shell.mode!=='dialing')return;callAudio=null;appendLines([`CONNECT ${REMOTE_TARGET.speed}`,`Connected to ${REMOTE_TARGET.service}.`,`Escape character is '~'.`]);renderTranscript({announce:true});await pause(connectionTiming.postConnectPauseMs);if(attempt!==callAttempt||shell.mode!=='dialing')return;setDialState('connected');shell.mode='remote-bbs';bbs=makeBbsBridge({render:()=>renderTranscript(),onDisconnect:()=>finishCall('Remote system logged off.')});if(terminalAnnouncer)terminalAnnouncer.textContent='Connected to The Midnight Relay BBS';renderTranscript()};
-  const sendRemoteLine=()=>{const value=remoteLine;remoteLine='';if(terminalInput)terminalInput.value='';bbs?.input(value)};
-  const handleRemoteKey=event=>{const key=event.key;if(key==='Enter'){if(escapePending){escapePending=false;bbs?.input('~')}sendRemoteLine();return}if(key==='Backspace'){remoteLine=remoteLine.slice(0,-1);if(terminalInput)terminalInput.value=remoteLine;return}if(key.length!==1)return;simulation.sessions.find(s=>s.username==='visitor').idleSeconds=0;const atStart=remoteLine.length===0;if(atStart&&key==='~'){escapePending=true;remoteLine='~';return}if(escapePending){escapePending=false;remoteLine='';if(key==='.')return finishCall();if(key==='?'){bbs?.screen.writeTrusted('\r\n~.   disconnect\r\n~?   help\r\n~~   send a literal ~\r\n');renderTranscript();return}if(key==='~'){bbs?.input('~');return}bbs?.input('~');}
-    if(bbs?.runtime.inputMode==='Single-key command'&&!bbs.runtime.pending){bbs.input(key);return}remoteLine+=key;if(terminalInput)terminalInput.value=remoteLine;};
+  const startDial=async dial=>{if(bbs||simulation.dialState!=='idle'){shell.mode='shell';appendLines(['tip: /dev/cu1: Device busy']);return}const attempt=++callAttempt;simulation.dialProgram=dial.program;setDialState('dialing');appendLines(['Negotiating carrier...']);renderTranscript();callAudio=makeHandshakeAudio(view);await callAudio.start();if(attempt!==callAttempt||shell.mode!=='dialing')return;callAudio=null;appendLines([`CONNECT ${REMOTE_TARGET.speed}`,`Connected to ${REMOTE_TARGET.service}.`,`Escape character is '~'.`]);renderTranscript({announce:true});await pause(connectionTiming.postConnectPauseMs);if(attempt!==callAttempt||shell.mode!=='dialing')return;setDialState('connected');shell.mode='remote-bbs';inputValue='';inputCursor=0;escapePending=false;if(terminalInput)terminalInput.value='';bbs=makeBbsBridge({render:()=>renderTranscript(),onDisconnect:()=>finishCall('Remote system logged off.')});if(terminalAnnouncer)terminalAnnouncer.textContent='Connected to The Midnight Relay BBS';renderTranscript();focusTerminal()};
+  const handleRemoteKey=event=>{const key=event.key;if(!bbs)return;if(key.length===1&&!event.ctrlKey&&!event.altKey&&!event.metaKey){simulation.sessions.find(s=>s.username==='visitor').idleSeconds=0;const atStart=bbs.lineValue===''&&!escapePending;if(atStart&&key==='~'){escapePending=true;return}if(escapePending){escapePending=false;if(key==='.')return finishCall();if(key==='?'){bbs.screen.writeTrusted('\r\n~.   disconnect\r\n~?   help\r\n~~   send a literal ~\r\n');renderTranscript();return}bbs.key({key:'~',preventDefault(){}});if(key==='~')return}}
+    else if(escapePending){if(key==='Backspace'){escapePending=false;return}if(key==='Enter'){escapePending=false;bbs.key({key:'~',preventDefault(){}})}}bbs.key(event)};
+  const handleRemoteInput=event=>{if(composingRemote||event.isComposing)return;const value=event.target.value;event.target.value='';for(const key of value)handleRemoteKey({key,preventDefault(){}})};
+  const handleBeforeInput=event=>{if(shell.mode!=='remote-bbs'||event.isComposing)return;const keys={insertLineBreak:'Enter',insertParagraph:'Enter',deleteContentBackward:'Backspace',deleteContentForward:'Delete'};const key=keys[event.inputType];if(!key)return;event.preventDefault();handleRemoteKey({key,preventDefault(){}});if(terminalInput)terminalInput.value=''};
   const dialButton=()=>{focusTerminal();if(shell.mode==='dialing'||shell.mode==='remote-bbs')finishCall();else if(shell.mode==='shell'){syncInput('tip midnight-relay');runInput()}};
   const focusTerminal = () => terminalInput?.focus({ preventScroll: true });
   const syncCursor = () => { inputCursor = terminalInput?.selectionStart ?? inputValue.length; renderTranscript(); };
@@ -146,7 +147,10 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     shell = new UnixShell(() => simulation);
     terminalLines = canonicalTranscript();
     screen?.addEventListener('click', focusTerminal);
-    terminalInput?.addEventListener('input', event => {if(shell.mode==='dialing'){event.target.value='';return}syncInput(event.target.value, event.target.selectionStart, false)});
+    terminalInput?.addEventListener('input', event => {if(shell.mode==='dialing'){event.target.value='';return}if(shell.mode==='remote-bbs'){handleRemoteInput(event);return}syncInput(event.target.value, event.target.selectionStart, false)});
+    terminalInput?.addEventListener('beforeinput',handleBeforeInput);
+    terminalInput?.addEventListener('compositionstart',()=>{composingRemote=shell.mode==='remote-bbs'});
+    terminalInput?.addEventListener('compositionend',event=>{if(!composingRemote)return;composingRemote=false;handleRemoteInput(event)});
     terminalInput?.addEventListener('keydown', handleTerminalKey);
     terminalInput?.addEventListener('keyup', syncCursor);
     terminalInput?.addEventListener('click', syncCursor);
@@ -213,7 +217,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   const applyDisplay = () => {
     if (screen && brightness && contrast) screen.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%)`;
   };
-  const clear = () => { showCanonicalTranscript = false; terminalLines = []; renderTranscript(); focusTerminal(); };
+  const clear = () => { showCanonicalTranscript = false; terminalLines = [];if(shell?.mode==='remote-bbs')bbs?.clear();renderTranscript(); focusTerminal(); };
   const reset = () => {
     callAttempt++;clearDialTimers();callAudio?.stop();bbs?.destroy();bbs=null;callAudio=null;
     simulation = createSimulation();

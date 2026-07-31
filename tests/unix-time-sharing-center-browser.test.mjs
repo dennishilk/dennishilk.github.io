@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { initializeUnixCenter, startUnixCenter } from '../museum/unix-time-sharing-center/unix-center.js';
+import { createBbsBridge } from '../museum/unix-time-sharing-center/unix-remote.js';
 
 const page = await readFile(new URL('../museum/unix-time-sharing-center/index.html', import.meta.url), 'utf8');
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
@@ -159,6 +160,51 @@ test('modem completion authoritatively precedes CONNECT, pause, and BBS activati
   assert.equal(lifecycle.shell.mode, 'remote-bbs');
   assert.equal(lifecycle.simulation.dialState, 'connected');
   assert.equal(bridgeCreations, 1);
+});
+
+test('connected UNIX textarea drives the real BBS line and single-key dispatcher', async () => {
+  const app = interactiveHarness();
+  let bridge;
+  const lifecycle = initializeUnixCenter(app.doc, app.view, {
+    createHandshakeAudio: () => ({ start: () => Promise.resolve(), stop() {} }),
+    createBbsBridge: options => (bridge = createBbsBridge(options)),
+    connectionTiming: { postConnectPauseMs: 650 }
+  });
+  app.elements.screen.dispatch('click');
+  app.type('tip midnight-relay'); app.key('Enter');
+  await Promise.resolve(); await Promise.resolve();
+  app.timeouts.at(-1)(); await Promise.resolve();
+  assert.equal(lifecycle.shell.mode, 'remote-bbs');
+  assert.match(bridge.screen.toString(), /NN:/);
+  assert.strictEqual(app.doc.activeElement, app.elements['terminal-input']);
+  const history = [...lifecycle.shell.history];
+  for (const character of 'GUEST') assert.equal(app.key(character), true);
+  assert.equal(bridge.lineValue, 'GUEST');
+  app.key('Backspace'); assert.equal(bridge.lineValue, 'GUES');
+  app.key('T'); assert.equal(bridge.lineValue, 'GUEST');
+  app.key('Enter');
+  assert.equal(bridge.runtime.context, 'main');
+  assert.deepEqual(lifecycle.shell.history, history);
+  assert.equal(app.elements['terminal-input'].value, '');
+  app.key('?');
+  assert.equal(bridge.runtime.context, 'main', 'single-key command dispatches immediately');
+  lifecycle.destroy();
+});
+
+test('remote tip escapes are line-positioned and cleanup restores UNIX input', async () => {
+  const app = interactiveHarness(); let bridge;
+  const lifecycle = initializeUnixCenter(app.doc, app.view, {
+    createHandshakeAudio: () => ({ start: () => Promise.resolve(), stop() {} }),
+    createBbsBridge: options => (bridge = createBbsBridge(options)),
+    connectionTiming: { postConnectPauseMs: 650 }
+  });
+  app.elements.screen.dispatch('click'); app.type('tip midnight-relay'); app.key('Enter');
+  await Promise.resolve(); await Promise.resolve(); app.timeouts.at(-1)(); await Promise.resolve();
+  app.key('~'); app.key('?'); assert.match(bridge.screen.toString(), /~\.   disconnect/);
+  app.key('~'); app.key('~'); assert.equal(bridge.lineValue, '~');
+  app.key('Backspace'); app.key('~'); app.key('.');
+  assert.equal(lifecycle.shell.mode, 'shell');
+  app.type('echo restored'); assert.match(app.elements.transcript.textContent, /echo restored/);
 });
 
 test('cancellation and reset invalidate pending modem completions', async () => {

@@ -3,6 +3,9 @@ export const CONNECTION_TIMING=Object.freeze({handshakeFallbackMs:12000,postConn
 export const REMOTE_TARGETS=Object.freeze([Object.freeze({name:'midnight-relay',aliases:Object.freeze(['research-net']),number:'5550194',displayNumber:'555-0194',device:'/dev/cu1',speed:9600,format:'8N1',service:'The Midnight Relay BBS'})]);
 export const REMOTE_TARGET=REMOTE_TARGETS[0];
 export const SUPPORTED_SPEEDS=Object.freeze([300,1200,2400,9600,14400]);
+// The former HTMLAudioElement path played at .22.  Doubling the linear level is
+// approximately +6 dB; a compressor protects the resulting Web Audio output.
+export const BRIDGE_HANDSHAKE_GAIN=.44;
 export function targetByName(name){return REMOTE_TARGETS.find(target=>target.name===name||target.aliases.includes(name))||null}
 export function targetByNumber(number){return REMOTE_TARGETS.find(target=>target.number===number)||null}
 export function parseDialCommand(name,args){
@@ -13,16 +16,17 @@ export function parseDialCommand(name,args){
  const target=targetByNumber(number);return target?{target,program:'cu',speed}:{error:'NO CARRIER'};
 }
 export function createHandshakeAudio(view=window,{fallbackMs=CONNECTION_TIMING.handshakeFallbackMs}={}){
- let audio=null,timer=null,settle=null,startedAt=0;
+ let audio=null,timer=null,settle=null,startedAt=0,context=null,source=null,gain=null,limiter=null;
  const clear=()=>{if(timer!==null)(view.clearTimeout||clearTimeout)(timer),timer=null};
- const finish=()=>{clear();settle?.();settle=null};
+ const release=()=>{if(audio){audio.pause();audio.removeAttribute?.('src');audio=null}try{source?.disconnect();gain?.disconnect();limiter?.disconnect()}catch{}context?.close?.().catch(()=>{});source=gain=limiter=context=null};
+ const finish=()=>{clear();release();settle?.();settle=null};
  const fallback=()=>{const elapsed=Math.max(0,(view.performance?.now?.()??Date.now())-startedAt);clear();timer=(view.setTimeout||setTimeout)(finish,Math.max(0,fallbackMs-elapsed))};
  return {
   start(){
    startedAt=view.performance?.now?.()??Date.now();
-   return new Promise(resolve=>{settle=resolve;try{audio=new view.Audio(HANDSHAKE_AUDIO);audio.volume=.22;audio.addEventListener?.('ended',finish,{once:true});audio.addEventListener?.('error',fallback,{once:true});const playback=audio.play();if(playback?.catch)playback.catch(fallback);else if(!audio.addEventListener)fallback()}catch{fallback()}});
+   return new Promise(resolve=>{settle=resolve;try{audio=new view.Audio(HANDSHAKE_AUDIO);audio.volume=1;const AudioContext=view.AudioContext||view.webkitAudioContext;if(AudioContext){context=new AudioContext();source=context.createMediaElementSource(audio);gain=context.createGain();limiter=context.createDynamicsCompressor();gain.gain.value=BRIDGE_HANDSHAKE_GAIN;limiter.threshold.value=-10;limiter.knee.value=12;limiter.ratio.value=4;limiter.attack.value=.003;limiter.release.value=.18;source.connect(gain).connect(limiter).connect(context.destination);context.resume?.().catch(()=>{})}else audio.volume=BRIDGE_HANDSHAKE_GAIN;audio.addEventListener?.('ended',finish,{once:true});audio.addEventListener?.('error',fallback,{once:true});const playback=audio.play();if(playback?.catch)playback.catch(fallback);else if(!audio.addEventListener)fallback()}catch{fallback()}});
   },
-  stop(){clear();settle?.();settle=null;if(audio){audio.pause();audio.removeAttribute?.('src');audio=null}}
+  stop(){clear();release();settle?.();settle=null}
  };
 }
 export {createBbsBridge};
