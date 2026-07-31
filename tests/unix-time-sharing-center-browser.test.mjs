@@ -43,7 +43,7 @@ function harness({ readyState = 'complete', hidden = false } = {}) {
 
 test('page loads the browser controller as a relative module with a browser-relative model import', () => {
   assert.match(page, /<script type="module" src="\.\/unix-center\.js"><\/script>/);
-  assert.match(controller, /from ['"]\.\/unix-simulation\.mjs['"]/);
+  assert.match(controller, /from ['"]\.\/unix-simulation\.js['"]/);
   assert.match(controller, /if \(typeof document !== 'undefined'\) startUnixCenter\(\)/);
 });
 

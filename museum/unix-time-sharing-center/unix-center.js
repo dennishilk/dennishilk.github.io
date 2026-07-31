@@ -1,4 +1,4 @@
-import { UnixSimulation, formatClock, formatDate, whoRows } from './unix-simulation.mjs';
+import { UnixSimulation, formatClock, formatDate, whoRows } from './unix-simulation.js';
 
 const CLOCK_INTERVAL_MS = 1000;
 export const STATUS_INTERVAL = Object.freeze({ minimum: 7000, spread: 5000 });

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { AMBIENT_HISTORY_LIMIT, AMBIENT_MESSAGES, CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.mjs';
+import { AMBIENT_HISTORY_LIMIT, AMBIENT_MESSAGES, CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.js';
 
 const page = await readFile(new URL('../museum/unix-time-sharing-center/index.html', import.meta.url), 'utf8');
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
