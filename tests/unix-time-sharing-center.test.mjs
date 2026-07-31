@@ -95,7 +95,7 @@ test('controller uses one clock lifecycle with calm centralized schedules', () =
   assert.match(controller, /minimum: 45000, spread: 30000/);
   assert.match(controller, /firstDelay: 120000/);
   assert.equal((controller.match(/setInterval\(/g) || []).length, 1);
-  assert.match(controller, /view\[LIFECYCLE_KEY\]\?\.destroy\(\)/);
+  assert.match(controller, /if \(view\[LIFECYCLE_KEY\]\) return view\[LIFECYCLE_KEY\]/);
   assert.match(controller, /clearInterval\(timer\)/);
   assert.match(controller, /visibilitychange/);
   assert.match(controller, /simulation\.considerAmbientMessage\(\)/);
