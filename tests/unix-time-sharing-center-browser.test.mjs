@@ -5,6 +5,7 @@ import { initializeUnixCenter, startUnixCenter } from '../museum/unix-time-shari
 
 const page = await readFile(new URL('../museum/unix-time-sharing-center/index.html', import.meta.url), 'utf8');
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
+const styles = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.css', import.meta.url), 'utf8');
 
 class Events {
   listeners = new Map();
@@ -46,6 +47,36 @@ test('page loads the browser controller as a relative module with a browser-rela
   assert.match(page, /<script type="module" src="\.\/unix-center\.js"><\/script>/);
   assert.match(controller, /from ['"]\.\/unix-simulation\.js['"]/);
   assert.match(controller, /if \(typeof document !== 'undefined'\) startUnixCenter\(\)/);
+});
+
+test('the real mobile-compatible terminal input is labeled and outside the visible CRT screen', () => {
+  assert.match(page, /<textarea id="terminal-input"[^>]+aria-label="UNIX terminal command input"[^>]+autocapitalize="none"[^>]+enterkeyhint="send"/);
+  const screenEnd = page.indexOf('</div></div></div>', page.indexOf('class="screen"'));
+  const inputPosition = page.indexOf('<textarea id="terminal-input"');
+  assert.ok(screenEnd > 0 && inputPosition > screenEnd, 'input follows the visible CRT instead of occupying transcript space');
+  assert.equal((page.match(/id="terminal-input"/g) || []).length, 1);
+});
+
+test('terminal input uses a fully clipped, non-disruptive visual hiding treatment', () => {
+  const rule = styles.match(/\.terminal-input\{([^}]+)\}/)?.[1] ?? '';
+  for (const declaration of ['position:fixed', 'width:1px', 'height:1px', 'clip-path:inset(50%)', 'opacity:0', 'appearance:none', 'background:transparent', 'border:0', 'box-shadow:none', 'caret-color:transparent', 'resize:none', 'pointer-events:none']) {
+    assert.ok(rule.includes(declaration), `missing hidden-input declaration: ${declaration}`);
+  }
+  assert.doesNotMatch(rule, /display:none|visibility:hidden/);
+});
+
+test('CRT focus and rendered command-line plumbing retain a single visible input buffer', () => {
+  assert.match(controller, /screen\?\.addEventListener\('click', focusTerminal\)/);
+  assert.match(controller, /focus\(\{ preventScroll: true \}\)/);
+  assert.match(controller, /event\.target\.selectionStart, false/);
+  assert.match(controller, /inputValue\.slice\(0, inputCursor\)/);
+  assert.match(controller, /inputValue\.slice\(inputCursor/);
+  assert.equal((page.match(/<textarea/g) || []).length, 1);
+});
+
+test('Clear and Reset restore focus to the terminal input', () => {
+  assert.match(controller, /const clear = \(\) => \{[^}]+renderTranscript\(\); focusTerminal\(\); \}/);
+  assert.match(controller, /renderClock\(\); renderSessions\(\); renderStatus\(\); renderTranscript\(\); focusTerminal\(\);/);
 });
 
 test('already-loaded startup initializes once, tolerates optional omissions, and ticks the clock', () => {
