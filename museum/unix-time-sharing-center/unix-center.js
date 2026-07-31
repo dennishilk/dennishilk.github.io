@@ -193,9 +193,10 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   const applyDisplay = () => {
     if (screen && brightness && contrast) screen.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%)`;
   };
-  const clear = () => { showCanonicalTranscript = false; simulation.ambientHistory.length = 0; terminalLines = []; renderTranscript(); focusTerminal(); };
+  const clear = () => { showCanonicalTranscript = false; terminalLines = []; renderTranscript(); focusTerminal(); };
   const reset = () => {
     simulation = createSimulation();
+    simulation.ambientHistory.length = 0;
     startedAt = monotonicNow();
     nextStatus = STATUS_INTERVAL.minimum + simulation.random() * STATUS_INTERVAL.spread;
     nextSessionCheck = SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
