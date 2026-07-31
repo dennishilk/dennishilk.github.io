@@ -1,4 +1,5 @@
 import { UnixSimulation, formatClock, formatDate, formatUptime, whoRows } from './unix-simulation.js';
+import { SHELL_LIMITS, UnixShell } from './unix-shell.js';
 
 const CLOCK_INTERVAL_MS = 1000;
 export const STATUS_INTERVAL = Object.freeze({ minimum: 7000, spread: 5000 });
@@ -10,6 +11,8 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   if (view[LIFECYCLE_KEY]) return view[LIFECYCLE_KEY];
   const screen = doc.querySelector('.screen');
   const transcript = screen?.querySelector('pre');
+  const terminalInput = doc.querySelector('#terminal-input');
+  const terminalAnnouncer = doc.querySelector('#terminal-announcer');
   const usersTable = doc.querySelector('#online-users');
   const clock = doc.querySelector('#clock');
   if (!clock) return null;
@@ -41,6 +44,10 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   let nextSessionCheck = SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
   let nextAmbientCheck = AMBIENT_INTERVAL.firstDelay + simulation.random() * AMBIENT_INTERVAL.spread;
   let showCanonicalTranscript = true;
+  let terminalLines = [];
+  let inputValue = '';
+  let inputCursor = 0;
+  let shell;
 
   const renderSessions = () => {
     const rows = whoRows(simulation);
@@ -58,19 +65,73 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     if (elements.currentUsers) elements.currentUsers.textContent = String(rows.length);
   };
 
-  const renderTranscript = () => {
+  const canonicalTranscript = () => {
     const lines = whoRows(simulation).map(row =>
       `${row.username.padEnd(12)} ${row.tty.padEnd(7)} ${row.login.padEnd(8)} ${row.idle}`
     );
     const canonical = `Chesapeake Signal Tech UNIX/32V (cs-vax1)\n\nlogin: visitor\nPassword:\nLast login: Fri Jul 31 12:41:07 on tty6\nUNIX System VAX-11/780\n\nYou have 2 unread messages.\nType "help" for the exhibit roadmap.\n\n$ who\nUSER         TTY     LOGIN    IDLE\n${lines.join('\n')}\n\n$ mail\nMail version 6.2. Type ? for help.\n  1  m.weber    Printer maintenance complete\n  2  operator   Friday tape rotation\n& q\n`;
-    const ambient = simulation.ambientHistory.map(event => `[${formatClock(event.timestamp)}] ${event.text}`).join('\n');
-    if (!transcript) return;
-    transcript.textContent = `${showCanonicalTranscript ? canonical : ''}${ambient ? `\n${ambient}\n` : ''}\n$ `;
-    const cursor = doc.createElement('span');
-    cursor.className = 'cursor';
-    cursor.setAttribute('aria-hidden', 'true');
-    cursor.textContent = '█';
-    transcript.append(cursor);
+    return canonical.trimEnd().split('\n');
+  };
+
+  const renderTranscript = ({ announce = false } = {}) => {
+    if (!transcript || !shell) return;
+    const wasNearBottom = !screen || screen.scrollHeight - screen.scrollTop - screen.clientHeight < 48;
+    transcript.replaceChildren();
+    const body = doc.createTextNode(`${terminalLines.join('\n')}${terminalLines.length ? '\n' : ''}`);
+    transcript.append(body);
+    if (shell.mode === 'shell' || shell.mode.startsWith('mail')) {
+      transcript.append(doc.createTextNode((shell.mode === 'shell' ? shell.prompt() : '& ') + inputValue.slice(0, inputCursor)));
+      const cursor = doc.createElement('span'); cursor.className = 'cursor'; cursor.setAttribute('aria-hidden', 'true'); cursor.textContent = inputValue[inputCursor] || '█'; transcript.append(cursor);
+      transcript.append(doc.createTextNode(inputValue.slice(inputCursor + (inputValue[inputCursor] ? 1 : 0))));
+    }
+    if (announce && terminalAnnouncer) terminalAnnouncer.textContent = `Command output. ${terminalLines.slice(-8).join(' ')}`.slice(0, 800);
+    if (wasNearBottom) screen?.scrollTo?.(0, screen.scrollHeight);
+  };
+  const appendLines = lines => { terminalLines.push(...lines); if (terminalLines.length > SHELL_LIMITS.scrollback) terminalLines.splice(0, terminalLines.length - SHELL_LIMITS.scrollback); };
+  const applyShellResult = result => {
+    if (!result) return;
+    if (result.reset) { reset(); return; }
+    if (result.clear) terminalLines = [];
+    else appendLines(result.lines);
+    inputValue = ''; inputCursor = 0; if (terminalInput) terminalInput.value = '';
+    renderTranscript({ announce: true });
+  };
+  const runInput = () => {
+    if (shell.mode !== 'shell') { applyShellResult(shell.handleMode(inputValue)); return; }
+    appendLines([`${shell.prompt()}${inputValue}`]);
+    applyShellResult(shell.execute(inputValue));
+  };
+  const syncInput = value => { inputValue = String(value).slice(0, SHELL_LIMITS.command); inputCursor = inputValue.length; renderTranscript(); };
+  const handleTerminalKey = event => {
+    if (!shell || doc.activeElement !== terminalInput) return;
+    if (shell.mode === 'pager' || shell.mode === 'logged-out') { if ([' ','Enter','q','Q'].includes(event.key)) { event.preventDefault(); applyShellResult(shell.handleMode(event.key)); } return; }
+    if (event.key === 'Enter') { event.preventDefault(); runInput(); return; }
+    if (event.ctrlKey && event.key.toLowerCase() === 'c') { event.preventDefault(); appendLines([`${shell.prompt()}${inputValue}^C`]); syncInput(''); return; }
+    if (event.ctrlKey && event.key.toLowerCase() === 'l') { event.preventDefault(); applyShellResult({ lines: [], clear: true }); return; }
+    if (event.key === 'ArrowUp' && shell.mode === 'shell') { event.preventDefault(); shell.historyIndex = Math.max(0, shell.historyIndex - 1); syncInput(shell.history[shell.historyIndex] || ''); return; }
+    if (event.key === 'ArrowDown' && shell.mode === 'shell') { event.preventDefault(); shell.historyIndex = Math.min(shell.history.length, shell.historyIndex + 1); syncInput(shell.history[shell.historyIndex] || ''); return; }
+    if (event.key === 'Tab' && shell.mode === 'shell') { event.preventDefault(); const completed=shell.complete(inputValue); if(completed.matches.length>1){appendLines([completed.matches.join('  ')]);renderTranscript();}else syncInput(completed.value); return; }
+  };
+  const focusTerminal = () => terminalInput?.focus();
+  const syncCursor = () => { inputCursor = terminalInput?.selectionStart ?? inputValue.length; renderTranscript(); };
+  const initializeTerminal = () => {
+    shell = new UnixShell(() => simulation);
+    terminalLines = canonicalTranscript();
+    screen?.addEventListener('click', focusTerminal);
+    terminalInput?.addEventListener('input', event => syncInput(event.target.value));
+    terminalInput?.addEventListener('keydown', handleTerminalKey);
+    terminalInput?.addEventListener('keyup', syncCursor);
+    terminalInput?.addEventListener('click', syncCursor);
+    terminalInput?.addEventListener('focus', () => screen?.classList?.add('terminal-focused'));
+    terminalInput?.addEventListener('blur', () => screen?.classList?.remove('terminal-focused'));
+    renderTranscript();
+  };
+
+  const appendAmbient = event => {
+    const line = `[${formatClock(event.timestamp)}] ${event.text}`;
+    if (shell.queueAmbient(line)) return;
+    appendLines(['', line]);
+    renderTranscript();
   };
 
   const renderStatus = () => {
@@ -107,13 +168,15 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
       nextSessionCheck = elapsed + SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
     }
     if (elapsed >= nextAmbientCheck) {
-      transcriptChanged = Boolean(simulation.considerAmbientMessage());
+      const ambient = simulation.considerAmbientMessage();
+      transcriptChanged = Boolean(ambient);
+      if (ambient && !doc.hidden) appendAmbient(ambient);
       nextAmbientCheck = elapsed + AMBIENT_INTERVAL.minimum + simulation.random() * AMBIENT_INTERVAL.spread;
     }
     if (!doc.hidden) {
       renderClock();
       renderSessions();
-      if (sessionsChanged || transcriptChanged) renderTranscript();
+      if (sessionsChanged && !transcriptChanged) renderTranscript();
     }
   };
   const handleVisibility = () => { if (!doc.hidden) { tick(); renderStatus(); renderTranscript(); } };
@@ -122,7 +185,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   const applyDisplay = () => {
     if (screen && brightness && contrast) screen.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%)`;
   };
-  const clear = () => { showCanonicalTranscript = false; simulation.ambientHistory.length = 0; renderTranscript(); };
+  const clear = () => { showCanonicalTranscript = false; simulation.ambientHistory.length = 0; terminalLines = []; renderTranscript(); };
   const reset = () => {
     simulation = createSimulation();
     startedAt = monotonicNow();
@@ -130,6 +193,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     nextSessionCheck = SESSION_INTERVAL.minimum + simulation.random() * SESSION_INTERVAL.spread;
     nextAmbientCheck = AMBIENT_INTERVAL.firstDelay + simulation.random() * AMBIENT_INTERVAL.spread;
     showCanonicalTranscript = true;
+    shell?.reset(); terminalLines = canonicalTranscript(); inputValue = ''; inputCursor = 0;
     if (brightness) brightness.value = 100;
     if (contrast) contrast.value = 100;
     applyDisplay();
@@ -142,7 +206,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   elements.reset?.addEventListener('click', reset);
   elements.fullscreen?.addEventListener('click', fullscreen);
 
-  renderClock(); renderSessions(); renderStatus(); renderTranscript();
+  initializeTerminal(); renderClock(); renderSessions(); renderStatus();
   doc.documentElement.dataset.unixSimulation = 'active';
   const timer = view.setInterval(tick, CLOCK_INTERVAL_MS);
   const destroy = () => {
@@ -152,6 +216,10 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     elements.clear?.removeEventListener('click', clear);
     elements.reset?.removeEventListener('click', reset);
     elements.fullscreen?.removeEventListener('click', fullscreen);
+    screen?.removeEventListener('click', focusTerminal);
+    terminalInput?.removeEventListener('keydown', handleTerminalKey);
+    terminalInput?.removeEventListener('keyup', syncCursor);
+    terminalInput?.removeEventListener('click', syncCursor);
     doc.removeEventListener('visibilitychange', handleVisibility);
     view.removeEventListener('pagehide', destroy);
     if (view[LIFECYCLE_KEY]?.destroy === destroy) delete view[LIFECYCLE_KEY];
@@ -159,7 +227,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   };
   view.addEventListener('pagehide', destroy, { once: true });
   doc.addEventListener('visibilitychange', handleVisibility);
-  const lifecycle = { get simulation() { return simulation; }, tick, destroy, reset, clear };
+  const lifecycle = { get simulation() { return simulation; }, get shell() { return shell; }, tick, destroy, reset, clear };
   return (view[LIFECYCLE_KEY] = lifecycle);
 }
 
