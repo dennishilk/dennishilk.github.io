@@ -101,7 +101,15 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     appendLines([`${shell.prompt()}${inputValue}`]);
     applyShellResult(shell.execute(inputValue));
   };
-  const syncInput = value => { inputValue = String(value).slice(0, SHELL_LIMITS.command); inputCursor = inputValue.length; renderTranscript(); };
+  const syncInput = (value, cursor = String(value).length, updateControl = true) => {
+    inputValue = String(value).slice(0, SHELL_LIMITS.command);
+    inputCursor = Math.max(0, Math.min(Number(cursor), inputValue.length));
+    if (terminalInput && updateControl) {
+      terminalInput.value = inputValue;
+      terminalInput.setSelectionRange?.(inputCursor, inputCursor);
+    }
+    renderTranscript();
+  };
   const handleTerminalKey = event => {
     if (!shell || doc.activeElement !== terminalInput) return;
     if (shell.mode === 'pager' || shell.mode === 'logged-out') { if ([' ','Enter','q','Q'].includes(event.key)) { event.preventDefault(); applyShellResult(shell.handleMode(event.key)); } return; }
@@ -112,13 +120,13 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     if (event.key === 'ArrowDown' && shell.mode === 'shell') { event.preventDefault(); shell.historyIndex = Math.min(shell.history.length, shell.historyIndex + 1); syncInput(shell.history[shell.historyIndex] || ''); return; }
     if (event.key === 'Tab' && shell.mode === 'shell') { event.preventDefault(); const completed=shell.complete(inputValue); if(completed.matches.length>1){appendLines([completed.matches.join('  ')]);renderTranscript();}else syncInput(completed.value); return; }
   };
-  const focusTerminal = () => terminalInput?.focus();
+  const focusTerminal = () => terminalInput?.focus({ preventScroll: true });
   const syncCursor = () => { inputCursor = terminalInput?.selectionStart ?? inputValue.length; renderTranscript(); };
   const initializeTerminal = () => {
     shell = new UnixShell(() => simulation);
     terminalLines = canonicalTranscript();
     screen?.addEventListener('click', focusTerminal);
-    terminalInput?.addEventListener('input', event => syncInput(event.target.value));
+    terminalInput?.addEventListener('input', event => syncInput(event.target.value, event.target.selectionStart, false));
     terminalInput?.addEventListener('keydown', handleTerminalKey);
     terminalInput?.addEventListener('keyup', syncCursor);
     terminalInput?.addEventListener('click', syncCursor);
@@ -185,7 +193,7 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
   const applyDisplay = () => {
     if (screen && brightness && contrast) screen.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%)`;
   };
-  const clear = () => { showCanonicalTranscript = false; simulation.ambientHistory.length = 0; terminalLines = []; renderTranscript(); };
+  const clear = () => { showCanonicalTranscript = false; simulation.ambientHistory.length = 0; terminalLines = []; renderTranscript(); focusTerminal(); };
   const reset = () => {
     simulation = createSimulation();
     startedAt = monotonicNow();
@@ -194,10 +202,11 @@ export function initializeUnixCenter(doc = document, view = window, options = {}
     nextAmbientCheck = AMBIENT_INTERVAL.firstDelay + simulation.random() * AMBIENT_INTERVAL.spread;
     showCanonicalTranscript = true;
     shell?.reset(); terminalLines = canonicalTranscript(); inputValue = ''; inputCursor = 0;
+    if (terminalInput) terminalInput.value = '';
     if (brightness) brightness.value = 100;
     if (contrast) contrast.value = 100;
     applyDisplay();
-    renderClock(); renderSessions(); renderStatus(); renderTranscript();
+    renderClock(); renderSessions(); renderStatus(); renderTranscript(); focusTerminal();
   };
   const fullscreen = () => doc.fullscreenElement ? doc.exitFullscreen() : elements.terminalStation?.requestFullscreen?.();
   brightness?.addEventListener('input', applyDisplay);
