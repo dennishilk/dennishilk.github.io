@@ -1,4 +1,5 @@
 export const CANONICAL_START = Date.UTC(2026, 6, 31, 12, 49, 13);
+export const CANONICAL_UPTIME_SECONDS = 147 * 86400 + 6 * 3600 + 12 * 60;
 export const MIN_SESSIONS = 5;
 export const MAX_SESSIONS = 8;
 export const AMBIENT_HISTORY_LIMIT = 12;
@@ -155,6 +156,15 @@ export function formatDate(timestamp) {
   const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   return `${weekdays[date.getUTCDay()]} ${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
+}
+
+export function formatUptime(timestamp, startTime = CANONICAL_START) {
+  const elapsedSeconds = Math.max(0, Math.floor((timestamp - startTime) / 1000));
+  const uptimeSeconds = CANONICAL_UPTIME_SECONDS + elapsedSeconds;
+  const days = Math.floor(uptimeSeconds / 86400);
+  const hours = Math.floor((uptimeSeconds % 86400) / 3600);
+  const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+  return `UP ${days} DAYS, ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
 export function formatIdle(seconds) {

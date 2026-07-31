@@ -26,9 +26,10 @@ class Events {
 
 function harness({ readyState = 'complete', hidden = false } = {}) {
   const clock = { textContent: '12:49:13' };
+  const uptime = { textContent: 'UP 147 DAYS, 06:12' };
   const doc = Object.assign(new Events(), {
     readyState, hidden, documentElement: { dataset: {} },
-    querySelector(selector) { return selector === '#clock' ? clock : null; },
+    querySelector(selector) { return selector === '#clock' ? clock : selector === '#uptime' ? uptime : null; },
     createElement() { return {}; }, createTextNode(textContent) { return { textContent, nodeType: 3 }; }
   });
   let now = 0;
@@ -38,7 +39,7 @@ function harness({ readyState = 'complete', hidden = false } = {}) {
     setInterval(callback, delay) { intervals.push({ callback, delay }); return intervals.length; },
     clearInterval() {}
   });
-  return { clock, doc, view, intervals, advance(milliseconds) { now += milliseconds; } };
+  return { clock, uptime, doc, view, intervals, advance(milliseconds) { now += milliseconds; } };
 }
 
 test('page loads the browser controller as a relative module with a browser-relative model import', () => {
@@ -73,6 +74,18 @@ test('visibility restoration resynchronizes the visible clock', () => {
   assert.equal(app.clock.textContent, '12:49:13');
   app.doc.hidden = false; app.doc.dispatch('visibilitychange');
   assert.equal(app.clock.textContent, '12:49:15');
+});
+
+test('uptime follows elapsed clock time, resynchronizes after visibility, and reset restores its canonical value', () => {
+  const app = harness({ hidden: true });
+  const lifecycle = initializeUnixCenter(app.doc, app.view);
+  app.advance((17 * 60 + 48) * 60_000);
+  app.intervals[0].callback();
+  assert.equal(app.uptime.textContent, 'UP 147 DAYS, 06:12');
+  app.doc.hidden = false; app.doc.dispatch('visibilitychange');
+  assert.equal(app.uptime.textContent, 'UP 148 DAYS, 00:00');
+  lifecycle.reset();
+  assert.equal(app.uptime.textContent, 'UP 147 DAYS, 06:12');
 });
 
 test('startup logs initialization errors and preserves the fallback', () => {

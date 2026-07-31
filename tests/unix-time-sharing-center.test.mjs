@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { AMBIENT_HISTORY_LIMIT, AMBIENT_MESSAGES, CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.js';
+import { AMBIENT_HISTORY_LIMIT, AMBIENT_MESSAGES, CANONICAL_ACCOUNTS, CANONICAL_START, MAX_SESSIONS, MIN_SESSIONS, UnixSimulation, formatClock, formatDate, formatIdle, formatUptime, seededRandom, whoRows } from '../museum/unix-time-sharing-center/unix-simulation.js';
 
 const page = await readFile(new URL('../museum/unix-time-sharing-center/index.html', import.meta.url), 'utf8');
 const controller = await readFile(new URL('../museum/unix-time-sharing-center/unix-center.js', import.meta.url), 'utf8');
@@ -32,6 +32,14 @@ test('canonical clock starts on Day Zero and advances through UTC rollovers', ()
   const hour = new UnixSimulation({ startTime: Date.UTC(2026, 6, 31, 12, 59, 59) }); hour.advanceTo(hour.startTime + 1000); assert.equal(formatClock(hour.now), '13:00:00');
   const rollover = new UnixSimulation({ startTime: Date.UTC(2026, 6, 31, 23, 59, 58) }); rollover.advanceTo(rollover.startTime + 2000); assert.equal(formatClock(rollover.now), '00:00:00'); assert.equal(formatDate(rollover.now), 'SAT AUG 1, 2026');
   assert.equal(CANONICAL_START, Date.UTC(2026, 6, 31, 12, 49, 13));
+});
+
+test('canonical uptime advances naturally through minute, hour, and day rollovers', () => {
+  assert.equal(formatUptime(CANONICAL_START), 'UP 147 DAYS, 06:12');
+  assert.equal(formatUptime(CANONICAL_START + 60_000), 'UP 147 DAYS, 06:13');
+  assert.equal(formatUptime(CANONICAL_START + (48 * 60_000)), 'UP 147 DAYS, 07:00');
+  assert.equal(formatUptime(CANONICAL_START + (17 * 60 + 48) * 60_000), 'UP 148 DAYS, 00:00');
+  assert.match(page, /id="uptime">UP 147 DAYS, 06:12</);
 });
 
 test('production exhibit contains no residual 1979 dates', () => {
