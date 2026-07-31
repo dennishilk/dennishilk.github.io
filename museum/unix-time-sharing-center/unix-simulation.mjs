@@ -1,6 +1,7 @@
 export const CANONICAL_START = Date.UTC(2026, 6, 31, 12, 49, 13);
 export const MIN_SESSIONS = 5;
 export const MAX_SESSIONS = 8;
+export const AMBIENT_HISTORY_LIMIT = 12;
 
 export const CANONICAL_ACCOUNTS = Object.freeze([
   's.harper', 'm.weber', 'h.sullivan', 'f.kessler'
@@ -10,6 +11,20 @@ const AMBIENT_ACCOUNTS = Object.freeze([
   'j.miller', 'r.evans', 'a.carter', 'd.brooks', 'l.turner', 'p.hughes'
 ]);
 const STABLE_ACCOUNTS = new Set(['operator', 'visitor']);
+export const AMBIENT_MESSAGES = Object.freeze([
+  { type: 'mail-delivered', text: 'Mail delivered to m.weber.' },
+  { type: 'print-event', text: 'lpd: engineering printer online' },
+  { type: 'cron-event', text: 'cron: temporary files cleanup completed' },
+  { type: 'backup-event', text: 'backup: incremental archive complete' },
+  { type: 'mail-delivered', text: 'New mail for s.harper.' },
+  { type: 'operator-message', text: 'system: tape drive ready' },
+  { type: 'print-event', text: 'lpd: printer queue updated' },
+  { type: 'operator-message', text: 'operator: line printer maintenance at 18:00 UTC' },
+  { type: 'mail-delivered', text: 'Mail delivered to h.sullivan.' },
+  { type: 'cron-event', text: 'cron: accounting summary complete' },
+  { type: 'backup-event', text: 'backup: Friday tape verified' },
+  { type: 'mail-delivered', text: 'Mail delivered to f.kessler.' }
+]);
 const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
 
 export function seededRandom(seed = 20260731) {
@@ -39,6 +54,8 @@ export class UnixSimulation {
     ];
     this.load = [0.24, 0.27, 0.23];
     this.status = { cpu: 18, memory: 33, swap: 4, processes: 42, runQueue: 1 };
+    this.ambientHistory = [];
+    this.lastAmbientIndex = -1;
   }
 
   advanceTo(timestamp) {
@@ -76,8 +93,12 @@ export class UnixSimulation {
     this.status.cpu = Math.round(clamp(this.status.cpu + (target * 45 - this.status.cpu) * 0.18 + (this.random() - 0.5) * 2, 5, 48));
     this.status.memory = Math.round(clamp(this.status.memory + (this.random() - 0.48), 28, 45));
     this.status.swap = Math.round(clamp(this.status.swap + (this.random() < 0.08 ? (this.random() < 0.5 ? -1 : 1) : 0), 2, 9));
-    this.status.processes = Math.round(clamp(29 + this.sessions.length * 2 + (this.random() - 0.5) * 3, 35, 50));
-    this.status.runQueue = this.status.cpu > 32 && this.random() > 0.65 ? 2 : (this.random() > 0.78 ? 1 : 0);
+    const processStep = this.random() < 0.12 ? 2 : (this.random() < 0.68 ? 0 : (this.random() < 0.5 ? -1 : 1));
+    this.status.processes = Math.round(clamp(this.status.processes + processStep, 35, 54));
+    const queueRoll = this.random();
+    this.status.runQueue = this.status.cpu > 34 && queueRoll > 0.92 ? 3
+      : this.status.cpu > 27 && queueRoll > 0.72 ? 2
+        : queueRoll > 0.38 ? 1 : 0;
     if (this.random() < 0.18) {
       const employees = this.sessions.filter(item => !STABLE_ACCOUNTS.has(item.username));
       if (employees.length) employees[Math.floor(this.random() * employees.length)].idleSeconds = 0;
@@ -86,15 +107,41 @@ export class UnixSimulation {
 
   considerSessionChange() {
     const decision = this.random();
-    if (decision < 0.12 && this.sessions.length < MAX_SESSIONS) {
+    if (decision < 0.22 && this.sessions.length < MAX_SESSIONS) {
       const available = AMBIENT_ACCOUNTS.filter(name => !this.sessions.some(item => item.username === name));
-      return available.length ? this.addSession(available[Math.floor(this.random() * available.length)]) : false;
+      if (!available.length) return null;
+      const username = available[Math.floor(this.random() * available.length)];
+      if (!this.addSession(username)) return null;
+      this.applyActivityBoost();
+      return { type: 'user-login', username };
     }
     if (decision > 0.92 && this.sessions.length > MIN_SESSIONS) {
       const removable = this.sessions.filter(item => !item.canonical && !STABLE_ACCOUNTS.has(item.username));
-      return removable.length ? this.removeSession(removable[Math.floor(this.random() * removable.length)].username) : false;
+      if (!removable.length) return null;
+      const username = removable[Math.floor(this.random() * removable.length)].username;
+      return this.removeSession(username) ? { type: 'user-logout', username } : null;
     }
-    return false;
+    return null;
+  }
+
+  applyActivityBoost() {
+    this.status.cpu = Math.round(clamp(this.status.cpu + 2, 0, 48));
+    this.status.processes = Math.round(clamp(this.status.processes + 1, 35, 54));
+    this.load[0] = clamp(this.load[0] + 0.025, 0, 1.5);
+  }
+
+  considerAmbientMessage() {
+    if (this.random() >= 0.30) return null;
+    let index = Math.floor(this.random() * AMBIENT_MESSAGES.length);
+    if (index === this.lastAmbientIndex) index = (index + 1) % AMBIENT_MESSAGES.length;
+    this.lastAmbientIndex = index;
+    const event = { ...AMBIENT_MESSAGES[index], timestamp: this.now };
+    this.ambientHistory.push(event);
+    if (this.ambientHistory.length > AMBIENT_HISTORY_LIMIT) {
+      this.ambientHistory.splice(0, this.ambientHistory.length - AMBIENT_HISTORY_LIMIT);
+    }
+    this.applyActivityBoost();
+    return event;
   }
 }
 
