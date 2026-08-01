@@ -4208,7 +4208,7 @@ button.technology-observer-card {
 .lost-admin-hero .museum-section-label { margin-top: 1.25rem; }
 .lost-admin-hero .museum-status { margin: .4rem 0 .9rem; }
 .lost-admin-subtitle { color: #ffd08a; font: 700 clamp(.85rem, 1.5vw, 1rem)/1.5 "Courier New", monospace; letter-spacing: .1em; margin: 0 0 1.15rem; text-transform: uppercase; }
-.lost-admin-fiction-notice { background: rgba(7, 20, 27, .55); border: 1px solid rgba(120, 231, 241, .22); margin: 0 0 1.15rem; max-width: 820px; padding: .85rem 1rem; }
+.lost-admin-fiction-notice { background: rgba(7, 20, 27, .55); border: 1px solid rgba(120, 231, 241, .22); border-radius: 10px; grid-column: 1 / -1; margin: 0; padding: .85rem 1rem; }
 .lost-admin-fiction-notice h2 { color: #75dce9; font: 700 .7rem "Courier New", monospace; letter-spacing: .12em; margin: 0 0 .45rem; }
 .lost-admin-fiction-notice p { color: #aebfc3; font-size: .82rem; line-height: 1.6; margin: 0; }
 .lost-admin-introduction { border-left: 2px solid rgba(0, 180, 255, .48); max-width: 820px; padding-left: 1rem; }

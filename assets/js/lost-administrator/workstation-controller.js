@@ -7,7 +7,7 @@ import { completeTerminalInput } from '../debian-server/tab-completion.js';
 export function initializeWorkstation(doc=document, view=window, storage=view.localStorage) {
   const terminal=doc.querySelector('#debian-terminal'),history=doc.querySelector('#terminal-history'),input=doc.querySelector('#terminal-input'),prompt=doc.querySelector('#terminal-prompt-text');
   if(!terminal||!history||!input||!prompt)return;
-  const state=loadWorkstationState(storage),engine=new ShellEngine(state),renderer=new TerminalRenderer(terminal,history,prompt,{user:'michael',hostname:'workstation',home:'/home/michael'});
+  const state=loadWorkstationState(storage),engine=new ShellEngine(state),renderer=new TerminalRenderer(terminal,history,prompt,{user:'m.weber',hostname:'workstation',home:'/home/m.weber'});
   renderer.line('Debian GNU/Linux 13 (trixie)','debian-terminal-message');
   renderer.line('Last login: Fri Jul 31 17:41:26 UTC 2026 on tty1','debian-terminal-message');
   renderer.updatePrompt(state.currentDirectory);
