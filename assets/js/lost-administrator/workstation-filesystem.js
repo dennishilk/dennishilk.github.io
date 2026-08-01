@@ -66,7 +66,9 @@ export function createWorkstationFilesystem() {
    'holiday-list-2026.pdf':file('holiday-list-2026.pdf','PDF: office holiday coverage calendar, revision 3.\n','2026-07-24'),
    mp3_car:dir('mp3_car',{'01-Sultans-of-Swing.mp3':file('01-Sultans-of-Swing.mp3','MP3 audio, copied from Michael’s CD collection for the car.\n','2020-07-23'),'02-Solsbury-Hill.mp3':file('02-Solsbury-Hill.mp3','MP3 audio, copied from Michael’s CD collection for the car.\n','2020-07-23'),'03-Weather-With-You.mp3':file('03-Weather-With-You.mp3','MP3 audio, copied from Michael’s CD collection for the car.\n','2021-06-30'),'04-Fields-of-Gold.mp3':file('04-Fields-of-Gold.mp3','MP3 audio, copied from Michael’s CD collection for the car.\n','2023-07-28'),'playlist.m3u':file('playlist.m3u','01-Sultans-of-Swing.mp3\n02-Solsbury-Hill.mp3\n03-Weather-With-You.mp3\n04-Fields-of-Gold.mp3\n','2023-07-28')},'2020-07-23')
   },'2019-03-06'),
-  Mail:dir('Mail',{Inbox:dir('Inbox',inbox,'2026-07-29'),Sent:dir('Sent',{},'2026-07-29'),Drafts:dir('Drafts',{},'2026-07-29'),Archive:dir('Archive',{},'2026-07-29')},'2026-07-29'),
+  Mail:dir('Mail',{Inbox:dir('Inbox',inbox,'2026-07-29'),Sent:dir('Sent',{},'2026-07-29'),Drafts:dir('Drafts',{},'2026-07-29'),Archive:dir('Archive',{
+   README:file('README','Older email is stored in the encrypted company archive.\n\nThis workstation keeps only the active local mailbox.\n\nHistorical mail can be restored if required.\n','2026-07-29')
+  },'2026-07-29')},'2026-07-29'),
   Notes:dir('Notes',{
    'today.txt':file('today.txt','replace label roll in Printer-03 drawer\nremember HDMI adapter\ncoffee beans — medium roast, not Henry-dark\nask Nina about STORE-02 recovery mail\nEmma birthday: album paper + dinner booking\n','2026-07-29'),
    'ups-batteries.txt':file('ups-batteries.txt','UPS-02: fitted 2020-01-17, 21 min Jan 2026, retest October\nUPS-03: fitted 2024-01-19, 29 min Jan 2026\nBattery supplier: Nordstrom Power; collection cage by loading door\n','2026-01-12'),
@@ -102,7 +104,19 @@ export function createWorkstationFilesystem() {
    Workshop:dir('Workshop',{'2022-10-08_spare04-open.jpg':file('2022-10-08_spare04-open.jpg','JPEG photograph: SPARE-04 open on the bench before memory test.\n','2022-10-08')},'2022-10-08')
   },'2019-03-06'),
   Scripts:dir('Scripts',{'backup.sh':file('backup.sh','#!/bin/sh\nset -eu\n# Manual home-document copy; scheduled office backups use backup-tools.\nstamp=$(date +%Y%m%d-%H%M%S)\ntar -czf "$HOME/Archive/manual/documents-$stamp.tar.gz" -C "$HOME/Documents" .\n','2020-04-20','-rwxr-xr-x'),'cleanup.sh':file('cleanup.sh','#!/bin/sh\nfind "${1:-$HOME/Downloads}" -type f -mtime +90 -print\nprintf "Review only: nothing has been deleted.\\n"\n','2021-01-08','-rwxr-xr-x')},'2020-04-20'),
-  Archive:dir('Archive',{manual:dir('manual',{'README':file('README','Manual document archives made before travel or workstation maintenance. Scheduled office snapshots are not stored here.\n','2020-04-20')},'2020-04-20'),projects:dir('projects',{'monitoring-v1':dir('monitoring-v1',{'README-old.md':file('README-old.md','# monitoring v1\n\nArchived in 2022 after alert state moved from shell files to the Python checker. Kept because the STORE-01 deployment still referenced its variable names.\n','2022-01-14'),'README-final.md':file('README-final.md','# Migration note\n\nDo not deploy this copy. Current code is ~/Projects/monitoring. The old config naming is documented for STORE-01 retirement only.\n','2022-01-14')},'2022-01-14')},'2022-01-14')},'2020-04-20'),
+  Archive:dir('Archive',{
+   README:file('README',"Michael's personal archive for older files and finished projects.\n\nEmail is kept separately in ~/Mail/.\n",'2026-07-29'),
+   '2019':dir('2019',{},'2019-12-31'),
+   '2020':dir('2020',{},'2020-12-31'),
+   '2021':dir('2021',{},'2021-12-31'),
+   '2022':dir('2022',{},'2022-12-31'),
+   '2023':dir('2023',{},'2023-12-31'),
+   '2024':dir('2024',{},'2024-12-31'),
+   Projects:dir('Projects',{'monitoring-v1':dir('monitoring-v1',{'README-old.md':file('README-old.md','# monitoring v1\n\nArchived in 2022 after alert state moved from shell files to the Python checker. Kept because the STORE-01 deployment still referenced its variable names.\n','2022-01-14'),'README-final.md':file('README-final.md','# Migration note\n\nDo not deploy this copy. Current code is ~/Projects/monitoring. The old config naming is documented for STORE-01 retirement only.\n','2022-01-14')},'2022-01-14')},'2022-01-14'),
+   Photos:dir('Photos',{},'2026-07-29'),
+   Documents:dir('Documents',{},'2026-07-29'),
+   manual:dir('manual',{'README':file('README','Manual document archives made before travel or workstation maintenance. Scheduled office snapshots are not stored here.\n','2020-04-20')},'2020-04-20')
+  },'2020-04-20'),
   Books:dir('Books',{'reading-list.md':file('reading-list.md','# Reading list\n\n- The Practice of System and Network Administration — incident reviews\n- Debian Administrator’s Handbook — packaging chapters\n- A Pattern Language — borrowed from Arthur, return after holiday\n','2026-06-02')},'2021-02-04'),
   Research:dir('Research',{weather:dir('weather',{'ws07-format-notes.md':file('ws07-format-notes.md','# WS-07 formats\n\nNora’s pre-2020 exports use semicolons and a dash for missing wind direction. Preserve each source row in weather-parser output.\n','2023-02-03')},'2023-02-03'),storage:dir('storage',{'restore-timings.csv':file('restore-timings.csv','date,target,minutes,result\n2023-11-09,SPARE-04,31,pass\n2024-11-07,SPARE-04,26,pass\n2025-11-06,SPARE-04,23,pass\n','2025-11-06')},'2023-11-09')},'2022-03-21'),
   '.bash_history':file('.bash_history',bash.repeat(3),'2026-07-29'),
