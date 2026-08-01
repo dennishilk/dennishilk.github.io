@@ -9,7 +9,7 @@ export function initializeWorkstation(doc=document, view=window, storage=view.lo
   if(!terminal||!history||!input||!prompt)return;
   const state=loadWorkstationState(storage),engine=new ShellEngine(state),renderer=new TerminalRenderer(terminal,history,prompt,{user:'michael',hostname:'workstation',home:'/home/michael'});
   renderer.line('Debian GNU/Linux 13 (trixie)','debian-terminal-message');
-  renderer.line('Last login: session record unavailable on tty1','debian-terminal-message');
+  renderer.line('Last login: Fri Jul 31 17:41:26 UTC 2026 on tty1','debian-terminal-message');
   renderer.updatePrompt(state.currentDirectory);
   let awaitingResetConfirmation=false;
   const submit=()=>{const source=input.value;input.value='';renderer.command(state.currentDirectory,source);if(!source.trim()){renderer.scroll();input.focus();return;}state.commandHistory.push(source);
