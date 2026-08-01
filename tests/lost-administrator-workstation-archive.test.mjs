@@ -6,11 +6,11 @@ import { defaultWorkstationState, loadWorkstationState, WORKSTATION_SCHEMA_VERSI
 
 const execute = (engine, command) => engine.execute(command);
 const output = result => result.stdout.join('\n');
-const canonicalBody = "Hey Robodad,\n\nChloe and I were just about to print the new Major Tom pages, but the printer cartridge is empty. Do you know if there's a new one somewhere at home?\n\nI didn't want to just go to your desk and start looking through your things. :)\n\nEmma";
+const canonicalBody = "Hey Robodad,\n\nChloe and I were just about to print the new Major Tom pages, but the cartridge in her parents’ printer is empty.\n\nDo you still have one of the same kind in the cabinet in your office at home?\n\nI didn’t want to ride over and start looking through your things without asking. :)\n\nEmma";
 
 test('printer task and restrained project reference are canonical', () => {
   const state=defaultWorkstationState(), shell=new ShellEngine(state);
-  assert.equal(MAIL_MESSAGES.length,1);
+  assert.equal(MAIL_MESSAGES.length,4);
   assert.equal(MAIL_MESSAGES[0].body,canonicalBody);
   assert.match(output(execute(shell,'cat Notes/home.todo')),/^- Check with Emma for the spare printer cartridge at home$/m);
   const readme=output(execute(shell,'cat Projects/major-tom/README'));
@@ -18,17 +18,16 @@ test('printer task and restrained project reference are canonical', () => {
   for(const detail of ['school','teacher','deadline','artwork','purchase','replacement is','completed']) assert.doesNotMatch(readme,new RegExp(detail,'i'));
 });
 
-test('mail and personal archives remain separate with one filesystem message', () => {
+test('mail, Emma archive, Steve message, and calendar remain browsable', () => {
   const state=defaultWorkstationState(), shell=new ShellEngine(state);
-  assert.deepEqual(execute(shell,'find Mail -type f').stdout,[
-    '/home/m.weber/Mail/Archive/README',
-    '/home/m.weber/Mail/Inbox/2026-07-29-new-printer-cartridge.eml'
+  assert.deepEqual(execute(shell,'find Mail -name *.eml').stdout,[
+    '/home/m.weber/Mail/EMMA/2026-07-31-new-printer-cartridge.eml',
+    '/home/m.weber/Mail/Inbox/2026-07-30-customer-status-experience.eml'
   ]);
-  assert.deepEqual(execute(shell,'find Mail -name *.eml').stdout,['/home/m.weber/Mail/Inbox/2026-07-29-new-printer-cartridge.eml']);
-  execute(shell,'cd ~/Mail/Archive');
-  assert.deepEqual(execute(shell,'ls').stdout,['README']);
+  assert.match(output(execute(shell,'cat Mail/EMMA/README')),/Hundreds of messages · approximately 4.8 GB/);
+  assert.match(output(execute(shell,'cat Mail/Inbox/2026-07-30-customer-status-experience.eml')),/thirty-two slides[\s\S]*loading animation/);
+  assert.match(output(execute(shell,'cat Calendar/2026-07-31-pick-up-emma.ics')),/DTSTAMP:20260728[\s\S]*DTSTART:20260731T150500[\s\S]*STATUS:CONFIRMED/);
   execute(shell,'cd ~/Archive');
-  assert.ok(execute(shell,'find . -type f').stdout.length>10);
   assert.equal(execute(shell,'find . -name *.eml').stdout.length,0);
 });
 
@@ -82,21 +81,21 @@ test('live workstation contains only approved personal canon', () => {
   for(const path of removedFiles) assert.equal(execute(shell,`find ~ -path */${path}`).stdout.length,0,path);
   for(const directory of ['Documents/family','Downloads/mp3_car','Photos/Family','Photos/Emma','Photos/Vacation'])
     assert.equal(execute(shell,`find ~ -path */${directory}`).stdout.length,0,directory);
-  const forbidden=/\b(Arthur|Lena|Mia|Henry|Greetsiel|Pilsum|birthday|Claudia|Nina|Nora)\b|school placement|booking confirmation|consent form|holiday ideas/i;
+  const forbidden=/\b(Arthur|Lena|Mia|Greetsiel|Pilsum|birthday|Claudia|Nina|Nora)\b|school placement|booking confirmation|consent form|holiday ideas/i;
   for(const path of files){
     assert.doesNotMatch(path,forbidden,path);
     assert.doesNotMatch(output(execute(shell,`cat '${path}'`)),forbidden,path);
   }
   const emma=execute(shell,'grep -Ri emma ~').stdout;
   assert.ok(emma.length>0);
-  assert.ok(emma.every(line=>/Mail\/Inbox\/2026-07-29-new-printer-cartridge\.eml|Notes\/home\.todo|Projects\/major-tom\/README/.test(line)),emma.join('\n'));
+  assert.ok(emma.every(line=>/Mail\/EMMA\/2026-07-31-new-printer-cartridge\.eml|Mail\/EMMA\/README|Calendar\/2026-07-31-pick-up-emma\.ics|Notes\/home\.todo|Projects\/major-tom\/README/.test(line)),emma.join('\n'));
   assert.equal(execute(shell,'find ~/Photos -type f').stdout.length,4);
 });
 
 
 test('all recursive search and traversal commands use only the live filesystem tree', () => {
   const state=defaultWorkstationState(), shell=new ShellEngine(state);
-  const approved=/Mail\/Inbox\/2026-07-29-new-printer-cartridge\.eml|Notes\/home\.todo|Projects\/major-tom\/README/;
+  const approved=/Mail\/EMMA\/2026-07-31-new-printer-cartridge\.eml|Mail\/EMMA\/README|Calendar\/2026-07-31-pick-up-emma\.ics|Notes\/home\.todo|Projects\/major-tom\/README/;
   for(const command of ['grep -r Emma ~','grep -R Emma ~','grep -Ri emma ~','grep -Ri emma /home/m.weber']){
     const result=execute(shell,command);
     assert.equal(result.exitCode,0,command);

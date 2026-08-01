@@ -6,7 +6,7 @@ import { createPackages } from '../debian-server/package-model.js';
 export const WORKSTATION_STORAGE_KEY = 'lost-administrator:m.weber-workstation:phase-5';
 // Persisted state includes the filesystem. Bump this after Canon removals so an old
 // browser snapshot cannot restore files absent from createWorkstationFilesystem().
-export const WORKSTATION_SCHEMA_VERSION = 6;
+export const WORKSTATION_SCHEMA_VERSION = 8;
 export function defaultWorkstationState() {
   const started = new Date().toISOString(), home='/home/m.weber';
   return { schemaVersion:WORKSTATION_SCHEMA_VERSION, currentDirectory:home, filesystem:createWorkstationFilesystem(), commandHistory:[], sessionStartedAt:started,

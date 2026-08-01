@@ -36,7 +36,7 @@ test('grep performs safe substring searches with supported combined flags',()=>{
   assert.deepEqual(engine.execute('grep -i PRINTER Notes/home.todo').stdout,['- Check with Emma for the spare printer cartridge at home']);
   assert.deepEqual(engine.execute('grep -n printer Notes/home.todo').stdout,['3:- Check with Emma for the spare printer cartridge at home']);
   const recursive=engine.execute('grep -R printer Notes');assert.equal(recursive.exitCode,0);assert.ok(recursive.stdout.every(x=>x.startsWith('home.todo:')||x.includes(':')));
-  assert.match(engine.execute('grep -Rin EMMA ~').stdout.join('\n'),/Mail\/Inbox\/.*:\d+:From: Emma/);
+  assert.match(engine.execute('grep -Rin EMMA ~').stdout.join('\n'),/Mail\/EMMA\/.*:\d+:From: Emma/);
   assert.equal(engine.execute('grep absent-string Notes/home.todo').exitCode,1);
   assert.match(engine.execute('grep printer missing').stderr[0],/No such file or directory/);
   assert.match(engine.execute('grep -z printer Notes/home.todo').stderr[0],/invalid option/);
