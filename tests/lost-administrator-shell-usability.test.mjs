@@ -57,7 +57,7 @@ test('find validates its subset and traverses deterministically',()=>{
 test('ls expands simple nonrecursive globs deterministically and reports no matches',()=>{
   const {engine}=setup();engine.execute('cd Notes');
   const md=engine.execute('ls *.md');assert.equal(md.exitCode,0);assert.deepEqual(md.stdout,[...md.stdout].sort((a,b)=>a.localeCompare(b)));
-  engine.execute('cd ~');assert.match(engine.execute('ls Notes/*.txt').stdout.join('\n'),/shopping\.txt/);
+  engine.execute('cd ~');assert.match(engine.execute('ls Notes/*.txt').stdout.join('\n'),/project-review\.txt/);
   assert.match(engine.execute('ls Archive/2024/*').stdout.join('\n'),/kernel-upgrade-checklist\.md/);
   assert.match(engine.execute('ls *.does-not-exist').stderr[0],/No such file or directory/);
 });

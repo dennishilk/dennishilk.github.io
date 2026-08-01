@@ -64,3 +64,31 @@ test('canonical names are mundane and added prose remains English', () => {
     assert.doesNotMatch(prose,/\b(und|oder|nicht|achtung|geheimnis|druckerpatrone)\b/i);
   }
 });
+
+test('live workstation contains only approved personal canon', () => {
+  const state=defaultWorkstationState(), shell=new ShellEngine(state);
+  const files=execute(shell,'find ~ -type f').stdout;
+  const removedFiles=[
+    'Documents/family/north-sea-2023-booking.pdf','Documents/family/emma-school-placement.pdf',
+    'Downloads/meeting.png','Downloads/holiday-list-2026.pdf','Downloads/mp3_car/01-Sultans-of-Swing.mp3',
+    'Downloads/mp3_car/02-Solsbury-Hill.mp3','Downloads/mp3_car/03-Weather-With-You.mp3',
+    'Downloads/mp3_car/04-Fields-of-Gold.mp3','Downloads/mp3_car/playlist.m3u','Desktop/temp-nina.txt',
+    'Notes/henry-handover.md',
+    'Notes/shopping.txt','Notes/holiday-ideas.md','Photos/Family/2020-12-24_kitchen_emma-arthur.jpg',
+    'Photos/Family/2022-06-09_office-barbecue.jpg','Photos/Emma/2021-09-18_leaf-album.jpg',
+    'Photos/Emma/2024-06-12_school-placement.jpg','Photos/Vacation/2023-North-Sea/IMG_20230729_164211.jpg',
+    'Photos/Vacation/2023-North-Sea/IMG_20230731_111805.jpg','Photos/Vacation/2023-North-Sea/IMG_20230803_190412.jpg'
+  ];
+  for(const path of removedFiles) assert.equal(execute(shell,`find ~ -path */${path}`).stdout.length,0,path);
+  for(const directory of ['Documents/family','Downloads/mp3_car','Photos/Family','Photos/Emma','Photos/Vacation'])
+    assert.equal(execute(shell,`find ~ -path */${directory}`).stdout.length,0,directory);
+  const forbidden=/\b(Arthur|Lena|Mia|Henry|Greetsiel|Pilsum|birthday|Claudia|Nina|Nora)\b|school placement|booking confirmation|consent form|holiday ideas/i;
+  for(const path of files){
+    assert.doesNotMatch(path,forbidden,path);
+    assert.doesNotMatch(output(execute(shell,`cat '${path}'`)),forbidden,path);
+  }
+  const emma=execute(shell,'grep -Ri emma ~').stdout;
+  assert.ok(emma.length>0);
+  assert.ok(emma.every(line=>/Mail\/Inbox\/2026-07-29-new-printer-cartridge\.eml|Projects\/major-tom\/README/.test(line)),emma.join('\n'));
+  assert.equal(execute(shell,'find ~/Photos -type f').stdout.length,4);
+});
