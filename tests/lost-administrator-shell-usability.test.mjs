@@ -32,9 +32,9 @@ test('direct reads and completion support relative, absolute, home and canonical
 
 test('grep performs safe substring searches with supported combined flags',()=>{
   const {engine}=setup();
-  assert.deepEqual(engine.execute('grep printer Notes/home.todo').stdout,['- Check for spare printer cartridge at home']);
-  assert.deepEqual(engine.execute('grep -i PRINTER Notes/home.todo').stdout,['- Check for spare printer cartridge at home']);
-  assert.deepEqual(engine.execute('grep -n printer Notes/home.todo').stdout,['3:- Check for spare printer cartridge at home']);
+  assert.deepEqual(engine.execute('grep printer Notes/home.todo').stdout,['- Check with Emma for the spare printer cartridge at home']);
+  assert.deepEqual(engine.execute('grep -i PRINTER Notes/home.todo').stdout,['- Check with Emma for the spare printer cartridge at home']);
+  assert.deepEqual(engine.execute('grep -n printer Notes/home.todo').stdout,['3:- Check with Emma for the spare printer cartridge at home']);
   const recursive=engine.execute('grep -R printer Notes');assert.equal(recursive.exitCode,0);assert.ok(recursive.stdout.every(x=>x.startsWith('home.todo:')||x.includes(':')));
   assert.match(engine.execute('grep -Rin EMMA ~').stdout.join('\n'),/Mail\/Inbox\/.*:\d+:From: Emma/);
   assert.equal(engine.execute('grep absent-string Notes/home.todo').exitCode,1);
