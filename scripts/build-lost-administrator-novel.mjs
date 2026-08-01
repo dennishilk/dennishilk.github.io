@@ -86,7 +86,7 @@ function landing(chapters) {
     <a class="novel-back" href="/lost-administrator/">← BACK TO THE LOST ADMINISTRATOR</a>
     <section class="novel-hero">
       <div class="novel-cover-frame"><img class="novel-cover" src="${COVER}" alt="Cover of The Lost Administrator by Dennis Hilk"></div>
-      <div class="novel-copy"><p class="novel-kicker">THE NOVEL</p><h1>The Lost Administrator</h1><p class="novel-subtitle">A novel currently in development</p><p class="novel-intro">Completed chapters will appear here as they are released. Drafts, working notes and unfinished manuscript material are not published.</p></div>
+      <div class="novel-copy"><p class="novel-subtitle">A novel currently in development</p><p class="novel-intro">Completed chapters will appear here as they are released. Drafts, working notes and unfinished manuscript material are not published.</p></div>
     </section>
     <section class="novel-contents" aria-labelledby="contents-title"><h2 id="contents-title">CONTENTS</h2>${contents}</section>
   </main>`
