@@ -44,6 +44,22 @@ test('novel landing uses the existing cover and required alt text', async () => 
   assert.match(html, /alt="Cover of The Lost Administrator by Dennis Hilk"/);
 });
 
+test('novel landing centers the responsive cover above its supporting copy', async () => {
+  const html = await read('lost-administrator/novel/index.html');
+  const css = await read('lost-administrator/novel/novel.css');
+  assert.doesNotMatch(html, /class="novel-kicker"|<h1>The Lost Administrator<\/h1>/);
+  assert.match(html, /novel-cover-frame[\s\S]*novel-subtitle[\s\S]*novel-intro[\s\S]*novel-contents/);
+  assert.match(css, /\.novel-hero\s*\{[^}]*flex-direction:\s*column[^}]*align-items:\s*center[^}]*text-align:\s*center/);
+  assert.match(css, /\.novel-cover-frame\s*\{[^}]*width:\s*min\(420px, 100%\)/);
+  assert.match(css, /\.novel-cover\s*\{[^}]*width:\s*100%[^}]*height:\s*auto/);
+
+  const rootDir = await fixture({ chapters: [] });
+  await buildNovel({ rootDir });
+  const rebuilt = await fs.readFile(path.join(rootDir, 'lost-administrator/novel/index.html'), 'utf8');
+  assert.doesNotMatch(rebuilt, /class="novel-kicker"|<h1>The Lost Administrator<\/h1>/);
+  assert.match(rebuilt, /novel-cover-frame[\s\S]*novel-subtitle[\s\S]*novel-intro[\s\S]*novel-contents/);
+});
+
 test('empty manifest creates an honest landing page without chapter links', async () => {
   const rootDir = await fixture({ chapters: [] });
   await buildNovel({ rootDir });
