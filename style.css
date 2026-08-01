@@ -4507,3 +4507,18 @@ button.technology-observer-card {
 @media (max-width: 760px) { .statistics-overview, .archive-results-grid, .curiosity-grid, .patterns-grid { grid-template-columns: 1fr; } .statistics-hero { text-align: left; } }
 
 .workstation-body{background:#05090b;margin:0;min-height:100vh}.workstation-viewport{box-sizing:border-box;display:flex;margin:0 auto;min-height:100vh;padding:clamp(.5rem,2vw,1.5rem);width:min(100%,1440px)}.workstation-viewport .debian-terminal{flex:1;min-height:calc(100vh - clamp(1rem,4vw,3rem));max-height:calc(100vh - clamp(1rem,4vw,3rem))}@media(max-width:600px){.workstation-viewport{padding:.35rem}.workstation-viewport .debian-terminal{min-height:calc(100vh - .7rem);max-height:calc(100vh - .7rem);padding:.8rem}}
+
+/* Home Computing Lab — photographic record of the current environment */
+.hcl-today-documentation { display: grid; gap: 1rem; margin: 1.2rem 0 2rem; }
+.hcl-today-documentation figure { background: rgba(7,22,27,.88); border: 1px solid rgba(137,185,191,.46); margin: 0; padding: clamp(.65rem, 1.5vw, 1rem); }
+.hcl-today-documentation a { background: #03090c; display: block; overflow: hidden; }
+.hcl-today-documentation img { display: block; height: auto; transition: filter .18s ease; width: 100%; }
+.hcl-today-documentation a:hover img { filter: brightness(1.06); }
+.hcl-today-documentation a:focus-visible { outline: 2px solid #9de4ef; outline-offset: 3px; }
+.hcl-today-documentation figcaption { color: #9fb7bb; font: .82rem/1.5 "Courier New", monospace; padding-top: .7rem; }
+.hcl-today-documentation figcaption strong, .hcl-today-documentation figcaption span { display: block; }
+.hcl-today-documentation figcaption strong { color: #9de4ef; font-size: .78rem; letter-spacing: .09em; margin-bottom: .25rem; }
+.hcl-today-supporting-photos { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hcl-today-supporting-photos img { aspect-ratio: 4 / 3; object-fit: cover; }
+@media (max-width: 700px) { .hcl-today-supporting-photos { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .hcl-today-documentation img { transition: none; } }
