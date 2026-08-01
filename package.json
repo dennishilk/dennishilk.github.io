@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "build:novel": "node scripts/build-lost-administrator-novel.mjs",
+    "test:novel": "node --test tests/lost-administrator-novel.test.mjs"
+  }
+}

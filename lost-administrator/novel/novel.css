@@ -1,0 +1,26 @@
+.novel-page { --novel-border: rgba(113, 196, 255, .25); }
+.novel-shell { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0 4rem; }
+.novel-back { display: inline-block; margin-bottom: 2.5rem; color: #8fcfff; font: .78rem/1.4 monospace; letter-spacing: .08em; text-decoration: none; }
+.novel-back:hover, .novel-back:focus-visible { text-decoration: underline; }
+.novel-hero { display: grid; grid-template-columns: minmax(220px, 330px) 1fr; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.novel-cover { display: block; width: 100%; height: auto; border: 1px solid var(--novel-border); border-radius: 4px; box-shadow: 0 14px 40px rgba(0, 0, 0, .28); }
+.novel-kicker, .novel-chapter-number { color: #74c7ff; font: .78rem/1.4 monospace; letter-spacing: .14em; }
+.novel-copy h1 { margin: .55rem 0 .7rem; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.04; }
+.novel-subtitle { color: #c9d5dd; font-size: clamp(1.05rem, 2vw, 1.3rem); }
+.novel-intro { max-width: 59ch; color: #aebdc6; font-size: 1.05rem; line-height: 1.75; }
+.novel-contents { margin-top: clamp(3.5rem, 8vw, 6rem); padding-top: 2rem; border-top: 1px solid var(--novel-border); }
+.novel-contents h2 { font: .85rem/1.4 monospace; letter-spacing: .14em; }
+.novel-empty { margin-top: 1.4rem; padding: 1.5rem; border: 1px solid var(--novel-border); border-radius: 4px; }
+.novel-empty strong { display: block; color: #dce8ee; font: .82rem/1.4 monospace; letter-spacing: .08em; }
+.novel-empty p { margin: .65rem 0 0; color: #9eb0ba; }
+.novel-toc { padding: 0; list-style: none; border-top: 1px solid var(--novel-border); }
+.novel-toc a { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--novel-border); color: inherit; text-decoration: none; }
+.novel-reader { width: min(72ch, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0 5rem; }
+.novel-reader-header { margin: 1.5rem 0 3rem; }
+.novel-reader-header h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.12; }
+.novel-prose { color: #d3dadd; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.08rem, 2vw, 1.22rem); line-height: 1.8; }
+.novel-prose p { margin: 0 0 1.35em; }
+.novel-prose hr { width: 4rem; margin: 2.8rem auto; border: 0; border-top: 1px solid #80909a; }
+.novel-chapter-nav { display: flex; justify-content: space-between; gap: 2rem; margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--novel-border); }
+@media (max-width: 680px) { .novel-shell { padding-top: 2rem; } .novel-hero { grid-template-columns: 1fr; } .novel-cover-frame { width: min(78vw, 320px); } .novel-back { margin-bottom: 2rem; } }
+@media print { #stars, .novel-page footer, .novel-back, .novel-chapter-nav { display: none !important; } .novel-reader { width: auto; padding: 0; } .novel-prose { color: #000; font-size: 12pt; } body { background: #fff; } }
