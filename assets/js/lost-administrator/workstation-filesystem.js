@@ -17,13 +17,62 @@ function repo(name, created, purpose, source, operations, changes) {
 }
 
 const inbox = {
-  '2026-07-29-new-printer-cartridge.eml':message('2026-07-29-new-printer-cartridge.eml','2026-07-29 12:00 EDT','Emma Weber <robodad@michamailgate.com>','Michael Weber <michael.weber@chesapeakesignaltech.com>','New printer cartridge?',`Hey Robodad,
+  '2026-07-30-customer-status-experience.eml':message('2026-07-30-customer-status-experience.eml','2026-07-30 evening','Steve Harper','Henry Sullivan','Customer Status Experience — Concept Preview',`Cc: Michael Weber <michael.weber@chesapeakesignaltech.com>
+Attachment: customer-status-experience-concept-preview.pptx
 
-Chloe and I were just about to print the new Major Tom pages, but the printer cartridge is empty. Do you know if there's a new one somewhere at home?
+Hi Henry,
 
-I didn't want to just go to your desk and start looking through your things. :)
+I finished the first pass of the Customer Status Experience concept and attached the preview deck.
 
-Emma`)
+The idea is to make overnight warnings easier for customers to understand without removing the technical detail they may need later.
+
+It is currently thirty-two slides, although most of them are visual. I also added a short loading animation to communicate that the system is actively retrieving the latest status.
+
+Could you take a look tomorrow morning?
+
+Michael, I copied you in as well in case you notice anything technically inaccurate.
+
+I think it is in a good place.
+
+Steve`)
+};
+
+const emmaMail = {
+  '2026-07-31-new-printer-cartridge.eml':message('2026-07-31-new-printer-cartridge.eml','2026-07-31 10:42 EDT','Emma Weber <emma@michamailgate.com>','Michael Weber <robodad@michamailgate.com>','New printer cartridge?',`Hey Robodad,
+
+Chloe and I were just about to print the new Major Tom pages, but the cartridge in her parents’ printer is empty.
+
+Do you still have one of the same kind in the cabinet in your office at home?
+
+I didn’t want to ride over and start looking through your things without asking. :)
+
+Emma
+
+--- Reply: Michael Weber ---
+
+Yes.
+
+Office cabinet, top shelf. Gray box marked PRINTER. Take the unopened cartridge on the left.
+
+Helmet. Lock the door behind you.
+
+I’ll pick you up at 3:05.
+
+Dad
+
+--- Reply: Emma Weber ---
+
+Thanks, Dad.
+
+Chloe says thank you too.
+
+Major Tom reports that the printing systems may still be recoverable.`),
+  README:file('README',`Permanent archive of Emma’s messages.
+
+Hundreds of messages · approximately 4.8 GB
+
+Drawings, questions, Byte photographs, technical-help requests, and everyday messages.
+`,'2026-07-31')
 };
 
 const bash = `pwd\nls -la\ncd Projects/monitoring\ngit status\nvim README.md\ngit diff\npython3 -m pytest\ngit add README.md\ngit commit -m "Document alert recovery"\ncd\nclear\nclear\nssh monitor-01\nsudo systemctl status prometheus-node-exporter\njournalctl -u prometheus-node-exporter --since today\nexit\ncd Tickets/2026\nrg UPS-02 .\ncd ~/Downloads\nsha256sum BrotherDriver-4.1.0.tar.gz\nsha256sum -c BrotherDriver-4.1.0.sha256\ncd ~/Projects/printer-audit\npython3 src/audit.py ../../Documents/office/assets.csv\nvim config/printers.ini\ngit diff\ngit commit -am "Update Printer-03 driver"\nclear\ncd ~/Projects/inventory\ngit pull --ff-only\npython3 src/inventory.py --input ~/Documents/office/assets.csv\npython3 src/inventory.py --input ~/Documents/office/assets.csv --check-duplicates\ngit status\ncd\nfind Downloads -type f -mtime +90 -print\ndu -sh Downloads/* | sort -h\ncat Notes/ups-batteries.txt\nping -c 3 sw-02\nssh sw-02\nshow interfaces status\nexit\nclear\nsudo apt update\nsudo apt list --upgradable\nsudo apt upgrade\nsystemctl --failed\njournalctl -p warning -b\ndf -h\nlsblk\nsudo smartctl -a /dev/nvme0n1\ncd ~/Projects/backup-tools\ngit log --oneline -8\npython3 src/verify.py --snapshot /mnt/backup/latest\npython3 src/verify.py --snapshot /mnt/backup/latest --manifest\necho $?\nvim docs/operations.md\ngit diff --check\ngit commit -am "Clarify restore mount"\ncd\nrg Printer-03 Mail Tickets Documents\nrg UPS-02 Mail Tickets Notes Documents\nfind Photos -type f | sort\nfind Documents -type f -mtime -30 -print\nls ~/Photos/Office\nclear\nhistory | tail -40\nhistory | rg journalctl\ncd ~/Projects/weather-parser\npython3 -m pytest\npython3 src/parser.py tests/fixtures/ws07-old.txt\nvim src/parser.py\npython3 -m pytest\ngit diff\ngit commit -am "Keep original WS-07 line"\nclear\ncd ~/Desktop\nls -lt\nvim TODO.txt\nlibreoffice network-map.odg\ncp network-map.odg network-map-2025-02-12.odg\ncd\nssh store-02\ndf -h\ndu -sh /srv/scans/* | sort -h | tail\nexit\nclear\ncd ~/Projects/monitoring\nvim config/hosts.ini\npython3 src/check.py --host store-02 --dry-run\ngit diff\ngit commit -am "Raise STORE-02 disk threshold"\ngit push\ncd\nmail\nclear\nclear\n`;
@@ -94,9 +143,12 @@ export function createWorkstationFilesystem() {
    'debian-12.5.0-amd64-netinst.iso.torrent':file('debian-12.5.0-amd64-netinst.iso.torrent','BitTorrent metainfo for Debian 12.5 netinst, used for SPARE-04 rebuild.\n','2024-02-12'),
    'firmware-SW02-3.2.7.bin':file('firmware-SW02-3.2.7.bin','Firmware image staged for retired SW-02; never applied after replacement was approved.\n','2024-12-04'),
   },'2019-03-06'),
-  Mail:dir('Mail',{Inbox:dir('Inbox',inbox,'2026-07-29'),Sent:dir('Sent',{},'2026-07-29'),Drafts:dir('Drafts',{},'2026-07-29'),Archive:dir('Archive',{
+  Mail:dir('Mail',{Inbox:dir('Inbox',inbox,'2026-07-30'),EMMA:dir('EMMA',emmaMail,'2026-07-31'),Sent:dir('Sent',{},'2026-07-31'),Drafts:dir('Drafts',{},'2026-07-31'),Archive:dir('Archive',{
    README:file('README','Older email is stored in the encrypted company archive.\n\nThis workstation keeps only the active local mailbox.\n\nHistorical mail can be restored if required.\n','2026-07-29')
   },'2026-07-29')},'2026-07-29'),
+  Calendar:dir('Calendar',{
+   '2026-07-31-pick-up-emma.ics':file('2026-07-31-pick-up-emma.ics','BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTAMP:20260728\nDTSTART:20260731T150500\nSUMMARY:PICK UP EMMA — VANCE HOUSE\nSTATUS:CONFIRMED\nDESCRIPTION:Routine pickup reminder; created three days earlier as redundancy.\nEND:VEVENT\nEND:VCALENDAR\n','2026-07-28')
+  },'2026-07-28'),
   Notes:dir('Notes',{
    ...practicalNotes,
    'ups-batteries.txt':file('ups-batteries.txt','UPS-02: fitted 2020-01-17, 21 min Jan 2026, retest October\nUPS-03: fitted 2024-01-19, 29 min Jan 2026\nBattery supplier: Nordstrom Power; collection cage by loading door\n','2026-01-12'),
