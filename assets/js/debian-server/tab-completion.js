@@ -20,8 +20,9 @@ export function completeTerminalInput(input, state, fs, commandNames, onCandidat
   else {
     const slash=needle.lastIndexOf('/'),dirPart=slash<0?'':needle.slice(0,slash+1),base=slash<0?needle:needle.slice(slash+1);
     const rawDirectory=dirPart||'.',expanded=rawDirectory==='~/'?home:rawDirectory.startsWith('~/')?home+rawDirectory.slice(1):rawDirectory;
-    const path=normalizePath(expanded,state.currentDirectory),directory=fs.get(path);
-    if(directory?.type==='directory'&&!fs.denied(path)) choices=Object.values(directory.children).filter(node=>node.name.startsWith(base)).map(node=>`${dirPart}${node.name}${node.type==='directory'?'/':''}`);
+    const path=normalizePath(expanded,state.currentDirectory);let directory=fs.get(path),canonicalDirectory=path;
+    if(!directory){let node=fs.root,built='';for(const segment of path.split('/').filter(Boolean)){const direct=node?.children?.[segment],matches=direct?[direct]:Object.values(node?.children||{}).filter(x=>x.type==='directory'&&x.name.toLowerCase()===segment.toLowerCase());if(matches.length!==1){node=null;break;}node=matches[0];built+=`/${node.name}`;}directory=node;canonicalDirectory=built||'/';}
+    if(directory?.type==='directory'&&!fs.denied(canonicalDirectory)) choices=Object.values(directory.children).filter(node=>node.name.startsWith(base)||(node.type==='directory'&&node.name.toLowerCase().startsWith(base.toLowerCase()))).map(node=>`${dirPart}${node.name}${node.type==='directory'?'/':''}`);
   }
   if(choices.length===1) {
     let replacement=choices[0];
