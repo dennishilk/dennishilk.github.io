@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ShellEngine } from '../assets/js/debian-server/shell-engine.js';
 import { MAIL_MESSAGES } from '../assets/js/lost-administrator/mail-data.js';
-import { defaultWorkstationState } from '../assets/js/lost-administrator/workstation-state.js';
+import { defaultWorkstationState, loadWorkstationState, WORKSTATION_SCHEMA_VERSION, WORKSTATION_STORAGE_KEY } from '../assets/js/lost-administrator/workstation-state.js';
 
 const execute = (engine, command) => engine.execute(command);
 const output = result => result.stdout.join('\n');
@@ -12,7 +12,7 @@ test('printer task and restrained project reference are canonical', () => {
   const state=defaultWorkstationState(), shell=new ShellEngine(state);
   assert.equal(MAIL_MESSAGES.length,1);
   assert.equal(MAIL_MESSAGES[0].body,canonicalBody);
-  assert.match(output(execute(shell,'cat Notes/home.todo')),/^- Check for spare printer cartridge at home$/m);
+  assert.match(output(execute(shell,'cat Notes/home.todo')),/^- Check with Emma for the spare printer cartridge at home$/m);
   const readme=output(execute(shell,'cat Projects/major-tom/README'));
   assert.equal(readme,"Printable pages for Emma and Chloe's Major Tom project.\n\nThe project files themselves are not stored on this company workstation.");
   for(const detail of ['school','teacher','deadline','artwork','purchase','replacement is','completed']) assert.doesNotMatch(readme,new RegExp(detail,'i'));
@@ -74,7 +74,7 @@ test('live workstation contains only approved personal canon', () => {
     'Downloads/mp3_car/02-Solsbury-Hill.mp3','Downloads/mp3_car/03-Weather-With-You.mp3',
     'Downloads/mp3_car/04-Fields-of-Gold.mp3','Downloads/mp3_car/playlist.m3u','Desktop/temp-nina.txt',
     'Notes/henry-handover.md',
-    'Notes/shopping.txt','Notes/holiday-ideas.md','Photos/Family/2020-12-24_kitchen_emma-arthur.jpg',
+    'Notes/today.txt','Notes/shopping.txt','Notes/holiday-ideas.md','Photos/Family/2020-12-24_kitchen_emma-arthur.jpg',
     'Photos/Family/2022-06-09_office-barbecue.jpg','Photos/Emma/2021-09-18_leaf-album.jpg',
     'Photos/Emma/2024-06-12_school-placement.jpg','Photos/Vacation/2023-North-Sea/IMG_20230729_164211.jpg',
     'Photos/Vacation/2023-North-Sea/IMG_20230731_111805.jpg','Photos/Vacation/2023-North-Sea/IMG_20230803_190412.jpg'
@@ -89,6 +89,38 @@ test('live workstation contains only approved personal canon', () => {
   }
   const emma=execute(shell,'grep -Ri emma ~').stdout;
   assert.ok(emma.length>0);
-  assert.ok(emma.every(line=>/Mail\/Inbox\/2026-07-29-new-printer-cartridge\.eml|Projects\/major-tom\/README/.test(line)),emma.join('\n'));
+  assert.ok(emma.every(line=>/Mail\/Inbox\/2026-07-29-new-printer-cartridge\.eml|Notes\/home\.todo|Projects\/major-tom\/README/.test(line)),emma.join('\n'));
   assert.equal(execute(shell,'find ~/Photos -type f').stdout.length,4);
+});
+
+
+test('all recursive search and traversal commands use only the live filesystem tree', () => {
+  const state=defaultWorkstationState(), shell=new ShellEngine(state);
+  const approved=/Mail\/Inbox\/2026-07-29-new-printer-cartridge\.eml|Notes\/home\.todo|Projects\/major-tom\/README/;
+  for(const command of ['grep -r Emma ~','grep -R Emma ~','grep -Ri emma ~','grep -Ri emma /home/m.weber']){
+    const result=execute(shell,command);
+    assert.equal(result.exitCode,0,command);
+    assert.ok(result.stdout.every(line=>approved.test(line)),`${command}\n${result.stdout.join('\n')}`);
+  }
+  execute(shell,'echo Emma > Notes/remove-me.txt');
+  assert.match(output(execute(shell,'grep -R Emma ~')),/remove-me\.txt/);
+  execute(shell,'rm Notes/remove-me.txt');
+  for(const command of ['grep -R Emma ~','find ~','find ~ -type f','tree ~'])
+    assert.doesNotMatch(output(execute(shell,command)),/remove-me\.txt/,command);
+});
+
+test('a pre-cleanup persisted filesystem is invalidated instead of becoming a search index', () => {
+  const stale=defaultWorkstationState();
+  stale.schemaVersion=WORKSTATION_SCHEMA_VERSION-1;
+  stale.filesystem.children.home.children['m.weber'].children.Notes.children['shopping.txt']={
+    name:'shopping.txt',type:'file',owner:'m.weber',group:'m.weber',mode:'-rw-r--r--',
+    content:'Emma Arthur Lena Mia Greetsiel',created:'',modified:'',protected:false
+  };
+  const data=new Map([[WORKSTATION_STORAGE_KEY,JSON.stringify(stale)]]);
+  const storage={getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,value),removeItem:key=>data.delete(key)};
+  const loaded=loadWorkstationState(storage), shell=new ShellEngine(loaded);
+  assert.equal(loaded.schemaVersion,WORKSTATION_SCHEMA_VERSION);
+  for(const command of ['grep -Ri arthur ~','grep -Ri greetsiel ~','find ~ -name shopping.txt','tree ~'])
+    assert.doesNotMatch(output(execute(shell,command)),/Arthur|Greetsiel|shopping\.txt/i,command);
+  assert.equal(JSON.parse(data.get(WORKSTATION_STORAGE_KEY)).schemaVersion,WORKSTATION_SCHEMA_VERSION);
 });
