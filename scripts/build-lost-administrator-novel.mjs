@@ -41,10 +41,8 @@ function page({ title, description, canonical, body, reader = false }) {
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="stylesheet" href="/style.css?v=59">
   <link rel="stylesheet" href="/lost-administrator/novel/novel.css">
-  <script defer src="/stars.js"></script>
 </head>
 <body class="novel-page${reader ? ' novel-reader-page' : ''}">
-<canvas id="stars"></canvas>
 <div class="content museum-page lost-admin-page">
 ${body}
   <footer>

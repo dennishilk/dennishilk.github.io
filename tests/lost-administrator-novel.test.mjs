@@ -19,8 +19,22 @@ async function fixture(manifest, sources = {}) {
 
 test('main landing page links to the novel without displaying its cover', async () => {
   const html = await read('lost-administrator/index.html');
-  assert.match(html, /href="\/lost-administrator\/novel\/"[^>]*>READ THE NOVEL/);
+  assert.match(html, /href="\/lost-administrator\/novel\/"[^>]*>READ <span aria-hidden="true">→<\/span>/);
+  assert.match(html, /href="\/lost-administrator\/workstation\/"[^>]*>LOGIN <span aria-hidden="true">→<\/span>/);
   assert.doesNotMatch(html, /thelostadministrator\.webp/);
+});
+
+test('novel pages use a static shell without the animated starfield', async () => {
+  const css = await read('lost-administrator/novel/novel.css');
+  const html = await read('lost-administrator/novel/index.html');
+  assert.match(css, /\.novel-page\s*\{[^}]*background:\s*#000/);
+  assert.doesNotMatch(html, /stars\.js|id="stars"/);
+
+  const rootDir = await fixture({ chapters: [{ number: 1, slug: 'one', title: 'One', source: 'one.md' }] }, { 'one.md': 'Quiet prose.' });
+  await buildNovel({ rootDir });
+  const chapter = await fs.readFile(path.join(rootDir, 'lost-administrator/novel/chapters/one/index.html'), 'utf8');
+  assert.match(chapter, /<body class="novel-page novel-reader-page">/);
+  assert.doesNotMatch(chapter, /stars\.js|id="stars"/);
 });
 
 test('novel landing uses the existing cover and required alt text', async () => {

@@ -1,4 +1,4 @@
-.novel-page { --novel-border: rgba(113, 196, 255, .25); }
+.novel-page { --novel-border: rgba(113, 196, 255, .25); background: #000; }
 .novel-shell { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0 4rem; }
 .novel-back { display: inline-block; margin-bottom: 2.5rem; color: #8fcfff; font: .78rem/1.4 monospace; letter-spacing: .08em; text-decoration: none; }
 .novel-back:hover, .novel-back:focus-visible { text-decoration: underline; }
