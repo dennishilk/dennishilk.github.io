@@ -122,3 +122,53 @@ test('does not auto-discover unlisted Markdown and preserves the cover on rebuil
   assert.match(html, /thelostadministrator\.webp/);
   await assert.rejects(fs.access(path.join(rootDir, 'lost-administrator/novel/chapters/unlisted-draft/index.html')));
 });
+
+test('renders the supported Markdown subset while keeping manuscript HTML safe', async () => {
+  const rootDir = await fixture(
+    { chapters: [{ number: 1, slug: 'markup', title: '*Safe* `Markup`', source: 'markup.md' }] },
+    { 'markup.md': 'A *quiet* **strong** `command` and <script>alert("no")</script>.\n\n- *list*\n\n> **quoted** `text`\n\n```text\nm.weber@workstation:~$ status\n  preserved output\n```' }
+  );
+  await buildNovel({ rootDir });
+  const html = await fs.readFile(path.join(rootDir, 'lost-administrator/novel/chapters/markup/index.html'), 'utf8');
+  assert.match(html, /A <em>quiet<\/em> <strong>strong<\/strong> <code>command<\/code>/);
+  assert.match(html, /&lt;script&gt;alert\(&quot;no&quot;\)&lt;\/script&gt;/);
+  assert.doesNotMatch(html, /<script>alert/);
+  assert.match(html, /<li><em>list<\/em><\/li>/);
+  assert.match(html, /<blockquote><p><strong>quoted<\/strong> <code>text<\/code><\/p><\/blockquote>/);
+  assert.match(html, /<pre><code class="language-text">m\.weber@workstation:~\$ status\n  preserved output<\/code><\/pre>/);
+  assert.doesNotMatch(html, /```/);
+});
+
+test('publishes the two approved chapters in order with adjacent navigation only', async () => {
+  const landing = await read('lost-administrator/novel/index.html');
+  const chapterOne = await read('lost-administrator/novel/chapters/day-zero/index.html');
+  const chapterTwo = await read('lost-administrator/novel/chapters/ill-be-right-back/index.html');
+  assert.ok(landing.indexOf('/chapters/day-zero/') < landing.indexOf('/chapters/ill-be-right-back/'));
+  assert.match(chapterOne, /class="novel-next"[^>]*href="\/lost-administrator\/novel\/chapters\/ill-be-right-back\//);
+  assert.doesNotMatch(chapterOne, /class="novel-previous"/);
+  assert.match(chapterTwo, /class="novel-previous"[^>]*href="\/lost-administrator\/novel\/chapters\/day-zero\//);
+  assert.doesNotMatch(chapterTwo, /class="novel-next"/);
+  assert.doesNotMatch(landing + chapterOne + chapterTwo, /chapter(?:-|\s*)3|chapter-03/i);
+  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-3/index.html')));
+});
+
+test('approved sources retain their required endings and terminal identity', async () => {
+  const chapterOne = (await read('content/lost-administrator/novel/chapters/chapter-01-day-zero.md')).trimEnd();
+  const chapterTwo = (await read('content/lost-administrator/novel/chapters/chapter-02-ill-be-right-back.md')).trimEnd();
+  assert.ok(chapterOne.endsWith('Behind him, the office continued working.'));
+  assert.ok(chapterTwo.endsWith('Michael Weber was missing.'));
+  assert.match(chapterTwo, /m\.weber@workstation:~\$/);
+  assert.doesNotMatch(chapterTwo, /michael@workstation:~\$/);
+});
+
+test('generated publication contains no Markdown fences, drafts, or Canon material', async () => {
+  const publicFiles = [
+    'lost-administrator/novel/index.html',
+    'lost-administrator/novel/chapters/day-zero/index.html',
+    'lost-administrator/novel/chapters/ill-be-right-back/index.html'
+  ];
+  const publication = (await Promise.all(publicFiles.map(read))).join('\n');
+  assert.doesNotMatch(publication, /```|\*Friday, July 31, 2026\*|\*\*(?:06:30 AM|01:30 PM)\*\*/);
+  assert.match(publication, /<pre><code class="language-text">/);
+  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft/i);
+});
