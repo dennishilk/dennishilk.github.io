@@ -4219,17 +4219,16 @@ button.technology-observer-card {
 .lost-admin-card-grid h2 { color: #d8f5ff; margin: .35rem 0 .65rem; }
 .lost-admin-card-grid p:last-child { color: #c1d0d4; line-height: 1.65; margin-bottom: 0; }
 .lost-admin-card-number { color: #75dce9 !important; font: 700 .7rem "Courier New", monospace; letter-spacing: .12em; margin: 0 !important; }
-.lost-admin-card-actions { align-items: center; display: flex; gap: .55rem; margin-top: 1rem; }
-.lost-admin-development-status { color: #ffd08a !important; font: 700 .69rem "Courier New", monospace; letter-spacing: .09em; margin: 0; text-align: center; }
-.lost-admin-card-grid :is(.lost-admin-novel-link, .lost-admin-workstation-link) { font-size: .8rem; min-height: 40px; padding: .45rem .7rem; width: auto; }
-.lost-admin-card-grid :is(.lost-admin-novel-link, .lost-admin-workstation-link):focus-visible { outline: 2px solid #8fe8ff; outline-offset: 3px; }
+.lost-admin-primary-card { color: inherit; text-decoration: none; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.lost-admin-primary-card:hover { border-color: var(--accent); box-shadow: 0 0 12px rgba(0, 180, 255, .25); transform: translateY(-2px); }
+.lost-admin-primary-card:focus-visible { border-color: var(--accent); outline: 2px solid #8fe8ff; outline-offset: 3px; }
+.lost-admin-development-status { color: #ffd08a !important; font: 700 .69rem "Courier New", monospace; letter-spacing: .09em; margin: .8rem 0 0 !important; text-align: center; }
 .lost-admin-browser-card { grid-column: 1 / -1; }
 @media (max-width: 700px) {
   .lost-admin-hero { text-align: center; }
   .lost-admin-fiction-notice { text-align: left; }
   .lost-admin-introduction { border-left: 0; border-top: 2px solid rgba(0, 180, 255, .48); padding-left: 0; padding-top: 1rem; text-align: left; }
   .lost-admin-card-grid { grid-template-columns: 1fr; }
-  .lost-admin-card-grid :is(.lost-admin-novel-link, .lost-admin-workstation-link) { min-height: 44px; }
   .lost-admin-browser-card { grid-column: auto; }
 }
 
