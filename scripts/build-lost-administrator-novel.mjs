@@ -10,18 +10,65 @@ const escapeHtml = (value) => String(value)
   .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 
 // Deliberately small, safe subset for prose: raw HTML is always escaped.
+function renderInline(source) {
+  let rendered = '';
+  let plain = '';
+  const flush = () => { rendered += escapeHtml(plain); plain = ''; };
+  for (let index = 0; index < source.length;) {
+    const marker = source.startsWith('**', index) ? '**' : source[index] === '*' ? '*' : source[index] === '`' ? '`' : '';
+    if (!marker) { plain += source[index]; index += 1; continue; }
+    const end = source.indexOf(marker, index + marker.length);
+    if (end < 0 || end === index + marker.length) { plain += marker; index += marker.length; continue; }
+    flush();
+    const content = escapeHtml(source.slice(index + marker.length, end));
+    if (marker === '**') rendered += `<strong>${content}</strong>`;
+    else if (marker === '*') rendered += `<em>${content}</em>`;
+    else rendered += `<code>${content}</code>`;
+    index = end + marker.length;
+  }
+  flush();
+  return rendered;
+}
+
+function markdownBlocks(source) {
+  const lines = source.replaceAll('\r\n', '\n').split('\n');
+  const blocks = [];
+  for (let index = 0; index < lines.length;) {
+    if (!lines[index].trim()) { index += 1; continue; }
+    const fence = lines[index].match(/^```(.*)$/);
+    if (fence) {
+      const language = fence[1].trim();
+      if (language && !/^[A-Za-z0-9_-]+$/.test(language)) throw new Error('Unsafe fenced code language.');
+      const code = [];
+      index += 1;
+      while (index < lines.length && lines[index] !== '```') { code.push(lines[index]); index += 1; }
+      if (index === lines.length) throw new Error('Unclosed fenced code block.');
+      blocks.push({ code: code.join('\n'), language });
+      index += 1;
+      continue;
+    }
+    const text = [];
+    while (index < lines.length && lines[index].trim() && !/^```/.test(lines[index])) { text.push(lines[index]); index += 1; }
+    blocks.push({ text: text.join('\n') });
+  }
+  return blocks;
+}
+
 function renderMarkdown(source) {
-  const blocks = source.replaceAll('\r\n', '\n').trim().split(/\n\s*\n/);
-  return blocks.filter(Boolean).map(block => {
-    const text = block.trim();
+  return markdownBlocks(source).map(block => {
+    if ('code' in block) {
+      const language = /^[A-Za-z0-9_-]+$/.test(block.language) ? ` class="language-${block.language}"` : '';
+      return `<pre><code${language}>${escapeHtml(block.code)}</code></pre>`;
+    }
+    const text = block.text.trim();
     if (/^(?:\*\s*\*\s*\*|-{3,}|_{3,})$/.test(text)) return '<hr>';
     const heading = text.match(/^(#{2,6})\s+(.+)$/s);
-    if (heading && !heading[2].includes('\n')) return `<h${heading[1].length}>${escapeHtml(heading[2])}</h${heading[1].length}>`;
+    if (heading && !heading[2].includes('\n')) return `<h${heading[1].length}>${renderInline(heading[2])}</h${heading[1].length}>`;
     const lines = text.split('\n');
-    if (lines.every(line => /^[-*]\s+/.test(line))) return `<ul>${lines.map(line => `<li>${escapeHtml(line.replace(/^[-*]\s+/, ''))}</li>`).join('')}</ul>`;
-    if (lines.every(line => /^\d+\.\s+/.test(line))) return `<ol>${lines.map(line => `<li>${escapeHtml(line.replace(/^\d+\.\s+/, ''))}</li>`).join('')}</ol>`;
-    if (lines.every(line => /^>\s?/.test(line))) return `<blockquote><p>${lines.map(line => escapeHtml(line.replace(/^>\s?/, ''))).join('<br>')}</p></blockquote>`;
-    return `<p>${lines.map(escapeHtml).join('<br>')}</p>`;
+    if (lines.every(line => /^[-*]\s+/.test(line))) return `<ul>${lines.map(line => `<li>${renderInline(line.replace(/^[-*]\s+/, ''))}</li>`).join('')}</ul>`;
+    if (lines.every(line => /^\d+\.\s+/.test(line))) return `<ol>${lines.map(line => `<li>${renderInline(line.replace(/^\d+\.\s+/, ''))}</li>`).join('')}</ol>`;
+    if (lines.every(line => /^>\s?/.test(line))) return `<blockquote><p>${lines.map(line => renderInline(line.replace(/^>\s?/, ''))).join('<br>')}</p></blockquote>`;
+    return `<p>${lines.map(renderInline).join('<br>')}</p>`;
   }).join('\n');
 }
 
