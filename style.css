@@ -4203,7 +4203,6 @@ button.technology-observer-card {
 }
 
 /* The Lost Administrator — phase 1 project landing page */
-.home-lost-administrator-cta { color: var(--accent); display: block; font: 700 .72rem "Courier New", monospace; letter-spacing: .08em; margin-top: .8rem; }
 .lost-admin-page { margin: 0 auto; max-width: 1440px; }
 .lost-admin-hero { margin-left: auto; margin-right: auto; max-width: 1100px; text-align: left; }
 .lost-admin-hero .museum-section-label { margin-top: 1.25rem; }
@@ -4220,9 +4219,9 @@ button.technology-observer-card {
 .lost-admin-card-grid h2 { color: #d8f5ff; margin: .35rem 0 .65rem; }
 .lost-admin-card-grid p:last-child { color: #c1d0d4; line-height: 1.65; margin-bottom: 0; }
 .lost-admin-card-number { color: #75dce9 !important; font: 700 .7rem "Courier New", monospace; letter-spacing: .12em; margin: 0 !important; }
-.lost-admin-card-actions { align-items: center; display: flex; flex-direction: column; gap: .55rem; margin-top: 1rem; }
+.lost-admin-card-actions { align-items: center; display: flex; gap: .55rem; margin-top: 1rem; }
 .lost-admin-development-status { color: #ffd08a !important; font: 700 .69rem "Courier New", monospace; letter-spacing: .09em; margin: 0; text-align: center; }
-.lost-admin-card-grid :is(.lost-admin-novel-link, .lost-admin-workstation-link) { align-self: flex-start; font-size: .8rem; min-height: 40px; padding: .45rem .7rem; width: auto; }
+.lost-admin-card-grid :is(.lost-admin-novel-link, .lost-admin-workstation-link) { font-size: .8rem; min-height: 40px; padding: .45rem .7rem; width: auto; }
 .lost-admin-card-grid :is(.lost-admin-novel-link, .lost-admin-workstation-link):focus-visible { outline: 2px solid #8fe8ff; outline-offset: 3px; }
 .lost-admin-browser-card { grid-column: 1 / -1; }
 @media (max-width: 700px) {

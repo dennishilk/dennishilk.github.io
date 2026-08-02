@@ -35,7 +35,7 @@ test('main landing page links to the novel without displaying its cover', async 
   assert.match(html, /href="\/lost-administrator\/novel\/"[^>]*>READ <span aria-hidden="true">→<\/span>/);
   assert.match(html, /href="\/lost-administrator\/workstation\/"[^>]*>LOGIN <span aria-hidden="true">→<\/span>/);
   assert.equal(html.match(/THE STORY CONTINUES/g)?.length, 1);
-  assert.match(html, /class="lost-admin-card-actions"[\s\S]*THE STORY CONTINUES[\s\S]*href="\/lost-administrator\/novel\/"/);
+  assert.match(html, /class="lost-admin-card-actions"[\s\S]*href="\/lost-administrator\/novel\/"[\s\S]*THE STORY CONTINUES/);
   assert.doesNotMatch(html, /THE NOVEL IS CURRENTLY IN DEVELOPMENT/);
   assert.doesNotMatch(html.slice(html.indexOf('<body>')), /thelostadministrator\.webp/);
 });
