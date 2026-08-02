@@ -86,8 +86,8 @@ function page({ title, description, canonical, body, reader = false }) {
   <meta property="og:url" content="${canonical}">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="stylesheet" href="/style.css?v=59">
-  <link rel="stylesheet" href="/lost-administrator/novel/novel.css?v=2">
+  <link rel="stylesheet" href="/style.css?v=60">
+  <link rel="stylesheet" href="/lost-administrator/novel/novel.css?v=3">
 </head>
 <body class="novel-page${reader ? ' novel-reader-page' : ''}">
 <div class="content museum-page lost-admin-page">

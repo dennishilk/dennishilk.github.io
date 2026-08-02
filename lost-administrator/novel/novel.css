@@ -9,8 +9,8 @@
 .novel-copy { display: flex; flex-direction: column; align-items: center; }
 .novel-subtitle { margin: 2rem 0 0; color: #c9d5dd; font-size: clamp(1.05rem, 2vw, 1.3rem); }
 .novel-intro { max-width: 59ch; margin: 1rem 0 0; color: #aebdc6; font-size: 1.05rem; line-height: 1.75; }
-.novel-contents { margin-top: clamp(3.5rem, 8vw, 6rem); padding-top: 2rem; border-top: 1px solid var(--novel-border); }
-.novel-contents h2 { font: .85rem/1.4 monospace; letter-spacing: .14em; }
+.novel-contents { margin-top: clamp(3.5rem, 8vw, 6rem); padding-top: 2rem; }
+.novel-contents h2 { border-bottom: 1px solid var(--novel-border); display: inline-block; font: .85rem/1.4 monospace; letter-spacing: .14em; padding-bottom: .35rem; }
 .novel-empty { margin-top: 1.4rem; padding: 1.5rem; border: 1px solid var(--novel-border); border-radius: 4px; }
 .novel-empty strong { display: block; color: #dce8ee; font: .82rem/1.4 monospace; letter-spacing: .08em; }
 .novel-empty p { margin: .65rem 0 0; color: #9eb0ba; }

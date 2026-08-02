@@ -4,9 +4,9 @@ import { readFileSync } from 'node:fs';
 const html = readFileSync(new URL('../museum/index.html', import.meta.url), 'utf8');
 const featuredSection = html.match(/<section class="museum-featured"[^>]*>([\s\S]*?)<\/section>/)?.[1];
 assert.ok(featuredSection, 'Featured experience section must exist');
-assert.match(featuredSection, /museum-card-linux-academy/, 'Linux Terminal Academy must be the featured experience');
-assert.match(featuredSection, /<h2[^>]*>Linux Terminal Academy<\/h2>/, 'Featured experience must use the Linux Terminal Academy title');
-assert.match(featuredSection, /href="\/museum\/linux-terminal-academy\/"/, 'Featured Academy CTA must link to the Linux Terminal Academy route');
+assert.match(featuredSection, /museum-card-lost-administrator/, 'The Lost Administrator must be the featured experience');
+assert.match(featuredSection, /<h2[^>]*>The Lost Administrator<\/h2>/, 'Featured experience must use The Lost Administrator title');
+assert.match(featuredSection, /href="\/lost-administrator\/"/, 'Featured story CTA must link to The Lost Administrator route');
 assert.doesNotMatch(featuredSection, /museum-card-wopr|>WOPR</, 'WOPR must not be the featured experience');
 
 const authorLabSection = html.match(/<section class="museum-behind"[^>]*>([\s\S]*?)<\/section>/)?.[1];
