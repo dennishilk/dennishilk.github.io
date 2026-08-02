@@ -14,7 +14,8 @@ test('homepage presents the author identity and exact featured project order', (
   assert.doesNotMatch(projects, /NVIDIA Installer/);
   const storyCard = projects.slice(projects.indexOf('<a href="/lost-administrator/"'), projects.indexOf('</a>', projects.indexOf('<a href="/lost-administrator/"')));
   assert.match(storyCard, /class="card home-lost-administrator-card"/);
-  assert.match(storyCard, /ENTER THE STORY →/);
+  assert.match(storyCard, /An ongoing novel and interactive story experience built around a missing Debian administrator\./);
+  assert.doesNotMatch(storyCard, /ENTER THE STORY →/);
   assert.equal((storyCard.match(/<a\b/g) || []).length, 1);
   assert.doesNotMatch(storyCard, /<button\b/);
 });
