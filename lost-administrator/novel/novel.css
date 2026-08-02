@@ -14,8 +14,9 @@
 .novel-empty { margin-top: 1.4rem; padding: 1.5rem; border: 1px solid var(--novel-border); border-radius: 4px; }
 .novel-empty strong { display: block; color: #dce8ee; font: .82rem/1.4 monospace; letter-spacing: .08em; }
 .novel-empty p { margin: .65rem 0 0; color: #9eb0ba; }
-.novel-toc { padding: 0; list-style: none; border-top: 1px solid var(--novel-border); }
-.novel-toc a { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--novel-border); color: inherit; text-decoration: none; }
+.novel-toc { padding: 0; list-style: none; }
+.novel-toc li + li { border-top: 1px solid var(--novel-border); }
+.novel-toc a { display: flex; gap: 1rem; padding: 1rem 0; color: inherit; text-decoration: none; }
 .novel-reader { width: min(72ch, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0 5rem; }
 .novel-reader-header { margin: 1.5rem 0 3rem; }
 .novel-reader-header h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.12; }

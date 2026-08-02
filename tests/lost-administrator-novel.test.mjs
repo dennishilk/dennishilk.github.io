@@ -21,7 +21,29 @@ test('main landing page links to the novel without displaying its cover', async 
   const html = await read('lost-administrator/index.html');
   assert.match(html, /href="\/lost-administrator\/novel\/"[^>]*>READ <span aria-hidden="true">→<\/span>/);
   assert.match(html, /href="\/lost-administrator\/workstation\/"[^>]*>LOGIN <span aria-hidden="true">→<\/span>/);
+  assert.match(html, />THE STORY CONTINUES<\/p>/);
+  assert.doesNotMatch(html, /THE NOVEL IS CURRENTLY IN DEVELOPMENT/);
   assert.doesNotMatch(html, /thelostadministrator\.webp/);
+});
+
+test('novel contents uses only a section border and separators between chapters', async () => {
+  const css = await read('lost-administrator/novel/novel.css');
+  assert.match(css, /\.novel-contents\s*\{[^}]*border-top:\s*1px solid var\(--novel-border\)/);
+  assert.doesNotMatch(css, /\.novel-toc\s*\{[^}]*border-top/);
+  assert.match(css, /\.novel-toc li \+ li\s*\{[^}]*border-top:\s*1px solid var\(--novel-border\)/);
+  assert.doesNotMatch(css, /\.novel-toc a\s*\{[^}]*border-bottom/);
+  assert.doesNotMatch(css, /\.novel-toc li(?:\s|,|\{)[^}]*border-bottom/);
+});
+
+test('generated novel pages use the versioned novel stylesheet', async () => {
+  const pages = [
+    'lost-administrator/novel/index.html',
+    'lost-administrator/novel/chapters/day-zero/index.html',
+    'lost-administrator/novel/chapters/ill-be-right-back/index.html'
+  ];
+  for (const page of pages) {
+    assert.match(await read(page), /href="\/lost-administrator\/novel\/novel\.css\?v=2"/);
+  }
 });
 
 test('novel pages use a static shell without the animated starfield', async () => {
