@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -30,14 +31,35 @@ async function fixture(manifest, sources = {}) {
   return rootDir;
 }
 
-test('main landing page links to the novel without displaying its cover', async () => {
+test('main landing page uses full-card links for the novel and workstation', async () => {
   const html = await read('lost-administrator/index.html');
-  assert.match(html, /href="\/lost-administrator\/novel\/"[^>]*>READ <span aria-hidden="true">→<\/span>/);
-  assert.match(html, /href="\/lost-administrator\/workstation\/"[^>]*>LOGIN <span aria-hidden="true">→<\/span>/);
+  const storyCards = html.match(/<a class="[^"]*lost-admin-novel-link[^"]*" href="\/lost-administrator\/novel\/">[\s\S]*?<\/a>/g) || [];
+  const environmentCards = html.match(/<a class="[^"]*lost-admin-environment-link[^"]*" href="\/lost-administrator\/workstation\/">[\s\S]*?<\/a>/g) || [];
+
+  assert.equal(storyCards.length, 1);
+  assert.equal(environmentCards.length, 1);
+  assert.match(storyCards[0], /class="[^"]*detail-card[^"]*"[\s\S]*01 \/ STORY[\s\S]*<h2>The Novel<\/h2>/);
+  assert.match(environmentCards[0], /class="[^"]*detail-card[^"]*"[\s\S]*02 \/ ENVIRONMENT[\s\S]*<h2>Interactive Workstation<\/h2>/);
+  const cardContents = (storyCards[0] + environmentCards[0]).replace(/<a\b[^>]*>/g, '');
+  assert.doesNotMatch(cardContents, /<(?:a|button)\b/);
+  assert.doesNotMatch(html, /READ\s*(?:<[^>]+>)*→|LOGIN\s*(?:<[^>]+>)*→/);
+  assert.equal(storyCards[0].match(/THE STORY CONTINUES/g)?.length, 1);
   assert.equal(html.match(/THE STORY CONTINUES/g)?.length, 1);
-  assert.match(html, /class="lost-admin-card-actions"[\s\S]*href="\/lost-administrator\/novel\/"[\s\S]*THE STORY CONTINUES/);
+  assert.match(storyCards[0], /Michael Weber’s life\.<\/p>\s*<p class="lost-admin-development-status">THE STORY CONTINUES<\/p>/);
   assert.doesNotMatch(html, /THE NOVEL IS CURRENTLY IN DEVELOPMENT/);
   assert.doesNotMatch(html.slice(html.indexOf('<body>')), /thelostadministrator\.webp/);
+});
+
+test('canonical chapter Markdown remains unchanged', async () => {
+  const expectedHashes = new Map([
+    ['content/lost-administrator/novel/chapters/chapter-01-day-zero.md', '242468c4819e6f92e3301761ff8896b2cf0c0303c417ff6262b27d98e988ac52'],
+    ['content/lost-administrator/novel/chapters/chapter-02-ill-be-right-back.md', 'ae1ec8331677d27bd7f6c27edbfce760187202626c05eed2fcd5401ab6682951']
+  ]);
+
+  for (const [chapter, expectedHash] of expectedHashes) {
+    const source = await fs.readFile(path.join(repositoryRoot, chapter));
+    assert.equal(createHash('sha256').update(source).digest('hex'), expectedHash, chapter);
+  }
 });
 
 test('novel contents underlines its heading and separates only consecutive chapters', async () => {
