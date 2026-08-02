@@ -8,6 +8,19 @@ import { buildNovel } from '../scripts/build-lost-administrator-novel.mjs';
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
 const read = relative => fs.readFile(path.join(repositoryRoot, relative), 'utf8');
 
+test('project metadata presents the ongoing novel and uses its cover image', async () => {
+  const html = await read('lost-administrator/index.html');
+  const head = html.slice(0, html.indexOf('</head>'));
+  const title = 'The Lost Administrator — Ongoing Novel &amp; Interactive Story Experience';
+  const description = 'The Lost Administrator is an ongoing novel and interactive story experience told through published chapters, digital traces and Michael Weber’s reconstructed Debian workstation.';
+  const cover = 'https://dennishilk.com/assets/lost-administrator/thelostadministrator.webp';
+  assert.match(head, new RegExp(`<title>${title}</title>`));
+  assert.equal((head.match(new RegExp(`content="${description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'g')) || []).length, 3);
+  assert.equal((head.match(new RegExp(`content="${cover}"`, 'g')) || []).length, 2);
+  assert.equal((head.match(new RegExp(`content="${title}"`, 'g')) || []).length, 2);
+  assert.doesNotMatch(head, /planned|browser-only/i);
+});
+
 async function fixture(manifest, sources = {}) {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'novel-build-'));
   const chapterDir = path.join(rootDir, 'content/lost-administrator/novel/chapters');
@@ -21,14 +34,16 @@ test('main landing page links to the novel without displaying its cover', async 
   const html = await read('lost-administrator/index.html');
   assert.match(html, /href="\/lost-administrator\/novel\/"[^>]*>READ <span aria-hidden="true">→<\/span>/);
   assert.match(html, /href="\/lost-administrator\/workstation\/"[^>]*>LOGIN <span aria-hidden="true">→<\/span>/);
-  assert.match(html, />THE STORY CONTINUES<\/p>/);
+  assert.equal(html.match(/THE STORY CONTINUES/g)?.length, 1);
+  assert.match(html, /class="lost-admin-card-actions"[\s\S]*THE STORY CONTINUES[\s\S]*href="\/lost-administrator\/novel\/"/);
   assert.doesNotMatch(html, /THE NOVEL IS CURRENTLY IN DEVELOPMENT/);
-  assert.doesNotMatch(html, /thelostadministrator\.webp/);
+  assert.doesNotMatch(html.slice(html.indexOf('<body>')), /thelostadministrator\.webp/);
 });
 
-test('novel contents uses only a section border and separators between chapters', async () => {
+test('novel contents underlines its heading and separates only consecutive chapters', async () => {
   const css = await read('lost-administrator/novel/novel.css');
-  assert.match(css, /\.novel-contents\s*\{[^}]*border-top:\s*1px solid var\(--novel-border\)/);
+  assert.doesNotMatch(css, /\.novel-contents\s*\{[^}]*border-top/);
+  assert.match(css, /\.novel-contents h2\s*\{[^}]*border-bottom:\s*1px solid var\(--novel-border\)[^}]*display:\s*inline-block/);
   assert.doesNotMatch(css, /\.novel-toc\s*\{[^}]*border-top/);
   assert.match(css, /\.novel-toc li \+ li\s*\{[^}]*border-top:\s*1px solid var\(--novel-border\)/);
   assert.doesNotMatch(css, /\.novel-toc a\s*\{[^}]*border-bottom/);
@@ -42,7 +57,9 @@ test('generated novel pages use the versioned novel stylesheet', async () => {
     'lost-administrator/novel/chapters/ill-be-right-back/index.html'
   ];
   for (const page of pages) {
-    assert.match(await read(page), /href="\/lost-administrator\/novel\/novel\.css\?v=2"/);
+    const html = await read(page);
+    assert.match(html, /href="\/style\.css\?v=60"/);
+    assert.match(html, /href="\/lost-administrator\/novel\/novel\.css\?v=3"/);
   }
 });
 
