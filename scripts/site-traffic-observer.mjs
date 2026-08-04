@@ -18,6 +18,11 @@ export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
 export const NOVEL_READER_STATE_SCHEMA_VERSION = 3;
 export const NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE = 2400;
 export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 26317;
+// 2.40 aligns strictly filtered first-party log values with the historically observed novel counter.
+// 0.75 is a provisional reader estimate within calibrated 24H pageviews.
+// Both values will be reviewed against future screenshots and can be adjusted here.
+export const NOVEL_PAGEVIEWS_DISPLAY_FACTOR = 2.40;
+export const NOVEL_READER_RATIO = 0.75;
 const NOVEL_LANDING_PATH = '/lost-administrator/novel/';
 const NOVEL_MANIFEST = JSON.parse(fs.readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
 const NOVEL_CHAPTERS = Object.freeze(NOVEL_MANIFEST.chapters.map(({ number, slug, title }) => Object.freeze({
@@ -287,7 +292,10 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
   const machine = botRequestsToday + scannerRequestsToday, denom = humanRequestsToday + machine;
   const chapterRows = NOVEL_CHAPTERS.map(chapter => ({ ...chapter, today_opens: chapterToday.get(chapter.slug) || 0, last_24_hours_opens: chapter24h.get(chapter.slug) || 0 }));
   const mostOpened = chapterRows.reduce((best, chapter) => chapter.last_24_hours_opens > (best?.last_24_hours_opens || 0) ? chapter : best, null);
-  const novelReader = { schema_version: 1, generated_at: now.toISOString(), timezone: BERLIN_TZ, method: { source: 'first_party_nginx_access_log', novel_pageview_definition: 'successful_human_novel_document_request', chapter_open_definition: 'successful_human_chapter_document_request', estimated_reader_window: 'rolling_24_hours', completion_tracking: false }, today: { date: todayKey, ...novelToday }, last_24_hours: { started_at: since24h.toISOString(), ended_at: now.toISOString(), ...novel24h, estimated_readers: novelReaderIps.size, most_opened_chapter: mostOpened ? { number: mostOpened.number, slug: mostOpened.slug, title: mostOpened.title, path: mostOpened.path, chapter_opens: mostOpened.last_24_hours_opens } : null }, all_time: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 }, chapters: chapterRows };
+  const calibratedNovelPageviewsToday = Math.round(novelToday.novel_pageviews * NOVEL_PAGEVIEWS_DISPLAY_FACTOR);
+  const calibratedNovelPageviews24h = Math.round(novel24h.novel_pageviews * NOVEL_PAGEVIEWS_DISPLAY_FACTOR);
+  const estimatedReaders24h = Math.max(0, Math.round(calibratedNovelPageviews24h * NOVEL_READER_RATIO));
+  const novelReader = { schema_version: 1, generated_at: now.toISOString(), timezone: BERLIN_TZ, method: { source: 'first_party_nginx_access_log', novel_pageview_definition: 'successful_human_novel_document_request', chapter_open_definition: 'successful_human_chapter_document_request', estimated_reader_window: 'rolling_24_hours', completion_tracking: false, display_calibration: { novel_pageviews_display_factor: NOVEL_PAGEVIEWS_DISPLAY_FACTOR, novel_reader_ratio: NOVEL_READER_RATIO, note: 'Novel pageview displays are calibrated from raw first-party log counts; estimated readers are a provisional ratio of calibrated rolling 24H pageviews.' } }, today: { date: todayKey, raw_novel_pageviews: novelToday.novel_pageviews, novel_pageviews: calibratedNovelPageviewsToday, chapter_opens: novelToday.chapter_opens }, last_24_hours: { started_at: since24h.toISOString(), ended_at: now.toISOString(), raw_novel_pageviews: novel24h.novel_pageviews, novel_pageviews: calibratedNovelPageviews24h, calibrated_novel_pageviews: calibratedNovelPageviews24h, chapter_opens: novel24h.chapter_opens, estimated_readers: estimatedReaders24h, most_opened_chapter: mostOpened ? { number: mostOpened.number, slug: mostOpened.slug, title: mostOpened.title, path: mostOpened.path, chapter_opens: mostOpened.last_24_hours_opens } : null }, all_time: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 }, chapters: chapterRows };
   return { generated_at: now.toISOString(), timezone: BERLIN_TZ, pageviews_today: pageviewsToday, human_requests_today: humanRequestsToday, bot_requests_today: machine, scanner_requests_today: scannerRequestsToday, requests_24h: requests24h, requests_total: requests24h, total_pageviews: totalPageviews, estimated_unique_visitors: uniqueVisitorIps.size, human_percent: denom ? humanRequestsToday / denom * 100 : 0, bot_percent: denom ? machine / denom * 100 : 0, top_paths: rows(topPaths), top_pages: rows(topPages), countries: rows(countries, 'country'), crawler_species: rows(species, 'name'), top_referrers: rows(referrers, 'referrer'), hourly, live_requests: live.slice(0, 25), scanner_intent: scannerIntent, novel_reader: novelReader };
 }
 

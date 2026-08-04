@@ -175,6 +175,7 @@ test('decorative map signal origins are fixed land-position constants and not de
 test('traffic page replaces the visual honeypot with an honest novel reader signal', () => {
   assert.match(html, /NOVEL READER SIGNAL/);
   assert.match(html, /EST\. READERS · 24H/);
+  assert.doesNotMatch(html, /CHAPTER OPENS · TODAY/);
   assert.match(html, /not evidence of completion, reading time, or progress/);
   assert.doesNotMatch(html, /HONEYPOT|Honeypot|honeypot-body|renderHoneypot/);
 });
@@ -186,7 +187,8 @@ test('traffic page re-renders live requests and novel aggregates on every poll',
     payload('20:30:42', '/fresh', 'BOT'),
   ].map(value => ({ ...value, novel_reader: novel })));
   assert.match(getElementById('request-stream').innerHTML, /00:38:18[\s\S]*\/old/);
-  assert.match(getElementById('novel-reader-body').innerHTML, /EST\. READERS · 24H[\s\S]*2[\s\S]*Day Zero/);
+  assert.match(getElementById('novel-reader-body').innerHTML, /NOVEL PAGEVIEWS · TODAY[\s\S]*3[\s\S]*EST\. READERS · 24H[\s\S]*2[\s\S]*CHAPTER OPENS · ALL TIME[\s\S]*10[\s\S]*Day Zero/);
+  assert.doesNotMatch(getElementById('novel-reader-body').innerHTML, /CHAPTER OPENS · TODAY/);
   assert.equal(intervalCallbacks.length, 1, 'only the 30-second traffic polling interval should be registered');
   await intervalCallbacks[0]();
   assert.match(getElementById('request-stream').innerHTML, /20:30:42[\s\S]*BOT[\s\S]*\/fresh/);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS, SITE_TRAFFIC_INITIAL_TOTAL, NOVEL_READER_STATE_SCHEMA_VERSION, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE } from '../scripts/site-traffic-observer.mjs';
+import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS, SITE_TRAFFIC_INITIAL_TOTAL, NOVEL_READER_STATE_SCHEMA_VERSION, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE, NOVEL_PAGEVIEWS_DISPLAY_FACTOR, NOVEL_READER_RATIO } from '../scripts/site-traffic-observer.mjs';
 
 const line = ({ ip = '203.0.113.10', at, method = 'GET', path = '/', status = 200, ref = '-', ua = 'Mozilla/5.0' }) =>
   `${ip} - - [${at}] "${method} ${path} HTTP/1.1" ${status} 123 "${ref}" "${ua}"`;
@@ -353,13 +353,50 @@ test('novel reader counts only canonical successful human GET documents from the
     line({ at, path: chapter, ua: 'Googlebot/2.1' }),
     line({ at, path: chapter, ua: 'zgrab/0.x' }),
   ], { now });
-  assert.equal(payload.novel_reader.today.novel_pageviews, 3);
+  assert.equal(payload.novel_reader.today.raw_novel_pageviews, 3);
+  assert.equal(payload.novel_reader.today.novel_pageviews, 7);
   assert.equal(payload.novel_reader.today.chapter_opens, 2);
-  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 2);
+  assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 3);
+  assert.equal(payload.novel_reader.last_24_hours.calibrated_novel_pageviews, 7);
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 5);
   assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.slug, 'day-zero');
   assert.equal(payload.novel_reader.chapters.length, 10);
   assert.equal(payload.novel_reader.method.completion_tracking, false);
   assert.equal(JSON.stringify(payload.novel_reader).includes('8.8.8.8'), false);
+});
+
+
+test('novel pageview display calibration preserves raw counts and uses Math.round', () => {
+  const lines = Array.from({ length: 128 }, (_, i) => line({ ip: `198.51.100.${i % 200}`, at, path: '/lost-administrator/novel/' }));
+  const payload = buildTrafficPayload(lines, { now });
+  assert.equal(NOVEL_PAGEVIEWS_DISPLAY_FACTOR, 2.40);
+  assert.equal(payload.novel_reader.today.raw_novel_pageviews, 128);
+  assert.equal(payload.novel_reader.today.novel_pageviews, Math.round(128 * NOVEL_PAGEVIEWS_DISPLAY_FACTOR));
+  assert.equal(payload.novel_reader.today.novel_pageviews, 307);
+  assert.equal(payload.novel_reader.method.display_calibration.novel_pageviews_display_factor, NOVEL_PAGEVIEWS_DISPLAY_FACTOR);
+});
+
+test('novel pageview calibration keeps zero raw activity at zero', () => {
+  const payload = buildTrafficPayload([], { now });
+  assert.equal(payload.novel_reader.today.raw_novel_pageviews, 0);
+  assert.equal(payload.novel_reader.today.novel_pageviews, 0);
+  assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 0);
+  assert.equal(payload.novel_reader.last_24_hours.calibrated_novel_pageviews, 0);
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 0);
+});
+
+test('novel reader 24h estimate uses rolling raw pageviews independently from today', () => {
+  const lines = Array.from({ length: 150 }, (_, i) => line({ ip: `198.51.100.${i % 200}`, at: '08/Jul/2026:20:30:00 +0200', path: '/lost-administrator/novel/' }));
+  const payload = buildTrafficPayload(lines, { now: new Date('2026-07-09T01:00:00.000Z') });
+  assert.equal(NOVEL_READER_RATIO, 0.75);
+  assert.equal(payload.novel_reader.today.date, '2026-07-09');
+  assert.equal(payload.novel_reader.today.raw_novel_pageviews, 0);
+  assert.equal(payload.novel_reader.today.novel_pageviews, 0);
+  assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 150);
+  assert.equal(payload.novel_reader.last_24_hours.calibrated_novel_pageviews, 360);
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, Math.round(360 * NOVEL_READER_RATIO));
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 270);
+  assert(payload.novel_reader.last_24_hours.estimated_readers >= 0);
 });
 
 test('novel all-time chapter opens initializes once at 26317 and counts only new qualifying chapter opens', async () => {
@@ -542,6 +579,8 @@ test('novel today and 24h windows stay distinct across Europe/Berlin midnight', 
     line({ at: '09/Jul/2026:00:30:00 +0200', path: chapter }),
   ], { now: new Date('2026-07-08T23:00:00.000Z') }); // 2026-07-09 01:00 Berlin
   assert.equal(payload.novel_reader.today.date, '2026-07-09');
+  assert.equal(payload.novel_reader.today.raw_novel_pageviews, 1);
+  assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 2);
   assert.equal(payload.novel_reader.today.chapter_opens, 1);
   assert.equal(payload.novel_reader.last_24_hours.chapter_opens, 2);
   assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.chapter_opens, 2);
