@@ -15,7 +15,9 @@ const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 
 // not useful observation data.  Bot and scanner classification takes precedence.
 const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
 export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
-export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 2400;
+export const NOVEL_READER_STATE_SCHEMA_VERSION = 3;
+export const NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE = 2400;
+export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 26317;
 const NOVEL_LANDING_PATH = '/lost-administrator/novel/';
 const NOVEL_MANIFEST = JSON.parse(fs.readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
 const NOVEL_CHAPTERS = Object.freeze(NOVEL_MANIFEST.chapters.map(({ number, slug, title }) => Object.freeze({
@@ -370,22 +372,50 @@ function qualifyingRequestsInNewBytes(file, offset) {
  * copytruncate shrink is conservatively checkpointed without counting, which
  * prefers missing an in-flight line to ever recounting retained old content.
  */
+function currentLogCheckpoints(inputFiles) {
+  return Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)]));
+}
+
 function initialNovelReaderState(inputFiles, now) {
+  const checkpoints = currentLogCheckpoints(inputFiles);
   return {
-    schema_version: 1,
+    schema_version: NOVEL_READER_STATE_SCHEMA_VERSION,
     historical_baseline: NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE,
     counted_since_cutover: 0,
     chapter_opens: NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE,
     novel_pageviews: 0,
     since: now.toISOString(),
     cutover_timestamp: now.toISOString(),
-    sources: Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)])),
+    sources: checkpoints,
+    log_checkpoints: checkpoints,
   };
 }
 
-function ensureNovelReaderState(state, inputFiles, now) {
-  if (state.novel_reader?.schema_version === 1 && Number.isSafeInteger(state.novel_reader.chapter_opens) && state.novel_reader.historical_baseline === NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE && state.novel_reader.sources && typeof state.novel_reader.sources === 'object') return false;
-  state.novel_reader = initialNovelReaderState(inputFiles, now);
+function backupStateForMigration(stateFile) {
+  if (!fs.existsSync(stateFile)) return null;
+  const backup = `${stateFile}.backup-${Date.now()}`;
+  fs.copyFileSync(stateFile, backup, fs.constants.COPYFILE_EXCL);
+  return backup;
+}
+
+function ensureNovelReaderState(state, inputFiles, now, stateFile) {
+  const reader = state.novel_reader;
+  if (Number.isSafeInteger(reader?.schema_version) && reader.schema_version > NOVEL_READER_STATE_SCHEMA_VERSION) return false;
+  if (reader?.schema_version === NOVEL_READER_STATE_SCHEMA_VERSION && reader.historical_baseline === NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE && Number.isSafeInteger(reader.chapter_opens) && reader.sources && typeof reader.sources === 'object') {
+    if (!reader.log_checkpoints) reader.log_checkpoints = reader.sources;
+    return false;
+  }
+  const previousNovelReader = reader && typeof reader === 'object' ? JSON.parse(JSON.stringify(reader)) : null;
+  const backup_path = stateFile ? backupStateForMigration(stateFile) : null;
+  state.novel_reader = {
+    ...initialNovelReaderState(inputFiles, now),
+    previous_incorrect_baseline: previousNovelReader?.historical_baseline === NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE ? NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE : previousNovelReader?.historical_baseline,
+    previous_counted_since_cutover: previousNovelReader?.counted_since_cutover,
+    previous_chapter_opens: previousNovelReader?.chapter_opens,
+    rebaseline_reason: 'Corrected from verified historical screenshots',
+    rebaseline_backup_path: backup_path,
+    migrated_from_schema_version: previousNovelReader?.schema_version ?? null,
+  };
   return true;
 }
 
@@ -423,13 +453,13 @@ export function updatePersistentPageviewTotal(inputFiles, stateFile, now = new D
       total_pageviews: SITE_TRAFFIC_INITIAL_TOTAL,
       initialized_at: now.toISOString(),
       novel_reader: initialNovelReaderState(inputFiles, now),
-      sources: Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)])),
+      sources: currentLogCheckpoints(inputFiles),
     };
     atomicWriteJson(stateFile, state);
     return state;
   }
 
-  const migratedNovelReader = ensureNovelReaderState(state, inputFiles, now);
+  const migratedNovelReader = ensureNovelReaderState(state, inputFiles, now, stateFile);
 
   for (const file of inputFiles) {
     const key = path.resolve(file);
