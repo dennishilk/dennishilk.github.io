@@ -15,6 +15,7 @@ const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 
 // not useful observation data.  Bot and scanner classification takes precedence.
 const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
 export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
+export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 2400;
 const NOVEL_LANDING_PATH = '/lost-administrator/novel/';
 const NOVEL_MANIFEST = JSON.parse(fs.readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
 const NOVEL_CHAPTERS = Object.freeze(NOVEL_MANIFEST.chapters.map(({ number, slug, title }) => Object.freeze({
@@ -309,15 +310,26 @@ function readState(stateFile) {
   try {
     const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
     if (!Number.isSafeInteger(state.total_pageviews) || state.total_pageviews < SITE_TRAFFIC_INITIAL_TOTAL || !state.sources || typeof state.sources !== 'object') throw new Error('invalid state');
-    if (!state.novel_reader) state.novel_reader = { since: new Date().toISOString(), novel_pageviews: 0, chapter_opens: 0 };
     return state;
   } catch (error) {
     if (error.code === 'ENOENT') return null;
-    throw new Error(`Cannot read Site Traffic counter state ${stateFile}: ${error.message}`);
+    backupUnreadableState(stateFile, error);
+    throw new Error(`Cannot read Site Traffic counter state ${stateFile}: ${error.message}; unreadable file was backed up and not reset automatically`);
   }
 }
 
-function atomicWriteJson(file, value) {
+function backupUnreadableState(stateFile, error) {
+  try {
+    if (!fs.existsSync(stateFile)) return;
+    const backup = `${stateFile}.corrupt-${Date.now()}`;
+    fs.copyFileSync(stateFile, backup, fs.constants.COPYFILE_EXCL);
+    console.error(`Cannot read Site Traffic counter state ${stateFile}: ${error.message}. Backed up to ${backup}; refusing to reset counters automatically.`);
+  } catch (backupError) {
+    console.error(`Cannot back up unreadable Site Traffic counter state ${stateFile}: ${backupError.message}`);
+  }
+}
+
+export function atomicWriteJson(file, value) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const temp = `${file}.${process.pid}.${Date.now()}.tmp`;
   const fd = fs.openSync(temp, 'w', 0o600);
@@ -358,18 +370,66 @@ function qualifyingRequestsInNewBytes(file, offset) {
  * copytruncate shrink is conservatively checkpointed without counting, which
  * prefers missing an in-flight line to ever recounting retained old content.
  */
+function initialNovelReaderState(inputFiles, now) {
+  return {
+    schema_version: 1,
+    historical_baseline: NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE,
+    counted_since_cutover: 0,
+    chapter_opens: NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE,
+    novel_pageviews: 0,
+    since: now.toISOString(),
+    cutover_timestamp: now.toISOString(),
+    sources: Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)])),
+  };
+}
+
+function ensureNovelReaderState(state, inputFiles, now) {
+  if (state.novel_reader?.schema_version === 1 && Number.isSafeInteger(state.novel_reader.chapter_opens) && state.novel_reader.historical_baseline === NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE && state.novel_reader.sources && typeof state.novel_reader.sources === 'object') return false;
+  state.novel_reader = initialNovelReaderState(inputFiles, now);
+  return true;
+}
+
+function updateNovelReaderTotal(inputFiles, state) {
+  for (const file of inputFiles) {
+    const key = path.resolve(file);
+    const current = sourceCheckpoint(file);
+    const previous = state.novel_reader.sources[key];
+    if (!previous) {
+      state.novel_reader.sources[key] = current;
+      continue;
+    }
+    if (previous.dev === current.dev && previous.ino === current.ino && current.offset >= previous.offset) {
+      const added = qualifyingRequestsInNewBytes(file, previous.offset);
+      state.novel_reader.novel_pageviews += added.novel_pageviews;
+      state.novel_reader.counted_since_cutover += added.chapter_opens;
+      state.novel_reader.chapter_opens += added.chapter_opens;
+      state.novel_reader.sources[key] = { ...current, offset: added.offset };
+    } else if (previous.dev !== current.dev || previous.ino !== current.ino) {
+      const added = qualifyingRequestsInNewBytes(file, 0);
+      state.novel_reader.novel_pageviews += added.novel_pageviews;
+      state.novel_reader.counted_since_cutover += added.chapter_opens;
+      state.novel_reader.chapter_opens += added.chapter_opens;
+      state.novel_reader.sources[key] = { ...current, offset: added.offset };
+    } else {
+      state.novel_reader.sources[key] = current;
+    }
+  }
+}
+
 export function updatePersistentPageviewTotal(inputFiles, stateFile, now = new Date()) {
   let state = readState(stateFile);
   if (!state) {
     state = {
       total_pageviews: SITE_TRAFFIC_INITIAL_TOTAL,
       initialized_at: now.toISOString(),
-      novel_reader: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 },
+      novel_reader: initialNovelReaderState(inputFiles, now),
       sources: Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)])),
     };
     atomicWriteJson(stateFile, state);
     return state;
   }
+
+  const migratedNovelReader = ensureNovelReaderState(state, inputFiles, now);
 
   for (const file of inputFiles) {
     const key = path.resolve(file);
@@ -383,19 +443,16 @@ export function updatePersistentPageviewTotal(inputFiles, stateFile, now = new D
     if (previous.dev === current.dev && previous.ino === current.ino && current.offset >= previous.offset) {
       const added = qualifyingRequestsInNewBytes(file, previous.offset);
       state.total_pageviews += added.pageviews;
-      state.novel_reader.novel_pageviews += added.novel_pageviews;
-      state.novel_reader.chapter_opens += added.chapter_opens;
       state.sources[key] = { ...current, offset: added.offset };
     } else if (previous.dev !== current.dev || previous.ino !== current.ino) {
       const added = qualifyingRequestsInNewBytes(file, 0);
       state.total_pageviews += added.pageviews;
-      state.novel_reader.novel_pageviews += added.novel_pageviews;
-      state.novel_reader.chapter_opens += added.chapter_opens;
       state.sources[key] = { ...current, offset: added.offset };
     } else {
       state.sources[key] = current;
     }
   }
+  if (!migratedNovelReader) updateNovelReaderTotal(inputFiles, state);
   atomicWriteJson(stateFile, state);
   return state;
 }
