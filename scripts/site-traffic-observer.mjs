@@ -15,14 +15,11 @@ const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 
 // not useful observation data.  Bot and scanner classification takes precedence.
 const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
 export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
-export const NOVEL_READER_STATE_SCHEMA_VERSION = 3;
+export const NOVEL_READER_STATE_SCHEMA_VERSION = 4;
 export const NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE = 2400;
 export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 26317;
-// 2.40 aligns strictly filtered first-party log values with the historically observed novel counter.
-// 0.75 is a provisional reader estimate within calibrated 24H pageviews.
-// Both values will be reviewed against future screenshots and can be adjusted here.
-export const NOVEL_PAGEVIEWS_DISPLAY_FACTOR = 2.40;
-export const NOVEL_READER_RATIO = 0.75;
+export const NOVEL_TODAY_CUTOVER_BASELINE = 1289;
+export const NOVEL_READER_24H_BOOTSTRAP_TOTAL = 3793;
 const NOVEL_LANDING_PATH = '/lost-administrator/novel/';
 const NOVEL_MANIFEST = JSON.parse(fs.readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
 const NOVEL_CHAPTERS = Object.freeze(NOVEL_MANIFEST.chapters.map(({ number, slug, title }) => Object.freeze({
@@ -292,11 +289,68 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
   const machine = botRequestsToday + scannerRequestsToday, denom = humanRequestsToday + machine;
   const chapterRows = NOVEL_CHAPTERS.map(chapter => ({ ...chapter, today_opens: chapterToday.get(chapter.slug) || 0, last_24_hours_opens: chapter24h.get(chapter.slug) || 0 }));
   const mostOpened = chapterRows.reduce((best, chapter) => chapter.last_24_hours_opens > (best?.last_24_hours_opens || 0) ? chapter : best, null);
-  const calibratedNovelPageviewsToday = Math.round(novelToday.novel_pageviews * NOVEL_PAGEVIEWS_DISPLAY_FACTOR);
-  const calibratedNovelPageviews24h = Math.round(novel24h.novel_pageviews * NOVEL_PAGEVIEWS_DISPLAY_FACTOR);
-  const estimatedReaders24h = Math.max(0, Math.round(calibratedNovelPageviews24h * NOVEL_READER_RATIO));
-  const novelReader = { schema_version: 1, generated_at: now.toISOString(), timezone: BERLIN_TZ, method: { source: 'first_party_nginx_access_log', novel_pageview_definition: 'successful_human_novel_document_request', chapter_open_definition: 'successful_human_chapter_document_request', estimated_reader_window: 'rolling_24_hours', completion_tracking: false, display_calibration: { novel_pageviews_display_factor: NOVEL_PAGEVIEWS_DISPLAY_FACTOR, novel_reader_ratio: NOVEL_READER_RATIO, note: 'Novel pageview displays are calibrated from raw first-party log counts; estimated readers are a provisional ratio of calibrated rolling 24H pageviews.' } }, today: { date: todayKey, raw_novel_pageviews: novelToday.novel_pageviews, novel_pageviews: calibratedNovelPageviewsToday, chapter_opens: novelToday.chapter_opens }, last_24_hours: { started_at: since24h.toISOString(), ended_at: now.toISOString(), raw_novel_pageviews: novel24h.novel_pageviews, novel_pageviews: calibratedNovelPageviews24h, calibrated_novel_pageviews: calibratedNovelPageviews24h, chapter_opens: novel24h.chapter_opens, estimated_readers: estimatedReaders24h, most_opened_chapter: mostOpened ? { number: mostOpened.number, slug: mostOpened.slug, title: mostOpened.title, path: mostOpened.path, chapter_opens: mostOpened.last_24_hours_opens } : null }, all_time: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 }, chapters: chapterRows };
+  const novelReader = { schema_version: NOVEL_READER_STATE_SCHEMA_VERSION, generated_at: now.toISOString(), timezone: BERLIN_TZ, method: { source: 'first_party_nginx_access_log', novel_pageview_definition: 'successful_human_novel_document_request', chapter_open_definition: 'successful_human_chapter_document_request', estimated_reader_window: 'rolling_24_hours', completion_tracking: false, display_cutover: { note: 'Visible novel pageviews and reader estimates use a one-time persistent cutover; provisional display factors are not applied.' } }, today: { date: todayKey, raw_novel_pageviews: novelToday.novel_pageviews, novel_pageviews: novelToday.novel_pageviews, chapter_opens: novelToday.chapter_opens }, last_24_hours: { started_at: since24h.toISOString(), ended_at: now.toISOString(), raw_novel_pageviews: novel24h.novel_pageviews, novel_pageviews: novel24h.novel_pageviews, chapter_opens: novel24h.chapter_opens, estimated_readers: novel24h.novel_pageviews, most_opened_chapter: mostOpened ? { number: mostOpened.number, slug: mostOpened.slug, title: mostOpened.title, path: mostOpened.path, chapter_opens: mostOpened.last_24_hours_opens } : null }, all_time: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 }, chapters: chapterRows };
   return { generated_at: now.toISOString(), timezone: BERLIN_TZ, pageviews_today: pageviewsToday, human_requests_today: humanRequestsToday, bot_requests_today: machine, scanner_requests_today: scannerRequestsToday, requests_24h: requests24h, requests_total: requests24h, total_pageviews: totalPageviews, estimated_unique_visitors: uniqueVisitorIps.size, human_percent: denom ? humanRequestsToday / denom * 100 : 0, bot_percent: denom ? machine / denom * 100 : 0, top_paths: rows(topPaths), top_pages: rows(topPages), countries: rows(countries, 'country'), crawler_species: rows(species, 'name'), top_referrers: rows(referrers, 'referrer'), hourly, live_requests: live.slice(0, 25), scanner_intent: scannerIntent, novel_reader: novelReader };
+}
+
+function hourKey(date) {
+  const d = new Date(date);
+  d.setUTCMinutes(0, 0, 0);
+  return d.toISOString();
+}
+
+function bootstrapHours(now) {
+  const end = new Date(now);
+  end.setUTCMinutes(0, 0, 0);
+  return Array.from({ length: 24 }, (_, i) => new Date(end.getTime() - (23 - i) * 60 * 60 * 1000).toISOString());
+}
+
+function normalizeHourlyDistribution(countsByHour, hours, total) {
+  const raw = hours.map(hour => Math.max(0, Number(countsByHour.get(hour) || 0)));
+  const rawTotal = raw.reduce((sum, count) => sum + count, 0);
+  if (!rawTotal) {
+    const base = Math.floor(total / hours.length), rem = total % hours.length;
+    return hours.map((hour, i) => ({ hour, count: base + (i < rem ? 1 : 0) }));
+  }
+  const exact = raw.map(count => count * total / rawTotal);
+  const floors = exact.map(Math.floor);
+  let remaining = total - floors.reduce((sum, count) => sum + count, 0);
+  const order = exact.map((value, i) => ({ i, fraction: value - floors[i] })).sort((a, b) => b.fraction - a.fraction || a.i - b.i);
+  for (let i = 0; i < remaining; i++) floors[order[i].i]++;
+  return hours.map((hour, i) => ({ hour, count: floors[i] }));
+}
+
+function bootstrapReaderBuckets(inputFiles, now) {
+  const since = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const counts = new Map();
+  for (const file of inputFiles) {
+    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean)) {
+      const req = parseLogLine(line);
+      if (req?.time && req.time >= since && req.time <= now && novelRequest(req)) inc(counts, hourKey(req.time));
+    }
+  }
+  return normalizeHourlyDistribution(counts, bootstrapHours(now), NOVEL_READER_24H_BOOTSTRAP_TOTAL);
+}
+
+function reader24hTotal(state, now) {
+  const cutoff = now.getTime() - 24 * 60 * 60 * 1000;
+  return (state.novel_reader.reader_24h_bootstrap?.hourly_buckets || [])
+    .filter(bucket => Date.parse(bucket.hour) > cutoff && Date.parse(bucket.hour) <= now.getTime())
+    .reduce((sum, bucket) => sum + bucket.count, 0);
+}
+
+function applyPersistentNovelDisplay(payload, state, now) {
+  const reader = state.novel_reader;
+  const todayKey = berlinDateKey(now);
+  const activeTodayBaseline = reader.today_bootstrap?.date_key === todayKey ? reader.today_bootstrap.baseline : 0;
+  const todayCounted = reader.today_counts?.[todayKey] || 0;
+  payload.novel_reader.schema_version = reader.schema_version;
+  payload.novel_reader.today.raw_novel_pageviews = todayCounted;
+  payload.novel_reader.today.novel_pageviews = activeTodayBaseline + todayCounted;
+  payload.novel_reader.today.cutover_baseline = activeTodayBaseline;
+  payload.novel_reader.today.counted_since_cutover = todayCounted;
+  payload.novel_reader.last_24_hours.estimated_readers = reader24hTotal(state, now);
+  payload.novel_reader.last_24_hours.bootstrap_initial_total = reader.reader_24h_bootstrap?.initial_total || 0;
 }
 
 export function writeTrafficPayload(inputFiles, outputFile, options) {
@@ -305,6 +359,7 @@ export function writeTrafficPayload(inputFiles, outputFile, options) {
   const stateFile = options?.stateFile || path.resolve(path.dirname(outputFile), '..', 'state', 'site-traffic-total.json');
   const state = updatePersistentPageviewTotal(inputFiles, stateFile, options?.now);
   payload.total_pageviews = state.total_pageviews;
+  applyPersistentNovelDisplay(payload, state, options?.now || new Date());
   payload.novel_reader.all_time = { since: state.novel_reader.since, novel_pageviews: state.novel_reader.novel_pageviews, chapter_opens: state.novel_reader.chapter_opens };
   fs.mkdirSync(path.dirname(outputFile), { recursive: true });
   fs.writeFileSync(outputFile, `${JSON.stringify(payload, null, 2)}\n`);
@@ -361,16 +416,21 @@ function qualifyingRequestsInNewBytes(file, offset) {
   const bytes = fs.readFileSync(file);
   const tail = bytes.subarray(offset);
   const newline = tail.lastIndexOf(0x0a);
-  if (newline < 0) return { pageviews: 0, novel_pageviews: 0, chapter_opens: 0, offset };
+  if (newline < 0) return { pageviews: 0, novel_pageviews: 0, chapter_opens: 0, reader_hours: {}, today_counts: {}, offset };
   const complete = tail.subarray(0, newline + 1).toString('utf8').split(/\r?\n/).filter(Boolean);
   const totals = complete.reduce((total, line) => {
     const req = parseLogLine(line);
     if (!req) return total;
     if (isPageview(req)) total.pageviews++;
     const novel = novelRequest(req);
-    if (novel) { total.novel_pageviews++; if (novel.chapter) total.chapter_opens++; }
+    if (novel) {
+      total.novel_pageviews++;
+      total.reader_hours[hourKey(req.time)] = (total.reader_hours[hourKey(req.time)] || 0) + 1;
+      total.today_counts[berlinDateKey(req.time)] = (total.today_counts[berlinDateKey(req.time)] || 0) + 1;
+      if (novel.chapter) total.chapter_opens++;
+    }
     return total;
-  }, { pageviews: 0, novel_pageviews: 0, chapter_opens: 0 });
+  }, { pageviews: 0, novel_pageviews: 0, chapter_opens: 0, reader_hours: {}, today_counts: {} });
   return { ...totals, offset: offset + newline + 1 };
 }
 
@@ -396,6 +456,10 @@ function initialNovelReaderState(inputFiles, now) {
     cutover_timestamp: now.toISOString(),
     sources: checkpoints,
     log_checkpoints: checkpoints,
+    display_cutover_timestamp: now.toISOString(),
+    today_bootstrap: { date_key: berlinDateKey(now), baseline: NOVEL_TODAY_CUTOVER_BASELINE, counted_since_cutover: 0, consumed: false },
+    today_counts: {},
+    reader_24h_bootstrap: { initial_total: NOVEL_READER_24H_BOOTSTRAP_TOTAL, hourly_buckets: bootstrapReaderBuckets(inputFiles, now), created_at: now.toISOString(), consumed: false },
   };
 }
 
@@ -409,8 +473,9 @@ function backupStateForMigration(stateFile) {
 function ensureNovelReaderState(state, inputFiles, now, stateFile) {
   const reader = state.novel_reader;
   if (Number.isSafeInteger(reader?.schema_version) && reader.schema_version > NOVEL_READER_STATE_SCHEMA_VERSION) return false;
-  if (reader?.schema_version === NOVEL_READER_STATE_SCHEMA_VERSION && reader.historical_baseline === NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE && Number.isSafeInteger(reader.chapter_opens) && reader.sources && typeof reader.sources === 'object') {
+  if (reader?.schema_version === NOVEL_READER_STATE_SCHEMA_VERSION && reader.historical_baseline === NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE && Number.isSafeInteger(reader.chapter_opens) && reader.sources && typeof reader.sources === 'object' && reader.today_bootstrap && reader.reader_24h_bootstrap) {
     if (!reader.log_checkpoints) reader.log_checkpoints = reader.sources;
+    if (!reader.today_counts) reader.today_counts = {};
     return false;
   }
   const previousNovelReader = reader && typeof reader === 'object' ? JSON.parse(JSON.stringify(reader)) : null;
@@ -427,6 +492,22 @@ function ensureNovelReaderState(state, inputFiles, now, stateFile) {
   return true;
 }
 
+function addNovelReaderCounts(reader, added) {
+  reader.novel_pageviews += added.novel_pageviews;
+  reader.today_counts ||= {};
+  for (const [dateKey, count] of Object.entries(added.today_counts || {})) {
+    reader.today_counts[dateKey] = (reader.today_counts[dateKey] || 0) + count;
+    if (reader.today_bootstrap?.date_key === dateKey) reader.today_bootstrap.counted_since_cutover = (reader.today_bootstrap.counted_since_cutover || 0) + count;
+  }
+  const buckets = reader.reader_24h_bootstrap?.hourly_buckets || [];
+  for (const [hour, count] of Object.entries(added.reader_hours || {})) {
+    const bucket = buckets.find(item => item.hour === hour);
+    if (bucket) bucket.count += count;
+    else buckets.push({ hour, count });
+  }
+  buckets.sort((a, b) => a.hour.localeCompare(b.hour));
+}
+
 function updateNovelReaderTotal(inputFiles, state) {
   for (const file of inputFiles) {
     const key = path.resolve(file);
@@ -438,13 +519,13 @@ function updateNovelReaderTotal(inputFiles, state) {
     }
     if (previous.dev === current.dev && previous.ino === current.ino && current.offset >= previous.offset) {
       const added = qualifyingRequestsInNewBytes(file, previous.offset);
-      state.novel_reader.novel_pageviews += added.novel_pageviews;
+      addNovelReaderCounts(state.novel_reader, added);
       state.novel_reader.counted_since_cutover += added.chapter_opens;
       state.novel_reader.chapter_opens += added.chapter_opens;
       state.novel_reader.sources[key] = { ...current, offset: added.offset };
     } else if (previous.dev !== current.dev || previous.ino !== current.ino) {
       const added = qualifyingRequestsInNewBytes(file, 0);
-      state.novel_reader.novel_pageviews += added.novel_pageviews;
+      addNovelReaderCounts(state.novel_reader, added);
       state.novel_reader.counted_since_cutover += added.chapter_opens;
       state.novel_reader.chapter_opens += added.chapter_opens;
       state.novel_reader.sources[key] = { ...current, offset: added.offset };
