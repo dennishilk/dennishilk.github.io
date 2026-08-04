@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS, SITE_TRAFFIC_INITIAL_TOTAL, NOVEL_READER_STATE_SCHEMA_VERSION, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE, NOVEL_PAGEVIEWS_DISPLAY_FACTOR, NOVEL_READER_RATIO } from '../scripts/site-traffic-observer.mjs';
+import { buildTrafficPayload, classifyScannerIntent, parseNginxTime, SCANNER_INTENT_DECORATIVE_MASKS, SITE_TRAFFIC_INITIAL_TOTAL, NOVEL_READER_STATE_SCHEMA_VERSION, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE, NOVEL_TODAY_CUTOVER_BASELINE, NOVEL_READER_24H_BOOTSTRAP_TOTAL } from '../scripts/site-traffic-observer.mjs';
 
 const line = ({ ip = '203.0.113.10', at, method = 'GET', path = '/', status = 200, ref = '-', ua = 'Mozilla/5.0' }) =>
   `${ip} - - [${at}] "${method} ${path} HTTP/1.1" ${status} 123 "${ref}" "${ua}"`;
@@ -354,11 +354,11 @@ test('novel reader counts only canonical successful human GET documents from the
     line({ at, path: chapter, ua: 'zgrab/0.x' }),
   ], { now });
   assert.equal(payload.novel_reader.today.raw_novel_pageviews, 3);
-  assert.equal(payload.novel_reader.today.novel_pageviews, 7);
+  assert.equal(payload.novel_reader.today.novel_pageviews, 3);
   assert.equal(payload.novel_reader.today.chapter_opens, 2);
   assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 3);
-  assert.equal(payload.novel_reader.last_24_hours.calibrated_novel_pageviews, 7);
-  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 5);
+  assert.equal(payload.novel_reader.last_24_hours.novel_pageviews, 3);
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 3);
   assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.slug, 'day-zero');
   assert.equal(payload.novel_reader.chapters.length, 10);
   assert.equal(payload.novel_reader.method.completion_tracking, false);
@@ -366,14 +366,13 @@ test('novel reader counts only canonical successful human GET documents from the
 });
 
 
-test('novel pageview display calibration preserves raw counts and uses Math.round', () => {
+test('novel build payload exposes raw novel counts without provisional display factors', () => {
   const lines = Array.from({ length: 128 }, (_, i) => line({ ip: `198.51.100.${i % 200}`, at, path: '/lost-administrator/novel/' }));
   const payload = buildTrafficPayload(lines, { now });
-  assert.equal(NOVEL_PAGEVIEWS_DISPLAY_FACTOR, 2.40);
   assert.equal(payload.novel_reader.today.raw_novel_pageviews, 128);
-  assert.equal(payload.novel_reader.today.novel_pageviews, Math.round(128 * NOVEL_PAGEVIEWS_DISPLAY_FACTOR));
-  assert.equal(payload.novel_reader.today.novel_pageviews, 307);
-  assert.equal(payload.novel_reader.method.display_calibration.novel_pageviews_display_factor, NOVEL_PAGEVIEWS_DISPLAY_FACTOR);
+  assert.equal(payload.novel_reader.today.novel_pageviews, 128);
+  assert.equal(JSON.stringify(payload.novel_reader).includes('2.40'), false);
+  assert.equal(JSON.stringify(payload.novel_reader).includes('0.75'), false);
 });
 
 test('novel pageview calibration keeps zero raw activity at zero', () => {
@@ -381,22 +380,19 @@ test('novel pageview calibration keeps zero raw activity at zero', () => {
   assert.equal(payload.novel_reader.today.raw_novel_pageviews, 0);
   assert.equal(payload.novel_reader.today.novel_pageviews, 0);
   assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 0);
-  assert.equal(payload.novel_reader.last_24_hours.calibrated_novel_pageviews, 0);
+  assert.equal(payload.novel_reader.last_24_hours.novel_pageviews, 0);
   assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 0);
 });
 
 test('novel reader 24h estimate uses rolling raw pageviews independently from today', () => {
   const lines = Array.from({ length: 150 }, (_, i) => line({ ip: `198.51.100.${i % 200}`, at: '08/Jul/2026:20:30:00 +0200', path: '/lost-administrator/novel/' }));
   const payload = buildTrafficPayload(lines, { now: new Date('2026-07-09T01:00:00.000Z') });
-  assert.equal(NOVEL_READER_RATIO, 0.75);
   assert.equal(payload.novel_reader.today.date, '2026-07-09');
   assert.equal(payload.novel_reader.today.raw_novel_pageviews, 0);
   assert.equal(payload.novel_reader.today.novel_pageviews, 0);
   assert.equal(payload.novel_reader.last_24_hours.raw_novel_pageviews, 150);
-  assert.equal(payload.novel_reader.last_24_hours.calibrated_novel_pageviews, 360);
-  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, Math.round(360 * NOVEL_READER_RATIO));
-  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 270);
-  assert(payload.novel_reader.last_24_hours.estimated_readers >= 0);
+  assert.equal(payload.novel_reader.last_24_hours.novel_pageviews, 150);
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 150);
 });
 
 test('novel all-time chapter opens initializes once at 26317 and counts only new qualifying chapter opens', async () => {
@@ -532,7 +528,7 @@ test('novel v1 baseline 2400 is rebaselined once to 26317 without adding old cou
     const migrated = writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time;
     assert.equal(migrated.chapter_opens, 26317);
     const state = JSON.parse(await readFile(stateFile, 'utf8'));
-    assert.equal(state.novel_reader.schema_version, 3);
+    assert.equal(state.novel_reader.schema_version, NOVEL_READER_STATE_SCHEMA_VERSION);
     assert.equal(state.novel_reader.historical_baseline, 26317);
     assert.equal(state.novel_reader.counted_since_cutover, 0);
     assert.equal(state.novel_reader.previous_incorrect_baseline, 2400);
@@ -584,4 +580,70 @@ test('novel today and 24h windows stay distinct across Europe/Berlin midnight', 
   assert.equal(payload.novel_reader.today.chapter_opens, 1);
   assert.equal(payload.novel_reader.last_24_hours.chapter_opens, 2);
   assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.chapter_opens, 2);
+});
+
+test('novel reader schema 4 display cutover is one-time, rolling, and ignores old calibration constants', async () => {
+  const { mkdtemp, readFile, writeFile, appendFile, mkdir, readdir, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-cutover-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    const chapter = '/lost-administrator/novel/chapters/day-zero/';
+    await writeFile(log, `${line({ at: '08/Jul/2026:10:00:00 +0200', path: chapter })}\n${line({ at: '08/Jul/2026:11:00:00 +0200', path: '/lost-administrator/novel/' })}\n`);
+    const first = writeTrafficPayload([log], output, { now, stateFile });
+    assert.equal(first.novel_reader.schema_version, 4);
+    assert.equal(first.novel_reader.today.novel_pageviews, NOVEL_TODAY_CUTOVER_BASELINE);
+    assert.equal(first.novel_reader.last_24_hours.estimated_readers, NOVEL_READER_24H_BOOTSTRAP_TOTAL);
+    assert.equal(first.novel_reader.all_time.chapter_opens, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE);
+    let state = JSON.parse(await readFile(stateFile, 'utf8'));
+    assert.equal(state.novel_reader.reader_24h_bootstrap.hourly_buckets.reduce((sum, bucket) => sum + bucket.count, 0), NOVEL_READER_24H_BOOTSTRAP_TOTAL);
+    assert.equal(JSON.stringify(first.novel_reader).includes('2.40'), false);
+    assert.equal(JSON.stringify(first.novel_reader).includes('0.75'), false);
+
+    await appendFile(log, `${line({ at: '08/Jul/2026:12:05:00 +0200', path: chapter })}\n${line({ at: '08/Jul/2026:12:06:00 +0200', path: '/data/site-traffic.json' })}\n${line({ at: '08/Jul/2026:12:07:00 +0200', path: chapter, ua: 'Googlebot/2.1' })}\n${line({ at: '08/Jul/2026:12:08:00 +0200', path: chapter, ua: 'zgrab/0.x' })}\n${line({ at: '08/Jul/2026:12:09:00 +0200', path: '/style.css' })}\n${line({ at: '08/Jul/2026:12:10:00 +0200', method: 'HEAD', path: chapter })}\n${line({ at: '08/Jul/2026:12:11:00 +0200', path: chapter, status: 404 })}\n`);
+    const second = writeTrafficPayload([log], output, { now: new Date('2026-07-08T10:30:00.000Z'), stateFile });
+    assert.equal(second.novel_reader.today.novel_pageviews, 1290);
+    assert.equal(second.novel_reader.last_24_hours.estimated_readers, 3794);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-08T10:31:00.000Z'), stateFile }).novel_reader.today.novel_pageviews, 1290);
+    const nextDay = writeTrafficPayload([log], output, { now: new Date('2026-07-08T22:30:00.000Z'), stateFile });
+    assert.equal(nextDay.novel_reader.today.date, '2026-07-09');
+    assert.equal(nextDay.novel_reader.today.novel_pageviews, 0);
+    assert(nextDay.novel_reader.last_24_hours.estimated_readers > 0);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T10:06:01.000Z'), stateFile }).novel_reader.last_24_hours.estimated_readers, 0);
+    state = JSON.parse(await readFile(stateFile, 'utf8'));
+    assert.equal(state.novel_reader.reader_24h_bootstrap.hourly_buckets.some(bucket => bucket.hour === '2026-07-08T10:00:00.000Z' && bucket.count >= 1), true);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('novel reader bootstrap distribution normalizes rounding remainders and backs up before migration', async () => {
+  const { mkdtemp, readFile, writeFile, mkdir, readdir, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join, resolve } = await import('node:path');
+  const { statSync } = await import('node:fs');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-distribution-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    await writeFile(log, `${line({ at: '08/Jul/2026:10:00:00 +0200', path: '/lost-administrator/novel/' })}\n${line({ at: '08/Jul/2026:11:00:00 +0200', path: '/lost-administrator/novel/' })}\n${line({ at: '08/Jul/2026:11:05:00 +0200', path: '/lost-administrator/novel/' })}\n`);
+    const st = statSync(log);
+    await mkdir(join(dir, 'state'), { recursive: true });
+    await writeFile(stateFile, JSON.stringify({ total_pageviews: 50010, initialized_at: now.toISOString(), novel_reader: { schema_version: 3, historical_baseline: 26317, counted_since_cutover: 0, chapter_opens: 26317, novel_pageviews: 0, since: now.toISOString(), sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: 0 } } }, sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: st.size } } }));
+    writeTrafficPayload([log], output, { now, stateFile });
+    const state = JSON.parse(await readFile(stateFile, 'utf8'));
+    const buckets = state.novel_reader.reader_24h_bootstrap.hourly_buckets;
+    assert.equal(buckets.reduce((sum, bucket) => sum + bucket.count, 0), 3793);
+    assert.equal(buckets.find(bucket => bucket.hour === '2026-07-08T08:00:00.000Z').count, 1264);
+    assert.equal(buckets.find(bucket => bucket.hour === '2026-07-08T09:00:00.000Z').count, 2529);
+    assert((await readdir(join(dir, 'state'))).some(name => name.startsWith('site-traffic-total.json.backup-')));
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });
