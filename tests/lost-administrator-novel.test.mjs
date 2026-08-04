@@ -57,7 +57,11 @@ test('canonical chapter Markdown remains unchanged', async () => {
     ['content/lost-administrator/novel/chapters/chapter-03-the-truth.md', 'f2b302a234734a6fa8f69d901811595e57d795b7468ba419914cb02ed4a72905'],
     ['content/lost-administrator/novel/chapters/chapter-04-the-things-we-leave-behind.md', 'afd9600bd225137008835f6bace045eb0ac4235b28775bea0efa92e59cb43d2c'],
     ['content/lost-administrator/novel/chapters/chapter-05-the-passenger.md', '864d501844da7c3ef5fc38f66866a190da6fba93389eb48c999cc44ace213406'],
-    ['content/lost-administrator/novel/chapters/chapter-06-no-such-vehicle.md', '3b4ee030271727658a9f21ca661972618ee913122cf7b57b1e2bb9247b5b4beb']
+    ['content/lost-administrator/novel/chapters/chapter-06-no-such-vehicle.md', '3b4ee030271727658a9f21ca661972618ee913122cf7b57b1e2bb9247b5b4beb'],
+    ['content/lost-administrator/novel/chapters/chapter-07-out-of-range.md', '522b87a7daff90da43e36d6eaa388fd6ef5a4986030acdcaea092415eb617dcb'],
+    ['content/lost-administrator/novel/chapters/chapter-08-restricted-access.md', '561c7eca8432210edc5b75d73e4d2b0c35c4ccc6470364cd0f6315cb93e39a17'],
+    ['content/lost-administrator/novel/chapters/chapter-09-accepted.md', '34f6fb2d2114f18a2c6b92236461a3e50229b493293c54b3a378e21e41980e32'],
+    ['content/lost-administrator/novel/chapters/chapter-10-the-time-between.md', 'a0406e3b5c564997268395de2f32646ca5752aa25ea32fcc883574a13b3e1f07']
   ]);
 
   for (const [chapter, expectedHash] of expectedHashes) {
@@ -84,7 +88,11 @@ test('generated novel pages use the versioned novel stylesheet', async () => {
     'lost-administrator/novel/chapters/the-truth/index.html',
     'lost-administrator/novel/chapters/the-things-we-leave-behind/index.html',
     'lost-administrator/novel/chapters/the-passenger/index.html',
-    'lost-administrator/novel/chapters/no-such-vehicle/index.html'
+    'lost-administrator/novel/chapters/no-such-vehicle/index.html',
+    'lost-administrator/novel/chapters/out-of-range/index.html',
+    'lost-administrator/novel/chapters/restricted-access/index.html',
+    'lost-administrator/novel/chapters/accepted/index.html',
+    'lost-administrator/novel/chapters/the-time-between/index.html'
   ];
   for (const page of pages) {
     const html = await read(page);
@@ -208,14 +216,18 @@ test('renders the supported Markdown subset while keeping manuscript HTML safe',
   assert.doesNotMatch(html, /```/);
 });
 
-test('publishes exactly six approved chapters in order with adjacent navigation only', async () => {
+test('publishes exactly ten approved chapters in order with adjacent navigation only', async () => {
   const expected = [
     { number: 1, slug: 'day-zero', title: 'Day Zero', source: 'chapter-01-day-zero.md' },
     { number: 2, slug: 'ill-be-right-back', title: 'I’ll Be Right Back', source: 'chapter-02-ill-be-right-back.md' },
     { number: 3, slug: 'the-truth', title: 'The Truth', source: 'chapter-03-the-truth.md' },
     { number: 4, slug: 'the-things-we-leave-behind', title: 'The Things We Leave Behind', source: 'chapter-04-the-things-we-leave-behind.md' },
     { number: 5, slug: 'the-passenger', title: 'The Passenger', source: 'chapter-05-the-passenger.md' },
-    { number: 6, slug: 'no-such-vehicle', title: 'No Such Vehicle', source: 'chapter-06-no-such-vehicle.md' }
+    { number: 6, slug: 'no-such-vehicle', title: 'No Such Vehicle', source: 'chapter-06-no-such-vehicle.md' },
+    { number: 7, slug: 'out-of-range', title: 'Out of Range', source: 'chapter-07-out-of-range.md' },
+    { number: 8, slug: 'restricted-access', title: 'Restricted Access', source: 'chapter-08-restricted-access.md' },
+    { number: 9, slug: 'accepted', title: 'Accepted', source: 'chapter-09-accepted.md' },
+    { number: 10, slug: 'the-time-between', title: 'The Time Between', source: 'chapter-10-the-time-between.md' }
   ];
   const manifest = JSON.parse(await read('content/lost-administrator/novel/novel-manifest.json'));
   assert.deepEqual(manifest.chapters, expected);
@@ -224,10 +236,13 @@ test('publishes exactly six approved chapters in order with adjacent navigation 
   const pages = await Promise.all(expected.map(chapter => read(`lost-administrator/novel/chapters/${chapter.slug}/index.html`)));
   const chapterLinks = [...landing.matchAll(/href="\/lost-administrator\/novel\/chapters\/([^/]+)\//g)].map(match => match[1]);
   assert.deepEqual(chapterLinks, expected.map(chapter => chapter.slug));
+  assert.equal(new Set(chapterLinks).size, 10);
+  assert.deepEqual(expected.map(chapter => chapter.number), Array.from({ length: 10 }, (_, index) => index + 1));
 
   for (let index = 0; index < expected.length; index += 1) {
     const page = pages[index];
     assert.match(page, new RegExp(`<p class="novel-chapter-number">CHAPTER ${expected[index].number}</p><h1>${expected[index].title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h1>`));
+    assert.equal((page.match(/<h1>/g) || []).length, 1);
     if (index === 0) assert.doesNotMatch(page, /class="novel-previous"/);
     else assert.match(page, new RegExp(`class="novel-previous"[^>]*href="/lost-administrator/novel/chapters/${expected[index - 1].slug}/`));
     if (index === expected.length - 1) assert.doesNotMatch(page, /class="novel-next"/);
@@ -235,8 +250,8 @@ test('publishes exactly six approved chapters in order with adjacent navigation 
   }
 
   const publication = landing + pages.join('');
-  assert.doesNotMatch(publication, /chapter(?:-|\s*)0?7|coming soon/i);
-  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-07/index.html')));
+  assert.doesNotMatch(publication, /chapter(?:-|\s*)0?11|coming soon/i);
+  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-11/index.html')));
 });
 
 test('approved sources retain their required endings and terminal identity', async () => {
@@ -270,7 +285,11 @@ test('all internal links in the novel publication resolve', async () => {
     'lost-administrator/novel/chapters/the-truth/index.html',
     'lost-administrator/novel/chapters/the-things-we-leave-behind/index.html',
     'lost-administrator/novel/chapters/the-passenger/index.html',
-    'lost-administrator/novel/chapters/no-such-vehicle/index.html'
+    'lost-administrator/novel/chapters/no-such-vehicle/index.html',
+    'lost-administrator/novel/chapters/out-of-range/index.html',
+    'lost-administrator/novel/chapters/restricted-access/index.html',
+    'lost-administrator/novel/chapters/accepted/index.html',
+    'lost-administrator/novel/chapters/the-time-between/index.html'
   ];
   for (const publicFile of publicFiles) {
     const html = await read(publicFile);
@@ -289,10 +308,14 @@ test('generated publication contains no Markdown fences, drafts, or Canon materi
     'lost-administrator/novel/chapters/the-truth/index.html',
     'lost-administrator/novel/chapters/the-things-we-leave-behind/index.html',
     'lost-administrator/novel/chapters/the-passenger/index.html',
-    'lost-administrator/novel/chapters/no-such-vehicle/index.html'
+    'lost-administrator/novel/chapters/no-such-vehicle/index.html',
+    'lost-administrator/novel/chapters/out-of-range/index.html',
+    'lost-administrator/novel/chapters/restricted-access/index.html',
+    'lost-administrator/novel/chapters/accepted/index.html',
+    'lost-administrator/novel/chapters/the-time-between/index.html'
   ];
   const publication = (await Promise.all(publicFiles.map(read))).join('\n');
   assert.doesNotMatch(publication, /```|\*Friday, July 31, 2026\*|\*\*(?:06:30 AM|01:30 PM)\*\*/);
   assert.match(publication, /<pre><code class="language-text">/);
-  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft/i);
+  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft|chapter(?:-|\s*)0?11|German draft/i);
 });
