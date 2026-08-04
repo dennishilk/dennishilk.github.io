@@ -361,3 +361,111 @@ test('novel reader counts only canonical successful human GET documents from the
   assert.equal(payload.novel_reader.method.completion_tracking, false);
   assert.equal(JSON.stringify(payload.novel_reader).includes('8.8.8.8'), false);
 });
+
+test('novel all-time chapter opens initializes once at 2400 and counts only new qualifying chapter opens', async () => {
+  const { mkdtemp, readFile, writeFile, appendFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { writeTrafficPayload, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-novel-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    const chapter = '/lost-administrator/novel/chapters/day-zero/';
+    await writeFile(log, `${line({ at, path: chapter })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE);
+    await appendFile(log, `${line({ at: '08/Jul/2026:11:45:00 +0200', path: chapter })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 2401);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 2401);
+    await appendFile(log, `${line({ at: '08/Jul/2026:11:46:00 +0200', path: chapter, ua: 'Googlebot/2.1' })}\n${line({ at: '08/Jul/2026:11:47:00 +0200', path: '/lost-administrator/novel/' })}\n${line({ at: '08/Jul/2026:11:48:00 +0200', path: '/style.css' })}\n${line({ at: '08/Jul/2026:11:49:00 +0200', method: 'HEAD', path: chapter })}\n${line({ at: '08/Jul/2026:11:50:00 +0200', path: chapter, status: 404 })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 2401);
+    const state = JSON.parse(await readFile(stateFile, 'utf8'));
+    assert.equal(state.novel_reader.historical_baseline, 2400);
+    assert.equal(state.novel_reader.counted_since_cutover, 1);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('novel all-time migration checkpoints existing logs without adding pre-cutover requests', async () => {
+  const { mkdtemp, writeFile, appendFile, mkdir, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join, resolve } = await import('node:path');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-novel-migrate-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    const chapter = '/lost-administrator/novel/chapters/day-zero/';
+    await writeFile(log, `${line({ at, path: chapter })}\n`);
+    await mkdir(join(dir, 'state'), { recursive: true });
+    await writeFile(stateFile, JSON.stringify({ total_pageviews: 50010, initialized_at: now.toISOString(), novel_reader: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 3 }, sources: { [resolve(log)]: { dev: 0, ino: 0, offset: 0 } } }));
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 2400);
+    await appendFile(log, `${line({ at: '08/Jul/2026:11:45:00 +0200', path: chapter })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 2401);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('novel all-time survives day changes, restarts, and rename log rotation without double counting', async () => {
+  const { mkdtemp, writeFile, appendFile, rename, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-novel-rotate-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    const chapter = '/lost-administrator/novel/chapters/day-zero/';
+    await writeFile(log, '');
+    writeTrafficPayload([log], output, { now, stateFile });
+    await appendFile(log, `${line({ at: '08/Jul/2026:23:55:00 +0200', path: chapter })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-08T22:00:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 2401);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:00:00.000Z'), stateFile }).novel_reader.today.chapter_opens, 0);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:00:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 2401);
+    await rename(log, join(dir, 'access.log.1'));
+    await writeFile(log, `${line({ at: '09/Jul/2026:03:05:00 +0200', path: chapter })}\n`);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:10:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 2402);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('corrupt traffic state is backed up and not reset to the novel baseline', async () => {
+  const { mkdtemp, writeFile, readdir, mkdir, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { writeTrafficPayload } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-corrupt-'));
+  try {
+    const output = join(dir, 'data', 'site-traffic.json');
+    const stateFile = join(dir, 'state', 'site-traffic-total.json');
+    const log = join(dir, 'access.log');
+    await writeFile(log, '');
+    await mkdir(join(dir, 'state'), { recursive: true });
+    await writeFile(stateFile, '{not json');
+    assert.throws(() => writeTrafficPayload([log], output, { now, stateFile }), /not reset automatically/);
+    assert((await readdir(join(dir, 'state'))).some(name => name.startsWith('site-traffic-total.json.corrupt-')));
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('atomic JSON write leaves a complete target document', async () => {
+  const { mkdtemp, readFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { atomicWriteJson } = await import('../scripts/site-traffic-observer.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'site-traffic-atomic-'));
+  try {
+    const file = join(dir, 'state', 'counter.json');
+    atomicWriteJson(file, { ok: true, count: 2400 });
+    assert.deepEqual(JSON.parse(await readFile(file, 'utf8')), { ok: true, count: 2400 });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
