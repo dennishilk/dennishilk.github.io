@@ -338,3 +338,26 @@ test('raw IPs do not appear anywhere in output JSON for ordinary log input', () 
   assert.equal(output.includes('8.8.8.8'), false);
   assert.equal(output.includes('1.1.1.1'), false);
 });
+
+test('novel reader counts only canonical successful human GET documents from the manifest', () => {
+  const chapter = '/lost-administrator/novel/chapters/day-zero/';
+  const payload = buildTrafficPayload([
+    line({ ip: '8.8.8.8', at, path: '/lost-administrator/novel/?from=home' }),
+    line({ ip: '8.8.8.8', at, path: `${chapter}?ref=x`, status: 304 }),
+    line({ ip: '1.1.1.1', at, path: chapter }),
+    line({ at, method: 'HEAD', path: chapter }),
+    line({ at, status: 301, path: chapter }),
+    line({ at, path: '/lost-administrator/novel/index.html' }),
+    line({ at, path: '/lost-administrator/novel/chapters/unpublished/' }),
+    line({ at, path: '/lost-administrator/novel/chapter-01-day-zero.md' }),
+    line({ at, path: chapter, ua: 'Googlebot/2.1' }),
+    line({ at, path: chapter, ua: 'zgrab/0.x' }),
+  ], { now });
+  assert.equal(payload.novel_reader.today.novel_pageviews, 3);
+  assert.equal(payload.novel_reader.today.chapter_opens, 2);
+  assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 2);
+  assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.slug, 'day-zero');
+  assert.equal(payload.novel_reader.chapters.length, 10);
+  assert.equal(payload.novel_reader.method.completion_tracking, false);
+  assert.equal(JSON.stringify(payload.novel_reader).includes('8.8.8.8'), false);
+});

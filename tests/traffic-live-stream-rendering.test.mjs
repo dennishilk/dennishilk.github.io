@@ -97,7 +97,7 @@ test('traffic dashboard card layout replaces Top Referrers with one compact sign
 
   const rowPattern = /MOST OBSERVED PAGES[\s\S]*CRAWLER SPECIES[\s\S]*<article class="traffic-card signal-matrix-card"><h2>SIGNAL ACTIVITY MATRIX <span>\(24H\)<\/span>/;
   assert.match(html, rowPattern, 'matrix should occupy the former third card position after pages and crawler species');
-  assert.match(html, /HONEYPOT/);
+  assert.match(html, /NOVEL READER SIGNAL/);
   assert.match(html, /OBSERVATION METHOD/);
   assert.match(html, /GLOBAL SIGNAL MAP/);
 });
@@ -172,84 +172,30 @@ test('decorative map signal origins are fixed land-position constants and not de
   assert.doesNotMatch(script, /classifyRouteKind/);
 });
 
-test('traffic page contains HONEYPOT title and exact visual metaphor sentence', () => {
-  assert.match(html, /HONEYPOT/);
-  assert.match(html, /<b><i class="live-dot"><\/i> LIVE<\/b>/);
-  assert.match(html, /Honeypot is a visual observer metaphor; no dedicated trap service is operated\./);
+test('traffic page replaces the visual honeypot with an honest novel reader signal', () => {
+  assert.match(html, /NOVEL READER SIGNAL/);
+  assert.match(html, /EST\. READERS · 24H/);
+  assert.match(html, /not evidence of completion, reading time, or progress/);
+  assert.doesNotMatch(html, /HONEYPOT|Honeypot|honeypot-body|renderHoneypot/);
 });
 
-test('traffic page re-renders live_requests on every poll', async () => {
+test('traffic page re-renders live requests and novel aggregates on every poll', async () => {
+  const novel = { today: { novel_pageviews: 3, chapter_opens: 2 }, last_24_hours: { estimated_readers: 2, most_opened_chapter: { title: 'Day Zero', chapter_opens: 2 } }, all_time: { chapter_opens: 10 } };
   const { getElementById, intervalCallbacks } = await runTrafficScript([
     payload('00:38:18', '/old'),
     payload('20:30:42', '/fresh', 'BOT'),
-  ]);
+  ].map(value => ({ ...value, novel_reader: novel })));
   assert.match(getElementById('request-stream').innerHTML, /00:38:18[\s\S]*\/old/);
-
-  assert.equal(intervalCallbacks.length, 2, 'traffic and honeypot age intervals should be registered');
+  assert.match(getElementById('novel-reader-body').innerHTML, /EST\. READERS · 24H[\s\S]*2[\s\S]*Day Zero/);
+  assert.equal(intervalCallbacks.length, 1, 'only the 30-second traffic polling interval should be registered');
   await intervalCallbacks[0]();
   assert.match(getElementById('request-stream').innerHTML, /20:30:42[\s\S]*BOT[\s\S]*\/fresh/);
-  assert.doesNotMatch(getElementById('request-stream').innerHTML, /00:38:18|\/old/);
 });
 
-test('honeypot renders privacy-safe recent scanner events and excludes raw request fields', async () => {
-  const { getElementById } = await runTrafficScript([basePayload({
-    scanner_intent: {
-      total_scanner_requests: 42,
-      top_intent: 'WORDPRESS PROBING',
-      trapping_duration_seconds: 7322,
-      last_probe_at: '2026-07-08T18:25:00.000Z',
-      recent_events: [{
-        timestamp: '2026-07-08T18:29:45.000Z',
-        time: '18:29:45',
-        intent_id: 'wordpress',
-        intent_label: 'WORDPRESS PROBING',
-        decorative_mask: '███.██.███.█',
-        ip: '203.0.113.10', path: '/wp-login.php', method: 'GET', status: 404,
-        userAgent: 'BadScanner', referrer: 'https://example.test',
-      }],
-    },
-  })]);
-  const rendered = getElementById('honeypot-body').innerHTML;
-  assert.match(rendered, /18:29:45/);
-  assert.match(rendered, /███\.██\.███\.█/);
-  assert.match(rendered, /WORDPRESS PROBING/);
-  assert.match(rendered, /PROBES TODAY[\s\S]*42/);
-  assert.match(rendered, /TRAPPING SINCE[\s\S]*2 hours/);
-  assert.match(rendered, /LAST PROBE[\s\S]*5 minutes ago/);
-  assert.doesNotMatch(rendered, /203\.0\.113\.10|wp-login|GET|404|BadScanner|referrer|example\.test/);
-});
-
-test('honeypot duration formats under a minute, minutes, singular and plural hours, and singular and plural days', async () => {
-  const cases = [
-    [59, /less than a minute/],
-    [60, /1 minute/],
-    [720, /12 minutes/],
-    [3600, /1 hour/],
-    [36000, /10 hours/],
-    [86400, /1 day/],
-    [172800, /2 days/],
-  ];
-  for (const [seconds, expected] of cases) {
-    const { getElementById } = await runTrafficScript([basePayload({ scanner_intent: { total_scanner_requests: 1, top_intent: 'SCAN', trapping_duration_seconds: seconds, last_probe_at: '2026-07-08T18:29:55.000Z', recent_events: [] } })]);
-    assert.match(getElementById('honeypot-body').innerHTML, expected);
-  }
-});
-
-test('honeypot last_probe_at formats defensively', async () => {
-  const { getElementById } = await runTrafficScript([basePayload({ scanner_intent: { total_scanner_requests: 1, top_intent: 'SCAN', trapping_duration_seconds: -1, last_probe_at: 'not-a-date', recent_events: [] } })]);
-  const rendered = getElementById('honeypot-body').innerHTML;
-  assert.match(rendered, /TRAPPING SINCE[\s\S]*unavailable/);
-  assert.match(rendered, /LAST PROBE[\s\S]*unavailable/);
-});
-
-test('honeypot shows missing scanner_intent fallback', async () => {
-  const { getElementById } = await runTrafficScript([basePayload({ scanner_intent: undefined })]);
-  assert.equal(getElementById('honeypot-body').textContent, 'offline / no probe feed available');
-});
-
-test('honeypot shows empty recent_events fallback while preserving aggregate totals', async () => {
-  const { getElementById } = await runTrafficScript([basePayload({ scanner_intent: { total_scanner_requests: 7, top_intent: 'ADMIN PROBING', trapping_duration_seconds: 120, last_probe_at: '2026-07-08T18:29:59.000Z', recent_events: [] } })]);
-  const rendered = getElementById('honeypot-body').innerHTML;
-  assert.match(rendered, /No recent scanner probes observed\./);
-  assert.match(rendered, /PROBES TODAY[\s\S]*7/);
+test('novel reader signal handles zero activity and missing payloads', async () => {
+  const zero = { today: { novel_pageviews: 0, chapter_opens: 0 }, last_24_hours: { estimated_readers: 0, most_opened_chapter: null }, all_time: { chapter_opens: 0 } };
+  let result = await runTrafficScript([basePayload({ novel_reader: zero })]);
+  assert.match(result.getElementById('novel-reader-body').innerHTML, /No chapter opens observed in the last 24 hours/);
+  result = await runTrafficScript([basePayload({ novel_reader: undefined })]);
+  assert.equal(result.getElementById('novel-reader-body').textContent, 'novel signal unavailable');
 });

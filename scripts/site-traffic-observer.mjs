@@ -15,6 +15,12 @@ const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 
 // not useful observation data.  Bot and scanner classification takes precedence.
 const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
 export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
+const NOVEL_LANDING_PATH = '/lost-administrator/novel/';
+const NOVEL_MANIFEST = JSON.parse(fs.readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
+const NOVEL_CHAPTERS = Object.freeze(NOVEL_MANIFEST.chapters.map(({ number, slug, title }) => Object.freeze({
+  number, slug, title, path: `${NOVEL_LANDING_PATH}chapters/${slug}/`,
+})));
+const NOVEL_CHAPTER_BY_PATH = new Map(NOVEL_CHAPTERS.map(chapter => [chapter.path, chapter]));
 
 const SCANNER_INTENT_PRIORITY = [
   'path_traversal',
@@ -122,6 +128,15 @@ export function isPageview(req, kind = classifyRequest(req)) {
   return kind === 'human' && ['GET', 'HEAD'].includes(req.method) && SUCCESS.has(req.status) && isDocumentPath(req.path);
 }
 
+/** Return canonical manifest metadata only for an eligible novel document request. */
+export function novelRequest(req, kind = classifyRequest(req)) {
+  if (kind !== 'human' || req.method !== 'GET' || ![200, 304].includes(req.status)) return null;
+  const pathname = String(req.path || '/').replace(/[?#].*$/, '');
+  if (pathname === NOVEL_LANDING_PATH) return { type: 'landing', chapter: null };
+  const chapter = NOVEL_CHAPTER_BY_PATH.get(pathname);
+  return chapter ? { type: 'chapter', chapter } : null;
+}
+
 const inc = (map, key) => map.set(key, (map.get(key) || 0) + 1);
 const rows = (map, name = 'path') => [...map.entries()].sort((a,b) => b[1] - a[1]).map(([k,v]) => ({ [name]: k, count: v }));
 const COUNTRY_CODE = /^[A-Z]{2}$/;
@@ -180,6 +195,10 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
   const hourly = Array.from({ length: 24 }, (_, i) => ({ hour: String(i).padStart(2, '0'), humans: 0, bots: 0, scanners: 0, total: 0 }));
   const live = [];
   const uniqueVisitorIps = new Set();
+  const novelReaderIps = new Set();
+  const novelToday = { novel_pageviews: 0, chapter_opens: 0 };
+  const novel24h = { novel_pageviews: 0, chapter_opens: 0 };
+  const chapterToday = new Map(), chapter24h = new Map();
   const scannerIntentCounts = new Map(SCANNER_INTENT_PRIORITY.map(id => [id, 0]));
   const recentScannerEvents = [];
   const rollingScannerTimestamps = [];
@@ -190,6 +209,7 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
     if (!req?.time) continue;
     const kind = classifyRequest(req);
     const pageview = isPageview(req, kind);
+    const novel = novelRequest(req, kind);
     // Dashboard polling is deliberately excluded from every aggregate.  Keep
     // scanners and bots visible even when they target this path (see classifier).
     if (kind === 'observer_internal') continue;
@@ -205,12 +225,21 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
         inc(scannerIntentCounts, classifyScannerIntent(req));
       }
       if (pageview) pageviewsToday++;
+      if (novel) {
+        novelToday.novel_pageviews++;
+        if (novel.chapter) { novelToday.chapter_opens++; inc(chapterToday, novel.chapter.slug); }
+      }
     }
     if (in24h) {
       requests24h++;
       const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: BERLIN_TZ, hour: '2-digit', hour12: false }).format(req.time));
       const bin = hourly[hour === 24 ? 0 : hour]; bin.total++; bin[kind === 'scanner' ? 'scanners' : `${kind}s`]++;
       uniqueVisitorIps.add(req.ip);
+      if (novel) {
+        novel24h.novel_pageviews++;
+        novelReaderIps.add(req.ip);
+        if (novel.chapter) { novel24h.chapter_opens++; inc(chapter24h, novel.chapter.slug); }
+      }
       const country = countryFor(req.ip);
       inc(countries, country);
       live.push({ timestamp: req.time.toISOString(), time: berlinTime(req.time), kind: kind === 'scanner' ? 'SCANNER' : kind.toUpperCase(), country, path: req.path, status: req.status, method: req.method });
@@ -253,15 +282,19 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
     trapping_duration_seconds: oldestScanner && newestScanner ? Math.floor((newestScanner - oldestScanner) / 1000) : 0,
   };
   const machine = botRequestsToday + scannerRequestsToday, denom = humanRequestsToday + machine;
-  return { generated_at: now.toISOString(), timezone: BERLIN_TZ, pageviews_today: pageviewsToday, human_requests_today: humanRequestsToday, bot_requests_today: machine, scanner_requests_today: scannerRequestsToday, requests_24h: requests24h, requests_total: requests24h, total_pageviews: totalPageviews, estimated_unique_visitors: uniqueVisitorIps.size, human_percent: denom ? humanRequestsToday / denom * 100 : 0, bot_percent: denom ? machine / denom * 100 : 0, top_paths: rows(topPaths), top_pages: rows(topPages), countries: rows(countries, 'country'), crawler_species: rows(species, 'name'), top_referrers: rows(referrers, 'referrer'), hourly, live_requests: live.slice(0, 25), scanner_intent: scannerIntent };
+  const chapterRows = NOVEL_CHAPTERS.map(chapter => ({ ...chapter, today_opens: chapterToday.get(chapter.slug) || 0, last_24_hours_opens: chapter24h.get(chapter.slug) || 0 }));
+  const mostOpened = chapterRows.reduce((best, chapter) => chapter.last_24_hours_opens > (best?.last_24_hours_opens || 0) ? chapter : best, null);
+  const novelReader = { schema_version: 1, generated_at: now.toISOString(), timezone: BERLIN_TZ, method: { source: 'first_party_nginx_access_log', novel_pageview_definition: 'successful_human_novel_document_request', chapter_open_definition: 'successful_human_chapter_document_request', estimated_reader_window: 'rolling_24_hours', completion_tracking: false }, today: { date: todayKey, ...novelToday }, last_24_hours: { started_at: since24h.toISOString(), ended_at: now.toISOString(), ...novel24h, estimated_readers: novelReaderIps.size, most_opened_chapter: mostOpened ? { number: mostOpened.number, slug: mostOpened.slug, title: mostOpened.title, path: mostOpened.path, chapter_opens: mostOpened.last_24_hours_opens } : null }, all_time: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 }, chapters: chapterRows };
+  return { generated_at: now.toISOString(), timezone: BERLIN_TZ, pageviews_today: pageviewsToday, human_requests_today: humanRequestsToday, bot_requests_today: machine, scanner_requests_today: scannerRequestsToday, requests_24h: requests24h, requests_total: requests24h, total_pageviews: totalPageviews, estimated_unique_visitors: uniqueVisitorIps.size, human_percent: denom ? humanRequestsToday / denom * 100 : 0, bot_percent: denom ? machine / denom * 100 : 0, top_paths: rows(topPaths), top_pages: rows(topPages), countries: rows(countries, 'country'), crawler_species: rows(species, 'name'), top_referrers: rows(referrers, 'referrer'), hourly, live_requests: live.slice(0, 25), scanner_intent: scannerIntent, novel_reader: novelReader };
 }
 
 export function writeTrafficPayload(inputFiles, outputFile, options) {
   const lines = inputFiles.flatMap(file => fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean));
   const payload = buildTrafficPayload(lines, options);
   const stateFile = options?.stateFile || path.resolve(path.dirname(outputFile), '..', 'state', 'site-traffic-total.json');
-  const state = updatePersistentPageviewTotal(inputFiles, stateFile);
+  const state = updatePersistentPageviewTotal(inputFiles, stateFile, options?.now);
   payload.total_pageviews = state.total_pageviews;
+  payload.novel_reader.all_time = { since: state.novel_reader.since, novel_pageviews: state.novel_reader.novel_pageviews, chapter_opens: state.novel_reader.chapter_opens };
   fs.mkdirSync(path.dirname(outputFile), { recursive: true });
   fs.writeFileSync(outputFile, `${JSON.stringify(payload, null, 2)}\n`);
   return payload;
@@ -276,6 +309,7 @@ function readState(stateFile) {
   try {
     const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
     if (!Number.isSafeInteger(state.total_pageviews) || state.total_pageviews < SITE_TRAFFIC_INITIAL_TOTAL || !state.sources || typeof state.sources !== 'object') throw new Error('invalid state');
+    if (!state.novel_reader) state.novel_reader = { since: new Date().toISOString(), novel_pageviews: 0, chapter_opens: 0 };
     return state;
   } catch (error) {
     if (error.code === 'ENOENT') return null;
@@ -301,17 +335,21 @@ function atomicWriteJson(file, value) {
   } catch { /* Directory fsync is unavailable on some platforms. */ }
 }
 
-function qualifyingPageviewsInNewBytes(file, offset) {
+function qualifyingRequestsInNewBytes(file, offset) {
   const bytes = fs.readFileSync(file);
   const tail = bytes.subarray(offset);
   const newline = tail.lastIndexOf(0x0a);
-  if (newline < 0) return { count: 0, offset };
+  if (newline < 0) return { pageviews: 0, novel_pageviews: 0, chapter_opens: 0, offset };
   const complete = tail.subarray(0, newline + 1).toString('utf8').split(/\r?\n/).filter(Boolean);
-  const count = complete.reduce((total, line) => {
+  const totals = complete.reduce((total, line) => {
     const req = parseLogLine(line);
-    return total + (req && isPageview(req) ? 1 : 0);
-  }, 0);
-  return { count, offset: offset + newline + 1 };
+    if (!req) return total;
+    if (isPageview(req)) total.pageviews++;
+    const novel = novelRequest(req);
+    if (novel) { total.novel_pageviews++; if (novel.chapter) total.chapter_opens++; }
+    return total;
+  }, { pageviews: 0, novel_pageviews: 0, chapter_opens: 0 });
+  return { ...totals, offset: offset + newline + 1 };
 }
 
 /**
@@ -320,12 +358,13 @@ function qualifyingPageviewsInNewBytes(file, offset) {
  * copytruncate shrink is conservatively checkpointed without counting, which
  * prefers missing an in-flight line to ever recounting retained old content.
  */
-export function updatePersistentPageviewTotal(inputFiles, stateFile) {
+export function updatePersistentPageviewTotal(inputFiles, stateFile, now = new Date()) {
   let state = readState(stateFile);
   if (!state) {
     state = {
       total_pageviews: SITE_TRAFFIC_INITIAL_TOTAL,
-      initialized_at: new Date().toISOString(),
+      initialized_at: now.toISOString(),
+      novel_reader: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 0 },
       sources: Object.fromEntries(inputFiles.map(file => [path.resolve(file), sourceCheckpoint(file)])),
     };
     atomicWriteJson(stateFile, state);
@@ -342,12 +381,16 @@ export function updatePersistentPageviewTotal(inputFiles, stateFile) {
       continue;
     }
     if (previous.dev === current.dev && previous.ino === current.ino && current.offset >= previous.offset) {
-      const added = qualifyingPageviewsInNewBytes(file, previous.offset);
-      state.total_pageviews += added.count;
+      const added = qualifyingRequestsInNewBytes(file, previous.offset);
+      state.total_pageviews += added.pageviews;
+      state.novel_reader.novel_pageviews += added.novel_pageviews;
+      state.novel_reader.chapter_opens += added.chapter_opens;
       state.sources[key] = { ...current, offset: added.offset };
     } else if (previous.dev !== current.dev || previous.ino !== current.ino) {
-      const added = qualifyingPageviewsInNewBytes(file, 0);
-      state.total_pageviews += added.count;
+      const added = qualifyingRequestsInNewBytes(file, 0);
+      state.total_pageviews += added.pageviews;
+      state.novel_reader.novel_pageviews += added.novel_pageviews;
+      state.novel_reader.chapter_opens += added.chapter_opens;
       state.sources[key] = { ...current, offset: added.offset };
     } else {
       state.sources[key] = current;
