@@ -7,7 +7,7 @@ import { MICHAEL_FROZEN_SYSTEM } from '../debian-server/system-model.js';
 export const WORKSTATION_STORAGE_KEY = 'lost-administrator:m.weber-workstation:phase-5';
 // Persisted state includes the filesystem. Bump this after Canon removals so an old
 // browser snapshot cannot restore files absent from createWorkstationFilesystem().
-export const WORKSTATION_SCHEMA_VERSION = 10;
+export const WORKSTATION_SCHEMA_VERSION = 11;
 function createWorkstationServices(){const services=createServices();delete services['nginx.service'];delete services['monitor.service'];return services;}
 export function defaultWorkstationState() {
   const started = new Date().toISOString(), home='/home/m.weber';
