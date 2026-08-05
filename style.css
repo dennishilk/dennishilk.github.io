@@ -1819,6 +1819,12 @@ button.technology-observer-card {
 .novel-reader-facts span,.novel-reader-top span { display:block; color:#7f8c98; font-size:.64rem; letter-spacing:.1em; margin-bottom:.2rem; }
 .novel-reader-facts strong,.novel-reader-top strong { display:block; color:#dffdf3; font-family:'JetBrains Mono',monospace; font-size:.9rem; }
 .novel-reader-top,.novel-reader-empty { border-top:1px solid rgba(0,220,255,.14); padding-top:.6rem; margin:.2rem 0; }
+.novel-reader-top-link { align-items:center; border-radius:7px; color:inherit; display:flex; gap:.75rem; justify-content:space-between; margin-left:-.35rem; margin-right:-.35rem; padding:.6rem .35rem .05rem; text-decoration:none; }
+.novel-reader-top-link em { color:var(--accent); flex:0 0 auto; font-family:'JetBrains Mono',monospace; font-size:.64rem; font-style:normal; font-weight:700; letter-spacing:.11em; opacity:0; text-shadow:0 0 8px rgba(0,220,255,.35); }
+.novel-reader-top-link:hover,.novel-reader-top-link:focus-visible { background:rgba(0,180,255,.055); }
+.novel-reader-top-link:hover em,.novel-reader-top-link:focus-visible em { opacity:1; }
+.novel-reader-top-link:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+@media (hover: none), (pointer: coarse), (max-width: 620px) { .novel-reader-top-link em { opacity:1; } .novel-reader-top-link em { font-size:0; } .novel-reader-top-link em::after { content:"→"; font-size:.82rem; } }
 .novel-reader-note { color:#9facba; margin:.55rem 0 0; font-size:.8rem; }
 @media (max-width: 1050px) { .traffic-dashboard > .traffic-kpis { grid-template-columns:repeat(3,1fr); } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:auto; } .traffic-grid { grid-template-columns:repeat(2,1fr); } .traffic-card,.panel-pulse,.panel-stream,.panel-map,.panel-ratio,.timeline,.method-card,.panel-novel-reader { grid-column:span 1; } .map-layout { grid-template-columns:1fr; } .traffic-hero-grid { grid-template-columns:1fr; } }
 @media (max-width: 620px) { .novel-reader-facts { grid-template-columns:1fr 1fr; } .traffic-shell { padding:0 .8rem; } .traffic-header { padding-top:1.15rem; } .traffic-dashboard > .traffic-kpis,.traffic-grid { grid-template-columns:1fr; } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:span 1; } #request-stream div { grid-template-columns:54px 66px 26px minmax(0,1fr); font-size:.72rem; } .traffic-hero-copy h1 { font-size:2.05rem; } .terminal-command { font-size:.86rem; } .method-card dl { grid-template-columns:1fr; } .world-map-frame { min-height:220px; } }
