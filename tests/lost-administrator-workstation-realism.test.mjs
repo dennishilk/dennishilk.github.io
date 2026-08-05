@@ -59,3 +59,37 @@ test('old schema snapshots reset to canonical state with clean visitor history',
   const restored=loadWorkstationState(storage);
   assert.equal(restored.schemaVersion,10);assert.deepEqual(restored.commandHistory,[]);
 });
+
+test('frozen system summary derives packages, uptime, users and processes from one state',()=>{
+  const state=defaultWorkstationState(),engine=new ShellEngine(state);
+  const fastfetch=text(exec(engine,state,'fastfetch'));
+  const top=text(exec(engine,state,'top'));
+  const uptime=text(exec(engine,state,'uptime'));
+  const who=text(exec(engine,state,'who'));
+  const w=text(exec(engine,state,'w'));
+  const last=text(exec(engine,state,'last'));
+  const dpkgCount=Number(text(exec(engine,state,"dpkg-query -f '${binary:Package}\\n' | wc -l")).trim());
+  const fastfetchCount=Number(fastfetch.match(/Packages: (\d+) \(dpkg\)/)?.[1]);
+  assert.equal(state.system.frozenLocal,'Fri Jul 31 15:18:43 EDT 2026');
+  assert.equal(state.system.frozenUtc,'Fri Jul 31 19:18:43 UTC 2026');
+  assert.equal(state.system.bootLocal,'Thu Jul 30 13:48:43 EDT 2026');
+  assert.equal(state.system.bootUtc,'Thu Jul 30 17:48:43 UTC 2026');
+  assert.equal(fastfetchCount,642);
+  assert.equal(dpkgCount,fastfetchCount);
+  assert.notEqual(fastfetchCount,33);
+  assert.match(fastfetch,/Uptime: 1 day, 1 hour, 30 minutes/);
+  assert.match(top,/^top - 15:18:43 up 1 day, 1:30,/);
+  assert.match(uptime,/^ 15:18:43 up 1 day, 1:30,/);
+  assert.doesNotMatch([top,uptime,w].join('\n'),/09:30:00/);
+  assert.equal(who,'m.weber  tty1         Jul 31 13:41');
+  assert.match(w,/m\.weber\s+tty1/);
+  assert.match(last,/m\.weber\s+tty1[\s\S]*reboot\s+system boot\s+6\.12\.38\+deb13-amd64 Thu Jul 30 13:48:43 EDT 2026/);
+  for(const leaked of ['visitor','nginx','monitor','www-data'])assert.doesNotMatch([top,who,w,last].join('\n'),new RegExp(`\\b${leaked}\\b`));
+});
+
+test('workstation package model stays administrative without future clue tools',()=>{
+  const state=defaultWorkstationState(),engine=new ShellEngine(state);
+  const aptList=text(exec(engine,state,'apt list --installed'));
+  for(const name of ['bash','coreutils','openssh-server','rsync','smartmontools','tmux','vim-tiny'])assert.match(aptList,new RegExp(`^${name}/trixie`,'m'));
+  for(const forbidden of ['nebustrike','chapter11','chapter12','chapter13','quantum','singularity','chronicle'])assert.doesNotMatch(aptList,new RegExp(forbidden,'i'));
+});
