@@ -14,7 +14,7 @@ test('chapter 10 sync preserves exact startup and frozen workstation time', asyn
   assert.match(controller, /renderer\.line\('Debian GNU\/Linux 13 \(trixie\)'/);
   assert.match(controller, /renderer\.line\('Last login: Fri Jul 31 17:41:26 UTC 2026 on tty1'/);
   const { engine } = shell();
-  assert.equal(out(engine.execute('date')), 'Fri Jul 31, 2026, 19:18:43 UTC');
+  assert.equal(out(engine.execute('date')), 'Fri Jul 31 15:18:43 EDT 2026');
   assert.equal(out(engine.execute('pwd')), '/home/m.weber');
 });
 
