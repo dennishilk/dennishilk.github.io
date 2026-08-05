@@ -2,13 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { ShellEngine } from '../assets/js/debian-server/shell-engine.js';
+import { createProcesses } from '../assets/js/debian-server/process-model.js';
 import { defaultWorkstationState, loadWorkstationState, WORKSTATION_SCHEMA_VERSION, WORKSTATION_STORAGE_KEY } from '../assets/js/lost-administrator/workstation-state.js';
 
 const exec=(engine,state,source)=>{state.commandHistory.push(source);return engine.execute(source);};
 const text=r=>r.stdout.join('\n');
+const output=text;
+const createOldSchema10Processes=()=>createProcesses('visitor');
+const createOldSchema11Processes=()=>createProcesses('m.weber');
 
 test('realism pass preserves startup, schema and frozen identity',async()=>{
-  assert.equal(WORKSTATION_SCHEMA_VERSION,10);
+  assert.equal(WORKSTATION_SCHEMA_VERSION,11);
   const controller=await readFile(new URL('../assets/js/lost-administrator/workstation-controller.js',import.meta.url),'utf8');
   assert.match(controller,/Debian GNU\/Linux 13 \(trixie\)/);
   assert.match(controller,/Last login: Fri Jul 31 17:41:26 UTC 2026 on tty1/);
@@ -57,7 +61,7 @@ test('old schema snapshots reset to canonical state with clean visitor history',
   const old=defaultWorkstationState();old.schemaVersion=9;old.commandHistory=['visitor command'];
   const data=new Map([[WORKSTATION_STORAGE_KEY,JSON.stringify(old)]]);const storage={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};
   const restored=loadWorkstationState(storage);
-  assert.equal(restored.schemaVersion,10);assert.deepEqual(restored.commandHistory,[]);
+  assert.equal(restored.schemaVersion,WORKSTATION_SCHEMA_VERSION);assert.deepEqual(restored.commandHistory,[]);
 });
 
 test('frozen system summary derives packages, uptime, users and processes from one state',()=>{
@@ -85,6 +89,45 @@ test('frozen system summary derives packages, uptime, users and processes from o
   assert.match(w,/m\.weber\s+tty1/);
   assert.match(last,/m\.weber\s+tty1[\s\S]*reboot\s+system boot\s+6\.12\.38\+deb13-amd64 Thu Jul 30 13:48:43 EDT 2026/);
   for(const leaked of ['visitor','nginx','monitor','www-data'])assert.doesNotMatch([top,who,w,last].join('\n'),new RegExp(`\\b${leaked}\\b`));
+});
+
+test('schema-10 persisted workstation summary snapshot migrates to schema-11 canonical state',()=>{
+  const stale=defaultWorkstationState();
+  stale.schemaVersion=10;
+  stale.packageSummary={totalInstalled:30,curatedVisible:30};
+  stale.packages=Object.fromEntries(Object.entries(stale.packages).slice(0,30));
+  stale.processes=createOldSchema10Processes();
+  stale.services={...stale.services,'nginx.service':{name:'nginx.service',description:'nginx web server',active:true,enabled:true},'monitor.service':{name:'monitor.service',description:'monitor service',active:true,enabled:true}};
+  delete stale.system.frozenLocal;
+  delete stale.system.frozenUtc;
+  delete stale.system.frozenClock;
+  delete stale.system.bootLocal;
+  delete stale.system.bootUtc;
+  delete stale.system.frozenEpochMs;
+  delete stale.system.bootEpochMs;
+  const data=new Map([[WORKSTATION_STORAGE_KEY,JSON.stringify(stale)]]);
+  const storage={getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,value),removeItem:key=>data.delete(key)};
+  const loaded=loadWorkstationState(storage), shell=new ShellEngine(loaded);
+  const persisted=JSON.parse(data.get(WORKSTATION_STORAGE_KEY));
+  const fastfetch=output(shell.execute('fastfetch'));
+  const top=output(shell.execute('top'));
+  const uptime=output(shell.execute('uptime'));
+  assert.equal(loaded.schemaVersion,WORKSTATION_SCHEMA_VERSION);
+  assert.equal(persisted.schemaVersion,WORKSTATION_SCHEMA_VERSION);
+  assert.equal(loaded.packageSummary.totalInstalled,642);
+  assert.equal(persisted.packageSummary.totalInstalled,642);
+  assert.deepEqual(loaded.processes,createOldSchema11Processes());
+  assert.ok(loaded.system.frozenEpochMs);
+  assert.equal(loaded.system.frozenLocal,'Fri Jul 31 15:18:43 EDT 2026');
+  assert.equal(loaded.system.frozenUtc,'Fri Jul 31 19:18:43 UTC 2026');
+  assert.equal(loaded.system.frozenClock,'15:18:43');
+  assert.equal(loaded.system.bootLocal,'Thu Jul 30 13:48:43 EDT 2026');
+  assert.equal(loaded.system.bootUtc,'Thu Jul 30 17:48:43 UTC 2026');
+  assert.equal(loaded.system.bootEpochMs,Date.UTC(2026,6,30,17,48,43));
+  assert.equal(fastfetch.match(/Packages: (\d+) \(dpkg\)/)?.[1],'642');
+  assert.match(top,/^top - 15:18:43 up 1 day, 1:30,/);
+  assert.match(uptime,/^ 15:18:43 up 1 day, 1:30,/);
+  assert.doesNotMatch([top,uptime,JSON.stringify(loaded.processes),JSON.stringify(loaded.services)].join('\n'),/\b(visitor|nginx|monitor|www-data)\b/);
 });
 
 test('workstation package model stays administrative without future clue tools',()=>{
