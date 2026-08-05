@@ -107,6 +107,7 @@ const safeScripts = {
 };
 
 export function createWorkstationFilesystem() {
+ const kernelLog='Jul 31 13:41 EDT workstation kernel: usb 2-1: new high-speed USB device\nJul 31 13:41 EDT workstation kernel: usb-storage 2-1:1.0: USB Mass Storage device detected\nJul 31 13:41 EDT workstation kernel: scsi host6: usb-storage 2-1:1.0\n';
  const home=dir('m.weber',{
   Desktop:dir('Desktop',{
    'TODO.txt':file('TODO.txt','Wednesday\n---------\n[x] Check overnight backup report\n[x] Record the Printer-03 toner ETA\n[ ] Review inventory 2.4 release notes\n[ ] Test the HDMI adapter\n\nThis week\n---------\n[ ] Add UPS-02 autumn test calendar entry\n[ ] Sort technical PDFs into Documents\n','2026-07-29'),
@@ -151,6 +152,9 @@ export function createWorkstationFilesystem() {
   },'2026-07-28'),
   Notes:dir('Notes',{
    ...practicalNotes,
+   work:dir('work',{
+    '2026-07-31.txt':file('2026-07-31.txt','Parser correction completed.\nCustomer drive received for diagnostics.\nStatus: pending examination.\nLegacy archive notice closed.\n','2026-07-31')
+   },'2026-07-31'),
    'ups-batteries.txt':file('ups-batteries.txt','UPS-02: fitted 2020-01-17, 21 min Jan 2026, retest October\nUPS-03: fitted 2024-01-19, 29 min Jan 2026\nBattery supplier: Nordstrom Power; collection cage by loading door\n','2026-01-12'),
    'printer-toner.txt':file('printer-toner.txt','Printer-01 black TN-3480\nPrinter-03 CMYK TN-421 series — cyan replaced 2021; black spare in cabinet\nDo not change just because warning appears; the operator checks print quality.\n','2026-03-09'),
    'rack-reference.md':file('rack-reference.md','# Rack reference\n\n- Rack B cage key sticks: lift door slightly.\n- SW-02 port 18 is Meeting Room 2.\n- UPS service cards are behind the PDU, not on the door.\n\nVerify labels against the current network map before maintenance.\n','2025-04-24'),
@@ -198,5 +202,5 @@ export function createWorkstationFilesystem() {
   '.bash_history':file('.bash_history',bash.repeat(3),'2026-07-29'),
   '.profile':file('.profile','# ~/.profile\nPATH="$HOME/Scripts:$HOME/.local/bin:$PATH"\nexport EDITOR=vim\nexport PAGER=less\n','2019-02-11')
  },'2019-02-11');
- return dir('',{etc:dir('etc',{hostname:file('hostname','workstation\n','2024-02-12','-rw-r--r--','root'),'os-release':file('os-release','PRETTY_NAME="Debian GNU/Linux 13 (trixie)"\nNAME="Debian GNU/Linux"\nVERSION_ID="13"\n','2026-07-20','-rw-r--r--','root'),hosts:file('hosts','127.0.0.1 localhost\n127.0.1.1 workstation\n10.24.8.12 monitor-01\n10.24.8.22 store-02\n10.24.8.32 sw-02\n','2025-02-12','-rw-r--r--','root'),passwd:file('passwd','root:x:0:0:root:/root:/bin/bash\nm.weber:x:1000:1000:Michael Weber:/home/m.weber:/bin/bash\n','2019-02-11','-rw-r--r--','root')},'2019-02-11','root'),home:dir('home',{'m.weber':home},'2019-02-11','root'),tmp:dir('tmp',{},'2026-07-29','root'),root:dir('root',{},'2019-02-11','root'),var:dir('var',{log:dir('log',{},'2026-07-29','root')},'2019-02-11','root'),usr:dir('usr',{bin:dir('bin',{},'2026-07-20','root')},'2019-02-11','root')},'2019-02-11','root');
+ return dir('',{etc:dir('etc',{hostname:file('hostname','workstation\n','2024-02-12','-rw-r--r--','root'),'os-release':file('os-release','PRETTY_NAME="Debian GNU/Linux 13 (trixie)"\nNAME="Debian GNU/Linux"\nVERSION_ID="13"\n','2026-07-20','-rw-r--r--','root'),hosts:file('hosts','127.0.0.1 localhost\n127.0.1.1 workstation\n10.24.8.12 monitor-01\n10.24.8.22 store-02\n10.24.8.32 sw-02\n','2025-02-12','-rw-r--r--','root'),passwd:file('passwd','root:x:0:0:root:/root:/bin/bash\nm.weber:x:1000:1000:Michael Weber:/home/m.weber:/bin/bash\n','2019-02-11','-rw-r--r--','root')},'2019-02-11','root'),home:dir('home',{'m.weber':home},'2019-02-11','root'),tmp:dir('tmp',{},'2026-07-29','root'),root:dir('root',{},'2019-02-11','root'),var:dir('var',{log:dir('log',{chesapeake:dir('chesapeake',{'backup-verification.log':file('backup-verification.log','Jul 31 13:26 EDT  scheduled backup verification completed\nJul 31 13:26 EDT  result: OK\n','2026-07-31','-rw-r--r--','root')},'2026-07-31','root'),'kern.log':file('kern.log',kernelLog,'2026-07-31','-rw-r--r--','root')},'2026-07-31','root')},'2019-02-11','root'),srv:dir('srv',{'archive-index':dir('archive-index',{'legacy-sites.tsv':file('legacy-sites.tsv','CMTA-SF-12 | PHYSICAL / PARTIAL DIGITAL | PERMANENT | WFR-04 | FOLDER 12\n','2026-07-31','-rw-r--r--','root')},'2026-07-31','root')},'2026-07-31','root'),usr:dir('usr',{bin:dir('bin',{},'2026-07-20','root')},'2019-02-11','root')},'2019-02-11','root');
 }
