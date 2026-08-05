@@ -4,6 +4,8 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const html = readFileSync(new URL('../traffic.html', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../style.css', import.meta.url), 'utf8');
+const manifest = JSON.parse(readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>\n?([\s\S]*?)<\/script>/g)];
 const script = scripts.at(-1)?.[1];
 
@@ -81,9 +83,10 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z', opt
     Object,
     RegExp,
     Intl,
-    fetch: async () => ({ ok: true, json: async () => responses.shift() }),
+    fetch: async (url) => String(url).includes('/content/lost-administrator/novel/novel-manifest.json') ? ({ ok: true, json: async () => manifest }) : ({ ok: true, json: async () => responses.shift() }),
   };
   vm.runInNewContext(script, context);
+  await new Promise((resolve) => setImmediate(resolve));
   await new Promise((resolve) => setImmediate(resolve));
   return { getElementById, intervalCallbacks, timeoutCallbacks };
 };
@@ -192,6 +195,64 @@ test('traffic page re-renders live requests and novel aggregates on every poll',
   assert.equal(intervalCallbacks.length, 1, 'only the 30-second traffic polling interval should be registered');
   await intervalCallbacks[0]();
   assert.match(getElementById('request-stream').innerHTML, /20:30:42[\s\S]*BOT[\s\S]*\/fresh/);
+});
+
+
+
+test('novel reader most-opened chapter resolves to the canonical published chapter link', async () => {
+  const novel = { today: { novel_pageviews: 3 }, last_24_hours: { estimated_readers: 2, most_opened_chapter: { title: 'No Such Vehicle', chapter_opens: 3 } }, all_time: { chapter_opens: 10 } };
+  const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
+  const body = getElementById('novel-reader-body').innerHTML;
+  const chapter = manifest.chapters.find(({ number }) => number === 6);
+
+  assert.equal(chapter.title, 'No Such Vehicle');
+  assert.match(body, new RegExp(`<a class="novel-reader-top novel-reader-top-link" href="/lost-administrator/novel/chapters/${chapter.slug}/" aria-label="Open Chapter 06 — No Such Vehicle">[\\s\\S]*No Such Vehicle · 3 opens[\\s\\S]*</a>`));
+  assert.match(body, /<em aria-hidden="true">OPEN CHAPTER →<\/em>/);
+  assert.doesNotMatch(body, /target="_blank"/);
+});
+
+test('novel reader links follow whichever reported chapter resolves through manifest metadata', async () => {
+  const novel = { today: { novel_pageviews: 5 }, last_24_hours: { estimated_readers: 1, most_opened_chapter: { slug: 'day-zero', title: 'Day Zero', chapter_opens: 4 } }, all_time: { chapter_opens: 12 } };
+  const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
+
+  assert.match(getElementById('novel-reader-body').innerHTML, /<a class="novel-reader-top novel-reader-top-link" href="\/lost-administrator\/novel\/chapters\/day-zero\/"/);
+  assert.match(script, /novel-manifest\.json/);
+  assert.match(script, /resolveNovelChapter\(top\)/);
+});
+
+test('novel reader unknown or unpublished most-opened result stays plain text', async () => {
+  const novel = { today: { novel_pageviews: 3 }, last_24_hours: { estimated_readers: 1, most_opened_chapter: { title: 'Unpublished Draft', chapter_opens: 7 } }, all_time: { chapter_opens: 10 } };
+  const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
+  const body = getElementById('novel-reader-body').innerHTML;
+
+  assert.match(body, /<p class="novel-reader-top">[\s\S]*Unpublished Draft · 7 opens[\s\S]*<\/p>/);
+  assert.doesNotMatch(body, /<a class="novel-reader-top/);
+  assert.doesNotMatch(body, /href="\/lost-administrator\/novel\/chapters\/unpublished-draft\//);
+});
+
+test('novel reader privacy explanation remains unchanged and non-clickable', () => {
+  const note = 'Chapter opens are successful page requests, not evidence of completion, reading time, or progress. Only aggregate counts are published.';
+  assert.match(html, new RegExp(`<p class="novel-reader-note">${note.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/p>`));
+  const card = html.match(/<article class="traffic-card novel-reader-card panel-novel-reader"[\s\S]*?<\/article>/)?.[0] || '';
+  assert.doesNotMatch(card, /<a[^>]*class="novel-reader-note"|class="novel-reader-note"[\s\S]*<a\b/);
+});
+
+test('novel reader link styling preserves visible keyboard focus and mobile cue', () => {
+  assert.match(css, /\.novel-reader-top-link:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--accent\)[^}]*outline-offset:\s*3px/);
+  assert.match(css, /\.novel-reader-top-link:hover em,\.novel-reader-top-link:focus-visible em\s*\{[^}]*opacity:1/);
+  assert.match(css, /@media \(hover: none\), \(pointer: coarse\), \(max-width: 620px\) \{[^}]*\.novel-reader-top-link em \{ opacity:1;/);
+});
+
+test('novel reader changes do not alter analytics values or counting fields', async () => {
+  const novel = { today: { novel_pageviews: 9, chapter_opens: 99 }, last_24_hours: { estimated_readers: 8, most_opened_chapter: { title: 'No Such Vehicle', chapter_opens: 3 } }, all_time: { chapter_opens: 77 } };
+  const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
+  const body = getElementById('novel-reader-body').innerHTML;
+
+  assert.match(body, /NOVEL PAGEVIEWS · TODAY[\s\S]*9/);
+  assert.match(body, /EST\. READERS · 24H[\s\S]*8/);
+  assert.match(body, /CHAPTER OPENS · ALL TIME[\s\S]*77/);
+  assert.match(body, /No Such Vehicle · 3 opens/);
+  assert.doesNotMatch(body, /CHAPTER OPENS · TODAY/);
 });
 
 test('novel reader signal handles zero activity and missing payloads', async () => {
