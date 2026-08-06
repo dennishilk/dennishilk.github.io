@@ -190,7 +190,7 @@ test('traffic page re-renders live requests and novel aggregates on every poll',
     payload('20:30:42', '/fresh', 'BOT'),
   ].map(value => ({ ...value, novel_reader: novel })));
   assert.match(getElementById('request-stream').innerHTML, /00:38:18[\s\S]*\/old/);
-  assert.match(getElementById('novel-reader-body').innerHTML, /NOVEL PAGEVIEWS · TODAY[\s\S]*3[\s\S]*EST\. READERS · 24H[\s\S]*2[\s\S]*CHAPTER OPENS · ALL TIME[\s\S]*10[\s\S]*Day Zero/);
+  assert.match(getElementById('novel-reader-body').innerHTML, /NOVEL PAGEVIEWS · TODAY[\s\S]*3[\s\S]*EST\. READERS · 24H[\s\S]*2[\s\S]*CHAPTER OPENS · ALL TIME[\s\S]*10[\s\S]*THE LOST ADMINISTRATOR/);
   assert.doesNotMatch(getElementById('novel-reader-body').innerHTML, /CHAPTER OPENS · TODAY/);
   assert.equal(intervalCallbacks.length, 1, 'only the 30-second traffic polling interval should be registered');
   await intervalCallbacks[0]();
@@ -199,35 +199,14 @@ test('traffic page re-renders live requests and novel aggregates on every poll',
 
 
 
-test('novel reader most-opened chapter resolves to the canonical published chapter link', async () => {
-  const novel = { today: { novel_pageviews: 3 }, last_24_hours: { estimated_readers: 2, most_opened_chapter: { title: 'No Such Vehicle', chapter_opens: 3 } }, all_time: { chapter_opens: 10 } };
+test('novel reader hides per-chapter statistics and links to the novel landing page', async () => {
+  const novel = { today: { novel_pageviews: 3 }, last_24_hours: { estimated_readers: 2, most_opened_chapter: { title: 'Restricted Access', chapter_opens: 7 } }, all_time: { chapter_opens: 10 } };
   const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
   const body = getElementById('novel-reader-body').innerHTML;
-  const chapter = manifest.chapters.find(({ number }) => number === 6);
-
-  assert.equal(chapter.title, 'No Such Vehicle');
-  assert.match(body, new RegExp(`<a class="novel-reader-top novel-reader-top-link" href="/lost-administrator/novel/chapters/${chapter.slug}/" aria-label="Open Chapter 06 — No Such Vehicle">[\\s\\S]*No Such Vehicle · 3 opens[\\s\\S]*</a>`));
-  assert.match(body, /<em aria-hidden="true">OPEN CHAPTER →<\/em>/);
-  assert.doesNotMatch(body, /target="_blank"/);
-});
-
-test('novel reader links follow whichever reported chapter resolves through manifest metadata', async () => {
-  const novel = { today: { novel_pageviews: 5 }, last_24_hours: { estimated_readers: 1, most_opened_chapter: { slug: 'day-zero', title: 'Day Zero', chapter_opens: 4 } }, all_time: { chapter_opens: 12 } };
-  const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
-
-  assert.match(getElementById('novel-reader-body').innerHTML, /<a class="novel-reader-top novel-reader-top-link" href="\/lost-administrator\/novel\/chapters\/day-zero\/"/);
-  assert.match(script, /novel-manifest\.json/);
-  assert.match(script, /resolveNovelChapter\(top\)/);
-});
-
-test('novel reader unknown or unpublished most-opened result stays plain text', async () => {
-  const novel = { today: { novel_pageviews: 3 }, last_24_hours: { estimated_readers: 1, most_opened_chapter: { title: 'Unpublished Draft', chapter_opens: 7 } }, all_time: { chapter_opens: 10 } };
-  const { getElementById } = await runTrafficScript([basePayload({ novel_reader: novel })]);
-  const body = getElementById('novel-reader-body').innerHTML;
-
-  assert.match(body, /<p class="novel-reader-top">[\s\S]*Unpublished Draft · 7 opens[\s\S]*<\/p>/);
-  assert.doesNotMatch(body, /<a class="novel-reader-top/);
-  assert.doesNotMatch(body, /href="\/lost-administrator\/novel\/chapters\/unpublished-draft\//);
+  assert.match(body, /<a class="novel-reader-link" href="\/lost-administrator\/novel\/" aria-label="Open The Lost Administrator novel">/);
+  assert.match(body, /THE LOST ADMINISTRATOR[\s\S]*OPEN NOVEL →/);
+  assert.doesNotMatch(body, /MOST OPENED|Restricted Access|7 opens|OPEN CHAPTER/);
+  assert.doesNotMatch(body, /target=/);
 });
 
 test('novel reader privacy explanation remains unchanged and non-clickable', () => {
@@ -237,10 +216,10 @@ test('novel reader privacy explanation remains unchanged and non-clickable', () 
   assert.doesNotMatch(card, /<a[^>]*class="novel-reader-note"|class="novel-reader-note"[\s\S]*<a\b/);
 });
 
-test('novel reader link styling preserves visible keyboard focus and mobile cue', () => {
-  assert.match(css, /\.novel-reader-top-link:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--accent\)[^}]*outline-offset:\s*3px/);
-  assert.match(css, /\.novel-reader-top-link:hover em,\.novel-reader-top-link:focus-visible em\s*\{[^}]*opacity:1/);
-  assert.match(css, /@media \(hover: none\), \(pointer: coarse\), \(max-width: 620px\) \{[^}]*\.novel-reader-top-link em \{ opacity:1;/);
+test('novel landing link has keyboard focus and decorative signal respects reduced motion', () => {
+  assert.match(css, /\.novel-reader-link:focus-visible\s*\{[^}]*outline:2px solid var\(--accent\)[^}]*outline-offset:3px/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[^}]*\.novel-live-signal i \{ animation:none/);
+  assert.match(html, /class=\"novel-live-signal\"/);
 });
 
 test('novel reader changes do not alter analytics values or counting fields', async () => {
@@ -251,14 +230,15 @@ test('novel reader changes do not alter analytics values or counting fields', as
   assert.match(body, /NOVEL PAGEVIEWS · TODAY[\s\S]*9/);
   assert.match(body, /EST\. READERS · 24H[\s\S]*8/);
   assert.match(body, /CHAPTER OPENS · ALL TIME[\s\S]*77/);
-  assert.match(body, /No Such Vehicle · 3 opens/);
+  assert.doesNotMatch(body, /No Such Vehicle|3 opens|MOST OPENED/);
+  assert.match(body, /href="\/lost-administrator\/novel\/"/);
   assert.doesNotMatch(body, /CHAPTER OPENS · TODAY/);
 });
 
 test('novel reader signal handles zero activity and missing payloads', async () => {
   const zero = { today: { novel_pageviews: 0, chapter_opens: 0 }, last_24_hours: { estimated_readers: 0, most_opened_chapter: null }, all_time: { chapter_opens: 0 } };
   let result = await runTrafficScript([basePayload({ novel_reader: zero })]);
-  assert.match(result.getElementById('novel-reader-body').innerHTML, /No chapter opens observed in the last 24 hours/);
+  assert.match(result.getElementById('novel-reader-body').innerHTML, /THE LOST ADMINISTRATOR[\s\S]*OPEN NOVEL/);
   result = await runTrafficScript([basePayload({ novel_reader: undefined })]);
   assert.equal(result.getElementById('novel-reader-body').textContent, 'novel signal unavailable');
 });

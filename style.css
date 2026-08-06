@@ -1813,6 +1813,8 @@ button.technology-observer-card {
 .novel-reader-card { grid-column:span 8; }
 .novel-reader-card h2 { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
 .novel-reader-card h2 span { color:#7cff82; font-size:.68rem; letter-spacing:.12em; }
+.novel-live-signal i { display:inline-block; width:.42rem; height:.42rem; margin-right:.45rem; border-radius:50%; background:#7cff82; box-shadow:0 0 7px rgba(124,255,130,.65); animation:novel-live-pulse 18s ease-in-out infinite; }
+@keyframes novel-live-pulse { 0%,6%,12%,100% { opacity:.55; transform:scale(.82); } 3%,9% { opacity:1; transform:scale(1.12); } }
 .novel-reader-body.unavailable { color:#9facba; font-family:'JetBrains Mono',monospace; }
 .novel-reader-facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; margin-bottom:.7rem; }
 .novel-reader-facts div { border:1px solid rgba(0,220,255,.18); background:rgba(0,20,26,.46); border-radius:7px; padding:.55rem; }
@@ -1826,6 +1828,12 @@ button.technology-observer-card {
 .novel-reader-top-link:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 @media (hover: none), (pointer: coarse), (max-width: 620px) { .novel-reader-top-link em { opacity:1; } .novel-reader-top-link em { font-size:0; } .novel-reader-top-link em::after { content:"→"; font-size:.82rem; } }
 .novel-reader-note { color:#9facba; margin:.55rem 0 0; font-size:.8rem; }
+.novel-reader-link { align-items:center; border-top:1px solid rgba(0,220,255,.14); color:inherit; display:flex; justify-content:space-between; gap:1rem; padding:.72rem .35rem .15rem; text-decoration:none; }
+.novel-reader-link span { color:#7f8c98; font-size:.68rem; letter-spacing:.1em; }
+.novel-reader-link strong { color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.1em; }
+.novel-reader-link:hover,.novel-reader-link:focus-visible { background:rgba(0,180,255,.055); }
+.novel-reader-link:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+@media (prefers-reduced-motion: reduce) { .novel-live-signal i { animation:none; opacity:.72; transform:none; } }
 @media (max-width: 1050px) { .traffic-dashboard > .traffic-kpis { grid-template-columns:repeat(3,1fr); } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:auto; } .traffic-grid { grid-template-columns:repeat(2,1fr); } .traffic-card,.panel-pulse,.panel-stream,.panel-map,.panel-ratio,.timeline,.method-card,.panel-novel-reader { grid-column:span 1; } .map-layout { grid-template-columns:1fr; } .traffic-hero-grid { grid-template-columns:1fr; } }
 @media (max-width: 620px) { .novel-reader-facts { grid-template-columns:1fr 1fr; } .traffic-shell { padding:0 .8rem; } .traffic-header { padding-top:1.15rem; } .traffic-dashboard > .traffic-kpis,.traffic-grid { grid-template-columns:1fr; } .traffic-dashboard > .traffic-kpis > .kpi:last-child { grid-column:span 1; } #request-stream div { grid-template-columns:54px 66px 26px minmax(0,1fr); font-size:.72rem; } .traffic-hero-copy h1 { font-size:2.05rem; } .terminal-command { font-size:.86rem; } .method-card dl { grid-template-columns:1fr; } .world-map-frame { min-height:220px; } }
 
