@@ -61,7 +61,17 @@ test('canonical chapter Markdown remains unchanged', async () => {
     ['content/lost-administrator/novel/chapters/chapter-07-out-of-range.md', '522b87a7daff90da43e36d6eaa388fd6ef5a4986030acdcaea092415eb617dcb'],
     ['content/lost-administrator/novel/chapters/chapter-08-restricted-access.md', '561c7eca8432210edc5b75d73e4d2b0c35c4ccc6470364cd0f6315cb93e39a17'],
     ['content/lost-administrator/novel/chapters/chapter-09-accepted.md', '34f6fb2d2114f18a2c6b92236461a3e50229b493293c54b3a378e21e41980e32'],
-    ['content/lost-administrator/novel/chapters/chapter-10-the-time-between.md', 'a0406e3b5c564997268395de2f32646ca5752aa25ea32fcc883574a13b3e1f07']
+    ['content/lost-administrator/novel/chapters/chapter-10-the-time-between.md', 'a0406e3b5c564997268395de2f32646ca5752aa25ea32fcc883574a13b3e1f07'],
+    ['content/lost-administrator/novel/chapters/chapter-11-the-other-network.md', '674c0f39ea6c6d648751d855e12965092b5dfda39f9aae6ddf3b5b30f8e980a9'],
+    ['content/lost-administrator/novel/chapters/chapter-12-no-check-in.md', '70b2d8bfc6568c3cb788b4f19ff6f40013a6622f57007d226d629b0a20fa487e'],
+    ['content/lost-administrator/novel/chapters/chapter-13-authorized-contacts.md', '8b2717d6b9858899de931463cbec980bf22107f574a00a1dfde8b0b49dd71b7d'],
+    ['content/lost-administrator/novel/chapters/chapter-14-alpha.md', '3a359be5cb69e7a2ce86eb750d1c4facbe3596b36b7b1b7e6a66a26e8cb363a6'],
+    ['content/lost-administrator/novel/chapters/chapter-15-ground-truth.md', 'd4171340360208647fa97b6f7b53da13474b20e97a7dc672b9a4acb0ae5b5554'],
+    ['content/lost-administrator/novel/chapters/chapter-16-the-last-step.md', '21f0e578ae2e8a2ef8f784089c73bb2f3cabc17b63afb5ac87f8520b12f784d7'],
+    ['content/lost-administrator/novel/chapters/chapter-17-without-a-word.md', 'ba733f23a9080a7ba0ed9c0f613276e93d4774797cf17c0349e0b8e20eab33e7'],
+    ['content/lost-administrator/novel/chapters/chapter-18-before-anyone-else.md', 'fecd45f0689d44198e0c3f92d2c50dd3ba10dd03d7100db22df3b7c430d8bf9d'],
+    ['content/lost-administrator/novel/chapters/chapter-19-the-package.md', '28da35eb603c3652e826896bd521da246acce72a3a23d8bb49ba4137c745c857'],
+    ['content/lost-administrator/novel/chapters/chapter-20-where-the-road-ends.md', '24c9041b0dfaeca1910c0670c5d05f39b3cc6e3365fff48e982981a05b39e785']
   ]);
 
   for (const [chapter, expectedHash] of expectedHashes) {
@@ -92,7 +102,17 @@ test('generated novel pages use the versioned novel stylesheet', async () => {
     'lost-administrator/novel/chapters/out-of-range/index.html',
     'lost-administrator/novel/chapters/restricted-access/index.html',
     'lost-administrator/novel/chapters/accepted/index.html',
-    'lost-administrator/novel/chapters/the-time-between/index.html'
+    'lost-administrator/novel/chapters/the-time-between/index.html',
+    'lost-administrator/novel/chapters/the-other-network/index.html',
+    'lost-administrator/novel/chapters/no-check-in/index.html',
+    'lost-administrator/novel/chapters/authorized-contacts/index.html',
+    'lost-administrator/novel/chapters/alpha/index.html',
+    'lost-administrator/novel/chapters/ground-truth/index.html',
+    'lost-administrator/novel/chapters/the-last-step/index.html',
+    'lost-administrator/novel/chapters/without-a-word/index.html',
+    'lost-administrator/novel/chapters/before-anyone-else/index.html',
+    'lost-administrator/novel/chapters/the-package/index.html',
+    'lost-administrator/novel/chapters/where-the-road-ends/index.html'
   ];
   for (const page of pages) {
     const html = await read(page);
@@ -216,7 +236,7 @@ test('renders the supported Markdown subset while keeping manuscript HTML safe',
   assert.doesNotMatch(html, /```/);
 });
 
-test('publishes exactly ten approved chapters in order with adjacent navigation only', async () => {
+test('publishes exactly twenty approved chapters in order with adjacent navigation only', async () => {
   const expected = [
     { number: 1, slug: 'day-zero', title: 'Day Zero', source: 'chapter-01-day-zero.md' },
     { number: 2, slug: 'ill-be-right-back', title: 'I’ll Be Right Back', source: 'chapter-02-ill-be-right-back.md' },
@@ -227,7 +247,17 @@ test('publishes exactly ten approved chapters in order with adjacent navigation 
     { number: 7, slug: 'out-of-range', title: 'Out of Range', source: 'chapter-07-out-of-range.md' },
     { number: 8, slug: 'restricted-access', title: 'Restricted Access', source: 'chapter-08-restricted-access.md' },
     { number: 9, slug: 'accepted', title: 'Accepted', source: 'chapter-09-accepted.md' },
-    { number: 10, slug: 'the-time-between', title: 'The Time Between', source: 'chapter-10-the-time-between.md' }
+    { number: 10, slug: 'the-time-between', title: 'The Time Between', source: 'chapter-10-the-time-between.md' },
+    { number: 11, slug: 'the-other-network', title: 'The Other Network', source: 'chapter-11-the-other-network.md' },
+    { number: 12, slug: 'no-check-in', title: 'No Check-In', source: 'chapter-12-no-check-in.md' },
+    { number: 13, slug: 'authorized-contacts', title: 'Authorized Contacts', source: 'chapter-13-authorized-contacts.md' },
+    { number: 14, slug: 'alpha', title: 'Alpha', source: 'chapter-14-alpha.md' },
+    { number: 15, slug: 'ground-truth', title: 'Ground Truth', source: 'chapter-15-ground-truth.md' },
+    { number: 16, slug: 'the-last-step', title: 'The Last Step', source: 'chapter-16-the-last-step.md' },
+    { number: 17, slug: 'without-a-word', title: 'Without a Word', source: 'chapter-17-without-a-word.md' },
+    { number: 18, slug: 'before-anyone-else', title: 'Before Anyone Else', source: 'chapter-18-before-anyone-else.md' },
+    { number: 19, slug: 'the-package', title: 'The Package', source: 'chapter-19-the-package.md' },
+    { number: 20, slug: 'where-the-road-ends', title: 'Where the Road Ends', source: 'chapter-20-where-the-road-ends.md' }
   ];
   const manifest = JSON.parse(await read('content/lost-administrator/novel/novel-manifest.json'));
   assert.deepEqual(manifest.chapters, expected);
@@ -236,8 +266,8 @@ test('publishes exactly ten approved chapters in order with adjacent navigation 
   const pages = await Promise.all(expected.map(chapter => read(`lost-administrator/novel/chapters/${chapter.slug}/index.html`)));
   const chapterLinks = [...landing.matchAll(/href="\/lost-administrator\/novel\/chapters\/([^/]+)\//g)].map(match => match[1]);
   assert.deepEqual(chapterLinks, expected.map(chapter => chapter.slug));
-  assert.equal(new Set(chapterLinks).size, 10);
-  assert.deepEqual(expected.map(chapter => chapter.number), Array.from({ length: 10 }, (_, index) => index + 1));
+  assert.equal(new Set(chapterLinks).size, 20);
+  assert.deepEqual(expected.map(chapter => chapter.number), Array.from({ length: 20 }, (_, index) => index + 1));
 
   for (let index = 0; index < expected.length; index += 1) {
     const page = pages[index];
@@ -250,8 +280,8 @@ test('publishes exactly ten approved chapters in order with adjacent navigation 
   }
 
   const publication = landing + pages.join('');
-  assert.doesNotMatch(publication, /chapter(?:-|\s*)0?11|coming soon/i);
-  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-11/index.html')));
+  assert.doesNotMatch(publication, /chapter(?:-|\s*)0?21|coming soon/i);
+  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-21/index.html')));
 });
 
 test('approved sources retain their required endings and terminal identity', async () => {
@@ -289,7 +319,17 @@ test('all internal links in the novel publication resolve', async () => {
     'lost-administrator/novel/chapters/out-of-range/index.html',
     'lost-administrator/novel/chapters/restricted-access/index.html',
     'lost-administrator/novel/chapters/accepted/index.html',
-    'lost-administrator/novel/chapters/the-time-between/index.html'
+    'lost-administrator/novel/chapters/the-time-between/index.html',
+    'lost-administrator/novel/chapters/the-other-network/index.html',
+    'lost-administrator/novel/chapters/no-check-in/index.html',
+    'lost-administrator/novel/chapters/authorized-contacts/index.html',
+    'lost-administrator/novel/chapters/alpha/index.html',
+    'lost-administrator/novel/chapters/ground-truth/index.html',
+    'lost-administrator/novel/chapters/the-last-step/index.html',
+    'lost-administrator/novel/chapters/without-a-word/index.html',
+    'lost-administrator/novel/chapters/before-anyone-else/index.html',
+    'lost-administrator/novel/chapters/the-package/index.html',
+    'lost-administrator/novel/chapters/where-the-road-ends/index.html'
   ];
   for (const publicFile of publicFiles) {
     const html = await read(publicFile);
@@ -312,10 +352,20 @@ test('generated publication contains no Markdown fences, drafts, or Canon materi
     'lost-administrator/novel/chapters/out-of-range/index.html',
     'lost-administrator/novel/chapters/restricted-access/index.html',
     'lost-administrator/novel/chapters/accepted/index.html',
-    'lost-administrator/novel/chapters/the-time-between/index.html'
+    'lost-administrator/novel/chapters/the-time-between/index.html',
+    'lost-administrator/novel/chapters/the-other-network/index.html',
+    'lost-administrator/novel/chapters/no-check-in/index.html',
+    'lost-administrator/novel/chapters/authorized-contacts/index.html',
+    'lost-administrator/novel/chapters/alpha/index.html',
+    'lost-administrator/novel/chapters/ground-truth/index.html',
+    'lost-administrator/novel/chapters/the-last-step/index.html',
+    'lost-administrator/novel/chapters/without-a-word/index.html',
+    'lost-administrator/novel/chapters/before-anyone-else/index.html',
+    'lost-administrator/novel/chapters/the-package/index.html',
+    'lost-administrator/novel/chapters/where-the-road-ends/index.html'
   ];
   const publication = (await Promise.all(publicFiles.map(read))).join('\n');
   assert.doesNotMatch(publication, /```|\*Friday, July 31, 2026\*|\*\*(?:06:30 AM|01:30 PM)\*\*/);
   assert.match(publication, /<pre><code class="language-text">/);
-  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft|chapter(?:-|\s*)0?11|German draft/i);
+  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft|chapter(?:-|\s*)0?21|German draft/i);
 });
