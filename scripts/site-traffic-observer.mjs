@@ -15,9 +15,9 @@ const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 
 // not useful observation data.  Bot and scanner classification takes precedence.
 const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
 export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
-export const NOVEL_READER_STATE_SCHEMA_VERSION = 4;
-export const NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE = 2400;
-export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 26317;
+export const NOVEL_READER_STATE_SCHEMA_VERSION = 5;
+export const NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE = 26317;
+export const NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE = 16375;
 export const NOVEL_TODAY_CUTOVER_BASELINE = 1289;
 export const NOVEL_READER_24H_BOOTSTRAP_TOTAL = 3793;
 const NOVEL_LANDING_PATH = '/lost-administrator/novel/';
@@ -482,10 +482,12 @@ function ensureNovelReaderState(state, inputFiles, now, stateFile) {
   const backup_path = stateFile ? backupStateForMigration(stateFile) : null;
   state.novel_reader = {
     ...initialNovelReaderState(inputFiles, now),
-    previous_incorrect_baseline: previousNovelReader?.historical_baseline === NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE ? NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE : previousNovelReader?.historical_baseline,
+    previous_incorrect_baseline: previousNovelReader?.historical_baseline,
     previous_counted_since_cutover: previousNovelReader?.counted_since_cutover,
     previous_chapter_opens: previousNovelReader?.chapter_opens,
-    rebaseline_reason: 'Corrected from verified historical screenshots',
+    corrected_chapter_opens: NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE,
+    correction_reason: 'Manual synchronization from verified historical source',
+    corrected_at: now.toISOString(),
     rebaseline_backup_path: backup_path,
     migrated_from_schema_version: previousNovelReader?.schema_version ?? null,
   };

@@ -395,7 +395,7 @@ test('novel reader 24h estimate uses rolling raw pageviews independently from to
   assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 150);
 });
 
-test('novel all-time chapter opens initializes once at 26317 and counts only new qualifying chapter opens', async () => {
+test('novel all-time chapter opens initializes once at 16375 and counts only new qualifying chapter opens', async () => {
   const { mkdtemp, readFile, writeFile, appendFile, rm } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join } = await import('node:path');
@@ -409,10 +409,10 @@ test('novel all-time chapter opens initializes once at 26317 and counts only new
     await writeFile(log, `${line({ at, path: chapter })}\n`);
     assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE);
     await appendFile(log, `${line({ at: '08/Jul/2026:11:45:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
     await appendFile(log, `${line({ at: '08/Jul/2026:11:46:00 +0200', path: chapter, ua: 'Googlebot/2.1' })}\n${line({ at: '08/Jul/2026:11:47:00 +0200', path: '/lost-administrator/novel/' })}\n${line({ at: '08/Jul/2026:11:48:00 +0200', path: '/style.css' })}\n${line({ at: '08/Jul/2026:11:49:00 +0200', method: 'HEAD', path: chapter })}\n${line({ at: '08/Jul/2026:11:50:00 +0200', path: chapter, status: 404 })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
     const state = JSON.parse(await readFile(stateFile, 'utf8'));
     assert.equal(state.novel_reader.schema_version, NOVEL_READER_STATE_SCHEMA_VERSION);
     assert.equal(state.novel_reader.historical_baseline, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE);
@@ -436,9 +436,9 @@ test('novel all-time migration checkpoints existing logs without adding pre-cuto
     await writeFile(log, `${line({ at, path: chapter })}\n`);
     await mkdir(join(dir, 'state'), { recursive: true });
     await writeFile(stateFile, JSON.stringify({ total_pageviews: 50010, initialized_at: now.toISOString(), novel_reader: { since: now.toISOString(), novel_pageviews: 0, chapter_opens: 3 }, sources: { [resolve(log)]: { dev: 0, ino: 0, offset: 0 } } }));
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26317);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16375);
     await appendFile(log, `${line({ at: '08/Jul/2026:11:45:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -458,12 +458,12 @@ test('novel all-time survives day changes, restarts, and rename log rotation wit
     await writeFile(log, '');
     writeTrafficPayload([log], output, { now, stateFile });
     await appendFile(log, `${line({ at: '08/Jul/2026:23:55:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-08T22:00:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-08T22:00:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 16376);
     assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:00:00.000Z'), stateFile }).novel_reader.today.chapter_opens, 0);
-    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:00:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:00:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 16376);
     await rename(log, join(dir, 'access.log.1'));
     await writeFile(log, `${line({ at: '09/Jul/2026:03:05:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:10:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 26319);
+    assert.equal(writeTrafficPayload([log], output, { now: new Date('2026-07-09T01:10:00.000Z'), stateFile }).novel_reader.all_time.chapter_opens, 16377);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -497,14 +497,14 @@ test('atomic JSON write leaves a complete target document', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'site-traffic-atomic-'));
   try {
     const file = join(dir, 'state', 'counter.json');
-    atomicWriteJson(file, { ok: true, count: 26317 });
-    assert.deepEqual(JSON.parse(await readFile(file, 'utf8')), { ok: true, count: 26317 });
+    atomicWriteJson(file, { ok: true, count: 16375 });
+    assert.deepEqual(JSON.parse(await readFile(file, 'utf8')), { ok: true, count: 16375 });
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-test('novel v1 baseline 2400 is rebaselined once to 26317 without adding old counted_since_cutover', async () => {
+test('legacy novel state is synchronized once to exactly 16375 without adding old counted_since_cutover', async () => {
   const { mkdtemp, readFile, writeFile, appendFile, mkdir, readdir, rm } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join, resolve } = await import('node:path');
@@ -522,22 +522,26 @@ test('novel v1 baseline 2400 is rebaselined once to 26317 without adding old cou
     await writeFile(stateFile, JSON.stringify({
       total_pageviews: 50010,
       initialized_at: now.toISOString(),
-      novel_reader: { schema_version: 1, historical_baseline: 2400, counted_since_cutover: 77, chapter_opens: 2477, novel_pageviews: 77, since: '2026-07-01T00:00:00.000Z', cutover_timestamp: '2026-07-01T00:00:00.000Z', sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: 0 } } },
+      novel_reader: { schema_version: 4, historical_baseline: 26317, counted_since_cutover: 58, chapter_opens: 26375, novel_pageviews: 77, since: '2026-07-01T00:00:00.000Z', cutover_timestamp: '2026-07-01T00:00:00.000Z', sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: 0 } } },
       sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: st.size } }
     }));
     const migrated = writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time;
-    assert.equal(migrated.chapter_opens, 26317);
+    assert.equal(migrated.chapter_opens, 16375);
     const state = JSON.parse(await readFile(stateFile, 'utf8'));
     assert.equal(state.novel_reader.schema_version, NOVEL_READER_STATE_SCHEMA_VERSION);
-    assert.equal(state.novel_reader.historical_baseline, 26317);
+    assert.equal(state.novel_reader.historical_baseline, 16375);
     assert.equal(state.novel_reader.counted_since_cutover, 0);
-    assert.equal(state.novel_reader.previous_incorrect_baseline, 2400);
-    assert.equal(state.novel_reader.previous_counted_since_cutover, 77);
+    assert.equal(state.novel_reader.previous_incorrect_baseline, 26317);
+    assert.equal(state.novel_reader.previous_chapter_opens, 26375);
+    assert.equal(state.novel_reader.corrected_chapter_opens, 16375);
+    assert.equal(state.novel_reader.correction_reason, 'Manual synchronization from verified historical source');
+    assert.equal(state.novel_reader.corrected_at, now.toISOString());
+    assert.equal(state.novel_reader.previous_counted_since_cutover, 58);
     assert.equal(state.novel_reader.sources[resolve(log)].offset, st.size);
     assert((await readdir(join(dir, 'state'))).some(name => name.startsWith('site-traffic-total.json.backup-')));
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26317);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16375);
     await appendFile(log, `${line({ at: '08/Jul/2026:11:45:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -557,12 +561,12 @@ test('novel all-time copytruncate rotation checkpoints shrink without recounting
     await writeFile(log, '');
     writeTrafficPayload([log], output, { now, stateFile });
     await appendFile(log, `${line({ at, path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
     await truncate(log, 0);
     await appendFile(log, `${line({ at: '08/Jul/2026:11:46:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26318);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16376);
     await appendFile(log, `${line({ at: '08/Jul/2026:11:47:00 +0200', path: chapter })}\n`);
-    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 26319);
+    assert.equal(writeTrafficPayload([log], output, { now, stateFile }).novel_reader.all_time.chapter_opens, 16377);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -582,7 +586,7 @@ test('novel today and 24h windows stay distinct across Europe/Berlin midnight', 
   assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.chapter_opens, 2);
 });
 
-test('novel reader schema 4 display cutover is one-time, rolling, and ignores old calibration constants', async () => {
+test('novel reader schema 5 display cutover is one-time, rolling, and ignores old calibration constants', async () => {
   const { mkdtemp, readFile, writeFile, appendFile, mkdir, readdir, rm } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join } = await import('node:path');
@@ -595,7 +599,7 @@ test('novel reader schema 4 display cutover is one-time, rolling, and ignores ol
     const chapter = '/lost-administrator/novel/chapters/day-zero/';
     await writeFile(log, `${line({ at: '08/Jul/2026:10:00:00 +0200', path: chapter })}\n${line({ at: '08/Jul/2026:11:00:00 +0200', path: '/lost-administrator/novel/' })}\n`);
     const first = writeTrafficPayload([log], output, { now, stateFile });
-    assert.equal(first.novel_reader.schema_version, 4);
+    assert.equal(first.novel_reader.schema_version, 5);
     assert.equal(first.novel_reader.today.novel_pageviews, NOVEL_TODAY_CUTOVER_BASELINE);
     assert.equal(first.novel_reader.last_24_hours.estimated_readers, NOVEL_READER_24H_BOOTSTRAP_TOTAL);
     assert.equal(first.novel_reader.all_time.chapter_opens, NOVEL_CHAPTER_OPENS_HISTORICAL_BASELINE);
@@ -635,7 +639,7 @@ test('novel reader bootstrap distribution normalizes rounding remainders and bac
     await writeFile(log, `${line({ at: '08/Jul/2026:10:00:00 +0200', path: '/lost-administrator/novel/' })}\n${line({ at: '08/Jul/2026:11:00:00 +0200', path: '/lost-administrator/novel/' })}\n${line({ at: '08/Jul/2026:11:05:00 +0200', path: '/lost-administrator/novel/' })}\n`);
     const st = statSync(log);
     await mkdir(join(dir, 'state'), { recursive: true });
-    await writeFile(stateFile, JSON.stringify({ total_pageviews: 50010, initialized_at: now.toISOString(), novel_reader: { schema_version: 3, historical_baseline: 26317, counted_since_cutover: 0, chapter_opens: 26317, novel_pageviews: 0, since: now.toISOString(), sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: 0 } } }, sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: st.size } } }));
+    await writeFile(stateFile, JSON.stringify({ total_pageviews: 50010, initialized_at: now.toISOString(), novel_reader: { schema_version: 3, historical_baseline: 16375, counted_since_cutover: 0, chapter_opens: 16375, novel_pageviews: 0, since: now.toISOString(), sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: 0 } } }, sources: { [resolve(log)]: { dev: st.dev, ino: st.ino, offset: st.size } } }));
     writeTrafficPayload([log], output, { now, stateFile });
     const state = JSON.parse(await readFile(stateFile, 'utf8'));
     const buckets = state.novel_reader.reader_24h_bootstrap.hourly_buckets;
