@@ -71,7 +71,11 @@ test('canonical chapter Markdown remains unchanged', async () => {
     ['content/lost-administrator/novel/chapters/chapter-17-without-a-word.md', 'ba733f23a9080a7ba0ed9c0f613276e93d4774797cf17c0349e0b8e20eab33e7'],
     ['content/lost-administrator/novel/chapters/chapter-18-before-anyone-else.md', 'fecd45f0689d44198e0c3f92d2c50dd3ba10dd03d7100db22df3b7c430d8bf9d'],
     ['content/lost-administrator/novel/chapters/chapter-19-the-package.md', '28da35eb603c3652e826896bd521da246acce72a3a23d8bb49ba4137c745c857'],
-    ['content/lost-administrator/novel/chapters/chapter-20-where-the-road-ends.md', '24c9041b0dfaeca1910c0670c5d05f39b3cc6e3365fff48e982981a05b39e785']
+    ['content/lost-administrator/novel/chapters/chapter-20-where-the-road-ends.md', '24c9041b0dfaeca1910c0670c5d05f39b3cc6e3365fff48e982981a05b39e785'],
+    ['content/lost-administrator/novel/chapters/chapter-21-no-wake.md', 'e018a2007b7f665516fb440e4aa7bf71ec78874425fe128059c02f305a7ebcd3'],
+    ['content/lost-administrator/novel/chapters/chapter-22-the-one-who-waited.md', '99dbdbb8dd4afe8517ceaa96f3d4681eee18f506ec6a7bdc1f478dc53e7200c6'],
+    ['content/lost-administrator/novel/chapters/chapter-23-who-will-feed-grissom.md', '27b9a487a4d013886ec85bc6ac421fbb7d15abd7e5ff95a82727afa5558991f6'],
+    ['content/lost-administrator/novel/chapters/chapter-24-the-other-end.md', '4b6d705a7b4848c01eb362c4b834e7d961de640f8bef32926f0f94f6e4f40af4']
   ]);
 
   for (const [chapter, expectedHash] of expectedHashes) {
@@ -112,12 +116,17 @@ test('generated novel pages use the versioned novel stylesheet', async () => {
     'lost-administrator/novel/chapters/without-a-word/index.html',
     'lost-administrator/novel/chapters/before-anyone-else/index.html',
     'lost-administrator/novel/chapters/the-package/index.html',
-    'lost-administrator/novel/chapters/where-the-road-ends/index.html'
+    'lost-administrator/novel/chapters/where-the-road-ends/index.html',
+    'lost-administrator/novel/chapters/no-wake/index.html',
+    'lost-administrator/novel/chapters/the-one-who-waited/index.html',
+    'lost-administrator/novel/chapters/who-will-feed-grissom/index.html',
+    'lost-administrator/novel/chapters/the-other-end/index.html',
+    'lost-administrator/novel/end/index.html'
   ];
   for (const page of pages) {
     const html = await read(page);
     assert.match(html, /href="\/style\.css\?v=60"/);
-    assert.match(html, /href="\/lost-administrator\/novel\/novel\.css\?v=3"/);
+    assert.match(html, /href="\/lost-administrator\/novel\/novel\.css\?v=4"/);
   }
 });
 
@@ -236,7 +245,7 @@ test('renders the supported Markdown subset while keeping manuscript HTML safe',
   assert.doesNotMatch(html, /```/);
 });
 
-test('publishes exactly twenty approved chapters in order with adjacent navigation only', async () => {
+test('publishes exactly twenty-four approved chapters in order with adjacent navigation and a separate final page', async () => {
   const expected = [
     { number: 1, slug: 'day-zero', title: 'Day Zero', source: 'chapter-01-day-zero.md' },
     { number: 2, slug: 'ill-be-right-back', title: 'I’ll Be Right Back', source: 'chapter-02-ill-be-right-back.md' },
@@ -257,7 +266,11 @@ test('publishes exactly twenty approved chapters in order with adjacent navigati
     { number: 17, slug: 'without-a-word', title: 'Without a Word', source: 'chapter-17-without-a-word.md' },
     { number: 18, slug: 'before-anyone-else', title: 'Before Anyone Else', source: 'chapter-18-before-anyone-else.md' },
     { number: 19, slug: 'the-package', title: 'The Package', source: 'chapter-19-the-package.md' },
-    { number: 20, slug: 'where-the-road-ends', title: 'Where the Road Ends', source: 'chapter-20-where-the-road-ends.md' }
+    { number: 20, slug: 'where-the-road-ends', title: 'Where the Road Ends', source: 'chapter-20-where-the-road-ends.md' },
+    { number: 21, slug: 'no-wake', title: 'No Wake', source: 'chapter-21-no-wake.md' },
+    { number: 22, slug: 'the-one-who-waited', title: 'The One Who Waited', source: 'chapter-22-the-one-who-waited.md' },
+    { number: 23, slug: 'who-will-feed-grissom', title: 'Who Will Feed Grissom?', source: 'chapter-23-who-will-feed-grissom.md' },
+    { number: 24, slug: 'the-other-end', title: 'The Other End', source: 'chapter-24-the-other-end.md' }
   ];
   const manifest = JSON.parse(await read('content/lost-administrator/novel/novel-manifest.json'));
   assert.deepEqual(manifest.chapters, expected);
@@ -266,8 +279,8 @@ test('publishes exactly twenty approved chapters in order with adjacent navigati
   const pages = await Promise.all(expected.map(chapter => read(`lost-administrator/novel/chapters/${chapter.slug}/index.html`)));
   const chapterLinks = [...landing.matchAll(/href="\/lost-administrator\/novel\/chapters\/([^/]+)\//g)].map(match => match[1]);
   assert.deepEqual(chapterLinks, expected.map(chapter => chapter.slug));
-  assert.equal(new Set(chapterLinks).size, 20);
-  assert.deepEqual(expected.map(chapter => chapter.number), Array.from({ length: 20 }, (_, index) => index + 1));
+  assert.equal(new Set(chapterLinks).size, 24);
+  assert.deepEqual(expected.map(chapter => chapter.number), Array.from({ length: 24 }, (_, index) => index + 1));
 
   for (let index = 0; index < expected.length; index += 1) {
     const page = pages[index];
@@ -275,13 +288,13 @@ test('publishes exactly twenty approved chapters in order with adjacent navigati
     assert.equal((page.match(/<h1>/g) || []).length, 1);
     if (index === 0) assert.doesNotMatch(page, /class="novel-previous"/);
     else assert.match(page, new RegExp(`class="novel-previous"[^>]*href="/lost-administrator/novel/chapters/${expected[index - 1].slug}/`));
-    if (index === expected.length - 1) assert.doesNotMatch(page, /class="novel-next"/);
+    if (index === expected.length - 1) assert.match(page, /class="novel-next"[^>]*href="\/lost-administrator\/novel\/end\/"[^>]*>Next page →<\/a>/);
     else assert.match(page, new RegExp(`class="novel-next"[^>]*href="/lost-administrator/novel/chapters/${expected[index + 1].slug}/`));
   }
 
   const publication = landing + pages.join('');
-  assert.doesNotMatch(publication, /chapter(?:-|\s*)0?21|coming soon/i);
-  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-21/index.html')));
+  assert.doesNotMatch(publication, /chapter(?:-|\s*)0?25|coming soon/i);
+  await assert.rejects(fs.access(path.join(repositoryRoot, 'lost-administrator/novel/chapters/chapter-25/index.html')));
 });
 
 test('approved sources retain their required endings and terminal identity', async () => {
@@ -329,7 +342,12 @@ test('all internal links in the novel publication resolve', async () => {
     'lost-administrator/novel/chapters/without-a-word/index.html',
     'lost-administrator/novel/chapters/before-anyone-else/index.html',
     'lost-administrator/novel/chapters/the-package/index.html',
-    'lost-administrator/novel/chapters/where-the-road-ends/index.html'
+    'lost-administrator/novel/chapters/where-the-road-ends/index.html',
+    'lost-administrator/novel/chapters/no-wake/index.html',
+    'lost-administrator/novel/chapters/the-one-who-waited/index.html',
+    'lost-administrator/novel/chapters/who-will-feed-grissom/index.html',
+    'lost-administrator/novel/chapters/the-other-end/index.html',
+    'lost-administrator/novel/end/index.html'
   ];
   for (const publicFile of publicFiles) {
     const html = await read(publicFile);
@@ -362,10 +380,60 @@ test('generated publication contains no Markdown fences, drafts, or Canon materi
     'lost-administrator/novel/chapters/without-a-word/index.html',
     'lost-administrator/novel/chapters/before-anyone-else/index.html',
     'lost-administrator/novel/chapters/the-package/index.html',
-    'lost-administrator/novel/chapters/where-the-road-ends/index.html'
+    'lost-administrator/novel/chapters/where-the-road-ends/index.html',
+    'lost-administrator/novel/chapters/no-wake/index.html',
+    'lost-administrator/novel/chapters/the-one-who-waited/index.html',
+    'lost-administrator/novel/chapters/who-will-feed-grissom/index.html',
+    'lost-administrator/novel/chapters/the-other-end/index.html',
+    'lost-administrator/novel/end/index.html'
   ];
   const publication = (await Promise.all(publicFiles.map(read))).join('\n');
   assert.doesNotMatch(publication, /```|\*Friday, July 31, 2026\*|\*\*(?:06:30 AM|01:30 PM)\*\*/);
   assert.match(publication, /<pre><code class="language-text">/);
-  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft|chapter(?:-|\s*)0?21|German draft/i);
+  assert.doesNotMatch(publication, /Canon Bible|private Canon|unpublished draft|chapter(?:-|\s*)0?25|German draft/i);
+});
+
+test('completed landing lists 24 chapters but not the separate visual ending', async () => {
+  const html = await read('lost-administrator/novel/index.html');
+  const chapterLinks = [...html.matchAll(/href="\/lost-administrator\/novel\/chapters\/([^/]+)\//g)];
+  assert.equal(chapterLinks.length, 24);
+  assert.match(html, /<p class="novel-subtitle">A complete novel<\/p>/);
+  assert.match(html, /All 24 chapters of The Lost Administrator are available to read online\./);
+  assert.doesNotMatch(html, /currently in development|as they are released|\/novel\/end\//i);
+});
+
+test('Chapter 24 ends with supplied prose and links to the non-chapter final page', async () => {
+  const html = await read('lost-administrator/novel/chapters/the-other-end/index.html');
+  const article = html.match(/<article class="novel-prose">([\s\S]*?)<\/article>/);
+  assert.ok(article);
+  assert.ok(article[1].trim().endsWith('</p>'));
+  assert.doesNotMatch(article[1], /end\.webp|THE END|Chapter 25/i);
+  assert.match(html, /href="\/lost-administrator\/novel\/chapters\/who-will-feed-grissom\/">← Previous chapter<\/a>/);
+  assert.match(html, /href="\/lost-administrator\/novel\/end\/">Next page →<\/a>/);
+  assert.doesNotMatch(html, /Next chapter →/);
+});
+
+test('manifest models the image ending outside exactly 24 chapters', async () => {
+  const manifest = JSON.parse(await read('content/lost-administrator/novel/novel-manifest.json'));
+  assert.equal(manifest.chapters.length, 24);
+  assert.deepEqual(manifest.endPage, {
+    slug: 'end',
+    image: '/assets/lost-administrator/end.webp',
+    alt: 'Four-scene collage from The Lost Administrator: Michael and Emma beside the aquarium, the white GMC Yukon beside a boat ramp, an old fenced communications site, and Michael’s RoboDad mug beside Byte the hamster.'
+  });
+  assert.equal(manifest.chapters.some(chapter => chapter.number === 25 || chapter.slug === 'end'), false);
+});
+
+test('visual ending is responsive, accessible, canonical, and has no visible narrative or navigation', async () => {
+  await fs.access(path.join(repositoryRoot, 'assets/lost-administrator/end.webp'));
+  const html = await read('lost-administrator/novel/end/index.html');
+  const css = await read('lost-administrator/novel/novel.css');
+  const main = html.match(/<main class="novel-final">([\s\S]*?)<\/main>/);
+  assert.ok(main);
+  assert.match(main[1], /^<img class="novel-final-image" src="\/assets\/lost-administrator\/end\.webp" alt="Four-scene collage[^>]+">$/);
+  assert.doesNotMatch(main[1], /<h[1-6]|<p|<nav|<a|Chapter 25|THE END/i);
+  assert.doesNotMatch(html, /class="novel-(?:next|previous|chapter-nav)"/);
+  assert.match(html, /<title>The Lost Administrator — Final Page<\/title>/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/dennishilk\.com\/lost-administrator\/novel\/end\/">/);
+  assert.match(css, /\.novel-final-image\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*height:\s*auto[^}]*margin:\s*0 auto/);
 });
