@@ -29,5 +29,7 @@
 .novel-prose em { font-style: italic; }
 .novel-prose hr { width: 4rem; margin: 2.8rem auto; border: 0; border-top: 1px solid #80909a; }
 .novel-chapter-nav { display: flex; justify-content: space-between; gap: 2rem; margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--novel-border); }
+.novel-final { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0 5rem; }
+.novel-final-image { display: block; width: 100%; max-width: 100%; height: auto; margin: 0 auto; }
 @media (max-width: 680px) { .novel-shell { padding-top: 2rem; } .novel-cover-frame { width: min(100%, 420px); } .novel-back { margin-bottom: 2rem; } }
 @media print { #stars, .novel-page footer, .novel-back, .novel-chapter-nav { display: none !important; } .novel-reader { width: auto; padding: 0; } .novel-prose { color: #000; font-size: 12pt; } .novel-prose pre { border-color: #888; background: #fff; color: #000; } .novel-prose code, .novel-prose strong { background: transparent; color: #000; } body { background: #fff; } }

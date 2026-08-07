@@ -72,7 +72,7 @@ function renderMarkdown(source) {
   }).join('\n');
 }
 
-function page({ title, description, canonical, body, reader = false }) {
+function page({ title, description, canonical, body, reader = false, finalPage = false }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,9 +87,9 @@ function page({ title, description, canonical, body, reader = false }) {
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="stylesheet" href="/style.css?v=60">
-  <link rel="stylesheet" href="/lost-administrator/novel/novel.css?v=3">
+  <link rel="stylesheet" href="/lost-administrator/novel/novel.css?v=4">
 </head>
-<body class="novel-page${reader ? ' novel-reader-page' : ''}">
+<body class="novel-page${reader ? ' novel-reader-page' : ''}${finalPage ? ' novel-final-page' : ''}">
 <div class="content museum-page lost-admin-page">
 ${body}
   <footer>
@@ -121,33 +121,53 @@ function validateManifest(data) {
   });
 }
 
+function validateEndPage(entry) {
+  if (entry === undefined) return null;
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) throw new Error('Manifest endPage must be an object.');
+  if (typeof entry.slug !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.slug)) throw new Error('Manifest endPage has an invalid slug.');
+  if (typeof entry.image !== 'string' || !/^\/assets\/[A-Za-z0-9][A-Za-z0-9._/-]*\.(?:avif|png|jpe?g|webp)$/.test(entry.image) || entry.image.includes('..')) throw new Error('Manifest endPage has an unsafe image path.');
+  if (typeof entry.alt !== 'string' || !entry.alt.trim()) throw new Error('Manifest endPage has invalid alt text.');
+  return { slug: entry.slug, image: entry.image, alt: entry.alt.trim() };
+}
+
 function landing(chapters) {
   const contents = chapters.length
     ? `<ol class="novel-toc">${chapters.map(chapter => `<li><a href="/lost-administrator/novel/chapters/${escapeHtml(chapter.slug)}/"><span>CHAPTER ${chapter.number}</span><strong>${escapeHtml(chapter.title)}</strong></a></li>`).join('')}</ol>`
     : `<div class="novel-empty"><strong>NO CHAPTERS PUBLISHED YET</strong><p>The first chapter is currently in development.</p></div>`;
   return page({
     title: 'The Lost Administrator — The Novel',
-    description: 'Read completed chapters of The Lost Administrator as they are released.',
+    description: 'Read all 24 chapters of The Lost Administrator online.',
     canonical: 'https://dennishilk.com/lost-administrator/novel/',
     body: `  <main class="novel-shell">
     <a class="novel-back" href="/lost-administrator/">← BACK TO THE LOST ADMINISTRATOR</a>
     <section class="novel-hero">
       <div class="novel-cover-frame"><img class="novel-cover" src="${COVER}" alt="Cover of The Lost Administrator by Dennis Hilk"></div>
-      <div class="novel-copy"><p class="novel-subtitle">A novel currently in development</p><p class="novel-intro">Completed chapters will appear here as they are released. Drafts, working notes and unfinished manuscript material are not published.</p></div>
+      <div class="novel-copy"><p class="novel-subtitle">A complete novel</p><p class="novel-intro">All 24 chapters of The Lost Administrator are available to read online.</p></div>
     </section>
     <section class="novel-contents" aria-labelledby="contents-title"><h2 id="contents-title">CONTENTS</h2>${contents}</section>
   </main>`
   });
 }
 
-function chapterPage(chapter, previous, next, rendered) {
+function chapterPage(chapter, previous, next, rendered, endPage) {
   const description = `Read Chapter ${chapter.number}, ${chapter.title}, from The Lost Administrator.`;
   const navigation = [
     previous ? `<a class="novel-previous" href="/lost-administrator/novel/chapters/${escapeHtml(previous.slug)}/">← Previous chapter</a>` : '',
-    next ? `<a class="novel-next" href="/lost-administrator/novel/chapters/${escapeHtml(next.slug)}/">Next chapter →</a>` : ''
+    next ? `<a class="novel-next" href="/lost-administrator/novel/chapters/${escapeHtml(next.slug)}/">Next chapter →</a>` :
+      endPage ? `<a class="novel-next" href="/lost-administrator/novel/${escapeHtml(endPage.slug)}/">Next page →</a>` : ''
   ].join('');
   return page({ title: `${chapter.title} — The Lost Administrator`, description, canonical: `https://dennishilk.com/lost-administrator/novel/chapters/${chapter.slug}/`, reader: true,
     body: `  <main class="novel-reader"><a class="novel-back" href="/lost-administrator/novel/">← CONTENTS</a><header class="novel-reader-header"><p class="novel-chapter-number">CHAPTER ${chapter.number}</p><h1>${escapeHtml(chapter.title)}</h1></header><article class="novel-prose">${rendered}</article>${navigation ? `<nav class="novel-chapter-nav" aria-label="Chapter navigation">${navigation}</nav>` : ''}</main>` });
+}
+
+function endPage(entry) {
+  return page({
+    title: 'The Lost Administrator — Final Page',
+    description: 'The visual final page of The Lost Administrator.',
+    canonical: `https://dennishilk.com/lost-administrator/novel/${entry.slug}/`,
+    finalPage: true,
+    body: `  <main class="novel-final"><img class="novel-final-image" src="${escapeHtml(entry.image)}" alt="${escapeHtml(entry.alt)}"></main>`
+  });
 }
 
 export async function buildNovel({ rootDir = DEFAULT_ROOT } = {}) {
@@ -158,6 +178,7 @@ export async function buildNovel({ rootDir = DEFAULT_ROOT } = {}) {
   try { manifest = JSON.parse(await fs.readFile(path.join(contentDir, 'novel-manifest.json'), 'utf8')); }
   catch (error) { throw new Error(`Unable to read novel manifest: ${error.message}`); }
   const chapters = validateManifest(manifest);
+  const finalPage = validateEndPage(manifest.endPage);
   const sources = [];
   for (const chapter of chapters) {
     const sourcePath = path.join(chaptersDir, chapter.source);
@@ -171,12 +192,20 @@ export async function buildNovel({ rootDir = DEFAULT_ROOT } = {}) {
   }
   await fs.mkdir(outputDir, { recursive: true });
   await fs.writeFile(path.join(outputDir, 'index.html'), landing(chapters));
+  const endOutput = path.join(outputDir, finalPage?.slug || 'end');
+  await fs.rm(endOutput, { recursive: true, force: true });
+  if (finalPage) {
+    try { await fs.access(path.join(rootDir, finalPage.image.slice(1))); }
+    catch { throw new Error(`Missing end page image: ${finalPage.image}.`); }
+    await fs.mkdir(endOutput, { recursive: true });
+    await fs.writeFile(path.join(endOutput, 'index.html'), endPage(finalPage));
+  }
   const chapterOutput = path.join(outputDir, 'chapters');
   await fs.rm(chapterOutput, { recursive: true, force: true });
   for (let index = 0; index < chapters.length; index += 1) {
     const destination = path.join(chapterOutput, chapters[index].slug);
     await fs.mkdir(destination, { recursive: true });
-    await fs.writeFile(path.join(destination, 'index.html'), chapterPage(chapters[index], chapters[index - 1], chapters[index + 1], renderMarkdown(sources[index])));
+    await fs.writeFile(path.join(destination, 'index.html'), chapterPage(chapters[index], chapters[index - 1], chapters[index + 1], renderMarkdown(sources[index]), index === chapters.length - 1 ? finalPage : null));
   }
   return { chapters: chapters.length };
 }

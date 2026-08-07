@@ -360,7 +360,8 @@ test('novel reader counts only canonical successful human GET documents from the
   assert.equal(payload.novel_reader.last_24_hours.novel_pageviews, 3);
   assert.equal(payload.novel_reader.last_24_hours.estimated_readers, 3);
   assert.equal(payload.novel_reader.last_24_hours.most_opened_chapter.slug, 'day-zero');
-  assert.equal(payload.novel_reader.chapters.length, 10);
+  assert.equal(payload.novel_reader.chapters.length, 24);
+  assert.equal(payload.novel_reader.chapters.some(chapter => chapter.number === 25 || chapter.slug === 'end'), false);
   assert.equal(payload.novel_reader.method.completion_tracking, false);
   assert.equal(JSON.stringify(payload.novel_reader).includes('8.8.8.8'), false);
 });
