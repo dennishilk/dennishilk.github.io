@@ -1,22 +1,23 @@
 (() => {
   "use strict";
 
-  // Add the published GitHub release tag here to enable real download counts.
-  // The asset names must exactly match the two files attached to that release.
   const release = {
     owner: "dennishilk",
     repository: "dennishilk.github.io",
-    tag: "",
+    tag: "the-lost-administrator-v1.0",
     assets: {
       english: "The_Lost_Administrator_English.pdf",
       german: "The_Lost_Administrator_German.pdf"
     }
   };
-  const cacheKey = "lost-administrator-release-download-counts";
-  const cacheLifetime = 60 * 60 * 1000;
+  // One-time migration offset for downloads made before the release assets existed.
+  const DOWNLOAD_BASELINE = {
+    english: 35,
+    german: 15
+  };
   const output = document.querySelector("#lost-admin-download-counts");
 
-  if (!output || !release.tag) return;
+  if (!output) return;
 
   const render = (counts) => {
     const english = output.querySelector('[data-download-count="english"]');
@@ -26,22 +27,6 @@
     german.textContent = counts.german.toLocaleString("en-US");
     total.textContent = (counts.english + counts.german).toLocaleString("en-US");
   };
-  const routeDownloads = (urls) => {
-    output.parentElement.querySelector('[data-download-edition="english"]').href = urls.english;
-    output.parentElement.querySelector('[data-download-edition="german"]').href = urls.german;
-  };
-
-  try {
-    const cached = JSON.parse(localStorage.getItem(cacheKey));
-    if (cached && Date.now() - cached.savedAt < cacheLifetime) {
-      routeDownloads(cached.urls);
-      render(cached.counts);
-      return;
-    }
-  } catch {
-    // Storage can be unavailable; the public API remains a safe fallback.
-  }
-
   const endpoint = `https://api.github.com/repos/${release.owner}/${release.repository}/releases/tags/${encodeURIComponent(release.tag)}`;
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 5000);
@@ -58,15 +43,14 @@
       const english = assets.find((asset) => asset.name === release.assets.english);
       const german = assets.find((asset) => asset.name === release.assets.german);
       if (!english || !german) throw new Error("Release assets unavailable");
-      const counts = { english: english.download_count, german: german.download_count };
-      const urls = { english: english.browser_download_url, german: german.browser_download_url };
-      routeDownloads(urls);
-      render(counts);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify({ savedAt: Date.now(), counts, urls }));
-      } catch {
-        // Counts still render when storage is disabled or full.
+      if (!Number.isInteger(english.download_count) || !Number.isInteger(german.download_count)) {
+        throw new Error("Release download counts unavailable");
       }
+      const counts = {
+        english: DOWNLOAD_BASELINE.english + english.download_count,
+        german: DOWNLOAD_BASELINE.german + german.download_count
+      };
+      render(counts);
     })
     .catch(() => {
       // The em dash already in the page is the intentionally quiet failure state.
