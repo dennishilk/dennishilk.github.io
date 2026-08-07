@@ -4233,6 +4233,7 @@ button.technology-observer-card {
 .lost-admin-development-status { color: #ffd08a !important; font: 700 .69rem "Courier New", monospace; letter-spacing: .09em; margin: .8rem 0 0 !important; text-align: center; }
 .lost-admin-action-card { display: flex; flex-direction: column; }
 .lost-admin-command { background: rgba(2, 10, 14, .72); border-left: 2px solid rgba(117, 220, 233, .55); color: #c9d1d9 !important; font: .78rem/1.55 "Courier New", monospace; margin: 1rem 0 .8rem; overflow-wrap: anywhere; padding: .48rem .62rem; }
+.lost-admin-command-no-accent { border-left: 0; }
 .lost-admin-command span { color: #75dce9; font-weight: 700; }
 .lost-admin-actions { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; margin: 0 0 .8rem; }
 .lost-admin-terminal-button { background: rgba(3, 18, 24, .9); border: 1px solid rgba(117, 220, 233, .58); border-radius: 4px; color: #bdeff5; display: inline-block; font: 700 .73rem/1.25 "Courier New", monospace; letter-spacing: .025em; padding: .55rem .72rem; text-decoration: none; transition: background .2s, border-color .2s, box-shadow .2s, color .2s; }
