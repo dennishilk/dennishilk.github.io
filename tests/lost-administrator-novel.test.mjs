@@ -43,11 +43,16 @@ test('main landing page uses full-card links for the novel and workstation', asy
   const cardContents = (storyCards[0] + environmentCards[0]).replace(/<a\b[^>]*>/g, '');
   assert.doesNotMatch(cardContents, /<(?:a|button)\b/);
   assert.doesNotMatch(html, /READ\s*(?:<[^>]+>)*→|LOGIN\s*(?:<[^>]+>)*→/);
-  assert.equal(storyCards[0].match(/THE STORY CONTINUES/g)?.length, 1);
-  assert.equal(html.match(/THE STORY CONTINUES/g)?.length, 1);
-  assert.match(storyCards[0], /Michael Weber’s life\.<\/p>\s*<p class="lost-admin-development-status">THE STORY CONTINUES<\/p>/);
+  assert.equal(storyCards[0].match(/THE STORY IS COMPLETE/g)?.length, 1);
+  assert.equal(html.match(/THE STORY IS COMPLETE/g)?.length, 1);
+  assert.match(storyCards[0], /The Lost Administrator is a completed novel\. The interactive workstation opens an additional window into the same fictional world and Michael Weber’s life\.<\/p>\s*<p class="lost-admin-development-status">THE STORY IS COMPLETE<\/p>/);
   assert.doesNotMatch(html, /THE NOVEL IS CURRENTLY IN DEVELOPMENT/);
   assert.doesNotMatch(html.slice(html.indexOf('<body>')), /thelostadministrator\.webp/);
+});
+
+test('landing page centers the download and support button groups', async () => {
+  const css = await read('style.css');
+  assert.match(css, /\.lost-admin-actions\s*\{[^}]*justify-content:\s*center;/);
 });
 
 test('canonical chapter Markdown remains unchanged', async () => {
