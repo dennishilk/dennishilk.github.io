@@ -29,22 +29,21 @@ body {
   color: var(--la-text);
 }
 
-/* Keep the cover's office atmosphere, but align the image to the lower half so
-   the printed cover title is cropped out of the viewport. */
+/* The dedicated wallpaper keeps the office details at the edges and a calm
+   center behind the content. */
 .lost-admin-cinematic::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -2;
   background-image:
-    linear-gradient(180deg, rgba(0, 0, 0, .26) 0%, rgba(0, 4, 7, .10) 34%, rgba(0, 4, 7, .08) 72%, rgba(0, 0, 0, .32) 100%),
-    linear-gradient(90deg, rgba(0, 2, 4, .03) 0%, rgba(0, 8, 12, .43) 28%, rgba(0, 8, 12, .48) 72%, rgba(0, 2, 4, .03) 100%),
-    url('/assets/lost-administrator/thelostadministrator.webp');
+    linear-gradient(180deg, rgba(0, 3, 5, .12) 0%, rgba(0, 5, 8, .03) 40%, rgba(0, 4, 7, .08) 78%, rgba(0, 2, 4, .22) 100%),
+    linear-gradient(90deg, rgba(0, 4, 7, .02) 0%, rgba(0, 9, 13, .20) 35%, rgba(0, 9, 13, .20) 65%, rgba(0, 4, 7, .02) 100%),
+    url('/assets/lost-administrator/wallpaper.webp');
   background-size: cover;
-  background-position: center 100%;
+  background-position: center center;
   background-repeat: no-repeat;
-  filter: saturate(.82) brightness(.79) contrast(1.05);
-  transform: scale(1.07);
+  filter: saturate(.9) brightness(.94) contrast(1.04);
 }
 
 .lost-admin-cinematic::after {
@@ -62,7 +61,7 @@ body {
 .la-shell {
   width: min(100% - 2.4rem, 960px);
   margin: 0 auto;
-  padding: 4.25rem 0 2.4rem;
+  padding: 5.5rem 0 3rem;
 }
 
 .la-hero {
@@ -307,14 +306,13 @@ body {
 
 @media (max-width: 760px) {
   .lost-admin-cinematic::before {
-    background-position: center 100%;
-    filter: saturate(.72) brightness(.6) contrast(1.08);
-    transform: scale(1.1);
+    background-position: 48% center;
+    filter: saturate(.86) brightness(.86) contrast(1.05);
   }
 
   .la-shell {
     width: min(100% - 1rem, 680px);
-    padding-top: 1.75rem;
+    padding-top: 2.75rem;
   }
 
   .la-hero {
