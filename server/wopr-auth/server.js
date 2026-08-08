@@ -17,7 +17,11 @@ const CONFIG = {
   sessionTtlSeconds: Number(process.env.WOPR_SESSION_TTL_SECONDS || 8 * 60 * 60),
   secureCookie: process.env.WOPR_COOKIE_SECURE !== "false",
   sameSite: process.env.WOPR_COOKIE_SAMESITE || "Strict",
-  allowedOrigin: process.env.WOPR_ALLOWED_ORIGIN || "https://dennishilk.com",
+  allowedOrigins: new Set([
+    "https://dennishilk.com",
+    "https://www.dennishilk.com",
+    process.env.WOPR_ALLOWED_ORIGIN || "https://dennishilk.com",
+  ]),
   transmissionsDir: process.env.WOPR_TRANSMISSIONS_DIR || "/var/lib/wopr/transmissions",
   securityStateFile: process.env.WOPR_SECURITY_STATE_FILE || "/var/lib/wopr/security/security-state.json",
   securityReviewsFile: process.env.WOPR_SECURITY_REVIEWS_FILE || "/var/lib/wopr/security/operator-reviews.json",
@@ -161,7 +165,7 @@ function readJson(req) {
 function hasTrustedOrigin(req) {
   const origin = req.headers.origin;
   if (!origin) return true;
-  return origin === CONFIG.allowedOrigin;
+  return CONFIG.allowedOrigins.has(origin);
 }
 
 function clientRateKey(req) {
@@ -550,4 +554,4 @@ ensureTransmissionStore().catch((error) => {
 });
 }
 
-module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview, chronologicalTransmissionOrder, migrateSignalNumbers, publicTransmission };
+module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, hasTrustedOrigin, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview, chronologicalTransmissionOrder, migrateSignalNumbers, publicTransmission };
