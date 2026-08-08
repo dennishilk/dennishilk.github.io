@@ -52,16 +52,24 @@
           <h2>Download the Novel</h2>
           <p>The complete novel is available free of charge in English and German as PDF and EPUB. No account. No paywall. No tracking.</p>
           <p class="lost-admin-command lost-admin-command-no-accent"><span>m.weber@workstation:~$</span> download --edition</p>
-          <div class="lost-admin-actions" aria-label="Novel downloads">
-            <a class="lost-admin-terminal-button" data-download-edition="english" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_English.pdf" download aria-label="Download The Lost Administrator in English as a PDF">↓ English PDF</a>
-            <a class="lost-admin-terminal-button" data-release-asset="The_Lost_Administrator_English.epub" data-download-edition="english" href="#" download hidden aria-label="Download The Lost Administrator in English as an EPUB">↓ English EPUB</a>
-            <a class="lost-admin-terminal-button" data-download-edition="german" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_German.pdf" download aria-label="The Lost Administrator auf Deutsch als PDF herunterladen">↓ Deutsche PDF</a>
-            <a class="lost-admin-terminal-button" data-release-asset="The_Lost_Administrator_German.epub" data-download-edition="german" href="#" download hidden aria-label="The Lost Administrator auf Deutsch als EPUB herunterladen">↓ Deutsches EPUB</a>
-          </div>
-          <div class="lost-admin-download-counts" id="lost-admin-download-counts" aria-label="Release asset download counts" aria-live="polite">
-            <span>download_count --english: <strong data-download-count="english">—</strong></span>
-            <span>download_count --german: <strong data-download-count="german">—</strong></span>
-            <span>download_count --total: <strong data-download-count="total">—</strong></span>
+
+          <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:1rem; margin:0 0 .8rem;" aria-label="Novel downloads and download counts">
+            <div style="display:grid; grid-template-columns:repeat(2,minmax(120px,1fr)); gap:.55rem; flex:1 1 270px; max-width:350px;">
+              <div style="display:grid; gap:.55rem;">
+                <a class="lost-admin-terminal-button" data-download-edition="english" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_English.pdf" download aria-label="Download The Lost Administrator in English as a PDF">↓ English PDF</a>
+                <a class="lost-admin-terminal-button" data-release-asset="The_Lost_Administrator_English.epub" data-download-edition="english" href="#" download hidden aria-label="Download The Lost Administrator in English as an EPUB">↓ English EPUB</a>
+              </div>
+              <div style="display:grid; gap:.55rem;">
+                <a class="lost-admin-terminal-button" data-download-edition="german" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_German.pdf" download aria-label="The Lost Administrator auf Deutsch als PDF herunterladen">↓ Deutsche PDF</a>
+                <a class="lost-admin-terminal-button" data-release-asset="The_Lost_Administrator_German.epub" data-download-edition="german" href="#" download hidden aria-label="The Lost Administrator auf Deutsch als EPUB herunterladen">↓ Deutsches EPUB</a>
+              </div>
+            </div>
+
+            <div class="lost-admin-download-counts" id="lost-admin-download-counts" aria-label="Release asset download counts" aria-live="polite" style="flex:0 1 175px; min-width:165px; padding:.55rem .7rem; background:rgba(2,10,14,.56); border:1px solid rgba(117,220,233,.18); border-radius:4px; text-align:left;">
+              <span>download_count --english: <strong data-download-count="english">—</strong></span>
+              <span>download_count --german: <strong data-download-count="german">—</strong></span>
+              <span>download_count --total: <strong data-download-count="total">—</strong></span>
+            </div>
           </div>
         </article>
         <article class="detail-card lost-admin-action-card">
