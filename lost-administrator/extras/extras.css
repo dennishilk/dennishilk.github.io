@@ -114,6 +114,19 @@
   font: 400 .71rem/1.55 'JetBrains Mono', monospace;
 }
 
+.la-graphic-card.la-spoiler-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+}
+
+.la-spoiler-only .la-graphic-meta {
+  width: min(100%, 34rem);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  text-align: center;
+}
+
 .la-spoiler-tag {
   display: inline-block;
   margin-left: .35rem;
