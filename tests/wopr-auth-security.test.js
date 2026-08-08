@@ -11,13 +11,20 @@ process.env.WOPR_SESSION_SECRET = 'x'.repeat(40);
 process.env.WOPR_SECURITY_STATE_FILE = path.join(securityTestDir, 'security-state.json');
 process.env.WOPR_SECURITY_REVIEWS_FILE = path.join(securityTestDir, 'operator-reviews.json');
 process.env.WOPR_SECURITY_CASES_FILE = path.join(securityTestDir, 'case-ledger.json');
-const { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route } = require('../server/wopr-auth/server.js');
+const { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, hasTrustedOrigin } = require('../server/wopr-auth/server.js');
 
 test('self-check allows only dennishilk.com allowlisted paths', () => {
   assert.equal(assertAllowedSelfCheckUrl('/.git/HEAD').href, 'https://dennishilk.com/.git/HEAD');
   assert.throws(() => assertAllowedSelfCheckUrl('https://example.com/.git/HEAD'));
   assert.throws(() => assertAllowedSelfCheckUrl('/not-allowlisted'));
   assert(SELF_CHECK_PATHS.every((entry) => entry.path.startsWith('/')));
+});
+
+test('trusted origin accepts apex and www site origins only', () => {
+  assert.equal(hasTrustedOrigin({ headers: { origin: 'https://dennishilk.com' } }), true);
+  assert.equal(hasTrustedOrigin({ headers: { origin: 'https://www.dennishilk.com' } }), true);
+  assert.equal(hasTrustedOrigin({ headers: { origin: 'https://example.com' } }), false);
+  assert.equal(hasTrustedOrigin({ headers: {} }), true);
 });
 
 test('security API requires existing WOPR session', async () => {
