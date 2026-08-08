@@ -9,6 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="stylesheet" href="/style.css?v=61">
+  <link rel="stylesheet" href="/lost-administrator/landing.css?v=1">
   <script defer src="/stars.js"></script>
   <meta property="og:title" content="The Lost Administrator — Complete Novel &amp; Interactive Workstation">
   <meta property="og:description" content="Read the completed techno-thriller free in English or German as PDF or EPUB, and explore Michael Weber’s interactive Debian workstation.">
@@ -22,80 +23,117 @@
 </head>
 <body>
 <canvas id="stars"></canvas>
-<div class="content museum-page lost-admin-page">
-  <div class="museum-exhibit">
-    <header class="dashboard-header wo-page-header museum-hero exhibit-hero lost-admin-hero">
-      <a class="museum-back" href="/museum/">← BACK TO COMPUTER MUSEUM</a>
-      <h1><span class="prompt">m.weber@workstation:~$</span> <span class="name">The Lost Administrator</span></h1>
+
+<div class="content lost-admin-cinematic">
+  <div class="la-shell">
+    <header class="la-hero">
+      <a class="la-back" href="/museum/">← BACK TO COMPUTER MUSEUM</a>
+      <h1 class="la-title"><span class="prompt">m.weber@workstation:~$</span> <span class="name">The Lost Administrator</span></h1>
     </header>
 
-    <main class="lost-admin-content">
-      <section class="lost-admin-card-grid" aria-label="Experience overview">
-        <aside class="lost-admin-fiction-notice" aria-labelledby="fiction-notice-title">
-          <h2 id="fiction-notice-title">FICTION NOTICE</h2>
-          <p>The Lost Administrator is a work of fiction. Its characters, companies, organizations and events are fictional. Any resemblance to actual persons, living or dead, or to real companies or organizations is purely coincidental. Real technologies, products and historical references may appear within a fictional context.</p>
-        </aside>
+    <main>
+      <aside class="la-fiction" aria-labelledby="fiction-notice-title">
+        <h2 id="fiction-notice-title">FICTION NOTICE</h2>
+        <p>The Lost Administrator is a work of fiction. Its characters, companies, organizations and events are fictional. Any resemblance to actual persons, living or dead, or to real companies or organizations is purely coincidental. Real technologies, products and historical references may appear within a fictional context.</p>
+      </aside>
 
-        <a class="detail-card lost-admin-primary-card lost-admin-novel-link" href="/lost-administrator/novel/" style="display:flex; flex-direction:column;">
-          <p class="lost-admin-card-number">01 / STORY</p>
-          <h2>The Novel</h2>
-          <p>The Lost Administrator is a completed novel. The interactive workstation opens an additional window into the same fictional world and Michael Weber’s life.</p>
-          <span class="lost-admin-terminal-button" style="align-self:center; margin-top:auto; transform:none;">READ</span>
-        </a>
+      <section class="la-terminal-panel" aria-label="The Lost Administrator">
+        <div class="la-row">
+          <div class="la-row-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M8 3.5h10l6 6V28.5H8z" />
+              <path d="M18 3.5v6h6" />
+              <path d="M12 15h8M12 19h8M12 23h5" />
+            </svg>
+          </div>
+          <div class="la-row-copy">
+            <p class="la-command">1) story --open</p>
+            <p>The Lost Administrator is a completed novel. The interactive workstation opens an additional window into the same fictional world and Michael Weber’s life.</p>
+          </div>
+          <a class="la-button" href="/lost-administrator/novel/" aria-label="Read The Lost Administrator online">READ <span class="la-button-arrow">→</span></a>
+        </div>
 
-        <a class="detail-card lost-admin-primary-card lost-admin-environment-link" href="/lost-administrator/workstation/" style="display:flex; flex-direction:column;">
-          <p class="lost-admin-card-number">02 / ENVIRONMENT</p>
-          <h2>Interactive Workstation</h2>
-          <p>Explore Michael Weber’s Debian workstation through emails, files, tickets, notes and terminal history.</p>
-          <p>There is no score and no fixed puzzle path. It is a place to explore, not a challenge to beat.</p>
-          <span class="lost-admin-terminal-button" style="align-self:center; margin-top:auto; transform:none;">LOGIN</span>
-        </a>
+        <div class="la-row">
+          <div class="la-row-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <rect x="3.5" y="5" width="25" height="21" rx="2" />
+              <path d="m9 12 4 4-4 4M16 21h6" />
+            </svg>
+          </div>
+          <div class="la-row-copy">
+            <p class="la-command">2) workstation --connect</p>
+            <p>Explore Michael Weber’s Debian workstation through emails, files, tickets, notes and terminal history. There is no score and no fixed puzzle path. It is a place to explore, not a challenge to beat.</p>
+          </div>
+          <a class="la-button" href="/lost-administrator/workstation/" aria-label="Open Michael Weber's interactive workstation">LOGIN <span class="la-button-arrow">→</span></a>
+        </div>
 
-        <article class="detail-card lost-admin-action-card">
-          <p class="lost-admin-card-number">03 / READ</p>
-          <h2>Download</h2>
-          <p>The complete novel is free in both languages and formats.</p>
-
-          <div style="display:grid; gap:.65rem; margin-top:auto; padding-top:.8rem;" aria-label="Novel downloads">
-            <div style="display:grid; grid-template-columns:82px repeat(2,minmax(90px,1fr)); gap:.55rem; align-items:center;">
-              <span style="color:#bdeff5; font:700 .73rem/1.25 'Courier New',monospace; text-align:right;">English:</span>
-              <a class="lost-admin-terminal-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_English.pdf" download aria-label="Download The Lost Administrator in English as a PDF">↓ PDF</a>
-              <a class="lost-admin-terminal-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_English_FINAL.epub" download aria-label="Download The Lost Administrator in English as an EPUB">↓ EPUB</a>
+        <div class="la-row la-download-row">
+          <div class="la-row-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M16 3v17" />
+              <path d="m10 14 6 6 6-6" />
+              <path d="M5 22v6h22v-6" />
+            </svg>
+          </div>
+          <div class="la-row-copy">
+            <p class="la-command">3) download --edition</p>
+            <p>Choose your language and preferred format.</p>
+          </div>
+          <div class="la-downloads" aria-label="Novel downloads">
+            <div class="la-download-line">
+              <span class="la-language">English</span>
+              <a class="la-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_English.pdf" download aria-label="Download The Lost Administrator in English as a PDF">PDF <span class="la-button-arrow">↓</span></a>
+              <a class="la-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_English_FINAL.epub" download aria-label="Download The Lost Administrator in English as an EPUB">EPUB <span class="la-button-arrow">↓</span></a>
             </div>
-            <div style="display:grid; grid-template-columns:82px repeat(2,minmax(90px,1fr)); gap:.55rem; align-items:center;">
-              <span style="color:#bdeff5; font:700 .73rem/1.25 'Courier New',monospace; text-align:right;">Deutsch:</span>
-              <a class="lost-admin-terminal-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_German.pdf" download aria-label="The Lost Administrator auf Deutsch als PDF herunterladen">↓ PDF</a>
-              <a class="lost-admin-terminal-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_German_FINAL.epub" download aria-label="The Lost Administrator auf Deutsch als EPUB herunterladen">↓ EPUB</a>
+            <div class="la-download-line">
+              <span class="la-language">Deutsch</span>
+              <a class="la-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_German.pdf" download aria-label="The Lost Administrator auf Deutsch als PDF herunterladen">PDF <span class="la-button-arrow">↓</span></a>
+              <a class="la-button" href="https://github.com/dennishilk/dennishilk.github.io/releases/download/the-lost-administrator-v1.0/The_Lost_Administrator_German_FINAL.epub" download aria-label="The Lost Administrator auf Deutsch als EPUB herunterladen">EPUB <span class="la-button-arrow">↓</span></a>
             </div>
           </div>
-        </article>
+        </div>
 
-        <article class="detail-card lost-admin-action-card">
-          <p class="lost-admin-card-number">04 / SUPPORT</p>
-          <h2>Support the Project</h2>
-          <p>The novel and interactive workstation are free to use. If you enjoyed the project, you can support future work voluntarily.</p>
-          <p class="lost-admin-command lost-admin-command-no-accent"><span>m.weber@workstation:~$</span> support --tea</p>
-          <div class="lost-admin-actions">
-            <a class="lost-admin-terminal-button" href="https://buymeacoffee.com/dennishilk" target="_blank" rel="noopener noreferrer">Buy me an East Frisian tea</a>
+        <div class="la-row">
+          <div class="la-row-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M6 12h16v9a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z" />
+              <path d="M22 14h2.5a3.5 3.5 0 0 1 0 7H22" />
+              <path d="M10 8c0-2 2-2 2-4M15 8c0-2 2-2 2-4M20 8c0-2 2-2 2-4" />
+            </svg>
           </div>
-          <p class="lost-admin-optional-support">Support is optional. The novel stays free.</p>
-        </article>
+          <div class="la-row-copy">
+            <p class="la-command">4) support --tea</p>
+            <p>If you enjoyed the project, you can support future work voluntarily. The novel and workstation stay free.</p>
+          </div>
+          <a class="la-button la-support-button" href="https://buymeacoffee.com/dennishilk" target="_blank" rel="noopener noreferrer">Buy me an East Frisian tea <span class="la-button-arrow">♡</span></a>
+        </div>
 
-        <article class="detail-card lost-admin-browser-card">
-          <p class="lost-admin-card-number">05 / PRIVACY</p>
-          <h2>Browser-Only Simulation</h2>
-          <p>Everything runs locally inside the browser. There is no real shell, remote server or access to the visitor’s computer.</p>
-        </article>
+        <div class="la-row la-privacy-row">
+          <div class="la-row-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M16 3.5 27 8v7c0 7.2-4.3 11.3-11 14-6.7-2.7-11-6.8-11-14V8z" />
+              <path d="M12.5 16.5 15 19l5-6" />
+            </svg>
+          </div>
+          <div class="la-row-copy">
+            <p class="la-command">5) privacy</p>
+            <p>Everything runs locally inside the browser. There is no real shell, remote server or access to the visitor’s computer.</p>
+          </div>
+        </div>
       </section>
     </main>
+
+    <footer class="la-footer">
+      <div class="nebby-terminal-line">
+        <picture>
+          <source srcset="../assets/generated/images/nebby.webp" type="image/webp">
+          <img src="/nebby.png" class="nebby" alt="Nebby mascot">
+        </picture>
+        <span class="coffee-text">m.weber@workstation:~$<span class="cursor"></span></span>
+      </div>
+      <p class="footer-links">© 2026 Dennis Hilk — <a href="/museum/">Computer Museum</a> · <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+    </footer>
   </div>
-  <footer>
-    <div class="nebby-terminal-line"><picture>
-<source srcset="../assets/generated/images/nebby.webp" type="image/webp">
-<img src="/nebby.png" class="nebby" alt="Nebby mascot">
-</picture><span class="coffee-text">m.weber@workstation:~$<span class="cursor"></span></span></div>
-    <p class="footer-links">© 2026 Dennis Hilk — <a href="/museum/">Computer Museum</a> · <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
-  </footer>
 </div>
 </body>
 </html>
