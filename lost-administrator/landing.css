@@ -29,23 +29,22 @@ body {
   color: var(--la-text);
 }
 
-/* Cinematic office backdrop: keep the cover atmosphere, but push the printed
-   title out of visual focus so the page feels like the mockup instead of a
-   giant cover image behind the UI. */
+/* Keep the cover's office atmosphere, but align the image to the lower half so
+   the printed cover title is cropped out of the viewport. */
 .lost-admin-cinematic::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -2;
   background-image:
-    linear-gradient(180deg, rgba(0, 0, 0, .68) 0%, rgba(0, 4, 7, .28) 31%, rgba(0, 4, 7, .20) 72%, rgba(0, 0, 0, .62) 100%),
-    linear-gradient(90deg, rgba(0, 2, 4, .08) 0%, rgba(0, 8, 12, .68) 28%, rgba(0, 8, 12, .74) 72%, rgba(0, 2, 4, .08) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, .26) 0%, rgba(0, 4, 7, .10) 34%, rgba(0, 4, 7, .08) 72%, rgba(0, 0, 0, .32) 100%),
+    linear-gradient(90deg, rgba(0, 2, 4, .03) 0%, rgba(0, 8, 12, .43) 28%, rgba(0, 8, 12, .48) 72%, rgba(0, 2, 4, .03) 100%),
     url('/assets/lost-administrator/thelostadministrator.webp');
   background-size: cover;
-  background-position: center 76%;
+  background-position: center 100%;
   background-repeat: no-repeat;
-  filter: saturate(.72) brightness(.62) contrast(1.08);
-  transform: scale(1.035);
+  filter: saturate(.82) brightness(.79) contrast(1.05);
+  transform: scale(1.07);
 }
 
 .lost-admin-cinematic::after {
@@ -55,15 +54,15 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 44%, rgba(0, 180, 255, .06), transparent 34%),
-    radial-gradient(circle at 8% 52%, rgba(0, 180, 255, .035), transparent 23%),
-    radial-gradient(circle at 92% 50%, rgba(0, 180, 255, .035), transparent 23%);
+    radial-gradient(circle at 50% 46%, rgba(0, 180, 255, .045), transparent 34%),
+    radial-gradient(circle at 8% 52%, rgba(0, 180, 255, .028), transparent 23%),
+    radial-gradient(circle at 92% 50%, rgba(0, 180, 255, .028), transparent 23%);
 }
 
 .la-shell {
   width: min(100% - 2.4rem, 960px);
   margin: 0 auto;
-  padding: 3rem 0 1.7rem;
+  padding: 4.25rem 0 2.4rem;
 }
 
 .la-hero {
@@ -279,13 +278,13 @@ body {
 }
 
 .la-footer {
-  margin-top: 1.35rem;
-  padding: .7rem 1rem 1rem;
+  margin-top: 1.85rem;
+  padding: .95rem 1rem 1.5rem;
   border-top: 0;
 }
 
 .la-footer .nebby-terminal-line {
-  margin-bottom: .3rem;
+  margin-bottom: .35rem;
 }
 
 .la-footer .nebby {
@@ -308,13 +307,14 @@ body {
 
 @media (max-width: 760px) {
   .lost-admin-cinematic::before {
-    background-position: center 70%;
-    filter: saturate(.66) brightness(.5) contrast(1.1);
+    background-position: center 100%;
+    filter: saturate(.72) brightness(.6) contrast(1.08);
+    transform: scale(1.1);
   }
 
   .la-shell {
     width: min(100% - 1rem, 680px);
-    padding-top: 1.25rem;
+    padding-top: 1.75rem;
   }
 
   .la-hero {
