@@ -139,7 +139,7 @@
 <source srcset="assets/generated/images/nebby.webp" type="image/webp">
 <img src="nebby.png" class="nebby">
 </picture>
-      <span class="coffee-text">&gt; sudo apt install a cup of East Frisian tea<span class="cursor"></span></span>
+      <span class="coffee-text"><span>total pageviews: <strong id="home-total-pageviews">—</strong></span><br>&gt; sudo apt install a cup of East Frisian tea<span class="cursor"></span></span>
     </div>
 
     <p class="footer-seo">
@@ -155,6 +155,26 @@
   </footer>
 
 </div>
+
+<script>
+(() => {
+  const output = document.getElementById("home-total-pageviews");
+  if (!output) return;
+
+  fetch(`/data/site-traffic.json?t=${Date.now()}`, { cache: "no-store" })
+    .then((response) => {
+      if (!response.ok) throw new Error("traffic unavailable");
+      return response.json();
+    })
+    .then((data) => {
+      const total = data.total_pageviews ?? data.pageviews_total ?? data.total;
+      output.textContent = Number.isFinite(Number(total)) ? Number(total).toLocaleString("en-US") : "—";
+    })
+    .catch(() => {
+      output.textContent = "—";
+    });
+})();
+</script>
 
 </body>
 </html>
