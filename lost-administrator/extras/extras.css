@@ -414,3 +414,38 @@
   object-fit: contain;
   object-position: center;
 }
+
+/* Personnel archive spoiler warning: replace the generic helper text and hide navigation. */
+.la-archive-shell:has(.la-personnel-desk) .la-archive-nav {
+  display: none;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-head > p:not(.la-archive-command) {
+  max-width: 46rem;
+  margin: .95rem auto 0;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255, 82, 82, .58);
+  border-radius: 6px;
+  background: rgba(112, 0, 0, .22);
+  box-shadow: inset 0 0 22px rgba(255, 48, 48, .035), 0 0 22px rgba(150, 0, 0, .08);
+  font-size: 0;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-head > p:not(.la-archive-command)::before {
+  content: "SPOILER ALERT";
+  display: block;
+  margin-bottom: .45rem;
+  color: #ff5e5e;
+  font: 800 clamp(.9rem, 2.3vw, 1.05rem)/1.2 'JetBrains Mono', monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-head > p:not(.la-archive-command)::after {
+  content: "Recovered personnel records may contain major story spoilers. For the best experience, read the book first and return to this archive afterward.";
+  display: block;
+  color: #ffb9b9;
+  font: italic 500 .74rem/1.6 'JetBrains Mono', monospace;
+}
