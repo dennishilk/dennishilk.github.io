@@ -1,0 +1,65 @@
+name: Patch Peatland German copy
+
+on:
+  push:
+    branches: [agent/peatland-proxy-basis]
+    paths:
+      - '.github/workflows/patch-peatland-de-copy.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/peatland-proxy-basis
+      - name: Finish Peatland German copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('site-i18n-de-wiesmoor.js')
+          text = p.read_text()
+          marker = '      ["Moorschutzprogramm area ", "Moorschutzprogramm Gebiet "],\n'
+          insert = '''      ["Moorschutzprogramm entry ", "Moorschutzprogramm Gebiet "],
+      ["ACTIVE · OK", "AKTIV · OK"],
+      ["Daily grids of mean soil moisture under grass for Germany, Version v1.0", "Tägliche Raster der mittleren Bodenfeuchte unter Gras für Deutschland, Version v1.0"],
+      ["Recent daily climate observations Germany (KL), daily precipitation RSK and daily mean temperature TMK", "Aktuelle tägliche Klimabeobachtungen Deutschland (KL), täglicher Niederschlag RSK und Tagesmitteltemperatur TMK"],
+      ["Nearby groundwater stations can indicate regional groundwater behaviour but are not an in-situ peat water-table sensor for Wiesmoor-Nord.", "Nahegelegene Grundwassermessstellen können Hinweise auf das regionale Grundwasserverhalten geben, sind jedoch kein In-situ-Sensor für den Moorwasserstand in Wiesmoor-Nord."],
+'''
+          if marker not in text:
+              raise SystemExit('Peatland phrase insertion marker not found')
+          text = text.replace(marker, marker + insert, 1)
+          p.write_text(text)
+
+          p = Path('site-language.js')
+          text = p.read_text()
+          if '2026-08-09-peatland-1' not in text:
+              raise SystemExit('site-language version marker missing')
+          text = text.replace('2026-08-09-peatland-1', '2026-08-09-peatland-2', 1)
+          text = text.replace('/site-i18n-de-wiesmoor.js?v=20260809-peatland-1', '/site-i18n-de-wiesmoor.js?v=20260809-peatland-2', 1)
+          p.write_text(text)
+
+          p = Path('stars.js')
+          text = p.read_text()
+          if '/site-language.js?v=20260809-peatland-1' not in text:
+              raise SystemExit('stars.js cache marker missing')
+          text = text.replace('/site-language.js?v=20260809-peatland-1', '/site-language.js?v=20260809-peatland-2', 1)
+          p.write_text(text)
+          PY
+      - name: Validate JavaScript syntax
+        run: |
+          node --check site-i18n-de-wiesmoor.js
+          node --check site-language.js
+          node --check stars.js
+      - name: Commit patch
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site-i18n-de-wiesmoor.js site-language.js stars.js
+          git commit -m 'Finish Peatland German copy'
+          git push origin HEAD:agent/peatland-proxy-basis
