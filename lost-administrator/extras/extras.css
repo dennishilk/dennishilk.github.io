@@ -285,6 +285,22 @@
   object-position: center 34%;
 }
 
+/* Grissom & Byte share one file but keep their own portraits. */
+.personnel-record-media--pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  height: clamp(390px, 50vw, 650px);
+}
+
+.personnel-record-media--pair img {
+  min-width: 0;
+  object-position: center 42%;
+}
+
+.personnel-record-media--pair img + img {
+  border-left: 1px solid rgba(228, 212, 175, .38);
+}
+
 .personnel-record-body {
   width: min(100%, 52rem);
   margin: 0 auto;
@@ -342,6 +358,20 @@
 
   .personnel-record-media {
     height: clamp(360px, 115vw, 620px);
+  }
+
+  .personnel-record-media--pair {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .personnel-record-media--pair img {
+    height: clamp(330px, 105vw, 560px);
+  }
+
+  .personnel-record-media--pair img + img {
+    border-left: 0;
+    border-top: 1px solid rgba(228, 212, 175, .38);
   }
 }
 
