@@ -30,7 +30,7 @@
   const normalizeLanguage = value => (value === "de" ? "de" : value === "en" ? "en" : null);
   const normalizePath = path => {
     if (!path) return "/";
-    if (path.endsWith("/index.html")) return path.slice(0, -10) || "/";
+    if (path.endsWith("/index.html")) return path.slice(0, -"index.html".length) || "/";
     return path;
   };
   const currentPath = location.pathname || "/";
