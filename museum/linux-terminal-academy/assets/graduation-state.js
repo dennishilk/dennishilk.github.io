@@ -1,3 +1,10 @@
+if (typeof document !== 'undefined' && !document.querySelector('script[data-site-language-loader]')) {
+  const languageScript = document.createElement('script');
+  languageScript.src = '/site-language.js?v=20260809-sitewide-1';
+  languageScript.dataset.siteLanguageLoader = 'true';
+  document.head.appendChild(languageScript);
+}
+
 /* Browser-local Lab 08 attempt and certificate helpers. No network or account state. */
 (function (root, factory) {
   const api = factory();
