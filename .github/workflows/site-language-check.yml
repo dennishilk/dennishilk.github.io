@@ -31,6 +31,7 @@ jobs:
           node --check site-language.js
           node --check site-i18n-de.js
           node --check site-i18n-de-extra.js
+          node --check site-i18n-de-observers.js
           node --check stars.js
           node --check museum/linux-terminal-academy/assets/graduation-state.js
           for file in museum/linux-terminal-academy/*/lab.js; do node --check "$file"; done
