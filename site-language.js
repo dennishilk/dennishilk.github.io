@@ -58,13 +58,14 @@
     const existing = document.querySelector(selector);
     if (existing?.dataset.loaded === "true") return resolve();
     const script = existing || document.createElement("script");
+    const finish = () => { script.dataset.loaded = "true"; resolve(); };
+    script.addEventListener("load", finish, { once: true });
+    script.addEventListener("error", () => resolve(), { once: true });
     if (!existing) {
       script.src = src;
       script.dataset.siteI18nSrc = src;
       document.head.appendChild(script);
     }
-    script.addEventListener("load", () => { script.dataset.loaded = "true"; resolve(); }, { once: true });
-    script.addEventListener("error", () => resolve(), { once: true });
   });
 
   const loadGermanBundle = () => {
@@ -112,7 +113,8 @@
     const original = node.nodeValue;
     if (!original || !original.trim()) return;
     const trimmed = original.trim();
-    const exact = spec.text[trimmed];
+    const normalized = trimmed.replace(/\s+/g, " ");
+    const exact = spec.text[trimmed] || spec.text[normalized];
     if (exact) {
       const leading = original.match(/^\s*/)?.[0] || "";
       const trailing = original.match(/\s*$/)?.[0] || "";
