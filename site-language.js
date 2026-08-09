@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-09-wiesmoor-1";
+  const VERSION = "2026-08-09-wiesmoor-2";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260809-sitewide-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -113,10 +113,10 @@
 
   const replacePhrases = (value, phrases) => {
     let next = value;
-    for (const pair of phrases) {
-      if (!Array.isArray(pair) || pair.length < 2 || !pair[0]) continue;
-      next = next.split(pair[0]).join(pair[1]);
-    }
+    const ordered = [...phrases]
+      .filter(pair => Array.isArray(pair) && pair.length >= 2 && pair[0])
+      .sort((a, b) => b[0].length - a[0].length);
+    for (const pair of ordered) next = next.split(pair[0]).join(pair[1]);
     return next;
   };
 
