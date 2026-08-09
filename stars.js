@@ -1,6 +1,6 @@
 if (!document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
-  languageScript.src = '/site-language.js?v=20260809-peatland-2';
+  languageScript.src = '/site-language.js?v=20260809-personnel-1';
   languageScript.dataset.siteLanguageLoader = 'true';
   document.head.appendChild(languageScript);
 }
