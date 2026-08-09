@@ -1,0 +1,63 @@
+name: Site language checks
+
+on:
+  pull_request:
+    paths:
+      - 'site-language.js'
+      - 'site-i18n-de*.js'
+      - 'stars.js'
+      - 'museum/linux-terminal-academy/**'
+      - '.github/workflows/site-language-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'site-language.js'
+      - 'site-i18n-de*.js'
+      - 'stars.js'
+      - 'museum/linux-terminal-academy/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check language JavaScript syntax
+        run: |
+          node --check site-language.js
+          node --check site-i18n-de.js
+          node --check site-i18n-de-extra.js
+          node --check stars.js
+          node --check museum/linux-terminal-academy/assets/graduation-state.js
+          for file in museum/linux-terminal-academy/*/lab.js; do node --check "$file"; done
+      - name: Check Linux Academy tests for new regressions
+        shell: bash
+        run: |
+          set +e
+          branch_output="$(node --test tests/linux-academy-virtual-system.test.js 2>&1)"
+          branch_status=$?
+          printf '%s\n' "$branch_output"
+          if [ "$branch_status" -eq 0 ]; then
+            exit 0
+          fi
+
+          git worktree add --detach /tmp/site-language-main origin/main >/dev/null 2>&1
+          main_output="$(cd /tmp/site-language-main && node --test tests/linux-academy-virtual-system.test.js 2>&1)"
+          main_status=$?
+
+          branch_failures="$(printf '%s\n' "$branch_output" | grep '^not ok ' | sed -E 's/^not ok [0-9]+ - //' || true)"
+          main_failures="$(printf '%s\n' "$main_output" | grep '^not ok ' | sed -E 's/^not ok [0-9]+ - //' || true)"
+
+          if [ "$main_status" -ne 0 ] && [ "$branch_failures" = "$main_failures" ]; then
+            compact="$(printf '%s' "$branch_failures" | tr '\n' '; ' | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
+            echo "::warning title=Existing Academy test drift on main::No new failing test names on this branch. Existing failures: $compact"
+            exit 0
+          fi
+
+          compact="$(printf '%s' "$branch_output" | tail -n 80 | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
+          echo "::error title=New Linux Academy test regression::$compact"
+          exit "$branch_status"

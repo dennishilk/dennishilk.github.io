@@ -1,3 +1,10 @@
+if (!document.querySelector('script[data-site-language-loader]')) {
+  const languageScript = document.createElement('script');
+  languageScript.src = '/site-language.js?v=20260809-sitewide-1';
+  languageScript.dataset.siteLanguageLoader = 'true';
+  document.head.appendChild(languageScript);
+}
+
 (function () {
   const { VirtualSystem, Shell, commandProfiles } = window.LinuxAcademy;
   const $ = selector => document.querySelector(selector); const output = $('#terminalOutput'), input = $('#terminalInput'), prompt = $('#prompt'), tree = $('#tree'), context = $('#context'), mission = $('#missionList'), guidance = $('#guidance'), announcer = $('#announcer');
