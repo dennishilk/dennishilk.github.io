@@ -449,3 +449,51 @@
   color: #ffb9b9;
   font: italic 500 .74rem/1.6 'JetBrains Mono', monospace;
 }
+
+/* Personnel archive header: keep the prompt, replace the command label with a real home link. */
+.la-archive-shell:has(.la-personnel-desk) .la-archive-head {
+  position: relative;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-command {
+  padding-right: 8.5rem;
+  font-size: 0;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-command strong {
+  font-size: clamp(.88rem, 2.3vw, 1.04rem);
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-nav {
+  position: absolute;
+  top: .95rem;
+  right: 1.35rem;
+  display: flex;
+  margin: 0;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-nav a:not(:last-child) {
+  display: none;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-nav a:last-child {
+  font-size: 0;
+}
+
+.la-archive-shell:has(.la-personnel-desk) .la-archive-nav a:last-child::before {
+  content: "← back home";
+  font: 600 .68rem/1 'JetBrains Mono', monospace;
+}
+
+@media (max-width: 700px) {
+  .la-archive-shell:has(.la-personnel-desk) .la-archive-command {
+    padding-right: 0;
+    text-align: center;
+  }
+
+  .la-archive-shell:has(.la-personnel-desk) .la-archive-nav {
+    position: static;
+    justify-content: center;
+    margin: .7rem 0 0;
+  }
+}
