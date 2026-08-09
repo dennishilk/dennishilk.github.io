@@ -163,12 +163,19 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .9rem;
+  align-items: start;
 }
 
 .personnel-folder {
   position: relative;
   min-width: 0;
   border: 0;
+}
+
+/* An opened folder becomes the full-width case file. */
+.personnel-folder[open] {
+  grid-column: 1 / -1;
+  z-index: 2;
 }
 
 .personnel-folder > summary {
@@ -214,6 +221,7 @@
 }
 
 .personnel-folder[open] > summary {
+  min-height: 96px;
   border-radius: 4px 7px 0 0;
   box-shadow: 0 5px 13px rgba(0,0,0,.2);
 }
@@ -254,6 +262,50 @@
   font: 500 .68rem/1.55 'JetBrains Mono', monospace;
 }
 
+/* Optional full-bleed portrait block for completed records.
+   Insert .personnel-record-media as the first child of .personnel-record. */
+.personnel-record-media {
+  position: relative;
+  overflow: hidden;
+  height: clamp(390px, 62vw, 720px);
+  margin: -.95rem -1rem 1.1rem;
+  background: #17120e;
+  border-bottom: 1px solid rgba(120, 92, 49, .58);
+}
+
+.personnel-record-media img,
+.personnel-record-media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.personnel-record-media img {
+  object-fit: cover;
+  object-position: center 34%;
+}
+
+.personnel-record-body {
+  width: min(100%, 52rem);
+  margin: 0 auto;
+  padding: .15rem clamp(.1rem, 1vw, .45rem) .25rem;
+}
+
+.personnel-record-kicker {
+  margin: 0 0 .45rem;
+  color: #89683c;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.personnel-record h2 {
+  margin: 0 0 .7rem;
+  color: #302116;
+  font: 800 clamp(1rem, 2.6vw, 1.35rem)/1.25 'JetBrains Mono', monospace;
+}
+
 .personnel-record strong {
   color: #664823;
 }
@@ -283,8 +335,13 @@
     grid-template-columns: 1fr;
   }
 
-  .la-graphic-card.la-wide {
+  .la-graphic-card.la-wide,
+  .personnel-folder[open] {
     grid-column: auto;
+  }
+
+  .personnel-record-media {
+    height: clamp(360px, 115vw, 620px);
   }
 }
 
@@ -300,6 +357,10 @@
 
   .personnel-folder > summary {
     min-height: 104px;
+  }
+
+  .personnel-folder[open] > summary {
+    min-height: 92px;
   }
 }
 
