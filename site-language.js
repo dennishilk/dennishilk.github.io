@@ -1,30 +1,21 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-09-sitewide-1";
-  const BUNDLE_SRC = "/site-i18n-de.js?v=20260809-sitewide-1";
+  const VERSION = "2026-08-09-sitewide-2";
+  const BUNDLE_SRCS = [
+    "/site-i18n-de.js?v=20260809-sitewide-1",
+    "/site-i18n-de-extra.js?v=20260809-sitewide-1",
+  ];
 
   const dedicatedRoutes = {
     "/": { en: "/", de: "/de/" },
     "/index.html": { en: "/", de: "/de/" },
     "/de/": { en: "/", de: "/de/" },
     "/de/index.html": { en: "/", de: "/de/" },
-    "/world-observer/hometown.html": {
-      en: "/world-observer/hometown.html",
-      de: "/de/world-observer/hometown.html",
-    },
-    "/de/world-observer/hometown.html": {
-      en: "/world-observer/hometown.html",
-      de: "/de/world-observer/hometown.html",
-    },
-    "/world-observer/wiesmoor.html": {
-      en: "/world-observer/wiesmoor.html",
-      de: "/de/world-observer/wiesmoor.html",
-    },
-    "/de/world-observer/wiesmoor.html": {
-      en: "/world-observer/wiesmoor.html",
-      de: "/de/world-observer/wiesmoor.html",
-    },
+    "/world-observer/hometown.html": { en: "/world-observer/hometown.html", de: "/de/world-observer/hometown.html" },
+    "/de/world-observer/hometown.html": { en: "/world-observer/hometown.html", de: "/de/world-observer/hometown.html" },
+    "/world-observer/wiesmoor.html": { en: "/world-observer/wiesmoor.html", de: "/de/world-observer/wiesmoor.html" },
+    "/de/world-observer/wiesmoor.html": { en: "/world-observer/wiesmoor.html", de: "/de/world-observer/wiesmoor.html" },
   };
 
   const normalizeLanguage = value => (value === "de" ? "de" : value === "en" ? "en" : null);
@@ -51,9 +42,7 @@
           return legacy;
         }
       }
-    } catch (error) {
-      // Storage can be unavailable. The current document language remains the fallback.
-    }
+    } catch (error) {}
     return null;
   };
 
@@ -61,28 +50,27 @@
     try {
       localStorage.setItem(STORAGE_KEY, language);
       LEGACY_KEYS.forEach(key => localStorage.setItem(key, language));
-    } catch (error) {
-      // Navigation and in-page translation still work when storage is unavailable.
-    }
+    } catch (error) {}
   };
 
-  const loadGermanBundle = () => {
-    if (window.DennisSiteI18nDE) return Promise.resolve(window.DennisSiteI18nDE);
-    if (bundlePromise) return bundlePromise;
-    bundlePromise = new Promise(resolve => {
-      const existing = document.querySelector('script[data-site-i18n-de]');
-      if (existing) {
-        existing.addEventListener("load", () => resolve(window.DennisSiteI18nDE || {}), { once: true });
-        existing.addEventListener("error", () => resolve({}), { once: true });
-        return;
-      }
-      const script = document.createElement("script");
-      script.src = BUNDLE_SRC;
-      script.dataset.siteI18nDe = "true";
-      script.onload = () => resolve(window.DennisSiteI18nDE || {});
-      script.onerror = () => resolve({});
+  const loadScript = src => new Promise(resolve => {
+    const selector = `script[data-site-i18n-src="${CSS.escape(src)}"]`;
+    const existing = document.querySelector(selector);
+    if (existing?.dataset.loaded === "true") return resolve();
+    const script = existing || document.createElement("script");
+    if (!existing) {
+      script.src = src;
+      script.dataset.siteI18nSrc = src;
       document.head.appendChild(script);
-    });
+    }
+    script.addEventListener("load", () => { script.dataset.loaded = "true"; resolve(); }, { once: true });
+    script.addEventListener("error", () => resolve(), { once: true });
+  });
+
+  const loadGermanBundle = () => {
+    if (bundlePromise) return bundlePromise;
+    bundlePromise = BUNDLE_SRCS.reduce((chain, src) => chain.then(() => loadScript(src)), Promise.resolve())
+      .then(() => window.DennisSiteI18nDE || {});
     return bundlePromise;
   };
 
@@ -97,11 +85,8 @@
     return {
       text: mergeMaps(common.text, ...prefixSpecs.map(spec => spec.text), page.text),
       attributes: mergeMaps(common.attributes, ...prefixSpecs.map(spec => spec.attributes), page.attributes),
-      phrases: [
-        ...(common.phrases || []),
-        ...prefixSpecs.flatMap(spec => spec.phrases || []),
-        ...(page.phrases || []),
-      ],
+      html: mergeMaps(common.html, ...prefixSpecs.map(spec => spec.html), page.html),
+      phrases: [...(common.phrases || []), ...prefixSpecs.flatMap(spec => spec.phrases || []), ...(page.phrases || [])],
       title: page.title || prefixSpecs.map(spec => spec.title).filter(Boolean).at(-1) || null,
       description: page.description || null,
     };
@@ -118,8 +103,7 @@
 
   const shouldSkipNode = node => {
     const parent = node.parentElement;
-    if (!parent) return true;
-    if (parent.closest(".site-language-switcher")) return true;
+    if (!parent || parent.closest(".site-language-switcher")) return true;
     return Boolean(parent.closest("script,style,noscript,code,kbd,samp"));
   };
 
@@ -128,14 +112,14 @@
     const original = node.nodeValue;
     if (!original || !original.trim()) return;
     const trimmed = original.trim();
-    let translated = spec.text[trimmed] || null;
-    if (translated) {
+    const exact = spec.text[trimmed];
+    if (exact) {
       const leading = original.match(/^\s*/)?.[0] || "";
       const trailing = original.match(/\s*$/)?.[0] || "";
-      node.nodeValue = `${leading}${translated}${trailing}`;
+      node.nodeValue = `${leading}${exact}${trailing}`;
       return;
     }
-    translated = replacePhrases(original, spec.phrases);
+    const translated = replacePhrases(original, spec.phrases);
     if (translated !== original) node.nodeValue = translated;
   };
 
@@ -152,38 +136,37 @@
 
   const translateTree = (root, spec) => {
     if (!root) return;
-    if (root.nodeType === Node.TEXT_NODE) {
-      translateTextNode(root, spec);
-      return;
-    }
-    if (root.nodeType !== Node.ELEMENT_NODE && root.nodeType !== Node.DOCUMENT_NODE && root.nodeType !== Node.DOCUMENT_FRAGMENT_NODE) return;
+    if (root.nodeType === Node.TEXT_NODE) return translateTextNode(root, spec);
+    if (![Node.ELEMENT_NODE, Node.DOCUMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(root.nodeType)) return;
     if (root instanceof Element) translateAttributes(root, spec);
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
-    let node = walker.nextNode();
-    while (node) {
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       if (node.nodeType === Node.TEXT_NODE) translateTextNode(node, spec);
       else translateAttributes(node, spec);
-      node = walker.nextNode();
+    }
+  };
+
+  const applyHtmlOverrides = spec => {
+    for (const [selector, html] of Object.entries(spec.html || {})) {
+      document.querySelectorAll(selector).forEach(element => {
+        if (element.dataset.siteI18nHtmlApplied === VERSION) return;
+        element.innerHTML = html;
+        element.dataset.siteI18nHtmlApplied = VERSION;
+      });
     }
   };
 
   const updateMetadata = spec => {
     if (spec.title) document.title = spec.title;
-    if (spec.description) {
-      const selectors = [
-        'meta[name="description"]',
-        'meta[property="og:description"]',
-        'meta[name="twitter:description"]',
-      ];
-      selectors.forEach(selector => {
-        const node = document.querySelector(selector);
-        if (node) node.setAttribute("content", spec.description);
-      });
-    }
+    if (!spec.description) return;
+    ['meta[name="description"]', 'meta[property="og:description"]', 'meta[name="twitter:description"]'].forEach(selector => {
+      const node = document.querySelector(selector);
+      if (node) node.setAttribute("content", spec.description);
+    });
   };
 
   const startObserver = spec => {
-    if (observer) observer.disconnect();
+    observer?.disconnect();
     observer = new MutationObserver(records => {
       for (const record of records) {
         if (record.type === "characterData") translateTextNode(record.target, spec);
@@ -191,19 +174,11 @@
         record.addedNodes?.forEach(node => translateTree(node, spec));
       }
     });
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ["aria-label", "title", "placeholder", "alt"],
-    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["aria-label", "title", "placeholder", "alt"] });
   };
 
   const setPressedState = language => {
-    document.querySelectorAll(".site-language-switcher [data-site-language]").forEach(link => {
-      link.setAttribute("aria-current", String(link.dataset.siteLanguage === language));
-    });
+    document.querySelectorAll(".site-language-switcher [data-site-language]").forEach(link => link.setAttribute("aria-current", String(link.dataset.siteLanguage === language)));
   };
 
   const applyGerman = async () => {
@@ -211,6 +186,7 @@
     const spec = resolveTranslationSpec(bundle);
     document.documentElement.lang = "de";
     document.body.dataset.siteLanguage = "de";
+    applyHtmlOverrides(spec);
     translateTree(document.body, spec);
     updateMetadata(spec);
     startObserver(spec);
@@ -219,51 +195,13 @@
   };
 
   const style = document.createElement("style");
-  style.textContent = `
-    .site-language-switcher {
-      position: fixed;
-      top: 14px;
-      right: 16px;
-      z-index: 10000;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 9px;
-      border: 1px solid rgba(98, 231, 224, .35);
-      border-radius: 999px;
-      background: rgba(7, 16, 20, .88);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-    .site-language-switcher a {
-      color: #9aadaa;
-      text-decoration: none;
-      padding: 4px 3px;
-      border-bottom: 1px solid transparent;
-      cursor: pointer;
-    }
-    .site-language-switcher a[aria-current="true"] {
-      color: #62e7e0;
-      border-color: #62e7e0;
-    }
-    .site-language-switcher a:focus-visible {
-      outline: 2px solid #e8a36c;
-      outline-offset: 3px;
-    }
-    .site-language-switcher span { color: #61716f; }
-    @media (max-width: 720px) {
-      .site-language-switcher { top: 10px; right: 10px; padding: 6px 8px; }
-    }
-  `;
+  style.textContent = `.site-language-switcher{position:fixed;top:14px;right:16px;z-index:10000;display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid rgba(98,231,224,.35);border-radius:999px;background:rgba(7,16,20,.88);box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.site-language-switcher a{color:#9aadaa;text-decoration:none;padding:4px 3px;border-bottom:1px solid transparent;cursor:pointer}.site-language-switcher a[aria-current="true"]{color:#62e7e0;border-color:#62e7e0}.site-language-switcher a:focus-visible{outline:2px solid #e8a36c;outline-offset:3px}.site-language-switcher span{color:#61716f}@media(max-width:720px){.site-language-switcher{top:10px;right:10px;padding:6px 8px}}`;
   document.head.appendChild(style);
 
   const switcher = document.createElement("nav");
   switcher.className = "site-language-switcher";
   switcher.setAttribute("aria-label", "Page language / Seitensprache");
   switcher.dataset.languageVersion = VERSION;
-
   const makeLink = (language, label) => {
     const link = document.createElement("a");
     link.dataset.siteLanguage = language;
@@ -276,15 +214,11 @@
       storeLanguage(language);
       if (route) return;
       event.preventDefault();
-      if (language === "de") {
-        applyGerman();
-      } else if (activeLanguage !== "en") {
-        location.reload();
-      }
+      if (language === "de") applyGerman();
+      else if (activeLanguage !== "en") location.reload();
     });
     return link;
   };
-
   switcher.append(makeLink("en", "EN"));
   const separator = document.createElement("span");
   separator.textContent = "|";
@@ -304,7 +238,6 @@
     setPressedState(routeLanguage);
     return;
   }
-
   if (storedLanguage === "de") applyGerman();
   else {
     document.documentElement.lang = "en";
