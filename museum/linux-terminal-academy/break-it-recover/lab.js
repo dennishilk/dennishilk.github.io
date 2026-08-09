@@ -1,3 +1,10 @@
+if (!document.querySelector('script[data-site-language-loader]')) {
+  const languageScript = document.createElement('script');
+  languageScript.src = '/site-language.js?v=20260809-sitewide-1';
+  languageScript.dataset.siteLanguageLoader = 'true';
+  document.head.appendChild(languageScript);
+}
+
 (function () {
   const { VirtualSystem, Shell, commandProfiles } = window.LinuxAcademy;
   const graduation = window.LinuxAcademyGraduation;
@@ -17,7 +24,6 @@
     $('#recoveryView').textContent = `PROCESS      ${runaway.terminated ? 'STOPPED' : 'RUNNING'}\nSERVICE      ${service.state === 'active' ? 'RUNNING' : 'FAILED'}\nPERMISSIONS  ${file && file.mode === 'rw-------' ? 'MINIMUM REPAIR' : 'FAULT PRESENT'}`;
     const complete = healthy && checks.every(([key]) => evidence[key]);
     if (complete) attempt.recordCompletion(system);
-    $('#completion').hidden = !complete;
     // The replayable recovery attempt is intentionally independent from browser-local graduation.
     const earned = graduation.eligible(window.localStorage);
     $('#certificateChallenge').hidden = earned;
