@@ -1,0 +1,38 @@
+name: Site language checks
+
+on:
+  pull_request:
+    paths:
+      - 'site-language.js'
+      - 'site-i18n-de*.js'
+      - 'stars.js'
+      - 'museum/linux-terminal-academy/**'
+      - '.github/workflows/site-language-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'site-language.js'
+      - 'site-i18n-de*.js'
+      - 'stars.js'
+      - 'museum/linux-terminal-academy/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check language JavaScript syntax
+        run: |
+          node --check site-language.js
+          node --check site-i18n-de.js
+          node --check site-i18n-de-extra.js
+          node --check stars.js
+          node --check museum/linux-terminal-academy/assets/graduation-state.js
+          for file in museum/linux-terminal-academy/*/lab.js; do node --check "$file"; done
+      - name: Run Linux Academy virtual-system tests
+        run: node --test tests/linux-academy-virtual-system.test.js
+      - name: Run novel build tests
+        run: node --test tests/lost-administrator-novel.test.mjs
