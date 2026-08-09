@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-09-observers-1";
+  const VERSION = "2026-08-09-observers-2";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260809-sitewide-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -18,6 +18,22 @@
     "/world-observer/wiesmoor.html": { en: "/world-observer/wiesmoor.html", de: "/de/world-observer/wiesmoor.html" },
     "/de/world-observer/wiesmoor.html": { en: "/world-observer/wiesmoor.html", de: "/de/world-observer/wiesmoor.html" },
   };
+
+  // Large map SVGs can contain hundreds or thousands of nodes. They do not carry
+  // visible prose that needs translating, so walking them on every mutation is
+  // both wasteful and capable of freezing observer-heavy pages.
+  const EXCLUDED_SUBTREE_SELECTOR = [
+    ".site-language-switcher",
+    "script",
+    "style",
+    "noscript",
+    "code",
+    "kbd",
+    "samp",
+    "#earthquake-map-canvas",
+    "#buoy-map-canvas",
+    "[data-site-i18n-skip]",
+  ].join(",");
 
   const normalizeLanguage = value => (value === "de" ? "de" : value === "en" ? "en" : null);
   const normalizePath = path => {
@@ -103,11 +119,18 @@
     return next;
   };
 
-  const shouldSkipNode = node => {
-    const parent = node.parentElement;
-    if (!parent || parent.closest(".site-language-switcher")) return true;
-    return Boolean(parent.closest("script,style,noscript,code,kbd,samp"));
+  const elementForNode = node => {
+    if (!node) return null;
+    if (node.nodeType === Node.ELEMENT_NODE) return node;
+    return node.parentElement || null;
   };
+
+  const isExcludedNode = node => {
+    const element = elementForNode(node);
+    return Boolean(element?.closest(EXCLUDED_SUBTREE_SELECTOR));
+  };
+
+  const shouldSkipNode = node => isExcludedNode(node);
 
   const translateTextNode = (node, spec) => {
     if (shouldSkipNode(node)) return;
@@ -127,7 +150,7 @@
   };
 
   const translateAttributes = (element, spec) => {
-    if (!(element instanceof Element) || element.closest(".site-language-switcher")) return;
+    if (!(element instanceof Element) || isExcludedNode(element)) return;
     for (const name of ["aria-label", "title", "placeholder", "alt"]) {
       const value = element.getAttribute(name);
       if (!value) continue;
@@ -138,11 +161,22 @@
   };
 
   const translateTree = (root, spec) => {
-    if (!root) return;
+    if (!root || isExcludedNode(root)) return;
     if (root.nodeType === Node.TEXT_NODE) return translateTextNode(root, spec);
     if (![Node.ELEMENT_NODE, Node.DOCUMENT_NODE, Node.DOCUMENT_FRAGMENT_NODE].includes(root.nodeType)) return;
     if (root instanceof Element) translateAttributes(root, spec);
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode(node) {
+          if (node.nodeType === Node.ELEMENT_NODE && node.matches?.(EXCLUDED_SUBTREE_SELECTOR)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      },
+    );
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       if (node.nodeType === Node.TEXT_NODE) translateTextNode(node, spec);
       else translateAttributes(node, spec);
@@ -172,6 +206,7 @@
     observer?.disconnect();
     observer = new MutationObserver(records => {
       for (const record of records) {
+        if (isExcludedNode(record.target)) continue;
         if (record.type === "characterData") translateTextNode(record.target, spec);
         if (record.type === "attributes") translateAttributes(record.target, spec);
         record.addedNodes?.forEach(node => translateTree(node, spec));
