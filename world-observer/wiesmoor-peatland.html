@@ -70,10 +70,10 @@
         <h2>HYDROLOGICAL PRESSURE</h2>
         <div id="pressure-value" class="peatland-primary-status unavailable">Awaiting live proxy data</div>
         <div class="weather-metric-list two">
-          <p><span>Confidence</span><strong id="pressure-confidence">pending</strong></p>
-          <p><span>Data status</span><strong id="pressure-data-status">not yet live-ingested</strong></p>
+          <p><span>Proxy basis</span><strong id="pressure-confidence">pending</strong></p>
+          <p><span>Data coverage</span><strong id="pressure-data-status">not yet live-ingested</strong></p>
         </div>
-        <p class="peatland-note">Regional proxy observation — not an in-situ peat water-table sensor.</p>
+        <p class="peatland-note">Regional proxy observation — not an in-situ peat water-table sensor. Proxy basis shows how many live proxy groups contribute to the classification; it is not a source-quality rating.</p>
       </article>
 
       <article class="traffic-card peatland-context-card">
@@ -250,7 +250,9 @@
     set("peatland-location", `Location: ${clean(loc.municipality, "Wiesmoor")}, ${clean(loc.state, "Lower Saxony")}, ${clean(loc.country, "Germany")}`);
     set("peatland-updated", `Last update: ${clean(data?.collected_at_utc || data?.date_utc, "pending")}`);
     set("peatland-source", data?.sources?.[0]?.name || data?.peat_context?.source?.name || "Regional proxy setup");
-    set("pressure-confidence", data?.peatland_hydrological_pressure?.confidence);
+    const contributingGroups = data?.peatland_hydrological_pressure?.contributing_proxy_groups;
+    const proxyBasis = Array.isArray(contributingGroups) && contributingGroups.length ? `${contributingGroups.length} contributing proxy ${contributingGroups.length === 1 ? "group" : "groups"}` : clean(data?.peatland_hydrological_pressure?.confidence);
+    set("pressure-confidence", proxyBasis);
     set("pressure-data-status", clean(data?.data_status, "not yet live-ingested"));
     renderPeatContext(data?.peat_context);
     const weather = data?.weather_pressure || {};

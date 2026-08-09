@@ -1,12 +1,13 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-09-wiesmoor-4";
+  const VERSION = "2026-08-09-peatland-2";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260809-sitewide-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
     "/site-i18n-de-observers.js?v=20260809-observers-1",
-    "/site-i18n-de-wiesmoor.js?v=20260809-wiesmoor-4",
+    "/site-i18n-de-wiesmoor.js?v=20260809-peatland-1",
+    "/site-i18n-de-peatland-polish.js?v=20260809-peatland-2",
   ];
 
   const dedicatedRoutes = {
