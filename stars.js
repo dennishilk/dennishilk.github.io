@@ -1,3 +1,10 @@
+if (!document.querySelector('script[data-site-language-loader]')) {
+  const languageScript = document.createElement('script');
+  languageScript.src = '/site-language.js?v=20260809';
+  languageScript.dataset.siteLanguageLoader = 'true';
+  document.head.appendChild(languageScript);
+}
+
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 let width = 0;
