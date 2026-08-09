@@ -33,6 +33,16 @@ jobs:
           node --check museum/linux-terminal-academy/assets/graduation-state.js
           for file in museum/linux-terminal-academy/*/lab.js; do node --check "$file"; done
       - name: Run Linux Academy virtual-system tests
-        run: node --test tests/linux-academy-virtual-system.test.js
+        shell: bash
+        run: |
+          set +e
+          output="$(node --test tests/linux-academy-virtual-system.test.js 2>&1)"
+          status=$?
+          printf '%s\n' "$output"
+          if [ "$status" -ne 0 ]; then
+            compact="$(printf '%s' "$output" | tail -n 80 | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
+            echo "::error title=Linux Academy tests failed::$compact"
+            exit "$status"
+          fi
       - name: Run novel build tests
         run: node --test tests/lost-administrator-novel.test.mjs
