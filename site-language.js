@@ -1,11 +1,12 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-09-observers-3";
+  const VERSION = "2026-08-09-wiesmoor-1";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260809-sitewide-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
     "/site-i18n-de-observers.js?v=20260809-observers-1",
+    "/site-i18n-de-wiesmoor.js?v=20260809-wiesmoor-1",
   ];
 
   const dedicatedRoutes = {
