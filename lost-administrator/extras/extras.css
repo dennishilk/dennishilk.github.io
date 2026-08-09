@@ -401,3 +401,16 @@
     transition: none;
   }
 }
+
+/* Preserve each single-person portrait's original composition.
+   The dossier still fills the full width, but no head/shoulder crop is forced. */
+.personnel-record-media:not(.personnel-record-media--pair) {
+  height: auto;
+  overflow: visible;
+}
+
+.personnel-record-media:not(.personnel-record-media--pair) img {
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
