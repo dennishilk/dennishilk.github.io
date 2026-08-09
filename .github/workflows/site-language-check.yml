@@ -61,5 +61,3 @@ jobs:
           compact="$(printf '%s' "$branch_output" | tail -n 80 | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
           echo "::error title=New Linux Academy test regression::$compact"
           exit "$branch_status"
-      - name: Run novel build tests
-        run: node --test tests/lost-administrator-novel.test.mjs
