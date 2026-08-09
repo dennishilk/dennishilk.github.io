@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-09-observers-2";
+  const VERSION = "2026-08-09-observers-3";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260809-sitewide-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -142,7 +142,8 @@
     if (exact) {
       const leading = original.match(/^\s*/)?.[0] || "";
       const trailing = original.match(/\s*$/)?.[0] || "";
-      node.nodeValue = `${leading}${exact}${trailing}`;
+      const translated = `${leading}${exact}${trailing}`;
+      if (translated !== original) node.nodeValue = translated;
       return;
     }
     const translated = replacePhrases(original, spec.phrases);
