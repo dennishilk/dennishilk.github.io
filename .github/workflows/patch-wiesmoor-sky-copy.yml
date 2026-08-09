@@ -1,0 +1,76 @@
+name: Patch Wiesmoor sky copy
+
+on:
+  push:
+    branches: [agent/wiesmoor-observers-de]
+    paths:
+      - '.github/workflows/patch-wiesmoor-sky-copy.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/wiesmoor-observers-de
+      - name: Refine repeated sky copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('world-observer/wiesmoor-sky.html')
+          text = p.read_text()
+          old = 'set("best-window", rangeLabel(night.best_astronomical_darkness_window_tonight?.start, night.best_astronomical_darkness_window_tonight?.end, "No astronomical darkness window tonight"));\n    set("dark-window-note", available ? "Best astronomical darkness window tonight." : "No astronomical darkness window tonight");'
+          new = 'set("best-window", rangeLabel(night.best_astronomical_darkness_window_tonight?.start, night.best_astronomical_darkness_window_tonight?.end, "Astronomical darkness not reached"));\n    set("dark-window-note", available ? "Best astronomical darkness interval tonight." : "Sun does not reach astronomical darkness tonight.");'
+          if old not in text:
+              raise SystemExit('sky render marker not found')
+          text = text.replace(old, new, 1)
+          p.write_text(text)
+
+          p = Path('site-i18n-de-wiesmoor.js')
+          text = p.read_text()
+          replacements = {
+            '"No Astronomical Darkness": "Keine astronomische Dunkelheit"': '"No Astronomical Darkness": "Dämmerung bleibt bestehen"',
+            '"Best astronomical darkness window tonight": "Beste astronomische Dunkelphase heute Nacht"': '"Best astronomical darkness window tonight": "Astronomische Dunkelphase"',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing translation marker: {old}')
+              text = text.replace(old, new, 1)
+          marker = '      "No astronomical darkness window tonight": "Heute Nacht keine astronomische Dunkelphase",\n'
+          insert = '      "Astronomical darkness not reached": "NICHT ERREICHT",\n      "Best astronomical darkness interval tonight.": "Astronomisches Dunkelintervall heute Nacht.",\n      "Sun does not reach astronomical darkness tonight.": "Die Sonne sinkt heute Nacht nicht tief genug unter den Horizont.",\n'
+          if marker not in text:
+              raise SystemExit('translation insertion marker missing')
+          text = text.replace(marker, marker + insert, 1)
+          p.write_text(text)
+
+          p = Path('site-language.js')
+          text = p.read_text()
+          text = text.replace('const VERSION = "2026-08-09-wiesmoor-3";', 'const VERSION = "2026-08-09-wiesmoor-4";', 1)
+          text = text.replace('/site-i18n-de-wiesmoor.js?v=20260809-wiesmoor-3', '/site-i18n-de-wiesmoor.js?v=20260809-wiesmoor-4', 1)
+          p.write_text(text)
+
+          p = Path('stars.js')
+          text = p.read_text().replace('/site-language.js?v=20260809-wiesmoor-3', '/site-language.js?v=20260809-wiesmoor-4', 1)
+          p.write_text(text)
+
+          p = Path('world-observer/horizon-observer.html')
+          text = p.read_text().replace('/site-language.js?v=20260809-wiesmoor-3', '/site-language.js?v=20260809-wiesmoor-4', 1)
+          p.write_text(text)
+          PY
+      - name: Validate JavaScript syntax
+        run: |
+          node --check site-language.js
+          node --check site-i18n-de-wiesmoor.js
+          node --check stars.js
+      - name: Commit patch
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add world-observer/wiesmoor-sky.html site-i18n-de-wiesmoor.js site-language.js stars.js world-observer/horizon-observer.html
+          git commit -m 'Refine Wiesmoor sky status copy'
+          git push origin HEAD:agent/wiesmoor-observers-de
