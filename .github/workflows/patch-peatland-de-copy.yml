@@ -1,6 +1,7 @@
 name: Patch Peatland German copy
 
 on:
+  workflow_dispatch:
   push:
     branches: [agent/peatland-proxy-basis]
     paths:
