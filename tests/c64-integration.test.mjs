@@ -76,6 +76,17 @@ test("the active lab exposes semantic keyboard, transcript, canvas and status al
   assert.match(css, /focus-visible/);
 });
 
+test("the C64 exhibit stays centered, bounded and responsive on wide screens", () => {
+  const css = read("museum/c64/c64-lab.css");
+  assert.match(css, /\.c64-lab-page\s*\{[\s\S]*?max-width:\s*clamp\(1280px,\s*92vw,\s*1760px\);[\s\S]*?margin-inline:\s*auto;/);
+  assert.match(css, /\.c64-lab-page main\s*\{[\s\S]*?max-width:\s*clamp\(1100px,\s*80vw,\s*1600px\);/);
+  assert.match(css, /\.c64-lab\s*\{[\s\S]*?max-width:\s*1440px;[\s\S]*?margin-inline:\s*auto;/);
+  assert.match(css, /\.c64-display-frame\s*\{[\s\S]*?max-width:\s*920px;[\s\S]*?margin-inline:\s*auto;/);
+  assert.match(css, /@media\s*\(min-width:\s*1600px\)[\s\S]*?\.c64-supporting\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,/);
+  assert.match(css, /@media\s*\(max-width:\s*980px\)[\s\S]*?\.c64-workspace\s*\{[\s\S]*?grid-template-columns:\s*1fr;/);
+  assert.match(css, /@media\s*\(max-width:\s*720px\)[\s\S]*?\.c64-supporting,[\s\S]*?grid-template-columns:\s*1fr;/);
+});
+
 test("the public accuracy boundary is explicit in both languages", () => {
   assert.match(en, /Educational BASIC V2 subset · No Commodore ROMs · Browser-rendered VIC\/SID concepts/);
   assert.match(en, /not SID emulation/);

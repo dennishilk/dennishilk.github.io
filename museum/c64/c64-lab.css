@@ -16,8 +16,14 @@ body {
 }
 
 .c64-lab-page {
-  max-width: 1280px;
+  width: 100%;
+  max-width: clamp(1280px, 92vw, 1760px);
+  margin-inline: auto;
   padding-bottom: 3rem;
+}
+
+.c64-lab-page main {
+  max-width: clamp(1100px, 80vw, 1600px);
 }
 
 .c64-hero {
@@ -51,6 +57,8 @@ body {
 }
 
 .c64-lab {
+  max-width: 1440px;
+  margin-inline: auto;
   scroll-margin-top: 1rem;
 }
 
@@ -130,6 +138,8 @@ body {
 .c64-display-frame {
   position: relative;
   width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border: 10px solid #7779d9;
@@ -567,6 +577,17 @@ body {
 .c64-related-links a:focus-visible {
   outline: 3px solid var(--c64-warm);
   outline-offset: 3px;
+}
+
+@media (min-width: 1600px) {
+  .c64-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(370px, 420px);
+    gap: clamp(1rem, 1.25vw, 1.5rem);
+  }
+
+  .c64-supporting {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 980px) {
