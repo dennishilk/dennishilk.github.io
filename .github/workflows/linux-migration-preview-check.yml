@@ -1,0 +1,27 @@
+name: Linux migration preview isolation
+
+on:
+  pull_request:
+    paths:
+      - 'labs/linux-migration-companion/**'
+      - 'tests/linux-migration-preview-isolation.test.mjs'
+      - '.github/workflows/linux-migration-preview-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'labs/linux-migration-companion/**'
+      - 'tests/linux-migration-preview-isolation.test.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/linux-migration-preview-isolation.test.mjs
