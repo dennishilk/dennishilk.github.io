@@ -24,6 +24,7 @@ window.DennisSiteI18nDE = {
       "START LAB →": "LABOR STARTEN →",
       "ENTER SYSTEM": "SYSTEM ÖFFNEN",
       "ENTER LAB": "LABOR ÖFFNEN",
+      "START PROGRAMMING": "PROGRAMMIEREN",
       "COMPUTER MUSEUM": "COMPUTER MUSEUM",
       "← COMPUTER MUSEUM": "← COMPUTER MUSEUM",
       "← LINUX TERMINAL ACADEMY": "← LINUX TERMINAL ACADEMY",
@@ -122,13 +123,17 @@ window.DennisSiteI18nDE = {
         "START SETUP": "SETUP STARTEN",
         "CONNECT TERMINAL": "TERMINAL VERBINDEN",
         "ENTER EXCHANGE": "VERMITTLUNG ÖFFNEN",
-        "ENTER EXHIBIT": "AUSSTELLUNG ÖFFNEN"
+        "ENTER EXHIBIT": "AUSSTELLUNG ÖFFNEN",
+        "Commodore 64 Programming Lab": "Commodore 64 Programmierlabor"
       },
       attributes: {},
       phrases: [
         ["Interactive terminal simulation", "Interaktive Terminal-Simulation"],
         ["Educational DOS environment", "Lehrreiche DOS-Umgebung"],
         ["Interactive BASIC environment", "Interaktive BASIC-Umgebung"],
+        ["Interactive BASIC learning lab", "Interaktives BASIC-Lernlabor"],
+        ["Learn a faithful browser-based subset of Commodore BASIC V2: type programs, explore PETSCII and POKE, and build an animated sprite.", "Lerne einen originalgetreuen Browser-Ausschnitt aus Commodore BASIC V2: Programme eingeben, PETSCII und POKE erkunden und ein animiertes Sprite bauen."],
+        ["Program a 1982 Commodore 64 in the interactive BASIC lab.", "Programmiere einen Commodore 64 von 1982 im interaktiven BASIC-Labor."],
         ["Educational BIOS environment", "Lehrreiche BIOS-Umgebung"],
         ["Educational software setup", "Lehrreiches Software-Setup"],
         ["Computer Security History", "Geschichte der Computersicherheit"],

@@ -1,0 +1,695 @@
+:root {
+  --c64-blue: #2e2c9b;
+  --c64-light-blue: #706deb;
+  --c64-ink: #d9dbff;
+  --c64-panel: rgba(7, 18, 24, 0.94);
+  --c64-panel-soft: rgba(15, 36, 43, 0.9);
+  --c64-border: rgba(98, 231, 224, 0.34);
+  --c64-accent: #62e7e0;
+  --c64-warm: #e8a36c;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -20%, rgba(38, 108, 120, 0.22), transparent 48rem),
+    #061014;
+}
+
+.c64-lab-page {
+  width: 100%;
+  max-width: clamp(1280px, 92vw, 1760px);
+  margin-inline: auto;
+  padding-bottom: 3rem;
+}
+
+.c64-lab-page main {
+  max-width: clamp(1100px, 80vw, 1600px);
+}
+
+.c64-hero {
+  margin-bottom: 1rem;
+}
+
+.c64-hero h1 .name {
+  display: inline;
+}
+
+.c64-hero-copy {
+  max-width: 880px;
+}
+
+.c64-accuracy-badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.65rem 0 1rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--c64-border);
+  border-radius: 999px;
+  color: var(--c64-accent);
+  background: rgba(9, 26, 31, 0.8);
+  font: 700 0.75rem/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.04em;
+}
+
+.c64-primary-action {
+  min-height: 48px;
+}
+
+.c64-lab {
+  max-width: 1440px;
+  margin-inline: auto;
+  scroll-margin-top: 1rem;
+}
+
+.c64-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 370px);
+  gap: 1rem;
+  align-items: start;
+}
+
+.c64-machine-panel,
+.c64-lesson-panel,
+.c64-reference-card,
+.c64-memory-panel,
+.c64-transcript-panel,
+.c64-program-panel {
+  border: 1px solid var(--c64-border);
+  border-radius: 12px;
+  background: var(--c64-panel);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+}
+
+.c64-machine-panel {
+  min-width: 0;
+  padding: 0.85rem;
+}
+
+.c64-machine-heading,
+.c64-lesson-heading,
+.c64-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.c64-machine-heading h2,
+.c64-lesson-heading h2,
+.c64-panel-heading h3 {
+  margin: 0;
+  color: #e4fbff;
+  font: 700 clamp(0.95rem, 2vw, 1.1rem)/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.c64-runtime-status,
+.c64-sound-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid rgba(98, 231, 224, 0.32);
+  border-radius: 999px;
+  color: var(--c64-accent);
+  font: 700 0.7rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.c64-runtime-status[data-state="running"]::before,
+.c64-sound-status[data-activity="true"]::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: #78f59a;
+  box-shadow: 0 0 10px #78f59a;
+}
+
+.c64-runtime-status[data-state="paused"],
+.c64-runtime-status[data-state="error"] {
+  color: #ffd39e;
+  border-color: rgba(232, 163, 108, 0.55);
+}
+
+.c64-display-frame {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 10px solid #7779d9;
+  border-radius: 14px;
+  background: var(--c64-light-blue);
+  box-shadow:
+    0 0 0 2px rgba(219, 221, 255, 0.16) inset,
+    0 20px 55px rgba(46, 44, 155, 0.28);
+}
+
+.c64-display-frame canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.c64-crt-enabled .c64-display-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 3px,
+    rgba(0, 0, 0, 0.12) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+.c64-crt-enabled .c64-display-frame {
+  box-shadow:
+    0 0 0 2px rgba(219, 221, 255, 0.16) inset,
+    0 0 38px rgba(112, 109, 235, 0.38),
+    0 20px 55px rgba(0, 0, 0, 0.36);
+}
+
+.c64-canvas-description {
+  margin: 0.65rem 0 0;
+  color: #bcd3d6;
+  font-size: 0.82rem;
+}
+
+.c64-command-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.c64-command-field {
+  min-width: 0;
+}
+
+.c64-command-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--c64-accent);
+  font: 700 0.72rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.c64-command-field input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(167, 171, 255, 0.65);
+  border-radius: 7px;
+  color: #f2f2ff;
+  background: #24248b;
+  font: 700 1rem/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-transform: uppercase;
+  caret-color: #fff;
+}
+
+.c64-command-field input:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.c64-command-form > button,
+.c64-control-grid button,
+.c64-special-keys button,
+.c64-lesson-actions button,
+.c64-lesson-tab {
+  min-height: 44px;
+  border: 1px solid rgba(98, 231, 224, 0.38);
+  border-radius: 7px;
+  color: #dffcff;
+  background: rgba(18, 54, 62, 0.95);
+  font: 700 0.78rem/1.25 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  cursor: pointer;
+}
+
+.c64-command-form > button {
+  align-self: end;
+  min-width: 92px;
+}
+
+.c64-command-form button:hover,
+.c64-control-grid button:hover,
+.c64-special-keys button:hover,
+.c64-lesson-actions button:hover,
+.c64-lesson-tab:hover {
+  border-color: var(--c64-accent);
+  background: rgba(25, 73, 82, 0.98);
+}
+
+.c64-command-form button:disabled,
+.c64-control-grid button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.c64-control-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.c64-control-grid button[aria-pressed="true"] {
+  color: #081619;
+  border-color: var(--c64-accent);
+  background: var(--c64-accent);
+}
+
+.c64-control-grid .c64-stop {
+  border-color: rgba(232, 163, 108, 0.62);
+  color: #ffd6ae;
+}
+
+.c64-special-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.c64-special-keys button {
+  flex: 1 1 72px;
+  padding-inline: 0.45rem;
+}
+
+.c64-machine-secondary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.c64-transcript-panel,
+.c64-program-panel {
+  min-width: 0;
+  padding: 0.7rem;
+  background: rgba(5, 14, 18, 0.78);
+}
+
+.c64-transcript-panel h3,
+.c64-program-panel h3,
+.c64-memory-panel h3 {
+  margin: 0 0 0.5rem;
+  color: var(--c64-accent);
+  font: 700 0.78rem/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.c64-transcript,
+.c64-program-listing,
+.c64-screen-text {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  color: #d8e8ea;
+  background: #071014;
+  font: 0.78rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.c64-transcript,
+.c64-program-listing {
+  max-height: 230px;
+  padding: 0.6rem;
+  overflow: auto;
+  border: 1px solid rgba(98, 231, 224, 0.18);
+  border-radius: 6px;
+}
+
+.c64-screen-text {
+  max-height: 22rem;
+  padding: 0.75rem;
+  overflow: auto;
+}
+
+.c64-lesson-panel {
+  position: sticky;
+  top: 0.75rem;
+  padding: 0.85rem;
+}
+
+.c64-lesson-heading {
+  align-items: flex-start;
+}
+
+.c64-lesson-step {
+  margin: 0 0 0.25rem;
+  color: var(--c64-warm);
+  font: 700 0.72rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.08em;
+}
+
+.c64-lesson-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  max-height: 245px;
+  margin-bottom: 0.8rem;
+  overflow: auto;
+}
+
+.c64-lesson-tab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.4rem;
+  align-items: center;
+  min-height: 48px;
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+}
+
+.c64-lesson-tab span {
+  color: var(--c64-warm);
+}
+
+.c64-lesson-tab b {
+  overflow: hidden;
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+}
+
+.c64-lesson-tab[aria-current="true"] {
+  color: #071619;
+  border-color: var(--c64-accent);
+  background: var(--c64-accent);
+}
+
+.c64-lesson-tab[aria-current="true"] span {
+  color: #154b4a;
+}
+
+.c64-lesson-tab.is-complete:not([aria-current="true"]) {
+  border-color: rgba(120, 245, 154, 0.58);
+}
+
+.c64-lesson-copy {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.c64-lesson-block {
+  padding: 0.65rem;
+  border-left: 3px solid rgba(98, 231, 224, 0.5);
+  background: rgba(15, 36, 43, 0.72);
+}
+
+.c64-lesson-block h3 {
+  margin: 0 0 0.25rem;
+  color: var(--c64-accent);
+  font: 700 0.69rem/1.25 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.06em;
+}
+
+.c64-lesson-block p {
+  margin: 0;
+  color: #d5e4e6;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.c64-hint {
+  margin: 0;
+  padding: 0.65rem;
+  border: 1px dashed rgba(232, 163, 108, 0.58);
+  border-radius: 7px;
+  color: #ffe1be;
+  background: rgba(64, 39, 24, 0.45);
+  font-size: 0.85rem;
+}
+
+.c64-lesson-complete {
+  margin: 0;
+  padding: 0.7rem;
+  border: 1px solid rgba(120, 245, 154, 0.5);
+  border-radius: 7px;
+  color: #caffd8;
+  background: rgba(21, 69, 40, 0.45);
+  font: 700 0.78rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.c64-lesson-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.c64-lesson-actions button {
+  padding: 0.5rem;
+}
+
+.c64-lesson-actions .c64-next,
+.c64-lesson-actions .c64-free {
+  border-color: rgba(232, 163, 108, 0.55);
+}
+
+.c64-memory-panel {
+  margin-top: 1rem;
+  padding: 0.85rem;
+}
+
+.c64-memory-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #d8e8ea;
+  font: 0.78rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.c64-memory-table th,
+.c64-memory-table td {
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1px solid rgba(98, 231, 224, 0.16);
+  text-align: left;
+}
+
+.c64-memory-table th {
+  color: var(--c64-accent);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.c64-supporting {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.c64-reference-card {
+  padding: 1rem;
+}
+
+.c64-reference-card h2 {
+  margin-top: 0;
+  color: #e4fbff;
+  font-size: 1.1rem;
+}
+
+.c64-reference-card h3 {
+  color: var(--c64-accent);
+  font-size: 0.95rem;
+}
+
+.c64-reference-card p,
+.c64-reference-card li,
+.c64-reference-card dd {
+  color: #c9dbdd;
+  line-height: 1.65;
+}
+
+.c64-reference-card code {
+  color: #fff;
+  background: rgba(112, 109, 235, 0.24);
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+}
+
+.c64-address-list {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.35rem 0.8rem;
+}
+
+.c64-address-list dt {
+  color: var(--c64-warm);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 700;
+}
+
+.c64-address-list dd {
+  margin: 0;
+}
+
+.c64-related-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.c64-related-links a {
+  display: block;
+  padding: 0.7rem;
+  border: 1px solid var(--c64-border);
+  border-radius: 7px;
+  color: var(--c64-accent);
+  text-decoration: none;
+}
+
+.c64-related-links a:hover {
+  border-color: var(--c64-accent);
+}
+
+.c64-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.c64-command-field input:focus-visible,
+.c64-command-form button:focus-visible,
+.c64-control-grid button:focus-visible,
+.c64-special-keys button:focus-visible,
+.c64-lesson-actions button:focus-visible,
+.c64-lesson-tab:focus-visible,
+.c64-related-links a:focus-visible {
+  outline: 3px solid var(--c64-warm);
+  outline-offset: 3px;
+}
+
+@media (min-width: 1600px) {
+  .c64-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(370px, 420px);
+    gap: clamp(1rem, 1.25vw, 1.5rem);
+  }
+
+  .c64-supporting {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .c64-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .c64-lesson-panel {
+    position: static;
+  }
+
+  .c64-lesson-nav {
+    max-height: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .c64-lab-page {
+    padding-inline: 0.7rem;
+  }
+
+  .c64-machine-panel,
+  .c64-lesson-panel {
+    padding: 0.65rem;
+  }
+
+  .c64-display-frame {
+    border-width: 6px;
+    border-radius: 9px;
+  }
+
+  .c64-machine-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .c64-command-form {
+    grid-template-columns: 1fr;
+  }
+
+  .c64-command-form > button {
+    width: 100%;
+  }
+
+  .c64-control-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .c64-machine-secondary,
+  .c64-supporting,
+  .c64-related-links {
+    grid-template-columns: 1fr;
+  }
+
+  .c64-lesson-nav {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c64-display-frame,
+  .c64-command-form button,
+  .c64-control-grid button,
+  .c64-special-keys button,
+  .c64-lesson-actions button,
+  .c64-lesson-tab {
+    transition: none !important;
+  }
+
+  .c64-crt-enabled .c64-display-frame::after {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .c64-machine-panel,
+  .c64-lesson-panel,
+  .c64-reference-card,
+  .c64-memory-panel,
+  .c64-transcript-panel,
+  .c64-program-panel,
+  .c64-lesson-block,
+  .c64-hint,
+  .c64-lesson-complete {
+    color: CanvasText;
+    border-color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+
+  .c64-command-field input,
+  .c64-command-form button,
+  .c64-control-grid button,
+  .c64-special-keys button,
+  .c64-lesson-actions button,
+  .c64-lesson-tab {
+    color: ButtonText;
+    border-color: ButtonText;
+    background: ButtonFace;
+  }
+
+  .c64-crt-enabled .c64-display-frame::after {
+    display: none;
+  }
+}
