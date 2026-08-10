@@ -41,7 +41,7 @@ test("both pages have reciprocal en/de/x-default hreflang and localized social m
     assert.match(document, /hreflang="de" href="https:\/\/dennishilk\.com\/de\/museum\/c64\/"/);
     assert.match(document, /hreflang="x-default" href="https:\/\/dennishilk\.com\/museum\/c64\/"/);
     assert.match(document, /property="og:image:alt"/);
-    assert.match(document, /c64-programming-lab-preview\.png/);
+    assert.match(document, /c64-programming-lab-preview\.jpg/);
   }
   assert.match(en, /og:locale" content="en_US"/);
   assert.match(de, /og:locale" content="de_DE"/);
@@ -144,6 +144,7 @@ test("all local C64 page assets exist on both route variants", () => {
     "museum/c64/c64-worker.js",
     "museum/c64/c64-machine.js",
     "museum/c64/c64-basic-core.js",
+    "museum/c64/c64-programming-lab-preview.jpg",
     "museum/c64/THIRD_PARTY_NOTICES.md"
   ];
   for (const relative of required) assert.equal(fs.existsSync(path.join(root, relative)), true, relative);
@@ -192,5 +193,5 @@ test("dedicated C64 CI workflow exists and runs all four required suites", () =>
     "c64-lessons.test.mjs",
     "c64-integration.test.mjs"
   ]) assert.match(workflow, new RegExp(file.replace(".", "\\.")));
-  assert.match(workflow, /node --check museum\/c64\/\*\.js/);
+  assert.match(workflow, /for file in museum\/c64\/\*\.js; do node --check "\$file"; done/);
 });

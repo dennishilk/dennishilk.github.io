@@ -37,7 +37,7 @@ jobs:
           node-version: "22"
       - name: Check JavaScript syntax
         run: |
-          node --check museum/c64/*.js
+          for file in museum/c64/*.js; do node --check "$file"; done
           node --check site-language.js
           node --check site-i18n-de.js
       - name: Test BASIC core
