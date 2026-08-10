@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commodore 64 programmieren lernen | Interaktives C64 BASIC Lab</title>
+  <meta name="description" content="Lerne C64 BASIC direkt im Browser: Programme eingeben, LIST und RUN nutzen und mit POKE, PETSCII, Sprites und Sound ein Mini-Projekt bauen.">
+  <link rel="canonical" href="https://dennishilk.com/de/museum/c64/">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/museum/c64/">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/museum/c64/">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/museum/c64/">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../avatar.png">
+  <link rel="stylesheet" href="../../../style.css?v=58">
+  <link rel="stylesheet" href="../../../museum/c64/c64-lab.css?v=1">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Commodore 64 programmieren lernen | Interaktives C64 BASIC Lab">
+  <meta property="og:description" content="Tippe BASIC, erkunde den C64-Speicher, baue ein Sprite und vollende das animierte Projekt STAR RUNNER.">
+  <meta property="og:url" content="https://dennishilk.com/de/museum/c64/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://dennishilk.com/museum/c64/c64-programming-lab-preview.png">
+  <meta property="og:image:alt" content="Commodore 64 Programmierlabor mit BASIC-Code und blauem Lehrbildschirm">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Commodore 64 programmieren lernen | Interaktives C64 BASIC Lab">
+  <meta name="twitter:description" content="Ein browserbasierter BASIC-V2-Lehrumfang mit Bildschirmspeicher, PETSCII, Sprites und SID-artigem Klang.">
+  <meta name="twitter:image" content="https://dennishilk.com/museum/c64/c64-programming-lab-preview.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LearningResource",
+        "@id": "https://dennishilk.com/de/museum/c64/#course",
+        "name": "Commodore 64 programmieren lernen",
+        "description": "Eine interaktive Einführung in einen dokumentierten Lehrumfang von Commodore BASIC V2 mit zehn Stationen.",
+        "url": "https://dennishilk.com/de/museum/c64/",
+        "inLanguage": "de",
+        "learningResourceType": "Interaktives Tutorial",
+        "educationalLevel": "Anfänger",
+        "teaches": ["BASIC-Programmierung", "Programme mit Zeilennummern", "PEEK und POKE", "PETSCII und Screen-Codes", "C64-Sprites", "SID-Registerkonzepte"],
+        "isAccessibleForFree": true,
+        "isPartOf": {
+          "@type": "CollectionPage",
+          "name": "Computer Museum",
+          "url": "https://dennishilk.com/museum/"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://dennishilk.com/de/museum/c64/#application",
+        "name": "Commodore 64 Programmierlabor",
+        "url": "https://dennishilk.com/de/museum/c64/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Jeder moderne Browser",
+        "isAccessibleForFree": true,
+        "inLanguage": "de"
+      }
+    ]
+  }
+  </script>
+  <script defer src="../../../site-language.js?v=20260810-c64-1"></script>
+  <script defer src="../../../museum/c64/c64-screen.js?v=1"></script>
+  <script defer src="../../../museum/c64/c64-lessons.js?v=1"></script>
+  <script defer src="../../../museum/c64/c64-lab.js?v=1"></script>
+</head>
+<body>
+<div class="content museum-page c64-lab-page">
+  <header class="dashboard-header wo-page-header museum-hero exhibit-hero c64-hero">
+    <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/de/">Startseite</a></div></div>
+    <a class="museum-back" href="/museum/">← Zurück zum Computer Museum</a>
+    <span class="museum-status available">AKTIV · INTERAKTIVES LERNLABOR</span>
+    <p class="museum-section-label">PERSONAL COMPUTING · 1982</p>
+    <h1><span class="prompt">ready@c64:~$</span> <span class="name">Commodore 64 programmieren lernen</span></h1>
+    <dl class="museum-meta exhibit-meta">
+      <div><dt>Ära</dt><dd>1982</dd></div>
+      <div><dt>Typ</dt><dd>Interaktives BASIC-Lernlabor</dd></div>
+    </dl>
+    <p class="museum-exhibit-summary c64-hero-copy">Lerne, einen Commodore 64 selbst zu programmieren. Starte bei <strong>READY.</strong>, baue Programme mit Zeilennummern, erkunde Speicher mit PEEK und POKE, erstelle ein Sprite und vollende STAR RUNNER.</p>
+    <p class="c64-accuracy-badge">BASIC-V2-Lehrumfang · Keine Commodore-ROMs · Browserdarstellung von VIC-/SID-Konzepten</p>
+    <div><button id="c64Start" class="card-button museum-primary-action c64-primary-action" type="button">PROGRAMMIEREN</button></div>
+    <noscript><p class="observer-notice">Für die interaktive Ausstellung ist JavaScript nötig. Historische Hinweise und Speicherreferenz bleiben unten lesbar.</p></noscript>
+  </header>
+
+  <main>
+    <section id="c64Lab" class="c64-lab" aria-labelledby="c64MachineTitle">
+      <div class="c64-workspace">
+        <section class="c64-machine-panel" aria-labelledby="c64MachineTitle">
+          <div class="c64-machine-heading">
+            <h2 id="c64MachineTitle">Die Maschine ist die Ausstellung</h2>
+            <span id="c64Status" class="c64-runtime-status" data-state="ready">Bereit für BASIC-Eingabe</span>
+          </div>
+
+          <div class="c64-display-frame">
+            <canvas id="c64Canvas" width="384" height="272" role="img" aria-describedby="c64CanvasDescription">C64-Lehrbildschirm. Das Texttranskript bietet eine gleichwertige lesbare Ausgabe.</canvas>
+          </div>
+          <p id="c64CanvasDescription" class="c64-canvas-description">C64-Lehrbildschirm mit Startmeldung; keine Sprites aktiv.</p>
+
+          <form id="c64CommandForm" class="c64-command-form">
+            <div class="c64-command-field">
+              <label id="c64CommandLabel" for="c64Command">BASIC-Eingabe</label>
+              <input id="c64Command" type="text" maxlength="80" enterkeyhint="send" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="c64KeyboardHelp">
+            </div>
+            <button type="submit">RETURN</button>
+          </form>
+          <p id="c64KeyboardHelp" class="c64-canvas-description">Gib eine BASIC-Zeile oder einen Direktbefehl ein. Pfeil hoch/runter ruft frühere Eingaben auf. Escape ist RUN/STOP.</p>
+
+          <div class="c64-control-grid" aria-label="Moderne Laborfunktionen">
+            <button id="c64Run" type="button">RUN</button>
+            <button id="c64Stop" class="c64-stop" type="button" disabled>RUN/STOP</button>
+            <button id="c64Continue" type="button" hidden>FORTSETZEN</button>
+            <button id="c64Reset" type="button">RESET</button>
+            <button id="c64New" type="button">NEUES PROJEKT</button>
+            <button id="c64Clear" type="button">BILDSCHIRM LEEREN</button>
+            <button id="c64Save" type="button">PROJEKT SPEICHERN</button>
+            <button id="c64Open" type="button">PROJEKT ÖFFNEN</button>
+            <button id="c64Sound" type="button" aria-pressed="false">TON</button>
+            <button id="c64Crt" type="button" aria-pressed="false">CRT</button>
+            <button id="c64TranscriptToggle" type="button" aria-pressed="false">TEXTANSICHT</button>
+          </div>
+          <input id="c64File" class="c64-visually-hidden" type="file" accept=".bas,.txt,text/plain" tabindex="-1">
+
+          <div id="c64SpecialKeys" class="c64-special-keys" aria-label="Sondertasten für Mobilgeräte">
+            <button type="button" data-c64-key="RETURN">RETURN</button>
+            <button type="button" data-c64-key="RUN">RUN</button>
+            <button type="button" data-c64-key="STOP">RUN/STOP</button>
+            <button type="button" data-c64-key="CLR">CLR/HOME</button>
+            <button type="button" data-c64-key="LEFT" aria-label="Eingabecursor nach links">←</button>
+            <button type="button" data-c64-key="RIGHT" aria-label="Eingabecursor nach rechts">→</button>
+          </div>
+
+          <div class="c64-machine-secondary">
+            <section id="c64TranscriptPanel" class="c64-transcript-panel" hidden>
+              <h3>Zugängliches Ausgabetranskript</h3>
+              <pre id="c64Transcript" class="c64-transcript" tabindex="0"></pre>
+              <h3>Aktueller 40×25-Textbildschirm</h3>
+              <pre id="c64ScreenText" class="c64-screen-text" tabindex="0"></pre>
+            </section>
+            <section class="c64-program-panel">
+              <h3>Gespeichertes BASIC-Programm</h3>
+              <pre id="c64ProgramListing" class="c64-program-listing" tabindex="0">(KEIN GESPEICHERTES PROGRAMM)</pre>
+            </section>
+          </div>
+          <p><span id="c64SoundState" class="c64-sound-status">Ton stumm</span></p>
+        </section>
+
+        <aside class="c64-lesson-panel" aria-labelledby="c64LessonTitle">
+          <nav id="c64LessonNav" class="c64-lesson-nav" aria-label="Programmierlektionen"></nav>
+          <div class="c64-lesson-heading">
+            <div>
+              <p id="c64LessonStep" class="c64-lesson-step">SCHRITT 1 VON 10</p>
+              <h2 id="c64LessonTitle">READY: Direktmodus</h2>
+            </div>
+          </div>
+          <div class="c64-lesson-copy">
+            <section class="c64-lesson-block"><h3>ZIEL</h3><p id="c64LessonObjective"></p></section>
+            <section class="c64-lesson-block"><h3>WARUM DAS C64 IST</h3><p id="c64LessonHistory"></p></section>
+            <section class="c64-lesson-block"><h3>DEINE AUFGABE</h3><p id="c64LessonChallenge"></p></section>
+            <p id="c64HintText" class="c64-hint" hidden></p>
+            <p id="c64LessonComplete" class="c64-lesson-complete" hidden></p>
+          </div>
+          <div class="c64-lesson-actions">
+            <button id="c64Hint" type="button">Hinweis</button>
+            <button id="c64Solution" type="button">Lösung zeigen</button>
+            <button id="c64Restore" type="button">Starter wiederherstellen</button>
+            <button id="c64Next" class="c64-next" type="button">Nächste Lektion</button>
+            <button id="c64Free" class="c64-free" type="button">FREIES PROGRAMMIEREN</button>
+          </div>
+        </aside>
+      </div>
+
+      <section class="c64-memory-panel" aria-labelledby="c64MemoryTitle">
+        <div class="c64-panel-heading"><h3 id="c64MemoryTitle">Speicherinspektor · letzte BASIC-Schreibzugriffe</h3><span class="c64-sound-status">DEZIMALADRESSEN</span></div>
+        <table class="c64-memory-table">
+          <thead><tr><th>Adresse</th><th>Bedeutung</th><th>Wert</th></tr></thead>
+          <tbody id="c64MemoryBody"></tbody>
+        </table>
+      </section>
+      <p id="c64LiveStatus" class="c64-visually-hidden" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <div class="c64-supporting">
+      <section id="basic" class="c64-reference-card">
+        <h2>So funktioniert Commodore BASIC V2</h2>
+        <p>Der C64 startet bei <code>READY.</code>. Ein Befehl wie <code>PRINT "HELLO"</code> läuft sofort. Beginnt eine Zeile mit einer Nummer, wird sie als Programm gespeichert. <code>LIST</code> zeigt es, <code>RUN</code> führt es aus und <code>NEW</code> entfernt es.</p>
+        <p>In BASIC V2 sind nur die ersten beiden Zeichen eines Variablennamens bedeutsam. Das Labor bildet dieses sichtbare Verhalten und die für den Kurs gewählten Befehle ab; es ist keine vollständige BASIC-ROM-Implementierung.</p>
+      </section>
+
+      <section id="screen-colors" class="c64-reference-card">
+        <h2>Bildschirm, Farben und POKE</h2>
+        <p>BASIC V2 besitzt keine bequemen eingebauten Befehle für Sprites, Grafik oder Klang. C64-Programmierer erreichten die Hardware mit <code>PEEK</code> und <code>POKE</code>.</p>
+        <dl class="c64-address-list">
+          <dt>1024–2023</dt><dd>40×25 Zellen Bildschirmspeicher</dd>
+          <dt>55296–56295</dt><dd>Farbspeicher, Werte 0–15</dd>
+          <dt>53280</dt><dd>Randfarbe</dd>
+          <dt>53281</dt><dd>Hintergrundfarbe</dd>
+        </dl>
+      </section>
+
+      <section id="petscii" class="c64-reference-card">
+        <h2>PETSCII ist nicht der Bildschirmspeicher</h2>
+        <p>PETSCII beschreibt Tastatur-, Druck- und Steuerwerte wie <code>CHR$(147)</code> zum Leeren des Bildschirms. Im Bildschirmspeicher liegen verwandte <strong>Screen-Codes</strong>. Die Lektion macht den Unterschied sichtbar.</p>
+      </section>
+
+      <section id="sprites" class="c64-reference-card">
+        <h2>Sprites aus dem Speicher</h2>
+        <p>Ein hochauflösendes einfarbiges C64-Sprite ist 24×21 Pixel groß: drei Bytes pro Reihe, 21 Reihen oder 63 Datenbytes. Das Labor unterstützt acht einfache einfarbige Sprites, die Zeigertabelle 2040–2047, Register 53269 zum Aktivieren sowie die dokumentierten Positions- und Farbregister.</p>
+      </section>
+
+      <section id="sound" class="c64-reference-card">
+        <h2>SID-artiges Klangkonzept</h2>
+        <p>Der SID-Registerbereich beginnt bei 54272. Wenn du Ton aktivierst, steuern ausgewählte Registerzugriffe eine Web-Audio-Stimme. Das veranschaulicht Frequenz, Wellenform, Hüllkurve, Gate und Lautstärke; es ist eine <strong>SID-artige Browser-Annäherung</strong>, keine SID-Emulation.</p>
+      </section>
+
+      <section id="accuracy" class="c64-reference-card">
+        <h2>Genauigkeit und Grenzen</h2>
+        <p>Interpreter, Darstellung, Lektionen, Sprite und Programme wurden eigenständig erstellt. Es sind keine Commodore-ROMs oder kommerzielle Programme enthalten. Das Labor bildet einen dokumentierten BASIC-V2-Lehrumfang und historisch bedeutsame Speicheradressen ab.</p>
+        <p>Bewusst fehlen Zyklustiming, 6510-CPU, KERNAL und Disketten-I/O, bytegenauer tokenisierter Programmspeicher, Commodore-Fließkomma mit fünf Bytes, Rastereffekte, Multicolor/Kollisionen, sämtliche PETSCII-Tastaturmodi, analoge SID-Filter, Maschinencode sowie Spiel-/Softwarekompatibilität.</p>
+      </section>
+
+      <section id="sources" class="c64-reference-card">
+        <h2>Historische Quellen</h2>
+        <ul>
+          <li><a href="https://www.c64-wiki.com/wiki/Commodore_64_Programmer%27s_Reference_Guide">Index des Commodore 64 Programmer’s Reference Guide</a></li>
+          <li><a href="https://www.c64-wiki.com/wiki/Screen_RAM">Bildschirmspeicher</a> und <a href="https://www.c64-wiki.com/wiki/Color_RAM">Farbspeicher</a></li>
+          <li><a href="https://www.c64-wiki.com/wiki/Sprite">C64-Sprite-Speicher und Register</a></li>
+          <li><a href="https://www.c64-wiki.com/wiki/SID">SID-Registerübersicht</a></li>
+        </ul>
+        <p>Dies ist eine inoffizielle Lernrekonstruktion ohne Verbindung zu Commodore.</p>
+      </section>
+
+      <section class="c64-reference-card">
+        <h2>Verwandte Museumsausstellungen</h2>
+        <div class="c64-related-links">
+          <a href="/museum/home-computing-lab/">The Author’s Computing Lab</a>
+          <a href="/museum/ibm-pc-xt/">PC XT Command Desk</a>
+          <a href="/museum/bbs-system/">Bulletin Board System</a>
+          <a href="/museum/crt-remote-terminal/">CRT Remote Terminal</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="nebby-terminal-line"><picture>
+      <source srcset="../../../assets/generated/images/nebby.webp" type="image/webp">
+      <img src="../../../nebby.png" class="nebby" alt="Nebby-Maskottchen">
+    </picture><span class="coffee-text">&gt; c64-lab --modus=basic-v2-lehrumfang<span class="cursor"></span></span></div>
+    <p class="footer-links">© 2026 Dennis Hilk — <a href="../../../impressum.html">Impressum</a> · <a href="../../../datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</div>
+</body>
+</html>

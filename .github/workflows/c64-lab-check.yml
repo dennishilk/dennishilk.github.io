@@ -1,0 +1,50 @@
+name: C64 Programming Lab checks
+
+on:
+  pull_request:
+    paths:
+      - "museum/c64/**"
+      - "de/museum/c64/**"
+      - "museum/index.html"
+      - "museum/home-computing-lab/index.html"
+      - "site-language.js"
+      - "site-i18n-de.js"
+      - "sitemap.xml"
+      - "sitemap-de.xml"
+      - "tests/c64-*.test.mjs"
+      - ".github/workflows/c64-lab-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "museum/c64/**"
+      - "de/museum/c64/**"
+      - "museum/index.html"
+      - "museum/home-computing-lab/index.html"
+      - "site-language.js"
+      - "site-i18n-de.js"
+      - "sitemap.xml"
+      - "sitemap-de.xml"
+      - "tests/c64-*.test.mjs"
+      - ".github/workflows/c64-lab-check.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        run: |
+          node --check museum/c64/*.js
+          node --check site-language.js
+          node --check site-i18n-de.js
+      - name: Test BASIC core
+        run: node --test tests/c64-basic-core.test.mjs
+      - name: Test C64 machine model
+        run: node --test tests/c64-machine.test.mjs
+      - name: Test lessons and STAR RUNNER
+        run: node --test tests/c64-lessons.test.mjs
+      - name: Test routes, SEO, accessibility contracts and integration
+        run: node --test tests/c64-integration.test.mjs
