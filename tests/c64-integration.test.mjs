@@ -157,6 +157,7 @@ test("interpreter code uses an AST and worker without eval or generated JavaScri
   assert.match(javascript, /class Tokenizer/);
   assert.match(javascript, /class Parser/);
   assert.match(javascript, /new Worker\(new URL\("c64-worker\.js", assetBase\)\)/);
+  assert.match(read("museum/c64/c64-lab.js"), /item\.reason !== "error"/);
   assert.match(read("museum/c64/c64-worker.js"), /session\.step\(500, 4\)/);
   assert.match(read("museum/c64/c64-basic-core.js"), /noProgressStatementsLimit/);
   assert.match(read("museum/c64/c64-basic-core.js"), /outputLineLimit/);

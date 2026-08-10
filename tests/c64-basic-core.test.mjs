@@ -223,6 +223,17 @@ test("syntax and runtime errors use BASIC-style names and source lines", () => {
   assert.match(output(direct.events), /\?ILLEGAL DIRECT ERROR/);
 });
 
+test("direct errors after RUN do not inherit the last program line", () => {
+  const lab = createLab();
+  lab.session.submit('10 PRINT "DONE"');
+  lab.session.submit("RUN");
+  runUntilSettled(lab.session);
+  lab.session.submit("PRINT (");
+  const error = lab.events.filter(event => event.type === "error").at(-1);
+  assert.equal(error.message, "SYNTAX");
+  assert.equal(error.line, null);
+});
+
 test("10 GOTO 10 reaches the no-progress pause and always remains stoppable", () => {
   const lab = createLab({
     noProgressStatementsLimit: 50,

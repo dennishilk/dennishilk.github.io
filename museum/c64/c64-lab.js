@@ -325,7 +325,7 @@
     if (item.type === "internal-error") setStatus("error", text.internalError);
     if (item.type === "notice" && item.code === "program-active") announce(text.activeProgram);
     if (item.type === "pause") setStatus("paused", text.paused);
-    if (item.type === "status" && item.status === "ready") setStatus("ready", text.ready);
+    if (item.type === "status" && item.status === "ready" && item.reason !== "error") setStatus("ready", text.ready);
     if (item.type === "error") {
       const suffix = item.line == null ? "" : " IN " + item.line;
       setStatus("error", "?" + item.message + " ERROR" + suffix);

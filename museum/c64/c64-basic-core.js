@@ -1116,6 +1116,7 @@
 
     submit(source) {
       source = String(source || "").replace(/\r?\n/g, "").toUpperCase();
+      if (this.runtime.status !== "waiting-input") this.runtime.currentLine = null;
       if (source.length > 80) {
         this.runtime.fail(new BasicError("SYNTAX"));
         return;
