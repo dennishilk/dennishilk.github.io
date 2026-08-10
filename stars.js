@@ -6,7 +6,8 @@ if (!document.querySelector('script[data-site-language-loader]')) {
 }
 
 const canvas = document.getElementById("stars");
-const isHomepage = window.location.pathname === "/" || window.location.pathname === "/index.html";
+const homepagePaths = new Set(["/", "/index.html", "/de/", "/de/index.html"]);
+const isHomepage = homepagePaths.has(window.location.pathname);
 
 if (!isHomepage || !canvas) {
   canvas?.remove();
