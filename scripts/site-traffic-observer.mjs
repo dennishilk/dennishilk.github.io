@@ -14,6 +14,12 @@ const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 
 // direct browser navigation is still a normal request, but the polling request is
 // not useful observation data.  Bot and scanner classification takes precedence.
 const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
+const TOP_PAGE_EXCLUDED_PATHS = new Set([
+  '/impressum.html',
+  '/datenschutzerklaerung.html',
+  '/de/impressum.html',
+  '/de/datenschutzerklaerung.html',
+]);
 export const SITE_TRAFFIC_INITIAL_TOTAL = 50000;
 export const NOVEL_READER_STATE_SCHEMA_VERSION = 5;
 export const NOVEL_CHAPTER_OPENS_PREVIOUS_INCORRECT_BASELINE = 26317;
@@ -221,7 +227,10 @@ export function buildTrafficPayload(lines, { now = new Date(), countryResolver }
     const isToday = berlinDateKey(req.time) === todayKey;
     const in24h = req.time >= since24h && req.time <= now;
     inc(topPaths, req.path);
-    if (pageview) { totalPageviews++; inc(topPages, req.path); }
+    if (pageview) {
+      totalPageviews++;
+      if (!TOP_PAGE_EXCLUDED_PATHS.has(req.path)) inc(topPages, req.path);
+    }
     if (isToday) {
       if (kind === 'human') humanRequestsToday++;
       else if (kind === 'bot') botRequestsToday++;
