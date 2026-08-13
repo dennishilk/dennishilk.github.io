@@ -6,7 +6,7 @@
     "/site-i18n-de.js?v=20260810-c64-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
     "/site-i18n-de-observers.js?v=20260809-observers-1",
-    "/site-i18n-de-wiesmoor.js?v=20260809-peatland-1",
+    "/site-i18n-de-wiesmoor.js?v=20260813-public-1",
     "/site-i18n-de-peatland-polish.js?v=20260809-peatland-2",
     "/site-i18n-de-personnel.js?v=20260809-personnel-1",
   ];

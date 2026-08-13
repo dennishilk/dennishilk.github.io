@@ -459,4 +459,123 @@
       ["Pass approaching", "Überflug nähert sich"]
     ]
   });
+
+  const publicObserverText = {
+    ...commonText,
+    "AT A GLANCE": "AUF EINEN BLICK",
+    "METHODOLOGY & LIMITS": "METHODIK & GRENZEN",
+    "SOURCES": "QUELLEN",
+    "Snapshot: —": "Snapshot: —",
+    "Official source": "Amtliche Quelle",
+    "Official statistical offices": "Amtliche Statistikstellen",
+    "Official year-end values only; no live population is estimated.": "Nur amtliche Jahresendwerte; es wird keine Live-Bevölkerung geschätzt.",
+    "Installed capacity is not production. No unit, address, operator, or identifier data is published.": "Installierte Leistung ist keine Erzeugung. Es werden keine Einheiten-, Adress-, Betreiber- oder Identifikationsdaten veröffentlicht.",
+    "Regional reference station — not a groundwater measurement inside Wiesmoor.": "Regionale Referenzmessstelle — keine Grundwassermessung innerhalb Wiesmoors.",
+    "Directory presence does not prove an open consultation, deadline, approval, or construction stage.": "Ein Verzeichniseintrag belegt keine laufende Beteiligung, Frist, Genehmigung oder Bauphase.",
+    "ACTUAL, PLAN and FORECAST remain strictly separate; budget figures are not live bank balances.": "IST, PLAN und PROGNOSE bleiben strikt getrennt; Haushaltswerte sind keine Live-Kontostände.",
+    "The current official-data snapshot could not be loaded.": "Der aktuelle amtliche Daten-Snapshot konnte nicht geladen werden.",
+    "No substitute value is fabricated.": "Es wird kein Ersatzwert erfunden."
+  };
+
+  addPage("/world-observer/wiesmoor-population.html", {
+    title: "Wiesmoor Population Observer – Amtliche Bevölkerung",
+    description: "Amtliche jährliche Bevölkerungsstände für Wiesmoor mit transparentem Methodenbruch beim Wechsel der Zensusbasis.",
+    text: {
+      ...publicObserverText,
+      "Official annual population snapshots for Wiesmoor": "Amtliche jährliche Bevölkerungsstände für Wiesmoor",
+      "LATEST OFFICIAL POPULATION": "LETZTE AMTLICHE BEVÖLKERUNGSZAHL",
+      "OFFICIAL YEAR-END SERIES": "AMTLICHE JAHRESENDREIHE",
+      "COMPARABILITY": "VERGLEICHBARKEIT",
+      "The latest interval crosses a census-basis change and must not be read as a directly comparable year-on-year movement.": "Das jüngste Intervall überschreitet einen Wechsel der Zensusbasis und darf nicht als direkt vergleichbare Jahresänderung gelesen werden.",
+      "Landesamt für Statistik Niedersachsen — population tables": "Landesamt für Statistik Niedersachsen — Bevölkerungstabellen",
+      "Statistisches Bundesamt — Gemeindeverzeichnis annual snapshots": "Statistisches Bundesamt — jährliche Gemeindeverzeichnis-Snapshots",
+      "The archived 2019-2023 municipal directory snapshots use the Zensus 2011 basis. The 2024 snapshot uses the Zensus 2022 basis, so the apparent 2023-2024 difference is not published as a year-on-year change.": "Die archivierten Gemeindeverzeichnis-Snapshots 2019–2023 verwenden die Basis Zensus 2011. Der Snapshot 2024 verwendet die Basis Zensus 2022; deshalb wird die scheinbare Differenz 2023–2024 nicht als Jahresänderung veröffentlicht.",
+      "This is an official year-end statistical population, not a live residents-register count.": "Dies ist eine amtliche statistische Bevölkerung zum Jahresende, kein Live-Wert aus dem Melderegister.",
+      "No demographic characteristic smaller than municipality-level male/female totals is published.": "Es werden keine demografischen Merkmale unterhalb der aggregierten männlich/weiblich-Summen auf Gemeindeebene veröffentlicht."
+    },
+    attributes: { "Wiesmoor population dashboard": "Dashboard zur Bevölkerung Wiesmoors" },
+    phrases: [...commonPhrases, ["official methodology and latest-publication index", "amtliche Methodik und Index der jüngsten Veröffentlichung"], ["official municipality-level values", "amtliche Werte auf Gemeindeebene"]]
+  });
+
+  addPage("/world-observer/wiesmoor-energy.html", {
+    title: "Wiesmoor Energy Observer – Installierte Leistung",
+    description: "Datenschutzfreundliche Gemeindeaggregate zur installierten elektrischen Leistung in Wiesmoor aus dem Marktstammdatenregister.",
+    text: {
+      ...publicObserverText,
+      "Installed electrical capacity · anonymous municipal aggregate": "Installierte elektrische Leistung · anonymes Gemeindeaggregat",
+      "OPERATIONAL INSTALLED POWER": "INSTALLIERTE LEISTUNG · IN BETRIEB",
+      "INSTALLED POWER BY CATEGORY": "INSTALLIERTE LEISTUNG NACH KATEGORIE",
+      "COMMISSIONING HISTORY": "INBETRIEBNAHME-VERLAUF",
+      "Installed power is not electricity production, feed-in, or local consumption.": "Installierte Leistung ist weder Stromerzeugung noch Einspeisung oder lokaler Verbrauch.",
+      "Marktstammdatenregister — public units overview": "Marktstammdatenregister — öffentliche Einheitenübersicht",
+      "Marktstammdatenregister — public data download": "Marktstammdatenregister — öffentlicher Datendownload",
+      "Installed capacity is not electricity production, generation, feed-in, or consumption.": "Installierte Leistung ist weder Stromproduktion noch Erzeugung, Einspeisung oder Verbrauch.",
+      "Register status and commissioning dates are source-reported public records and may be corrected later.": "Registerstatus und Inbetriebnahmedaten sind öffentlich gemeldete Quellenwerte und können nachträglich korrigiert werden.",
+      "The commissioning series is a grouping of currently operational units, not a historical snapshot of capacity that existed in each year.": "Die Inbetriebnahmereihe gruppiert aktuell betriebliche Einheiten; sie ist kein historischer Snapshot der in jedem Jahr vorhandenen Leistung.",
+      "Storage values describe installed electrical power in kW, not stored energy in kWh.": "Speicherwerte beschreiben installierte elektrische Leistung in kW, nicht gespeicherte Energie in kWh."
+    },
+    attributes: { "Wiesmoor energy dashboard": "Dashboard zur Energie in Wiesmoor" },
+    phrases: [...commonPhrases, ["official public register interface", "amtliche öffentliche Registeroberfläche"], ["official dataset and licence documentation", "amtliche Datensatz- und Lizenzdokumentation"]]
+  });
+
+  addPage("/world-observer/wiesmoor-groundwater.html", {
+    title: "Wiesmoor Groundwater Observer – Regionale Referenzmessstelle",
+    description: "Amtliche NLWKN-Grundwasserwerte einer klar gekennzeichneten regionalen Referenzmessstelle nahe Wiesmoor.",
+    text: {
+      ...publicObserverText,
+      "Regional reference station / Regionale Referenzmessstelle": "Regionale Referenzmessstelle",
+      "REGIONAL GROUNDWATER LEVEL": "REGIONALER GRUNDWASSERSTAND",
+      "RECENT OFFICIAL DAILY VALUES": "LETZTE AMTLICHE TAGESWERTE",
+      "REFERENCE-STATION CONTEXT": "KONTEXT DER REFERENZMESSSTELLE",
+      "The selected NLWKN station is a regional proxy and may not represent conditions within Wiesmoor.": "Die ausgewählte NLWKN-Messstelle ist ein regionaler Proxy und bildet die Verhältnisse in Wiesmoor möglicherweise nicht ab.",
+      "NLWKN public web-service manual": "NLWKN-Handbuch zum öffentlichen Webservice",
+      "No station explicitly named or located as Wiesmoor is present in the official station list at collection time.": "Zum Erfassungszeitpunkt enthält die amtliche Stationsliste keine ausdrücklich als Wiesmoor benannte oder verortete Messstelle.",
+      "The selected station is a regional reference only and may not represent groundwater conditions within Wiesmoor.": "Die ausgewählte Messstelle ist ausschließlich eine regionale Referenz und bildet die Grundwasserverhältnisse in Wiesmoor möglicherweise nicht ab.",
+      "Daily values are official raw values and may not yet have passed final quality control.": "Die Tageswerte sind amtliche Rohwerte und haben möglicherweise noch nicht die abschließende Qualitätskontrolle durchlaufen.",
+      "Missing-value sentinels such as -777 and -888 are excluded and never published as measurements.": "Fehlwert-Codes wie -777 und -888 werden ausgeschlossen und niemals als Messwerte veröffentlicht.",
+      "Any groundwater class shown is copied from NLWKN; this observer creates no warning, critical, or danger class.": "Jede angezeigte Grundwasserklasse wird vom NLWKN übernommen; dieser Observer erzeugt keine Warn-, Kritisch- oder Gefahrenklasse."
+    },
+    attributes: { "Wiesmoor groundwater dashboard": "Dashboard zum Grundwasser nahe Wiesmoor" },
+    phrases: [...commonPhrases, ["official public measurements", "amtliche öffentliche Messwerte"], ["field and API methodology", "Feld- und API-Methodik"]]
+  });
+
+  addPage("/world-observer/wiesmoor-development.html", {
+    title: "Wiesmoor City Development Observer – Amtliche Planungsdokumente",
+    description: "Periodische Beobachtung amtlicher Wiesmoorer Planungsdokumente ohne Ableitung rechtlicher Projektstände.",
+    text: {
+      ...publicObserverText,
+      "Official planning-document listings · project stages are not inferred": "Amtliche Planungsdokumente · Projektstände werden nicht abgeleitet",
+      "OFFICIAL COLLECTIONS LISTED": "AMTLICH GELISTETE SAMMLUNGEN",
+      "CURRENT OFFICIAL DOCUMENT LISTING": "AKTUELLE AMTLICHE DOKUMENTENLISTE",
+      "DOCUMENT DATES VISIBLE IN OFFICIAL FILENAMES": "DOKUMENTDATEN IN AMTLICHEN DATEINAMEN",
+      "The observer reports official directory listings and does not infer a formal legal or construction stage.": "Der Observer meldet amtliche Verzeichniseinträge und leitet keinen formalen Rechts- oder Baustand ab.",
+      "City of Wiesmoor — Bauleitplanung": "Stadt Wiesmoor — Bauleitplanung",
+      "City of Wiesmoor — Auslegungen": "Stadt Wiesmoor — Auslegungen",
+      "City of Wiesmoor — Bauleitplanung archive": "Stadt Wiesmoor — Bauleitplanungsarchiv",
+      "Directory presence alone does not establish a current legal project stage, consultation period, deadline, approval, or construction status.": "Ein Verzeichniseintrag allein belegt keinen aktuellen rechtlichen Projektstand, Beteiligungszeitraum, keine Frist, Genehmigung oder Bauphase.",
+      "Dates are parsed only when they are visible in official filenames; they are document dates, not inferred publication dates.": "Daten werden nur übernommen, wenn sie in amtlichen Dateinamen sichtbar sind; es sind Dokumentdaten, keine abgeleiteten Veröffentlichungsdaten.",
+      "The observer links to official files and does not mirror planning documents.": "Der Observer verlinkt amtliche Dateien und spiegelt keine Planungsdokumente."
+    },
+    attributes: { "Wiesmoor city development dashboard": "Dashboard zur Stadtentwicklung Wiesmoors" },
+    phrases: [...commonPhrases, ["official planning entry page", "amtliche Einstiegsseite zur Bauleitplanung"], ["official public document listing", "amtliches öffentliches Dokumentenverzeichnis"], ["official planning archive", "amtliches Planungsarchiv"]]
+  });
+
+  addPage("/world-observer/wiesmoor-finance.html", {
+    title: "Wiesmoor City Finance Observer – Amtlicher Haushalt",
+    description: "Amtliche Wiesmoorer Haushaltswerte mit strikter Trennung von IST, PLAN und PROGNOSE.",
+    text: {
+      ...publicObserverText,
+      "Official municipal figures · ACTUAL / PLAN / FORECAST": "Amtliche Kommunalfinanzen · IST / PLAN / PROGNOSE",
+      "2026 PLANNED OVERALL RESULT": "GEPLANTES GESAMTERGEBNIS 2026",
+      "OVERALL RESULT BY VALUE STATUS": "GESAMTERGEBNIS NACH WERTSTATUS",
+      "FINANCIAL PERIODS": "FINANZZEITRÄUME",
+      "PLAN and FORECAST values are not actual spending or revenue results.": "PLAN- und PROGNOSE-Werte sind keine Ist-Ausgaben oder Ist-Erträge.",
+      "City of Wiesmoor — Finanzen": "Stadt Wiesmoor — Finanzen",
+      "PLAN, ACTUAL, and FORECAST values are never merged or presented as the same measurement status.": "PLAN-, IST- und PROGNOSE-Werte werden niemals zusammengeführt oder als gleicher Messstatus dargestellt.",
+      "The 2024 ACTUAL values and 2025-2029 PLAN/FORECAST values are transcribed from the official 2026 budget document and may be superseded by later official documents.": "Die IST-Werte 2024 sowie die PLAN-/PROGNOSE-Werte 2025–2029 sind dem amtlichen Haushaltsdokument 2026 entnommen und können durch spätere amtliche Dokumente ersetzt werden.",
+      "Budget values do not describe live bank balances or current spending execution.": "Haushaltswerte beschreiben weder Live-Kontostände noch den aktuellen Haushaltsvollzug."
+    },
+    attributes: { "Wiesmoor city finance dashboard": "Dashboard zu den Stadtfinanzen Wiesmoors" },
+    phrases: [...commonPhrases, ["official budget-document index", "amtlicher Index der Haushaltsdokumente"], ["official values and status labels", "amtliche Werte und Statuskennzeichnungen"]]
+  });
 })();
