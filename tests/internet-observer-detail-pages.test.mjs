@@ -48,7 +48,7 @@ test("every current Internet observer has a stable detail page", () => {
       assert.ok(html.includes("gibs.earthdata.nasa.gov"));
       assert.ok(!html.includes("area51-thermal-base"));
     } else {
-      assert.ok(html.includes("<h2 id=\"history-title\">History</h2>"));
+      assert.match(html, /<h2 id="history-title">[^<]+<\/h2>/);
     }
 
     assert.ok(html.includes(">Observed</h2>"));

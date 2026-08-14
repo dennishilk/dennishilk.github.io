@@ -4,75 +4,200 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Internet Shrinkage Index – World Observer</title>
-  <meta name="description" content="Internet Shrinkage Index observer detail page in World Observer.">
+  <meta name="description" content="Internet Shrinkage Index is a public observation console for the published shrinkage score, its metric-series boundary and history, without treating the score as a percentage or a direct measure of Internet size.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://dennishilk.com/world-observer/internet-shrinkage-index.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/internet-shrinkage-index.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/internet-shrinkage-index.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/internet-shrinkage-index.html">
   <meta property="og:title" content="Internet Shrinkage Index – World Observer">
-  <meta property="og:description" content="Internet Shrinkage Index observer detail page in World Observer.">
+  <meta property="og:description" content="A public shrinkage-score observation aperture with explicit metric-series boundaries and no invented interpretation of Internet size.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/internet-shrinkage-index.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Internet Shrinkage Index – World Observer">
+  <meta name="twitter:description" content="Published shrinkage score, metric-path break and history with a strict evidence boundary.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="theme-color" content="#020708">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
-  <link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=1">
-  <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/internet-observer-detail.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Internet Shrinkage Index – World Observer","description":"Internet Shrinkage Index observer detail page in World Observer.","url":"https://dennishilk.com/world-observer/internet-shrinkage-index.html","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <link rel="stylesheet" href="/world-observer/internet-shrinkage-index.css?v=1">
+  <script defer src="/world-observer/internet-shrinkage-language.js?v=1"></script>
+  <script defer src="/world-observer/internet-shrinkage-index.js?v=1"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Internet Shrinkage Index – World Observer",
+    "description": "Public observation console for the exported Internet shrinkage score, current metric path and published history.",
+    "url": "https://dennishilk.com/world-observer/internet-shrinkage-index.html",
+    "inLanguage": "en",
+    "isPartOf": {"@type": "WebSite", "name": "World Observer", "url": "https://dennishilk.com/world-observer.html"},
+    "about": {"@type": "Thing", "name": "Public Internet shrinkage-score observation"}
+  }
+  </script>
 </head>
 <body data-observer-page="internet-detail" data-observer-id="internet-shrinkage-index">
-<canvas id="stars"></canvas>
-<div class="content world-observer-page">
-  <header class="dashboard-header wo-page-header">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Internet Shrinkage Index</span></h1>
-    <p>Internet observer detail page using the existing public static World Observer exports.</p>
-    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
-    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a>
-      <a href="/world-observer/internet.html" class="active" aria-current="page">Internet</a>
-      <a href="/world-observer/media.html">Media</a>
-      <a href="/world-observer/society.html">Society</a>
-      <a href="/world-observer/hometown.html">Hometown</a>
-      <a href="/world-observer/environment.html">Earth &amp; Space</a>
-      <a href="/world-observer/technology.html">Technology</a>
-      <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
-    </nav>
-  </header>
+<div class="content world-observer-page shrink-page">
   <main>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
-    <p id="observer-loading" class="observer-limitation" aria-live="polite">Loading observer data…</p>
-    <div id="observer-content" class="internet-detail-shell" hidden>
-      <section class="internet-detail-summary" aria-labelledby="current-observation-title">
-        <h2 id="current-observation-title">Current Observation</h2>
-        <div class="internet-detail-summary-grid">
-          <p class="internet-detail-primary"><span id="observer-primary-label">Primary metric</span><strong id="observer-primary-value">—</strong></p>
-          <div>
-            <div id="observer-statuses" class="internet-detail-statuses" aria-label="Observer status"></div>
-            <p id="observer-last-update" class="internet-detail-updated">Last observation/update: —</p>
+    <div class="shrink-topbar">
+      <div class="shrink-identity">
+        <h1 class="shrink-compact-title">INTERNET SHRINKAGE INDEX</h1>
+        <a class="shrink-back" href="/world-observer/internet.html">← Back to Internet Observers</a>
+      </div>
+      <nav class="shrink-language" aria-label="Page language">
+        <a href="/world-observer/internet-shrinkage-index.html" hreflang="en" lang="en" aria-current="page">EN</a>
+        <span aria-hidden="true">|</span>
+        <a href="/de/world-observer/internet-shrinkage-index.html" hreflang="de" lang="de">DE</a>
+      </nav>
+    </div>
+
+    <p id="observer-loading" class="shrink-loading" aria-live="polite">Loading published shrinkage observations…</p>
+
+    <div id="observer-content" class="shrink-shell" hidden>
+      <section class="shrink-section" aria-labelledby="current-observation-title">
+        <div class="shrink-section-inner">
+          <div class="shrink-section-head">
+            <div>
+              <span class="shrink-section-index">01 / CURRENT MEASUREMENT APERTURE</span>
+              <h2 id="current-observation-title">Current Observation</h2>
+            </div>
+            <p>Published score from the active export metric. The aperture is a relative display, not a percentage and not a direct measurement of Internet size.</p>
           </div>
-          <dl id="observer-secondary-metrics" class="internet-secondary-metrics internet-detail-secondary"></dl>
+
+          <div class="shrink-current-grid">
+            <div class="shrink-readout">
+              <article class="shrink-score-block">
+                <span>SHRINKAGE INDEX</span>
+                <strong id="shrink-current-value">—</strong>
+                <small>published score</small>
+              </article>
+              <div class="shrink-readout-meta">
+                <div><span>COUNTRIES EVALUATED</span><strong id="shrink-country-count">—</strong></div>
+                <div><span>EXPORT STATUS</span><strong id="shrink-status">—</strong></div>
+              </div>
+              <p id="observer-last-update" class="shrink-updated">Last observation/update: —</p>
+            </div>
+
+            <div class="shrink-aperture-panel">
+              <div class="shrink-console-head"><span>OBSERVATION APERTURE</span><span>ACTIVE METRIC PATH</span></div>
+              <div id="shrink-aperture" class="shrink-aperture" aria-label="Relative visualization of the current published shrinkage score">
+                <div class="shrink-grid-lines" aria-hidden="true"></div>
+                <div class="shrink-mask shrink-mask-left" aria-hidden="true"></div>
+                <div class="shrink-mask shrink-mask-right" aria-hidden="true"></div>
+                <div class="shrink-aperture-core">
+                  <span>EXPORTED SCORE</span>
+                  <strong id="shrink-aperture-value">—</strong>
+                  <small id="shrink-relative-label">relative to current-series observed range</small>
+                </div>
+                <div class="shrink-aperture-axis"><span>0</span><span id="shrink-series-peak-label">series peak —</span></div>
+              </div>
+              <div class="shrink-metric-path">
+                <span>CURRENT SERIES</span>
+                <code id="shrink-metric-path">—</code>
+              </div>
+              <div class="shrink-country-band">
+                <span>EVALUATED UNITS</span>
+                <div id="shrink-country-dots" class="shrink-country-dots" aria-hidden="true"></div>
+                <small>count only · identities are not represented here</small>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-      <section class="internet-detail-section internet-detail-history-section" aria-labelledby="history-title">
-        <h2 id="history-title">History</h2>
-        <p id="observer-history-summary" class="internet-detail-placeholder">Loading published history…</p>
-        <div class="internet-detail-history-wrap">
-          <table id="observer-history-table" class="internet-detail-history">
-            <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+
+      <section class="shrink-section" aria-labelledby="history-title">
+        <div class="shrink-section-inner">
+          <div class="shrink-section-head">
+            <div>
+              <span class="shrink-section-index">02 / SERIES MEMORY</span>
+              <h2 id="history-title">History &amp; metric boundary</h2>
+            </div>
+            <p id="shrink-history-count-label">Published history points</p>
+          </div>
+
+          <div class="shrink-history-grid">
+            <div class="shrink-history-panel">
+              <div class="shrink-history-range"><span id="shrink-history-start">—</span><span>SHRINKAGE SCORE</span><span id="shrink-history-end">—</span></div>
+              <div id="shrink-history-field" class="shrink-history-field" aria-label="Published shrinkage-index history with metric-series boundary"></div>
+              <div class="shrink-history-legend"><span class="is-legacy">LEGACY METRIC PATH</span><span class="is-current">CURRENT METRIC PATH</span></div>
+              <p class="shrink-history-caption">Bar height is scaled only within the active metric path. Legacy-path values are separated and are not used to scale the current series.</p>
+              <p id="observer-history-summary" class="shrink-history-summary">Loading published history…</p>
+            </div>
+            <div id="shrink-history-stats" class="shrink-history-stats" aria-label="History statistics"></div>
+          </div>
+
+          <div class="shrink-break-note">
+            <span>SERIES BOUNDARY</span>
+            <p id="shrink-break-copy">Checking published metric paths…</p>
+          </div>
+
+          <details class="shrink-archive">
+            <summary>Open recent published observations</summary>
+            <div class="shrink-table-wrap">
+              <table id="observer-history-table" class="shrink-history-table">
+                <thead><tr><th scope="col">Date</th><th scope="col">Score</th><th scope="col">Metric path</th><th scope="col">Data status</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
         </div>
       </section>
-      <section class="internet-detail-section" aria-labelledby="observed-title"><h2 id="observed-title">Observed</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="derived-title"><h2 id="derived-title">Derived</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="unknown-title"><h2 id="unknown-title">Unknown</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="methodology-title"><h2 id="methodology-title">Methodology</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="sources-title"><h2 id="sources-title">Sources</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
+
+      <section class="shrink-section" aria-label="Evidence boundary">
+        <div class="shrink-section-inner">
+          <div class="shrink-section-head">
+            <div><span class="shrink-section-index">03 / EVIDENCE BOUNDARY</span><h2>What the export can — and cannot — say</h2></div>
+            <p>A published index value, browser-derived series statistics and broader Internet interpretation remain separate.</p>
+          </div>
+          <div class="shrink-evidence-grid">
+            <article class="shrink-evidence-card" data-kind="observed">
+              <h2 id="observed-title">Observed</h2>
+              <ul><li id="shrink-observed-score">Current published shrinkage score.</li><li id="shrink-observed-countries">Published count of countries evaluated.</li><li id="shrink-observed-history">Published history values, dates, statuses and metric names.</li></ul>
+            </article>
+            <article class="shrink-evidence-card" data-kind="derived">
+              <h2 id="derived-title">Derived</h2>
+              <ul><li id="shrink-derived-peak">Current-series peak is calculated from comparable published points.</li><li id="shrink-derived-distinct">Distinct values are counted only within the active metric path.</li><li id="shrink-derived-changes">Consecutive value changes are calculated from the active series.</li></ul>
+            </article>
+            <article class="shrink-evidence-card" data-kind="unknown">
+              <h2 id="unknown-title">Unknown</h2>
+              <ul><li>The physical or address-space size of the Internet.</li><li>Which networks, services or users are affected by a score.</li><li>Cause, policy, outage mechanism or broader significance of any change.</li></ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="shrink-section" aria-label="Methodology and sources">
+        <div class="shrink-section-inner">
+          <div class="shrink-section-head">
+            <div><span class="shrink-section-index">04 / PROVENANCE</span><h2>Method &amp; source boundary</h2></div>
+            <p>This view adds presentation and simple arithmetic, but no external enrichment or causal interpretation.</p>
+          </div>
+          <div class="shrink-method-grid">
+            <div class="shrink-method-block">
+              <h2 id="methodology-title">Methodology</h2>
+              <p>The current value is read from <code>global.global_shrinkage_index</code>. The aperture width is normalized only against the maximum numeric value observed within that same metric path and must not be read as a percentage. History points with another <code>metric_name</code> remain visible as a separate legacy segment instead of being treated as directly comparable. Statistics are calculated in the browser from the published history export.</p>
+            </div>
+            <div class="shrink-method-block">
+              <h2 id="sources-title">Sources</h2>
+              <ul>
+                <li><a class="shrink-source-link" href="/world-observer/dashboard/internet.json">World Observer Internet dashboard export ↗</a></li>
+                <li><a class="shrink-source-link" href="/world-observer/dashboard/history/internet-observers.json">World Observer Internet history export ↗</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
-  <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/dashboard/internet.json<span class="cursor"></span></span></div>
+
+  <footer class="shrink-footer-terminal">
+    <div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; observe --series-boundary internet-shrinkage-index<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>
