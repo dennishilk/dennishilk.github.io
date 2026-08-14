@@ -8,6 +8,8 @@ const dashboardHtml = readFileSync(new URL("world-observer/internet.html", root)
 const renderer = readFileSync(new URL("world-observer.js", root), "utf8");
 const area51Renderer = readFileSync(new URL("world-observer/area51.js", root), "utf8");
 const area51GermanBundle = readFileSync(new URL("site-i18n-de-area51.js", root), "utf8");
+const siteLanguage = readFileSync(new URL("site-language.js", root), "utf8");
+const stars = readFileSync(new URL("stars.js", root), "utf8");
 const sitemap = readFileSync(new URL("sitemap.xml", root), "utf8");
 
 function slugFor(observerId) {
@@ -76,6 +78,14 @@ test("Area51 has crawlable English and German localized pages", () => {
   assert.ok(german.includes("Beobachtung thermischer Anomalien"));
   assert.ok(sitemap.includes(`<loc>${deUrl}</loc>`));
   assert.ok(sitemap.includes(`hreflang="de" href="${deUrl}"`));
+});
+
+test("Area51 language switch uses dedicated localized routes", () => {
+  assert.doesNotThrow(() => new Function(siteLanguage));
+  assert.doesNotThrow(() => new Function(stars));
+  assert.ok(siteLanguage.includes('"/world-observer/area51.html": { en: "/world-observer/area51.html", de: "/de/world-observer/area51.html" }'));
+  assert.ok(siteLanguage.includes('"/de/world-observer/area51.html": { en: "/world-observer/area51.html", de: "/de/world-observer/area51.html" }'));
+  assert.ok(stars.includes("/site-language.js?v=20260814-area51-1"));
 });
 
 test("Internet observer cards use crawlable anchor destinations", () => {
