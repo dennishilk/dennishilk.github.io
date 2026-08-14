@@ -4,30 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Area51 Reachability – World Observer</title>
-  <meta name="description" content="Area51 Reachability observer detail page in World Observer.">
+  <meta name="description" content="Public-data telemetry view for the Area51 Reachability observer, presenting current exported measurements and published history without causal claims.">
   <link rel="canonical" href="https://dennishilk.com/world-observer/area51.html">
   <meta property="og:title" content="Area51 Reachability – World Observer">
-  <meta property="og:description" content="Area51 Reachability observer detail page in World Observer.">
+  <meta property="og:description" content="Public-data telemetry view for the Area51 Reachability observer, presenting current exported measurements and published history without causal claims.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/area51.html">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#05090b">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
-  <link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=1">
+  <link rel="stylesheet" href="/world-observer/area51.css?v=1">
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/internet-observer-detail.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Area51 Reachability – World Observer","description":"Area51 Reachability observer detail page in World Observer.","url":"https://dennishilk.com/world-observer/area51.html","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <script defer src="/world-observer/area51.js?v=1"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Area51 Reachability – World Observer",
+    "description": "Public-data telemetry view for the Area51 Reachability observer, presenting current exported measurements and published history without causal claims.",
+    "url": "https://dennishilk.com/world-observer/area51.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "World Observer",
+      "url": "https://dennishilk.com/world-observer.html"
+    }
+  }
+  </script>
 </head>
-<body data-observer-page="internet-detail" data-observer-id="area51-reachability">
+<body class="area51-page" data-observer-page="area51" data-observer-id="area51-reachability">
 <canvas id="stars"></canvas>
-<div class="content world-observer-page">
-  <header class="dashboard-header wo-page-header">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Area51 Reachability</span></h1>
-    <p>Internet observer detail page using the existing public static World Observer exports.</p>
-    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
+
+<div class="area51-grid" aria-hidden="true"></div>
+<div class="content world-observer-page area51-frame">
+  <header class="area51-hero">
+    <div class="area51-hero-topline">
+      <span>WORLD OBSERVER</span>
+      <span>PUBLIC TELEMETRY NODE</span>
+      <span>INTERNET / 01</span>
+    </div>
+
+    <div class="area51-identity">
+      <p class="area51-eyebrow">GROOM LAKE PUBLIC SIGNAL OBSERVATORY</p>
+      <h1><span class="area51-wordmark">AREA 51</span></h1>
+      <p class="area51-classification">UNCLASSIFIED <span aria-hidden="true">//</span> PUBLIC DATA ONLY</p>
+      <p class="area51-deck">A restrained view of the existing public Area51 Reachability export and its published observation history.</p>
+    </div>
+
+    <div class="button-group wo-site-nav area51-site-nav">
+      <div class="buttons"><a href="/">Home</a></div>
+    </div>
     <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
       <a href="/world-observer.html">Overview</a>
       <a href="/world-observer/internet.html" class="active" aria-current="page">Internet</a>
@@ -39,40 +68,131 @@
       <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
     </nav>
   </header>
-  <main>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
-    <p id="observer-loading" class="observer-limitation" aria-live="polite">Loading observer data…</p>
-    <div id="observer-content" class="internet-detail-shell" hidden>
-      <section class="internet-detail-summary" aria-labelledby="current-observation-title">
-        <h2 id="current-observation-title">Current Observation</h2>
-        <div class="internet-detail-summary-grid">
-          <p class="internet-detail-primary"><span id="observer-primary-label">Primary metric</span><strong id="observer-primary-value">—</strong></p>
+
+  <main class="area51-main">
+    <p class="wo-back-nav area51-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
+
+    <p id="observer-loading" class="area51-loading" aria-live="polite">Establishing public telemetry view…</p>
+
+    <div id="observer-content" class="area51-observer-content" hidden>
+      <section class="area51-panel area51-current" aria-labelledby="current-observation-title">
+        <div class="area51-section-heading">
           <div>
-            <div id="observer-statuses" class="internet-detail-statuses" aria-label="Observer status"></div>
-            <p id="observer-last-update" class="internet-detail-updated">Last observation/update: —</p>
+            <p class="area51-section-index">01 / CURRENT EXPORT</p>
+            <h2 id="current-observation-title">Current Observation</h2>
           </div>
-          <dl id="observer-secondary-metrics" class="internet-secondary-metrics internet-detail-secondary"></dl>
+          <p id="observer-last-update" class="area51-timestamp">Last observation/update: —</p>
+        </div>
+
+        <div class="area51-current-layout">
+          <div class="area51-instrument-wrap">
+            <div class="area51-instrument" aria-hidden="true">
+              <div class="area51-radar-grid"></div>
+              <div class="area51-radar-sweep"></div>
+              <div class="area51-radar-crosshair"></div>
+              <span class="area51-radar-marker marker-one"></span>
+              <span class="area51-radar-marker marker-two"></span>
+              <span class="area51-radar-marker marker-three"></span>
+            </div>
+            <div class="area51-score-readout">
+              <span id="observer-primary-label" class="area51-score-label">Reachability score</span>
+              <strong id="observer-primary-value" class="area51-score-value">—</strong>
+              <span id="observer-primary-unit" class="area51-score-unit">SCORE / EXPORTED VALUE</span>
+            </div>
+            <p class="area51-instrument-caption">Published observer aggregate. The instrument does not represent a geographic position.</p>
+          </div>
+
+          <div class="area51-telemetry-stack">
+            <div class="area51-telemetry-header">
+              <span>OBSERVATION CHANNELS</span>
+              <span aria-hidden="true">DATA</span>
+            </div>
+            <dl id="observer-secondary-metrics" class="area51-secondary-metrics"></dl>
+            <div class="area51-scope-note">
+              <span class="area51-scope-pulse" aria-hidden="true"></span>
+              <p>Public export values only. No intent, cause, identity, precise position, or military activity is inferred.</p>
+            </div>
+          </div>
         </div>
       </section>
-      <section class="internet-detail-section internet-detail-history-section" aria-labelledby="history-title">
-        <h2 id="history-title">History</h2>
-        <p id="observer-history-summary" class="internet-detail-placeholder">Loading published history…</p>
-        <div class="internet-detail-history-wrap">
-          <table id="observer-history-table" class="internet-detail-history">
-            <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+
+      <section class="area51-panel area51-history" aria-labelledby="history-title">
+        <div class="area51-section-heading">
+          <div>
+            <p class="area51-section-index">02 / PUBLISHED SERIES</p>
+            <h2 id="history-title">History</h2>
+          </div>
+          <p id="observer-history-summary" class="area51-history-summary">Loading published history…</p>
         </div>
+
+        <div class="area51-history-visual">
+          <div id="area51-history-chart" class="area51-chart" aria-live="polite"></div>
+          <dl id="area51-history-metrics" class="area51-history-metrics"></dl>
+        </div>
+
+        <details class="area51-data-table">
+          <summary>Accessible recent data table</summary>
+          <div class="area51-table-scroll">
+            <table id="observer-history-table">
+              <caption>Most recent published numeric history points</caption>
+              <thead><tr><th scope="col">Date</th><th scope="col">Value</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
       </section>
-      <section class="internet-detail-section" aria-labelledby="observed-title"><h2 id="observed-title">Observed</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="derived-title"><h2 id="derived-title">Derived</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="unknown-title"><h2 id="unknown-title">Unknown</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="methodology-title"><h2 id="methodology-title">Methodology</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="sources-title"><h2 id="sources-title">Sources</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
+
+      <section class="area51-provenance" aria-label="Observation provenance and interpretation boundaries">
+        <article class="area51-provenance-card observed-card" aria-labelledby="observed-title">
+          <p class="area51-provenance-code">RAW / CURRENT</p>
+          <h2 id="observed-title">Observed</h2>
+          <ul id="area51-observed-list" class="area51-fact-list"></ul>
+        </article>
+
+        <article class="area51-provenance-card derived-card" aria-labelledby="derived-title">
+          <p class="area51-provenance-code">COMPUTED / PUBLISHED</p>
+          <h2 id="derived-title">Derived</h2>
+          <p id="area51-derived-copy">The existing observer export supplies a derived primary metric. This page does not add a new calculation.</p>
+        </article>
+
+        <article class="area51-provenance-card historical-card" aria-labelledby="historical-title">
+          <p class="area51-provenance-code">ARCHIVE / CONTEXT</p>
+          <h2 id="historical-title">Historical</h2>
+          <p id="area51-historical-copy">Published history is presented as recorded values without a causal interpretation.</p>
+        </article>
+
+        <article class="area51-provenance-card unknown-card" aria-labelledby="unknown-title">
+          <p class="area51-provenance-code">BOUNDARY / NOT ESTABLISHED</p>
+          <h2 id="unknown-title">Unknown</h2>
+          <p>The exports do not establish identity, purpose, intent, precise position, cause, or military activity. Absence or change in a signal is not an explanation.</p>
+        </article>
+      </section>
+
+      <section class="area51-foundation-grid">
+        <article class="area51-panel area51-foundation-card" aria-labelledby="methodology-title">
+          <p class="area51-section-index">03 / DOCUMENTATION</p>
+          <h2 id="methodology-title">Methodology</h2>
+          <p>Detailed collector methodology will be documented in a later observer-specific source review. This interface does not add to or modify the existing measurement logic.</p>
+        </article>
+
+        <article class="area51-panel area51-foundation-card" aria-labelledby="sources-title">
+          <p class="area51-section-index">04 / PROVENANCE</p>
+          <h2 id="sources-title">Sources</h2>
+          <p>Source attribution will be expanded in a later observer-specific pass. This page currently presents only the existing public World Observer dashboard and history exports.</p>
+          <div class="area51-source-paths" aria-label="Current local data exports">
+            <code>dashboard/internet.json</code>
+            <code>dashboard/history/internet-observers.json</code>
+          </div>
+        </article>
+      </section>
     </div>
   </main>
-  <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/dashboard/internet.json<span class="cursor"></span></span></div>
+
+  <footer class="area51-footer">
+    <div class="nebby-terminal-line">
+      <picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture>
+      <span class="coffee-text">&gt; observe --public area51-reachability<span class="cursor"></span></span>
+    </div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>
