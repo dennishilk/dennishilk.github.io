@@ -18,6 +18,8 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/area51.css?v=1">
+  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=1">
+  <script src="/site-i18n-de-area51.js?v=20260814-1"></script>
   <script defer src="/stars.js"></script>
   <script defer src="/world-observer/area51.js?v=1"></script>
   <script type="application/ld+json">
@@ -85,6 +87,33 @@
               <p>Public export values only. No intent, cause, identity, precise position, or military activity is inferred.</p>
             </div>
           </div>
+
+          <section class="area51-imagery-panel" aria-labelledby="area51-imagery-title">
+            <div class="area51-imagery-heading">
+              <div>
+                <p class="area51-section-index">PUBLIC LOCATION CONTEXT</p>
+                <h3 id="area51-imagery-title">Location / Imagery</h3>
+              </div>
+              <span class="area51-imagery-source-badge">USGS / USDA</span>
+            </div>
+
+            <figure class="area51-imagery-figure">
+              <img
+                src="https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=-115.88%2C37.20%2C-115.72%2C37.30&amp;bboxSR=4326&amp;imageSR=4326&amp;size=1200%2C750&amp;format=jpg&amp;f=image"
+                alt="Public USGS and USDA orthoimagery centered on Groom Lake, Nevada"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+              >
+              <figcaption>
+                <strong>Groom Lake, Nevada</strong>
+                <span>Public aerial / orthoimagery from the current USGS service mosaic. Not a live feed; image age varies with the source mosaic.</span>
+              </figcaption>
+            </figure>
+
+            <p class="area51-imagery-attribution">Map services and data available from U.S. Geological Survey, National Geospatial Program. NAIP imagery is provided through the USGS / USDA partnership.</p>
+            <a class="area51-imagery-source-link" href="https://www.usgs.gov/national-map-supporting-themes" target="_blank" rel="noopener noreferrer">USGS imagery &amp; licensing ↗</a>
+          </section>
         </div>
       </section>
 
