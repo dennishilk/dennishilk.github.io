@@ -52,6 +52,11 @@ test("all 19 public Internet observers have German crawlable routes", () => {
       assert.ok(html.includes('/world-observer/traceroute-to-nowhere.css?v=1'), slug);
       assert.ok(html.includes('/world-observer/traceroute-to-nowhere.js?v=1'), slug);
       assert.ok(html.includes('class="trace-language"'), slug);
+    } else if (slug === "north-korea-connectivity") {
+      assert.ok(html.includes('/world-observer/north-korea-connectivity.css?v=1'), slug);
+      assert.ok(html.includes('/world-observer/north-korea-connectivity.js?v=1'), slug);
+      assert.ok(html.includes('/world-observer/north-korea-language.js?v=1'), slug);
+      assert.ok(html.includes('class="nk-language"'), slug);
     } else {
       assert.ok(html.includes('/world-observer/internet-observer-detail.css?v=2'), slug);
       assert.ok(html.includes('/world-observer/internet-observer-detail.js?v=2'), slug);
