@@ -42,6 +42,16 @@ test("Traceroute header is compact and language switching is explicit", () => {
   assert.ok(headerStyles.includes('.trace-compact-title'));
 });
 
+test("Traceroute renderer only targets DOM IDs present on both language pages", () => {
+  const ids = [...renderer.matchAll(/getElementById\("([^"]+)"\)/g)].map(match => match[1]);
+  assert.ok(ids.length > 0);
+  for (const id of new Set(ids)) {
+    assert.ok(english.includes(`id="${id}"`), `missing English DOM target: ${id}`);
+    assert.ok(german.includes(`id="${id}"`), `missing German DOM target: ${id}`);
+  }
+  assert.ok(!renderer.includes('getElementById("trace-hero-count")'));
+});
+
 test("Traceroute showcase preserves the evidence boundary", () => {
   assert.ok(english.includes("UNRESOLVED"));
   assert.ok(english.includes("NOT EXPORTED"));
