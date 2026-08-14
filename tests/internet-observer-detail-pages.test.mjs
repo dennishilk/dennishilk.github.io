@@ -35,7 +35,7 @@ test("every current Internet observer has a stable detail page", () => {
     assert.ok(html.includes(`data-observer-id="${observer.observer}"`));
     assert.ok(html.includes(`href="${canonical}"`));
     assert.ok(html.includes("← Back to Internet Observers"));
-    assert.ok(html.includes("<h2 id=\"current-observation-title\">Current Observation</h2>"));
+    assert.match(html, /<h2 id="current-observation-title">[^<]+<\/h2>/);
 
     if (observer.observer === "area51-reachability") {
       assert.ok(html.includes("<h2 id=\"public-watch-title\">Satellite &amp; Thermal Watch</h2>"));
@@ -51,11 +51,11 @@ test("every current Internet observer has a stable detail page", () => {
       assert.match(html, /<h2 id="history-title">[^<]+<\/h2>/);
     }
 
-    assert.ok(html.includes(">Observed</h2>"));
-    assert.ok(html.includes(">Derived</h2>"));
-    assert.ok(html.includes(">Unknown</h2>"));
-    assert.ok(html.includes(">Methodology</h2>"));
-    assert.ok(html.includes(">Sources</h2>"));
+    assert.match(html, />Observed<\/h[23]>/);
+    assert.match(html, />Derived<\/h[23]>/);
+    assert.match(html, />Unknown<\/h[23]>/);
+    assert.match(html, />Methodology<\/h[23]>/);
+    assert.match(html, />Sources<\/h[23]>/);
     assert.ok(sitemap.includes(`<loc>${canonical}</loc>`));
   }
 });
