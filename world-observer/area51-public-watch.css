@@ -494,15 +494,7 @@
 }
 
 .area51-thermal-map-label {
-  background: rgba(2, 7, 8, 0.9);
-  border-left: 2px solid var(--a51-amber);
-  bottom: 0.8rem;
-  display: grid;
-  gap: 0.15rem;
-  left: 0.8rem;
-  padding: 0.48rem 0.65rem;
-  position: absolute;
-  z-index: 8;
+  display: none;
 }
 
 .area51-thermal-map-label span {
@@ -564,7 +556,7 @@
   height: auto;
   max-width: 100%;
   min-height: 18px;
-  width: auto;
+  width: min(100%, 240px) !important;
 }
 
 .area51-thermal-days {
