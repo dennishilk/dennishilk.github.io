@@ -6,6 +6,7 @@ const root = new URL("../", import.meta.url);
 const dashboard = JSON.parse(readFileSync(new URL("world-observer/dashboard/internet.json", root), "utf8"));
 const dashboardHtml = readFileSync(new URL("world-observer/internet.html", root), "utf8");
 const renderer = readFileSync(new URL("world-observer.js", root), "utf8");
+const area51Renderer = readFileSync(new URL("world-observer/area51.js", root), "utf8");
 const sitemap = readFileSync(new URL("sitemap.xml", root), "utf8");
 
 function slugFor(observerId) {
@@ -27,7 +28,17 @@ test("every current Internet observer has a stable detail page", () => {
     assert.ok(html.includes(`href="${canonical}"`));
     assert.ok(html.includes("← Back to Internet Observers"));
     assert.ok(html.includes("<h2 id=\"current-observation-title\">Current Observation</h2>"));
-    assert.ok(html.includes("<h2 id=\"history-title\">History</h2>"));
+
+    if (observer.observer === "area51-reachability") {
+      assert.ok(html.includes("<h2 id=\"public-watch-title\">Satellite &amp; Thermal Watch</h2>"));
+      assert.ok(html.includes("Latest Public Satellite Pass"));
+      assert.ok(html.includes("Thermal Anomaly Watch"));
+      assert.ok(html.includes("stac.dataspace.copernicus.eu"));
+      assert.ok(html.includes("gibs.earthdata.nasa.gov"));
+    } else {
+      assert.ok(html.includes("<h2 id=\"history-title\">History</h2>"));
+    }
+
     assert.ok(html.includes(">Observed</h2>"));
     assert.ok(html.includes(">Derived</h2>"));
     assert.ok(html.includes(">Unknown</h2>"));
@@ -39,10 +50,18 @@ test("every current Internet observer has a stable detail page", () => {
 
 test("Internet observer cards use crawlable anchor destinations", () => {
   assert.ok(dashboardHtml.includes("/world-observer/internet-observer-detail.css"));
+  assert.ok(dashboardHtml.includes('href="/world-observer.html">← World Observer</a>'));
   assert.ok(renderer.includes('const link = document.createElement("a")'));
   assert.ok(renderer.includes('link.href = observerUrl'));
   assert.ok(renderer.includes('link.setAttribute("aria-label", `Open ${titleText} observer`)'));
   assert.ok(renderer.includes('id === "area51-reachability" ? "area51" : id'));
   assert.ok(renderer.includes('getObserverId(observer) !== "east-frisia-water-observer"'));
   assert.ok(!renderer.includes('detailsId = `internet-observer-details-${index}`'));
+});
+
+test("Area51 public-watch renderer remains valid JavaScript", () => {
+  assert.doesNotThrow(() => new Function(area51Renderer));
+  assert.ok(area51Renderer.includes("stac.dataspace.copernicus.eu/v1/search"));
+  assert.ok(area51Renderer.includes("VIIRS_NOAA20_Thermal_Anomalies_375m_All"));
+  assert.ok(area51Renderer.includes("gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"));
 });

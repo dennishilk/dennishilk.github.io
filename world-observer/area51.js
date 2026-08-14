@@ -4,6 +4,9 @@
   const observerId = "area51-reachability";
   const dashboardUrl = "/world-observer/dashboard/internet.json";
   const historyUrl = "/world-observer/dashboard/history/internet-observers.json";
+  const copernicusStacUrl = "https://stac.dataspace.copernicus.eu/v1/search";
+  const watchBbox = [-115.8837890625, 37.1953305828, -115.751953125, 37.2653099556];
+  const thermalLayer = "VIIRS_NOAA20_Thermal_Anomalies_375m_All";
 
   function formatNumber(value) {
     if (value === null || value === undefined || value === "") return "—";
@@ -43,6 +46,10 @@
     return `${new Intl.DateTimeFormat("en-GB", options).format(date)} UTC`;
   }
 
+  function isoDay(date) {
+    return date.toISOString().slice(0, 10);
+  }
+
   function createElement(tagName, className, text) {
     const element = document.createElement(tagName);
     if (className) element.className = className;
@@ -57,15 +64,6 @@
     const description = createElement("dd", "", formatMetric(value, unit));
     term.appendChild(unitLabel);
     group.append(term, description);
-    container.appendChild(group);
-  }
-
-  function appendHistoryMetric(container, label, value) {
-    const group = createElement("div");
-    group.append(
-      createElement("dt", "", label),
-      createElement("dd", "", value),
-    );
     container.appendChild(group);
   }
 
@@ -105,148 +103,171 @@
       `The existing export publishes “${observer.primary_metric_name || "Primary metric"}” as ${formatMetric(observer.primary_metric_value, observer.primary_metric_unit)}. This page displays that supplied value without adding a new calculation or causal interpretation.`;
   }
 
-  function median(values) {
-    if (!values.length) return null;
-    const sorted = [...values].sort((a, b) => a - b);
-    const middle = Math.floor(sorted.length / 2);
-    if (sorted.length % 2) return sorted[middle];
-    return (sorted[middle - 1] + sorted[middle]) / 2;
-  }
-
-  function renderObservationPulse(record) {
-    const grid = document.getElementById("area51-pulse-grid");
-    const peaks = document.getElementById("area51-peak-list");
-    grid.textContent = "";
-    peaks.textContent = "";
-
-    const points = Array.isArray(record?.points) ? record.points : [];
-    const numericPoints = points
-      .map((point, index) => ({ ...point, index, numericValue: Number(point?.value) }))
-      .filter((point) => Number.isFinite(point.numericValue));
-
-    document.getElementById("area51-pulse-start").textContent = points[0]?.date || "—";
-    document.getElementById("area51-pulse-end").textContent = points.at(-1)?.date || "—";
-
-    if (!points.length || !numericPoints.length) {
-      grid.appendChild(createElement("p", "area51-chart-empty", "No published numeric history is available yet."));
-      return;
-    }
-
-    const maximum = Math.max(...numericPoints.map((point) => Math.max(0, point.numericValue)), 1);
-    const logMaximum = Math.log1p(maximum) || 1;
-
-    points.forEach((point, index) => {
-      const numeric = Number(point?.value);
-      const hasNumeric = Number.isFinite(numeric);
-      const status = String(point?.data_status || "unknown").toLowerCase();
-      const cell = createElement("span", "area51-pulse-cell");
-      cell.dataset.status = status;
-      cell.setAttribute("role", "listitem");
-
-      if (hasNumeric) {
-        const normalized = Math.log1p(Math.max(0, numeric)) / logMaximum;
-        cell.style.setProperty("--pulse", Math.max(0.08, normalized).toFixed(3));
-      } else {
-        cell.classList.add("is-missing");
-      }
-
-      if (index === points.length - 1) cell.classList.add("is-latest");
-
-      const valueLabel = hasNumeric
-        ? formatMetric(numeric, point.metric_unit || record?.metric_unit)
-        : "no numeric value";
-      const accessibleLabel = `${point.date || "Observation"}: ${valueLabel}; status ${status}`;
-      cell.title = accessibleLabel;
-      cell.setAttribute("aria-label", accessibleLabel);
-      grid.appendChild(cell);
-    });
-
-    [...numericPoints]
-      .sort((a, b) => b.numericValue - a.numericValue)
-      .slice(0, 5)
-      .forEach((point, index) => {
-        const item = document.createElement("li");
-        item.append(
-          createElement("span", "area51-peak-rank", `#${index + 1}`),
-          createElement("time", "area51-peak-date", point.date || "—"),
-          createElement("strong", "area51-peak-value", formatMetric(point.numericValue, point.metric_unit || record?.metric_unit)),
-        );
-        peaks.appendChild(item);
-      });
-  }
-
   function renderHistoryTable(record) {
     const body = document.querySelector("#observer-history-table tbody");
-    const details = document.querySelector(".area51-data-table");
+    const details = document.querySelector(".area51-history-archive");
     body.textContent = "";
 
-    const numericPoints = (Array.isArray(record?.points) ? record.points : [])
-      .filter((point) => Number.isFinite(Number(point?.value)));
+    const points = Array.isArray(record?.points) ? record.points : [];
+    const numericPoints = points.filter((point) => Number.isFinite(Number(point?.value)));
+    const totalCount = Number.isFinite(Number(record?.total_point_count))
+      ? Number(record.total_point_count)
+      : points.length;
+    const numericCount = Number.isFinite(Number(record?.numeric_point_count))
+      ? Number(record.numeric_point_count)
+      : numericPoints.length;
+    const missingCount = Math.max(0, totalCount - numericCount);
+    const summary = document.getElementById("observer-history-summary");
 
-    if (!numericPoints.length) {
+    if (!record || !points.length || !numericPoints.length) {
       details.hidden = true;
+      summary.textContent = "No published history is available yet.";
+      document.getElementById("area51-historical-copy").textContent =
+        "No published history is available in the existing export yet.";
       return;
     }
 
     details.hidden = false;
+    summary.textContent = `${formatNumber(totalCount)} points · ${formatNumber(numericCount)} numeric · ${formatNumber(missingCount)} gaps`;
+
     numericPoints.slice(-12).reverse().forEach((point) => {
       const row = document.createElement("tr");
-      const date = createElement("td", "", point.date || "—");
-      const value = createElement(
-        "td",
-        "",
-        formatMetric(Number(point.value), point.metric_unit || record.metric_unit),
+      row.append(
+        createElement("td", "", point.date || "—"),
+        createElement("td", "", formatMetric(Number(point.value), point.metric_unit || record.metric_unit)),
       );
-      row.append(date, value);
       body.appendChild(row);
     });
-  }
-
-  function renderHistory(record) {
-    const points = Array.isArray(record?.points) ? record.points : [];
-    const numericPoints = points.filter((point) => Number.isFinite(Number(point?.value)));
-    const numericValues = numericPoints.map((point) => Number(point.value));
-    const summary = document.getElementById("observer-history-summary");
-    const metrics = document.getElementById("area51-history-metrics");
-    metrics.textContent = "";
-
-    if (!record || !points.length) {
-      summary.textContent = "No published history is available for this observer yet.";
-      document.getElementById("area51-historical-copy").textContent =
-        "No published history is available in the existing export yet.";
-      renderObservationPulse(null);
-      renderHistoryTable(null);
-      return;
-    }
-
-    const totalCount = Number.isFinite(Number(record.total_point_count))
-      ? Number(record.total_point_count)
-      : points.length;
-    const numericCount = Number.isFinite(Number(record.numeric_point_count))
-      ? Number(record.numeric_point_count)
-      : numericPoints.length;
-    const latest = record.latest_value ?? numericPoints.at(-1)?.value;
-    const unit = record.metric_unit || numericPoints.at(-1)?.metric_unit || "score";
-    const peak = numericValues.length ? Math.max(...numericValues) : null;
-    const medianValue = median(numericValues);
-    const missingCount = Math.max(0, totalCount - numericCount);
-
-    summary.textContent =
-      `${formatNumber(totalCount)} published points • ${formatNumber(numericCount)} numeric • ${formatNumber(missingCount)} gaps`;
-
-    appendHistoryMetric(metrics, "Latest", formatMetric(latest, unit));
-    appendHistoryMetric(metrics, "7-day average", formatMetric(record.seven_day_average, unit));
-    appendHistoryMetric(metrics, "30-day average", formatMetric(record.thirty_day_average, unit));
-    appendHistoryMetric(metrics, "Median", formatMetric(medianValue, unit));
-    appendHistoryMetric(metrics, "Peak", formatMetric(peak, unit));
 
     const firstDate = points[0]?.date || "the first published observation";
     const lastDate = points.at(-1)?.date || "the latest published observation";
     document.getElementById("area51-historical-copy").textContent =
-      `${formatNumber(totalCount)} published history points span ${firstDate} to ${lastDate}; ${formatNumber(numericCount)} contain numeric values. The pulse display and peak list are descriptive views of those published values, without a causal interpretation.`;
+      `${formatNumber(totalCount)} published history points span ${firstDate} to ${lastDate}; ${formatNumber(numericCount)} contain numeric values. The history remains available as a compact data table without causal interpretation.`;
+  }
 
-    renderObservationPulse(record);
-    renderHistoryTable(record);
+  function scenePlatform(feature) {
+    const properties = feature?.properties || {};
+    const platform = properties.platform || properties.constellation;
+    if (platform) return String(platform).replaceAll("_", " ").toUpperCase();
+    const prefix = String(feature?.id || "").match(/^S2[ABC]/i)?.[0];
+    return prefix ? prefix.toUpperCase() : "SENTINEL-2";
+  }
+
+  function setSceneUnavailable() {
+    document.getElementById("area51-scene-state").textContent = "Catalogue temporarily unavailable";
+    document.getElementById("area51-scene-date").textContent = "—";
+    document.getElementById("area51-scene-time").textContent = "— UTC";
+    document.getElementById("area51-scene-age").textContent = "—";
+    document.getElementById("area51-scene-platform").textContent = "—";
+    document.getElementById("area51-scene-cloud").textContent = "—";
+    document.getElementById("area51-scene-id").textContent = "—";
+    document.getElementById("area51-cloud-gauge").style.setProperty("--cloud-angle", "0deg");
+  }
+
+  async function loadLatestSatelliteScene() {
+    const end = new Date();
+    const start = new Date(end.getTime() - (90 * 24 * 60 * 60 * 1000));
+    const params = new URLSearchParams({
+      collections: "sentinel-2-l2a",
+      bbox: watchBbox.join(","),
+      datetime: `${start.toISOString()}/${end.toISOString()}`,
+      limit: "20",
+      sortby: "-datetime",
+    });
+
+    try {
+      const response = await fetch(`${copernicusStacUrl}?${params.toString()}`, {
+        cache: "no-store",
+        headers: { Accept: "application/geo+json, application/json" },
+      });
+      if (!response.ok) throw new Error(`Copernicus STAC HTTP ${response.status}`);
+      const payload = await response.json();
+      const features = Array.isArray(payload?.features) ? payload.features : [];
+      const feature = [...features].sort((a, b) => {
+        const aTime = new Date(a?.properties?.datetime || a?.properties?.start_datetime || 0).getTime();
+        const bTime = new Date(b?.properties?.datetime || b?.properties?.start_datetime || 0).getTime();
+        return bTime - aTime;
+      })[0];
+      if (!feature) throw new Error("No Sentinel-2 scene returned for watch area");
+
+      const properties = feature.properties || {};
+      const acquisition = new Date(properties.datetime || properties.start_datetime);
+      if (Number.isNaN(acquisition.getTime())) throw new Error("Scene has no usable acquisition time");
+
+      const cloud = Number(properties["eo:cloud_cover"]);
+      const cloudPercent = Number.isFinite(cloud) ? Math.max(0, Math.min(100, cloud)) : null;
+      const ageDays = Math.max(0, Math.floor((Date.now() - acquisition.getTime()) / (24 * 60 * 60 * 1000)));
+      const sceneId = String(feature.id || "—");
+
+      document.getElementById("area51-scene-state").textContent = "Catalogue online";
+      document.getElementById("area51-scene-date").textContent = isoDay(acquisition);
+      document.getElementById("area51-scene-time").textContent = `${acquisition.toISOString().slice(11, 16)} UTC`;
+      document.getElementById("area51-scene-age").textContent = `${ageDays} d`;
+      document.getElementById("area51-scene-platform").textContent = scenePlatform(feature);
+      document.getElementById("area51-scene-id").textContent = sceneId;
+      document.getElementById("area51-scene-id").title = sceneId;
+
+      const cloudNode = document.getElementById("area51-scene-cloud");
+      const gauge = document.getElementById("area51-cloud-gauge");
+      if (cloudPercent === null) {
+        cloudNode.textContent = "—";
+        gauge.style.setProperty("--cloud-angle", "0deg");
+        gauge.setAttribute("aria-label", "Tile cloud cover unavailable");
+      } else {
+        cloudNode.textContent = `${formatNumber(cloudPercent)}%`;
+        gauge.style.setProperty("--cloud-angle", `${(cloudPercent * 3.6).toFixed(1)}deg`);
+        gauge.setAttribute("aria-label", `Tile cloud cover ${formatNumber(cloudPercent)} percent`);
+      }
+    } catch (error) {
+      console.warn("Unable to load Copernicus Sentinel-2 catalogue metadata", error);
+      setSceneUnavailable();
+    }
+  }
+
+  function thermalWmsUrl(date) {
+    const params = new URLSearchParams({
+      TIME: `${date}T00:00:00Z`,
+      LAYERS: thermalLayer,
+      REQUEST: "GetMap",
+      SERVICE: "WMS",
+      FORMAT: "image/png",
+      WIDTH: "900",
+      HEIGHT: "600",
+      VERSION: "1.1.1",
+      SRS: "epsg:4326",
+      BBOX: watchBbox.join(","),
+      TRANSPARENT: "TRUE",
+    });
+    return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?${params.toString()}`;
+  }
+
+  function selectThermalDate(date, button) {
+    document.querySelectorAll("#area51-thermal-days button").forEach((candidate) => {
+      candidate.setAttribute("aria-pressed", String(candidate === button));
+    });
+    const overlay = document.getElementById("area51-thermal-overlay");
+    overlay.src = thermalWmsUrl(date);
+    overlay.alt = `NASA GIBS VIIRS NOAA-20 thermal-anomaly overlay for ${date}`;
+    document.getElementById("area51-thermal-date").textContent = date;
+  }
+
+  function initThermalWatch() {
+    const container = document.getElementById("area51-thermal-days");
+    container.textContent = "";
+    const today = new Date();
+
+    for (let offset = 1; offset <= 7; offset += 1) {
+      const date = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - offset));
+      const dateValue = isoDay(date);
+      const button = createElement("button", "", dateValue.slice(5));
+      button.type = "button";
+      button.title = dateValue;
+      button.setAttribute("aria-label", `Show NASA thermal-anomaly layer for ${dateValue}`);
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => selectThermalDate(dateValue, button));
+      container.appendChild(button);
+      if (offset === 1) selectThermalDate(dateValue, button);
+    }
   }
 
   async function loadJson(url) {
@@ -256,6 +277,9 @@
   }
 
   async function render() {
+    initThermalWatch();
+    loadLatestSatelliteScene();
+
     const [dashboardResult, historyResult] = await Promise.allSettled([
       loadJson(dashboardUrl),
       loadJson(historyUrl),
@@ -272,7 +296,7 @@
     const history = historyResult.status === "fulfilled"
       ? historyResult.value?.observers?.[observerId]
       : null;
-    renderHistory(history);
+    renderHistoryTable(history);
 
     document.getElementById("observer-loading").hidden = true;
     document.getElementById("observer-content").hidden = false;

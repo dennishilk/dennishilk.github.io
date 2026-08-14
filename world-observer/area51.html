@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Area51 Reachability – World Observer</title>
-  <meta name="description" content="Public-data telemetry view for the Area51 Reachability observer, presenting current exported measurements and published history without causal claims.">
+  <meta name="description" content="Public-data telemetry and Earth-observation context for the Area51 Reachability observer, without causal or military-activity claims.">
   <link rel="canonical" href="https://dennishilk.com/world-observer/area51.html">
   <meta property="og:title" content="Area51 Reachability – World Observer">
-  <meta property="og:description" content="Public-data telemetry view for the Area51 Reachability observer, presenting current exported measurements and published history without causal claims.">
+  <meta property="og:description" content="Public telemetry plus public satellite and thermal-anomaly context for Groom Lake, presented without causal claims.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/area51.html">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
@@ -18,16 +18,17 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/area51.css?v=1">
-  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=4">
-  <script src="/site-i18n-de-area51.js?v=20260814-3"></script>
+  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=5">
+  <link rel="stylesheet" href="/world-observer/area51-public-watch.css?v=1">
+  <script src="/site-i18n-de-area51.js?v=20260814-4"></script>
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/area51.js?v=3"></script>
+  <script defer src="/world-observer/area51.js?v=4"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Area51 Reachability – World Observer",
-    "description": "Public-data telemetry view for the Area51 Reachability observer, presenting current exported measurements and published history without causal claims.",
+    "description": "Public-data telemetry and Earth-observation context for the Area51 Reachability observer, without causal or military-activity claims.",
     "url": "https://dennishilk.com/world-observer/area51.html",
     "isPartOf": {
       "@type": "WebSite",
@@ -101,14 +102,14 @@
               <div
                 class="area51-imagery-tiles"
                 role="img"
-                aria-label="Sentinel-2 cloudless satellite mosaic centered on the Groom Lake area in Nevada"
+                aria-label="Sentinel-2 cloudless satellite mosaic centered on the Groom Lake facilities and surrounding area in Nevada"
               >
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3180/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3180/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3180/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
                 <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
                 <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
                 <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </div>
               <figcaption>
                 <strong>Groom Lake, Nevada</strong>
@@ -122,42 +123,87 @@
         </div>
       </section>
 
-      <section class="area51-panel area51-history" aria-labelledby="history-title">
+      <section class="area51-panel area51-public-watch" aria-labelledby="public-watch-title">
         <div class="area51-section-heading">
           <div>
-            <p class="area51-section-index">02 / ACTIVITY TIMELINE</p>
-            <h2 id="history-title">Observation Pulse</h2>
+            <p class="area51-section-index">02 / PUBLIC SOURCE WATCH</p>
+            <h2 id="public-watch-title">Satellite &amp; Thermal Watch</h2>
           </div>
-          <p id="observer-history-summary" class="area51-history-summary">Loading published history…</p>
+          <p class="area51-watch-disclaimer">Public Earth-observation context only</p>
         </div>
 
-        <div class="area51-pulse-layout">
-          <div class="area51-pulse-main">
-            <div class="area51-pulse-range" aria-hidden="true">
-              <span id="area51-pulse-start">—</span>
-              <span id="area51-pulse-end">—</span>
+        <div class="area51-watch-layout">
+          <article class="area51-watch-card area51-satellite-watch" aria-labelledby="satellite-watch-title">
+            <div class="area51-watch-card-head">
+              <div>
+                <p class="area51-section-index">COPERNICUS DATA SPACE</p>
+                <h3 id="satellite-watch-title">Latest Public Satellite Pass</h3>
+              </div>
+              <span id="area51-scene-state" class="area51-watch-state" aria-live="polite">Querying catalogue…</span>
             </div>
-            <div id="area51-pulse-grid" class="area51-pulse-grid" role="list" aria-label="Published Area51 reachability observations by day"></div>
-            <div class="area51-pulse-legend" aria-label="Relative visual intensity legend">
-              <span>Lower published value</span>
-              <span class="area51-pulse-gradient" aria-hidden="true"></span>
-              <span>Higher published value</span>
-            </div>
-            <p class="area51-pulse-note">Cell brightness is a log-scaled visual mapping of the published score only. It is not a probability, location estimate, or military-activity indicator.</p>
-          </div>
 
-          <aside class="area51-pulse-context" aria-labelledby="area51-peak-title">
-            <div class="area51-pulse-context-heading">
-              <p class="area51-section-index">PUBLISHED OUTLIERS</p>
-              <h3 id="area51-peak-title">Peak observations</h3>
+            <div class="area51-scene-hero">
+              <div>
+                <span class="area51-watch-kicker">Latest Sentinel-2 L2A scene intersecting the watch area</span>
+                <strong id="area51-scene-date" class="area51-scene-date">—</strong>
+                <span id="area51-scene-time" class="area51-scene-time">— UTC</span>
+              </div>
+              <div id="area51-cloud-gauge" class="area51-cloud-gauge" style="--cloud-angle: 0deg" aria-label="Tile cloud cover unavailable">
+                <div class="area51-cloud-gauge-inner">
+                  <strong id="area51-scene-cloud">—</strong>
+                  <span>tile cloud</span>
+                </div>
+              </div>
             </div>
-            <ol id="area51-peak-list" class="area51-peak-list"></ol>
-            <dl id="area51-history-metrics" class="area51-history-metrics"></dl>
-          </aside>
+
+            <dl class="area51-scene-facts">
+              <div><dt>Scene age</dt><dd id="area51-scene-age">—</dd></div>
+              <div><dt>Platform</dt><dd id="area51-scene-platform">—</dd></div>
+              <div><dt>Product</dt><dd>Sentinel-2 L2A</dd></div>
+              <div class="area51-scene-id-row"><dt>Scene ID</dt><dd id="area51-scene-id" title="">—</dd></div>
+            </dl>
+
+            <p class="area51-watch-note">Cloud cover is catalogue metadata for the full Sentinel tile, not a cloud estimate for the facility itself. A recent scene is not evidence of activity.</p>
+            <a class="area51-watch-source" href="https://stac.dataspace.copernicus.eu/v1/collections/sentinel-2-l2a" target="_blank" rel="noopener noreferrer">Copernicus Sentinel-2 L2A catalogue ↗</a>
+          </article>
+
+          <article class="area51-watch-card area51-thermal-watch" aria-labelledby="thermal-watch-title">
+            <div class="area51-watch-card-head">
+              <div>
+                <p class="area51-section-index">NASA EARTHDATA / GIBS</p>
+                <h3 id="thermal-watch-title">Thermal Anomaly Watch</h3>
+              </div>
+              <span class="area51-watch-state">VIIRS NOAA-20 · 375 m</span>
+            </div>
+
+            <div class="area51-thermal-map" role="img" aria-label="Public Sentinel-2 context map with a NASA VIIRS thermal-anomaly layer for the selected date">
+              <div class="area51-thermal-base" aria-hidden="true">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1459.jpg" alt="" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1460.jpg" alt="" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1461.jpg" alt="" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1459.jpg" alt="" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1460.jpg" alt="" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1461.jpg" alt="" loading="lazy" decoding="async">
+              </div>
+              <img id="area51-thermal-overlay" class="area51-thermal-overlay" alt="NASA GIBS VIIRS NOAA-20 thermal-anomaly overlay" decoding="async">
+              <div class="area51-thermal-map-label">
+                <span>Selected public layer</span>
+                <strong id="area51-thermal-date">—</strong>
+              </div>
+            </div>
+
+            <div>
+              <span class="area51-watch-kicker">Recent daily layers</span>
+              <div id="area51-thermal-days" class="area51-thermal-days" aria-label="Select recent thermal-anomaly date"></div>
+            </div>
+
+            <p class="area51-watch-note area51-thermal-note">Visible marks are satellite-derived thermal anomalies for the selected day. They may be associated with fire or other hot sources; a blank layer is not proof that no activity occurred. This panel does not identify cause, intent, aircraft, or military activity.</p>
+            <a class="area51-watch-source" href="https://firms.modaps.eosdis.nasa.gov/content/tutorials/gibs/" target="_blank" rel="noopener noreferrer">NASA GIBS / FIRMS thermal-anomaly layers ↗</a>
+          </article>
         </div>
 
-        <details class="area51-data-table">
-          <summary>Accessible recent data table</summary>
+        <details class="area51-data-table area51-history-archive">
+          <summary>Published telemetry history <span id="observer-history-summary">Loading published history…</span></summary>
           <div class="area51-table-scroll">
             <table id="observer-history-table">
               <caption>Most recent published numeric history points</caption>
@@ -190,7 +236,7 @@
         <article class="area51-provenance-card unknown-card" aria-labelledby="unknown-title">
           <p class="area51-provenance-code">BOUNDARY / NOT ESTABLISHED</p>
           <h2 id="unknown-title">Unknown</h2>
-          <p>The exports do not establish identity, purpose, intent, precise position, cause, or military activity. Absence or change in a signal is not an explanation.</p>
+          <p>The exports and public Earth-observation layers do not establish identity, purpose, intent, precise position, cause, or military activity. Absence or change in a signal is not an explanation.</p>
         </article>
       </section>
 
@@ -198,13 +244,13 @@
         <article class="area51-panel area51-foundation-card" aria-labelledby="methodology-title">
           <p class="area51-section-index">03 / DOCUMENTATION</p>
           <h2 id="methodology-title">Methodology</h2>
-          <p>Detailed collector methodology will be documented in a later observer-specific source review. This interface does not add to or modify the existing measurement logic.</p>
+          <p>The existing reachability collector and dashboard logic are unchanged. Public-source panels independently request catalogue metadata or imagery from Copernicus Data Space and NASA GIBS and keep those sources separate from the observer metric.</p>
         </article>
 
         <article class="area51-panel area51-foundation-card" aria-labelledby="sources-title">
           <p class="area51-section-index">04 / PROVENANCE</p>
           <h2 id="sources-title">Sources</h2>
-          <p>Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the EOxCloudless Sentinel-2 annual mosaic with visible attribution.</p>
+          <p>Observer telemetry uses the existing local World Observer exports. Location context uses EOxCloudless Sentinel-2 imagery; satellite-pass metadata comes from the Copernicus Data Space STAC catalogue; thermal-anomaly imagery comes from NASA Earthdata GIBS.</p>
           <div class="area51-source-paths" aria-label="Current local data exports">
             <code>dashboard/internet.json</code>
             <code>dashboard/history/internet-observers.json</code>
