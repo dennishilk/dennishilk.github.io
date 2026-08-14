@@ -27,6 +27,8 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/traceroute-to-nowhere.css?v=1">
+  <link rel="stylesheet" href="/world-observer/traceroute-header-polish.css?v=1">
+  <script defer src="/world-observer/traceroute-language.js?v=1"></script>
   <script defer src="/world-observer/traceroute-to-nowhere.js?v=1"></script>
   <script type="application/ld+json">
   {
@@ -45,24 +47,16 @@
 <div class="content world-observer-page trace-page">
   <main>
     <div class="trace-topbar">
-      <a class="trace-back" href="/world-observer/internet.html">← Zurück zu den Internet-Observern</a>
+      <div class="trace-identity">
+        <h1 class="trace-compact-title">TRACEROUTE INS NIRGENDWO</h1>
+        <a class="trace-back" href="/world-observer/internet.html">← Zurück zu den Internet-Observern</a>
+      </div>
       <nav class="trace-language" aria-label="Seitensprache">
         <a href="/world-observer/traceroute-to-nowhere.html" hreflang="en" lang="en">EN</a>
         <span aria-hidden="true">|</span>
         <a href="/de/world-observer/traceroute-to-nowhere.html" hreflang="de" lang="de" aria-current="page">DE</a>
       </nav>
     </div>
-
-    <header class="trace-hero">
-      <div>
-        <span class="trace-eyebrow">ÖFFENTLICHE ROUTEN-BEOBACHTUNGSKONSOLE</span>
-        <h1>Traceroute ins Nirgendwo</h1>
-        <p class="trace-hero-copy">Eine bewusst strenge Sicht auf den veröffentlichten Traceroute-Aggregatwert: Was im öffentlichen Export vorhanden ist, wird gezeigt; nicht exportierte Hop-Identitäten, Routentopologie, RTTs und Ursachen bleiben sichtbar unaufgelöst.</p>
-      </div>
-      <div class="trace-hero-mark" aria-label="Aktuell veröffentlichter Trace-Count">
-        <strong id="trace-hero-count">08</strong>
-      </div>
-    </header>
 
     <p id="observer-loading" class="trace-loading" aria-live="polite">Veröffentlichte Routenbeobachtungen werden geladen…</p>
 
