@@ -52,6 +52,14 @@ test("Traceroute renderer only targets DOM IDs present on both language pages", 
   assert.ok(!renderer.includes('getElementById("trace-hero-count")'));
 });
 
+test("Traceroute final polish hides redundant boundary chrome without deleting renderer targets", () => {
+  assert.match(headerStyles, /\.trace-boundary,\s*\n\.trace-facts\s*\{\s*\n\s*display:\s*none;/);
+  assert.ok(english.includes('class="trace-boundary"'));
+  assert.ok(german.includes('class="trace-boundary"'));
+  assert.ok(english.includes('class="trace-facts"'));
+  assert.ok(german.includes('class="trace-facts"'));
+});
+
 test("Traceroute showcase preserves the evidence boundary", () => {
   assert.ok(english.includes("UNRESOLVED"));
   assert.ok(english.includes("NOT EXPORTED"));
