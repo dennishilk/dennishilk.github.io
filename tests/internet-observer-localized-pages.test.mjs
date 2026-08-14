@@ -67,6 +67,11 @@ test("all 19 public Internet observers have German crawlable routes", () => {
       assert.ok(html.includes('/world-observer/cuba-internet-weather.js?v=1'), slug);
       assert.ok(html.includes('/world-observer/cuba-internet-weather-language.js?v=1'), slug);
       assert.ok(html.includes('class="cuba-language"'), slug);
+    } else if (slug === "tls-fingerprint-change") {
+      assert.ok(html.includes('/world-observer/tls-fingerprint-change.css?v=1'), slug);
+      assert.ok(html.includes('/world-observer/tls-fingerprint-change.js?v=1'), slug);
+      assert.ok(html.includes('/world-observer/tls-fingerprint-language.js?v=1'), slug);
+      assert.ok(html.includes('class="tls-language"'), slug);
     } else {
       assert.ok(html.includes('/world-observer/internet-observer-detail.css?v=2'), slug);
       assert.ok(html.includes('/world-observer/internet-observer-detail.js?v=2'), slug);

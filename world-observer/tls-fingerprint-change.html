@@ -4,75 +4,202 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TLS Fingerprint Change – World Observer</title>
-  <meta name="description" content="TLS Fingerprint Change observer detail page in World Observer.">
+  <meta name="description" content="TLS Fingerprint Change visualizes the World Observer's published TLS profile distributions, change scores and significant-event history without inventing certificate hashes or causal attribution.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://dennishilk.com/world-observer/tls-fingerprint-change.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/tls-fingerprint-change.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/tls-fingerprint-change.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/tls-fingerprint-change.html">
   <meta property="og:title" content="TLS Fingerprint Change – World Observer">
-  <meta property="og:description" content="TLS Fingerprint Change observer detail page in World Observer.">
+  <meta property="og:description" content="A public TLS surface scanner for exported protocol distributions, change scores and significant-event history, with a strict evidence boundary.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/tls-fingerprint-change.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TLS Fingerprint Change – World Observer">
+  <meta name="twitter:description" content="Published TLS profile distributions and change-event history, without invented certificate fingerprints or causal claims.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="theme-color" content="#061016">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
-  <link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=1">
+  <link rel="stylesheet" href="/world-observer/tls-fingerprint-change.css?v=1">
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/internet-observer-detail.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"TLS Fingerprint Change – World Observer","description":"TLS Fingerprint Change observer detail page in World Observer.","url":"https://dennishilk.com/world-observer/tls-fingerprint-change.html","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <script defer src="/world-observer/tls-fingerprint-language.js?v=1"></script>
+  <script defer src="/world-observer/tls-fingerprint-change.js?v=1"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"TLS Fingerprint Change – World Observer","description":"Public World Observer detail page for exported TLS profile distributions, change scores and significant-event history.","url":"https://dennishilk.com/world-observer/tls-fingerprint-change.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
 </head>
 <body data-observer-page="internet-detail" data-observer-id="tls-fingerprint-change">
 <canvas id="stars"></canvas>
-<div class="content world-observer-page">
-  <header class="dashboard-header wo-page-header">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">TLS Fingerprint Change</span></h1>
-    <p>Internet observer detail page using the existing public static World Observer exports.</p>
-    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
-    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a>
-      <a href="/world-observer/internet.html" class="active" aria-current="page">Internet</a>
-      <a href="/world-observer/media.html">Media</a>
-      <a href="/world-observer/society.html">Society</a>
-      <a href="/world-observer/hometown.html">Hometown</a>
-      <a href="/world-observer/environment.html">Earth &amp; Space</a>
-      <a href="/world-observer/technology.html">Technology</a>
-      <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
+<div class="content tls-page">
+  <header class="tls-topbar">
+    <div class="tls-identity">
+      <h1 class="tls-compact-title">TLS Fingerprint Change</h1>
+      <a class="tls-back" href="/world-observer/internet.html">← Back to Internet Observers</a>
+    </div>
+    <nav class="tls-language" aria-label="Page language / Seitensprache">
+      <a href="/world-observer/tls-fingerprint-change.html" hreflang="en" lang="en" aria-current="page">EN</a>
+      <span aria-hidden="true">|</span>
+      <a href="/de/world-observer/tls-fingerprint-change.html" hreflang="de" lang="de">DE</a>
     </nav>
   </header>
+
   <main>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
-    <p id="observer-loading" class="observer-limitation" aria-live="polite">Loading observer data…</p>
-    <div id="observer-content" class="internet-detail-shell" hidden>
-      <section class="internet-detail-summary" aria-labelledby="current-observation-title">
-        <h2 id="current-observation-title">Current Observation</h2>
-        <div class="internet-detail-summary-grid">
-          <p class="internet-detail-primary"><span id="observer-primary-label">Primary metric</span><strong id="observer-primary-value">—</strong></p>
-          <div>
-            <div id="observer-statuses" class="internet-detail-statuses" aria-label="Observer status"></div>
-            <p id="observer-last-update" class="internet-detail-updated">Last observation/update: —</p>
+    <p id="observer-loading" class="tls-loading" aria-live="polite">Loading published TLS observer data…</p>
+    <div id="observer-content" class="tls-shell" hidden>
+      <section class="tls-section" aria-labelledby="current-observation-title">
+        <div class="tls-section-inner">
+          <header class="tls-section-head">
+            <div>
+              <span class="tls-section-index">01 / TLS SURFACE SCANNER</span>
+              <h2 id="current-observation-title">Current observation</h2>
+            </div>
+            <p>The export describes TLS profile distributions and change scores. It does not publish literal certificate fingerprints, hashes or endpoint identities.</p>
+          </header>
+
+          <div class="tls-current-grid">
+            <aside class="tls-readout" aria-label="Current TLS change summary">
+              <div class="tls-primary-card">
+                <span>Significant events</span>
+                <strong id="tls-significant-count">—</strong>
+                <p>published event counter</p>
+              </div>
+              <dl class="tls-summary-grid">
+                <div><dt>Countries evaluated</dt><dd id="tls-countries-evaluated">—</dd></div>
+                <div><dt>Dashboard change score</dt><dd id="tls-dashboard-change-score">—</dd></div>
+                <div><dt>Any significant</dt><dd id="tls-any-significant">—</dd></div>
+                <div><dt>Mass event</dt><dd id="tls-mass-event">—</dd></div>
+              </dl>
+              <p class="tls-updated">Last observation/update:<br><strong id="tls-current-date">—</strong></p>
+            </aside>
+
+            <div class="tls-scanner" aria-label="Exported TLS country profiles">
+              <div class="tls-scanner-labels">
+                <span>exported country profiles</span>
+                <span>profile surface ≠ certificate hash</span>
+              </div>
+              <div class="tls-scan-field" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div id="tls-country-surfaces" class="tls-country-surfaces"></div>
+              <div class="tls-scanner-foot">
+                <span>Significance threshold: <strong id="tls-sigma-mult">—</strong>σ</span>
+                <span>Current triggers: <strong id="tls-trigger-count">—</strong></span>
+              </div>
+            </div>
           </div>
-          <dl id="observer-secondary-metrics" class="internet-secondary-metrics internet-detail-secondary"></dl>
         </div>
       </section>
-      <section class="internet-detail-section internet-detail-history-section" aria-labelledby="history-title">
-        <h2 id="history-title">History</h2>
-        <p id="observer-history-summary" class="internet-detail-placeholder">Loading published history…</p>
-        <div class="internet-detail-history-wrap">
-          <table id="observer-history-table" class="internet-detail-history">
-            <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+
+      <section class="tls-section" aria-labelledby="history-title">
+        <div class="tls-section-inner">
+          <header class="tls-section-head">
+            <div>
+              <span class="tls-section-index">02 / CHANGE MEMORY</span>
+              <h2 id="history-title">Published event memory</h2>
+            </div>
+            <p>Each memory cell is one published history point. The sequence shows export history, not uninterrupted calendar-day coverage.</p>
+          </header>
+
+          <div class="tls-history-grid">
+            <div class="tls-history-panel">
+              <div class="tls-memory-range"><span id="tls-history-first-date">—</span><span>significant-event count</span><span id="tls-history-last-date">—</span></div>
+              <div id="tls-memory-field" class="tls-memory-field" aria-label="Published TLS significant-event history"></div>
+              <div class="tls-memory-legend"><span><i class="is-zero"></i> zero events</span><span><i class="is-event"></i> non-zero events</span><span><i class="is-missing"></i> non-numeric point</span></div>
+              <p id="tls-history-summary" class="tls-history-summary">Loading published history…</p>
+            </div>
+            <dl class="tls-history-stats">
+              <div><dt>Published points</dt><dd id="tls-history-points">—</dd></div>
+              <div><dt>Numeric points</dt><dd id="tls-numeric-points">—</dd></div>
+              <div><dt>Non-zero points</dt><dd id="tls-nonzero-points">—</dd></div>
+              <div><dt>Value changes</dt><dd id="tls-value-changes">—</dd></div>
+              <div><dt>Current zero run</dt><dd id="tls-zero-run">—</dd><small>published points</small></div>
+              <div><dt>Latest value</dt><dd id="tls-latest-history">—</dd></div>
+            </dl>
+          </div>
+
+          <details class="tls-archive">
+            <summary>▶ Open recent published observations</summary>
+            <div class="tls-table-wrap">
+              <table class="tls-history-table">
+                <thead><tr><th scope="col">Date</th><th scope="col">Significant events</th><th scope="col">Data status</th></tr></thead>
+                <tbody id="tls-history-body"></tbody>
+              </table>
+            </div>
+          </details>
         </div>
       </section>
-      <section class="internet-detail-section" aria-labelledby="observed-title"><h2 id="observed-title">Observed</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="derived-title"><h2 id="derived-title">Derived</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="unknown-title"><h2 id="unknown-title">Unknown</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="methodology-title"><h2 id="methodology-title">Methodology</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="sources-title"><h2 id="sources-title">Sources</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
+
+      <section class="tls-section" aria-labelledby="evidence-title">
+        <div class="tls-section-inner">
+          <header class="tls-section-head">
+            <div>
+              <span class="tls-section-index">03 / EVIDENCE BOUNDARY</span>
+              <h2 id="evidence-title">What the export can — and cannot — say</h2>
+            </div>
+            <p>Observed fields, browser-derived summaries and unexported certificate or network context remain deliberately separate.</p>
+          </header>
+          <div class="tls-evidence-grid">
+            <article class="tls-evidence-card" data-kind="observed">
+              <h3>Observed</h3>
+              <ul>
+                <li>Current significant-event count, country count and significance flags.</li>
+                <li>Per-country sample size, completeness, TLS success, abort rate, ALPN presence and change score.</li>
+                <li>Exported TLS-version and cipher-class distributions.</li>
+                <li>Published significant-event history.</li>
+              </ul>
+            </article>
+            <article class="tls-evidence-card" data-kind="derived">
+              <h3>Derived</h3>
+              <ul>
+                <li><strong id="tls-tls13-count">—</strong> current country profiles have TLS 1.3 as the complete exported version distribution.</li>
+                <li><strong id="tls-aes256-count">—</strong> current country profiles have AES-256 as the complete exported cipher-class distribution.</li>
+                <li>Historical non-zero points, value changes and the current zero-run are counted in the browser.</li>
+              </ul>
+            </article>
+            <article class="tls-evidence-card" data-kind="unknown">
+              <h3>Unknown</h3>
+              <ul>
+                <li>Certificate hashes/fingerprints, subject, issuer, SANs, expiry and endpoint identities are not exported here.</li>
+                <li>Provider, route, interception, policy or operational causes are not established by these fields.</li>
+                <li>The sample set must not be treated as a country-wide TLS census or user-experience measurement.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="tls-section" aria-labelledby="methodology-title">
+        <div class="tls-section-inner">
+          <header class="tls-section-head">
+            <div>
+              <span class="tls-section-index">04 / PROVENANCE</span>
+              <h2 id="methodology-title">Method & source boundary</h2>
+            </div>
+            <p>This presentation adds no external enrichment and does not reconstruct data that the public export does not contain.</p>
+          </header>
+          <div class="tls-method-grid">
+            <article class="tls-method-block">
+              <h3>Methodology</h3>
+              <p>The published observer defines <code>tls_change_score</code> from changes in TLS-version distribution, cipher-class distribution, positive handshake-abort-rate change and absolute ALPN-presence-rate change, with components clipped to the 0–1 range. The export currently uses a <strong id="tls-method-sigma">—</strong>σ significance multiplier. The visual “surface” on this page represents those exported profile fields; it is not a certificate fingerprint.</p>
+            </article>
+            <article class="tls-method-block">
+              <h3>Sources</h3>
+              <ul>
+                <li><a class="tls-source-link" href="/world-observer/dashboard/latest/tls-fingerprint-change.json">TLS latest export ↗</a></li>
+                <li><a class="tls-source-link" href="/world-observer/dashboard/internet.json">Internet dashboard export ↗</a></li>
+                <li><a class="tls-source-link" href="/world-observer/dashboard/history/internet-observers.json">Internet history export ↗</a></li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
-  <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/dashboard/internet.json<span class="cursor"></span></span></div>
+
+  <footer class="tls-footer-terminal">
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; observe --tls-surface tls-fingerprint-change<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>

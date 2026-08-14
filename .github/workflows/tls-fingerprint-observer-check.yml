@@ -1,0 +1,40 @@
+name: TLS Fingerprint Change observer checks
+
+on:
+  pull_request:
+    paths:
+      - 'world-observer/tls-fingerprint-change.html'
+      - 'world-observer/tls-fingerprint-change.css'
+      - 'world-observer/tls-fingerprint-change.js'
+      - 'world-observer/tls-fingerprint-language.js'
+      - 'de/world-observer/tls-fingerprint-change.html'
+      - 'tests/tls-fingerprint-change.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+      - '.github/workflows/tls-fingerprint-observer-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'world-observer/tls-fingerprint-change.html'
+      - 'world-observer/tls-fingerprint-change.css'
+      - 'world-observer/tls-fingerprint-change.js'
+      - 'world-observer/tls-fingerprint-language.js'
+      - 'de/world-observer/tls-fingerprint-change.html'
+      - 'tests/tls-fingerprint-change.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check TLS showcase JavaScript syntax
+        run: |
+          node --check world-observer/tls-fingerprint-change.js
+          node --check world-observer/tls-fingerprint-language.js
+      - name: Run focused TLS showcase regression tests
+        run: node --test tests/tls-fingerprint-change.test.mjs
+      - name: Run shared Internet observer detail contract
+        run: node --test tests/internet-observer-detail-pages.test.mjs tests/internet-observer-localized-pages.test.mjs
