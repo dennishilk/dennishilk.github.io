@@ -1,0 +1,40 @@
+name: North Korea connectivity observer checks
+
+on:
+  pull_request:
+    paths:
+      - 'world-observer/north-korea-connectivity.html'
+      - 'world-observer/north-korea-connectivity.css'
+      - 'world-observer/north-korea-connectivity.js'
+      - 'world-observer/north-korea-language.js'
+      - 'de/world-observer/north-korea-connectivity.html'
+      - 'tests/north-korea-connectivity.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+      - '.github/workflows/north-korea-observer-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'world-observer/north-korea-connectivity.html'
+      - 'world-observer/north-korea-connectivity.css'
+      - 'world-observer/north-korea-connectivity.js'
+      - 'world-observer/north-korea-language.js'
+      - 'de/world-observer/north-korea-connectivity.html'
+      - 'tests/north-korea-connectivity.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check North Korea showcase JavaScript syntax
+        run: |
+          node --check world-observer/north-korea-connectivity.js
+          node --check world-observer/north-korea-language.js
+      - name: Run focused North Korea showcase regression tests
+        run: node --test tests/north-korea-connectivity.test.mjs
+      - name: Run shared Internet observer detail contract
+        run: node --test tests/internet-observer-detail-pages.test.mjs tests/internet-observer-localized-pages.test.mjs
