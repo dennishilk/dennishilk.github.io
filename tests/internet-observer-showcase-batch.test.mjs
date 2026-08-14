@@ -51,11 +51,21 @@ test("showcase runtime only reads existing static World Observer exports", () =>
   assert.ok(runtime.includes('fetch(historyUrl, { cache: "no-store" })'));
 });
 
-test("showcase shell provides every static DOM target used by the runtime", () => {
-  const ids = [...runtime.matchAll(/\$\("([^"]+)"\)/g)].map(match => match[1]);
-  assert.ok(ids.length > 5);
-  for (const id of new Set(ids)) {
-    assert.ok(detail.includes(`id=\"${id}\"`), `missing shell id ${id}`);
+test("showcase shell and existing route files provide every runtime DOM target", () => {
+  const baseIds = new Set(["observer-loading", "observer-content"]);
+  for (const slug of quick) {
+    for (const path of [`world-observer/${slug}.html`, `de/world-observer/${slug}.html`]) {
+      const html = readFileSync(new URL(path, root), "utf8");
+      for (const id of baseIds) assert.ok(html.includes(`id=\"${id}\"`), `${path}: missing base id ${id}`);
+    }
+  }
+
+  const dynamicIds = [...runtime.matchAll(/\$\("([^"]+)"\)/g)]
+    .map(match => match[1])
+    .filter(id => !baseIds.has(id));
+  assert.ok(dynamicIds.length > 5);
+  for (const id of new Set(dynamicIds)) {
+    assert.ok(detail.includes(`id=\"${id}\"`), `missing generated shell id ${id}`);
   }
 });
 
