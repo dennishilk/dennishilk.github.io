@@ -1,4 +1,30 @@
-if (!document.querySelector('script[data-site-language-loader]')) {
+const dedicatedInternetDetailIds = new Set([
+  "cuba-internet-weather",
+  "dns-time-to-answer-index",
+  "dns-tta-stress-index",
+  "global-reachability-long-horizon",
+  "global-reachability-score",
+  "http-reachability-index",
+  "internet-shrinkage-index",
+  "ipv6-adoption-locked-states",
+  "ipv6-global-compare",
+  "ipv6-locked-states",
+  "iran-dns-behavior",
+  "mx-presence-by-country",
+  "mx-presence-per-country",
+  "north-korea-connectivity",
+  "silent-countries-list",
+  "tls-fingerprint-change",
+  "traceroute-to-nowhere",
+  "undersea-cable-dependency",
+  "undersea-cable-dependency-map",
+]);
+
+const useDedicatedInternetLanguageUi =
+  document.body?.dataset.observerPage === "internet-detail"
+  && dedicatedInternetDetailIds.has(document.body?.dataset.observerId);
+
+if (!useDedicatedInternetLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
   languageScript.src = '/site-language.js?v=20260814-area51-1';
   languageScript.dataset.siteLanguageLoader = 'true';
