@@ -1,18 +1,202 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuba Internet-Wetter – World Observer</title>
-  <meta name="description" content="Öffentliche World-Observer-Detailseite für Kuba Internet-Wetter mit aktuellem Messwert und veröffentlichtem Verlauf, ohne zusätzliche kausale Interpretation.">
-  <meta name="robots" content="index,follow">
+  <meta name="description" content="Kuba Internet-Wetter visualisiert die veröffentlichte durchschnittliche Ping-Latenz des World Observer als Latenz-Wetterstation und trennt Beobachtung, Ableitung und unbekannte Ursachen klar voneinander.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://dennishilk.com/de/world-observer/cuba-internet-weather.html">
   <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/cuba-internet-weather.html">
   <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/cuba-internet-weather.html">
   <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/cuba-internet-weather.html">
-  <meta property="og:title" content="Kuba Internet-Wetter – World Observer"><meta property="og:description" content="Öffentliche Internet-Beobachtungsdaten zu Kuba Internet-Wetter mit aktuellem Exportwert und jüngstem Verlauf."><meta property="og:url" content="https://dennishilk.com/de/world-observer/cuba-internet-weather.html"><meta property="og:type" content="website"><meta property="og:locale" content="de_DE"><meta property="og:locale:alternate" content="en_US"><meta property="og:image" content="https://dennishilk.com/avatar.png">
-  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Kuba Internet-Wetter – World Observer"><meta name="twitter:description" content="Öffentliche Internet-Beobachtungsdaten zu Kuba Internet-Wetter mit aktuellem Exportwert und jüngstem Verlauf."><meta name="twitter:image" content="https://dennishilk.com/avatar.png"><meta name="theme-color" content="#05090b">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/style.css?v=42"><link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=2"><script defer src="/stars.js"></script><script defer src="/world-observer/internet-observer-detail.js?v=2"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Kuba Internet-Wetter – World Observer","description":"Öffentliche World-Observer-Detailseite für Kuba Internet-Wetter mit aktuellem Messwert und veröffentlichtem Verlauf, ohne zusätzliche kausale Interpretation.","url":"https://dennishilk.com/de/world-observer/cuba-internet-weather.html","inLanguage":"de","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <meta property="og:title" content="Kuba Internet-Wetter – World Observer">
+  <meta property="og:description" content="Öffentliche Ping-Latenz als streng abgegrenzte Mess-Wetterstation – ohne erfundene Routen, Provider oder Kausalaussagen.">
+  <meta property="og:url" content="https://dennishilk.com/de/world-observer/cuba-internet-weather.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kuba Internet-Wetter – World Observer">
+  <meta name="twitter:description" content="Veröffentlichte durchschnittliche Ping-Latenz und Verlauf als methodisch begrenzte Latenz-Wetterstation.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="theme-color" content="#020809">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css?v=42">
+  <link rel="stylesheet" href="/world-observer/cuba-internet-weather.css?v=1">
+  <script defer src="/world-observer/cuba-internet-weather-language.js?v=1"></script>
+  <script defer src="/world-observer/cuba-internet-weather.js?v=1"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Kuba Internet-Wetter – World Observer",
+    "description": "Öffentliche Beobachtungsseite für die exportierte durchschnittliche Ping-Latenz von Kuba Internet-Wetter und ihren veröffentlichten Verlauf, mit Wetterstations-Metapher ohne Kausalinterpretation.",
+    "url": "https://dennishilk.com/de/world-observer/cuba-internet-weather.html",
+    "inLanguage": "de",
+    "isPartOf": {"@type": "WebSite", "name": "World Observer", "url": "https://dennishilk.com/world-observer.html"},
+    "about": {"@type": "Thing", "name": "Öffentliche Internet-Latenzbeobachtung"}
+  }
+  </script>
 </head>
-<body data-observer-page="internet-detail" data-observer-id="cuba-internet-weather"><canvas id="stars"></canvas><div class="content world-observer-page internet-detail-page"><main><h1 class="internet-detail-eyebrow">Kuba Internet-Wetter</h1><p class="wo-back-nav internet-detail-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Zurück zu den Internet-Observern</a></p><p id="observer-loading" class="observer-limitation" aria-live="polite">Observer-Daten werden geladen…</p><div id="observer-content" class="internet-detail-shell" hidden></div></main><footer><div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/cuba-internet-weather.html<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer></div></body></html>
+<body data-observer-page="internet-detail" data-observer-id="cuba-internet-weather">
+<div class="content world-observer-page cuba-page">
+  <main>
+    <div class="cuba-topbar">
+      <div class="cuba-identity">
+        <h1 class="cuba-compact-title">KUBA INTERNET-WETTER</h1>
+        <a class="cuba-back" href="/world-observer/internet.html">← Zurück zu den Internet-Observern</a>
+      </div>
+      <nav class="cuba-language" aria-label="Seitensprache">
+        <a href="/world-observer/cuba-internet-weather.html" hreflang="en" lang="en">EN</a>
+        <span aria-hidden="true">|</span>
+        <a href="/de/world-observer/cuba-internet-weather.html" hreflang="de" lang="de" aria-current="page">DE</a>
+      </nav>
+    </div>
+
+    <p id="observer-loading" class="cuba-loading" aria-live="polite">Veröffentlichte Latenzbeobachtungen werden geladen…</p>
+
+    <div id="observer-content" class="cuba-shell" hidden>
+      <section class="cuba-section" aria-labelledby="current-observation-title">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div>
+              <span class="cuba-section-index">01 / LATENZ-WETTERSTATION</span>
+              <h2 id="current-observation-title">Aktuelle Beobachtung</h2>
+            </div>
+            <p>Veröffentlichte durchschnittliche Ping-Zeit. „Wetter“ ist nur die visuelle Metapher für wechselnde Latenz – keine Aussage über Ursache oder landesweite Internetbedingungen.</p>
+          </div>
+
+          <div class="cuba-current-grid">
+            <div class="cuba-readout">
+              <article class="cuba-primary-card">
+                <span>DURCHSCHNITTLICHE PING-ZEIT</span>
+                <strong><span id="cuba-current-value">—</span><small>ms</small></strong>
+                <p>veröffentlichter Messwert</p>
+              </article>
+              <div class="cuba-status-grid">
+                <div><span>EXPORTSTATUS</span><strong id="cuba-status">—</strong></div>
+                <div><span>METRIKPFAD</span><code>targets.1.ping.rtt_avg_ms</code></div>
+              </div>
+              <p id="observer-last-update" class="cuba-updated">Letzte Beobachtung/Aktualisierung: —</p>
+            </div>
+
+            <div class="cuba-station" aria-label="Latenzbarometer relativ zum veröffentlichten Verlaufsbereich">
+              <div class="cuba-station-labels"><span>LATENZBAROMETER</span><span>RELATIV ZUM VERÖFFENTLICHTEN BEREICH</span></div>
+              <div class="cuba-barometer-wrap">
+                <div class="cuba-barometer" aria-hidden="true">
+                  <div class="cuba-isobar cuba-isobar-a"></div>
+                  <div class="cuba-isobar cuba-isobar-b"></div>
+                  <div class="cuba-isobar cuba-isobar-c"></div>
+                  <div id="cuba-needle" class="cuba-needle"></div>
+                  <div class="cuba-hub"></div>
+                  <span class="cuba-scale-min" id="cuba-range-min">—</span>
+                  <span class="cuba-scale-max" id="cuba-range-max">—</span>
+                  <span class="cuba-scale-unit">ms</span>
+                </div>
+                <div class="cuba-current-marker">
+                  <span>AKTUELL</span>
+                  <strong id="cuba-current-repeat">— ms</strong>
+                  <small id="cuba-relative-position">Position im veröffentlichten numerischen Bereich</small>
+                </div>
+              </div>
+              <div class="cuba-horizons" aria-label="Veröffentlichte Latenz-Referenzfenster">
+                <div><span>7T-MITTEL</span><strong id="cuba-avg-7">—</strong><small>ms</small></div>
+                <div><span>30T-MITTEL</span><strong id="cuba-avg-30">—</strong><small>ms</small></div>
+                <div><span>90T-MITTEL</span><strong id="cuba-avg-90">—</strong><small>ms</small></div>
+              </div>
+              <p class="cuba-metaphor-note">VISUELLE METAPHER // NUR LATENZ // KEINE VORHERSAGE</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cuba-section" aria-labelledby="history-title">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div>
+              <span class="cuba-section-index">02 / LATENZ-ATMOSPHÄRE</span>
+              <h2 id="history-title">Verlauf</h2>
+            </div>
+            <p id="cuba-history-count-label">Veröffentlichte Latenzpunkte</p>
+          </div>
+
+          <div class="cuba-history-grid">
+            <div class="cuba-history-panel">
+              <div class="cuba-history-range"><span id="cuba-history-start">—</span><span>DURCHSCHNITTLICHE PING-ZEIT / ms</span><span id="cuba-history-end">—</span></div>
+              <div id="cuba-history-plot" class="cuba-history-plot" role="img" aria-label="Veröffentlichter Verlauf der durchschnittlichen Ping-Zeit"></div>
+              <div class="cuba-plot-legend"><span><i class="is-line"></i> veröffentlichte Latenz</span><span><i class="is-band"></i> Interquartilsbereich</span><span><i class="is-upper"></i> oberstes Dezil</span></div>
+              <p id="observer-history-summary" class="cuba-history-summary">Veröffentlichter Verlauf wird geladen…</p>
+            </div>
+            <div id="cuba-history-stats" class="cuba-history-stats" aria-label="Verlaufsstatistik"></div>
+          </div>
+
+          <details class="cuba-archive">
+            <summary>Neueste veröffentlichte Beobachtungen öffnen</summary>
+            <div class="cuba-table-wrap">
+              <table id="observer-history-table" class="cuba-history-table">
+                <thead><tr><th scope="col">Datum</th><th scope="col">Durchschnittlicher Ping</th><th scope="col">Datenstatus</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="cuba-section" aria-label="Beweisgrenze">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div><span class="cuba-section-index">03 / BEWEISGRENZE</span><h2>Was der Export sagen kann – und was nicht</h2></div>
+            <p>Gemessene Latenz, einfache numerische Ableitungen und fehlender Netzkontext bleiben getrennt.</p>
+          </div>
+          <div class="cuba-evidence-grid">
+            <article class="cuba-evidence-card" data-kind="observed">
+              <h2 id="observed-title">Beobachtet</h2>
+              <ul><li id="cuba-observed-current">Aktuell veröffentlichte durchschnittliche Ping-Zeit.</li><li id="cuba-observed-history">Veröffentlichter Latenzverlauf und Beobachtungsdaten.</li><li id="cuba-observed-status">Aktueller Exportstatus und Beobachtungszeitpunkt.</li></ul>
+            </article>
+            <article class="cuba-evidence-card" data-kind="derived">
+              <h2 id="derived-title">Abgeleitet</h2>
+              <ul><li id="cuba-derived-median">Median und Quartile aus den numerischen Verlaufspunkten.</li><li id="cuba-derived-position">Aktuelle Position im veröffentlichten numerischen Bereich.</li><li id="cuba-derived-upper">Markierungen des oberen Dezils aus der veröffentlichten Reihe.</li></ul>
+            </article>
+            <article class="cuba-evidence-card" data-kind="unknown">
+              <h2 id="unknown-title">Unbekannt</h2>
+              <ul><li>Die Zielidentität hinter <code>targets.1</code> wird in diesen Dashboard-/Verlaufsexporten nicht benannt.</li><li>Route, Provider, ASN, Ursache möglicher Überlastung und paketbezogene Pfaddetails.</li><li>Ob dieser einzelne exportierte Messwert landesweite Internetbedingungen in Kuba oder die Nutzererfahrung repräsentiert.</li></ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cuba-section" aria-label="Methodik und Quellen">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div><span class="cuba-section-index">04 / PROVENIENZ</span><h2>Methodik &amp; Quellengrenze</h2></div>
+            <p>Diese observer-spezifische Ansicht fügt keine externe Anreicherung hinzu.</p>
+          </div>
+          <div class="cuba-method-grid">
+            <div class="cuba-method-block">
+              <h2 id="methodology-title">Methodik</h2>
+              <p>Der aktuelle Wert stammt aus <code>targets.1.ping.rtt_avg_ms</code>. Das Barometer ordnet ihn ausschließlich zwischen Minimum und Maximum der numerischen veröffentlichten Verlaufspunkte ein; es ist kein Qualitätswert. Das Verlaufsfeld zeigt dieselbe exportierte Metrik. Median, Quartile, Bereichsposition und Markierungen des oberen Dezils werden im Browser aus diesen veröffentlichten Werten berechnet. „Wetter“ beschreibt nur die Darstellung und leitet weder Meteorologie noch Politik, Infrastrukturfehler oder eine Ursache ab.</p>
+            </div>
+            <div class="cuba-method-block">
+              <h2 id="sources-title">Quellen</h2>
+              <ul>
+                <li><a class="cuba-source-link" href="/world-observer/dashboard/internet.json">World Observer Internet-Dashboard-Export ↗</a></li>
+                <li><a class="cuba-source-link" href="/world-observer/dashboard/history/internet-observers.json">World Observer Internet-Verlaufs-Export ↗</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="cuba-footer-terminal">
+    <div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; observe --latency-weather cuba-internet-weather<span class="cursor"></span></span></div>
+    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</div>
+</body>
+</html>

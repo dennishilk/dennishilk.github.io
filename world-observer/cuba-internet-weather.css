@@ -1,0 +1,887 @@
+:root {
+  --cuba-bg: #020708;
+  --cuba-panel: rgba(3, 16, 18, 0.78);
+  --cuba-panel-strong: rgba(4, 22, 25, 0.92);
+  --cuba-line: rgba(61, 214, 226, 0.25);
+  --cuba-line-strong: rgba(61, 214, 226, 0.52);
+  --cuba-cyan: #52e8f2;
+  --cuba-cyan-soft: #baf7fa;
+  --cuba-teal: #2baab5;
+  --cuba-amber: #e4b860;
+  --cuba-green: #7bdc9a;
+  --cuba-text: #c2d9dc;
+  --cuba-muted: #78999d;
+  --cuba-grid: rgba(82, 232, 242, 0.055);
+}
+
+html {
+  background: var(--cuba-bg);
+}
+
+body[data-observer-id="cuba-internet-weather"] {
+  background:
+    radial-gradient(circle at 52% 18%, rgba(40, 151, 160, 0.08), transparent 34rem),
+    linear-gradient(180deg, #020708 0%, #010505 100%);
+  color: var(--cuba-text);
+}
+
+body[data-observer-id="cuba-internet-weather"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--cuba-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cuba-grid) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.72), transparent 82%);
+}
+
+.cuba-page {
+  width: min(1180px, calc(100% - 34px));
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-top: 34px;
+}
+
+.cuba-page main {
+  display: grid;
+  gap: 22px;
+}
+
+.cuba-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.cuba-identity {
+  display: grid;
+  gap: 12px;
+}
+
+.cuba-compact-title {
+  margin: 0;
+  color: var(--cuba-cyan);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.cuba-back,
+.cuba-language a {
+  color: var(--cuba-cyan);
+  text-decoration: none;
+}
+
+.cuba-back {
+  width: fit-content;
+  padding: 8px 12px;
+  border: 1px solid var(--cuba-line-strong);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.cuba-back:hover,
+.cuba-back:focus-visible {
+  border-color: var(--cuba-cyan);
+  background: rgba(82, 232, 242, 0.06);
+}
+
+.cuba-language {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--cuba-line-strong);
+  color: var(--cuba-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+
+.cuba-language a:not([aria-current="page"]) {
+  color: var(--cuba-muted);
+}
+
+.cuba-language a:hover,
+.cuba-language a:focus-visible {
+  color: var(--cuba-cyan-soft);
+}
+
+.cuba-loading {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border-left: 2px solid var(--cuba-cyan);
+  background: rgba(82, 232, 242, 0.035);
+  color: var(--cuba-muted);
+  font-size: 0.78rem;
+}
+
+.cuba-loading[data-state="error"] {
+  border-color: var(--cuba-amber);
+  color: var(--cuba-amber);
+}
+
+.cuba-shell {
+  display: grid;
+  gap: 22px;
+}
+
+.cuba-section {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--cuba-line-strong);
+  background:
+    linear-gradient(135deg, rgba(82, 232, 242, 0.028), transparent 28%),
+    var(--cuba-panel);
+}
+
+.cuba-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0 49.85%, rgba(82,232,242,.025) 50%, transparent 50.15%);
+}
+
+.cuba-section-inner {
+  position: relative;
+  z-index: 1;
+  padding: 30px;
+}
+
+.cuba-section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.7fr);
+  gap: 28px;
+  align-items: end;
+  margin-bottom: 24px;
+}
+
+.cuba-section-index {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--cuba-cyan);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.cuba-section-head h2 {
+  margin: 0;
+  color: #d7f4f6;
+  font-size: clamp(1.45rem, 2.4vw, 2.15rem);
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  line-height: 1.2;
+}
+
+.cuba-section-head > p {
+  margin: 0;
+  color: var(--cuba-muted);
+  font-size: 0.72rem;
+  line-height: 1.65;
+  text-align: right;
+}
+
+.cuba-current-grid {
+  display: grid;
+  grid-template-columns: minmax(235px, 0.68fr) minmax(0, 1.82fr);
+  gap: 18px;
+}
+
+.cuba-readout,
+.cuba-station,
+.cuba-history-panel,
+.cuba-history-stats > div,
+.cuba-evidence-card,
+.cuba-method-block {
+  border: 1px solid var(--cuba-line);
+  background: rgba(0, 7, 8, 0.66);
+}
+
+.cuba-readout {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 18px;
+}
+
+.cuba-primary-card {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 16px 8px 20px;
+  border-bottom: 1px solid var(--cuba-line);
+  text-align: center;
+}
+
+.cuba-primary-card > span,
+.cuba-status-grid span,
+.cuba-station-labels,
+.cuba-current-marker > span,
+.cuba-horizons span,
+.cuba-history-range,
+.cuba-history-stats span {
+  color: var(--cuba-muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cuba-primary-card strong {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--cuba-cyan-soft);
+  font-size: clamp(3rem, 6vw, 5.35rem);
+  font-weight: 300;
+  line-height: 1;
+  text-shadow: 0 0 28px rgba(82, 232, 242, 0.12);
+}
+
+.cuba-primary-card strong small {
+  color: var(--cuba-cyan);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+.cuba-primary-card p {
+  margin: 0;
+  color: var(--cuba-muted);
+  font-size: 0.7rem;
+}
+
+.cuba-status-grid {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--cuba-line);
+}
+
+.cuba-status-grid > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cuba-status-grid strong {
+  color: var(--cuba-green);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.cuba-status-grid code,
+.cuba-method-block code,
+.cuba-evidence-card code {
+  overflow-wrap: anywhere;
+  color: var(--cuba-cyan);
+  font-family: inherit;
+  font-size: 0.68rem;
+}
+
+.cuba-updated {
+  margin: auto 0 0;
+  padding-top: 18px;
+  color: var(--cuba-text);
+  font-size: 0.76rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.cuba-station {
+  position: relative;
+  overflow: hidden;
+  min-height: 390px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 62% 45%, rgba(82, 232, 242, 0.055), transparent 34%),
+    repeating-linear-gradient(0deg, transparent 0 35px, rgba(82,232,242,.035) 36px),
+    repeating-linear-gradient(90deg, transparent 0 51px, rgba(82,232,242,.025) 52px),
+    rgba(0, 7, 8, 0.72);
+}
+
+.cuba-station-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--cuba-line);
+}
+
+.cuba-station-labels span:last-child {
+  color: var(--cuba-amber);
+}
+
+.cuba-barometer-wrap {
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) minmax(145px, 0.45fr);
+  align-items: center;
+  gap: 20px;
+  min-height: 250px;
+  padding: 18px 14px 8px;
+}
+
+.cuba-barometer {
+  position: relative;
+  width: min(280px, 92%);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border: 1px solid rgba(82, 232, 242, 0.3);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 8%, rgba(82,232,242,.045) 8.4% 9%, transparent 9.4% 34%, rgba(82,232,242,.045) 34.4% 35%, transparent 35.4% 48%, rgba(82,232,242,.04) 48.4% 49%, transparent 49.4%),
+    conic-gradient(from 215deg, rgba(82,232,242,.16), rgba(82,232,242,.025) 42%, rgba(228,184,96,.14) 74%, transparent 75% 100%);
+  box-shadow: inset 0 0 45px rgba(82, 232, 242, 0.035);
+}
+
+.cuba-barometer::before,
+.cuba-barometer::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border: 1px dashed rgba(82, 232, 242, 0.16);
+  border-radius: 50%;
+}
+
+.cuba-barometer::after {
+  inset: 27%;
+  border-color: rgba(82, 232, 242, 0.11);
+}
+
+.cuba-isobar {
+  position: absolute;
+  border: 1px solid rgba(82, 232, 242, 0.16);
+  border-radius: 50%;
+  transform-origin: center;
+  animation: cuba-drift 12s ease-in-out infinite alternate;
+}
+
+.cuba-isobar-a {
+  inset: 17% 12% 22% 18%;
+  border-radius: 43% 57% 50% 50%;
+}
+
+.cuba-isobar-b {
+  inset: 29% 22% 33% 28%;
+  border-radius: 58% 42% 46% 54%;
+  animation-delay: -4s;
+}
+
+.cuba-isobar-c {
+  inset: 39% 35% 40% 33%;
+  border-color: rgba(228, 184, 96, 0.2);
+  animation-delay: -7s;
+}
+
+@keyframes cuba-drift {
+  from { transform: rotate(-4deg) scale(0.98); }
+  to { transform: rotate(5deg) scale(1.02); }
+}
+
+.cuba-needle {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: 2px;
+  height: 38%;
+  background: linear-gradient(to top, var(--cuba-cyan), var(--cuba-amber));
+  transform: translateX(-50%) rotate(-70deg);
+  transform-origin: 50% 100%;
+  box-shadow: 0 0 14px rgba(82, 232, 242, 0.45);
+  transition: transform 650ms cubic-bezier(.2,.8,.2,1);
+}
+
+.cuba-needle::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--cuba-amber);
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--cuba-bg);
+}
+
+.cuba-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--cuba-cyan);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: #031012;
+  box-shadow: 0 0 18px rgba(82,232,242,.35);
+}
+
+.cuba-scale-min,
+.cuba-scale-max,
+.cuba-scale-unit {
+  position: absolute;
+  color: var(--cuba-muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+}
+
+.cuba-scale-min { left: 7%; bottom: 17%; }
+.cuba-scale-max { right: 7%; bottom: 17%; }
+.cuba-scale-unit { left: 50%; bottom: 7%; transform: translateX(-50%); }
+
+.cuba-current-marker {
+  display: grid;
+  gap: 11px;
+  align-content: center;
+  min-height: 145px;
+  padding: 16px;
+  border-left: 1px solid var(--cuba-line-strong);
+}
+
+.cuba-current-marker strong {
+  color: var(--cuba-cyan-soft);
+  font-size: clamp(1.65rem, 3vw, 2.6rem);
+  font-weight: 300;
+  letter-spacing: 0.03em;
+}
+
+.cuba-current-marker small {
+  color: var(--cuba-muted);
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.cuba-horizons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 2px;
+  border: 1px solid var(--cuba-line);
+  background: var(--cuba-line);
+}
+
+.cuba-horizons > div {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 7px;
+  padding: 12px 14px;
+  background: #031012;
+}
+
+.cuba-horizons strong {
+  color: var(--cuba-cyan-soft);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.cuba-horizons small {
+  color: var(--cuba-muted);
+  font-size: 0.62rem;
+}
+
+.cuba-metaphor-note {
+  margin: 14px 0 0;
+  color: var(--cuba-amber);
+  font-size: 0.59rem;
+  letter-spacing: 0.14em;
+  text-align: center;
+}
+
+.cuba-history-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 205px;
+  gap: 18px;
+}
+
+.cuba-history-panel {
+  min-width: 0;
+  padding: 18px;
+}
+
+.cuba-history-range {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+.cuba-history-plot {
+  position: relative;
+  min-height: 310px;
+  border: 1px solid var(--cuba-line);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 48px, rgba(82,232,242,.035) 49px),
+    repeating-linear-gradient(90deg, transparent 0 74px, rgba(82,232,242,.026) 75px),
+    rgba(1, 10, 11, 0.72);
+}
+
+.cuba-history-plot svg {
+  display: block;
+  width: 100%;
+  height: 310px;
+  overflow: visible;
+}
+
+.cuba-chart-grid {
+  stroke: rgba(82, 232, 242, 0.1);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.cuba-iqr-band {
+  fill: rgba(82, 232, 242, 0.065);
+  stroke: rgba(82, 232, 242, 0.18);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.cuba-history-fill {
+  fill: url(#cubaHistoryFill);
+  opacity: 0.8;
+}
+
+.cuba-history-line {
+  fill: none;
+  stroke: var(--cuba-cyan);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 4px rgba(82,232,242,.25));
+}
+
+.cuba-upper-point {
+  fill: #061113;
+  stroke: var(--cuba-amber);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.cuba-latest-point {
+  fill: var(--cuba-cyan-soft);
+  stroke: var(--cuba-cyan);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.cuba-axis-label {
+  fill: var(--cuba-muted);
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.cuba-plot-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+  color: var(--cuba-muted);
+  font-size: 0.64rem;
+}
+
+.cuba-plot-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.cuba-plot-legend i {
+  display: inline-block;
+  width: 18px;
+  height: 6px;
+  border: 1px solid var(--cuba-line-strong);
+}
+
+.cuba-plot-legend .is-line { height: 1px; border: 0; background: var(--cuba-cyan); }
+.cuba-plot-legend .is-band { background: rgba(82,232,242,.09); }
+.cuba-plot-legend .is-upper { width: 7px; height: 7px; border-radius: 50%; border-color: var(--cuba-amber); }
+
+.cuba-history-summary {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-left: 2px solid var(--cuba-cyan);
+  color: var(--cuba-text);
+  font-size: 0.72rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.cuba-history-stats {
+  display: grid;
+  align-content: stretch;
+  gap: 8px;
+}
+
+.cuba-history-stats > div {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  min-height: 64px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.cuba-history-stats strong {
+  color: var(--cuba-cyan-soft);
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.cuba-history-stats small {
+  color: var(--cuba-muted);
+  font-size: 0.58rem;
+}
+
+.cuba-archive {
+  margin-top: 16px;
+  border-top: 1px solid var(--cuba-line);
+}
+
+.cuba-archive summary {
+  padding: 13px 6px;
+  color: var(--cuba-cyan);
+  cursor: pointer;
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.cuba-table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--cuba-line);
+}
+
+.cuba-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.68rem;
+}
+
+.cuba-history-table th,
+.cuba-history-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(82,232,242,.08);
+  text-align: left;
+}
+
+.cuba-history-table th {
+  color: var(--cuba-muted);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cuba-history-table td:nth-child(2) {
+  color: var(--cuba-cyan-soft);
+}
+
+.cuba-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.cuba-evidence-card {
+  padding: 20px;
+}
+
+.cuba-evidence-card h2,
+.cuba-method-block h2 {
+  margin: 0 0 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.cuba-evidence-card[data-kind="observed"] h2 { color: var(--cuba-cyan); }
+.cuba-evidence-card[data-kind="derived"] h2 { color: var(--cuba-green); }
+.cuba-evidence-card[data-kind="unknown"] h2 { color: var(--cuba-amber); }
+
+.cuba-evidence-card ul,
+.cuba-method-block ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--cuba-text);
+  font-size: 0.68rem;
+  line-height: 1.7;
+}
+
+.cuba-method-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 0.9fr;
+  gap: 18px;
+}
+
+.cuba-method-block {
+  padding: 20px;
+}
+
+.cuba-method-block h2 {
+  color: var(--cuba-cyan-soft);
+}
+
+.cuba-method-block p {
+  margin: 0;
+  color: var(--cuba-text);
+  font-size: 0.68rem;
+  line-height: 1.75;
+  text-align: center;
+}
+
+.cuba-source-link {
+  color: var(--cuba-cyan);
+  text-decoration: none;
+}
+
+.cuba-source-link:hover,
+.cuba-source-link:focus-visible {
+  color: var(--cuba-cyan-soft);
+  text-decoration: underline;
+}
+
+.cuba-footer-terminal {
+  margin-top: 70px;
+  padding: 28px 0 18px;
+  border-top: 1px solid rgba(82,232,242,.14);
+}
+
+.cuba-footer-terminal .nebby-terminal-line {
+  justify-content: center;
+}
+
+.cuba-footer-terminal .coffee-text {
+  color: #00bfff;
+}
+
+.cuba-footer-terminal .footer-links {
+  margin-top: 12px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .cuba-section-head {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .cuba-section-head > p {
+    text-align: left;
+  }
+
+  .cuba-current-grid,
+  .cuba-history-grid,
+  .cuba-method-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cuba-history-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cuba-history-stats > div {
+    min-height: 72px;
+  }
+}
+
+@media (max-width: 680px) {
+  .cuba-page {
+    width: min(100% - 22px, 1180px);
+    padding-top: 22px;
+  }
+
+  .cuba-topbar {
+    align-items: flex-start;
+  }
+
+  .cuba-compact-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.24em;
+  }
+
+  .cuba-back {
+    font-size: 0.62rem;
+  }
+
+  .cuba-section-inner {
+    padding: 20px 16px;
+  }
+
+  .cuba-barometer-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .cuba-current-marker {
+    min-height: auto;
+    border-top: 1px solid var(--cuba-line-strong);
+    border-left: 0;
+    text-align: center;
+  }
+
+  .cuba-horizons {
+    grid-template-columns: 1fr;
+  }
+
+  .cuba-horizons > div {
+    grid-template-columns: 1fr auto auto;
+  }
+
+  .cuba-evidence-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cuba-history-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cuba-history-range {
+    font-size: 0.54rem;
+  }
+
+  .cuba-history-plot,
+  .cuba-history-plot svg {
+    min-height: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 430px) {
+  .cuba-topbar {
+    flex-direction: column;
+  }
+
+  .cuba-language {
+    align-self: flex-end;
+  }
+
+  .cuba-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cuba-history-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cuba-section-head h2 {
+    font-size: 1.32rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cuba-isobar {
+    animation: none !important;
+  }
+
+  .cuba-needle,
+  .cuba-back {
+    transition: none !important;
+  }
+}
