@@ -4,75 +4,197 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cuba Internet Weather – World Observer</title>
-  <meta name="description" content="Cuba Internet Weather observer detail page in World Observer.">
+  <meta name="description" content="Cuba Internet Weather visualizes the World Observer's published average ping-time series as a latency weather station, with explicit limits on what the export can establish.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://dennishilk.com/world-observer/cuba-internet-weather.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/cuba-internet-weather.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/cuba-internet-weather.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/cuba-internet-weather.html">
   <meta property="og:title" content="Cuba Internet Weather – World Observer">
-  <meta property="og:description" content="Cuba Internet Weather observer detail page in World Observer.">
+  <meta property="og:description" content="A public latency weather station for the exported Cuba Internet Weather ping-time series — without invented routes, providers or causal claims.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/cuba-internet-weather.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cuba Internet Weather – World Observer">
+  <meta name="twitter:description" content="Published average ping time and latency history shown as a carefully bounded measurement weather station.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="theme-color" content="#020809">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
-  <link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=1">
-  <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/internet-observer-detail.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Cuba Internet Weather – World Observer","description":"Cuba Internet Weather observer detail page in World Observer.","url":"https://dennishilk.com/world-observer/cuba-internet-weather.html","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <link rel="stylesheet" href="/world-observer/cuba-internet-weather.css?v=1">
+  <script defer src="/world-observer/cuba-internet-weather-language.js?v=1"></script>
+  <script defer src="/world-observer/cuba-internet-weather.js?v=1"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Cuba Internet Weather – World Observer",
+    "description": "Public observation page for the exported Cuba Internet Weather average ping-time metric and its published history, using a weather-station visual metaphor without causal interpretation.",
+    "url": "https://dennishilk.com/world-observer/cuba-internet-weather.html",
+    "inLanguage": "en",
+    "isPartOf": {"@type": "WebSite", "name": "World Observer", "url": "https://dennishilk.com/world-observer.html"},
+    "about": {"@type": "Thing", "name": "Public Internet latency observation"}
+  }
+  </script>
 </head>
 <body data-observer-page="internet-detail" data-observer-id="cuba-internet-weather">
-<canvas id="stars"></canvas>
-<div class="content world-observer-page">
-  <header class="dashboard-header wo-page-header">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Cuba Internet Weather</span></h1>
-    <p>Internet observer detail page using the existing public static World Observer exports.</p>
-    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
-    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a>
-      <a href="/world-observer/internet.html" class="active" aria-current="page">Internet</a>
-      <a href="/world-observer/media.html">Media</a>
-      <a href="/world-observer/society.html">Society</a>
-      <a href="/world-observer/hometown.html">Hometown</a>
-      <a href="/world-observer/environment.html">Earth &amp; Space</a>
-      <a href="/world-observer/technology.html">Technology</a>
-      <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
-    </nav>
-  </header>
+<div class="content world-observer-page cuba-page">
   <main>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
-    <p id="observer-loading" class="observer-limitation" aria-live="polite">Loading observer data…</p>
-    <div id="observer-content" class="internet-detail-shell" hidden>
-      <section class="internet-detail-summary" aria-labelledby="current-observation-title">
-        <h2 id="current-observation-title">Current Observation</h2>
-        <div class="internet-detail-summary-grid">
-          <p class="internet-detail-primary"><span id="observer-primary-label">Primary metric</span><strong id="observer-primary-value">—</strong></p>
-          <div>
-            <div id="observer-statuses" class="internet-detail-statuses" aria-label="Observer status"></div>
-            <p id="observer-last-update" class="internet-detail-updated">Last observation/update: —</p>
+    <div class="cuba-topbar">
+      <div class="cuba-identity">
+        <h1 class="cuba-compact-title">CUBA INTERNET WEATHER</h1>
+        <a class="cuba-back" href="/world-observer/internet.html">← Back to Internet Observers</a>
+      </div>
+      <nav class="cuba-language" aria-label="Page language">
+        <a href="/world-observer/cuba-internet-weather.html" hreflang="en" lang="en" aria-current="page">EN</a>
+        <span aria-hidden="true">|</span>
+        <a href="/de/world-observer/cuba-internet-weather.html" hreflang="de" lang="de">DE</a>
+      </nav>
+    </div>
+
+    <p id="observer-loading" class="cuba-loading" aria-live="polite">Loading published latency observations…</p>
+
+    <div id="observer-content" class="cuba-shell" hidden>
+      <section class="cuba-section" aria-labelledby="current-observation-title">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div>
+              <span class="cuba-section-index">01 / LATENCY WEATHER STATION</span>
+              <h2 id="current-observation-title">Current Observation</h2>
+            </div>
+            <p>Published average ping time. “Weather” is a visual metaphor for changing latency, not a claim about cause or country-wide Internet conditions.</p>
           </div>
-          <dl id="observer-secondary-metrics" class="internet-secondary-metrics internet-detail-secondary"></dl>
+
+          <div class="cuba-current-grid">
+            <div class="cuba-readout">
+              <article class="cuba-primary-card">
+                <span>AVERAGE PING TIME</span>
+                <strong><span id="cuba-current-value">—</span><small>ms</small></strong>
+                <p>published metric value</p>
+              </article>
+              <div class="cuba-status-grid">
+                <div><span>EXPORT STATUS</span><strong id="cuba-status">—</strong></div>
+                <div><span>METRIC PATH</span><code>targets.1.ping.rtt_avg_ms</code></div>
+              </div>
+              <p id="observer-last-update" class="cuba-updated">Last observation/update: —</p>
+            </div>
+
+            <div class="cuba-station" aria-label="Latency barometer scaled to the published history range">
+              <div class="cuba-station-labels"><span>LATENCY BAROMETER</span><span>RELATIVE TO PUBLISHED RANGE</span></div>
+              <div class="cuba-barometer-wrap">
+                <div class="cuba-barometer" aria-hidden="true">
+                  <div class="cuba-isobar cuba-isobar-a"></div>
+                  <div class="cuba-isobar cuba-isobar-b"></div>
+                  <div class="cuba-isobar cuba-isobar-c"></div>
+                  <div id="cuba-needle" class="cuba-needle"></div>
+                  <div class="cuba-hub"></div>
+                  <span class="cuba-scale-min" id="cuba-range-min">—</span>
+                  <span class="cuba-scale-max" id="cuba-range-max">—</span>
+                  <span class="cuba-scale-unit">ms</span>
+                </div>
+                <div class="cuba-current-marker">
+                  <span>CURRENT</span>
+                  <strong id="cuba-current-repeat">— ms</strong>
+                  <small id="cuba-relative-position">position within published numeric range</small>
+                </div>
+              </div>
+              <div class="cuba-horizons" aria-label="Published latency reference windows">
+                <div><span>7D MEAN</span><strong id="cuba-avg-7">—</strong><small>ms</small></div>
+                <div><span>30D MEAN</span><strong id="cuba-avg-30">—</strong><small>ms</small></div>
+                <div><span>90D MEAN</span><strong id="cuba-avg-90">—</strong><small>ms</small></div>
+              </div>
+              <p class="cuba-metaphor-note">VISUAL METAPHOR // LATENCY ONLY // NO FORECAST</p>
+            </div>
+          </div>
         </div>
       </section>
-      <section class="internet-detail-section internet-detail-history-section" aria-labelledby="history-title">
-        <h2 id="history-title">History</h2>
-        <p id="observer-history-summary" class="internet-detail-placeholder">Loading published history…</p>
-        <div class="internet-detail-history-wrap">
-          <table id="observer-history-table" class="internet-detail-history">
-            <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+
+      <section class="cuba-section" aria-labelledby="history-title">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div>
+              <span class="cuba-section-index">02 / LATENCY ATMOSPHERE</span>
+              <h2 id="history-title">History</h2>
+            </div>
+            <p id="cuba-history-count-label">Published latency points</p>
+          </div>
+
+          <div class="cuba-history-grid">
+            <div class="cuba-history-panel">
+              <div class="cuba-history-range"><span id="cuba-history-start">—</span><span>AVERAGE PING TIME / ms</span><span id="cuba-history-end">—</span></div>
+              <div id="cuba-history-plot" class="cuba-history-plot" role="img" aria-label="Published average ping-time history"></div>
+              <div class="cuba-plot-legend"><span><i class="is-line"></i> published latency</span><span><i class="is-band"></i> interquartile band</span><span><i class="is-upper"></i> upper-decile points</span></div>
+              <p id="observer-history-summary" class="cuba-history-summary">Loading published history…</p>
+            </div>
+            <div id="cuba-history-stats" class="cuba-history-stats" aria-label="History statistics"></div>
+          </div>
+
+          <details class="cuba-archive">
+            <summary>Open recent published observations</summary>
+            <div class="cuba-table-wrap">
+              <table id="observer-history-table" class="cuba-history-table">
+                <thead><tr><th scope="col">Date</th><th scope="col">Average ping</th><th scope="col">Data status</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
         </div>
       </section>
-      <section class="internet-detail-section" aria-labelledby="observed-title"><h2 id="observed-title">Observed</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="derived-title"><h2 id="derived-title">Derived</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="unknown-title"><h2 id="unknown-title">Unknown</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="methodology-title"><h2 id="methodology-title">Methodology</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="sources-title"><h2 id="sources-title">Sources</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
+
+      <section class="cuba-section" aria-label="Evidence boundary">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div><span class="cuba-section-index">03 / EVIDENCE BOUNDARY</span><h2>What the export can — and cannot — say</h2></div>
+            <p>Measured latency, browser-derived numeric context and missing network context remain separate.</p>
+          </div>
+          <div class="cuba-evidence-grid">
+            <article class="cuba-evidence-card" data-kind="observed">
+              <h2 id="observed-title">Observed</h2>
+              <ul><li id="cuba-observed-current">Current published average ping time.</li><li id="cuba-observed-history">Published latency history and dates.</li><li id="cuba-observed-status">Current export status and observation time.</li></ul>
+            </article>
+            <article class="cuba-evidence-card" data-kind="derived">
+              <h2 id="derived-title">Derived</h2>
+              <ul><li id="cuba-derived-median">Median and quartiles calculated from numeric history points.</li><li id="cuba-derived-position">Current position within the published numeric range.</li><li id="cuba-derived-upper">Upper-decile markers calculated from the published series.</li></ul>
+            </article>
+            <article class="cuba-evidence-card" data-kind="unknown">
+              <h2 id="unknown-title">Unknown</h2>
+              <ul><li>The target identity represented by <code>targets.1</code> is not named in these dashboard/history exports.</li><li>Route, provider, ASN, congestion source and packet-level path details.</li><li>Whether this single exported metric represents country-wide Cuban Internet conditions or user experience.</li></ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cuba-section" aria-label="Methodology and sources">
+        <div class="cuba-section-inner">
+          <div class="cuba-section-head">
+            <div><span class="cuba-section-index">04 / PROVENANCE</span><h2>Method &amp; source boundary</h2></div>
+            <p>No external enrichment is added to this observer-specific view.</p>
+          </div>
+          <div class="cuba-method-grid">
+            <div class="cuba-method-block">
+              <h2 id="methodology-title">Methodology</h2>
+              <p>The current value comes from <code>targets.1.ping.rtt_avg_ms</code>. The barometer maps that value only against the minimum and maximum numeric values in the published history; it is not a quality score. The history panel plots the same exported metric. Median, quartiles, range position and upper-decile markers are presentation-time calculations from those published values. “Weather” describes the visual language only and does not infer meteorology, policy, infrastructure failure or cause.</p>
+            </div>
+            <div class="cuba-method-block">
+              <h2 id="sources-title">Sources</h2>
+              <ul>
+                <li><a class="cuba-source-link" href="/world-observer/dashboard/internet.json">World Observer Internet dashboard export ↗</a></li>
+                <li><a class="cuba-source-link" href="/world-observer/dashboard/history/internet-observers.json">World Observer Internet history export ↗</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
-  <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/dashboard/internet.json<span class="cursor"></span></span></div>
+
+  <footer class="cuba-footer-terminal">
+    <div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; observe --latency-weather cuba-internet-weather<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>

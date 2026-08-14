@@ -1,0 +1,40 @@
+name: Cuba Internet Weather observer checks
+
+on:
+  pull_request:
+    paths:
+      - 'world-observer/cuba-internet-weather.html'
+      - 'world-observer/cuba-internet-weather.css'
+      - 'world-observer/cuba-internet-weather.js'
+      - 'world-observer/cuba-internet-weather-language.js'
+      - 'de/world-observer/cuba-internet-weather.html'
+      - 'tests/cuba-internet-weather.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+      - '.github/workflows/cuba-internet-weather-observer-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'world-observer/cuba-internet-weather.html'
+      - 'world-observer/cuba-internet-weather.css'
+      - 'world-observer/cuba-internet-weather.js'
+      - 'world-observer/cuba-internet-weather-language.js'
+      - 'de/world-observer/cuba-internet-weather.html'
+      - 'tests/cuba-internet-weather.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Cuba showcase JavaScript syntax
+        run: |
+          node --check world-observer/cuba-internet-weather.js
+          node --check world-observer/cuba-internet-weather-language.js
+      - name: Run focused Cuba showcase regression tests
+        run: node --test tests/cuba-internet-weather.test.mjs
+      - name: Run shared Internet observer detail contract
+        run: node --test tests/internet-observer-detail-pages.test.mjs tests/internet-observer-localized-pages.test.mjs

@@ -62,6 +62,11 @@ test("all 19 public Internet observers have German crawlable routes", () => {
       assert.ok(html.includes('/world-observer/internet-shrinkage-index.js?v=1'), slug);
       assert.ok(html.includes('/world-observer/internet-shrinkage-language.js?v=1'), slug);
       assert.ok(html.includes('class="shrink-language"'), slug);
+    } else if (slug === "cuba-internet-weather") {
+      assert.ok(html.includes('/world-observer/cuba-internet-weather.css?v=1'), slug);
+      assert.ok(html.includes('/world-observer/cuba-internet-weather.js?v=1'), slug);
+      assert.ok(html.includes('/world-observer/cuba-internet-weather-language.js?v=1'), slug);
+      assert.ok(html.includes('class="cuba-language"'), slug);
     } else {
       assert.ok(html.includes('/world-observer/internet-observer-detail.css?v=2'), slug);
       assert.ok(html.includes('/world-observer/internet-observer-detail.js?v=2'), slug);
