@@ -2480,6 +2480,7 @@ function renderInternetObservers(data, history) {
   container.textContent = "";
 
   const observers = normalizeCollection(data)
+    .filter((observer) => getObserverId(observer) !== "east-frisia-water-observer")
     .slice()
     .sort((a, b) => Number(a?.dashboard_priority ?? a?.priority ?? 9999) - Number(b?.dashboard_priority ?? b?.priority ?? 9999));
   const historyById = history ? normalizeInternetHistory(history) : new Map();
@@ -2506,7 +2507,8 @@ function renderInternetObservers(data, history) {
       const numericPointCount = getHistoryCount(historyRecord, "numeric_point_count", numericPoints.length);
       const trendEmptyMessage = getTrendEmptyMessage(totalPointCount, numericPointCount);
       const lastUpdate = formatDate(getLastUpdate(observer, data));
-      const detailsId = `internet-observer-details-${index}`;
+      const observerSlug = id === "area51-reachability" ? "area51" : id;
+      const observerUrl = `/world-observer/${observerSlug}.html`;
 
       const card = document.createElement("article");
       card.className = "internet-observer-card";
@@ -2514,11 +2516,10 @@ function renderInternetObservers(data, history) {
         card.classList.add("signal-unavailable");
       }
 
-      const toggle = document.createElement("button");
-      toggle.className = "internet-card-toggle";
-      toggle.type = "button";
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-controls", detailsId);
+      const link = document.createElement("a");
+      link.className = "internet-observer-card-link";
+      link.href = observerUrl;
+      link.setAttribute("aria-label", `Open ${titleText} observer`);
 
       const header = document.createElement("div");
       header.className = "internet-card-header";
@@ -2562,40 +2563,13 @@ function renderInternetObservers(data, history) {
       lastSeen.className = "internet-last-seen";
       lastSeen.textContent = `Last update: ${lastUpdate}`;
 
-      toggle.append(header, metric, signalNote, secondarySummary, lastSeen, renderInternetTrendSummary(historyRecord, numericPoints, titleText, trendEmptyMessage));
+      const openAffordance = document.createElement("span");
+      openAffordance.className = "internet-observer-open-link";
+      openAffordance.setAttribute("aria-hidden", "true");
+      openAffordance.textContent = "Open observer →";
 
-      const details = document.createElement("div");
-      details.className = "internet-card-details";
-      details.id = detailsId;
-      details.hidden = true;
-
-      const meta = document.createElement("dl");
-      meta.className = "internet-detail-list";
-      [
-        ["Observer", id],
-        ["Last update", lastUpdate],
-        ["History points", formatNumber(totalPointCount)],
-        ["Numeric trend points", formatNumber(numericPointCount)],
-      ].forEach(([label, value]) => {
-        const term = document.createElement("dt");
-        term.textContent = label;
-        const description = document.createElement("dd");
-        description.textContent = value;
-        meta.append(term, description);
-      });
-
-      const secondaryTitle = document.createElement("h4");
-      secondaryTitle.textContent = "Secondary metrics";
-      details.append(meta, secondaryTitle, renderMetricList(secondaryMetrics, "internet-secondary-metrics details"));
-
-      toggle.addEventListener("click", () => {
-        const expanded = toggle.getAttribute("aria-expanded") === "true";
-        toggle.setAttribute("aria-expanded", String(!expanded));
-        details.hidden = expanded;
-        card.classList.toggle("expanded", !expanded);
-      });
-
-      card.append(toggle, details);
+      link.append(header, metric, signalNote, secondarySummary, lastSeen, renderInternetTrendSummary(historyRecord, numericPoints, titleText, trendEmptyMessage), openAffordance);
+      card.appendChild(link);
       container.appendChild(card);
     } catch (error) {
       renderInternetObserverFallback(container, rawObserver, index, error);
