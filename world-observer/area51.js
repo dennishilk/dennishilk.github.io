@@ -130,6 +130,26 @@
     return segments;
   }
 
+  function niceStep(rawStep) {
+    if (!Number.isFinite(rawStep) || rawStep <= 0) return 1;
+    const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+    const normalized = rawStep / magnitude;
+    const factor = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+    return factor * magnitude;
+  }
+
+  function buildAxisScale(values) {
+    const rawMinimum = Math.min(0, ...values);
+    const rawMaximum = Math.max(0, ...values);
+    const rawRange = rawMaximum - rawMinimum || 1;
+    const step = niceStep(rawRange / 4);
+    const minimum = Math.floor(rawMinimum / step) * step;
+    let maximum = Math.ceil(rawMaximum / step) * step;
+    if (maximum === minimum) maximum = minimum + step;
+    const tickCount = Math.max(1, Math.round((maximum - minimum) / step));
+    return { minimum, maximum, step, tickCount };
+  }
+
   function renderHistoryChart(record) {
     const container = document.getElementById("area51-history-chart");
     container.textContent = "";
@@ -147,16 +167,15 @@
 
     const width = 800;
     const height = 360;
-    const margin = { top: 22, right: 24, bottom: 52, left: 64 };
+    const margin = { top: 22, right: 24, bottom: 52, left: 78 };
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
     const values = numericPoints.map((point) => point.numericValue);
-    const minimum = Math.min(0, ...values);
-    const maximum = Math.max(...values);
-    const range = maximum - minimum || 1;
+    const axis = buildAxisScale(values);
+    const range = axis.maximum - axis.minimum || axis.step;
     const denominator = Math.max(points.length - 1, 1);
     const x = (index) => margin.left + (index / denominator) * plotWidth;
-    const y = (value) => margin.top + (1 - ((value - minimum) / range)) * plotHeight;
+    const y = (value) => margin.top + (1 - ((value - axis.minimum) / range)) * plotHeight;
 
     const svg = createSvgElement("svg", {
       viewBox: `0 0 ${width} ${height}`,
@@ -193,10 +212,10 @@
     definitions.appendChild(gradient);
     svg.appendChild(definitions);
 
-    for (let step = 0; step <= 4; step += 1) {
-      const ratio = step / 4;
+    for (let tick = 0; tick <= axis.tickCount; tick += 1) {
+      const ratio = tick / axis.tickCount;
       const lineY = margin.top + ratio * plotHeight;
-      const value = maximum - ratio * range;
+      const value = axis.maximum - tick * axis.step;
       svg.appendChild(createSvgElement("line", {
         class: "area51-chart-grid",
         x1: margin.left,
