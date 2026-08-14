@@ -1,0 +1,33 @@
+name: Internet observer showcase batch checks
+
+on:
+  pull_request:
+    paths:
+      - 'world-observer/internet-observer-detail.js'
+      - 'world-observer/internet-observer-showcase.js'
+      - 'world-observer/internet-observer-showcase.css'
+      - 'world-observer/internet-observer-showcase-base.css'
+      - 'tests/internet-observer-showcase-batch.test.mjs'
+      - 'tests/internet-observer-detail-pages.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+      - '.github/workflows/internet-observer-showcase-batch-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check showcase JavaScript syntax
+        run: |
+          node --check world-observer/internet-observer-detail.js
+          node --check world-observer/internet-observer-showcase.js
+      - name: Run focused showcase batch tests
+        run: node --test tests/internet-observer-showcase-batch.test.mjs
+      - name: Run shared Internet observer contracts
+        run: node --test tests/internet-observer-detail-pages.test.mjs tests/internet-observer-localized-pages.test.mjs
