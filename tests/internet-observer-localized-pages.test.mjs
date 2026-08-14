@@ -31,7 +31,7 @@ const observers = [
   ["undersea-cable-dependency-map", "Karte der Unterseekabel-Abhängigkeiten"],
 ];
 
-test("all 19 public generic Internet observers have German crawlable routes", () => {
+test("all 19 public Internet observers have German crawlable routes", () => {
   assert.equal(observers.length, 19);
 
   for (const [slug, title] of observers) {
@@ -44,11 +44,18 @@ test("all 19 public generic Internet observers have German crawlable routes", ()
     assert.ok(html.includes(`<link rel="canonical" href="${deUrl}">`), slug);
     assert.ok(html.includes(`hreflang="en" href="${enUrl}"`), slug);
     assert.ok(html.includes(`hreflang="de" href="${deUrl}"`), slug);
-    assert.ok(html.includes('"inLanguage":"de"'), slug);
+    assert.match(html, /"inLanguage"\s*:\s*"de"/, slug);
     assert.ok(html.includes(title), slug);
     assert.ok(html.includes("← Zurück zu den Internet-Observern"), slug);
-    assert.ok(html.includes('/world-observer/internet-observer-detail.css?v=2'), slug);
-    assert.ok(html.includes('/world-observer/internet-observer-detail.js?v=2'), slug);
+
+    if (slug === "traceroute-to-nowhere") {
+      assert.ok(html.includes('/world-observer/traceroute-to-nowhere.css?v=1'), slug);
+      assert.ok(html.includes('/world-observer/traceroute-to-nowhere.js?v=1'), slug);
+      assert.ok(html.includes('class="trace-language"'), slug);
+    } else {
+      assert.ok(html.includes('/world-observer/internet-observer-detail.css?v=2'), slug);
+      assert.ok(html.includes('/world-observer/internet-observer-detail.js?v=2'), slug);
+    }
 
     assert.ok(sitemap.includes(`<loc>${enUrl}</loc>`), `${slug} EN sitemap`);
     assert.ok(sitemap.includes(`<loc>${deUrl}</loc>`), `${slug} DE sitemap`);
@@ -57,7 +64,7 @@ test("all 19 public generic Internet observers have German crawlable routes", ()
   }
 });
 
-test("dedicated Internet detail runtime localizes dynamic UI and owns EN/DE switching", () => {
+test("shared Internet detail runtime localizes remaining generic UI and owns EN/DE switching", () => {
   assert.doesNotThrow(() => new Function(renderer));
   assert.doesNotThrow(() => new Function(stars));
 
