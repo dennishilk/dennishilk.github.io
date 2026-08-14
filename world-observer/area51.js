@@ -76,6 +76,32 @@
     return metricNames[value] || value;
   }
 
+  function applyInterfacePolish() {
+    const watchTitle = document.getElementById("public-watch-title");
+    if (watchTitle) {
+      watchTitle.textContent = isGerman
+        ? "Satelliten- & Thermalanomalie-Beobachtung"
+        : "Satellite & Thermal Anomaly Watch";
+    }
+
+    if (!document.getElementById("area51-legend-contrast-polish")) {
+      const style = document.createElement("style");
+      style.id = "area51-legend-contrast-polish";
+      style.textContent = `
+        .area51-thermal-legend figcaption {
+          color: #b8d5d9;
+          font-size: 0.57rem;
+        }
+        .area51-thermal-legend img {
+          filter: invert(1) hue-rotate(180deg) brightness(1.25) contrast(1.12);
+          opacity: 0.98;
+          width: min(100%, 340px);
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
   function formatNumber(value) {
     if (value === null || value === undefined || value === "") return "—";
     const numeric = Number(value);
@@ -443,6 +469,7 @@
   }
 
   async function render() {
+    applyInterfacePolish();
     initThermalWatch();
     loadSatelliteScenes();
 
