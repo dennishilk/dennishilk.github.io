@@ -52,6 +52,11 @@
   margin: 0 0 0.8rem;
 }
 
+.internet-card-badges .status-badge:nth-child(n+2),
+.internet-detail-statuses .status-badge:nth-child(n+2) {
+  display: none;
+}
+
 .internet-detail-updated {
   color: #c9d1d9;
   line-height: 1.5;
