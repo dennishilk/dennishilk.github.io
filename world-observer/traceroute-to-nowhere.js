@@ -271,7 +271,6 @@
     document.getElementById("observer-primary-value").textContent = formatNumber(observer.primary_metric_value);
     document.getElementById("trace-primary-unit").textContent = text.traces;
     document.getElementById("observer-last-update").textContent = `${text.lastObservation}: ${formatDate(observer.last_seen_date)}`;
-    document.getElementById("trace-hero-count").textContent = formatNumber(observer.primary_metric_value).padStart(2, "0");
 
     renderLanes(observer.primary_metric_value);
     renderFacts(observer);
