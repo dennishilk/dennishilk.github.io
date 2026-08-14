@@ -27,7 +27,17 @@ test("every current Internet observer has a stable detail page", () => {
     assert.ok(html.includes(`href="${canonical}"`));
     assert.ok(html.includes("← Back to Internet Observers"));
     assert.ok(html.includes("<h2 id=\"current-observation-title\">Current Observation</h2>"));
-    assert.ok(html.includes("<h2 id=\"history-title\">History</h2>"));
+
+    if (observer.observer === "area51-reachability") {
+      assert.ok(html.includes("<h2 id=\"public-watch-title\">Satellite &amp; Thermal Watch</h2>"));
+      assert.ok(html.includes("Latest Public Satellite Pass"));
+      assert.ok(html.includes("Thermal Anomaly Watch"));
+      assert.ok(html.includes("stac.dataspace.copernicus.eu"));
+      assert.ok(html.includes("gibs.earthdata.nasa.gov"));
+    } else {
+      assert.ok(html.includes("<h2 id=\"history-title\">History</h2>"));
+    }
+
     assert.ok(html.includes(">Observed</h2>"));
     assert.ok(html.includes(">Derived</h2>"));
     assert.ok(html.includes(">Unknown</h2>"));
@@ -39,6 +49,7 @@ test("every current Internet observer has a stable detail page", () => {
 
 test("Internet observer cards use crawlable anchor destinations", () => {
   assert.ok(dashboardHtml.includes("/world-observer/internet-observer-detail.css"));
+  assert.ok(dashboardHtml.includes('href="/world-observer.html">← World Observer</a>'));
   assert.ok(renderer.includes('const link = document.createElement("a")'));
   assert.ok(renderer.includes('link.href = observerUrl'));
   assert.ok(renderer.includes('link.setAttribute("aria-label", `Open ${titleText} observer`)'));
