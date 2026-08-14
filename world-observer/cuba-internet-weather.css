@@ -218,6 +218,7 @@ body[data-observer-id="cuba-internet-weather"]::before {
   display: grid;
   justify-items: center;
   gap: 8px;
+  min-width: 0;
   padding: 16px 8px 20px;
   border-bottom: 1px solid var(--cuba-line);
   text-align: center;
@@ -239,18 +240,24 @@ body[data-observer-id="cuba-internet-weather"]::before {
 .cuba-primary-card strong {
   display: flex;
   align-items: baseline;
-  gap: 9px;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   color: var(--cuba-cyan-soft);
-  font-size: clamp(3rem, 6vw, 5.35rem);
+  font-size: clamp(2.6rem, 4vw, 3.9rem);
   font-weight: 300;
   line-height: 1;
+  white-space: nowrap;
   text-shadow: 0 0 28px rgba(82, 232, 242, 0.12);
 }
 
 .cuba-primary-card strong small {
+  flex: 0 0 auto;
   color: var(--cuba-cyan);
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
 }
 
 .cuba-primary-card p {
