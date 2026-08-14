@@ -24,12 +24,16 @@
       "PUBLIC LOCATION CONTEXT": "ÖFFENTLICHER ORTSKONTEXT",
       "Location / Imagery": "Ort / Bilddaten",
       "Groom Lake, Nevada": "Groom Lake, Nevada",
-      "Public USGS basemap imagery at a medium map scale. Not a live feed; imagery source and acquisition date vary with the service mosaic.": "Öffentliche USGS-Basiskarten-Bilddaten in mittlerem Kartenmaßstab. Kein Live-Bild; Bildquelle und Aufnahmezeitpunkt variieren mit dem Service-Mosaik.",
-      "U.S. Geological Survey, The National Map. The ImageryOnly basemap uses different imagery sources by map scale, including Landsat at small to medium scales and higher-resolution orthoimagery where available.": "U.S. Geological Survey, The National Map. Die ImageryOnly-Basiskarte verwendet je nach Kartenmaßstab unterschiedliche Bildquellen, darunter Landsat bei kleinen bis mittleren Maßstäben und höher aufgelöste Orthobilddaten, wo verfügbar.",
-      "USGS ImageryOnly service ↗": "USGS-ImageryOnly-Dienst ↗",
-      "02 / PUBLISHED SERIES": "02 / VERÖFFENTLICHTE REIHE",
-      "History": "Verlauf",
+      "Sentinel-2 cloudless 2025 annual mosaic. Public satellite context, not a live feed or a claim about current activity.": "Sentinel-2-Cloudless-Jahresmosaik 2025. Öffentlicher Satellitenkontext, kein Live-Bild und keine Aussage über aktuelle Aktivität.",
+      "EOxCloudless imagery & license ↗": "EOxCloudless-Bilddaten & Lizenz ↗",
+      "02 / ACTIVITY TIMELINE": "02 / AKTIVITÄTSZEITLEISTE",
+      "Observation Pulse": "Beobachtungsimpuls",
       "Loading published history…": "Veröffentlichter Verlauf wird geladen…",
+      "Lower published value": "Niedrigerer veröffentlichter Wert",
+      "Higher published value": "Höherer veröffentlichter Wert",
+      "Cell brightness is a log-scaled visual mapping of the published score only. It is not a probability, location estimate, or military-activity indicator.": "Die Helligkeit der Zellen ist ausschließlich eine logarithmisch skalierte Darstellung des veröffentlichten Werts. Sie ist weder Wahrscheinlichkeit noch Positionsschätzung oder Indikator militärischer Aktivität.",
+      "PUBLISHED OUTLIERS": "VERÖFFENTLICHTE AUSSCHLÄGE",
+      "Peak observations": "Höchste Beobachtungswerte",
       "Accessible recent data table": "Zugängliche Tabelle der neuesten Daten",
       "Most recent published numeric history points": "Neueste veröffentlichte numerische Verlaufspunkte",
       "Date": "Datum",
@@ -50,10 +54,12 @@
       "Detailed collector methodology will be documented in a later observer-specific source review. This interface does not add to or modify the existing measurement logic.": "Die detaillierte Collector-Methodik wird in einer späteren observer-spezifischen Quellenprüfung dokumentiert. Diese Oberfläche ergänzt oder verändert die bestehende Messlogik nicht.",
       "04 / PROVENANCE": "04 / PROVENIENZ",
       "Sources": "Quellen",
-      "Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the public USGS ImageryOnly basemap from The National Map.": "Die Quellenangaben zur Telemetrie werden in einem späteren observer-spezifischen Durchgang erweitert. Das Panel Ort / Bilddaten nutzt separat die öffentliche USGS-ImageryOnly-Basiskarte von The National Map."
+      "Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the EOxCloudless Sentinel-2 annual mosaic with visible attribution.": "Die Quellenangaben zur Telemetrie werden in einem späteren observer-spezifischen Durchgang erweitert. Das Panel Ort / Bilddaten nutzt separat das EOxCloudless-Sentinel-2-Jahresmosaik mit sichtbarer Quellenangabe."
     },
     attributes: {
-      "Public USGS satellite and orthoimagery mosaic centered on the Groom Lake area in Nevada": "Öffentliches USGS-Satelliten- und Orthobildmosaik mit dem Groom-Lake-Gebiet in Nevada im Zentrum",
+      "Sentinel-2 cloudless satellite mosaic centered on the Groom Lake area in Nevada": "Sentinel-2-Cloudless-Satellitenmosaik mit dem Groom-Lake-Gebiet in Nevada im Zentrum",
+      "Published Area51 reachability observations by day": "Veröffentlichte Area51-Erreichbarkeitsbeobachtungen nach Tag",
+      "Relative visual intensity legend": "Legende der relativen visuellen Intensität",
       "Observation provenance and interpretation boundaries": "Provenienz der Beobachtungen und Grenzen der Interpretation",
       "Current local data exports": "Aktuelle lokale Datenexporte"
     },
@@ -73,18 +79,18 @@
       ["No published history is available for this observer yet.", "Für diesen Observer ist noch kein veröffentlichter Verlauf verfügbar."],
       ["No published history is available in the existing export yet.", "Im bestehenden Export ist noch kein veröffentlichter Verlauf verfügbar."],
       ["published points", "veröffentlichte Punkte"],
-      ["numeric values", "numerische Werte"],
-      ["Latest delta", "Letzte Änderung"],
+      ["numeric", "numerisch"],
+      ["gaps", "Lücken"],
+      ["no numeric value", "kein numerischer Wert"],
+      ["status", "Status"],
       ["30-day average", "30-Tage-Mittel"],
       ["7-day average", "7-Tage-Mittel"],
-      ["Previous", "Vorher"],
+      ["Median", "Median"],
+      ["Peak", "Spitze"],
       ["Latest", "Aktuell"],
       ["published history points span", "veröffentlichte Verlaufspunkte reichen von"],
-      ["contain numeric values. They are displayed without a causal interpretation.", "enthalten numerische Werte. Sie werden ohne kausale Interpretation dargestellt."],
-      ["Public observer data is not available yet.", "Öffentliche Observer-Daten sind derzeit nicht verfügbar."],
-      ["Area51 Reachability published observation history", "Veröffentlichter Beobachtungsverlauf der Area51-Erreichbarkeit"],
-      ["published history points", "veröffentlichten Verlaufspunkten"],
-      ["Missing numeric points appear as gaps.", "Fehlende numerische Punkte erscheinen als Lücken."]
+      ["contain numeric values. The pulse display and peak list are descriptive views of those published values, without a causal interpretation.", "enthalten numerische Werte. Pulsdarstellung und Spitzenliste sind beschreibende Ansichten dieser veröffentlichten Werte ohne kausale Interpretation."],
+      ["Public observer data is not available yet.", "Öffentliche Observer-Daten sind derzeit nicht verfügbar."]
     ]
   };
 
