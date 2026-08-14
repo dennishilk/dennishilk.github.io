@@ -18,10 +18,10 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/area51.css?v=1">
-  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=3">
-  <script src="/site-i18n-de-area51.js?v=20260814-2"></script>
+  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=4">
+  <script src="/site-i18n-de-area51.js?v=20260814-3"></script>
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/area51.js?v=2"></script>
+  <script defer src="/world-observer/area51.js?v=3"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -94,30 +94,30 @@
                 <p class="area51-section-index">PUBLIC LOCATION CONTEXT</p>
                 <h3 id="area51-imagery-title">Location / Imagery</h3>
               </div>
-              <span class="area51-imagery-source-badge">USGS</span>
+              <span class="area51-imagery-source-badge">COPERNICUS / EOX</span>
             </div>
 
             <figure class="area51-imagery-figure">
               <div
                 class="area51-imagery-tiles"
                 role="img"
-                aria-label="Public USGS satellite and orthoimagery mosaic centered on the Groom Lake area in Nevada"
+                aria-label="Sentinel-2 cloudless satellite mosaic centered on the Groom Lake area in Nevada"
               >
-                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1590/729" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1590/730" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1590/731" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1591/729" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1591/730" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1591/731" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3180/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3180/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3180/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </div>
               <figcaption>
                 <strong>Groom Lake, Nevada</strong>
-                <span>Public USGS basemap imagery at a medium map scale. Not a live feed; imagery source and acquisition date vary with the service mosaic.</span>
+                <span>Sentinel-2 cloudless 2025 annual mosaic. Public satellite context, not a live feed or a claim about current activity.</span>
               </figcaption>
             </figure>
 
-            <p class="area51-imagery-attribution">U.S. Geological Survey, The National Map. The ImageryOnly basemap uses different imagery sources by map scale, including Landsat at small to medium scales and higher-resolution orthoimagery where available.</p>
-            <a class="area51-imagery-source-link" href="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer" target="_blank" rel="noopener noreferrer">USGS ImageryOnly service ↗</a>
+            <p class="area51-imagery-attribution">EOxCloudless <a href="https://cloudless.eox.at" target="_blank" rel="noopener noreferrer">cloudless.eox.at</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2025).</p>
+            <a class="area51-imagery-source-link" href="https://cloudless.eox.at/preview" target="_blank" rel="noopener noreferrer">EOxCloudless imagery &amp; license ↗</a>
           </section>
         </div>
       </section>
@@ -125,15 +125,35 @@
       <section class="area51-panel area51-history" aria-labelledby="history-title">
         <div class="area51-section-heading">
           <div>
-            <p class="area51-section-index">02 / PUBLISHED SERIES</p>
-            <h2 id="history-title">History</h2>
+            <p class="area51-section-index">02 / ACTIVITY TIMELINE</p>
+            <h2 id="history-title">Observation Pulse</h2>
           </div>
           <p id="observer-history-summary" class="area51-history-summary">Loading published history…</p>
         </div>
 
-        <div class="area51-history-visual">
-          <div id="area51-history-chart" class="area51-chart" aria-live="polite"></div>
-          <dl id="area51-history-metrics" class="area51-history-metrics"></dl>
+        <div class="area51-pulse-layout">
+          <div class="area51-pulse-main">
+            <div class="area51-pulse-range" aria-hidden="true">
+              <span id="area51-pulse-start">—</span>
+              <span id="area51-pulse-end">—</span>
+            </div>
+            <div id="area51-pulse-grid" class="area51-pulse-grid" role="list" aria-label="Published Area51 reachability observations by day"></div>
+            <div class="area51-pulse-legend" aria-label="Relative visual intensity legend">
+              <span>Lower published value</span>
+              <span class="area51-pulse-gradient" aria-hidden="true"></span>
+              <span>Higher published value</span>
+            </div>
+            <p class="area51-pulse-note">Cell brightness is a log-scaled visual mapping of the published score only. It is not a probability, location estimate, or military-activity indicator.</p>
+          </div>
+
+          <aside class="area51-pulse-context" aria-labelledby="area51-peak-title">
+            <div class="area51-pulse-context-heading">
+              <p class="area51-section-index">PUBLISHED OUTLIERS</p>
+              <h3 id="area51-peak-title">Peak observations</h3>
+            </div>
+            <ol id="area51-peak-list" class="area51-peak-list"></ol>
+            <dl id="area51-history-metrics" class="area51-history-metrics"></dl>
+          </aside>
         </div>
 
         <details class="area51-data-table">
@@ -184,7 +204,7 @@
         <article class="area51-panel area51-foundation-card" aria-labelledby="sources-title">
           <p class="area51-section-index">04 / PROVENANCE</p>
           <h2 id="sources-title">Sources</h2>
-          <p>Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the public USGS ImageryOnly basemap from The National Map.</p>
+          <p>Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the EOxCloudless Sentinel-2 annual mosaic with visible attribution.</p>
           <div class="area51-source-paths" aria-label="Current local data exports">
             <code>dashboard/internet.json</code>
             <code>dashboard/history/internet-observers.json</code>
