@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groom Lake Signal-Observatorium – Area 51 | World Observer</title>
+  <meta name="description" content="Öffentliches Area-51-Observatorium für Groom Lake mit Reachability-Telemetrie, Sentinel-2-Szenenmetadaten und NASA-Thermalanomalie-Kontext ohne kausale Schlussfolgerungen.">
+  <link rel="canonical" href="https://dennishilk.com/de/world-observer/area51.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/area51.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/area51.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/area51.html">
+  <meta property="og:title" content="Groom Lake Signal-Observatorium – Area 51 | World Observer">
+  <meta property="og:description" content="Öffentliche Reachability-Telemetrie plus Sentinel-2-Szenenmetadaten und NASA-Thermalanomalie-Kontext für Groom Lake.">
+  <meta property="og:url" content="https://dennishilk.com/de/world-observer/area51.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Groom Lake Signal-Observatorium – Area 51 | World Observer">
+  <meta name="twitter:description" content="Öffentliche Telemetrie und Erdbeobachtung für Groom Lake mit klaren Grenzen der Interpretation.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="theme-color" content="#05090b">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css?v=42">
+  <link rel="stylesheet" href="/world-observer/area51.css?v=1">
+  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=5">
+  <link rel="stylesheet" href="/world-observer/area51-public-watch.css?v=2">
+  <script defer src="/stars.js"></script>
+  <script defer src="/world-observer/area51.js?v=5"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Groom Lake Signal-Observatorium – Area 51",
+    "description": "Öffentliches Area-51-Observatorium für Groom Lake mit Reachability-Telemetrie, Sentinel-2-Szenenmetadaten und NASA-Thermalanomalie-Kontext ohne kausale Schlussfolgerungen.",
+    "url": "https://dennishilk.com/de/world-observer/area51.html",
+    "inLanguage": "de",
+    "about": {
+      "@type": "Place",
+      "name": "Groom Lake, Nevada"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "World Observer",
+      "url": "https://dennishilk.com/world-observer.html"
+    }
+  }
+  </script>
+</head>
+<body class="area51-page" data-observer-page="area51" data-observer-id="area51-reachability">
+<canvas id="stars"></canvas>
+
+<div class="area51-grid" aria-hidden="true"></div>
+<div class="content world-observer-page area51-frame">
+  <main class="area51-main">
+    <h1 class="area51-eyebrow">GROOM LAKE – ÖFFENTLICHES SIGNAL-OBSERVATORIUM</h1>
+    <p class="wo-back-nav area51-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Zurück zu den Internet-Observern</a></p>
+
+    <p id="observer-loading" class="area51-loading" aria-live="polite">Öffentliche Telemetrieansicht wird aufgebaut…</p>
+
+    <div id="observer-content" class="area51-observer-content" hidden>
+      <section class="area51-panel area51-current" aria-labelledby="current-observation-title">
+        <div class="area51-section-heading">
+          <div>
+            <p class="area51-section-index">01 / AKTUELLER EXPORT</p>
+            <h2 id="current-observation-title">Aktuelle Beobachtung</h2>
+          </div>
+          <p id="observer-last-update" class="area51-timestamp">Letzte Beobachtung/Aktualisierung: —</p>
+        </div>
+
+        <div class="area51-current-layout">
+          <div class="area51-instrument-wrap">
+            <div class="area51-instrument" aria-hidden="true">
+              <div class="area51-radar-grid"></div>
+              <div class="area51-radar-sweep"></div>
+              <div class="area51-radar-crosshair"></div>
+              <span class="area51-radar-marker marker-one"></span>
+              <span class="area51-radar-marker marker-two"></span>
+              <span class="area51-radar-marker marker-three"></span>
+            </div>
+            <div class="area51-score-readout">
+              <span id="observer-primary-label" class="area51-score-label">Erreichbarkeitswert</span>
+              <strong id="observer-primary-value" class="area51-score-value">—</strong>
+              <span id="observer-primary-unit" class="area51-score-unit">WERT / EXPORTIERTER WERT</span>
+            </div>
+            <p class="area51-instrument-caption">Veröffentlichter Observer-Gesamtwert. Das Instrument stellt keine geografische Position dar.</p>
+          </div>
+
+          <div class="area51-telemetry-stack">
+            <div class="area51-telemetry-header">
+              <span>BEOBACHTUNGSKANÄLE</span>
+              <span aria-hidden="true">DATEN</span>
+            </div>
+            <dl id="observer-secondary-metrics" class="area51-secondary-metrics"></dl>
+            <div class="area51-scope-note">
+              <span class="area51-scope-pulse" aria-hidden="true"></span>
+              <p>Ausschließlich öffentliche Exportwerte. Daraus werden weder Absicht, Ursache, Identität, genaue Position noch militärische Aktivität abgeleitet.</p>
+            </div>
+          </div>
+
+          <section class="area51-imagery-panel" aria-labelledby="area51-imagery-title">
+            <div class="area51-imagery-heading">
+              <div>
+                <p class="area51-section-index">ÖFFENTLICHER ORTSKONTEXT</p>
+                <h3 id="area51-imagery-title">Ort / Bilddaten</h3>
+              </div>
+              <span class="area51-imagery-source-badge">COPERNICUS / EOX</span>
+            </div>
+
+            <figure class="area51-imagery-figure">
+              <div
+                class="area51-imagery-tiles"
+                role="img"
+                aria-label="Sentinel-2-Cloudless-Satellitenmosaik mit den Groom-Lake-Anlagen und der Umgebung in Nevada im Zentrum"
+              >
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1459.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1460.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1461.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              </div>
+              <figcaption>
+                <strong>Groom Lake, Nevada</strong>
+                <span>Sentinel-2-Cloudless-Jahresmosaik 2025. Öffentlicher Satellitenkontext, kein Live-Bild und keine Aussage über aktuelle Aktivität.</span>
+              </figcaption>
+            </figure>
+
+            <p class="area51-imagery-attribution">EOxCloudless <a href="https://cloudless.eox.at" target="_blank" rel="noopener noreferrer">cloudless.eox.at</a> von EOX IT Services GmbH (enthält modifizierte Copernicus-Sentinel-Daten 2025).</p>
+            <a class="area51-imagery-source-link" href="https://cloudless.eox.at/preview" target="_blank" rel="noopener noreferrer">EOxCloudless-Bilddaten &amp; Lizenz ↗</a>
+          </section>
+        </div>
+      </section>
+
+      <section class="area51-panel area51-public-watch" aria-labelledby="public-watch-title">
+        <div class="area51-section-heading">
+          <div>
+            <p class="area51-section-index">02 / ÖFFENTLICHE QUELLENBEOBACHTUNG</p>
+            <h2 id="public-watch-title">Satelliten- &amp; Thermikbeobachtung</h2>
+          </div>
+          <p class="area51-watch-disclaimer">Nur öffentlicher Erdbeobachtungskontext</p>
+        </div>
+
+        <div class="area51-watch-layout">
+          <article class="area51-watch-card area51-satellite-watch" aria-labelledby="satellite-watch-title">
+            <div class="area51-watch-card-head">
+              <div>
+                <p class="area51-section-index">COPERNICUS DATA SPACE</p>
+                <h3 id="satellite-watch-title">Letzte öffentliche Satellitenpassage</h3>
+              </div>
+              <span id="area51-scene-state" class="area51-watch-state" aria-live="polite">Katalog wird abgefragt…</span>
+            </div>
+
+            <div class="area51-scene-hero">
+              <div>
+                <span class="area51-watch-kicker">Neueste Sentinel-2-L2A-Szene mit Überdeckung des Beobachtungsgebiets</span>
+                <strong id="area51-scene-date" class="area51-scene-date">—</strong>
+                <span id="area51-scene-time" class="area51-scene-time">— UTC</span>
+              </div>
+              <div id="area51-cloud-gauge" class="area51-cloud-gauge" style="--cloud-angle: 0deg" aria-label="Kachelbewölkung nicht verfügbar">
+                <div class="area51-cloud-gauge-inner">
+                  <strong id="area51-scene-cloud">—</strong>
+                  <span>Kachelbewölkung</span>
+                </div>
+              </div>
+            </div>
+
+            <dl class="area51-scene-facts">
+              <div><dt>Szenenalter</dt><dd id="area51-scene-age">—</dd></div>
+              <div><dt>Plattform</dt><dd id="area51-scene-platform">—</dd></div>
+              <div><dt>Produkt</dt><dd>Sentinel-2 L2A</dd></div>
+              <div class="area51-scene-id-row"><dt>Szenen-ID</dt><dd id="area51-scene-id" title="">—</dd></div>
+            </dl>
+
+            <section class="area51-recent-scenes-block" aria-labelledby="area51-recent-scenes-title">
+              <div class="area51-recent-scenes-head">
+                <strong id="area51-recent-scenes-title">Letzte Sentinel-2-Passagen</strong>
+                <span>Bewölkungsmetadaten der Gesamtkachel</span>
+              </div>
+              <ol id="area51-recent-scenes" class="area51-recent-scenes" aria-live="polite">
+                <li class="area51-recent-scenes-empty">Letzte Szenen werden abgefragt…</li>
+              </ol>
+            </section>
+
+            <p class="area51-watch-note">Die Bewölkung ist Katalogmetadatum der gesamten Sentinel-Kachel und keine lokale Wolkenschätzung für die Anlage. Eine aktuelle Szene ist kein Beleg für Aktivität.</p>
+            <a class="area51-watch-source" href="https://stac.dataspace.copernicus.eu/v1/collections/sentinel-2-l2a" target="_blank" rel="noopener noreferrer">Copernicus-Sentinel-2-L2A-Katalog ↗</a>
+          </article>
+
+          <article class="area51-watch-card area51-thermal-watch" aria-labelledby="thermal-watch-title">
+            <div class="area51-watch-card-head">
+              <div>
+                <p class="area51-section-index">NASA EARTHDATA / GIBS</p>
+                <h3 id="thermal-watch-title">Beobachtung thermischer Anomalien</h3>
+              </div>
+              <span class="area51-watch-state">VIIRS NOAA-20 · 375 m</span>
+            </div>
+
+            <div class="area51-thermal-map" role="img" aria-label="NASA-VIIRS-Thermalanomalie-Ebene über einem dunklen Referenzraster des öffentlichen Beobachtungsgebiets; ohne Satelliten-Basiskarte">
+              <div class="area51-thermal-grid" aria-hidden="true"></div>
+              <div class="area51-thermal-sweep" aria-hidden="true"></div>
+              <div class="area51-thermal-reticle" aria-hidden="true"></div>
+              <span class="area51-thermal-coord northwest" aria-hidden="true">37.265° N</span>
+              <span class="area51-thermal-coord northeast" aria-hidden="true">115.752° W</span>
+              <span class="area51-thermal-coord southwest" aria-hidden="true">37.195° N</span>
+              <span class="area51-thermal-coord southeast" aria-hidden="true">115.884° W</span>
+              <img id="area51-thermal-overlay" class="area51-thermal-overlay" alt="NASA-GIBS-VIIRS-NOAA-20-Thermalanomalie-Ebene" decoding="async">
+              <div class="area51-thermal-center-label" aria-hidden="true">
+                <strong>GROOM LAKE AOI</strong>
+                <span>KEINE BASISKARTE · NUR DETEKTIONEN</span>
+              </div>
+              <div class="area51-thermal-map-label">
+                <span>Ausgewählte öffentliche Ebene</span>
+                <strong id="area51-thermal-date">—</strong>
+              </div>
+            </div>
+
+            <div class="area51-thermal-readout">
+              <div>
+                <span>Ebenenstatus</span>
+                <strong id="area51-thermal-state" data-state="loading" aria-live="polite">Warte auf öffentliche Ebene</strong>
+              </div>
+              <div>
+                <span>Darstellungsmodus</span>
+                <strong>Transparente Detektionen · keine Basiskarte</strong>
+              </div>
+              <figure class="area51-thermal-legend">
+                <figcaption>NASA-GIBS-Ebenenlegende</figcaption>
+                <img src="https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=VIIRS_NOAA20_Thermal_Anomalies_375m_All&amp;format=image/png&amp;STYLE=default" alt="NASA-GIBS-Legende für VIIRS-NOAA-20-Thermalanomalien" loading="lazy" decoding="async">
+              </figure>
+            </div>
+
+            <div>
+              <span class="area51-watch-kicker">Letzte Tagesebenen</span>
+              <div id="area51-thermal-days" class="area51-thermal-days" aria-label="Datum einer aktuellen Thermalanomalie-Ebene auswählen"></div>
+            </div>
+
+            <p class="area51-watch-note area51-thermal-note">Hier wird ausschließlich die transparente NASA-Ebene mit thermischen Detektionen dargestellt; die Satelliten-Basiskarte ist bewusst weggelassen. Sichtbare Markierungen sind veröffentlichte thermische Anomalien des gewählten Tages. Eine leere Ebene beweist nicht, dass keine Aktivität stattfand, und dieses Panel bestimmt weder Ursache, Absicht, Flugzeuge noch militärische Aktivität.</p>
+            <a class="area51-watch-source" href="https://firms.modaps.eosdis.nasa.gov/content/tutorials/gibs/" target="_blank" rel="noopener noreferrer">NASA-GIBS-/FIRMS-Thermalanomalie-Ebenen ↗</a>
+          </article>
+        </div>
+
+        <details class="area51-data-table area51-history-archive">
+          <summary>Veröffentlichter Telemetrieverlauf <span id="observer-history-summary">Veröffentlichter Verlauf wird geladen…</span></summary>
+          <div class="area51-table-scroll">
+            <table id="observer-history-table">
+              <caption>Neueste veröffentlichte numerische Verlaufspunkte</caption>
+              <thead><tr><th scope="col">Datum</th><th scope="col">Wert</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="area51-provenance" aria-label="Provenienz der Beobachtungen und Grenzen der Interpretation">
+        <article class="area51-provenance-card observed-card" aria-labelledby="observed-title">
+          <p class="area51-provenance-code">ROH / AKTUELL</p>
+          <h2 id="observed-title">Beobachtet</h2>
+          <ul id="area51-observed-list" class="area51-fact-list"></ul>
+        </article>
+
+        <article class="area51-provenance-card derived-card" aria-labelledby="derived-title">
+          <p class="area51-provenance-code">BERECHNET / VERÖFFENTLICHT</p>
+          <h2 id="derived-title">Abgeleitet</h2>
+          <p id="area51-derived-copy">Der bestehende Observer-Export liefert eine abgeleitete Primärmetrik. Diese Seite fügt keine neue Berechnung hinzu.</p>
+        </article>
+
+        <article class="area51-provenance-card historical-card" aria-labelledby="historical-title">
+          <p class="area51-provenance-code">ARCHIV / KONTEXT</p>
+          <h2 id="historical-title">Historisch</h2>
+          <p id="area51-historical-copy">Der veröffentlichte Verlauf wird als aufgezeichnete Werte ohne kausale Interpretation dargestellt.</p>
+        </article>
+
+        <article class="area51-provenance-card unknown-card" aria-labelledby="unknown-title">
+          <p class="area51-provenance-code">GRENZE / NICHT BELEGT</p>
+          <h2 id="unknown-title">Unbekannt</h2>
+          <p>Die Exporte und öffentlichen Erdbeobachtungsebenen belegen weder Identität, Zweck, Absicht, genaue Position, Ursache noch militärische Aktivität. Das Fehlen oder die Veränderung eines Signals ist keine Erklärung.</p>
+        </article>
+      </section>
+
+      <section class="area51-foundation-grid">
+        <article class="area51-panel area51-foundation-card" aria-labelledby="methodology-title">
+          <p class="area51-section-index">03 / DOKUMENTATION</p>
+          <h2 id="methodology-title">Methodik</h2>
+          <p>Bestehender Reachability-Collector und Dashboard-Logik bleiben unverändert. Die Panels für öffentliche Quellen laden unabhängig Katalogmetadaten oder Bilddaten von Copernicus Data Space und NASA GIBS und halten diese Quellen getrennt von der Observer-Metrik.</p>
+        </article>
+
+        <article class="area51-panel area51-foundation-card" aria-labelledby="sources-title">
+          <p class="area51-section-index">04 / PROVENIENZ</p>
+          <h2 id="sources-title">Quellen</h2>
+          <p>Die Observer-Telemetrie nutzt die bestehenden lokalen World-Observer-Exporte. Der Ortskontext verwendet EOxCloudless-Sentinel-2-Bilddaten; Metadaten zu Satellitenpassagen stammen aus dem STAC-Katalog von Copernicus Data Space; Thermal-Anomalie-Bilddaten und Legende stammen aus NASA Earthdata GIBS.</p>
+          <div class="area51-source-paths" aria-label="Aktuelle lokale Datenexporte">
+            <code>dashboard/internet.json</code>
+            <code>dashboard/history/internet-observers.json</code>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="area51-footer">
+    <div class="nebby-terminal-line">
+      <picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby-Maskottchen"></picture>
+      <span class="coffee-text">&gt; observe --public area51-reachability<span class="cursor"></span></span>
+    </div>
+    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</div>
+</body>
+</html>
