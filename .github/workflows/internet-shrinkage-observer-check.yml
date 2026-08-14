@@ -1,0 +1,40 @@
+name: Internet Shrinkage observer checks
+
+on:
+  pull_request:
+    paths:
+      - 'world-observer/internet-shrinkage-index.html'
+      - 'world-observer/internet-shrinkage-index.css'
+      - 'world-observer/internet-shrinkage-index.js'
+      - 'world-observer/internet-shrinkage-language.js'
+      - 'de/world-observer/internet-shrinkage-index.html'
+      - 'tests/internet-shrinkage-index.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+      - '.github/workflows/internet-shrinkage-observer-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'world-observer/internet-shrinkage-index.html'
+      - 'world-observer/internet-shrinkage-index.css'
+      - 'world-observer/internet-shrinkage-index.js'
+      - 'world-observer/internet-shrinkage-language.js'
+      - 'de/world-observer/internet-shrinkage-index.html'
+      - 'tests/internet-shrinkage-index.test.mjs'
+      - 'tests/internet-observer-localized-pages.test.mjs'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Internet Shrinkage JavaScript syntax
+        run: |
+          node --check world-observer/internet-shrinkage-index.js
+          node --check world-observer/internet-shrinkage-language.js
+      - name: Run focused Internet Shrinkage regression tests
+        run: node --test tests/internet-shrinkage-index.test.mjs
+      - name: Run shared Internet observer detail contract
+        run: node --test tests/internet-observer-detail-pages.test.mjs tests/internet-observer-localized-pages.test.mjs
