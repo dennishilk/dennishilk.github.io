@@ -4,75 +4,191 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traceroute To Nowhere – World Observer</title>
-  <meta name="description" content="Traceroute To Nowhere observer detail page in World Observer.">
+  <meta name="description" content="Traceroute To Nowhere is a public route-observation console that visualizes the published aggregate trace count and its history without inventing hop topology, RTTs, IPs or ASNs.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://dennishilk.com/world-observer/traceroute-to-nowhere.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/traceroute-to-nowhere.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/traceroute-to-nowhere.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/traceroute-to-nowhere.html">
   <meta property="og:title" content="Traceroute To Nowhere – World Observer">
-  <meta property="og:description" content="Traceroute To Nowhere observer detail page in World Observer.">
+  <meta property="og:description" content="A public route-observation console for the published aggregate trace count, with a strict boundary between observed data and unknown network topology.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/traceroute-to-nowhere.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Traceroute To Nowhere – World Observer">
+  <meta name="twitter:description" content="Public aggregate traceroute observations, visualized without fabricated hops or route claims.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="theme-color" content="#020607">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
-  <link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=1">
-  <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/internet-observer-detail.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Traceroute To Nowhere – World Observer","description":"Traceroute To Nowhere observer detail page in World Observer.","url":"https://dennishilk.com/world-observer/traceroute-to-nowhere.html","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <link rel="stylesheet" href="/world-observer/traceroute-to-nowhere.css?v=1">
+  <script defer src="/world-observer/traceroute-to-nowhere.js?v=1"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Traceroute To Nowhere – World Observer",
+    "description": "Public route-observation console for the published aggregate trace count and its history, with unknown hop topology explicitly left unknown.",
+    "url": "https://dennishilk.com/world-observer/traceroute-to-nowhere.html",
+    "inLanguage": "en",
+    "isPartOf": {"@type": "WebSite", "name": "World Observer", "url": "https://dennishilk.com/world-observer.html"},
+    "about": {"@type": "Thing", "name": "Public Internet route observation"}
+  }
+  </script>
 </head>
 <body data-observer-page="internet-detail" data-observer-id="traceroute-to-nowhere">
-<canvas id="stars"></canvas>
-<div class="content world-observer-page">
-  <header class="dashboard-header wo-page-header">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Traceroute To Nowhere</span></h1>
-    <p>Internet observer detail page using the existing public static World Observer exports.</p>
-    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
-    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a>
-      <a href="/world-observer/internet.html" class="active" aria-current="page">Internet</a>
-      <a href="/world-observer/media.html">Media</a>
-      <a href="/world-observer/society.html">Society</a>
-      <a href="/world-observer/hometown.html">Hometown</a>
-      <a href="/world-observer/environment.html">Earth &amp; Space</a>
-      <a href="/world-observer/technology.html">Technology</a>
-      <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
-    </nav>
-  </header>
+<div class="content world-observer-page trace-page">
   <main>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
-    <p id="observer-loading" class="observer-limitation" aria-live="polite">Loading observer data…</p>
-    <div id="observer-content" class="internet-detail-shell" hidden>
-      <section class="internet-detail-summary" aria-labelledby="current-observation-title">
-        <h2 id="current-observation-title">Current Observation</h2>
-        <div class="internet-detail-summary-grid">
-          <p class="internet-detail-primary"><span id="observer-primary-label">Primary metric</span><strong id="observer-primary-value">—</strong></p>
-          <div>
-            <div id="observer-statuses" class="internet-detail-statuses" aria-label="Observer status"></div>
-            <p id="observer-last-update" class="internet-detail-updated">Last observation/update: —</p>
+    <div class="trace-topbar">
+      <a class="trace-back" href="/world-observer/internet.html">← Back to Internet Observers</a>
+      <nav class="trace-language" aria-label="Page language">
+        <a href="/world-observer/traceroute-to-nowhere.html" hreflang="en" lang="en" aria-current="page">EN</a>
+        <span aria-hidden="true">|</span>
+        <a href="/de/world-observer/traceroute-to-nowhere.html" hreflang="de" lang="de">DE</a>
+      </nav>
+    </div>
+
+    <header class="trace-hero">
+      <div>
+        <span class="trace-eyebrow">PUBLIC ROUTE OBSERVATION CONSOLE</span>
+        <h1>Traceroute To Nowhere</h1>
+        <p class="trace-hero-copy">A deliberately strict view of the published traceroute aggregate: what is present in the public export is shown; hop identities, route topology, RTTs and causes that are not exported remain visibly unresolved.</p>
+      </div>
+      <div class="trace-hero-mark" aria-label="Current published trace count">
+        <strong id="trace-hero-count">08</strong>
+      </div>
+    </header>
+
+    <p id="observer-loading" class="trace-loading" aria-live="polite">Loading published route observations…</p>
+
+    <div id="observer-content" class="trace-shell" hidden>
+      <section class="trace-section" aria-labelledby="current-observation-title">
+        <div class="trace-section-inner">
+          <div class="trace-section-head">
+            <div>
+              <span class="trace-section-index">01 / CURRENT SIGNAL</span>
+              <h2 id="current-observation-title">Current Observation</h2>
+            </div>
+            <p>Aggregate count from the public World Observer export. The visual lanes below are presentation-only.</p>
           </div>
-          <dl id="observer-secondary-metrics" class="internet-secondary-metrics internet-detail-secondary"></dl>
+
+          <div class="trace-current-grid">
+            <div class="trace-readout">
+              <div>
+                <span class="trace-primary-label">Trace count</span>
+                <strong id="observer-primary-value" class="trace-primary-value">—</strong>
+                <span id="trace-primary-unit" class="trace-primary-unit">published traces</span>
+              </div>
+              <p id="observer-last-update" class="trace-updated">Last observation/update: —</p>
+            </div>
+
+            <div class="trace-array" aria-label="Abstract visualization of the published trace count">
+              <div class="trace-array-labels" aria-hidden="true">
+                <span id="trace-array-origin">AGGREGATE</span>
+                <span id="trace-array-path">VISUAL COUNT LANE</span>
+                <span id="trace-array-boundary">UNRESOLVED</span>
+              </div>
+              <div id="trace-lanes" class="trace-lanes"></div>
+              <div class="trace-boundary" aria-hidden="true"><strong>?</strong><span id="trace-boundary-label">UNRESOLVED</span></div>
+              <p id="trace-array-note" class="trace-array-note">Presentation rule: one visual lane per unit of the currently published trace count. These lanes are not real network hops and do not represent IP, ASN or RTT topology.</p>
+            </div>
+          </div>
+
+          <div class="trace-facts" aria-label="Export boundary">
+            <div class="trace-fact"><span>Data status</span><strong id="trace-status">—</strong></div>
+            <div class="trace-fact is-unknown"><span>Route topology</span><strong id="trace-topology">NOT EXPORTED</strong></div>
+            <div class="trace-fact is-unknown"><span>Hop identities / ASN</span><strong id="trace-hop-identities">NOT EXPORTED</strong></div>
+            <div class="trace-fact is-unknown"><span>Per-hop RTT</span><strong id="trace-rtt">NOT EXPORTED</strong></div>
+          </div>
         </div>
       </section>
-      <section class="internet-detail-section internet-detail-history-section" aria-labelledby="history-title">
-        <h2 id="history-title">History</h2>
-        <p id="observer-history-summary" class="internet-detail-placeholder">Loading published history…</p>
-        <div class="internet-detail-history-wrap">
-          <table id="observer-history-table" class="internet-detail-history">
-            <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+
+      <section class="trace-section" aria-labelledby="history-title">
+        <div class="trace-section-inner">
+          <div class="trace-section-head">
+            <div>
+              <span class="trace-section-index">02 / CARRIER CONTINUITY</span>
+              <h2 id="history-title">History</h2>
+            </div>
+            <p id="trace-history-count-label">Published history points</p>
+          </div>
+
+          <div class="trace-history-grid">
+            <div class="trace-carrier">
+              <div class="trace-carrier-range"><span id="trace-carrier-start">—</span><span>AGGREGATE TRACE COUNT</span><span id="trace-carrier-end">—</span></div>
+              <div id="trace-carrier-strip" class="trace-carrier-strip" aria-label="Published trace count history"><span class="trace-carrier-line" aria-hidden="true"></span></div>
+              <p class="trace-carrier-caption">Each vertical carrier represents one published history point. Height encodes only the exported numeric trace count; striped carriers represent non-numeric or unavailable points.</p>
+              <p id="observer-history-summary" class="trace-history-summary">Loading published history…</p>
+            </div>
+            <div id="trace-history-stats" class="trace-history-stats" aria-label="History statistics"></div>
+          </div>
+
+          <details class="trace-archive">
+            <summary>Open recent published observations</summary>
+            <div class="trace-history-table-wrap">
+              <table id="observer-history-table" class="trace-history-table">
+                <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
         </div>
       </section>
-      <section class="internet-detail-section" aria-labelledby="observed-title"><h2 id="observed-title">Observed</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="derived-title"><h2 id="derived-title">Derived</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="unknown-title"><h2 id="unknown-title">Unknown</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="methodology-title"><h2 id="methodology-title">Methodology</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="sources-title"><h2 id="sources-title">Sources</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
+
+      <section class="trace-section" aria-label="Evidence boundary">
+        <div class="trace-section-inner">
+          <div class="trace-section-head">
+            <div><span class="trace-section-index">03 / EVIDENCE BOUNDARY</span><h2>What the export can — and cannot — say</h2></div>
+            <p>The page keeps observed values, simple derivations and unknown network details separate.</p>
+          </div>
+          <div class="trace-evidence-grid">
+            <article class="trace-evidence-card" data-kind="observed">
+              <h2 id="observed-title">Observed</h2>
+              <ul><li id="trace-observed-current">Current published trace count.</li><li id="trace-observed-history">Published history points.</li><li>The export supplies observation date and data status.</li></ul>
+            </article>
+            <article class="trace-evidence-card" data-kind="derived">
+              <h2 id="derived-title">Derived</h2>
+              <ul><li id="trace-derived-changes">Value changes are computed from the published series.</li><li id="trace-derived-distinct">Distinct values are counted from numeric points.</li><li id="trace-derived-coverage">Numeric coverage is calculated from the public history.</li></ul>
+            </article>
+            <article class="trace-evidence-card" data-kind="unknown">
+              <h2 id="unknown-title">Unknown</h2>
+              <ul><li>Actual hop sequence, IP addresses and ASNs.</li><li>Per-hop RTT, packet loss and ownership.</li><li>Destination outcome, routing intent and the cause of any change.</li></ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="trace-section" aria-label="Methodology and sources">
+        <div class="trace-section-inner">
+          <div class="trace-section-head">
+            <div><span class="trace-section-index">04 / PROVENANCE</span><h2>Method &amp; source boundary</h2></div>
+            <p>No external enrichment is added to this observer-specific view.</p>
+          </div>
+          <div class="trace-method-grid">
+            <div class="trace-method-block">
+              <h2 id="methodology-title">Methodology</h2>
+              <p>The current visualization reads the published <code>metrics.trace_count</code> aggregate. One animated lane is drawn per count unit, capped only for presentation if a future value becomes unusually large. Lane order, length and motion are graphic encodings, not measured hops. Historical stability, distinct-value count, change events and numeric coverage are calculated directly in the browser from the published history series.</p>
+            </div>
+            <div class="trace-method-block">
+              <h2 id="sources-title">Sources</h2>
+              <ul>
+                <li><a class="trace-source-link" href="/world-observer/dashboard/internet.json">World Observer Internet dashboard export ↗</a></li>
+                <li><a class="trace-source-link" href="/world-observer/dashboard/history/internet-observers.json">World Observer Internet history export ↗</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
-  <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/dashboard/internet.json<span class="cursor"></span></span></div>
+
+  <footer class="trace-footer-terminal">
+    <div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; traceroute --public-export nowhere<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>
