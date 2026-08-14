@@ -18,10 +18,10 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/area51.css?v=1">
-  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=2">
-  <script src="/site-i18n-de-area51.js?v=20260814-1"></script>
+  <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=3">
+  <script src="/site-i18n-de-area51.js?v=20260814-2"></script>
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/area51.js?v=1"></script>
+  <script defer src="/world-observer/area51.js?v=2"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -94,25 +94,30 @@
                 <p class="area51-section-index">PUBLIC LOCATION CONTEXT</p>
                 <h3 id="area51-imagery-title">Location / Imagery</h3>
               </div>
-              <span class="area51-imagery-source-badge">USGS / USDA</span>
+              <span class="area51-imagery-source-badge">USGS</span>
             </div>
 
             <figure class="area51-imagery-figure">
-              <img
-                src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/export?bbox=-115.88%2C37.20%2C-115.72%2C37.30&amp;bboxSR=4326&amp;imageSR=4326&amp;size=1200%2C750&amp;format=jpg&amp;transparent=false&amp;f=image"
-                alt="Public USGS and USDA orthoimagery centered on Groom Lake, Nevada"
-                loading="lazy"
-                decoding="async"
-                referrerpolicy="no-referrer"
+              <div
+                class="area51-imagery-tiles"
+                role="img"
+                aria-label="Public USGS satellite and orthoimagery mosaic centered on the Groom Lake area in Nevada"
               >
+                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1590/729" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1590/730" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1590/731" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1591/729" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1591/730" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1591/731" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              </div>
               <figcaption>
                 <strong>Groom Lake, Nevada</strong>
-                <span>Public aerial / orthoimagery from the current USGS service mosaic. Not a live feed; image age varies with the source mosaic.</span>
+                <span>Public USGS basemap imagery at a medium map scale. Not a live feed; imagery source and acquisition date vary with the service mosaic.</span>
               </figcaption>
             </figure>
 
-            <p class="area51-imagery-attribution">Map services and data available from U.S. Geological Survey, National Geospatial Program. NAIP imagery is provided through the USGS / USDA partnership.</p>
-            <a class="area51-imagery-source-link" href="https://www.usgs.gov/national-map-supporting-themes" target="_blank" rel="noopener noreferrer">USGS imagery &amp; licensing ↗</a>
+            <p class="area51-imagery-attribution">U.S. Geological Survey, The National Map. The ImageryOnly basemap uses different imagery sources by map scale, including Landsat at small to medium scales and higher-resolution orthoimagery where available.</p>
+            <a class="area51-imagery-source-link" href="https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer" target="_blank" rel="noopener noreferrer">USGS ImageryOnly service ↗</a>
           </section>
         </div>
       </section>
@@ -179,7 +184,7 @@
         <article class="area51-panel area51-foundation-card" aria-labelledby="sources-title">
           <p class="area51-section-index">04 / PROVENANCE</p>
           <h2 id="sources-title">Sources</h2>
-          <p>Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses public USGS / USDA orthoimagery from The National Map.</p>
+          <p>Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the public USGS ImageryOnly basemap from The National Map.</p>
           <div class="area51-source-paths" aria-label="Current local data exports">
             <code>dashboard/internet.json</code>
             <code>dashboard/history/internet-observers.json</code>

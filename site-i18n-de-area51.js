@@ -24,8 +24,9 @@
       "PUBLIC LOCATION CONTEXT": "ÖFFENTLICHER ORTSKONTEXT",
       "Location / Imagery": "Ort / Bilddaten",
       "Groom Lake, Nevada": "Groom Lake, Nevada",
-      "Public aerial / orthoimagery from the current USGS service mosaic. Not a live feed; image age varies with the source mosaic.": "Öffentliche Luft-/Orthobilddaten aus dem aktuellen USGS-Service-Mosaik. Kein Live-Bild; das Alter der Aufnahme hängt vom Quellmosaik ab.",
-      "USGS imagery & licensing ↗": "USGS-Bilddaten & Lizenz ↗",
+      "Public USGS basemap imagery at a medium map scale. Not a live feed; imagery source and acquisition date vary with the service mosaic.": "Öffentliche USGS-Basiskarten-Bilddaten in mittlerem Kartenmaßstab. Kein Live-Bild; Bildquelle und Aufnahmezeitpunkt variieren mit dem Service-Mosaik.",
+      "U.S. Geological Survey, The National Map. The ImageryOnly basemap uses different imagery sources by map scale, including Landsat at small to medium scales and higher-resolution orthoimagery where available.": "U.S. Geological Survey, The National Map. Die ImageryOnly-Basiskarte verwendet je nach Kartenmaßstab unterschiedliche Bildquellen, darunter Landsat bei kleinen bis mittleren Maßstäben und höher aufgelöste Orthobilddaten, wo verfügbar.",
+      "USGS ImageryOnly service ↗": "USGS-ImageryOnly-Dienst ↗",
       "02 / PUBLISHED SERIES": "02 / VERÖFFENTLICHTE REIHE",
       "History": "Verlauf",
       "Loading published history…": "Veröffentlichter Verlauf wird geladen…",
@@ -49,10 +50,10 @@
       "Detailed collector methodology will be documented in a later observer-specific source review. This interface does not add to or modify the existing measurement logic.": "Die detaillierte Collector-Methodik wird in einer späteren observer-spezifischen Quellenprüfung dokumentiert. Diese Oberfläche ergänzt oder verändert die bestehende Messlogik nicht.",
       "04 / PROVENANCE": "04 / PROVENIENZ",
       "Sources": "Quellen",
-      "Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses public USGS / USDA orthoimagery from The National Map.": "Die Quellenangaben zur Telemetrie werden in einem späteren observer-spezifischen Durchgang erweitert. Das Panel Ort / Bilddaten nutzt separat öffentliche USGS-/USDA-Orthobilddaten aus The National Map."
+      "Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses the public USGS ImageryOnly basemap from The National Map.": "Die Quellenangaben zur Telemetrie werden in einem späteren observer-spezifischen Durchgang erweitert. Das Panel Ort / Bilddaten nutzt separat die öffentliche USGS-ImageryOnly-Basiskarte von The National Map."
     },
     attributes: {
-      "Public USGS and USDA orthoimagery centered on Groom Lake, Nevada": "Öffentliche USGS-/USDA-Orthobilddaten mit Groom Lake, Nevada, im Zentrum",
+      "Public USGS satellite and orthoimagery mosaic centered on the Groom Lake area in Nevada": "Öffentliches USGS-Satelliten- und Orthobildmosaik mit dem Groom-Lake-Gebiet in Nevada im Zentrum",
       "Observation provenance and interpretation boundaries": "Provenienz der Beobachtungen und Grenzen der Interpretation",
       "Current local data exports": "Aktuelle lokale Datenexporte"
     },
