@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-10-c64-1";
+  const VERSION = "2026-08-14-area51-1";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260810-c64-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -20,6 +20,8 @@
     "/de/world-observer/hometown.html": { en: "/world-observer/hometown.html", de: "/de/world-observer/hometown.html" },
     "/world-observer/wiesmoor.html": { en: "/world-observer/wiesmoor.html", de: "/de/world-observer/wiesmoor.html" },
     "/de/world-observer/wiesmoor.html": { en: "/world-observer/wiesmoor.html", de: "/de/world-observer/wiesmoor.html" },
+    "/world-observer/area51.html": { en: "/world-observer/area51.html", de: "/de/world-observer/area51.html" },
+    "/de/world-observer/area51.html": { en: "/world-observer/area51.html", de: "/de/world-observer/area51.html" },
     "/museum/c64/": { en: "/museum/c64/", de: "/de/museum/c64/" },
     "/museum/c64/index.html": { en: "/museum/c64/", de: "/de/museum/c64/" },
     "/de/museum/c64/": { en: "/museum/c64/", de: "/de/museum/c64/" },

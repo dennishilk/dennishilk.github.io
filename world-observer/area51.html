@@ -3,15 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Area51 Reachability – World Observer</title>
-  <meta name="description" content="Public-data telemetry and Earth-observation context for the Area51 Reachability observer, without causal or military-activity claims.">
+  <title>Groom Lake Public Signal Observatory – Area 51 | World Observer</title>
+  <meta name="description" content="Public-data Area 51 observatory for Groom Lake with reachability telemetry, Sentinel-2 scene metadata and NASA thermal-anomaly context, without causal claims.">
   <link rel="canonical" href="https://dennishilk.com/world-observer/area51.html">
-  <meta property="og:title" content="Area51 Reachability – World Observer">
-  <meta property="og:description" content="Public telemetry plus public satellite and thermal-anomaly context for Groom Lake, presented without causal claims.">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/area51.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/area51.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/area51.html">
+  <meta property="og:title" content="Groom Lake Public Signal Observatory – Area 51 | World Observer">
+  <meta property="og:description" content="Public reachability telemetry plus Sentinel-2 satellite-scene metadata and NASA thermal-anomaly context for Groom Lake.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/area51.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Groom Lake Public Signal Observatory – Area 51 | World Observer">
+  <meta name="twitter:description" content="Public telemetry and Earth-observation context for Groom Lake, with explicit interpretation limits.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
   <meta name="theme-color" content="#05090b">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
@@ -19,17 +27,22 @@
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/area51.css?v=1">
   <link rel="stylesheet" href="/world-observer/area51-imagery.css?v=5">
-  <link rel="stylesheet" href="/world-observer/area51-public-watch.css?v=1">
-  <script src="/site-i18n-de-area51.js?v=20260814-4"></script>
+  <link rel="stylesheet" href="/world-observer/area51-public-watch.css?v=2">
+  <script src="/site-i18n-de-area51.js?v=20260814-5"></script>
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/area51.js?v=4"></script>
+  <script defer src="/world-observer/area51.js?v=5"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Area51 Reachability – World Observer",
-    "description": "Public-data telemetry and Earth-observation context for the Area51 Reachability observer, without causal or military-activity claims.",
+    "name": "Groom Lake Public Signal Observatory – Area 51",
+    "description": "Public-data Area 51 observatory for Groom Lake with reachability telemetry, Sentinel-2 scene metadata and NASA thermal-anomaly context, without causal claims.",
     "url": "https://dennishilk.com/world-observer/area51.html",
+    "inLanguage": "en",
+    "about": {
+      "@type": "Place",
+      "name": "Groom Lake, Nevada"
+    },
     "isPartOf": {
       "@type": "WebSite",
       "name": "World Observer",
@@ -163,6 +176,16 @@
               <div class="area51-scene-id-row"><dt>Scene ID</dt><dd id="area51-scene-id" title="">—</dd></div>
             </dl>
 
+            <section class="area51-recent-scenes-block" aria-labelledby="area51-recent-scenes-title">
+              <div class="area51-recent-scenes-head">
+                <strong id="area51-recent-scenes-title">Recent Sentinel-2 passes</strong>
+                <span>full-tile cloud metadata</span>
+              </div>
+              <ol id="area51-recent-scenes" class="area51-recent-scenes" aria-live="polite">
+                <li class="area51-recent-scenes-empty">Querying recent scenes…</li>
+              </ol>
+            </section>
+
             <p class="area51-watch-note">Cloud cover is catalogue metadata for the full Sentinel tile, not a cloud estimate for the facility itself. A recent scene is not evidence of activity.</p>
             <a class="area51-watch-source" href="https://stac.dataspace.copernicus.eu/v1/collections/sentinel-2-l2a" target="_blank" rel="noopener noreferrer">Copernicus Sentinel-2 L2A catalogue ↗</a>
           </article>
@@ -176,20 +199,38 @@
               <span class="area51-watch-state">VIIRS NOAA-20 · 375 m</span>
             </div>
 
-            <div class="area51-thermal-map" role="img" aria-label="Public Sentinel-2 context map with a NASA VIIRS thermal-anomaly layer for the selected date">
-              <div class="area51-thermal-base" aria-hidden="true">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1459.jpg" alt="" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1460.jpg" alt="" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3181/1461.jpg" alt="" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1459.jpg" alt="" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1460.jpg" alt="" loading="lazy" decoding="async">
-                <img src="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2025_3857/default/g/13/3182/1461.jpg" alt="" loading="lazy" decoding="async">
-              </div>
+            <div class="area51-thermal-map" role="img" aria-label="NASA VIIRS thermal-anomaly detection layer over a dark public watch-area reference grid; no satellite basemap">
+              <div class="area51-thermal-grid" aria-hidden="true"></div>
+              <div class="area51-thermal-sweep" aria-hidden="true"></div>
+              <div class="area51-thermal-reticle" aria-hidden="true"></div>
+              <span class="area51-thermal-coord northwest" aria-hidden="true">37.265° N</span>
+              <span class="area51-thermal-coord northeast" aria-hidden="true">115.752° W</span>
+              <span class="area51-thermal-coord southwest" aria-hidden="true">37.195° N</span>
+              <span class="area51-thermal-coord southeast" aria-hidden="true">115.884° W</span>
               <img id="area51-thermal-overlay" class="area51-thermal-overlay" alt="NASA GIBS VIIRS NOAA-20 thermal-anomaly overlay" decoding="async">
+              <div class="area51-thermal-center-label" aria-hidden="true">
+                <strong>GROOM LAKE AOI</strong>
+                <span>NO BASEMAP · DETECTIONS ONLY</span>
+              </div>
               <div class="area51-thermal-map-label">
                 <span>Selected public layer</span>
                 <strong id="area51-thermal-date">—</strong>
               </div>
+            </div>
+
+            <div class="area51-thermal-readout">
+              <div>
+                <span>Layer status</span>
+                <strong id="area51-thermal-state" data-state="loading" aria-live="polite">Waiting for public layer</strong>
+              </div>
+              <div>
+                <span>Display mode</span>
+                <strong>Transparent detections · no basemap</strong>
+              </div>
+              <figure class="area51-thermal-legend">
+                <figcaption>NASA GIBS layer legend</figcaption>
+                <img src="https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=VIIRS_NOAA20_Thermal_Anomalies_375m_All&amp;format=image/png&amp;STYLE=default" alt="NASA GIBS legend for VIIRS NOAA-20 thermal anomalies" loading="lazy" decoding="async">
+              </figure>
             </div>
 
             <div>
@@ -197,7 +238,7 @@
               <div id="area51-thermal-days" class="area51-thermal-days" aria-label="Select recent thermal-anomaly date"></div>
             </div>
 
-            <p class="area51-watch-note area51-thermal-note">Visible marks are satellite-derived thermal anomalies for the selected day. They may be associated with fire or other hot sources; a blank layer is not proof that no activity occurred. This panel does not identify cause, intent, aircraft, or military activity.</p>
+            <p class="area51-watch-note area51-thermal-note">Only NASA's transparent thermal-detection layer is shown here; the satellite basemap is deliberately omitted. Visible marks are published thermal anomalies for the selected day. A blank layer is not proof that no activity occurred, and this panel does not identify cause, intent, aircraft, or military activity.</p>
             <a class="area51-watch-source" href="https://firms.modaps.eosdis.nasa.gov/content/tutorials/gibs/" target="_blank" rel="noopener noreferrer">NASA GIBS / FIRMS thermal-anomaly layers ↗</a>
           </article>
         </div>
@@ -250,7 +291,7 @@
         <article class="area51-panel area51-foundation-card" aria-labelledby="sources-title">
           <p class="area51-section-index">04 / PROVENANCE</p>
           <h2 id="sources-title">Sources</h2>
-          <p>Observer telemetry uses the existing local World Observer exports. Location context uses EOxCloudless Sentinel-2 imagery; satellite-pass metadata comes from the Copernicus Data Space STAC catalogue; thermal-anomaly imagery comes from NASA Earthdata GIBS.</p>
+          <p>Observer telemetry uses the existing local World Observer exports. Location context uses EOxCloudless Sentinel-2 imagery; satellite-pass metadata comes from the Copernicus Data Space STAC catalogue; thermal-anomaly imagery and its legend come from NASA Earthdata GIBS.</p>
           <div class="area51-source-paths" aria-label="Current local data exports">
             <code>dashboard/internet.json</code>
             <code>dashboard/history/internet-observers.json</code>
