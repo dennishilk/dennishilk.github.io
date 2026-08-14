@@ -4,7 +4,6 @@
   const observerId = "area51-reachability";
   const dashboardUrl = "/world-observer/dashboard/internet.json";
   const historyUrl = "/world-observer/dashboard/history/internet-observers.json";
-  const svgNamespace = "http://www.w3.org/2000/svg";
 
   function formatNumber(value) {
     if (value === null || value === undefined || value === "") return "—";
@@ -48,12 +47,6 @@
     const element = document.createElement(tagName);
     if (className) element.className = className;
     if (text !== undefined) element.textContent = text;
-    return element;
-  }
-
-  function createSvgElement(tagName, attributes = {}) {
-    const element = document.createElementNS(svgNamespace, tagName);
-    Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, String(value)));
     return element;
   }
 
@@ -112,182 +105,74 @@
       `The existing export publishes “${observer.primary_metric_name || "Primary metric"}” as ${formatMetric(observer.primary_metric_value, observer.primary_metric_unit)}. This page displays that supplied value without adding a new calculation or causal interpretation.`;
   }
 
-  function splitNumericSegments(points) {
-    const segments = [];
-    let current = [];
-
-    points.forEach((point, index) => {
-      const value = Number(point?.value);
-      if (Number.isFinite(value)) {
-        current.push({ ...point, index, numericValue: value });
-        return;
-      }
-      if (current.length) segments.push(current);
-      current = [];
-    });
-
-    if (current.length) segments.push(current);
-    return segments;
+  function median(values) {
+    if (!values.length) return null;
+    const sorted = [...values].sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    if (sorted.length % 2) return sorted[middle];
+    return (sorted[middle - 1] + sorted[middle]) / 2;
   }
 
-  function niceStep(rawStep) {
-    if (!Number.isFinite(rawStep) || rawStep <= 0) return 1;
-    const magnitude = 10 ** Math.floor(Math.log10(rawStep));
-    const normalized = rawStep / magnitude;
-    const factor = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
-    return factor * magnitude;
-  }
-
-  function buildAxisScale(values) {
-    const rawMinimum = Math.min(0, ...values);
-    const rawMaximum = Math.max(0, ...values);
-    const rawRange = rawMaximum - rawMinimum || 1;
-    const step = niceStep(rawRange / 4);
-    const minimum = Math.floor(rawMinimum / step) * step;
-    let maximum = Math.ceil(rawMaximum / step) * step;
-    if (maximum === minimum) maximum = minimum + step;
-    const tickCount = Math.max(1, Math.round((maximum - minimum) / step));
-    return { minimum, maximum, step, tickCount };
-  }
-
-  function renderHistoryChart(record) {
-    const container = document.getElementById("area51-history-chart");
-    container.textContent = "";
+  function renderObservationPulse(record) {
+    const grid = document.getElementById("area51-pulse-grid");
+    const peaks = document.getElementById("area51-peak-list");
+    grid.textContent = "";
+    peaks.textContent = "";
 
     const points = Array.isArray(record?.points) ? record.points : [];
-    const segments = splitNumericSegments(points);
-    const numericPoints = segments.flat();
+    const numericPoints = points
+      .map((point, index) => ({ ...point, index, numericValue: Number(point?.value) }))
+      .filter((point) => Number.isFinite(point.numericValue));
+
+    document.getElementById("area51-pulse-start").textContent = points[0]?.date || "—";
+    document.getElementById("area51-pulse-end").textContent = points.at(-1)?.date || "—";
 
     if (!points.length || !numericPoints.length) {
-      container.appendChild(
-        createElement("p", "area51-chart-empty", "No published numeric history is available yet."),
-      );
+      grid.appendChild(createElement("p", "area51-chart-empty", "No published numeric history is available yet."));
       return;
     }
 
-    const width = 800;
-    const height = 360;
-    const margin = { top: 22, right: 24, bottom: 52, left: 78 };
-    const plotWidth = width - margin.left - margin.right;
-    const plotHeight = height - margin.top - margin.bottom;
-    const values = numericPoints.map((point) => point.numericValue);
-    const axis = buildAxisScale(values);
-    const range = axis.maximum - axis.minimum || axis.step;
-    const denominator = Math.max(points.length - 1, 1);
-    const x = (index) => margin.left + (index / denominator) * plotWidth;
-    const y = (value) => margin.top + (1 - ((value - axis.minimum) / range)) * plotHeight;
+    const maximum = Math.max(...numericPoints.map((point) => Math.max(0, point.numericValue)), 1);
+    const logMaximum = Math.log1p(maximum) || 1;
 
-    const svg = createSvgElement("svg", {
-      viewBox: `0 0 ${width} ${height}`,
-      role: "img",
-      "aria-labelledby": "area51-chart-title area51-chart-description",
-    });
+    points.forEach((point, index) => {
+      const numeric = Number(point?.value);
+      const hasNumeric = Number.isFinite(numeric);
+      const status = String(point?.data_status || "unknown").toLowerCase();
+      const cell = createElement("span", "area51-pulse-cell");
+      cell.dataset.status = status;
+      cell.setAttribute("role", "listitem");
 
-    const title = createSvgElement("title", { id: "area51-chart-title" });
-    title.textContent = "Area51 Reachability published observation history";
-    const description = createSvgElement("desc", { id: "area51-chart-description" });
-    description.textContent =
-      `${numericPoints.length} numeric values across ${points.length} published history points, from ${points[0]?.date || "the first observation"} to ${points.at(-1)?.date || "the latest observation"}. Missing numeric points appear as gaps.`;
-    svg.append(title, description);
-
-    const definitions = createSvgElement("defs");
-    const gradient = createSvgElement("linearGradient", {
-      id: "area51-history-fill",
-      x1: "0",
-      x2: "0",
-      y1: "0",
-      y2: "1",
-    });
-    const start = createSvgElement("stop", {
-      offset: "0%",
-      "stop-color": "#5be3ff",
-      "stop-opacity": "0.28",
-    });
-    const end = createSvgElement("stop", {
-      offset: "100%",
-      "stop-color": "#5be3ff",
-      "stop-opacity": "0",
-    });
-    gradient.append(start, end);
-    definitions.appendChild(gradient);
-    svg.appendChild(definitions);
-
-    for (let tick = 0; tick <= axis.tickCount; tick += 1) {
-      const ratio = tick / axis.tickCount;
-      const lineY = margin.top + ratio * plotHeight;
-      const value = axis.maximum - tick * axis.step;
-      svg.appendChild(createSvgElement("line", {
-        class: "area51-chart-grid",
-        x1: margin.left,
-        x2: width - margin.right,
-        y1: lineY,
-        y2: lineY,
-      }));
-
-      const label = createSvgElement("text", {
-        class: "area51-chart-axis-label",
-        x: margin.left - 12,
-        y: lineY + 6,
-        "text-anchor": "end",
-      });
-      label.textContent = formatNumber(value);
-      svg.appendChild(label);
-    }
-
-    segments.forEach((segment) => {
-      const coordinates = segment.map((point) => [x(point.index), y(point.numericValue)]);
-      if (coordinates.length > 1) {
-        const linePath = coordinates
-          .map(([pointX, pointY], index) => `${index === 0 ? "M" : "L"} ${pointX.toFixed(2)} ${pointY.toFixed(2)}`)
-          .join(" ");
-        const areaPath = [
-          `M ${coordinates[0][0].toFixed(2)} ${(margin.top + plotHeight).toFixed(2)}`,
-          ...coordinates.map(([pointX, pointY]) => `L ${pointX.toFixed(2)} ${pointY.toFixed(2)}`),
-          `L ${coordinates.at(-1)[0].toFixed(2)} ${(margin.top + plotHeight).toFixed(2)} Z`,
-        ].join(" ");
-
-        svg.appendChild(createSvgElement("path", {
-          class: "area51-chart-area",
-          d: areaPath,
-        }));
-        svg.appendChild(createSvgElement("path", {
-          class: "area51-chart-line",
-          d: linePath,
-        }));
+      if (hasNumeric) {
+        const normalized = Math.log1p(Math.max(0, numeric)) / logMaximum;
+        cell.style.setProperty("--pulse", Math.max(0.08, normalized).toFixed(3));
+      } else {
+        cell.classList.add("is-missing");
       }
+
+      if (index === points.length - 1) cell.classList.add("is-latest");
+
+      const valueLabel = hasNumeric
+        ? formatMetric(numeric, point.metric_unit || record?.metric_unit)
+        : "no numeric value";
+      const accessibleLabel = `${point.date || "Observation"}: ${valueLabel}; status ${status}`;
+      cell.title = accessibleLabel;
+      cell.setAttribute("aria-label", accessibleLabel);
+      grid.appendChild(cell);
     });
 
-    numericPoints.forEach((point, numericIndex) => {
-      if (numericIndex % 7 !== 0 && numericIndex !== numericPoints.length - 1) return;
-      const isLatest = numericIndex === numericPoints.length - 1;
-      const circle = createSvgElement("circle", {
-        class: isLatest ? "area51-chart-latest" : "area51-chart-point",
-        cx: x(point.index),
-        cy: y(point.numericValue),
-        r: isLatest ? 6 : 3,
+    [...numericPoints]
+      .sort((a, b) => b.numericValue - a.numericValue)
+      .slice(0, 5)
+      .forEach((point, index) => {
+        const item = document.createElement("li");
+        item.append(
+          createElement("span", "area51-peak-rank", `#${index + 1}`),
+          createElement("time", "area51-peak-date", point.date || "—"),
+          createElement("strong", "area51-peak-value", formatMetric(point.numericValue, point.metric_unit || record?.metric_unit)),
+        );
+        peaks.appendChild(item);
       });
-      const pointTitle = createSvgElement("title");
-      pointTitle.textContent = `${point.date || "Observation"}: ${formatMetric(point.numericValue, point.metric_unit || record.metric_unit)}`;
-      circle.appendChild(pointTitle);
-      svg.appendChild(circle);
-    });
-
-    const dateLabels = [
-      [points[0]?.date, margin.left, "start"],
-      [points.at(-1)?.date, width - margin.right, "end"],
-    ];
-    dateLabels.forEach(([date, labelX, anchor]) => {
-      const label = createSvgElement("text", {
-        class: "area51-chart-axis-label",
-        x: labelX,
-        y: height - 14,
-        "text-anchor": anchor,
-      });
-      label.textContent = date || "—";
-      svg.appendChild(label);
-    });
-
-    container.appendChild(svg);
   }
 
   function renderHistoryTable(record) {
@@ -320,6 +205,7 @@
   function renderHistory(record) {
     const points = Array.isArray(record?.points) ? record.points : [];
     const numericPoints = points.filter((point) => Number.isFinite(Number(point?.value)));
+    const numericValues = numericPoints.map((point) => Number(point.value));
     const summary = document.getElementById("observer-history-summary");
     const metrics = document.getElementById("area51-history-metrics");
     metrics.textContent = "";
@@ -328,7 +214,7 @@
       summary.textContent = "No published history is available for this observer yet.";
       document.getElementById("area51-historical-copy").textContent =
         "No published history is available in the existing export yet.";
-      renderHistoryChart(null);
+      renderObservationPulse(null);
       renderHistoryTable(null);
       return;
     }
@@ -340,29 +226,26 @@
       ? Number(record.numeric_point_count)
       : numericPoints.length;
     const latest = record.latest_value ?? numericPoints.at(-1)?.value;
-    const previous = record.previous_value ?? numericPoints.at(-2)?.value;
     const unit = record.metric_unit || numericPoints.at(-1)?.metric_unit || "score";
+    const peak = numericValues.length ? Math.max(...numericValues) : null;
+    const medianValue = median(numericValues);
+    const missingCount = Math.max(0, totalCount - numericCount);
 
     summary.textContent =
-      `${formatNumber(totalCount)} published points / ${formatNumber(numericCount)} numeric values`;
+      `${formatNumber(totalCount)} published points • ${formatNumber(numericCount)} numeric • ${formatNumber(missingCount)} gaps`;
 
     appendHistoryMetric(metrics, "Latest", formatMetric(latest, unit));
-    appendHistoryMetric(metrics, "Previous", formatMetric(previous, unit));
     appendHistoryMetric(metrics, "7-day average", formatMetric(record.seven_day_average, unit));
     appendHistoryMetric(metrics, "30-day average", formatMetric(record.thirty_day_average, unit));
-
-    if (Number.isFinite(Number(record.delta))) {
-      const direction = String(record.direction || "").toLowerCase();
-      const arrow = direction === "up" ? "↑" : direction === "down" ? "↓" : "→";
-      appendHistoryMetric(metrics, "Latest delta", `${arrow} ${formatMetric(Math.abs(Number(record.delta)), unit)}`);
-    }
+    appendHistoryMetric(metrics, "Median", formatMetric(medianValue, unit));
+    appendHistoryMetric(metrics, "Peak", formatMetric(peak, unit));
 
     const firstDate = points[0]?.date || "the first published observation";
     const lastDate = points.at(-1)?.date || "the latest published observation";
     document.getElementById("area51-historical-copy").textContent =
-      `${formatNumber(totalCount)} published history points span ${firstDate} to ${lastDate}; ${formatNumber(numericCount)} contain numeric values. They are displayed without a causal interpretation.`;
+      `${formatNumber(totalCount)} published history points span ${firstDate} to ${lastDate}; ${formatNumber(numericCount)} contain numeric values. The pulse display and peak list are descriptive views of those published values, without a causal interpretation.`;
 
-    renderHistoryChart(record);
+    renderObservationPulse(record);
     renderHistoryTable(record);
   }
 
