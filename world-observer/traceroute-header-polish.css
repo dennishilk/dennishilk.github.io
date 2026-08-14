@@ -22,6 +22,15 @@
   width: fit-content;
 }
 
+/* Final visual polish: the lane-end labels and evidence section already explain
+   the unresolved boundary, so the large question-mark overlay and repeated
+   four-card export summary are intentionally not shown. The elements remain in
+   the DOM so the renderer contract stays stable. */
+.trace-boundary,
+.trace-facts {
+  display: none;
+}
+
 @media (max-width: 520px) {
   .trace-topbar {
     align-items: flex-start;
