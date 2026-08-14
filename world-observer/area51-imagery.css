@@ -1,0 +1,181 @@
+.world-observer-page .area51-main {
+  padding-top: clamp(3.6rem, 6vw, 5rem);
+}
+
+.area51-eyebrow {
+  margin-bottom: 1.1rem;
+  text-align: center;
+}
+
+.area51-imagery-panel {
+  align-content: start;
+  background:
+    linear-gradient(180deg, rgba(91, 227, 255, 0.025), transparent),
+    rgba(2, 6, 7, 0.58);
+  border: 1px solid rgba(91, 227, 255, 0.16);
+  display: grid;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+  position: relative;
+}
+
+.area51-imagery-panel::before {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(196, 243, 250, 0.012) 3px,
+    rgba(196, 243, 250, 0.012) 4px
+  );
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.area51-imagery-heading {
+  align-items: end;
+  border-bottom: 1px solid rgba(91, 227, 255, 0.16);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.7rem;
+  position: relative;
+  z-index: 3;
+}
+
+.area51-imagery-heading .area51-section-index {
+  margin-bottom: 0.25rem;
+}
+
+.area51-imagery-heading h3 {
+  color: var(--a51-cyan-soft);
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.area51-imagery-source-badge {
+  color: var(--a51-green);
+  font-size: 0.58rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.area51-imagery-figure {
+  margin: 0;
+  min-width: 0;
+  position: relative;
+  z-index: 3;
+}
+
+.area51-imagery-figure img {
+  aspect-ratio: 16 / 10;
+  background:
+    linear-gradient(rgba(91, 227, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91, 227, 255, 0.035) 1px, transparent 1px),
+    #020607;
+  background-size: 28px 28px;
+  border: 1px solid rgba(91, 227, 255, 0.18);
+  display: block;
+  filter: saturate(0.82) contrast(1.06) brightness(0.86);
+  height: auto;
+  object-fit: cover;
+  width: 100%;
+}
+
+.area51-imagery-figure figcaption {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.75rem 0 0;
+}
+
+.area51-imagery-figure figcaption strong {
+  color: #d9f5f8;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+}
+
+.area51-imagery-figure figcaption span,
+.area51-imagery-attribution {
+  color: var(--a51-muted);
+  font-size: 0.65rem;
+  line-height: 1.55;
+}
+
+.area51-imagery-attribution {
+  border-top: 1px solid rgba(91, 227, 255, 0.12);
+  margin: 0.8rem 0 0;
+  padding-top: 0.75rem;
+  position: relative;
+  z-index: 3;
+}
+
+.area51-imagery-source-link {
+  color: var(--a51-cyan);
+  font-size: 0.66rem;
+  margin-top: 0.6rem;
+  position: relative;
+  text-decoration: none;
+  width: fit-content;
+  z-index: 3;
+}
+
+.area51-imagery-source-link:hover {
+  text-decoration: underline;
+}
+
+.area51-imagery-source-link:focus-visible {
+  outline: 2px solid var(--a51-cyan);
+  outline-offset: 4px;
+}
+
+@media (min-width: 1200px) {
+  .area51-current-layout {
+    gap: clamp(1rem, 1.6vw, 1.5rem);
+    grid-template-columns: minmax(390px, 1.08fr) minmax(260px, 0.68fr) minmax(320px, 0.84fr);
+  }
+
+  .area51-instrument {
+    width: min(31vw, 470px);
+  }
+
+  .area51-secondary-metrics > div {
+    min-height: 76px;
+  }
+}
+
+@media (min-width: 801px) and (max-width: 1199px) {
+  .area51-imagery-panel {
+    grid-column: 1 / -1;
+  }
+
+  .area51-imagery-figure img {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+@media (max-width: 800px) {
+  .world-observer-page .area51-main {
+    padding-top: 4.2rem;
+  }
+
+  .area51-imagery-panel {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .area51-imagery-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .area51-imagery-figure img {
+    aspect-ratio: 4 / 3;
+  }
+}
