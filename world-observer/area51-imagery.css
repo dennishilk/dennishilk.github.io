@@ -214,9 +214,9 @@
 .area51-pulse-cell {
   --pulse: 0.12;
   aspect-ratio: 1;
-  background: rgba(91, 227, 255, calc(0.06 + (var(--pulse) * 0.72)));
-  border: 1px solid rgba(91, 227, 255, calc(0.12 + (var(--pulse) * 0.5)));
-  box-shadow: 0 0 calc(2px + (var(--pulse) * 10px)) rgba(91, 227, 255, calc(var(--pulse) * 0.22));
+  background: rgba(91, 227, 255, var(--pulse));
+  border: 1px solid rgba(91, 227, 255, 0.38);
+  box-shadow: 0 0 8px rgba(91, 227, 255, 0.14);
   min-width: 0;
   position: relative;
 }
