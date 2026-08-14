@@ -49,7 +49,7 @@
       "Detailed collector methodology will be documented in a later observer-specific source review. This interface does not add to or modify the existing measurement logic.": "Die detaillierte Collector-Methodik wird in einer späteren observer-spezifischen Quellenprüfung dokumentiert. Diese Oberfläche ergänzt oder verändert die bestehende Messlogik nicht.",
       "04 / PROVENANCE": "04 / PROVENIENZ",
       "Sources": "Quellen",
-      "Source attribution will be expanded in a later observer-specific pass. This page currently presents only the existing public World Observer dashboard and history exports.": "Die Quellenangaben werden in einem späteren observer-spezifischen Durchgang erweitert. Diese Seite zeigt derzeit nur die bestehenden öffentlichen World-Observer-Dashboard- und Verlaufs-Exporte."
+      "Telemetry source attribution will be expanded in a later observer-specific pass. The Location / Imagery panel separately uses public USGS / USDA orthoimagery from The National Map.": "Die Quellenangaben zur Telemetrie werden in einem späteren observer-spezifischen Durchgang erweitert. Das Panel Ort / Bilddaten nutzt separat öffentliche USGS-/USDA-Orthobilddaten aus The National Map."
     },
     attributes: {
       "Public USGS and USDA orthoimagery centered on Groom Lake, Nevada": "Öffentliche USGS-/USDA-Orthobilddaten mit Groom Lake, Nevada, im Zentrum",
