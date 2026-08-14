@@ -6,6 +6,7 @@ const root = new URL("../", import.meta.url);
 const dashboard = JSON.parse(readFileSync(new URL("world-observer/dashboard/internet.json", root), "utf8"));
 const dashboardHtml = readFileSync(new URL("world-observer/internet.html", root), "utf8");
 const renderer = readFileSync(new URL("world-observer.js", root), "utf8");
+const area51Renderer = readFileSync(new URL("world-observer/area51.js", root), "utf8");
 const sitemap = readFileSync(new URL("sitemap.xml", root), "utf8");
 
 function slugFor(observerId) {
@@ -56,4 +57,11 @@ test("Internet observer cards use crawlable anchor destinations", () => {
   assert.ok(renderer.includes('id === "area51-reachability" ? "area51" : id'));
   assert.ok(renderer.includes('getObserverId(observer) !== "east-frisia-water-observer"'));
   assert.ok(!renderer.includes('detailsId = `internet-observer-details-${index}`'));
+});
+
+test("Area51 public-watch renderer remains valid JavaScript", () => {
+  assert.doesNotThrow(() => new Function(area51Renderer));
+  assert.ok(area51Renderer.includes("stac.dataspace.copernicus.eu/v1/search"));
+  assert.ok(area51Renderer.includes("VIIRS_NOAA20_Thermal_Anomalies_375m_All"));
+  assert.ok(area51Renderer.includes("gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"));
 });
