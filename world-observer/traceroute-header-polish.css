@@ -1,0 +1,35 @@
+.trace-topbar {
+  align-items: flex-start;
+  margin: 1.7rem 0 1.45rem;
+}
+
+.trace-identity {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.trace-compact-title {
+  color: var(--trace-cyan);
+  font-size: clamp(0.68rem, 1.5vw, 0.86rem);
+  font-weight: 400;
+  letter-spacing: clamp(0.12em, 0.9vw, 0.34em);
+  line-height: 1.45;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.trace-topbar .trace-back {
+  width: fit-content;
+}
+
+@media (max-width: 520px) {
+  .trace-topbar {
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .trace-compact-title {
+    max-width: 22rem;
+  }
+}
