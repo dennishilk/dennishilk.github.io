@@ -1,0 +1,36 @@
+name: Traceroute observer checks
+
+on:
+  pull_request:
+    paths:
+      - 'world-observer/traceroute-to-nowhere.html'
+      - 'world-observer/traceroute-to-nowhere.css'
+      - 'world-observer/traceroute-to-nowhere.js'
+      - 'de/world-observer/traceroute-to-nowhere.html'
+      - 'sitemap-internet-observers.xml'
+      - 'tests/traceroute-to-nowhere.test.mjs'
+      - '.github/workflows/traceroute-observer-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'world-observer/traceroute-to-nowhere.html'
+      - 'world-observer/traceroute-to-nowhere.css'
+      - 'world-observer/traceroute-to-nowhere.js'
+      - 'de/world-observer/traceroute-to-nowhere.html'
+      - 'sitemap-internet-observers.xml'
+      - 'tests/traceroute-to-nowhere.test.mjs'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check showcase JavaScript syntax
+        run: node --check world-observer/traceroute-to-nowhere.js
+      - name: Run focused showcase regression tests
+        run: node --test tests/traceroute-to-nowhere.test.mjs
+      - name: Run shared Internet observer detail contract
+        run: node --test tests/internet-observer-detail-pages.test.mjs tests/internet-observer-localized-pages.test.mjs
