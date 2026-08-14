@@ -27,6 +27,8 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
   <link rel="stylesheet" href="/world-observer/traceroute-to-nowhere.css?v=1">
+  <link rel="stylesheet" href="/world-observer/traceroute-header-polish.css?v=1">
+  <script defer src="/world-observer/traceroute-language.js?v=1"></script>
   <script defer src="/world-observer/traceroute-to-nowhere.js?v=1"></script>
   <script type="application/ld+json">
   {
@@ -45,24 +47,16 @@
 <div class="content world-observer-page trace-page">
   <main>
     <div class="trace-topbar">
-      <a class="trace-back" href="/world-observer/internet.html">← Back to Internet Observers</a>
+      <div class="trace-identity">
+        <h1 class="trace-compact-title">TRACEROUTE TO NOWHERE</h1>
+        <a class="trace-back" href="/world-observer/internet.html">← Back to Internet Observers</a>
+      </div>
       <nav class="trace-language" aria-label="Page language">
         <a href="/world-observer/traceroute-to-nowhere.html" hreflang="en" lang="en" aria-current="page">EN</a>
         <span aria-hidden="true">|</span>
         <a href="/de/world-observer/traceroute-to-nowhere.html" hreflang="de" lang="de">DE</a>
       </nav>
     </div>
-
-    <header class="trace-hero">
-      <div>
-        <span class="trace-eyebrow">PUBLIC ROUTE OBSERVATION CONSOLE</span>
-        <h1>Traceroute To Nowhere</h1>
-        <p class="trace-hero-copy">A deliberately strict view of the published traceroute aggregate: what is present in the public export is shown; hop identities, route topology, RTTs and causes that are not exported remain visibly unresolved.</p>
-      </div>
-      <div class="trace-hero-mark" aria-label="Current published trace count">
-        <strong id="trace-hero-count">08</strong>
-      </div>
-    </header>
 
     <p id="observer-loading" class="trace-loading" aria-live="polite">Loading published route observations…</p>
 

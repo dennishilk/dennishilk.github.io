@@ -6,7 +6,9 @@ const root = new URL("../", import.meta.url);
 const english = readFileSync(new URL("world-observer/traceroute-to-nowhere.html", root), "utf8");
 const german = readFileSync(new URL("de/world-observer/traceroute-to-nowhere.html", root), "utf8");
 const renderer = readFileSync(new URL("world-observer/traceroute-to-nowhere.js", root), "utf8");
+const language = readFileSync(new URL("world-observer/traceroute-language.js", root), "utf8");
 const styles = readFileSync(new URL("world-observer/traceroute-to-nowhere.css", root), "utf8");
+const headerStyles = readFileSync(new URL("world-observer/traceroute-header-polish.css", root), "utf8");
 const sitemap = readFileSync(new URL("sitemap-internet-observers.xml", root), "utf8");
 
 const enUrl = "https://dennishilk.com/world-observer/traceroute-to-nowhere.html";
@@ -25,13 +27,26 @@ test("Traceroute showcase has crawlable English and German pages", () => {
   assert.ok(sitemap.includes(`<loc>${deUrl}</loc>`));
 });
 
+test("Traceroute header is compact and language switching is explicit", () => {
+  assert.ok(english.includes('<h1 class="trace-compact-title">TRACEROUTE TO NOWHERE</h1>'));
+  assert.ok(german.includes('<h1 class="trace-compact-title">TRACEROUTE INS NIRGENDWO</h1>'));
+  assert.ok(!english.includes('class="trace-hero"'));
+  assert.ok(!german.includes('class="trace-hero"'));
+  assert.ok(!english.includes('trace-hero-copy'));
+  assert.ok(!german.includes('trace-hero-copy'));
+  assert.ok(english.includes('/world-observer/traceroute-language.js?v=1'));
+  assert.ok(german.includes('/world-observer/traceroute-language.js?v=1'));
+  assert.doesNotThrow(() => new Function(language));
+  assert.ok(language.includes('localStorage.setItem(STORAGE_KEY, language)'));
+  assert.ok(language.includes('window.location.assign(link.href)'));
+  assert.ok(headerStyles.includes('.trace-compact-title'));
+});
+
 test("Traceroute showcase preserves the evidence boundary", () => {
-  assert.ok(english.includes("PUBLIC ROUTE OBSERVATION CONSOLE"));
   assert.ok(english.includes("UNRESOLVED"));
   assert.ok(english.includes("NOT EXPORTED"));
   assert.ok(english.includes("These lanes are not real network hops"));
   assert.ok(english.includes("Actual hop sequence, IP addresses and ASNs"));
-  assert.ok(german.includes("ÖFFENTLICHE ROUTEN-BEOBACHTUNGSKONSOLE"));
   assert.ok(german.includes("NICHT EXPORTIERT"));
   assert.ok(german.includes("Die Spuren sind keine echten Netzwerk-Hops"));
   assert.ok(!english.includes("AMS-IX"));
@@ -56,4 +71,5 @@ test("Traceroute view remains responsive and motion-safe", () => {
   assert.ok(styles.includes("@media (prefers-reduced-motion: reduce)"));
   assert.ok(styles.includes(".trace-lane-pulse"));
   assert.ok(styles.includes(".trace-carrier-strip"));
+  assert.ok(headerStyles.includes("@media (max-width: 520px)"));
 });

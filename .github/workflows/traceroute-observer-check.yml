@@ -6,6 +6,8 @@ on:
       - 'world-observer/traceroute-to-nowhere.html'
       - 'world-observer/traceroute-to-nowhere.css'
       - 'world-observer/traceroute-to-nowhere.js'
+      - 'world-observer/traceroute-header-polish.css'
+      - 'world-observer/traceroute-language.js'
       - 'de/world-observer/traceroute-to-nowhere.html'
       - 'sitemap-internet-observers.xml'
       - 'tests/traceroute-to-nowhere.test.mjs'
@@ -16,6 +18,8 @@ on:
       - 'world-observer/traceroute-to-nowhere.html'
       - 'world-observer/traceroute-to-nowhere.css'
       - 'world-observer/traceroute-to-nowhere.js'
+      - 'world-observer/traceroute-header-polish.css'
+      - 'world-observer/traceroute-language.js'
       - 'de/world-observer/traceroute-to-nowhere.html'
       - 'sitemap-internet-observers.xml'
       - 'tests/traceroute-to-nowhere.test.mjs'
@@ -29,7 +33,9 @@ jobs:
         with:
           node-version: '22'
       - name: Check showcase JavaScript syntax
-        run: node --check world-observer/traceroute-to-nowhere.js
+        run: |
+          node --check world-observer/traceroute-to-nowhere.js
+          node --check world-observer/traceroute-language.js
       - name: Run focused showcase regression tests
         run: node --test tests/traceroute-to-nowhere.test.mjs
       - name: Run shared Internet observer detail contract
