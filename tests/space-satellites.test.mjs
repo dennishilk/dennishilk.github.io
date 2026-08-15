@@ -89,10 +89,21 @@ test("language switching persists the existing site language preference", () => 
 test("orbital styling is responsive and visually schematic", () => {
   assert.ok(css.includes(".space-orbit-ring"));
   assert.ok(css.includes(".space-orbit-core"));
+  assert.ok(css.includes(".space-orbit-legend"));
   assert.ok(css.includes(".space-group-grid"));
   assert.ok(css.includes(".space-memory"));
   assert.ok(css.includes("@media (max-width: 900px)"));
   assert.ok(css.includes("@media (max-width: 650px)"));
   assert.ok(css.includes("@media (max-width: 460px)"));
   assert.ok(css.includes("@media (prefers-reduced-motion: reduce)"));
+});
+
+test("visual polish keeps one-point history deliberate and telemetry-driven", () => {
+  assert.ok(runtime.includes('points.length === 1'));
+  assert.ok(runtime.includes('renderBaseline(memory, points[0])'));
+  assert.ok(runtime.includes('space-card-freshness'));
+  assert.ok(runtime.includes('space-orbit-legend'));
+  assert.ok(css.includes('.space-baseline-state'));
+  assert.ok(css.includes('.space-card-freshness-track'));
+  assert.ok(css.includes('SCHEMATIC') === false);
 });
