@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space / Satellites – Orbital Population Observatory | World Observer</title>
+  <meta name="description" content="A provenance-first orbital population observatory for selected public CelesTrak GP groups, showing record counts and element freshness without inventing real-time satellite positions or a global population total.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://dennishilk.com/world-observer/technology/space-satellites.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/technology/space-satellites.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/technology/space-satellites.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/technology/space-satellites.html">
+  <meta property="og:title" content="Space / Satellites – Orbital Population Observatory | World Observer">
+  <meta property="og:description" content="Selected public CelesTrak GP group telemetry with a strict evidence boundary: no invented positions and no summed global satellite count.">
+  <meta property="og:url" content="https://dennishilk.com/world-observer/technology/space-satellites.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#02070c">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css?v=42">
+  <link rel="stylesheet" href="/world-observer/technology/space-satellites.css?v=1">
+  <script defer src="/world-observer/technology/space-satellites-language.js?v=1"></script>
+  <script defer src="/world-observer/technology/space-satellites.js?v=1"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Space / Satellites – Orbital Population Observatory","description":"Selected public CelesTrak GP group telemetry with explicit observed, derived and unknown boundaries.","url":"https://dennishilk.com/world-observer/technology/space-satellites.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+</head>
+<body data-observer-page="technology-detail" data-observer-id="space-satellites">
+<canvas id="stars"></canvas>
+<div class="content space-page">
+  <header class="space-topbar">
+    <div class="space-identity">
+      <h1 class="space-compact-title">Space / Satellites</h1>
+      <a class="space-back" href="/world-observer/technology.html">← Back to Technology Observers</a>
+    </div>
+    <nav class="space-language" aria-label="Page language / Seitensprache">
+      <a href="/world-observer/technology/space-satellites.html" hreflang="en" lang="en" data-space-language="en" aria-current="page">EN</a>
+      <span aria-hidden="true">|</span>
+      <a href="/de/world-observer/technology/space-satellites.html" hreflang="de" lang="de" data-space-language="de">DE</a>
+    </nav>
+  </header>
+
+  <main>
+    <p id="observer-loading" class="space-loading" aria-live="polite">Loading public orbital group data…</p>
+    <div id="observer-content" class="space-shell" hidden>
+      <section class="space-section" aria-labelledby="current-observation-title">
+        <div class="space-section-inner">
+          <header class="space-section-head">
+            <div><span class="space-section-index">01 / ORBITAL POPULATION OBSERVATORY</span><h2 id="current-observation-title">Current observation</h2></div>
+            <p>Six selected CelesTrak GP groups are observed independently. Their memberships may overlap, so the page never sums them into a claimed global satellite population.</p>
+          </header>
+          <div class="space-current-grid">
+            <aside class="space-summary-panel" aria-label="Current orbital group summary">
+              <dl class="space-summary-grid">
+                <div><dt>Selected groups</dt><dd id="space-selected-groups">—</dd></div>
+                <div><dt>Available groups</dt><dd id="space-available-groups">—</dd></div>
+                <div><dt>Freshest GP epoch</dt><dd id="space-freshest-epoch">—</dd></div>
+                <div><dt>Data status</dt><dd id="space-data-status">—</dd></div>
+              </dl>
+              <p class="space-collected">Collected:<br><strong id="space-collected-at">—</strong><span id="space-source-state" class="space-source-state">—</span></p>
+            </aside>
+            <div class="space-orbit-console" aria-label="Schematic selected group field">
+              <div class="space-orbit-labels"><span>SELECTED GP GROUP FIELD</span><span>SCHEMATIC RINGS // NOT TRAJECTORIES</span></div>
+              <div id="space-orbit-field" class="space-orbit-field" aria-label="Schematic rings representing selected data groups"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-section" aria-labelledby="group-field-title">
+        <div class="space-section-inner">
+          <header class="space-section-head">
+            <div><span class="space-section-index">02 / GROUP TELEMETRY</span><h2 id="group-field-title">Selected orbital groups</h2></div>
+            <p>Counts describe records inside each named CelesTrak group. A record is not asserted to be a unique globally active satellite, and counts across groups are not additive.</p>
+          </header>
+          <div id="space-group-grid" class="space-group-grid" aria-live="polite"></div>
+          <div class="space-freshness">
+            <h3 id="space-freshness-title">Relative freshness within selected groups</h3>
+            <div id="space-freshness-list" class="space-freshness-list"></div>
+            <p id="space-freshness-note" class="space-freshness-note"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-section" aria-labelledby="history-title">
+        <div class="space-section-inner">
+          <header class="space-section-head">
+            <div><span class="space-section-index">03 / PUBLISHED MEMORY</span><h2 id="history-title">Daily group memory</h2></div>
+            <p>History begins with this observer's own daily publications. It is not backfilled and it does not imply uninterrupted source coverage before the first observation.</p>
+          </header>
+          <div class="space-history-stats">
+            <div><span>Published points</span><strong id="space-history-points">—</strong></div>
+            <div><span>First point</span><strong id="space-history-first">—</strong></div>
+            <div><span>Latest point</span><strong id="space-history-last">—</strong></div>
+          </div>
+          <div class="space-history-console">
+            <div id="space-memory" class="space-memory" aria-label="Published daily selected-group memory"></div>
+            <p id="space-history-note" class="space-history-note">—</p>
+            <div class="space-table-wrap">
+              <table class="space-history-table">
+                <thead><tr><th>Date</th><th>Stations</th><th>Starlink</th><th>OneWeb</th><th>GPS Ops</th><th>Galileo</th><th>CubeSats</th></tr></thead>
+                <tbody id="space-history-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-section" aria-labelledby="evidence-title">
+        <div class="space-section-inner">
+          <header class="space-section-head">
+            <div><span class="space-section-index">04 / EVIDENCE BOUNDARY</span><h2 id="evidence-title">What the export can — and cannot — say</h2></div>
+            <p>Raw group fields, transparent browser arithmetic and unavailable context stay deliberately separate.</p>
+          </header>
+          <div class="space-evidence-grid">
+            <article class="space-evidence-card" data-kind="observed"><h3 id="observed-title">Observed</h3><ul><li>Per-group GP record count and unique <code>NORAD_CAT_ID</code> count.</li><li>Exported GP <code>EPOCH</code> values and <code>INCLINATION</code> fields.</li><li>Which selected group queries completed or were not attempted after a source error.</li><li>The observer's own published daily group-count memory.</li></ul></article>
+            <article class="space-evidence-card" data-kind="derived"><h3 id="derived-title">Derived</h3><ul><li>Oldest/newest epoch among records in each selected group.</li><li>Median epoch age and mean inclination per group.</li><li>Relative freshness bars within the current selected-group export.</li><li>Published history length and first/latest local observation dates.</li></ul></article>
+            <article class="space-evidence-card" data-kind="unknown"><h3 id="unknown-title">Unknown</h3><ul><li>Real-time satellite positions, trajectories, visibility from a location or future passes.</li><li>Operational health, ownership meaning, mission status or service availability.</li><li>A global number of active satellites: selected groups may overlap and are not summed.</li><li>Objects or classifications outside the six explicitly queried CelesTrak groups.</li></ul></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-section" aria-labelledby="methodology-title">
+        <div class="space-section-inner">
+          <header class="space-section-head">
+            <div><span class="space-section-index">05 / PROVENANCE</span><h2 id="methodology-title">Method & source boundary</h2></div>
+            <p>The browser reads only the locally published World Observer export. CelesTrak is contacted by the server-side collector, not by this page.</p>
+          </header>
+          <div class="space-method-grid">
+            <article class="space-method-card"><h3>Methodology</h3><p>The collector requests six explicit CelesTrak Current GP groups in OMM-keyword CSV: <code>STATIONS</code>, <code>STARLINK</code>, <code>ONEWEB</code>, <code>GPS-OPS</code>, <code>GALILEO</code> and <code>CUBESAT</code>. It caches one result per UTC day and performs no retries. On the first source error it stops the remaining queries for that run. No orbit propagation is performed.</p></article>
+            <article class="space-method-card"><h3 id="sources-title">Sources</h3><ul><li><a class="space-source-link" href="/world-observer/dashboard/latest/space-satellites.json">Published World Observer export ↗</a></li><li><a class="space-source-link" href="https://celestrak.org/NORAD/elements/" rel="noopener">CelesTrak Current GP data ↗</a></li><li><a class="space-source-link" href="https://celestrak.org/NORAD/documentation/gp-data-formats.php" rel="noopener">CelesTrak GP query documentation ↗</a></li><li><a class="space-source-link" href="https://celestrak.org/usage-policy.php" rel="noopener">CelesTrak usage policy ↗</a></li></ul></article>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="space-footer">
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; observe --orbital-groups space-satellites<span class="cursor"></span></span></div>
+    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</div>
+</body>
+</html>
