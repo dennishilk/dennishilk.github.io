@@ -55,4 +55,4 @@
   nav.appendChild(separator);
   addLink("de", "DE", dePath);
   document.body.appendChild(nav);
-}());
+})();
