@@ -1,60 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="canonical" href="https://dennishilk.com/world-observer/wiesmoor-population.html">
-  <title>Wiesmoor Population Observer – World Observer</title>
-  <meta name="description" content="Official annual population snapshots for Wiesmoor, with transparent census-basis breaks and no interpolated live estimate.">
-  <meta property="og:title" content="Wiesmoor Population Observer – World Observer">
-  <meta property="og:description" content="Official Wiesmoor population trend with reference dates, statistical basis and comparability notes.">
-  <meta property="og:url" content="https://dennishilk.com/world-observer/wiesmoor-population.html">
+  <link rel="canonical" href="https://dennishilk.com/de/world-observer/wiesmoor-population.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/wiesmoor-population.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/wiesmoor-population.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/wiesmoor-population.html">
+  <title>Wiesmoor Population Observer – Amtliche Bevölkerung</title>
+  <meta name="description" content="Amtliche jährliche Bevölkerungsstände für Wiesmoor mit transparentem Methodenbruch beim Wechsel der Zensusbasis.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:title" content="Wiesmoor Population Observer – Amtliche Bevölkerung">
+  <meta property="og:description" content="Amtliche Bevölkerungsentwicklung Wiesmoors mit Stichtagen, statistischer Basis und Hinweisen zur Vergleichbarkeit.">
+  <meta property="og:url" content="https://dennishilk.com/de/world-observer/wiesmoor-population.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE"><meta property="og:locale:alternate" content="en_US">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Wiesmoor Population Observer – World Observer">
-  <meta name="twitter:description" content="Official annual population snapshots for Wiesmoor with an explicit census-basis break.">
-  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"Wiesmoor Population Observer","description":"Official annual municipality-level population snapshots for Wiesmoor.","url":"https://dennishilk.com/world-observer/wiesmoor-population.html","spatialCoverage":{"@type":"Place","name":"Wiesmoor, Lower Saxony, Germany"},"isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
-  <link rel="stylesheet" href="/style.css?v=49">
-  <link rel="stylesheet" href="/world-observer/wiesmoor-public-observers.css?v=20260813-1">
-  <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/wiesmoor-public-observers.js?v=20260813-1"></script>
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Wiesmoor Population Observer – Amtliche Bevölkerung"><meta name="twitter:description" content="Amtliche jährliche Bevölkerungsstände für Wiesmoor mit transparentem Zensus-Basiswechsel."><meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"Wiesmoor Population Observer – Amtliche Bevölkerung","description":"Amtliche jährliche Bevölkerungsstände auf Gemeindeebene für Wiesmoor.","url":"https://dennishilk.com/de/world-observer/wiesmoor-population.html","inLanguage":"de","spatialCoverage":{"@type":"Place","name":"Wiesmoor, Niedersachsen, Deutschland"},"isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="stylesheet" href="/style.css?v=49"><link rel="stylesheet" href="/world-observer/wiesmoor-public-observers.css?v=20260813-1">
+  <script defer src="/stars.js"></script><script defer src="/world-observer/wiesmoor-public-observers.js?v=20260813-1"></script>
 </head>
 <body class="traffic-page public-observer-page" data-public-observer="wiesmoor-population">
-<canvas id="stars"></canvas>
-<div class="content traffic-shell public-observer-shell">
-  <header class="traffic-header wo-page-header">
-    <nav class="button-group wo-site-nav traffic-global-nav" aria-label="Primary navigation"><div class="buttons"><a href="/">Home</a></div></nav>
-    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Media</a><a href="/world-observer/society.html">Society</a><a href="/world-observer/hometown.html" class="active" aria-current="page">Hometown</a><a href="/world-observer/environment.html">Earth &amp; Space</a><a href="/world-observer/technology.html">Technology</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
-    </nav>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/hometown.html">← Back to Hometown</a></p>
-    <section class="traffic-card public-observer-hero">
-      <div>
-        <p class="terminal-command">&gt; fetch dashboard/latest/wiesmoor-population.json</p>
-        <h1>Wiesmoor Population Observer</h1>
-        <p>Official annual population snapshots for Wiesmoor</p>
-        <small id="observer-last-update">Snapshot: —</small>
-        <small>Source: <span id="observer-source">Official statistical offices</span></small>
-      </div>
-      <strong id="observer-status" class="status-badge unavailable" aria-live="polite">STATUS: —</strong>
-    </section>
-  </header>
-  <main class="traffic-dashboard public-observer-dashboard">
-    <p id="observer-note" class="public-observer-note">Official year-end values only; no live population is estimated.</p>
-    <section class="public-observer-grid" aria-label="Wiesmoor population dashboard">
-      <article class="traffic-card public-observer-primary"><h2 id="primary-title">LATEST OFFICIAL POPULATION</h2><strong id="primary-value" class="public-observer-primary-value">—</strong><p id="primary-detail" class="public-observer-primary-detail">—</p></article>
-      <article class="traffic-card"><h2>AT A GLANCE</h2><dl id="key-metrics" class="public-metric-grid" aria-live="polite"></dl></article>
-      <article class="traffic-card public-observer-chart-card"><h2 id="breakdown-title">OFFICIAL YEAR-END SERIES</h2><div id="breakdown-content"></div></article>
-      <article class="traffic-card public-observer-timeline-card"><h2 id="timeline-title">COMPARABILITY</h2><div id="timeline-content"></div></article>
-      <article class="traffic-card public-observer-limits-card"><h2>METHODOLOGY &amp; LIMITS</h2><ul id="observer-limitations"><li>The latest interval crosses a census-basis change and must not be read as a directly comparable year-on-year movement.</li></ul></article>
-      <article class="traffic-card public-observer-sources-card"><h2>SOURCES</h2><ul id="observer-sources"><li><a href="https://www.statistik.niedersachsen.de/startseite/themen/bevoelkerung/bevolkerungsstand_einwohnerzahl_niedersachsens/bevolkerungsstand-einwohnerzahl-niedersachsens-tabellen-201964.html" rel="noopener">Landesamt für Statistik Niedersachsen — population tables</a></li></ul></article>
-    </section>
-  </main>
-  <footer><div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; observe wiesmoor-population<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
-</div>
-</body>
-</html>
+<canvas id="stars"></canvas><div class="content traffic-shell public-observer-shell">
+<header class="traffic-header wo-page-header">
+<nav class="button-group wo-site-nav traffic-global-nav" aria-label="Hauptnavigation"><div class="buttons"><a href="/de/">Startseite</a></div></nav>
+<nav class="observer-nav wo-section-nav" aria-label="World-Observer-Bereiche"><a href="/world-observer.html">Übersicht</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Medien</a><a href="/world-observer/society.html">Gesellschaft</a><a href="/de/world-observer/hometown.html" class="active" aria-current="page">Hometown</a><a href="/world-observer/environment.html">Erde &amp; Weltraum</a><a href="/world-observer/technology.html">Technologie</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a></nav>
+<p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/de/world-observer/hometown.html">← Zurück zum Hometown Observer</a></p>
+<section class="traffic-card public-observer-hero"><div><p class="terminal-command">&gt; fetch dashboard/latest/wiesmoor-population.json</p><h1>Wiesmoor Population Observer</h1><p>Amtliche jährliche Bevölkerungsstände für Wiesmoor</p><small id="observer-last-update">Snapshot: —</small><small>Quelle: <span id="observer-source">Amtliche Statistikstellen</span></small></div><strong id="observer-status" class="status-badge unavailable" aria-live="polite">STATUS: —</strong></section>
+</header>
+<main class="traffic-dashboard public-observer-dashboard"><p id="observer-note" class="public-observer-note">Nur amtliche Jahresendwerte; es wird keine Live-Bevölkerung geschätzt.</p><section class="public-observer-grid" aria-label="Dashboard zur Bevölkerung Wiesmoors">
+<article class="traffic-card public-observer-primary"><h2 id="primary-title">LETZTE AMTLICHE BEVÖLKERUNGSZAHL</h2><strong id="primary-value" class="public-observer-primary-value">—</strong><p id="primary-detail" class="public-observer-primary-detail">—</p></article>
+<article class="traffic-card"><h2>AUF EINEN BLICK</h2><dl id="key-metrics" class="public-metric-grid" aria-live="polite"></dl></article>
+<article class="traffic-card public-observer-chart-card"><h2 id="breakdown-title">AMTLICHE JAHRESENDREIHE</h2><div id="breakdown-content"></div></article>
+<article class="traffic-card public-observer-timeline-card"><h2 id="timeline-title">VERGLEICHBARKEIT</h2><div id="timeline-content"></div></article>
+<article class="traffic-card public-observer-limits-card"><h2>METHODIK &amp; GRENZEN</h2><ul id="observer-limitations"><li>Das jüngste Intervall überschreitet einen Wechsel der Zensusbasis und darf nicht als direkt vergleichbare Jahresänderung gelesen werden.</li></ul></article>
+<article class="traffic-card public-observer-sources-card"><h2>QUELLEN</h2><ul id="observer-sources"><li><a href="https://www.statistik.niedersachsen.de/startseite/themen/bevoelkerung/bevolkerungsstand_einwohnerzahl_niedersachsens/bevolkerungsstand-einwohnerzahl-niedersachsens-tabellen-201964.html" rel="noopener">Landesamt für Statistik Niedersachsen — Bevölkerungstabellen</a></li></ul></article>
+</section></main>
+<footer><div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby-Maskottchen"></picture><span class="coffee-text">&gt; observe wiesmoor-population<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div></body></html>
