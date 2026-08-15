@@ -8,10 +8,6 @@
   const text = isGerman ? {
     loading: "Öffentliche Orbital-Gruppendaten werden geladen…",
     unavailable: "Der Space-/Satelliten-Export ist derzeit nicht verfügbar.",
-    selectedGroups: "Ausgewählte Gruppen",
-    availableGroups: "Verfügbare Gruppen",
-    freshestEpoch: "Neueste GP-Epoche",
-    status: "Datenstatus",
     records: "GP-Datensätze",
     unique: "Eindeutige Katalog-IDs",
     medianAge: "Medianes Epochenalter",
@@ -20,22 +16,22 @@
     hours: "h",
     unavailableShort: "nicht verfügbar",
     notAttempted: "nicht abgefragt",
-    historyPoints: "Veröffentlichte Punkte",
-    firstPoint: "Erster Punkt",
-    lastPoint: "Letzter Punkt",
     historyEmpty: "Noch kein veröffentlichter Verlauf vorhanden.",
     historyNote: "Jede Zeile ist ein veröffentlichter Tagespunkt. Gruppenwerte werden nicht addiert.",
+    baselineEyebrow: "ERSTE LOKALE VERÖFFENTLICHUNG",
+    baselineTitle: "Basislinie etabliert",
+    baselineCopy: "Der Verlauf startet bewusst hier. Es gibt keinen rückwirkend aufgefüllten Datenbestand.",
+    baselineNote: "Ein echter veröffentlichter Punkt ist vorhanden. Die Zeitreihe wächst erst mit künftigen lokalen Veröffentlichungen.",
     relativeFreshness: "Relative Frische innerhalb der ausgewählten Gruppen",
     freshnessNote: "Längere Balken bedeuten eine jüngere mediane GP-Epoche innerhalb dieses Exports. Das ist kein Satellitenzustand und keine Positionsmessung.",
+    cardFreshness: "relative Frische",
     sourceStop: "Quellabfrage gestoppt",
     sourceOk: "Quelle vollständig gelesen",
+    orbitLegend: "Ausgewählte GP-Gruppen",
+    orbitLegendNote: "Ringe sind nur eine schematische Gruppendarstellung — keine Positionen und keine Flugbahnen.",
   } : {
     loading: "Loading public orbital group data…",
     unavailable: "The Space / Satellites export is currently unavailable.",
-    selectedGroups: "Selected groups",
-    availableGroups: "Available groups",
-    freshestEpoch: "Freshest GP epoch",
-    status: "Data status",
     records: "GP records",
     unique: "Unique catalog IDs",
     medianAge: "Median epoch age",
@@ -44,15 +40,19 @@
     hours: "h",
     unavailableShort: "unavailable",
     notAttempted: "not queried",
-    historyPoints: "Published points",
-    firstPoint: "First point",
-    lastPoint: "Latest point",
     historyEmpty: "No published history is available yet.",
     historyNote: "Each row is one published daily point. Group values are never summed.",
+    baselineEyebrow: "FIRST LOCAL PUBLICATION",
+    baselineTitle: "Baseline established",
+    baselineCopy: "The published series deliberately starts here. No earlier points are backfilled.",
+    baselineNote: "One real published point exists. The time series grows only with future local publications.",
     relativeFreshness: "Relative freshness within selected groups",
     freshnessNote: "Longer bars mean a younger median GP epoch within this export. This is not satellite health and not a position measurement.",
+    cardFreshness: "relative freshness",
     sourceStop: "Source query stopped",
     sourceOk: "Source read complete",
+    orbitLegend: "Selected GP groups",
+    orbitLegendNote: "Rings are a schematic group display only — not positions and not trajectories.",
   };
 
   function $(id) {
@@ -60,7 +60,9 @@
   }
 
   function formatInteger(value) {
-    return Number.isInteger(value) ? new Intl.NumberFormat(isGerman ? "de-DE" : "en-US").format(value) : "—";
+    return Number.isInteger(value)
+      ? new Intl.NumberFormat(isGerman ? "de-DE" : "en-US").format(value)
+      : "—";
   }
 
   function formatNumber(value, digits = 2) {
@@ -87,7 +89,25 @@
     return text.unavailableShort.toUpperCase();
   }
 
-  function groupCard(key, group) {
+  function freshnessScale(groups) {
+    const ages = groupOrder
+      .map((key) => groups[key]?.median_epoch_age_hours)
+      .filter((value) => typeof value === "number" && Number.isFinite(value));
+    const maxAge = ages.length ? Math.max(...ages) : 0;
+    const minAge = ages.length ? Math.min(...ages) : 0;
+    const span = Math.max(0.01, maxAge - minAge);
+    const values = {};
+
+    for (const key of groupOrder) {
+      const age = groups[key]?.median_epoch_age_hours;
+      values[key] = typeof age === "number" && Number.isFinite(age)
+        ? (maxAge === minAge ? 100 : 18 + ((maxAge - age) / span) * 82)
+        : 0;
+    }
+    return values;
+  }
+
+  function groupCard(key, group, freshnessWidth) {
     const article = document.createElement("article");
     article.className = "space-group-card";
     article.dataset.status = group?.status || "unavailable";
@@ -106,15 +126,23 @@
     state.textContent = statusLabel(group?.status);
     head.append(identity, state);
 
+    const primary = document.createElement("div");
+    primary.className = "space-group-primary";
+    const primaryLabel = document.createElement("span");
+    primaryLabel.textContent = text.records;
+    const primaryValue = document.createElement("strong");
+    primaryValue.textContent = formatInteger(group?.record_count);
+    primary.append(primaryLabel, primaryValue);
+
     const telemetry = document.createElement("dl");
     telemetry.className = "space-group-telemetry";
     const rows = [
-      [text.records, formatInteger(group?.record_count)],
       [text.unique, formatInteger(group?.unique_catalog_ids)],
       [text.medianAge, typeof group?.median_epoch_age_hours === "number" ? `${formatNumber(group.median_epoch_age_hours)} ${text.hours}` : "—"],
       [text.inclination, typeof group?.mean_inclination_deg === "number" ? `${formatNumber(group.mean_inclination_deg)}°` : "—"],
       [text.newest, formatDateTime(group?.newest_epoch_utc)],
     ];
+
     for (const [label, value] of rows) {
       const row = document.createElement("div");
       const dt = document.createElement("dt");
@@ -125,20 +153,49 @@
       telemetry.appendChild(row);
     }
 
+    const meter = document.createElement("div");
+    meter.className = "space-card-freshness";
+    const meterHead = document.createElement("div");
+    meterHead.className = "space-card-freshness-head";
+    const meterLabel = document.createElement("span");
+    meterLabel.textContent = text.cardFreshness;
+    const meterValue = document.createElement("span");
+    meterValue.textContent = typeof group?.median_epoch_age_hours === "number"
+      ? `${formatNumber(group.median_epoch_age_hours)} ${text.hours}`
+      : "—";
+    meterHead.append(meterLabel, meterValue);
+    const track = document.createElement("div");
+    track.className = "space-card-freshness-track";
+    const bar = document.createElement("i");
+    bar.style.width = `${Math.max(0, Math.min(100, freshnessWidth || 0))}%`;
+    track.appendChild(bar);
+    meter.append(meterHead, track);
+
+    article.append(head, primary, telemetry, meter);
+
     if (group?.reason) {
       const note = document.createElement("p");
       note.className = "space-group-reason";
       note.textContent = group.reason;
-      article.append(head, telemetry, note);
-    } else {
-      article.append(head, telemetry);
+      article.appendChild(note);
     }
+
     return article;
   }
 
   function renderOrbitField(groups) {
     const field = $("space-orbit-field");
     field.textContent = "";
+
+    const legend = document.createElement("div");
+    legend.className = "space-orbit-legend";
+    const legendTitle = document.createElement("strong");
+    legendTitle.textContent = text.orbitLegend;
+    const legendCopy = document.createElement("span");
+    legendCopy.textContent = text.orbitLegendNote;
+    legend.append(legendTitle, legendCopy);
+    field.appendChild(legend);
+
     const available = groupOrder.filter((key) => groups[key]?.status === "ok");
     groupOrder.forEach((key, index) => {
       const group = groups[key] || {};
@@ -146,26 +203,31 @@
       ring.className = "space-orbit-ring";
       ring.style.setProperty("--ring-index", String(index));
       ring.dataset.status = group.status || "unavailable";
+
       const label = document.createElement("span");
-      label.innerHTML = `<b>${group.query_group || key.toUpperCase()}</b><em>${formatInteger(group.record_count)}</em>`;
+      const code = document.createElement("b");
+      const count = document.createElement("em");
+      code.textContent = group.query_group || key.toUpperCase();
+      count.textContent = formatInteger(group.record_count);
+      label.append(code, count);
       ring.appendChild(label);
       field.appendChild(ring);
     });
+
     const core = document.createElement("div");
     core.className = "space-orbit-core";
-    core.innerHTML = `<span>${available.length}/${groupOrder.length}</span><small>${isGerman ? "Gruppen" : "groups"}</small>`;
+    const coreValue = document.createElement("span");
+    const coreLabel = document.createElement("small");
+    coreValue.textContent = `${available.length}/${groupOrder.length}`;
+    coreLabel.textContent = isGerman ? "Gruppen" : "groups";
+    core.append(coreValue, coreLabel);
     field.appendChild(core);
   }
 
   function renderFreshness(groups) {
     const container = $("space-freshness-list");
     container.textContent = "";
-    const ages = groupOrder
-      .map((key) => groups[key]?.median_epoch_age_hours)
-      .filter((value) => typeof value === "number" && Number.isFinite(value));
-    const maxAge = ages.length ? Math.max(...ages) : 0;
-    const minAge = ages.length ? Math.min(...ages) : 0;
-    const span = Math.max(0.01, maxAge - minAge);
+    const widths = freshnessScale(groups);
 
     for (const key of groupOrder) {
       const group = groups[key] || {};
@@ -176,37 +238,65 @@
       const track = document.createElement("div");
       track.className = "space-freshness-track";
       const bar = document.createElement("i");
-      const age = group.median_epoch_age_hours;
-      const width = typeof age === "number" && Number.isFinite(age)
-        ? (maxAge === minAge ? 100 : 18 + ((maxAge - age) / span) * 82)
-        : 0;
-      bar.style.width = `${Math.max(0, Math.min(100, width))}%`;
+      bar.style.width = `${Math.max(0, Math.min(100, widths[key]))}%`;
       track.appendChild(bar);
       const value = document.createElement("strong");
+      const age = group.median_epoch_age_hours;
       value.textContent = typeof age === "number" ? `${formatNumber(age)} ${text.hours}` : "—";
       row.append(label, track, value);
       container.appendChild(row);
     }
   }
 
+  function renderBaseline(memory, point) {
+    memory.classList.add("is-baseline");
+    const baseline = document.createElement("div");
+    baseline.className = "space-baseline-state";
+
+    const copy = document.createElement("div");
+    copy.className = "space-baseline-copy";
+    const eyebrow = document.createElement("span");
+    eyebrow.textContent = text.baselineEyebrow;
+    const title = document.createElement("strong");
+    title.textContent = text.baselineTitle;
+    const note = document.createElement("small");
+    note.textContent = text.baselineCopy;
+    copy.append(eyebrow, title, note);
+
+    const date = document.createElement("div");
+    date.className = "space-baseline-date";
+    date.textContent = point.date;
+    baseline.append(copy, date);
+    memory.appendChild(baseline);
+  }
+
   function renderHistory(history) {
-    const points = Array.isArray(history) ? history.filter((point) => point && typeof point.date === "string") : [];
+    const points = Array.isArray(history)
+      ? history.filter((point) => point && typeof point.date === "string")
+      : [];
+
     $("space-history-points").textContent = formatInteger(points.length);
     $("space-history-first").textContent = points.length ? points[0].date : "—";
     $("space-history-last").textContent = points.length ? points[points.length - 1].date : "—";
 
     const memory = $("space-memory");
     memory.textContent = "";
-    for (const point of points.slice(-60)) {
-      const cell = document.createElement("div");
-      cell.className = "space-memory-cell";
-      cell.title = point.date;
-      for (const key of groupOrder) {
-        const segment = document.createElement("i");
-        segment.className = Number.isInteger(point[`${key}_records`]) ? "has-value" : "is-missing";
-        cell.appendChild(segment);
+    memory.classList.remove("is-baseline");
+
+    if (points.length === 1) {
+      renderBaseline(memory, points[0]);
+    } else {
+      for (const point of points.slice(-60)) {
+        const cell = document.createElement("div");
+        cell.className = "space-memory-cell";
+        cell.title = point.date;
+        for (const key of groupOrder) {
+          const segment = document.createElement("i");
+          segment.className = Number.isInteger(point[`${key}_records`]) ? "has-value" : "is-missing";
+          cell.appendChild(segment);
+        }
+        memory.appendChild(cell);
       }
-      memory.appendChild(cell);
     }
 
     const body = $("space-history-body");
@@ -221,7 +311,10 @@
       });
       body.appendChild(row);
     }
-    $("space-history-note").textContent = points.length ? text.historyNote : text.historyEmpty;
+
+    $("space-history-note").textContent = points.length === 1
+      ? text.baselineNote
+      : (points.length ? text.historyNote : text.historyEmpty);
   }
 
   function render(data) {
@@ -235,9 +328,11 @@
     $("space-source-state").textContent = data?.diagnostics?.stop_reason ? text.sourceStop : text.sourceOk;
     $("space-source-state").dataset.state = data?.diagnostics?.stop_reason ? "warning" : "ok";
 
+    const widths = freshnessScale(groups);
     const grid = $("space-group-grid");
     grid.textContent = "";
-    groupOrder.forEach((key) => grid.appendChild(groupCard(key, groups[key] || {})));
+    groupOrder.forEach((key) => grid.appendChild(groupCard(key, groups[key] || {}, widths[key])));
+
     renderOrbitField(groups);
     renderFreshness(groups);
     renderHistory(data?.history);
