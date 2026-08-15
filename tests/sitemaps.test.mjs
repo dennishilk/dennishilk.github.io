@@ -141,6 +141,13 @@ test("all ten Wiesmoor observers have dedicated German sitemap entries and recip
   }
 });
 
+test("main sitemap contains all ten English Wiesmoor observer routes", () => {
+  const main = new Set(locs(sitemapMain));
+  for (const slug of wiesmoorSlugs) {
+    assert.ok(main.has(`${base}/world-observer/${slug}.html`), `main sitemap missing English Wiesmoor observer: ${slug}`);
+  }
+});
+
 test("German sitemap carries reciprocal EN/DE/x-default alternates", () => {
   const links = new Set(alternateLinks(sitemapDe));
   for (const deUrl of locs(sitemapDe)) {
