@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-14-area51-1";
+  const VERSION = "2026-08-15-hcl-1";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260810-c64-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -9,6 +9,7 @@
     "/site-i18n-de-wiesmoor.js?v=20260813-public-1",
     "/site-i18n-de-peatland-polish.js?v=20260809-peatland-2",
     "/site-i18n-de-personnel.js?v=20260809-personnel-1",
+    "/site-i18n-de-home-computing.js?v=20260815-hcl-1",
   ];
 
   const dedicatedRoutes = {
@@ -119,12 +120,41 @@
     };
   };
 
+  const isWordCharacter = value => Boolean(value && /[\p{L}\p{N}_]/u.test(value));
+  const replaceLiteralPhrase = (value, source, target) => {
+    let cursor = 0;
+    let result = "";
+    const startsWithWord = isWordCharacter(source[0]);
+    const endsWithWord = isWordCharacter(source[source.length - 1]);
+
+    while (cursor < value.length) {
+      const index = value.indexOf(source, cursor);
+      if (index === -1) break;
+      const before = index > 0 ? value[index - 1] : "";
+      const afterIndex = index + source.length;
+      const after = afterIndex < value.length ? value[afterIndex] : "";
+      const embeddedAtStart = startsWithWord && isWordCharacter(before);
+      const embeddedAtEnd = endsWithWord && isWordCharacter(after);
+
+      if (embeddedAtStart || embeddedAtEnd) {
+        result += value.slice(cursor, afterIndex);
+        cursor = afterIndex;
+        continue;
+      }
+
+      result += value.slice(cursor, index) + target;
+      cursor = afterIndex;
+    }
+
+    return result + value.slice(cursor);
+  };
+
   const replacePhrases = (value, phrases) => {
     let next = value;
     const ordered = [...phrases]
       .filter(pair => Array.isArray(pair) && pair.length >= 2 && pair[0])
       .sort((a, b) => b[0].length - a[0].length);
-    for (const pair of ordered) next = next.split(pair[0]).join(pair[1]);
+    for (const pair of ordered) next = replaceLiteralPhrase(next, pair[0], pair[1]);
     return next;
   };
 
@@ -204,7 +234,13 @@
   };
 
   const updateMetadata = spec => {
-    if (spec.title) document.title = spec.title;
+    if (spec.title) {
+      document.title = spec.title;
+      ['meta[property="og:title"]', 'meta[name="twitter:title"]'].forEach(selector => {
+        const node = document.querySelector(selector);
+        if (node) node.setAttribute("content", spec.title);
+      });
+    }
     if (!spec.description) return;
     ['meta[name="description"]', 'meta[property="og:description"]', 'meta[name="twitter:description"]'].forEach(selector => {
       const node = document.querySelector(selector);
