@@ -10,6 +10,7 @@ const language = readFileSync(new URL("world-observer/technology/space-satellite
 const card = readFileSync(new URL("world-observer/technology/space-satellites-card.js", root), "utf8");
 const css = readFileSync(new URL("world-observer/technology/space-satellites.css", root), "utf8");
 const technology = readFileSync(new URL("world-observer/technology.html", root), "utf8");
+const dashboardRuntime = readFileSync(new URL("world-observer.js", root), "utf8");
 
 const enUrl = "https://dennishilk.com/world-observer/technology/space-satellites.html";
 const deUrl = "https://dennishilk.com/de/world-observer/technology/space-satellites.html";
@@ -68,13 +69,24 @@ test("evidence boundary rejects positions, trajectories and summed population cl
   assert.ok(de.includes("keine Orbitpropagation"));
 });
 
-test("Technology category promotes Space Satellites and removes its planned duplicate", () => {
-  assert.ok(technology.includes('id="technology-space-title">Space Technology</h2>'));
-  assert.ok(technology.includes('href="/world-observer/technology/space-satellites.html"'));
-  assert.ok(technology.includes('/world-observer/technology/space-satellites-card.js?v=1'));
-  assert.ok(technology.includes('id="technology-space-status"'));
+test("Technology category presents Space Satellites with the same active-card state as live core observers", () => {
+  const spaceSection = technology.match(/<section class="observer-section" aria-labelledby="technology-space-title">[\s\S]*?<\/section>/)?.[0] || "";
+  assert.ok(spaceSection.includes('id="technology-space-title">Space Technology</h2>'));
+  assert.ok(spaceSection.includes('class="cards observer-cards technology-card-grid"'));
+  assert.ok(spaceSection.includes('id="technology-space-card" class="card observer-category technology-observer-card active"'));
+  assert.ok(spaceSection.includes('href="/world-observer/technology/space-satellites.html"'));
+  assert.ok(!spaceSection.includes("planned-cards"));
+  assert.ok(!spaceSection.includes(" technology-observer-card planned"));
+  assert.ok(technology.includes('/world-observer/technology/space-satellites-card.js?v=2'));
+  assert.ok(technology.includes('/world-observer.js?v=20260815-space-card'));
+  assert.ok(dashboardRuntime.includes('technology-observer-card${planned ? " planned" : " active"}'));
+  assert.ok(dashboardRuntime.includes('title: "Debian Package Count"'));
+  assert.ok(dashboardRuntime.includes('title: "Arch Linux Package Count"'));
+  assert.ok(card.includes('card.classList.add("active")'));
+  assert.ok(card.includes('card.classList.remove("planned", "signal-unavailable")'));
   assert.ok(card.includes('heading?.textContent.trim() === "Space Technology"'));
   assert.ok(card.includes("MutationObserver"));
+  assert.ok(!card.includes("observer.disconnect()"));
   assert.ok(card.includes('const latestUrl = "/world-observer/dashboard/latest/space-satellites.json"'));
 });
 
