@@ -1,0 +1,1 @@
+The localized-route implementation reuses existing public observer logic; only presentation metadata, localized route discovery, internal links, and structured-data/search discovery layers are changed.
