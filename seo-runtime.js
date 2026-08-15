@@ -78,13 +78,19 @@
   };
 
   const ensureRobots = () => {
-    let robots = document.querySelector('meta[name="robots"]');
-    if (!robots) {
-      robots = document.createElement("meta");
-      robots.name = "robots";
-      document.head.appendChild(robots);
+    const robots = document.querySelector('meta[name="robots"]');
+    if (robots) {
+      const current = robots.getAttribute("content") || "";
+      if (/\bnoindex\b/i.test(current)) return;
+      if (!/\bmax-image-preview\s*:/i.test(current)) {
+        robots.setAttribute("content", `${current.replace(/\s*,?\s*$/, "")}${current.trim() ? "," : ""}max-image-preview:large`);
+      }
+      return;
     }
-    robots.content = "index,follow,max-image-preview:large";
+    const node = document.createElement("meta");
+    node.name = "robots";
+    node.content = "index,follow,max-image-preview:large";
+    document.head.appendChild(node);
   };
 
   const wiesmoorPairs = {
