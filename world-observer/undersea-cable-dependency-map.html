@@ -4,75 +4,149 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Undersea Cable Dependency Map – World Observer</title>
-  <meta name="description" content="Undersea Cable Dependency Map observer detail page in World Observer.">
+  <meta name="description" content="A public-data subsea dependency atlas for the World Observer: three exported country profiles, pinned dataset provenance, and published history without invented cable routes or live-state claims.">
+  <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
   <meta property="og:title" content="Undersea Cable Dependency Map – World Observer">
-  <meta property="og:description" content="Undersea Cable Dependency Map observer detail page in World Observer.">
+  <meta property="og:description" content="Public undersea-cable dependency profiles with strict dataset provenance and no invented route geometry.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#031017">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css?v=42">
-  <link rel="stylesheet" href="/world-observer/internet-observer-detail.css?v=1">
+  <link rel="stylesheet" href="/world-observer/undersea-cable-dependency-map.css?v=1">
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer/internet-observer-detail.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Undersea Cable Dependency Map – World Observer","description":"Undersea Cable Dependency Map observer detail page in World Observer.","url":"https://dennishilk.com/world-observer/undersea-cable-dependency-map.html","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <script defer src="/world-observer/undersea-cable-map-language.js?v=1"></script>
+  <script defer src="/world-observer/undersea-cable-dependency-map.js?v=1"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Undersea Cable Dependency Map – World Observer","description":"A public-data subsea dependency atlas using pinned World Observer exports without invented cable routes or live-state claims.","url":"https://dennishilk.com/world-observer/undersea-cable-dependency-map.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
 </head>
-<body data-observer-page="internet-detail" data-observer-id="undersea-cable-dependency-map">
+<body class="cable-map-page" data-observer-page="internet-detail" data-observer-id="undersea-cable-dependency-map">
 <canvas id="stars"></canvas>
-<div class="content world-observer-page">
-  <header class="dashboard-header wo-page-header">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Undersea Cable Dependency Map</span></h1>
-    <p>Internet observer detail page using the existing public static World Observer exports.</p>
-    <div class="button-group wo-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
-    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a>
-      <a href="/world-observer/internet.html" class="active" aria-current="page">Internet</a>
-      <a href="/world-observer/media.html">Media</a>
-      <a href="/world-observer/society.html">Society</a>
-      <a href="/world-observer/hometown.html">Hometown</a>
-      <a href="/world-observer/environment.html">Earth &amp; Space</a>
-      <a href="/world-observer/technology.html">Technology</a>
-      <a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
-    </nav>
-  </header>
+<nav class="cable-language" aria-label="Page language / Seitensprache">
+  <a href="/world-observer/undersea-cable-dependency-map.html" hreflang="en" lang="en" data-cable-language="en" aria-current="page">EN</a>
+  <span aria-hidden="true">|</span>
+  <a href="/de/world-observer/undersea-cable-dependency-map.html" hreflang="de" lang="de" data-cable-language="de">DE</a>
+</nav>
+<div class="content world-observer-page cable-map-shell">
   <main>
-    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
-    <p id="observer-loading" class="observer-limitation" aria-live="polite">Loading observer data…</p>
-    <div id="observer-content" class="internet-detail-shell" hidden>
-      <section class="internet-detail-summary" aria-labelledby="current-observation-title">
-        <h2 id="current-observation-title">Current Observation</h2>
-        <div class="internet-detail-summary-grid">
-          <p class="internet-detail-primary"><span id="observer-primary-label">Primary metric</span><strong id="observer-primary-value">—</strong></p>
-          <div>
-            <div id="observer-statuses" class="internet-detail-statuses" aria-label="Observer status"></div>
-            <p id="observer-last-update" class="internet-detail-updated">Last observation/update: —</p>
-          </div>
-          <dl id="observer-secondary-metrics" class="internet-secondary-metrics internet-detail-secondary"></dl>
+    <p class="wo-back-nav cable-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/internet.html">← Back to Internet Observers</a></p>
+
+    <header class="cable-hero">
+      <div class="cable-hero-copy">
+        <p class="cable-kicker">WORLD OBSERVER // SUBSEA DATASET TELEMETRY</p>
+        <h1>Undersea Cable Dependency Map</h1>
+        <p class="cable-deck">A provenance-first atlas of the dependency fields that are actually present in the public export. The visualization is deliberately non-geographic because the export contains no coordinates or cable geometry.</p>
+      </div>
+      <div class="cable-hero-status" aria-label="Evidence status">
+        <span>PINNED DATASET HASH</span>
+        <span>PUBLIC EXPORT ONLY</span>
+        <span>NO LIVE STATUS QUERY</span>
+        <span>NO ROUTE GEOMETRY</span>
+      </div>
+    </header>
+
+    <p id="observer-loading" class="cable-loading" aria-live="polite">Loading pinned public export…</p>
+
+    <section class="cable-panel cable-current" aria-labelledby="current-observation-title">
+      <div class="cable-section-heading">
+        <div>
+          <p class="cable-overline">EXPORT SNAPSHOT</p>
+          <h2 id="current-observation-title">Current Observation</h2>
         </div>
-      </section>
-      <section class="internet-detail-section internet-detail-history-section" aria-labelledby="history-title">
-        <h2 id="history-title">History</h2>
-        <p id="observer-history-summary" class="internet-detail-placeholder">Loading published history…</p>
-        <div class="internet-detail-history-wrap">
-          <table id="observer-history-table" class="internet-detail-history">
-            <thead><tr><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Data status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+        <p id="export-timestamp" class="cable-timestamp">—</p>
+      </div>
+      <div class="cable-summary-grid">
+        <article><span>Country profiles</span><strong id="summary-countries">—</strong></article>
+        <article><span>Σ cable-count fields</span><strong id="summary-cables">—</strong></article>
+        <article><span>Σ landing-count fields</span><strong id="summary-landings">—</strong></article>
+        <article><span>Data status</span><strong id="summary-status">—</strong></article>
+      </div>
+      <p class="cable-fineprint">The two sums are browser-derived sums of country fields. They are <strong>not</strong> counts of distinct physical cables or distinct landing sites.</p>
+    </section>
+
+    <section class="cable-panel cable-atlas" aria-labelledby="atlas-title">
+      <div class="cable-atlas-gridfield" aria-hidden="true"></div>
+      <div class="cable-section-heading cable-atlas-heading">
+        <div>
+          <p class="cable-overline">SUBSEA DEPENDENCY ATLAS // NON-GEOGRAPHIC</p>
+          <h2 id="atlas-title">Exported Country Profiles</h2>
         </div>
-      </section>
-      <section class="internet-detail-section" aria-labelledby="observed-title"><h2 id="observed-title">Observed</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="derived-title"><h2 id="derived-title">Derived</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="unknown-title"><h2 id="unknown-title">Unknown</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="methodology-title"><h2 id="methodology-title">Methodology</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-      <section class="internet-detail-section" aria-labelledby="sources-title"><h2 id="sources-title">Sources</h2><p class="internet-detail-placeholder">Detailed interpretation will be added in a later observer-specific pass.</p></section>
-    </div>
+        <span class="cable-map-warning">COUNT MARKERS // NOT LOCATIONS</span>
+      </div>
+      <div id="country-profiles" class="cable-country-grid" aria-live="polite"></div>
+      <p class="cable-atlas-note">Marker placement is schematic and carries no geographic meaning. No cable path, landing coordinate, country-to-country connection, outage, or traffic flow is drawn or inferred.</p>
+    </section>
+
+    <section class="cable-panel cable-history" aria-labelledby="history-title">
+      <div class="cable-section-heading">
+        <div>
+          <p class="cable-overline">PUBLISHED MEMORY</p>
+          <h2 id="history-title">History</h2>
+        </div>
+        <span id="history-metric" class="cable-history-metric">—</span>
+      </div>
+      <div class="cable-memory-stats">
+        <article><span>Numeric points</span><strong id="history-points">—</strong></article>
+        <article><span>Distinct values</span><strong id="history-distinct">—</strong></article>
+        <article><span>Value changes</span><strong id="history-changes">—</strong></article>
+        <article><span>Current constant run</span><strong id="history-run">—</strong></article>
+      </div>
+      <div id="history-memory" class="cable-memory" role="img" aria-label="Published numeric history points"></div>
+      <p id="history-summary" class="cable-fineprint">Published history is loading…</p>
+    </section>
+
+    <section class="cable-panel cable-lock" aria-labelledby="dataset-lock-title">
+      <div class="cable-section-heading">
+        <div>
+          <p class="cable-overline">PROVENANCE</p>
+          <h2 id="dataset-lock-title">Dataset Lock</h2>
+        </div>
+        <span class="cable-lock-state">HASHED</span>
+      </div>
+      <dl class="cable-lock-grid">
+        <div><dt>Dataset name</dt><dd id="dataset-name">—</dd></div>
+        <div><dt>Export date</dt><dd id="dataset-date">—</dd></div>
+        <div><dt>Export status</dt><dd id="dataset-status">—</dd></div>
+        <div><dt>Countries evaluated</dt><dd id="dataset-countries">—</dd></div>
+        <div><dt>Any significant</dt><dd id="dataset-significance">—</dd></div>
+        <div class="cable-hash-row"><dt>Dataset SHA-256</dt><dd><code id="dataset-hash">—</code></dd></div>
+      </dl>
+      <p id="dataset-note" class="cable-fineprint">—</p>
+    </section>
+
+    <section class="cable-evidence" aria-labelledby="evidence-title">
+      <h2 id="evidence-title">Evidence Boundary</h2>
+      <div class="cable-evidence-grid">
+        <article class="cable-evidence-card observed"><p class="cable-evidence-tag">EXPORT</p><h3 id="observed-title">Observed</h3><p>Country codes and the exported <code>cable_count</code>, <code>landing_count</code>, <code>dependency_score</code>, <code>redundancy_score</code>, and <code>unique_partner_countries</code> fields, plus export status/date, summary/significance fields, dataset name, and dataset hash.</p></article>
+        <article class="cable-evidence-card derived"><p class="cable-evidence-tag">BROWSER</p><h3 id="derived-title">Derived</h3><p>Only transparent arithmetic over those fields: country-field sums and simple history counts such as distinct values, changes, and the current constant run.</p></article>
+        <article class="cable-evidence-card unknown"><p class="cable-evidence-tag">NOT EXPORTED</p><h3 id="unknown-title">Unknown</h3><p>Cable identities, landing-site names or coordinates, route geometry, ownership, capacity, traffic, physical condition, outages, and causal meaning. Score values are shown as raw unitless export values without inventing a percentage scale or qualitative label.</p></article>
+      </div>
+    </section>
+
+    <section class="cable-panel cable-method" aria-labelledby="methodology-title">
+      <p class="cable-overline">METHOD</p>
+      <h2 id="methodology-title">Methodology</h2>
+      <p>The page reads only the existing local World Observer latest export and its published history. It does not query cable operators, map providers, network routes, or live infrastructure services. The atlas is an abstract profile layout, not a geographic cable map.</p>
+    </section>
+
+    <section class="cable-panel cable-sources" aria-labelledby="sources-title">
+      <p class="cable-overline">SOURCE CHAIN</p>
+      <h2 id="sources-title">Sources</h2>
+      <p><code>world-observer/dashboard/latest/undersea-cable-dependency-map.json</code><br><code>world-observer/dashboard/history/internet-observers.json</code></p>
+      <p>The export metadata names its dataset <strong>Greg's Cable Map derivative (open license)</strong> and supplies a dataset SHA-256. This page does not contact a map provider or live cable-status service.</p>
+    </section>
   </main>
   <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="../assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cat world-observer/dashboard/internet.json<span class="cursor"></span></span></div>
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; verify dataset.dataset_hash<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>

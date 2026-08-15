@@ -1,0 +1,42 @@
+name: Undersea Cable Dependency Map observer checks
+
+on:
+  pull_request:
+    paths:
+      - "world-observer/undersea-cable-dependency-map.html"
+      - "de/world-observer/undersea-cable-dependency-map.html"
+      - "world-observer/undersea-cable-dependency-map.css"
+      - "world-observer/undersea-cable-dependency-map.js"
+      - "world-observer/undersea-cable-map-language.js"
+      - "tests/undersea-cable-dependency-map.test.mjs"
+      - "tests/internet-observer-localized-pages.test.mjs"
+      - "tests/internet-observer-detail-pages.test.mjs"
+      - ".github/workflows/undersea-cable-map-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "world-observer/undersea-cable-dependency-map.html"
+      - "de/world-observer/undersea-cable-dependency-map.html"
+      - "world-observer/undersea-cable-dependency-map.css"
+      - "world-observer/undersea-cable-dependency-map.js"
+      - "world-observer/undersea-cable-map-language.js"
+      - "tests/undersea-cable-dependency-map.test.mjs"
+      - "tests/internet-observer-localized-pages.test.mjs"
+      - "tests/internet-observer-detail-pages.test.mjs"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check premium observer JavaScript syntax
+        run: |
+          node --check world-observer/undersea-cable-dependency-map.js
+          node --check world-observer/undersea-cable-map-language.js
+      - name: Run focused premium observer tests
+        run: node --test tests/undersea-cable-dependency-map.test.mjs
+      - name: Run shared Internet observer contracts
+        run: node --test tests/internet-observer-localized-pages.test.mjs tests/internet-observer-detail-pages.test.mjs
