@@ -72,6 +72,11 @@ test("all 19 public Internet observers have German crawlable routes", () => {
       assert.ok(html.includes('/world-observer/tls-fingerprint-change.js?v=1'), slug);
       assert.ok(html.includes('/world-observer/tls-fingerprint-language.js?v=1'), slug);
       assert.ok(html.includes('class="tls-language"'), slug);
+    } else if (slug === "undersea-cable-dependency-map") {
+      assert.ok(html.includes('/world-observer/undersea-cable-dependency-map.css?v=1'), slug);
+      assert.ok(html.includes('/world-observer/undersea-cable-dependency-map.js?v=1'), slug);
+      assert.ok(html.includes('/world-observer/undersea-cable-map-language.js?v=1'), slug);
+      assert.ok(html.includes('class="cable-language"'), slug);
     } else {
       assert.ok(html.includes('/world-observer/internet-observer-detail.css?v=2'), slug);
       assert.ok(html.includes('/world-observer/internet-observer-detail.js?v=2'), slug);
