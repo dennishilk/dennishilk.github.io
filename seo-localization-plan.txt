@@ -1,0 +1,1 @@
+Dedicated German Wiesmoor observer routes will reuse the existing page markup/data logic and apply the already-maintained German translation bundle at render time, while exposing localized canonical/hreflang/title/description metadata and German internal links. This avoids duplicating observer logic.
