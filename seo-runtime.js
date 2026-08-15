@@ -111,6 +111,15 @@
     const enPath = reversePairs[path] || (wiesmoorPairs[path] ? path : null);
     const dePath = wiesmoorPairs[enPath];
     if (!enPath || !dePath) return;
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
+    }
+    canonical.href = `https://dennishilk.com${de ? dePath : enPath}`;
+
     const values = { en: enPath, de: dePath, "x-default": enPath };
     Object.entries(values).forEach(([language, route]) => {
       let link = document.querySelector(`link[rel="alternate"][hreflang="${language}"]`);
