@@ -77,22 +77,30 @@ test("runtime DOM targets exist in both localized pages", () => {
   }
 });
 
-test("current export is rendered as three raw country profiles without geographic invention", () => {
+test("current export is rendered as raw country profiles without geographic invention", () => {
   assert.equal(latest.observer, "undersea-cable-dependency-map");
   assert.equal(latest.data_status, "ok");
-  assert.equal(latest.source_type, "static_open_dataset");
-  assert.equal(latest.methodology_version, "1.0");
-  assert.equal(latest.dataset_hash_sha256, "1c5f188283b8a6d8f5e62b61d7b706cb5d03aa4ac8493f5f7db930311376994a");
-  assert.match(latest.notes, /Static, pinned mock of an open undersea-cable dataset/);
-  assert.match(latest.notes, /No private infrastructure data and no live cable-state data/);
+  assert.equal(latest.date_utc, "2026-07-26");
+  assert.equal(latest.dataset.name, "Greg's Cable Map derivative (open license)");
+  assert.equal(latest.dataset.dataset_hash, "ee081c1f6c99737aaaa1019bd18287b23a38af1103542eda36083e69bc4df3ca");
+  assert.equal(latest.dataset.last_updated_hint, "");
+  assert.equal(latest.summary_stats.countries_evaluated, 3);
+  assert.equal(latest.significance.any_significant, false);
 
   assert.equal(latest.countries.length, 3);
   assert.deepEqual(latest.countries.map((row) => row.country), ["BR", "US", "ZA"]);
+  assert.deepEqual(
+    latest.countries.map((row) => [row.cable_count, row.landing_count, row.dependency_score, row.redundancy_score, row.unique_partner_countries]),
+    [
+      [2, 2, 0.555556, 0.444444, 0],
+      [3, 3, 0.333333, 0.666667, 0],
+      [2, 2, 0.555556, 0.444444, 0],
+    ],
+  );
+  assert.equal(latest.countries.reduce((sum, row) => sum + row.cable_count, 0), 7);
+  assert.equal(latest.countries.reduce((sum, row) => sum + row.landing_count, 0), 7);
+
   for (const row of latest.countries) {
-    assert.equal(row.cable_count, 2);
-    assert.equal(row.landing_count, 2);
-    assert.equal(row.dependency_score, 1.0);
-    assert.equal(row.redundancy_score, 1.0);
     for (const forbidden of ["lat", "lon", "latitude", "longitude", "geometry", "route", "landing_points", "cable_names"]) {
       assert.equal(Object.hasOwn(row, forbidden), false, `${row.country} unexpectedly exports ${forbidden}`);
     }
@@ -102,12 +110,24 @@ test("current export is rendered as three raw country profiles without geographi
   assert.ok(en.includes("COUNT MARKERS // NOT LOCATIONS"));
   assert.ok(en.includes("no coordinates or cable geometry"));
   assert.ok(en.includes("not</strong> counts of distinct physical cables or distinct landing sites"));
+  assert.ok(en.includes("raw unitless export values"));
   assert.ok(de.includes("NICHT GEOGRAFISCH"));
   assert.ok(de.includes("ANZAHL-MARKER // KEINE ORTE"));
-  assert.ok(runtime.includes("formatScore"));
-  assert.ok(!runtime.includes('`${formatScore'));
-  assert.ok(!runtime.includes('dependency_score * 100'));
-  assert.ok(!runtime.includes('redundancy_score * 100'));
+  assert.ok(de.includes("rohe dimensionslose Exportwerte"));
+  assert.ok(runtime.includes("minimumFractionDigits: 6"));
+  assert.ok(runtime.includes("country.unique_partner_countries"));
+  assert.ok(!runtime.includes("dependency_score * 100"));
+  assert.ok(!runtime.includes("redundancy_score * 100"));
+});
+
+test("dataset lock uses the export's real nested provenance fields", () => {
+  assert.ok(runtime.includes('data?.dataset?.name'));
+  assert.ok(runtime.includes('data?.dataset?.dataset_hash'));
+  assert.ok(runtime.includes('data?.dataset?.last_updated_hint'));
+  assert.ok(runtime.includes('data?.summary_stats?.countries_evaluated'));
+  assert.ok(runtime.includes('data?.significance?.any_significant'));
+  assert.ok(en.includes("Greg's Cable Map derivative (open license)"));
+  assert.ok(de.includes("Greg's Cable Map derivative (open license)"));
 });
 
 test("published memory uses the real 105 numeric export-history points", () => {
@@ -128,7 +148,7 @@ test("published memory uses the real 105 numeric export-history points", () => {
   assert.ok(runtime.includes("keine lückenlose Kalender-Tagesabdeckung"));
 });
 
-test("runtime reads only existing local static exports", () => {
+test("runtime reads only existing local exports", () => {
   assert.ok(runtime.includes('const latestUrl = `/world-observer/dashboard/latest/${observerId}.json`'));
   assert.ok(runtime.includes('const historyUrl = "/world-observer/dashboard/history/internet-observers.json"'));
   assert.ok(runtime.includes('fetch(url, { cache: "no-store" })'));

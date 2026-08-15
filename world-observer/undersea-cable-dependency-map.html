@@ -11,7 +11,7 @@
   <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html">
   <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
   <meta property="og:title" content="Undersea Cable Dependency Map – World Observer">
-  <meta property="og:description" content="Static public undersea-cable dependency profiles with strict provenance and no invented route geometry.">
+  <meta property="og:description" content="Public undersea-cable dependency profiles with strict dataset provenance and no invented route geometry.">
   <meta property="og:url" content="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
@@ -27,7 +27,7 @@
   <script defer src="/stars.js"></script>
   <script defer src="/world-observer/undersea-cable-map-language.js?v=1"></script>
   <script defer src="/world-observer/undersea-cable-dependency-map.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Undersea Cable Dependency Map – World Observer","description":"A public-data subsea dependency atlas using pinned static World Observer exports without invented cable routes or live-state claims.","url":"https://dennishilk.com/world-observer/undersea-cable-dependency-map.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Undersea Cable Dependency Map – World Observer","description":"A public-data subsea dependency atlas using pinned World Observer exports without invented cable routes or live-state claims.","url":"https://dennishilk.com/world-observer/undersea-cable-dependency-map.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
 </head>
 <body class="cable-map-page" data-observer-page="internet-detail" data-observer-id="undersea-cable-dependency-map">
 <canvas id="stars"></canvas>
@@ -42,14 +42,14 @@
 
     <header class="cable-hero">
       <div class="cable-hero-copy">
-        <p class="cable-kicker">WORLD OBSERVER // STATIC SUBSEA INFRASTRUCTURE</p>
+        <p class="cable-kicker">WORLD OBSERVER // SUBSEA DATASET TELEMETRY</p>
         <h1>Undersea Cable Dependency Map</h1>
         <p class="cable-deck">A provenance-first atlas of the dependency fields that are actually present in the public export. The visualization is deliberately non-geographic because the export contains no coordinates or cable geometry.</p>
       </div>
       <div class="cable-hero-status" aria-label="Evidence status">
-        <span>STATIC DATASET</span>
+        <span>PINNED DATASET HASH</span>
         <span>PUBLIC EXPORT ONLY</span>
-        <span>NO LIVE CABLE STATE</span>
+        <span>NO LIVE STATUS QUERY</span>
         <span>NO ROUTE GEOMETRY</span>
       </div>
     </header>
@@ -110,13 +110,14 @@
           <p class="cable-overline">PROVENANCE</p>
           <h2 id="dataset-lock-title">Dataset Lock</h2>
         </div>
-        <span class="cable-lock-state">PINNED</span>
+        <span class="cable-lock-state">HASHED</span>
       </div>
       <dl class="cable-lock-grid">
-        <div><dt>Source type</dt><dd id="dataset-source-type">—</dd></div>
-        <div><dt>Methodology version</dt><dd id="dataset-methodology">—</dd></div>
+        <div><dt>Dataset name</dt><dd id="dataset-name">—</dd></div>
+        <div><dt>Export date</dt><dd id="dataset-date">—</dd></div>
         <div><dt>Export status</dt><dd id="dataset-status">—</dd></div>
-        <div><dt>Export timestamp</dt><dd id="dataset-timestamp">—</dd></div>
+        <div><dt>Countries evaluated</dt><dd id="dataset-countries">—</dd></div>
+        <div><dt>Any significant</dt><dd id="dataset-significance">—</dd></div>
         <div class="cable-hash-row"><dt>Dataset SHA-256</dt><dd><code id="dataset-hash">—</code></dd></div>
       </dl>
       <p id="dataset-note" class="cable-fineprint">—</p>
@@ -125,27 +126,27 @@
     <section class="cable-evidence" aria-labelledby="evidence-title">
       <h2 id="evidence-title">Evidence Boundary</h2>
       <div class="cable-evidence-grid">
-        <article class="cable-evidence-card observed"><p class="cable-evidence-tag">EXPORT</p><h3 id="observed-title">Observed</h3><p>Country codes and the exported <code>cable_count</code>, <code>landing_count</code>, <code>dependency_score</code>, and <code>redundancy_score</code> fields, plus status, timestamp, methodology version, source type, and dataset hash.</p></article>
+        <article class="cable-evidence-card observed"><p class="cable-evidence-tag">EXPORT</p><h3 id="observed-title">Observed</h3><p>Country codes and the exported <code>cable_count</code>, <code>landing_count</code>, <code>dependency_score</code>, <code>redundancy_score</code>, and <code>unique_partner_countries</code> fields, plus export status/date, summary/significance fields, dataset name, and dataset hash.</p></article>
         <article class="cable-evidence-card derived"><p class="cable-evidence-tag">BROWSER</p><h3 id="derived-title">Derived</h3><p>Only transparent arithmetic over those fields: country-field sums and simple history counts such as distinct values, changes, and the current constant run.</p></article>
-        <article class="cable-evidence-card unknown"><p class="cable-evidence-tag">NOT EXPORTED</p><h3 id="unknown-title">Unknown</h3><p>Cable identities, landing-site names or coordinates, route geometry, ownership, capacity, traffic, physical condition, outages, and causal meaning. Score values are shown without inventing a percentage scale or qualitative label.</p></article>
+        <article class="cable-evidence-card unknown"><p class="cable-evidence-tag">NOT EXPORTED</p><h3 id="unknown-title">Unknown</h3><p>Cable identities, landing-site names or coordinates, route geometry, ownership, capacity, traffic, physical condition, outages, and causal meaning. Score values are shown as raw unitless export values without inventing a percentage scale or qualitative label.</p></article>
       </div>
     </section>
 
     <section class="cable-panel cable-method" aria-labelledby="methodology-title">
       <p class="cable-overline">METHOD</p>
       <h2 id="methodology-title">Methodology</h2>
-      <p>The page reads only the existing static World Observer latest export and its published history. It does not query cable operators, map providers, network routes, or live infrastructure services. The atlas is an abstract profile layout, not a geographic cable map.</p>
+      <p>The page reads only the existing local World Observer latest export and its published history. It does not query cable operators, map providers, network routes, or live infrastructure services. The atlas is an abstract profile layout, not a geographic cable map.</p>
     </section>
 
     <section class="cable-panel cable-sources" aria-labelledby="sources-title">
       <p class="cable-overline">SOURCE CHAIN</p>
       <h2 id="sources-title">Sources</h2>
       <p><code>world-observer/dashboard/latest/undersea-cable-dependency-map.json</code><br><code>world-observer/dashboard/history/internet-observers.json</code></p>
-      <p>The export identifies its source as a static, pinned mock of an open undersea-cable dataset, described as a Greg's Cable Map derivative. No private infrastructure data or live cable-state data is presented here.</p>
+      <p>The export metadata names its dataset <strong>Greg's Cable Map derivative (open license)</strong> and supplies a dataset SHA-256. This page does not contact a map provider or live cable-status service.</p>
     </section>
   </main>
   <footer>
-    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; verify dataset_hash_sha256<span class="cursor"></span></span></div>
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; verify dataset.dataset_hash<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>

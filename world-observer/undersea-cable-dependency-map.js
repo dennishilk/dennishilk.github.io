@@ -18,7 +18,11 @@
       landingCount: "Landing count field",
       dependency: "Dependency score",
       redundancy: "Redundancy score",
+      partners: "Unique partner countries",
       unknown: "unknown",
+      yes: "TRUE",
+      no: "FALSE",
+      datasetHintMissing: "No dataset last-updated hint is populated in the export.",
       historyAria: (count) => `${count} published numeric cable-count history points`,
     },
     de: {
@@ -30,7 +34,11 @@
       landingCount: "Landepunkt-Feld",
       dependency: "Abhängigkeitswert",
       redundancy: "Redundanzwert",
+      partners: "Eindeutige Partnerländer",
       unknown: "unbekannt",
+      yes: "WAHR",
+      no: "FALSCH",
+      datasetHintMissing: "Im Export ist kein Hinweis zur letzten Dataset-Aktualisierung befüllt.",
       historyAria: (count) => `${count} veröffentlichte numerische Kabelanzahl-Verlaufspunkte`,
     },
   };
@@ -45,20 +53,19 @@
   function formatScore(value) {
     if (!Number.isFinite(Number(value))) return "—";
     return Number(value).toLocaleString(locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: 6,
+      maximumFractionDigits: 6,
     });
   }
 
-  function formatTimestamp(value) {
+  function formatDate(value) {
     if (!value) return "—";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return String(value);
-    return `${new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
-      timeStyle: "short",
       timeZone: "UTC",
-    }).format(date)} UTC`;
+    }).format(date);
   }
 
   function formatStatus(value) {
@@ -71,10 +78,6 @@
       error: "FEHLER",
       unknown: "UNBEKANNT",
     })[normalized] || normalized.replaceAll("_", " ").toUpperCase();
-  }
-
-  function readableToken(value) {
-    return String(value || "—").replaceAll("_", " ");
   }
 
   function markerTrack(count, kind) {
@@ -157,6 +160,7 @@
         metric(t.landingCount, country.landing_count, formatInteger),
         metric(t.dependency, country.dependency_score, formatScore),
         metric(t.redundancy, country.redundancy_score, formatScore),
+        metric(t.partners, country.unique_partner_countries, formatInteger),
       );
 
       card.append(head, markers, metrics);
@@ -173,14 +177,19 @@
     $("summary-cables").textContent = formatInteger(cableFieldSum);
     $("summary-landings").textContent = formatInteger(landingFieldSum);
     $("summary-status").textContent = formatStatus(data?.data_status);
-    $("export-timestamp").textContent = formatTimestamp(data?.timestamp);
+    $("export-timestamp").textContent = formatDate(data?.date_utc);
 
-    $("dataset-source-type").textContent = readableToken(data?.source_type);
-    $("dataset-methodology").textContent = String(data?.methodology_version || "—");
+    $("dataset-name").textContent = String(data?.dataset?.name || "—");
+    $("dataset-date").textContent = formatDate(data?.date_utc);
     $("dataset-status").textContent = formatStatus(data?.data_status);
-    $("dataset-timestamp").textContent = formatTimestamp(data?.timestamp);
-    $("dataset-hash").textContent = String(data?.dataset_hash_sha256 || "—");
-    $("dataset-note").textContent = String(data?.notes || "—");
+    $("dataset-countries").textContent = formatInteger(data?.summary_stats?.countries_evaluated);
+    $("dataset-significance").textContent = typeof data?.significance?.any_significant === "boolean"
+      ? (data.significance.any_significant ? t.yes : t.no)
+      : "—";
+    $("dataset-hash").textContent = String(data?.dataset?.dataset_hash || "—");
+    $("dataset-note").textContent = data?.dataset?.last_updated_hint
+      ? String(data.dataset.last_updated_hint)
+      : t.datasetHintMissing;
 
     renderCountries(countries);
   }

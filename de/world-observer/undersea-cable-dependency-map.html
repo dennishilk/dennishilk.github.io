@@ -11,7 +11,7 @@
   <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html">
   <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/world-observer/undersea-cable-dependency-map.html">
   <meta property="og:title" content="Karte der Unterseekabel-Abhängigkeiten – World Observer">
-  <meta property="og:description" content="Statische öffentliche Unterseekabel-Abhängigkeitsprofile mit strenger Provenienz und ohne erfundene Routengeometrie.">
+  <meta property="og:description" content="Öffentliche Unterseekabel-Abhängigkeitsprofile mit strenger Dataset-Provenienz und ohne erfundene Routengeometrie.">
   <meta property="og:url" content="https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_DE">
@@ -27,7 +27,7 @@
   <script defer src="/stars.js"></script>
   <script defer src="/world-observer/undersea-cable-map-language.js?v=1"></script>
   <script defer src="/world-observer/undersea-cable-dependency-map.js?v=1"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Karte der Unterseekabel-Abhängigkeiten – World Observer","description":"Ein öffentlicher Unterseekabel-Abhängigkeitsatlas auf Basis fixierter statischer World-Observer-Exporte ohne erfundene Kabelrouten oder Live-Status-Aussagen.","url":"https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html","inLanguage":"de","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Karte der Unterseekabel-Abhängigkeiten – World Observer","description":"Ein öffentlicher Unterseekabel-Abhängigkeitsatlas auf Basis fixierter World-Observer-Exporte ohne erfundene Kabelrouten oder Live-Status-Aussagen.","url":"https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html","inLanguage":"de","isPartOf":{"@type":"WebSite","name":"World Observer","url":"https://dennishilk.com/world-observer.html"}}</script>
 </head>
 <body class="cable-map-page" data-observer-page="internet-detail" data-observer-id="undersea-cable-dependency-map">
 <canvas id="stars"></canvas>
@@ -42,14 +42,14 @@
 
     <header class="cable-hero">
       <div class="cable-hero-copy">
-        <p class="cable-kicker">WORLD OBSERVER // STATISCHE SUBSEA-INFRASTRUKTUR</p>
+        <p class="cable-kicker">WORLD OBSERVER // SUBSEA-DATASET-TELEMETRIE</p>
         <h1>Karte der Unterseekabel-Abhängigkeiten</h1>
         <p class="cable-deck">Ein Atlas, der ausschließlich die Abhängigkeitsfelder zeigt, die tatsächlich im öffentlichen Export vorhanden sind. Die Visualisierung ist bewusst nicht geografisch, weil der Export weder Koordinaten noch Kabelgeometrien enthält.</p>
       </div>
       <div class="cable-hero-status" aria-label="Evidenzstatus">
-        <span>STATISCHES DATASET</span>
+        <span>FIXIERTER DATASET-HASH</span>
         <span>NUR ÖFFENTLICHER EXPORT</span>
-        <span>KEIN LIVE-KABELSTATUS</span>
+        <span>KEINE LIVE-STATUS-ABFRAGE</span>
         <span>KEINE ROUTENGEOMETRIE</span>
       </div>
     </header>
@@ -110,13 +110,14 @@
           <p class="cable-overline">PROVENIENZ</p>
           <h2 id="dataset-lock-title">Dataset Lock</h2>
         </div>
-        <span class="cable-lock-state">FIXIERT</span>
+        <span class="cable-lock-state">GEHASHT</span>
       </div>
       <dl class="cable-lock-grid">
-        <div><dt>Quellentyp</dt><dd id="dataset-source-type">—</dd></div>
-        <div><dt>Methodik-Version</dt><dd id="dataset-methodology">—</dd></div>
+        <div><dt>Dataset-Name</dt><dd id="dataset-name">—</dd></div>
+        <div><dt>Exportdatum</dt><dd id="dataset-date">—</dd></div>
         <div><dt>Exportstatus</dt><dd id="dataset-status">—</dd></div>
-        <div><dt>Export-Zeitstempel</dt><dd id="dataset-timestamp">—</dd></div>
+        <div><dt>Ausgewertete Länder</dt><dd id="dataset-countries">—</dd></div>
+        <div><dt>Signifikant vorhanden</dt><dd id="dataset-significance">—</dd></div>
         <div class="cable-hash-row"><dt>Dataset SHA-256</dt><dd><code id="dataset-hash">—</code></dd></div>
       </dl>
       <p id="dataset-note" class="cable-fineprint">—</p>
@@ -125,27 +126,27 @@
     <section class="cable-evidence" aria-labelledby="evidence-title">
       <h2 id="evidence-title">Evidenzgrenze</h2>
       <div class="cable-evidence-grid">
-        <article class="cable-evidence-card observed"><p class="cable-evidence-tag">EXPORT</p><h3 id="observed-title">Beobachtet</h3><p>Ländercodes und die exportierten Felder <code>cable_count</code>, <code>landing_count</code>, <code>dependency_score</code> und <code>redundancy_score</code>, außerdem Status, Zeitstempel, Methodik-Version, Quellentyp und Dataset-Hash.</p></article>
+        <article class="cable-evidence-card observed"><p class="cable-evidence-tag">EXPORT</p><h3 id="observed-title">Beobachtet</h3><p>Ländercodes und die exportierten Felder <code>cable_count</code>, <code>landing_count</code>, <code>dependency_score</code>, <code>redundancy_score</code> und <code>unique_partner_countries</code>, außerdem Exportstatus/-datum, Summary-/Signifikanzfelder, Dataset-Name und Dataset-Hash.</p></article>
         <article class="cable-evidence-card derived"><p class="cable-evidence-tag">BROWSER</p><h3 id="derived-title">Abgeleitet</h3><p>Nur transparente Arithmetik über diesen Feldern: Summen der Länderfelder und einfache Verlaufszählungen wie unterschiedliche Werte, Änderungen und die aktuelle konstante Serie.</p></article>
-        <article class="cable-evidence-card unknown"><p class="cable-evidence-tag">NICHT EXPORTIERT</p><h3 id="unknown-title">Unbekannt</h3><p>Kabelidentitäten, Namen oder Koordinaten von Landestellen, Routengeometrie, Eigentum, Kapazität, Verkehr, physischer Zustand, Störungen und kausale Bedeutung. Score-Werte werden ohne erfundene Prozentskala oder qualitative Einstufung angezeigt.</p></article>
+        <article class="cable-evidence-card unknown"><p class="cable-evidence-tag">NICHT EXPORTIERT</p><h3 id="unknown-title">Unbekannt</h3><p>Kabelidentitäten, Namen oder Koordinaten von Landestellen, Routengeometrie, Eigentum, Kapazität, Verkehr, physischer Zustand, Störungen und kausale Bedeutung. Score-Werte werden als rohe dimensionslose Exportwerte ohne erfundene Prozentskala oder qualitative Einstufung angezeigt.</p></article>
       </div>
     </section>
 
     <section class="cable-panel cable-method" aria-labelledby="methodology-title">
       <p class="cable-overline">METHODE</p>
       <h2 id="methodology-title">Methodik</h2>
-      <p>Die Seite liest ausschließlich den vorhandenen statischen Latest-Export des World Observer und dessen veröffentlichten Verlauf. Sie fragt keine Kabelbetreiber, Kartenanbieter, Netzwerkrouten oder Live-Infrastrukturdienste ab. Der Atlas ist eine abstrakte Profildarstellung und keine geografische Kabelkarte.</p>
+      <p>Die Seite liest ausschließlich den vorhandenen lokalen Latest-Export des World Observer und dessen veröffentlichten Verlauf. Sie fragt keine Kabelbetreiber, Kartenanbieter, Netzwerkrouten oder Live-Infrastrukturdienste ab. Der Atlas ist eine abstrakte Profildarstellung und keine geografische Kabelkarte.</p>
     </section>
 
     <section class="cable-panel cable-sources" aria-labelledby="sources-title">
       <p class="cable-overline">QUELLENKETTE</p>
       <h2 id="sources-title">Quellen</h2>
       <p><code>world-observer/dashboard/latest/undersea-cable-dependency-map.json</code><br><code>world-observer/dashboard/history/internet-observers.json</code></p>
-      <p>Der Export bezeichnet seine Quelle als statischen, fixierten Mock eines offenen Unterseekabel-Datasets und beschreibt ihn als Ableitung von Greg's Cable Map. Hier werden weder private Infrastrukturdaten noch Live-Kabelstatusdaten dargestellt.</p>
+      <p>Die Export-Metadaten benennen das Dataset als <strong>Greg's Cable Map derivative (open license)</strong> und liefern einen Dataset-SHA-256. Diese Seite kontaktiert weder einen Kartenanbieter noch einen Live-Kabelstatusdienst.</p>
     </section>
   </main>
   <footer>
-    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; verify dataset_hash_sha256<span class="cursor"></span></span></div>
+    <div class="nebby-terminal-line"><img src="/nebby.png" class="nebby" alt="Nebby mascot"><span class="coffee-text">&gt; verify dataset.dataset_hash<span class="cursor"></span></span></div>
     <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
   </footer>
 </div>
