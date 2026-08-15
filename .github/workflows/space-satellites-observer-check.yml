@@ -1,0 +1,30 @@
+name: Space Satellites observer checks
+
+on:
+  pull_request:
+    paths:
+      - "world-observer/technology/space-satellites*"
+      - "de/world-observer/technology/space-satellites.html"
+      - "world-observer/technology.html"
+      - "tests/space-satellites.test.mjs"
+      - ".github/workflows/space-satellites-observer-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        run: |
+          node --check world-observer/technology/space-satellites.js
+          node --check world-observer/technology/space-satellites-language.js
+          node --check world-observer/technology/space-satellites-card.js
+      - name: Run focused Space Satellites tests
+        run: node --test tests/space-satellites.test.mjs
