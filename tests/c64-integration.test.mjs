@@ -106,7 +106,7 @@ test("museum card stays second after WOPR and before PC XT with approved copy", 
   assert.match(segment, /Commodore 64 Programming Lab/);
   assert.match(segment, /Interactive BASIC learning lab/);
   assert.match(segment, /START PROGRAMMING/);
-  assert.match(segment, /faithful browser-based subset/);
+  assert.match(segment, /museum-status available">AVAILABLE/);
   assert.equal((museum.match(/museum-card-c64/g) || []).length, 1);
 });
 
@@ -127,7 +127,7 @@ test("dedicated language routing preserves the established site language system"
     '"/de/museum/c64/"',
     '"/de/museum/c64/index.html"'
   ]) assert.match(language, new RegExp(route.replace(/[/.]/g, "\\$&")));
-  assert.match(language, /2026-08-10-c64-1/);
+  assert.match(language, /site-i18n-de\.js\?v=20260810-c64-1/);
   assert.match(read("site-i18n-de.js"), /Commodore 64 Programmierlabor/);
 });
 

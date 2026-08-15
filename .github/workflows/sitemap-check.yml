@@ -1,0 +1,41 @@
+name: Sitemap checks
+
+on:
+  pull_request:
+    paths:
+      - "sitemap.xml"
+      - "sitemap-de.xml"
+      - "sitemap-internet-observers.xml"
+      - "sitemap-technology-observers.xml"
+      - "robots.txt"
+      - "de/**"
+      - "world-observer/**"
+      - "tests/sitemaps.test.mjs"
+      - ".github/workflows/sitemap-check.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "sitemap.xml"
+      - "sitemap-de.xml"
+      - "sitemap-internet-observers.xml"
+      - "sitemap-technology-observers.xml"
+      - "robots.txt"
+      - "de/**"
+      - "world-observer/**"
+      - "tests/sitemaps.test.mjs"
+      - ".github/workflows/sitemap-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate sitemap contracts
+        run: node --test tests/sitemaps.test.mjs
