@@ -122,8 +122,9 @@ test("SEO runtime supplies safe robots enrichment, reciprocal hreflang and Bread
 });
 
 test("Space German metadata is natural in static HTML and runtime", () => {
+  assert.match(spaceDe, /Satelliten &amp; Umlaufbahndaten – CelesTrak-Gruppen/);
+  assert.match(spaceLanguage, /Satelliten & Umlaufbahndaten – CelesTrak-Gruppen/);
   for (const source of [spaceDe, spaceLanguage]) {
-    assert.match(source, /Satelliten &(?:amp;| ) Umlaufbahndaten – CelesTrak-Gruppen/);
     assert.match(source, /Beobachtung ausgewählter öffentlicher CelesTrak-GP-Gruppen/);
     assert.doesNotMatch(source, /Ein provenance-first Orbital Population Observatory/);
   }
