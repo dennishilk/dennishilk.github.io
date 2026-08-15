@@ -32,6 +32,7 @@ const routeScript = read("wiesmoor-language-route.js");
 const stars = read("stars.js");
 const hometownDe = read("de/world-observer/hometown.html");
 const spaceLanguage = read("world-observer/technology/space-satellites-language.js");
+const spaceDe = read("de/world-observer/technology/space-satellites.html");
 
 test("all ten Wiesmoor observer pairs exist as crawlable local files", () => {
   for (const [slug] of pairs) {
@@ -76,6 +77,26 @@ test("rendered metadata fallback fixes the five complex German Wiesmoor observer
   assert.match(bootstrap, /canonical\.href = `https:\/\/dennishilk\.com\$\{dePath\}`/);
   assert.match(bootstrap, /document\.documentElement\.lang = "de"/);
   assert.match(bootstrap, /site-i18n-de-wiesmoor\.js/);
+  assert.match(seoRuntime, /canonical\.href = `https:\/\/dennishilk\.com\$\{de \? dePath : enPath\}`/);
+});
+
+test("core landing hubs carry descriptive static search metadata", () => {
+  const pages = [
+    ["index.html", /Open Source, Linux, World Observer &amp; Computer Museum/, /World Observer public-data observatory/],
+    ["de/index.html", /Open Source, Linux, World Observer &amp; Computermuseum/, /Public-Data-Projekt World Observer/],
+    ["world-observer.html", /Public Data on Internet, Environment, Society &amp; Technology/, /long-term public-data observations/],
+    ["world-observer/internet.html", /DNS, IPv6, Reachability &amp; Network Infrastructure/, /mail infrastructure, TLS, routes and undersea cable context/],
+    ["world-observer/technology.html", /Linux, Software Ecosystems, Time &amp; Satellites/, /kernel archives, reference time/],
+    ["museum/index.html", /Interactive Computer Museum – C64 BASIC, Modems, BBS &amp; Retro Computing/, /acoustic couplers, dial-up modems, BBS systems/],
+  ];
+  for (const [path, title, description] of pages) {
+    const page = read(path);
+    assert.match(page, title, `${path} missing descriptive title`);
+    assert.match(page, description, `${path} missing descriptive description`);
+    assert.match(page, /max-image-preview:large/, `${path} missing image preview directive`);
+  }
+  assert.doesNotMatch(read("index.html"), /<meta name="keywords"/);
+  assert.doesNotMatch(read("de/index.html"), /<meta name="keywords"/);
 });
 
 test("sitewide SEO metadata replaces generic implementation-oriented hub copy", () => {
@@ -92,18 +113,23 @@ test("sitewide SEO metadata replaces generic implementation-oriented hub copy", 
   assert.doesNotMatch(seoRuntime, /Static World Observer overview with project-level observational status data/i);
 });
 
-test("SEO runtime supplies robots, reciprocal hreflang and BreadcrumbList structured data", () => {
+test("SEO runtime supplies safe robots enrichment, reciprocal hreflang and BreadcrumbList structured data", () => {
   assert.match(seoRuntime, /index,follow,max-image-preview:large/);
+  assert.match(seoRuntime, /\\bnoindex\\b/);
   assert.match(seoRuntime, /hreflang/);
   assert.match(seoRuntime, /BreadcrumbList/);
   assert.match(seoRuntime, /seo-breadcrumb-jsonld/);
 });
 
-test("Space language runtime carries natural German metadata and breadcrumbs", () => {
-  assert.match(spaceLanguage, /Satelliten & Umlaufbahndaten – CelesTrak-Gruppen/);
-  assert.match(spaceLanguage, /Beobachtung ausgewählter öffentlicher CelesTrak-GP-Gruppen/);
+test("Space German metadata is natural in static HTML and runtime", () => {
+  for (const source of [spaceDe, spaceLanguage]) {
+    assert.match(source, /Satelliten &(?:amp;| ) Umlaufbahndaten – CelesTrak-Gruppen/);
+    assert.match(source, /Beobachtung ausgewählter öffentlicher CelesTrak-GP-Gruppen/);
+    assert.doesNotMatch(source, /Ein provenance-first Orbital Population Observatory/);
+  }
   assert.match(spaceLanguage, /BreadcrumbList/);
-  assert.doesNotMatch(spaceLanguage, /Ein provenance-first Orbital Population Observatory/);
+  assert.match(spaceDe, /hreflang="en"/);
+  assert.match(spaceDe, /hreflang="de"/);
 });
 
 test("SEO work does not introduce ranking guarantees or fabricated traffic claims", () => {
