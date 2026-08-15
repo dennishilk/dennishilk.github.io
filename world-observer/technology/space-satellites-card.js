@@ -2,28 +2,46 @@
   "use strict";
 
   const latestUrl = "/world-observer/dashboard/latest/space-satellites.json";
+  const spaceHref = "/world-observer/technology/space-satellites.html";
+
+  function activateSpaceCard() {
+    const card = document.getElementById("technology-space-card")
+      || document.querySelector(`a.technology-observer-card[href="${spaceHref}"]`);
+    if (!card) return;
+    card.classList.add("active");
+    card.classList.remove("planned", "signal-unavailable");
+  }
 
   function removePlannedDuplicate() {
     const container = document.getElementById("technology-planned-groups");
     if (!container) return false;
-    for (const section of container.querySelectorAll("section")) {
+
+    let removed = false;
+    for (const section of [...container.querySelectorAll("section")]) {
       const heading = section.querySelector("h2");
-      if (heading?.textContent.trim() === "Space Technology") {
+      const spaceCard = section.querySelector(".observer-category h3");
+      if (heading?.textContent.trim() === "Space Technology" || spaceCard?.textContent.trim() === "Space / Satellites") {
         section.remove();
-        return true;
+        removed = true;
       }
     }
-    return false;
+    return removed;
   }
 
   const planned = document.getElementById("technology-planned-groups");
   if (planned) {
     removePlannedDuplicate();
     const observer = new MutationObserver(() => {
-      if (removePlannedDuplicate()) observer.disconnect();
+      removePlannedDuplicate();
+      activateSpaceCard();
     });
     observer.observe(planned, { childList: true, subtree: true });
   }
+
+  window.addEventListener("load", () => {
+    removePlannedDuplicate();
+    activateSpaceCard();
+  }, { once: true });
 
   async function loadCard() {
     const status = document.getElementById("technology-space-status");
@@ -31,6 +49,8 @@
     const starlink = document.getElementById("technology-space-starlink");
     const epoch = document.getElementById("technology-space-epoch");
     if (!status || !groups || !starlink || !epoch) return;
+
+    activateSpaceCard();
 
     try {
       const response = await fetch(latestUrl, { cache: "no-store" });
@@ -47,13 +67,16 @@
       epoch.textContent = typeof data?.summary?.freshest_selected_group_epoch_utc === "string"
         ? data.summary.freshest_selected_group_epoch_utc.replace("T", " ").replace("Z", " UTC")
         : "—";
+      activateSpaceCard();
     } catch (error) {
       status.textContent = "WAITING FOR SNAPSHOT";
       groups.textContent = "—";
       starlink.textContent = "—";
       epoch.textContent = "—";
+      activateSpaceCard();
     }
   }
 
+  activateSpaceCard();
   loadCard();
 }());
