@@ -6,6 +6,7 @@ const root = new URL("../", import.meta.url);
 const en = readFileSync(new URL("world-observer/undersea-cable-dependency-map.html", root), "utf8");
 const de = readFileSync(new URL("de/world-observer/undersea-cable-dependency-map.html", root), "utf8");
 const css = readFileSync(new URL("world-observer/undersea-cable-dependency-map.css", root), "utf8");
+const polish = readFileSync(new URL("world-observer/undersea-cable-dependency-map-polish.css", root), "utf8");
 const runtime = readFileSync(new URL("world-observer/undersea-cable-dependency-map.js", root), "utf8");
 const language = readFileSync(new URL("world-observer/undersea-cable-map-language.js", root), "utf8");
 const latest = JSON.parse(readFileSync(new URL("world-observer/dashboard/latest/undersea-cable-dependency-map.json", root), "utf8"));
@@ -29,15 +30,29 @@ test("premium cable atlas keeps crawlable EN/DE routes and dedicated assets", ()
   assert.match(en, /"inLanguage"\s*:\s*"en"/);
   assert.match(de, /"inLanguage"\s*:\s*"de"/);
   assert.ok(en.includes('/world-observer/undersea-cable-dependency-map.css?v=1'));
+  assert.ok(en.includes('/world-observer/undersea-cable-dependency-map-polish.css?v=1'));
   assert.ok(en.includes('/world-observer/undersea-cable-dependency-map.js?v=1'));
   assert.ok(en.includes('/world-observer/undersea-cable-map-language.js?v=1'));
   assert.ok(de.includes('/world-observer/undersea-cable-dependency-map.css?v=1'));
+  assert.ok(de.includes('/world-observer/undersea-cable-dependency-map-polish.css?v=1'));
   assert.ok(de.includes('/world-observer/undersea-cable-dependency-map.js?v=1'));
   assert.ok(de.includes('/world-observer/undersea-cable-map-language.js?v=1'));
   assert.ok(en.includes('class="cable-language"'));
   assert.ok(de.includes('class="cable-language"'));
   assert.ok(!en.includes('/world-observer/internet-observer-detail.js'));
   assert.ok(!de.includes('/world-observer/internet-observer-detail.js'));
+});
+
+test("premium page starts compactly with navigation and current observation", () => {
+  for (const html of [en, de]) {
+    assert.ok(!html.includes('class="cable-hero"'));
+    assert.ok(!html.includes('class="cable-hero-status"'));
+    assert.ok(!html.includes('PINNED DATASET HASH'));
+    assert.ok(!html.includes('FIXIERTER DATASET-HASH'));
+    assert.ok(html.indexOf('cable-back-nav') < html.indexOf('id="current-observation-title"'));
+  }
+  assert.ok(!en.includes("A provenance-first atlas of the dependency fields"));
+  assert.ok(!de.includes("Ein Atlas, der ausschließlich die Abhängigkeitsfelder zeigt"));
 });
 
 test("premium page preserves stable semantic detail contract", () => {
@@ -108,7 +123,7 @@ test("current export is rendered as raw country profiles without geographic inve
 
   assert.ok(en.includes("SUBSEA DEPENDENCY ATLAS // NON-GEOGRAPHIC"));
   assert.ok(en.includes("COUNT MARKERS // NOT LOCATIONS"));
-  assert.ok(en.includes("no coordinates or cable geometry"));
+  assert.ok(en.includes("Marker placement is schematic and carries no geographic meaning"));
   assert.ok(en.includes("not</strong> counts of distinct physical cables or distinct landing sites"));
   assert.ok(en.includes("raw unitless export values"));
   assert.ok(de.includes("NICHT GEOGRAFISCH"));
@@ -164,7 +179,7 @@ test("language switching persists the existing site preference", () => {
   assert.ok(language.includes('de: "/de/world-observer/undersea-cable-dependency-map.html"'));
 });
 
-test("premium styling is responsive and respects reduced motion", () => {
+test("premium styling is responsive, centered and respects reduced motion", () => {
   assert.ok(css.includes(".cable-atlas-gridfield"));
   assert.ok(css.includes(".cable-country-grid"));
   assert.ok(css.includes(".cable-memory"));
@@ -173,4 +188,9 @@ test("premium styling is responsive and respects reduced motion", () => {
   assert.ok(css.includes("@media (max-width: 520px)"));
   assert.ok(css.includes("@media (prefers-reduced-motion: reduce)"));
   assert.ok(css.includes(".cable-atlas::after { animation: none; display: none; }"));
+  assert.ok(polish.includes("width: min(1180px, calc(100% - 34px))"));
+  assert.ok(polish.includes("max-width: 1180px"));
+  assert.ok(polish.includes("margin: 0 auto"));
+  assert.ok(polish.includes(".cable-map-shell main"));
+  assert.ok(polish.includes("max-width: none"));
 });
