@@ -189,4 +189,4 @@
   ensureRobots();
   ensureAlternates();
   addBreadcrumb();
-}());
+})();
