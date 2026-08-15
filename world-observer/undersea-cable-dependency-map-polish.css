@@ -1,0 +1,43 @@
+.cable-map-shell {
+  width: min(1180px, calc(100% - 34px));
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-top: 34px;
+}
+
+.cable-map-shell main {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0 0 2rem;
+}
+
+.cable-map-shell footer {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.cable-back-nav {
+  margin: 0 0 0.75rem;
+  text-align: left;
+}
+
+.cable-panel,
+.cable-evidence {
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  .cable-map-shell {
+    width: min(100% - 22px, 1180px);
+    padding-top: 28px;
+  }
+}
+
+@media (max-width: 520px) {
+  .cable-map-shell {
+    width: min(100% - 16px, 1180px);
+    padding-top: 24px;
+  }
+}
