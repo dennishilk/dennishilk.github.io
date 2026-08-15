@@ -23,8 +23,8 @@
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/style.css?v=42">
   <script defer src="/stars.js"></script>
-  <script defer src="/world-observer.js?v=20260703-package-fix"></script>
-  <script defer src="/world-observer/technology/space-satellites-card.js?v=1"></script>
+  <script defer src="/world-observer.js?v=20260815-space-card"></script>
+  <script defer src="/world-observer/technology/space-satellites-card.js?v=2"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -98,8 +98,8 @@
       <section class="observer-section" aria-labelledby="technology-space-title">
         <h2 id="technology-space-title">Space Technology</h2>
         <p class="observer-limitation">Public orbital group telemetry with strict provenance and no invented real-time positions.</p>
-        <div class="cards observer-cards planned-cards" aria-label="Space technology observer cards">
-          <a class="card observer-category technology-observer-card active" href="/world-observer/technology/space-satellites.html" aria-label="Open Space / Satellites observer">
+        <div class="cards observer-cards technology-card-grid" aria-label="Space technology observer cards">
+          <a id="technology-space-card" class="card observer-category technology-observer-card active" href="/world-observer/technology/space-satellites.html" aria-label="Open Space / Satellites observer">
             <h3>Space / Satellites</h3>
             <p><strong>Status:</strong> <span id="technology-space-status">LOADING</span></p>
             <p>Selected CelesTrak GP groups observed independently: Stations, Starlink, OneWeb, GPS Operational, Galileo and CubeSats.</p>
