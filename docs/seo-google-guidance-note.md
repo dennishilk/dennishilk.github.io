@@ -1,1 +1,0 @@
-Implementation follows current Google Search Central guidance for descriptive localized titles, dedicated language URLs with reciprocal hreflang, breadcrumb structured data, and image sitemap discovery. The site remains user-first; metadata describes existing page content only.

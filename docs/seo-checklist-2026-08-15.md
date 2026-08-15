@@ -1,8 +1,0 @@
-- [ ] localized metadata cleanup
-- [ ] hub metadata cleanup
-- [ ] dedicated Wiesmoor DE routes
-- [ ] reciprocal hreflang/canonical links
-- [ ] breadcrumb structured data
-- [ ] Wiesmoor image sitemap
-- [ ] sitemap and robots coverage
-- [ ] regression tests and CI
