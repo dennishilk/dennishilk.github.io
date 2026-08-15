@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.com/world-observer/east-frisia-water.html">
+  <script>if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") location.replace("https://" + location.hostname + location.pathname + location.search);</script>
+  <title>East Frisia Water Observer – World Observer</title>
+  <meta name="description" content="Regional water signals across East Frisia from public DWD, WSV, and NLWKN sources.">
+  <meta property="og:title" content="East Frisia Water Observer – World Observer">
+  <meta property="og:description" content="Regional water signals across East Frisia from public DWD, WSV, and NLWKN sources.">
+  <meta property="og:url" content="https://dennishilk.com/world-observer/east-frisia-water.html">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=49">
+  <script defer src="/stars.js"></script>
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="East Frisia Water Observer – World Observer">
+  <meta name="twitter:description" content="Regional water signals across East Frisia from public DWD, WSV, and NLWKN sources.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "East Frisia Water Observer – World Observer",
+    "description": "Regional water signals across East Frisia from public DWD, WSV, and NLWKN sources.",
+    "url": "https://dennishilk.com/world-observer/east-frisia-water.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "World Observer",
+      "url": "https://dennishilk.com/world-observer.html"
+    }
+  }
+  </script>
+</head>
+<body class="traffic-page weather-observer-page water-observer-page">
+<canvas id="stars"></canvas>
+<div class="content traffic-shell weather-shell">
+  <header class="traffic-header wo-page-header">
+    <nav class="button-group wo-site-nav traffic-global-nav" aria-label="Primary navigation"><div class="buttons"><a href="/">Home</a></div></nav>
+    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections"><a href="/world-observer.html">Overview</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Media</a><a href="/world-observer/society.html">Society</a><a href="/world-observer/hometown.html" class="active" aria-current="page">Hometown</a><a href="/world-observer/environment.html">Earth &amp; Space</a><a href="/world-observer/technology.html">Technology</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a></nav>
+    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/hometown.html">← Back to Hometown</a></p>
+    <section class="weather-hero traffic-card water-hero">
+      <div>
+        <p class="terminal-command">&gt; fetch dashboard/latest/east-frisia-water-observer.json</p>
+        <h1>East Frisia Water Observer</h1>
+        <p>Regional water signals across East Frisia</p>
+        <small id="water-last-seen">Latest update: —</small>
+      </div>
+      <strong id="water-status" class="status-badge unavailable" aria-live="polite">STATUS: —</strong>
+    </section>
+  </header>
+  <main class="traffic-dashboard weather-dashboard">
+    <section class="weather-grid water-grid">
+      <article class="traffic-card water-overview-card">
+        <h2>OVERVIEW</h2>
+        <div class="weather-metric-list water-overview-metrics"><p><span>Observer status</span><strong id="overview-status">—</strong></p><p><span>Active live sources</span><strong id="live-count">—</strong></p><p><span>Pending sources</span><strong id="pending-count">—</strong></p><p><span>Regional summary</span><strong id="regional-summary">—</strong></p></div>
+        <p class="weather-note water-warning">Regional public-data observation — not an in-situ sensor network and not a flood-warning service.</p>
+      </article>
+      <article class="traffic-card water-level-card">
+        <h2>WATER LEVEL — LEERORT / WSV</h2>
+        <div class="weather-temp water-primary"><span aria-hidden="true">≈</span><strong id="wsv-level">—</strong><small>Unchecked/raw official measurement; not a flood-warning classification.</small></div>
+        <div class="weather-metric-list two"><p><span>Measurement time</span><strong id="wsv-time">—</strong></p><p><span>Freshness</span><strong id="wsv-freshness">—</strong></p><p><span>Trend</span><strong id="wsv-trend">Unavailable</strong></p><p><span>Recent change</span><strong id="wsv-change">—</strong></p><p><span>Trend window</span><strong id="wsv-window">—</strong></p><p><span>Valid measurements</span><strong id="wsv-count">—</strong></p></div>
+        <dl class="weather-info"><dt>Station</dt><dd id="wsv-station">—</dd><dt>Water body</dt><dd id="wsv-water">—</dd><dt>Responsible agency</dt><dd id="wsv-agency">—</dd></dl>
+      </article>
+      <article class="traffic-card water-level-card">
+        <h2>COASTAL WATER LEVEL — BENSERSIEL / NLWKN</h2>
+        <div class="weather-temp water-primary"><span aria-hidden="true">≋</span><strong id="nlwkn-level">—</strong><small>Unchecked/raw official NLWKN data; not a flood-warning classification.</small></div>
+        <div class="weather-metric-list two"><p><span>Measurement time</span><strong id="nlwkn-time">—</strong></p><p><span>Freshness</span><strong id="nlwkn-freshness">—</strong></p><p><span>Trend</span><strong id="nlwkn-trend">Unavailable</strong></p><p><span>Recent change</span><strong id="nlwkn-change">—</strong></p><p><span>Trend window</span><strong id="nlwkn-window">—</strong></p><p><span>Valid measurements</span><strong id="nlwkn-count">—</strong></p></div>
+        <dl class="weather-info"><dt>Station</dt><dd id="nlwkn-station">Bensersiel</dd><dt>Station type</dt><dd id="nlwkn-type">—</dd><dt>Water body</dt><dd id="nlwkn-water">—</dd><dt>Operator</dt><dd id="nlwkn-operator">NLWKN</dd></dl>
+      </article>
+      <article class="traffic-card water-rain-card">
+        <h2>RAINFALL — WITTMUNDHAFEN / DWD</h2>
+        <div class="weather-temp water-primary"><span aria-hidden="true">☔</span><strong id="dwd-latest">—</strong><small>inland/central East Frisia rainfall proxy</small></div>
+        <div class="weather-metric-list two"><p><span>Observation date</span><strong id="dwd-date">—</strong></p><p><span>7-day rainfall total</span><strong id="dwd-7">—</strong></p><p><span>30-day rainfall total</span><strong id="dwd-30">—</strong></p><p><span>Coverage 7 / 30 days</span><strong id="dwd-coverage">—</strong></p><p><span>Station</span><strong id="dwd-station">—</strong></p><p><span>Proxy label</span><strong id="dwd-proxy">—</strong></p></div>
+      </article>
+      <article class="traffic-card water-chart-card rain-totals-card"><h2>RAINFALL TOTALS</h2><div id="rain-chart" class="pulse-chart water-bar-chart empty" role="img" aria-label="Rainfall latest day, 7 day total, and 30 day total">Rainfall totals appear when DWD data is available.</div><p class="weather-note">Rainfall uses millimetres only and is never mixed with water-level centimetres.</p></article>
+      <article class="traffic-card water-chart-card water-status-card"><h2>WATER-LEVEL STATUS VISUALIZATION</h2><div id="water-level-chart" class="pulse-chart water-bar-chart empty" role="img" aria-label="Current availability and latest values for Leerort and Bensersiel water levels">Water-level metric visualization appears when live values are available.</div><p class="weather-note">Leerort and Bensersiel are shown as separate gauge cards, not as a regional danger scale.</p></article>
+      <article class="traffic-card weather-diagnostics water-diagnostics-card"><h2>DIAGNOSTICS</h2><div id="adapter-diagnostics" class="water-diagnostics-list">Adapter diagnostics unavailable until the JSON is loaded.</div></article>
+      <article class="traffic-card water-context-card"><h2>REGIONAL CONTEXT</h2><div class="water-context-list"><p><strong>Leerort</strong><span>Lower Ems / federal waterway context.</span></p><p><strong>Bensersiel</strong><span>Coastal North Sea tide-gauge context.</span></p><p><strong>Wittmundhafen</strong><span>Inland rainfall context from one mainland DWD station.</span></p></div><p class="weather-note">These sources complement each other; a single snapshot does not prove direct causal relationships.</p></article>
+      <article class="traffic-card water-limits-card"><h2>OBSERVATION LIMITS</h2><ul class="water-limits"><li>Not a flood-warning service.</li><li>Not an in-situ sensor network.</li><li>Raw official gauge values may be unchecked.</li><li>Tide strongly affects coastal and lower-Ems water levels.</li><li>Rainfall is a regional proxy from one mainland DWD station.</li><li>No regional danger score is calculated.</li><li>Unavailable adapters remain visibly unavailable.</li></ul></article>
+    </section>
+  </main>
+  <footer><div class="nebby-terminal-line"><picture>
+<source srcset="../assets/generated/images/nebby.webp" type="image/webp">
+<img src="/nebby.png" class="nebby" alt="Nebby mascot">
+</picture><span class="coffee-text">&gt; fetch dashboard/latest/east-frisia-water-observer.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id), isNum = v => v !== null && v !== "" && Number.isFinite(Number(v));
+  const set = (id, v) => { const el=$(id); if (el) el.textContent = v ?? "—"; };
+  const esc = v => String(v ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
+  const adapter = (data, name) => (data?.adapters || []).find(a => a?.adapter === name) || {};
+  const fmt = (v, unit="", d=1) => isNum(v) ? `${Number(v).toLocaleString("de-DE", {minimumFractionDigits: d, maximumFractionDigits: d})}${unit ? " " + unit : ""}` : "—";
+  const fmtLevel = (v,u) => isNum(v) ? `${Number(v).toLocaleString("de-DE", {maximumFractionDigits: Number(v)%1 ? 1 : 0})} ${u||"cm"}` : "—";
+  const signed = (v,u="cm") => isNum(v) ? `${Number(v) > 0 ? "+" : Number(v) < 0 ? "−" : "±"}${Math.abs(Number(v)).toLocaleString("de-DE", {minimumFractionDigits:1, maximumFractionDigits:1})} ${u}` : "—";
+  const time = v => { if (!v) return "—"; const d=new Date(v); return Number.isNaN(d) ? String(v) : `${new Intl.DateTimeFormat("en-GB", {timeZone:"Europe/Berlin", dateStyle:"medium", timeStyle:"short"}).format(d)} Europe/Berlin (${String(v).replace("Z", " UTC")})`; };
+  const shortTime = v => { if (!v) return "—"; const d=new Date(v); return Number.isNaN(d) ? String(v) : new Intl.DateTimeFormat("en-GB", {timeZone:"Europe/Berlin", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"}).format(d); };
+  const trend = v => ({rising:"Rising", falling:"Falling", stable:"Stable"}[String(v||"").toLowerCase()] || "Unavailable");
+  const friendly = v => String(v || "unavailable").replaceAll("_", " ");
+  async function load() { try { const r=await fetch("/world-observer/dashboard/latest/east-frisia-water-observer.json", {cache:"no-store"}); if (!r.ok) throw new Error(`HTTP ${r.status}`); return await r.json(); } catch(e) { console.error("East Frisia Water Observer failed", e); return null; } }
+  function renderGauge(prefix, a, fallbackStation) {
+    const o=a?.observations || {}, tr=o.trend || {}, unit=o.unit || tr.unit || "cm";
+    set(`${prefix}-level`, fmtLevel(o.latest_measurement_value, unit)); set(`${prefix}-time`, time(o.latest_measurement_timestamp_utc)); set(`${prefix}-freshness`, friendly(o.freshness_status || a?.data_status || a?.status)); set(`${prefix}-trend`, trend(o.trend_direction || tr.direction)); set(`${prefix}-change`, signed(o.recent_change ?? tr.signed_change, unit)); set(`${prefix}-window`, tr.window_start_utc || tr.window_end_utc ? `${shortTime(tr.window_start_utc)} – ${shortTime(tr.window_end_utc)}` : "—"); set(`${prefix}-count`, o.valid_values_used ?? tr.valid_measurement_count ?? "—"); set(`${prefix}-station`, o.station_long_name || o.station_name || o.station_short_name || a?.diagnostics?.confirmed_station?.station_name || fallbackStation || "—"); set(`${prefix}-water`, o.water_body || "—");
+  }
+  function renderBars(id, items, unit) { const vals=items.map(i=>isNum(i.value)?Number(i.value):null), max=Math.max(...vals.filter(Number.isFinite), 1); const html=items.map(i=>{ const ok=isNum(i.value), h=ok?Math.max(8, Number(i.value)/max*100):8; return `<div class="water-bar-item ${ok?"":"missing"}"><span>${esc(i.label)}</span><div><b style="height:${h}%"></b></div><strong>${ok?esc(fmt(i.value,unit)):esc(i.status||"unavailable")}</strong></div>`; }).join(""); const el=$(id); el.classList.remove("empty"); el.innerHTML=`<div class="water-bars">${html}</div>`; }
+  function diagnostics(data) { const html=(data?.adapters||[]).filter(a=>["wsv","nlwkn","dwd"].includes(a?.adapter)).map(a=>{ const d=a.diagnostics||{}, o=a.observations||{}; const station=o.station_long_name||o.station_name||o.station?.station_name||d.confirmed_station?.station_name||"—"; return `<section class="water-diagnostic-row"><h3>${esc(a.adapter)}</h3><dl><dt>Status</dt><dd>${esc(a.status||"—")}</dd><dt>Data status</dt><dd>${esc(a.data_status||"—")}</dd><dt>API attempts</dt><dd>${esc(d.api_attempts ?? "—")}</dd><dt>Retries</dt><dd>${esc(d.retries ?? "—")}</dd><dt>Freshness</dt><dd>${esc(o.freshness_status || "—")}</dd><dt>Selected station</dt><dd>${esc(station)}</dd><dt>Selected source</dt><dd>${esc(o.source_name || o.source_endpoint_type || d.source_endpoint_type || "—")}</dd></dl></section>`; }).join(""); $("adapter-diagnostics").innerHTML = html || "No adapter diagnostics available."; }
+  load().then(data => {
+    if (!data) { set("overview-status", "unavailable"); set("regional-summary", "JSON could not be loaded; all values are unavailable."); $("water-status").textContent="STATUS: UNAVAILABLE"; return; }
+    const visibleAdapters=(data.adapters||[]).filter(a=>["wsv","nlwkn","dwd"].includes(a?.adapter));
+    const live=visibleAdapters.filter(a=>a.status==="live").length, pending=visibleAdapters.filter(a=>String(a.status).includes("pending") || String(a.data_status).includes("pending")).length;
+    const status=data.data_status || "partial"; $("water-status").textContent=`STATUS: ${status.toUpperCase()}`; $("water-status").className=`status-badge ${status}`; set("overview-status", friendly(status)); set("water-last-seen", `Latest update: ${time(data.generated_at_utc)}`); set("live-count", String(live)); set("pending-count", String(pending)); set("regional-summary", `${live} live source${live===1?"":"s"}; ${pending} pending source${pending===1?"":"s"}.`);
+    const wsv=adapter(data,"wsv"), nlwkn=adapter(data,"nlwkn"), dwd=adapter(data,"dwd"); renderGauge("wsv", wsv, "LEERORT"); set("wsv-agency", wsv.observations?.responsible_agency || wsv.source_research?.agency || "—"); renderGauge("nlwkn", nlwkn, "Bensersiel"); set("nlwkn-type", nlwkn.observations?.station_type || "coastal tide gauge context"); set("nlwkn-operator", nlwkn.observations?.operator || nlwkn.source_research?.agency || "NLWKN");
+    const rain=dwd.observations||{}, cov=rain.coverage||{}; set("dwd-latest", fmt(rain.latest_rainfall_mm,"mm")); set("dwd-date", rain.latest_date || "—"); set("dwd-7", fmt(rain.rainfall_7d_total_mm,"mm")); set("dwd-30", fmt(rain.rainfall_30d_total_mm,"mm")); set("dwd-coverage", `${cov.valid_days_7d ?? "—"}/${cov.expected_days_7d ?? "—"} · ${cov.valid_days_30d ?? "—"}/${cov.expected_days_30d ?? "—"}`); set("dwd-station", rain.station?.station_name || "Wittmundhafen"); set("dwd-proxy", rain.proxy_label || "inland/central East Frisia rainfall proxy");
+    renderBars("water-level-chart", [{label:"Leerort / WSV", value:wsv.observations?.latest_measurement_value, status:wsv.data_status || wsv.status}, {label:"Bensersiel / NLWKN", value:nlwkn.observations?.latest_measurement_value, status:nlwkn.data_status || nlwkn.status}], "cm");
+    renderBars("rain-chart", [{label:"Latest day", value:rain.latest_rainfall_mm}, {label:"7 days", value:rain.rainfall_7d_total_mm}, {label:"30 days", value:rain.rainfall_30d_total_mm}], "mm"); diagnostics(data);
+  });
+})();
+</script>
+</body>
+</html>

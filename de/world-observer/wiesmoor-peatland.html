@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://dennishilk.com/world-observer/wiesmoor-peatland.html">
+  <script>
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+  <title>Wiesmoor Peatland Observer – World Observer</title>
+  <meta name="description" content="Regional peatland hydrological proxy signals around Wiesmoor.">
+  <meta property="og:title" content="Wiesmoor Peatland Observer – World Observer">
+  <meta property="og:description" content="Regional peatland hydrological proxy signals around Wiesmoor.">
+  <meta property="og:url" content="https://dennishilk.com/world-observer/wiesmoor-peatland.html">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/style.css?v=49">
+  <script defer src="/stars.js"></script>
+  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Wiesmoor Peatland Observer – World Observer">
+  <meta name="twitter:description" content="Regional peatland hydrological proxy signals around Wiesmoor.">
+  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Wiesmoor Peatland Observer – World Observer",
+    "description": "Regional peatland hydrological proxy signals around Wiesmoor.",
+    "url": "https://dennishilk.com/world-observer/wiesmoor-peatland.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "World Observer",
+      "url": "https://dennishilk.com/world-observer.html"
+    }
+  }
+  </script>
+</head>
+<body class="traffic-page weather-observer-page peatland-detail-page">
+<canvas id="stars"></canvas>
+<div class="content traffic-shell weather-shell peatland-shell">
+  <header class="traffic-header wo-page-header">
+    <nav class="button-group wo-site-nav traffic-global-nav" aria-label="Primary navigation">
+      <div class="buttons"><a href="/">Home</a></div>
+    </nav>
+    <nav class="observer-nav wo-section-nav" aria-label="World Observer sections">
+      <a href="/world-observer.html">Overview</a><a href="/world-observer/internet.html">Internet</a><a href="/world-observer/media.html">Media</a><a href="/world-observer/society.html">Society</a><a href="/world-observer/hometown.html" class="active" aria-current="page">Hometown</a><a href="/world-observer/environment.html">Earth &amp; Space</a><a href="/world-observer/technology.html">Technology</a><a href="/traffic.html" class="observer-nav-standalone">Traffic</a>
+    </nav>
+    <p class="wo-back-nav"><a class="world-observer-back-link wo-nav-pill" href="/world-observer/hometown.html">← Back to Hometown</a></p>
+    <section class="weather-hero peatland-hero traffic-card">
+      <div>
+        <p class="terminal-command">&gt; fetch dashboard/latest/wiesmoor-peatland.json</p>
+        <h1>Wiesmoor Peatland Observer</h1>
+        <p>Regional peatland hydrological proxy signals around Wiesmoor.</p>
+        <small id="peatland-location">Location: Wiesmoor, Lower Saxony, Germany</small>
+        <small id="peatland-updated">Last update: —</small>
+        <small class="weather-source-line">Source: <span id="peatland-source">Regional proxy setup</span></small>
+      </div>
+      <strong id="peatland-status" class="status-badge unavailable">ACTIVE · PROXY ADAPTERS PENDING</strong>
+    </section>
+  </header>
+
+  <main class="traffic-dashboard weather-dashboard peatland-dashboard">
+    <section class="weather-grid peatland-grid">
+      <article class="traffic-card peatland-main-card">
+        <h2>HYDROLOGICAL PRESSURE</h2>
+        <div id="pressure-value" class="peatland-primary-status unavailable">Awaiting live proxy data</div>
+        <div class="weather-metric-list two">
+          <p><span>Proxy basis</span><strong id="pressure-confidence">pending</strong></p>
+          <p><span>Data coverage</span><strong id="pressure-data-status">not yet live-ingested</strong></p>
+        </div>
+        <p class="peatland-note">Regional proxy observation — not an in-situ peat water-table sensor. Proxy basis shows how many live proxy groups contribute to the classification; it is not a source-quality rating.</p>
+      </article>
+
+      <article class="traffic-card peatland-context-card">
+        <h2>PEAT CONTEXT / WIESMOOR-NORD</h2>
+        <p id="peat-context-note" hidden></p>
+        <div id="peat-context-facts" class="peat-context-facts" aria-label="Peat context fact tiles"></div>
+        <p id="peat-dataset-line" class="weather-note peatland-methodology-note" hidden></p>
+        <p id="peat-source-status-line" class="weather-note peatland-methodology-note" hidden></p>
+        <p id="peat-management-note" class="weather-note peatland-methodology-note" hidden></p>
+      </article>
+
+      <article class="traffic-card peatland-weather-card">
+        <h2>WEATHER PRESSURE / DWD DAILY CLIMATE</h2>
+        <div class="weather-metric-list two peatland-compact-metrics"><p><span>Latest rain</span><strong id="latest-precipitation">awaiting live adapter</strong></p><p><span>7-day rainfall</span><strong id="rainfall-7d">awaiting live adapter</strong></p><p><span>30-day rainfall</span><strong id="rainfall-30d">awaiting live adapter</strong></p><p><span>Dry days 7 / 30</span><strong id="dry-days-summary">pending</strong></p><p><span>Dry streak</span><strong id="consecutive-dry-days">pending</strong></p><p><span>Temperature latest / 7d / 30d</span><strong id="temperature">pending</strong></p></div>
+        <p id="dry-day-rule" class="weather-note peatland-methodology-note">Dry day: awaiting DWD daily precipitation rule.</p>
+        <p id="weather-pressure-source" class="weather-note">DWD Climate Data Center daily climate / precipitation adapter pending.</p>
+      </article>
+
+      <div class="peatland-right-stack">
+        <article class="traffic-card peatland-soil-card">
+          <h2 id="soil-card-heading">REGIONAL SOIL WATER / DWD SOIL MOISTURE / 0–60 CM</h2>
+          <div id="soil-metrics" class="weather-metric-list two"><p><span>Latest value</span><strong id="soil-value">awaiting live adapter</strong></p><p><span>Latest date</span><strong id="soil-date">pending</strong></p><p><span>Resolution</span><strong id="soil-resolution">1 km</strong></p><p><span>Status</span><strong id="soil-status">not yet live-ingested</strong></p></div>
+          <p id="soil-source" class="weather-note">DWD soil-moisture-under-grass grid adapter pending.</p>
+        </article>
+
+        <article class="traffic-card peatland-groundwater-card">
+          <h2>GROUNDWATER PROXY / NLWKN</h2>
+          <div class="weather-metric-list two peatland-groundwater-metrics"><p><span>Station</span><strong id="groundwater-station">candidate source pending</strong></p><p><span>Latest value</span><strong id="groundwater-value">awaiting live adapter</strong></p><p><span>Latest date</span><strong id="groundwater-date">pending</strong></p><p><span>Status</span><strong id="groundwater-status">not yet live-ingested</strong></p></div>
+          <p id="groundwater-note" class="weather-note">Nearby groundwater stations can support regional interpretation only.</p>
+        </article>
+      </div>
+
+    </section>
+
+    <article class="traffic-card peatland-limits-card">
+      <h2>OBSERVATION LIMITS</h2>
+      <ul id="observation-limits" class="peatland-limit-list">
+        <li>Regional proxy observation — not an in-situ peat water-table sensor.</li>
+        <li>No peat-water-table depth is measured or inferred.</li>
+        <li>NLWKN groundwater stations are regional groundwater proxies; station distance and local hydrogeological representativeness are uncertain.</li>
+        <li>DWD gridded soil moisture under grass is a regional model product for the 0-60 cm layer and is not converted to peat water-table depth.</li>
+        <li>DWD weather pressure comes from the selected nearby daily climate station; station distance and weather gradients limit site representativeness.</li>
+        <li>Copernicus SWI metadata-only and MoorIS static context are not used as live pressure signals.</li>
+      </ul>
+    </article>
+  </main>
+  <footer><div class="nebby-terminal-line"><picture>
+<source srcset="../assets/generated/images/nebby.webp" type="image/webp">
+<img src="/nebby.png" class="nebby" alt="Nebby mascot">
+</picture><span class="coffee-text">&gt; fetch dashboard/latest/wiesmoor-peatland.json<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const allowedPressures = new Set(["low", "normal", "elevated", "high"]);
+  const set = (id, value) => { const el = $(id); if (el) el.textContent = clean(value); };
+  const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
+  const clean = (value, fallback = "pending") => {
+    if (value === null || value === undefined || value === "") return fallback;
+    if (typeof value === "object") return fallback;
+    if (String(value).toLowerCase() === "unavailable") return fallback;
+    return String(value).replace(/_+/g, " ");
+  };
+  const hasText = (value) => clean(value, "") !== "";
+  const compact = (value) => clean(value, "").replace(/\s+/g, " ").trim();
+  const sourceLink = (label, url) => {
+    const text = compact(label);
+    const href = compact(url);
+    if (!text && !href) return "";
+    if (!href || !/^https?:\/\//i.test(href)) return escapeHtml(text || "source");
+    return `<a href="${escapeHtml(href)}">${escapeHtml(text || "source")}</a>`;
+  };
+  const setHiddenText = (id, value) => {
+    const el = $(id);
+    if (!el) return;
+    const text = compact(value);
+    el.hidden = !text;
+    el.textContent = text;
+  };
+  const shortLabel = (value, rules = [], fallback = "not available") => {
+    const text = compact(value);
+    if (!text) return fallback;
+    const lower = text.toLowerCase();
+    const found = rules.find(([pattern]) => pattern.test(lower));
+    return found ? found[1] : text.split(/[.;]/)[0].trim().slice(0, 80);
+  };
+  const areaLabel = (value) => {
+    const text = compact(value);
+    if (!text) return "not available";
+    const match = text.match(/Wiesmoor-Nord/i);
+    return match ? "Wiesmoor-Nord" : text.split(/[\/;,.]/)[0].trim().slice(0, 60);
+  };
+  const contextNote = (ctx = {}) => {
+    const management = compact(ctx?.restoration_or_management_context);
+    if (/nearby/i.test(management)) return "Nearby restoration context only; not a Wiesmoor-Nord measurement.";
+    const limitation = Array.isArray(ctx?.limitations) ? ctx.limitations.find((item) => /subareas|nearby|contextual/i.test(String(item))) : "";
+    return compact(limitation).split(/[.;]/)[0].trim();
+  };
+  const explicitNumber = (value) => {
+    if (typeof value === "number") return Number.isFinite(value) ? value : null;
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    if (!trimmed || ["unavailable", "pending"].includes(trimmed.toLowerCase())) return null;
+    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(trimmed)) return null;
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const num = (value, unit = "", fallback = "pending") => {
+    const parsed = explicitNumber(value);
+    return parsed === null ? fallback : `${parsed.toLocaleString("de-DE", { maximumFractionDigits: 1 })}${unit ? " " + unit : ""}`;
+  };
+  const dayCount = (value) => {
+    const parsed = explicitNumber(value);
+    if (parsed === null) return "pending";
+    const formatted = parsed.toLocaleString("de-DE", { maximumFractionDigits: 0 });
+    return `${formatted} ${parsed === 1 ? "day" : "days"}`;
+  };
+  const dryDayRule = (coverage = {}) => {
+    const threshold = explicitNumber(coverage.dry_day_threshold_mm);
+    const rule = typeof coverage.dry_day_rule === "string" ? coverage.dry_day_rule.trim() : "";
+    if (threshold !== null) {
+      return `Dry day: valid DWD daily precipitation < ${threshold.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mm; missing dates are never inferred as dry.`;
+    }
+    return rule || "Dry day: awaiting DWD daily precipitation rule.";
+  };
+  async function loadJson(urls) { for (const url of urls) { try { const r = await fetch(url, { cache: "no-store" }); if (r.ok) return await r.json(); } catch {} } return null; }
+  function renderFallback() {
+    set("peatland-status", "ACTIVE · DATA TEMPORARILY UNAVAILABLE");
+    set("pressure-value", "Awaiting live proxy data");
+    set("pressure-confidence", "pending");
+    set("pressure-data-status", "not yet live-ingested");
+    set("peatland-updated", "Last update: data temporarily unavailable");
+  }
+  function renderPeatContext(ctx = {}) {
+    const source = ctx?.source || {};
+    const nord = ctx?.wiesmoor_nord || {};
+    const sourceUrl = ctx?.source_url || source?.url;
+    const facts = [
+      ["Area", areaLabel(ctx?.area_name || "Wiesmoor-Nord")],
+      ["Moor type", shortLabel(ctx?.moor_type_context, [[/raised[- ]bog|hochmoor/, "Raised bog"]], "Raised bog")],
+      ["Historical use", shortLabel(ctx?.land_use_history, [[/peat.*horticulture|horticulture.*peat|greenhouse/, "Peat / horticulture"], [/agriculture|grassland/, "Agriculture context"]], "Peat / horticulture")],
+      ["Drainage", shortLabel(ctx?.drainage_context, [[/canal|kanal|road/, "Canal / road network"], [/drainage/, "Drainage context"]], "Canal / road network")],
+      ["Source", sourceLink("MoorIS / NLWKN", sourceUrl), true],
+      ["Context", "Static · not live"],
+    ];
+    const factId = (label) => ({ "Area": "peat-area", "Source": "peat-context-source", "Context": "peat-context-status" }[label] || "");
+    const factsEl = $("peat-context-facts");
+    if (factsEl) factsEl.innerHTML = facts.map(([label, value, html]) => {
+      const id = factId(label);
+      return `<div class="peat-context-tile"><span>${escapeHtml(label)}</span><strong${id ? ` id="${id}"` : ""}>${html ? value : escapeHtml(clean(value, "not available"))}</strong></div>`;
+    }).join("");
+
+    const datasetId = compact(nord?.page_or_dataset_identifier);
+    const pgMatch = datasetId.match(/pgId\s*=?\s*(\d+)/i) || compact(sourceUrl).match(/pgId=(\d+)/i);
+    const areaMatch = datasetId.match(/(?:area|gebiet|fläche)\s*(\d+)/i) || datasetId.match(/\b(377)\b/);
+    setHiddenText("peat-dataset-line", pgMatch || areaMatch ? `MoorIS pgId ${pgMatch ? pgMatch[1] : "585"} · Moorschutzprogramm area ${areaMatch ? areaMatch[1] : "377"}` : "");
+    setHiddenText("peat-source-status-line", "");
+    const hasContext = hasText(ctx?.area_name) || hasText(ctx?.moor_type_context) || hasText(ctx?.land_use_history) || hasText(ctx?.drainage_context);
+    setHiddenText("peat-context-note", hasContext ? "" : "Peat context unavailable in the current JSON.");
+    setHiddenText("peat-management-note", contextNote(ctx));
+  }
+  function render(data) {
+    const pressure = String(data?.peatland_hydrological_pressure?.value ?? data?.primary_metric_value ?? "").toLowerCase();
+    const livePressure = allowedPressures.has(pressure);
+    const pressureEl = $("pressure-value");
+    if (pressureEl) { pressureEl.textContent = livePressure ? pressure : "Awaiting live proxy data"; pressureEl.className = `peatland-primary-status ${livePressure ? pressure : "unavailable"}`; }
+    const observerStatus = clean(data?.status, "").toLowerCase();
+    const observerHealthy = ["ok", "active", "healthy", "available", "online"].includes(observerStatus);
+    const observerUnavailable = ["unavailable", "missing", "error", "offline"].includes(observerStatus) || data?.data_status === "unavailable";
+    const state = observerUnavailable ? "ACTIVE · PROXY ADAPTERS PENDING" : `ACTIVE · ${clean(data?.status || data?.data_status, "PROXY SETUP").toUpperCase()}`;
+    set("peatland-status", state);
+    $("peatland-status").className = `status-badge ${observerHealthy ? "ok" : observerUnavailable ? "unavailable" : clean(data?.status || data?.data_status, "unavailable")}`;
+    const loc = data?.location || {};
+    set("peatland-location", `Location: ${clean(loc.municipality, "Wiesmoor")}, ${clean(loc.state, "Lower Saxony")}, ${clean(loc.country, "Germany")}`);
+    set("peatland-updated", `Last update: ${clean(data?.collected_at_utc || data?.date_utc, "pending")}`);
+    set("peatland-source", data?.sources?.[0]?.name || data?.peat_context?.source?.name || "Regional proxy setup");
+    const contributingGroups = data?.peatland_hydrological_pressure?.contributing_proxy_groups;
+    const proxyBasis = Array.isArray(contributingGroups) && contributingGroups.length ? `${contributingGroups.length} contributing proxy ${contributingGroups.length === 1 ? "group" : "groups"}` : clean(data?.peatland_hydrological_pressure?.confidence);
+    set("pressure-confidence", proxyBasis);
+    set("pressure-data-status", clean(data?.data_status, "not yet live-ingested"));
+    renderPeatContext(data?.peat_context);
+    const weather = data?.weather_pressure || {};
+    set("latest-precipitation", num(weather.latest_precipitation_mm, "mm"));
+    set("rainfall-7d", num(weather.rainfall_7d_mm ?? data?.peatland_hydrological_pressure?.rainfall_7d, "mm"));
+    set("rainfall-30d", num(weather.rainfall_30d_mm ?? data?.peatland_hydrological_pressure?.rainfall_30d, "mm"));
+    const dry7 = explicitNumber(weather.dry_days_7d), dry30 = explicitNumber(weather.dry_days_30d);
+    set("dry-days-summary", dry7 === null && dry30 === null ? "pending" : `${dry7 === null ? "—" : dry7} / ${dry30 === null ? "—" : dry30}`);
+    set("consecutive-dry-days", dayCount(weather.consecutive_dry_days));
+    const temps = [num(weather.temperature_c, "°C", "—"), num(weather.temperature_mean_7d_c, "°C", "—"), num(weather.temperature_mean_30d_c, "°C", "—")];
+    set("temperature", temps.every((item) => item === "—") ? "pending" : temps.join(" / "));
+    set("dry-day-rule", dryDayRule(weather.coverage));
+    set("weather-pressure-status", clean(weather.data_status, "not yet live-ingested"));
+    set("weather-pressure-source", `${clean(weather.source?.name, "DWD daily climate adapter")} — ${clean(weather.source?.dataset || weather.source?.status, "awaiting live adapter")}`);
+    const soil = data?.regional_soil_water || {};
+    const soilUnit = clean(soil.unit, "");
+    set("soil-value", num(soil.latest_value, soilUnit));
+    set("soil-date", clean(soil.latest_date));
+    const soilHasAvailabilityFields = explicitNumber(soil.latest_value) !== null && hasText(soil.latest_date) && hasText(soil.spatial_resolution_km);
+    set("soil-resolution", explicitNumber(soil.spatial_resolution_km) === null ? "pending" : `${soil.spatial_resolution_km} km`);
+    const soilStatusEl = $("soil-status");
+    if (soilStatusEl) soilStatusEl.textContent = soilHasAvailabilityFields ? "ok" : "unavailable";
+    const soilDataset = soil.source?.dataset || soil.dataset || soil.variable || soil.source?.status;
+    set("soil-source", `${clean(soil.source?.name || soil.source || "DWD soil moisture adapter")} — ${clean(soilDataset, "awaiting live adapter")}`);
+    const station = data?.groundwater_proxy?.stations?.[0] || {};
+    set("groundwater-station", station.station_name || "candidate source pending");
+    set("groundwater-value", num(station.latest_value, station.latest_value_unit || ""));
+    set("groundwater-date", clean(station.latest_date));
+    set("groundwater-status", clean(station.status_category || data?.groundwater_proxy?.data_status, "not yet live-ingested"));
+    set("groundwater-note", data?.groundwater_proxy?.interpretation_note || "Nearby groundwater stations can support regional interpretation only.");
+  }
+  loadJson(["/world-observer/dashboard/latest/wiesmoor-peatland.json", "dashboard/latest/wiesmoor-peatland.json", "../world-observer/dashboard/latest/wiesmoor-peatland.json"]).then((data) => data ? render(data) : renderFallback()).catch(renderFallback);
+})();
+</script>
+</body>
+</html>

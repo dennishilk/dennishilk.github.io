@@ -1,4 +1,4 @@
-name: Sitemap checks
+name: Sitemap and SEO checks
 
 on:
   pull_request:
@@ -7,10 +7,16 @@ on:
       - "sitemap-de.xml"
       - "sitemap-internet-observers.xml"
       - "sitemap-technology-observers.xml"
+      - "sitemap-images.xml"
       - "robots.txt"
       - "de/**"
       - "world-observer/**"
+      - "stars.js"
+      - "seo-runtime.js"
+      - "wiesmoor-de-bootstrap.js"
+      - "wiesmoor-language-route.js"
       - "tests/sitemaps.test.mjs"
+      - "tests/seo-localization.test.mjs"
       - ".github/workflows/sitemap-check.yml"
   push:
     branches:
@@ -20,10 +26,16 @@ on:
       - "sitemap-de.xml"
       - "sitemap-internet-observers.xml"
       - "sitemap-technology-observers.xml"
+      - "sitemap-images.xml"
       - "robots.txt"
       - "de/**"
       - "world-observer/**"
+      - "stars.js"
+      - "seo-runtime.js"
+      - "wiesmoor-de-bootstrap.js"
+      - "wiesmoor-language-route.js"
       - "tests/sitemaps.test.mjs"
+      - "tests/seo-localization.test.mjs"
       - ".github/workflows/sitemap-check.yml"
 
 permissions:
@@ -39,3 +51,12 @@ jobs:
           node-version: "22"
       - name: Validate sitemap contracts
         run: node --test tests/sitemaps.test.mjs
+      - name: Validate SEO and localization contracts
+        run: node --test tests/seo-localization.test.mjs
+      - name: Check SEO JavaScript syntax
+        run: |
+          node --check seo-runtime.js
+          node --check wiesmoor-de-bootstrap.js
+          node --check wiesmoor-language-route.js
+          node --check stars.js
+          node --check world-observer/technology/space-satellites-language.js
