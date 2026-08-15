@@ -24,7 +24,35 @@ const useDedicatedInternetLanguageUi =
   document.body?.dataset.observerPage === "internet-detail"
   && dedicatedInternetDetailIds.has(document.body?.dataset.observerId);
 
-if (!useDedicatedInternetLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
+const dedicatedGermanWiesmoorPaths = new Set([
+  "/de/world-observer/wiesmoor-weather.html",
+  "/de/world-observer/wiesmoor-peatland.html",
+  "/de/world-observer/wiesmoor-sky.html",
+  "/de/world-observer/east-frisia-water.html",
+  "/de/world-observer/horizon-observer.html",
+  "/de/world-observer/wiesmoor-population.html",
+  "/de/world-observer/wiesmoor-energy.html",
+  "/de/world-observer/wiesmoor-groundwater.html",
+  "/de/world-observer/wiesmoor-development.html",
+  "/de/world-observer/wiesmoor-finance.html",
+]);
+const useDedicatedGermanWiesmoorUi = dedicatedGermanWiesmoorPaths.has(window.location.pathname);
+
+if (!document.querySelector('script[data-seo-runtime-loader]')) {
+  const seoScript = document.createElement('script');
+  seoScript.src = '/seo-runtime.js?v=20260815-1';
+  seoScript.dataset.seoRuntimeLoader = 'true';
+  document.head.appendChild(seoScript);
+}
+
+if (useDedicatedGermanWiesmoorUi) {
+  if (!document.querySelector('script[data-wiesmoor-de-loader]')) {
+    const languageScript = document.createElement('script');
+    languageScript.src = '/wiesmoor-de-bootstrap.js?v=20260815-1';
+    languageScript.dataset.wiesmoorDeLoader = 'true';
+    document.head.appendChild(languageScript);
+  }
+} else if (!useDedicatedInternetLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
   languageScript.src = '/site-language.js?v=20260814-area51-1';
   languageScript.dataset.siteLanguageLoader = 'true';
