@@ -85,7 +85,7 @@ if (useDedicatedWiesmoorLanguageUi && !document.querySelector('script[data-wiesm
 
 if (useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-world-observer-route-loader]')) {
   const routeScript = document.createElement('script');
-  routeScript.src = '/world-observer-language-route.js?v=20260816-core-1';
+  routeScript.src = '/world-observer-language-route.js?v=20260816-tech-1';
   routeScript.dataset.worldObserverRouteLoader = 'true';
   document.head.appendChild(routeScript);
 }
@@ -100,7 +100,7 @@ if (useDedicatedGermanWiesmoorUi) {
 } else if (useDedicatedGermanWorldObserverUi) {
   if (!document.querySelector('script[data-world-observer-de-loader]')) {
     const languageScript = document.createElement('script');
-    languageScript.src = '/world-observer-de-bootstrap.js?v=20260816-core-1';
+    languageScript.src = '/world-observer-de-bootstrap.js?v=20260816-tech-1';
     languageScript.dataset.worldObserverDeLoader = 'true';
     document.head.appendChild(languageScript);
   }
