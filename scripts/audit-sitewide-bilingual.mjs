@@ -1,18 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const excludedDirectories = new Set([".git", "node_modules"]);
 
-function walkHtml(directory) {
-  return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
-    if (entry.isDirectory() && excludedDirectories.has(entry.name)) return [];
-    const fullPath = path.join(directory, entry.name);
-    if (entry.isDirectory()) return walkHtml(fullPath);
-    return entry.isFile() && entry.name.endsWith(".html") ? [fullPath] : [];
-  });
+function trackedHtmlFiles() {
+  return execFileSync("git", ["ls-files", "-z", "--", "*.html"], { cwd: root, encoding: "utf8" })
+    .split("\0")
+    .filter(Boolean)
+    .map(relative => path.join(root, relative));
 }
 
 function routeForFile(file) {
@@ -62,9 +60,16 @@ function isGermanSource(file) {
   return path.relative(root, file).split(path.sep).join("/").startsWith("de/");
 }
 
+function isVerificationArtifact(file) {
+  const name = path.basename(file);
+  const html = fs.readFileSync(file, "utf8").trim();
+  return /^google[0-9a-f]+\.html$/i.test(name) && /^google-site-verification:\s*google[0-9a-f]+\.html$/i.test(html);
+}
+
 const bundle = loadGermanBundles();
-const uncovered = walkHtml(root)
+const uncovered = trackedHtmlFiles()
   .filter(file => !isGermanSource(file))
+  .filter(file => !isVerificationArtifact(file))
   .filter(file => !hasGermanFile(file))
   .map(routeForFile)
   .filter(route => !hasRuntimeCoverage(route, bundle))
