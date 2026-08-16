@@ -29,7 +29,7 @@
       const bootstrap = [
         `<base href="${sourceDirectory}">`,
         `<script>window.__DENNIS_MUSEUM_MIRROR_SOURCE_PATH=${JSON.stringify(sourcePath)};window.__DENNIS_FORCE_SITE_LANGUAGE="de";<\/script>`,
-        `<script defer data-site-language-loader src="/site-language.js?v=20260816-museum-2"><\/script>`,
+        `<script defer data-site-language-loader src="/site-language.js?v=20260816-museum-3"><\/script>`,
       ].join("");
 
       const rendered = /<head(?:\s[^>]*)?>/i.test(source)
