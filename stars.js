@@ -58,6 +58,9 @@ const dedicatedWorldObserverEnglishPaths = new Set([
   "/world-observer/geomagnetic-storm-observer.html",
   "/world-observer/earthquake-observer.html",
   "/world-observer/ocean-buoy-observer.html",
+  "/world-observer/time-observer.html",
+  "/world-observer/technology/debian-package-count.html",
+  "/world-observer/technology/arch-package-count.html",
 ]);
 const dedicatedGermanWorldObserverPaths = new Set(
   Array.from(dedicatedWorldObserverEnglishPaths, path => `/de${path}`),
