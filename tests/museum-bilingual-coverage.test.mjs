@@ -36,6 +36,7 @@ function loadMuseumBundles() {
     "site-i18n-de-museum-classics.js",
     "site-i18n-de-museum-crypto.js",
     "site-i18n-de-museum-malware.js",
+    "site-i18n-de-museum-polish.js",
   ]) {
     const source = fs.readFileSync(path.join(root, file), "utf8");
     vm.runInContext(source, context, { filename: file });
@@ -117,9 +118,18 @@ test("Museum mirror loader and language router preserve EN/DE route identity", (
   assert.match(router, /site-i18n-de-museum-classics\.js/);
   assert.match(router, /site-i18n-de-museum-crypto\.js/);
   assert.match(router, /site-i18n-de-museum-malware\.js/);
+  assert.match(router, /site-i18n-de-museum-polish\.js/);
   assert.match(router, /MUSEUM_MIRROR_PREFIXES/);
   assert.match(router, /rewriteMuseumMirrorLinks/);
   assert.match(router, /syncMuseumMirrorMetadata/);
+});
+
+test("Museum terminology polish fixes callsign label", () => {
+  const bundle = loadMuseumBundles();
+  assert.equal(
+    bundle.pages["/museum/linux-game-install/lab.html"].text["ENTER CALLSIGN"],
+    "RUFZEICHEN EINGEBEN",
+  );
 });
 
 test("Museum translations preserve key safety boundaries", () => {
