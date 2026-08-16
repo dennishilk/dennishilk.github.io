@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-16-museum-2";
+  const VERSION = "2026-08-16-museum-3";
   const SITE_ORIGIN = "https://dennishilk.com";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260810-c64-1",
@@ -14,6 +14,7 @@
     "/site-i18n-de-museum-classics.js?v=20260816-museum-1",
     "/site-i18n-de-museum-crypto.js?v=20260816-museum-1",
     "/site-i18n-de-museum-malware.js?v=20260816-museum-1",
+    "/site-i18n-de-museum-polish.js?v=20260816-museum-1",
   ];
 
   const dedicatedRoutes = {
@@ -290,6 +291,18 @@
     link.href = href;
   };
 
+  const updateCurrentJsonLdNode = (node, spec) => {
+    if (!node || typeof node !== "object") return;
+    if (typeof node.url === "string" && node.url === absoluteUrl(mirrorRoute.en)) {
+      node.url = absoluteUrl(mirrorRoute.de);
+    }
+    if (node.inLanguage != null) node.inLanguage = "de";
+    if (typeof node.url === "string" && node.url === absoluteUrl(mirrorRoute.de)) {
+      if (spec.title && typeof node.name === "string") node.name = spec.title;
+      if (spec.description && typeof node.description === "string") node.description = spec.description;
+    }
+  };
+
   const syncMuseumMirrorMetadata = (language, spec = null) => {
     if (!mirrorRoute) return;
     const canonicalPath = mirrorRoute[language];
@@ -319,16 +332,11 @@
     document.querySelectorAll('script[type="application/ld+json"]').forEach(script => {
       try {
         const data = JSON.parse(script.textContent);
-        const update = value => {
-          if (!value || typeof value !== "object") return;
-          if (Array.isArray(value)) return value.forEach(update);
-          if (typeof value.url === "string" && value.url.includes("dennishilk.com/museum/")) value.url = absoluteUrl(mirrorRoute.de);
-          if (typeof value.inLanguage === "string") value.inLanguage = "de";
-          if (spec.title && typeof value.name === "string") value.name = spec.title;
-          if (spec.description && typeof value.description === "string") value.description = spec.description;
-          Object.values(value).forEach(update);
-        };
-        update(data);
+        if (Array.isArray(data)) data.forEach(node => updateCurrentJsonLdNode(node, spec));
+        else {
+          updateCurrentJsonLdNode(data, spec);
+          if (Array.isArray(data?.["@graph"])) data["@graph"].forEach(node => updateCurrentJsonLdNode(node, spec));
+        }
         script.textContent = JSON.stringify(data);
       } catch (error) {}
     });
