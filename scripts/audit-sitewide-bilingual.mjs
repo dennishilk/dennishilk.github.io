@@ -33,6 +33,7 @@ function loadGermanBundles() {
     "site-i18n-de-museum-crypto.js",
     "site-i18n-de-museum-malware.js",
     "site-i18n-de-museum-polish.js",
+    "site-i18n-de-sitewide.js",
   ].filter(file => fs.existsSync(path.join(root, file)));
 
   for (const file of files) {
@@ -41,19 +42,27 @@ function loadGermanBundles() {
   return context.window.DennisSiteI18nDE || {};
 }
 
-function hasRuntimeCoverage(route, bundle) {
-  if (bundle.pages?.[route]) return true;
+function auditedRuntimeRoutes(bundle) {
+  const routes = new Set();
+  for (const record of Object.values(bundle.audit || {})) {
+    if (!record || !Array.isArray(record.routes)) continue;
+    for (const route of record.routes) routes.add(route);
+  }
+  return routes;
+}
+
+function hasRuntimeCoverage(route, bundle, auditedRoutes) {
   const normalized = route.endsWith("/index.html") ? route.slice(0, -"index.html".length) : route;
-  if (bundle.pages?.[normalized]) return true;
-  return Object.keys(bundle.prefixes || {}).some(prefix => {
-    if (!normalized.startsWith(prefix)) return false;
-    if (["/museum", "/museum/", "/world-observer", "/world-observer/"].includes(prefix)) return false;
-    return prefix.split("/").filter(Boolean).length >= 2;
-  });
+  return Boolean(bundle.pages?.[route] || bundle.pages?.[normalized] || auditedRoutes.has(route) || auditedRoutes.has(normalized));
 }
 
 function hasGermanFile(file) {
   return fs.existsSync(path.join(root, "de", path.relative(root, file)));
+}
+
+function hasInternalBilingualMarkup(file) {
+  const html = fs.readFileSync(file, "utf8");
+  return /data-language-content=["']en["']/.test(html) && /data-language-content=["']de["']/.test(html);
 }
 
 function isGermanSource(file) {
@@ -67,12 +76,14 @@ function isVerificationArtifact(file) {
 }
 
 const bundle = loadGermanBundles();
+const auditedRoutes = auditedRuntimeRoutes(bundle);
 const uncovered = trackedHtmlFiles()
   .filter(file => !isGermanSource(file))
   .filter(file => !isVerificationArtifact(file))
   .filter(file => !hasGermanFile(file))
+  .filter(file => !hasInternalBilingualMarkup(file))
   .map(routeForFile)
-  .filter(route => !hasRuntimeCoverage(route, bundle))
+  .filter(route => !hasRuntimeCoverage(route, bundle, auditedRoutes))
   .sort();
 
 if (uncovered.length) {
