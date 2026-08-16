@@ -87,11 +87,13 @@ const uncovered = trackedHtmlFiles()
   .sort();
 
 if (uncovered.length) {
-  for (const route of uncovered) {
-    const escaped = route.replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
-    process.stdout.write(`::error title=Missing German coverage::${escaped}\n`);
-  }
+  const summary = `${uncovered.length} route(s): ${uncovered.join(" | ")}`
+    .replaceAll("%", "%25")
+    .replaceAll("\r", "%0D")
+    .replaceAll("\n", "%0A");
+  process.stdout.write(`::error title=Missing German coverage::${summary}\n`);
   process.stdout.write(`Missing German coverage: ${uncovered.length} route(s).\n`);
+  for (const route of uncovered) process.stdout.write(`${route}\n`);
   process.exitCode = 1;
 } else {
   process.stdout.write("Sitewide bilingual coverage complete.\n");
