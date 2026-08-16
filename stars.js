@@ -51,6 +51,21 @@ const dedicatedGermanWiesmoorPaths = new Set([
 const useDedicatedGermanWiesmoorUi = dedicatedGermanWiesmoorPaths.has(window.location.pathname);
 const useDedicatedWiesmoorLanguageUi = useDedicatedGermanWiesmoorUi || dedicatedWiesmoorEnglishPaths.has(window.location.pathname);
 
+const dedicatedWorldObserverEnglishPaths = new Set([
+  "/world-observer.html",
+  "/world-observer/environment.html",
+  "/world-observer/technology.html",
+  "/world-observer/geomagnetic-storm-observer.html",
+  "/world-observer/earthquake-observer.html",
+  "/world-observer/ocean-buoy-observer.html",
+]);
+const dedicatedGermanWorldObserverPaths = new Set(
+  Array.from(dedicatedWorldObserverEnglishPaths, path => `/de${path}`),
+);
+const useDedicatedGermanWorldObserverUi = dedicatedGermanWorldObserverPaths.has(window.location.pathname);
+const useDedicatedWorldObserverLanguageUi =
+  useDedicatedGermanWorldObserverUi || dedicatedWorldObserverEnglishPaths.has(window.location.pathname);
+
 if (!document.querySelector('script[data-seo-runtime-loader]')) {
   const seoScript = document.createElement('script');
   seoScript.src = '/seo-runtime.js?v=20260815-1';
@@ -65,6 +80,13 @@ if (useDedicatedWiesmoorLanguageUi && !document.querySelector('script[data-wiesm
   document.head.appendChild(routeScript);
 }
 
+if (useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-world-observer-route-loader]')) {
+  const routeScript = document.createElement('script');
+  routeScript.src = '/world-observer-language-route.js?v=20260816-core-1';
+  routeScript.dataset.worldObserverRouteLoader = 'true';
+  document.head.appendChild(routeScript);
+}
+
 if (useDedicatedGermanWiesmoorUi) {
   if (!document.querySelector('script[data-wiesmoor-de-loader]')) {
     const languageScript = document.createElement('script');
@@ -72,7 +94,14 @@ if (useDedicatedGermanWiesmoorUi) {
     languageScript.dataset.wiesmoorDeLoader = 'true';
     document.head.appendChild(languageScript);
   }
-} else if (!useDedicatedInternetLanguageUi && !useDedicatedWiesmoorLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
+} else if (useDedicatedGermanWorldObserverUi) {
+  if (!document.querySelector('script[data-world-observer-de-loader]')) {
+    const languageScript = document.createElement('script');
+    languageScript.src = '/world-observer-de-bootstrap.js?v=20260816-core-1';
+    languageScript.dataset.worldObserverDeLoader = 'true';
+    document.head.appendChild(languageScript);
+  }
+} else if (!useDedicatedInternetLanguageUi && !useDedicatedWiesmoorLanguageUi && !useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
   languageScript.src = '/site-language.js?v=20260816-museum-3';
   languageScript.dataset.siteLanguageLoader = 'true';

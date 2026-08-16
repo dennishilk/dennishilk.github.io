@@ -6,11 +6,18 @@ on:
       - 'site-language.js'
       - 'site-i18n-de*.js'
       - 'museum-de-mirror-loader.js'
+      - 'world-observer-*.js'
       - 'stars.js'
       - 'museum/**'
       - 'de/museum/**'
+      - 'world-observer/**'
+      - 'de/world-observer.html'
+      - 'de/world-observer/**'
+      - 'sitemap-de.xml'
+      - 'robots.txt'
       - 'tests/home-computing-lab-language.test.mjs'
       - 'tests/museum-bilingual-coverage.test.mjs'
+      - 'tests/world-observer-bilingual-coverage.test.mjs'
       - '.github/workflows/site-language-check.yml'
   push:
     branches: [main]
@@ -18,11 +25,18 @@ on:
       - 'site-language.js'
       - 'site-i18n-de*.js'
       - 'museum-de-mirror-loader.js'
+      - 'world-observer-*.js'
       - 'stars.js'
       - 'museum/**'
       - 'de/museum/**'
+      - 'world-observer/**'
+      - 'de/world-observer.html'
+      - 'de/world-observer/**'
+      - 'sitemap-de.xml'
+      - 'robots.txt'
       - 'tests/home-computing-lab-language.test.mjs'
       - 'tests/museum-bilingual-coverage.test.mjs'
+      - 'tests/world-observer-bilingual-coverage.test.mjs'
 
 jobs:
   validate:
@@ -46,7 +60,11 @@ jobs:
           node --check site-i18n-de-museum-crypto.js
           node --check site-i18n-de-museum-malware.js
           node --check site-i18n-de-museum-polish.js
+          node --check site-i18n-de-world-observer-core.js
           node --check museum-de-mirror-loader.js
+          node --check world-observer-language-route.js
+          node --check world-observer-de-mirror-loader.js
+          node --check world-observer-de-bootstrap.js
           node --check stars.js
           node --check museum/linux-terminal-academy/assets/graduation-state.js
           for file in museum/linux-terminal-academy/*/lab.js; do node --check "$file"; done
@@ -54,6 +72,8 @@ jobs:
         run: node --test tests/home-computing-lab-language.test.mjs
       - name: Audit Computer Museum bilingual coverage
         run: node --test tests/museum-bilingual-coverage.test.mjs
+      - name: Audit World Observer bilingual core coverage
+        run: node --test tests/world-observer-bilingual-coverage.test.mjs
       - name: Check Linux Academy tests for new regressions
         shell: bash
         run: |
