@@ -3,26 +3,30 @@ name: Site language checks
 on:
   pull_request:
     paths:
+      - '**/*.html'
       - 'site-language.js'
       - 'site-i18n-de*.js'
       - 'museum-de-mirror-loader.js'
       - 'stars.js'
       - 'museum/**'
-      - 'de/museum/**'
+      - 'de/**'
       - 'tests/home-computing-lab-language.test.mjs'
       - 'tests/museum-bilingual-coverage.test.mjs'
+      - 'tests/sitewide-bilingual-coverage.test.mjs'
       - '.github/workflows/site-language-check.yml'
   push:
     branches: [main]
     paths:
+      - '**/*.html'
       - 'site-language.js'
       - 'site-i18n-de*.js'
       - 'museum-de-mirror-loader.js'
       - 'stars.js'
       - 'museum/**'
-      - 'de/museum/**'
+      - 'de/**'
       - 'tests/home-computing-lab-language.test.mjs'
       - 'tests/museum-bilingual-coverage.test.mjs'
+      - 'tests/sitewide-bilingual-coverage.test.mjs'
 
 jobs:
   validate:
@@ -54,6 +58,8 @@ jobs:
         run: node --test tests/home-computing-lab-language.test.mjs
       - name: Audit Computer Museum bilingual coverage
         run: node --test tests/museum-bilingual-coverage.test.mjs
+      - name: Audit sitewide bilingual coverage
+        run: node --test tests/sitewide-bilingual-coverage.test.mjs
       - name: Check Linux Academy tests for new regressions
         shell: bash
         run: |
