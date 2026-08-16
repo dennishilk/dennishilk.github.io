@@ -9,6 +9,9 @@
     "/de/world-observer/geomagnetic-storm-observer.html",
     "/de/world-observer/earthquake-observer.html",
     "/de/world-observer/ocean-buoy-observer.html",
+    "/de/world-observer/time-observer.html",
+    "/de/world-observer/technology/debian-package-count.html",
+    "/de/world-observer/technology/arch-package-count.html",
   ]);
   if (!supported.has(germanPath)) return;
 
