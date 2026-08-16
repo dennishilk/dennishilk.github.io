@@ -8,6 +8,9 @@
     "/world-observer/geomagnetic-storm-observer.html": "/de/world-observer/geomagnetic-storm-observer.html",
     "/world-observer/earthquake-observer.html": "/de/world-observer/earthquake-observer.html",
     "/world-observer/ocean-buoy-observer.html": "/de/world-observer/ocean-buoy-observer.html",
+    "/world-observer/time-observer.html": "/de/world-observer/time-observer.html",
+    "/world-observer/technology/debian-package-count.html": "/de/world-observer/technology/debian-package-count.html",
+    "/world-observer/technology/arch-package-count.html": "/de/world-observer/technology/arch-package-count.html",
   };
   const reverse = Object.fromEntries(Object.entries(pairs).map(([en, de]) => [de, en]));
   const currentPath = location.pathname;
