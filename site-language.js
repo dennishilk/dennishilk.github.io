@@ -1,7 +1,8 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-16-museum-1";
+  const VERSION = "2026-08-16-museum-2";
+  const SITE_ORIGIN = "https://dennishilk.com";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260810-c64-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -11,6 +12,8 @@
     "/site-i18n-de-personnel.js?v=20260809-personnel-1",
     "/site-i18n-de-home-computing.js?v=20260815-hcl-1",
     "/site-i18n-de-museum-classics.js?v=20260816-museum-1",
+    "/site-i18n-de-museum-crypto.js?v=20260816-museum-1",
+    "/site-i18n-de-museum-malware.js?v=20260816-museum-1",
   ];
 
   const dedicatedRoutes = {
@@ -30,9 +33,23 @@
     "/de/museum/c64/index.html": { en: "/museum/c64/", de: "/de/museum/c64/" },
   };
 
-  // Large map SVGs can contain hundreds or thousands of nodes. They do not carry
-  // visible prose that needs translating, so walking them on every mutation is
-  // both wasteful and capable of freezing observer-heavy pages.
+  const MUSEUM_MIRROR_PREFIXES = [
+    "/museum/apollo-dsky/",
+    "/museum/bbs-system/",
+    "/museum/bios-setup/",
+    "/museum/crt-remote-terminal/",
+    "/museum/debian-server-experiment/",
+    "/museum/dos-setup/",
+    "/museum/ibm-pc-xt/",
+    "/museum/linux-game-install/",
+    "/museum/modem-lab/",
+    "/museum/telephone-exchange/",
+    "/museum/unix-time-sharing-center/",
+    "/museum/wopr/",
+    "/museum/cryptography-lab/",
+    "/museum/malware-history/",
+  ];
+
   const EXCLUDED_SUBTREE_SELECTOR = [
     ".site-language-switcher",
     "script",
@@ -52,9 +69,21 @@
     if (path.endsWith("/index.html")) return path.slice(0, -"index.html".length) || "/";
     return path;
   };
+  const isMirrorableMuseumPath = path => {
+    const normalized = normalizePath(path);
+    return MUSEUM_MIRROR_PREFIXES.some(prefix => normalized.startsWith(prefix));
+  };
+
   const currentPath = location.pathname || "/";
-  const normalizedPath = normalizePath(currentPath);
-  const route = dedicatedRoutes[currentPath];
+  const mirrorSourcePath = typeof window.__DENNIS_MUSEUM_MIRROR_SOURCE_PATH === "string"
+    ? window.__DENNIS_MUSEUM_MIRROR_SOURCE_PATH
+    : null;
+  const normalizedPath = normalizePath(mirrorSourcePath || currentPath);
+  const isMuseumMirror = Boolean(mirrorSourcePath && currentPath.startsWith("/de/museum/"));
+  const mirrorRoute = isMirrorableMuseumPath(normalizedPath)
+    ? { en: normalizedPath, de: `/de${normalizedPath}` }
+    : null;
+  const route = dedicatedRoutes[currentPath] || mirrorRoute;
   let observer = null;
   let bundlePromise = null;
   let activeLanguage = currentPath.startsWith("/de/") ? "de" : "en";
@@ -249,6 +278,80 @@
     });
   };
 
+  const absoluteUrl = path => `${SITE_ORIGIN}${path}`;
+  const ensureAlternate = (hreflang, href) => {
+    let link = document.querySelector(`link[rel="alternate"][hreflang="${hreflang}"]`);
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "alternate";
+      link.hreflang = hreflang;
+      document.head.appendChild(link);
+    }
+    link.href = href;
+  };
+
+  const syncMuseumMirrorMetadata = (language, spec = null) => {
+    if (!mirrorRoute) return;
+    const canonicalPath = mirrorRoute[language];
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
+    }
+    canonical.href = absoluteUrl(canonicalPath);
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute("content", absoluteUrl(canonicalPath));
+    ensureAlternate("en", absoluteUrl(mirrorRoute.en));
+    ensureAlternate("de", absoluteUrl(mirrorRoute.de));
+    ensureAlternate("x-default", absoluteUrl(mirrorRoute.en));
+
+    let locale = document.querySelector('meta[property="og:locale"]');
+    if (!locale) {
+      locale = document.createElement("meta");
+      locale.setAttribute("property", "og:locale");
+      document.head.appendChild(locale);
+    }
+    locale.setAttribute("content", language === "de" ? "de_DE" : "en_US");
+
+    if (language !== "de" || !spec) return;
+    document.querySelectorAll('script[type="application/ld+json"]').forEach(script => {
+      try {
+        const data = JSON.parse(script.textContent);
+        const update = value => {
+          if (!value || typeof value !== "object") return;
+          if (Array.isArray(value)) return value.forEach(update);
+          if (typeof value.url === "string" && value.url.includes("dennishilk.com/museum/")) value.url = absoluteUrl(mirrorRoute.de);
+          if (typeof value.inLanguage === "string") value.inLanguage = "de";
+          if (spec.title && typeof value.name === "string") value.name = spec.title;
+          if (spec.description && typeof value.description === "string") value.description = spec.description;
+          Object.values(value).forEach(update);
+        };
+        update(data);
+        script.textContent = JSON.stringify(data);
+      } catch (error) {}
+    });
+  };
+
+  const rewriteMuseumMirrorLinks = (root = document) => {
+    if (!isMuseumMirror) return;
+    const anchors = root instanceof Element && root.matches("a[href]")
+      ? [root]
+      : Array.from(root.querySelectorAll?.("a[href]") || []);
+    anchors.forEach(anchor => {
+      if (anchor.closest(".site-language-switcher")) return;
+      const raw = anchor.getAttribute("href");
+      if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:")) return;
+      try {
+        const url = new URL(raw, document.baseURI);
+        if (url.origin !== location.origin || !isMirrorableMuseumPath(url.pathname)) return;
+        url.pathname = `/de${normalizePath(url.pathname)}`;
+        anchor.setAttribute("href", `${url.pathname}${url.search}${url.hash}`);
+      } catch (error) {}
+    });
+  };
+
   const startObserver = spec => {
     observer?.disconnect();
     observer = new MutationObserver(records => {
@@ -256,7 +359,10 @@
         if (isExcludedNode(record.target)) continue;
         if (record.type === "characterData") translateTextNode(record.target, spec);
         if (record.type === "attributes") translateAttributes(record.target, spec);
-        record.addedNodes?.forEach(node => translateTree(node, spec));
+        record.addedNodes?.forEach(node => {
+          translateTree(node, spec);
+          if (node.nodeType === Node.ELEMENT_NODE) rewriteMuseumMirrorLinks(node);
+        });
       }
     });
     observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["aria-label", "title", "placeholder", "alt"] });
@@ -274,6 +380,8 @@
     applyHtmlOverrides(spec);
     translateTree(document.body, spec);
     updateMetadata(spec);
+    rewriteMuseumMirrorLinks(document);
+    syncMuseumMirrorMetadata("de", spec);
     startObserver(spec);
     activeLanguage = "de";
     setPressedState("de");
@@ -311,15 +419,23 @@
   switcher.append(separator, makeLink("de", "DE"));
   document.body.appendChild(switcher);
 
-  const storedLanguage = readStoredLanguage();
+  const forcedLanguage = normalizeLanguage(window.__DENNIS_FORCE_SITE_LANGUAGE);
+  const storedLanguage = forcedLanguage || readStoredLanguage();
   if (route) {
-    const routeLanguage = currentPath.startsWith("/de/") ? "de" : "en";
+    const routeLanguage = isMuseumMirror ? "de" : currentPath.startsWith("/de/") ? "de" : "en";
     activeLanguage = routeLanguage;
-    if (storedLanguage && storedLanguage !== routeLanguage && route[storedLanguage]) {
+    if (!forcedLanguage && storedLanguage && storedLanguage !== routeLanguage && route[storedLanguage]) {
       location.replace(`${route[storedLanguage]}${location.search}${location.hash}`);
       return;
     }
+    if (isMuseumMirror) {
+      storeLanguage("de");
+      applyGerman();
+      return;
+    }
     document.documentElement.lang = routeLanguage;
+    document.body.dataset.siteLanguage = routeLanguage;
+    if (mirrorRoute) syncMuseumMirrorMetadata("en");
     setPressedState(routeLanguage);
     return;
   }
