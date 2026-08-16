@@ -74,7 +74,7 @@ if (useDedicatedGermanWiesmoorUi) {
   }
 } else if (!useDedicatedInternetLanguageUi && !useDedicatedWiesmoorLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
-  languageScript.src = '/site-language.js?v=20260814-area51-1';
+  languageScript.src = '/site-language.js?v=20260816-museum-2';
   languageScript.dataset.siteLanguageLoader = 'true';
   document.head.appendChild(languageScript);
 }
