@@ -29,6 +29,8 @@ function loadMuseumBundles() {
     "site-i18n-de-extra.js",
     "site-i18n-de-home-computing.js",
     "site-i18n-de-museum-classics.js",
+    "site-i18n-de-museum-crypto.js",
+    "site-i18n-de-museum-malware.js",
   ]) {
     const source = fs.readFileSync(path.join(root, file), "utf8");
     vm.runInContext(source, context, { filename: file });
@@ -50,6 +52,17 @@ function hasSpecificRuntimeCoverage(route, bundle) {
   );
 }
 
+function assertAuditFamily(bundle, key, expectedCount) {
+  const routes = bundle.audit?.[key]?.routes || [];
+  assert.equal(routes.length, expectedCount, `${key} route count changed unexpectedly`);
+  assert.equal(new Set(routes).size, routes.length, `${key} contains duplicate routes`);
+  for (const route of routes) {
+    assert.ok(bundle.pages?.[route], `${route} is missing page-level German metadata`);
+    assert.ok(bundle.pages[route].title?.trim(), `${route} is missing a German title`);
+    assert.ok(bundle.pages[route].description?.trim(), `${route} is missing a German description`);
+  }
+}
+
 test("every Computer Museum HTML page has a concrete German path or runtime translation family", () => {
   const bundle = loadMuseumBundles();
   const pages = listHtmlFiles(museumRoot);
@@ -67,14 +80,25 @@ test("every Computer Museum HTML page has a concrete German path or runtime tran
   );
 });
 
-test("classic Museum translation bundle declares the complete audited classic route set", () => {
+test("audited Museum translation families declare complete page-level metadata", () => {
   const bundle = loadMuseumBundles();
-  const routes = bundle.audit?.museumClassics?.routes || [];
-  assert.equal(routes.length, 21);
-  assert.equal(new Set(routes).size, routes.length);
-  for (const route of routes) {
-    assert.ok(bundle.pages?.[route], `${route} is missing page-level German metadata`);
-    assert.ok(bundle.pages[route].title?.trim(), `${route} is missing a German title`);
-    assert.ok(bundle.pages[route].description?.trim(), `${route} is missing a German description`);
-  }
+  assertAuditFamily(bundle, "museumClassics", 21);
+  assertAuditFamily(bundle, "museumCrypto", 17);
+  assertAuditFamily(bundle, "museumMalware", 18);
+});
+
+test("Museum translations preserve key safety boundaries", () => {
+  const bundle = loadMuseumBundles();
+  assert.match(
+    bundle.pages["/museum/malware-history/love-letter-incident/"].description,
+    /Browser/i,
+  );
+  assert.match(
+    bundle.pages["/museum/cryptography-lab/broken-crypto/lab.html"].description,
+    /fiktiv|sicher/i,
+  );
+  assert.match(
+    bundle.pages["/museum/apollo-dsky/dsky.html"].description,
+    /Browser/i,
+  );
 });
