@@ -28,6 +28,7 @@ function loadMuseumBundles() {
     "site-i18n-de.js",
     "site-i18n-de-extra.js",
     "site-i18n-de-home-computing.js",
+    "site-i18n-de-museum-classics.js",
   ]) {
     const source = fs.readFileSync(path.join(root, file), "utf8");
     vm.runInContext(source, context, { filename: file });
@@ -64,4 +65,16 @@ test("every Computer Museum HTML page has a concrete German path or runtime tran
     [],
     `Museum pages without concrete German coverage:\n${uncovered.join("\n")}`,
   );
+});
+
+test("classic Museum translation bundle declares the complete audited classic route set", () => {
+  const bundle = loadMuseumBundles();
+  const routes = bundle.audit?.museumClassics?.routes || [];
+  assert.equal(routes.length, 21);
+  assert.equal(new Set(routes).size, routes.length);
+  for (const route of routes) {
+    assert.ok(bundle.pages?.[route], `${route} is missing page-level German metadata`);
+    assert.ok(bundle.pages[route].title?.trim(), `${route} is missing a German title`);
+    assert.ok(bundle.pages[route].description?.trim(), `${route} is missing a German description`);
+  }
 });
