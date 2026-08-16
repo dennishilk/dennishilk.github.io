@@ -83,6 +83,13 @@ test("every site HTML source has a maintained German counterpart or page-level t
     .map(({ route }) => route)
     .sort();
 
+  if (process.env.GITHUB_ACTIONS === "true") {
+    for (const route of uncovered) {
+      const message = route.replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
+      console.error(`::error title=Missing German coverage::${message}`);
+    }
+  }
+
   assert.deepEqual(
     uncovered,
     [],
