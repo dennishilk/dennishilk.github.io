@@ -22,6 +22,11 @@ function routeForFile(file) {
   return `/${relative.replace(/index\.html$/, "")}`;
 }
 
+function sourceFileForRoute(route) {
+  const relative = route.startsWith("/") ? route.slice(1) : route;
+  return path.join(root, relative.endsWith("/") ? `${relative}index.html` : relative);
+}
+
 function germanFileForRoute(route) {
   const relative = route.startsWith("/") ? route.slice(1) : route;
   return path.join(root, "de", relative.endsWith("/") ? `${relative}index.html` : relative);
@@ -106,6 +111,20 @@ test("all newly audited Museum routes have physical German mirror entry points",
     assert.ok(fs.existsSync(file), `${route} is missing ${path.relative(root, file)}`);
     assert.match(fs.readFileSync(file, "utf8"), /museum-de-mirror-loader\.js/, `${route} does not use the German mirror loader`);
   }
+});
+
+test("all newly audited English Museum routes expose the shared language control", () => {
+  const bundle = loadMuseumBundles();
+  const routes = [
+    ...bundle.audit.museumClassics.routes,
+    ...bundle.audit.museumCrypto.routes,
+    ...bundle.audit.museumMalware.routes,
+  ];
+  const missing = routes.filter(route => {
+    const source = fs.readFileSync(sourceFileForRoute(route), "utf8");
+    return !/(?:\/stars\.js|\/site-language\.js)/.test(source);
+  }).sort();
+  assert.deepEqual(missing, [], `English Museum routes without a language control loader:\n${missing.join("\n")}`);
 });
 
 test("Museum mirror loader and language router preserve EN/DE route identity", () => {
