@@ -7,106 +7,22 @@
   <link rel="canonical" href="https://dennishilk.com/nothing.html" />
   <title>Nothing.</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --terminal-bg: #000;
-      --terminal-fg: #33ff66;
-      --terminal-muted: #238f3f;
-      --terminal-focus: #79ff96;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      min-height: 100%;
-      margin: 0;
-      overflow-x: hidden;
-      background: var(--terminal-bg);
-      color: var(--terminal-fg);
-      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    }
-
-    body {
-      display: grid;
-      place-items: center;
-      padding: clamp(1.25rem, 5vw, 4rem);
-    }
-
-    main {
-      width: min(100%, 44rem);
-      transform: translateY(-3vh);
-    }
-
-    .terminal {
-      max-width: 100%;
-      color: var(--terminal-fg);
-      font-size: clamp(0.88rem, 2.4vw, 1rem);
-      line-height: 1.7;
-      letter-spacing: 0.01em;
-      text-shadow: 0 0 0.35rem rgba(51, 255, 102, 0.16);
-    }
-
-    .terminal-output {
-      min-height: 22.2em;
-      margin: 0;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-
-    .cursor {
-      display: inline-block;
-      color: var(--terminal-fg);
-      animation: blink 1.1s steps(1, end) infinite;
-    }
-
-    .return-home {
-      display: inline-block;
-      margin-top: 1.8rem;
-      color: var(--terminal-muted);
-      font-size: 0.88rem;
-      text-decoration: none;
-      visibility: hidden;
-    }
-
-    .return-home.is-visible,
-    noscript .return-home {
-      visibility: visible;
-    }
-
-    .return-home:focus,
-    .return-home:hover {
-      color: var(--terminal-focus);
-      outline: none;
-    }
-
-    .return-home:focus-visible {
-      outline: 1px solid var(--terminal-muted);
-      outline-offset: 0.35rem;
-    }
-
-    @keyframes blink {
-      0%,
-      49% {
-        opacity: 1;
-      }
-
-      50%,
-      100% {
-        opacity: 0;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .cursor {
-        animation: none;
-        display: none;
-      }
-    }
+    :root { color-scheme: dark; --terminal-bg: #000; --terminal-fg: #33ff66; --terminal-muted: #238f3f; --terminal-focus: #79ff96; }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; overflow-x: hidden; background: var(--terminal-bg); color: var(--terminal-fg); font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+    body { display: grid; place-items: center; padding: clamp(1.25rem, 5vw, 4rem); }
+    main { width: min(100%, 44rem); transform: translateY(-3vh); }
+    .terminal { max-width: 100%; color: var(--terminal-fg); font-size: clamp(0.88rem, 2.4vw, 1rem); line-height: 1.7; letter-spacing: 0.01em; text-shadow: 0 0 0.35rem rgba(51, 255, 102, 0.16); }
+    .terminal-output { min-height: 22.2em; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; }
+    .cursor { display: inline-block; color: var(--terminal-fg); animation: blink 1.1s steps(1, end) infinite; }
+    .return-home { display: inline-block; margin-top: 1.8rem; color: var(--terminal-muted); font-size: 0.88rem; text-decoration: none; visibility: hidden; }
+    .return-home.is-visible, noscript .return-home { visibility: visible; }
+    .return-home:focus, .return-home:hover { color: var(--terminal-focus); outline: none; }
+    .return-home:focus-visible { outline: 1px solid var(--terminal-muted); outline-offset: 0.35rem; }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .cursor { animation: none; display: none; } }
   </style>
+  <script defer src="/site-language.js"></script>
 </head>
 <body>
   <main aria-labelledby="nothing-title">
@@ -171,37 +87,12 @@ That's better.</pre>
         { text: `\n${transcript[9]}`, after: shortPause },
         { text: `\n${transcript[10]}\n\n${transcript[12]}\n\n${transcript[14]}`, after: shortPause }
       ];
-
       const sleep = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
-
-      const typeText = async (text) => {
-        for (const character of text) {
-          output.textContent += character;
-          await sleep(typeDelay);
-        }
-      };
-
-      const showReturnHome = () => {
-        returnHome.classList.add("is-visible");
-      };
-
+      const typeText = async (text) => { for (const character of text) { output.textContent += character; await sleep(typeDelay); } };
+      const showReturnHome = () => { returnHome.classList.add("is-visible"); };
       const completeText = transcript.join("\n");
-
-      if (reducedMotion) {
-        output.textContent = completeText;
-        cursor.hidden = true;
-        showReturnHome();
-        return;
-      }
-
-      (async () => {
-        for (const step of sequence) {
-          await typeText(step.text);
-          await sleep(step.after);
-        }
-
-        showReturnHome();
-      })();
+      if (reducedMotion) { output.textContent = completeText; cursor.hidden = true; showReturnHome(); return; }
+      (async () => { for (const step of sequence) { await typeText(step.text); await sleep(step.after); } showReturnHome(); })();
     })();
   </script>
 </body>
