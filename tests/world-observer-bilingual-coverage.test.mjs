@@ -13,6 +13,9 @@ const pairs = {
   "/world-observer/geomagnetic-storm-observer.html": "/de/world-observer/geomagnetic-storm-observer.html",
   "/world-observer/earthquake-observer.html": "/de/world-observer/earthquake-observer.html",
   "/world-observer/ocean-buoy-observer.html": "/de/world-observer/ocean-buoy-observer.html",
+  "/world-observer/time-observer.html": "/de/world-observer/time-observer.html",
+  "/world-observer/technology/debian-package-count.html": "/de/world-observer/technology/debian-package-count.html",
+  "/world-observer/technology/arch-package-count.html": "/de/world-observer/technology/arch-package-count.html",
 };
 
 function fileForRoute(route) {
@@ -31,7 +34,7 @@ function loadBundles() {
   return context.window.DennisSiteI18nDE;
 }
 
-test("World Observer core bilingual routes have physical German entry points", () => {
+test("dedicated World Observer bilingual routes have physical German entry points", () => {
   for (const [en, de] of Object.entries(pairs)) {
     assert.ok(fs.existsSync(fileForRoute(en)), `${en} is missing`);
     assert.ok(fs.existsSync(fileForRoute(de)), `${de} is missing`);
@@ -43,7 +46,7 @@ test("World Observer core bilingual routes have physical German entry points", (
   }
 });
 
-test("World Observer core routes have page-level German metadata", () => {
+test("dedicated World Observer routes have page-level German metadata", () => {
   const bundle = loadBundles();
   for (const route of Object.keys(pairs)) {
     const spec = bundle.pages?.[route];
@@ -72,10 +75,11 @@ test("World Observer route, mirror and bootstrap scripts keep EN and DE identity
     assert.ok(routes.includes(`"${en}": "${de}"`), `${en} is absent from route pairs`);
     assert.ok(bootstrap.includes(`"${de}": "${en}"`), `${de} is absent from bootstrap pairs`);
     assert.ok(mirror.includes(`"${de}"`), `${de} is absent from mirror allowlist`);
+    assert.ok(stars.includes(`"${en}"`), `${en} is absent from dedicated World Observer paths`);
   }
 });
 
-test("canonical German sitemap exposes every new World Observer core route", () => {
+test("canonical German sitemap exposes every dedicated World Observer route", () => {
   const sitemap = fs.readFileSync(path.join(root, "sitemap-de.xml"), "utf8");
   for (const [en, de] of Object.entries(pairs)) {
     assert.ok(sitemap.includes(`https://dennishilk.com${de}`), `${de} missing from sitemap-de.xml`);
@@ -83,9 +87,12 @@ test("canonical German sitemap exposes every new World Observer core route", () 
   }
 });
 
-test("World Observer core polish covers overview and technology-only strings", () => {
+test("World Observer polish covers overview and technology-only strings", () => {
   const bundle = loadBundles();
   assert.equal(bundle.pages["/world-observer.html"].text["Observe. Don't speculate."], "Beobachten. Nicht spekulieren.");
   assert.equal(bundle.pages["/world-observer/technology.html"].text["Space Technology"], "Weltraumtechnik");
   assert.equal(bundle.pages["/world-observer/technology.html"].attributes["Open Space / Satellites observer"], "Observer Weltraum / Satelliten öffnen");
+  assert.equal(bundle.pages["/world-observer/technology/debian-package-count.html"].text["Debian Package Count"], "Debian-Paketanzahl");
+  assert.equal(bundle.pages["/world-observer/technology/arch-package-count.html"].text["Arch Linux Package Count"], "Arch-Linux-Paketanzahl");
+  assert.equal(bundle.pages["/world-observer/time-observer.html"].text["EARTH ROTATION · ATOMIC TIME · UTC · NTP"], "ERDROTATION · ATOMZEIT · UTC · NTP");
 });
