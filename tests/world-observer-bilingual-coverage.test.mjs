@@ -9,6 +9,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pairs = {
   "/world-observer.html": "/de/world-observer.html",
   "/world-observer/internet.html": "/de/world-observer/internet.html",
+  "/world-observer/media.html": "/de/world-observer/media.html",
+  "/world-observer/society.html": "/de/world-observer/society.html",
   "/world-observer/environment.html": "/de/world-observer/environment.html",
   "/world-observer/technology.html": "/de/world-observer/technology.html",
   "/world-observer/geomagnetic-storm-observer.html": "/de/world-observer/geomagnetic-storm-observer.html",
@@ -88,13 +90,20 @@ test("canonical German sitemap exposes every dedicated World Observer route", ()
   }
 });
 
-test("World Observer polish covers overview, Internet hub and Technology strings", () => {
+test("World Observer polish covers overview, Internet, Media, Society and Technology strings", () => {
   const bundle = loadBundles();
   assert.equal(bundle.pages["/world-observer.html"].text["Observe. Don't speculate."], "Beobachten. Nicht spekulieren.");
   assert.equal(bundle.pages["/world-observer/internet.html"].text["Internet Observers"], "Internet-Observer");
   assert.equal(bundle.pages["/world-observer/internet.html"].text["Active Observers"], "Aktive Observer");
   assert.equal(bundle.pages["/world-observer/internet.html"].text["Open observer →"], "Observer öffnen →");
   assert.ok(bundle.pages["/world-observer/internet.html"].phrases.some(([from, to]) => from === "Last update:" && to === "Letzte Aktualisierung:"));
+  assert.equal(bundle.pages["/world-observer/media.html"].text["Germany Media Language Observer"], "Deutschland: Medien-Sprach-Observer");
+  assert.equal(bundle.pages["/world-observer/media.html"].text["Observed changes"], "Beobachtete Änderungen");
+  assert.equal(bundle.pages["/world-observer/media.html"].text["Trending terms"], "Zunehmende Begriffe");
+  assert.equal(bundle.pages["/world-observer/society.html"].text["Society Observer"], "Gesellschafts-Observer");
+  assert.equal(bundle.pages["/world-observer/society.html"].text["Current values"], "Aktuelle Werte");
+  assert.equal(bundle.pages["/world-observer/society.html"].text["Electricity Observer"], "Strom-Observer");
+  assert.equal(bundle.pages["/world-observer/society.html"].text["Waiting for fuel observations."], "Warten auf Kraftstoff-Beobachtungen.");
   assert.equal(bundle.pages["/world-observer/technology.html"].text["Space Technology"], "Weltraumtechnik");
   assert.equal(bundle.pages["/world-observer/technology.html"].attributes["Open Space / Satellites observer"], "Observer Weltraum / Satelliten öffnen");
   assert.equal(bundle.pages["/world-observer/technology/debian-package-count.html"].text["Debian Package Count"], "Debian-Paketanzahl");
