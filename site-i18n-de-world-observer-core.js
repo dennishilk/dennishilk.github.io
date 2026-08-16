@@ -67,4 +67,29 @@
       ["Freshest selected GP epoch:", "Neueste ausgewählte GP-Epoche:"]
     ]
   });
+
+  addPage("/world-observer/internet.html", {
+    title: "Internet-Observer – Öffentliche Infrastruktur-Signale | World Observer",
+    description: "Öffentliche Signale zur Internet-Infrastruktur als Zeitreihen: DNS, HTTP, IPv6, TLS, Routing, Unterseekabel und globale Erreichbarkeit – mit transparenten Quellen und ohne Kausalbehauptungen.",
+    text: {
+      "Internet Observers": "Internet-Observer",
+      "Public infrastructure signals, observed as time series.": "Öffentliche Infrastruktur-Signale, als Zeitreihen beobachtet.",
+      "Active Observers": "Aktive Observer",
+      "Loading Internet observer data…": "Internet-Observer-Daten werden geladen…",
+      "Internet observers describe public infrastructure signals only. They do not establish cause, intent, or attribution, and should be read as observational indicators rather than proof of manipulation.": "Internet-Observer beschreiben ausschließlich öffentliche Infrastruktur-Signale. Sie belegen weder Ursache, Absicht noch Zuschreibung und sind als Beobachtungsindikatoren zu lesen, nicht als Beweis für Manipulation.",
+      "Open observer →": "Observer öffnen →",
+      "Current cards loaded. Trend file is not available yet.": "Aktuelle Karten geladen. Die Trenddatei ist derzeit nicht verfügbar.",
+      "No Internet observer data published yet.": "Noch keine Internet-Observer-Daten veröffentlicht.",
+      "The first observation will appear after the initial daily run.": "Die erste Beobachtung erscheint nach dem ersten täglichen Lauf.",
+      "This observer could not be rendered, but other observers are still available.": "Dieser Observer konnte nicht dargestellt werden; die übrigen Observer bleiben verfügbar."
+    },
+    phrases: [
+      ["Last update:", "Letzte Aktualisierung:"],
+      ["Open observer →", "Observer öffnen →"],
+      ["Internet Observer", "Internet-Observer"],
+      [" observations", " Beobachtungen"],
+      ["Open ", "Observer öffnen: "],
+      [" observer", ""]
+    ]
+  });
 })();
