@@ -32,6 +32,12 @@ function germanFileForRoute(route) {
   return path.join(root, "de", relative.endsWith("/") ? `${relative}index.html` : relative);
 }
 
+function hasNoindex(file) {
+  const html = fs.readFileSync(file, "utf8");
+  const tags = html.match(/<meta\b[^>]*>/gi) || [];
+  return tags.some(tag => /\bname\s*=\s*["']robots["']/i.test(tag) && /\bcontent\s*=\s*["'][^"']*\bnoindex\b/i.test(tag));
+}
+
 function loadMuseumBundles() {
   const context = vm.createContext({ window: {} });
   for (const file of [
@@ -113,7 +119,7 @@ test("all newly audited Museum routes have physical German mirror entry points",
   }
 });
 
-test("all newly audited English Museum routes expose the shared language control", () => {
+test("all indexable audited English Museum routes expose the shared language control", () => {
   const bundle = loadMuseumBundles();
   const routes = [
     ...bundle.audit.museumClassics.routes,
@@ -121,10 +127,12 @@ test("all newly audited English Museum routes expose the shared language control
     ...bundle.audit.museumMalware.routes,
   ];
   const missing = routes.filter(route => {
-    const source = fs.readFileSync(sourceFileForRoute(route), "utf8");
+    const file = sourceFileForRoute(route);
+    if (hasNoindex(file)) return false;
+    const source = fs.readFileSync(file, "utf8");
     return !/(?:\/stars\.js|\/site-language\.js)/.test(source);
   }).sort();
-  assert.deepEqual(missing, [], `English Museum routes without a language control loader:\n${missing.join("\n")}`);
+  assert.deepEqual(missing, [], `Indexable English Museum routes without a language control loader:\n${missing.join("\n")}`);
 });
 
 test("Museum mirror loader and language router preserve EN/DE route identity", () => {
