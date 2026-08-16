@@ -6,9 +6,9 @@ on:
       - 'site-language.js'
       - 'site-i18n-de*.js'
       - 'stars.js'
-      - 'museum/linux-terminal-academy/**'
-      - 'museum/home-computing-lab/**'
+      - 'museum/**'
       - 'tests/home-computing-lab-language.test.mjs'
+      - 'tests/museum-bilingual-coverage.test.mjs'
       - '.github/workflows/site-language-check.yml'
   push:
     branches: [main]
@@ -16,9 +16,9 @@ on:
       - 'site-language.js'
       - 'site-i18n-de*.js'
       - 'stars.js'
-      - 'museum/linux-terminal-academy/**'
-      - 'museum/home-computing-lab/**'
+      - 'museum/**'
       - 'tests/home-computing-lab-language.test.mjs'
+      - 'tests/museum-bilingual-coverage.test.mjs'
 
 jobs:
   validate:
@@ -43,6 +43,8 @@ jobs:
           for file in museum/linux-terminal-academy/*/lab.js; do node --check "$file"; done
       - name: Check Home Computing Lab language coverage
         run: node --test tests/home-computing-lab-language.test.mjs
+      - name: Audit Computer Museum bilingual coverage
+        run: node --test tests/museum-bilingual-coverage.test.mjs
       - name: Check Linux Academy tests for new regressions
         shell: bash
         run: |
