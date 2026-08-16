@@ -88,6 +88,31 @@ function publicUrlToPath(url) {
   return join(siteRoot, pathname.slice(1));
 }
 
+function hasNoindex(path) {
+  const html = readFileSync(path, "utf8");
+  const tags = html.match(/<meta\b[^>]*>/gi) || [];
+  return tags.some((tag) => /\bname\s*=\s*["']robots["']/i.test(tag) && /\bcontent\s*=\s*["'][^"']*\bnoindex\b/i.test(tag));
+}
+
+function isMuseumMirrorWrapper(path) {
+  return readFileSync(path, "utf8").includes("museum-de-mirror-loader.js");
+}
+
+function germanMirrorSourcePath(path) {
+  const rel = relative(join(siteRoot, "de"), path);
+  return join(siteRoot, rel);
+}
+
+function isIndexableGermanHtml(path) {
+  if (!path.endsWith(".html")) return false;
+  if (isMuseumMirrorWrapper(path)) {
+    const source = germanMirrorSourcePath(path);
+    assert.ok(existsSync(source), `German Museum mirror source missing: ${relative(siteRoot, source)}`);
+    return !hasNoindex(source);
+  }
+  return !hasNoindex(path);
+}
+
 function assertWellFormedEnvelope(name, xml) {
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'), `${name} missing XML declaration`);
   assert.match(xml, /<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/, `${name} missing sitemap namespace`);
@@ -116,9 +141,9 @@ test("robots.txt advertises every maintained sitemap", () => {
   ]) assert.ok(robots.includes(`Sitemap: ${base}/${name}`), `robots.txt missing ${name}`);
 });
 
-test("German sitemap contains every real German HTML route exactly once", () => {
+test("German sitemap contains every indexable German HTML route exactly once", () => {
   const actualGermanUrls = walk(join(siteRoot, "de"))
-    .filter((path) => path.endsWith(".html"))
+    .filter(isIndexableGermanHtml)
     .map(pathToPublicUrl)
     .sort();
   const sitemapGermanUrls = locs(sitemapDe).sort();
