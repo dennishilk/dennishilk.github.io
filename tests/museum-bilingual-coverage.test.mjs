@@ -22,6 +22,11 @@ function routeForFile(file) {
   return `/${relative.replace(/index\.html$/, "")}`;
 }
 
+function germanFileForRoute(route) {
+  const relative = route.startsWith("/") ? route.slice(1) : route;
+  return path.join(root, "de", relative.endsWith("/") ? `${relative}index.html` : relative);
+}
+
 function loadMuseumBundles() {
   const context = vm.createContext({ window: {} });
   for (const file of [
@@ -87,18 +92,39 @@ test("audited Museum translation families declare complete page-level metadata",
   assertAuditFamily(bundle, "museumMalware", 18);
 });
 
+test("all newly audited Museum routes have physical German mirror entry points", () => {
+  const bundle = loadMuseumBundles();
+  const routes = [
+    ...bundle.audit.museumClassics.routes,
+    ...bundle.audit.museumCrypto.routes,
+    ...bundle.audit.museumMalware.routes,
+  ];
+  assert.equal(routes.length, 56);
+  for (const route of routes) {
+    const file = germanFileForRoute(route);
+    assert.ok(fs.existsSync(file), `${route} is missing ${path.relative(root, file)}`);
+    assert.match(fs.readFileSync(file, "utf8"), /museum-de-mirror-loader\.js/, `${route} does not use the German mirror loader`);
+  }
+});
+
+test("Museum mirror loader and language router preserve EN/DE route identity", () => {
+  const loader = fs.readFileSync(path.join(root, "museum-de-mirror-loader.js"), "utf8");
+  const router = fs.readFileSync(path.join(root, "site-language.js"), "utf8");
+
+  assert.match(loader, /__DENNIS_MUSEUM_MIRROR_SOURCE_PATH/);
+  assert.match(loader, /__DENNIS_FORCE_SITE_LANGUAGE/);
+  assert.match(loader, /data-site-language-loader/);
+  assert.match(router, /site-i18n-de-museum-classics\.js/);
+  assert.match(router, /site-i18n-de-museum-crypto\.js/);
+  assert.match(router, /site-i18n-de-museum-malware\.js/);
+  assert.match(router, /MUSEUM_MIRROR_PREFIXES/);
+  assert.match(router, /rewriteMuseumMirrorLinks/);
+  assert.match(router, /syncMuseumMirrorMetadata/);
+});
+
 test("Museum translations preserve key safety boundaries", () => {
   const bundle = loadMuseumBundles();
-  assert.match(
-    bundle.pages["/museum/malware-history/love-letter-incident/"].description,
-    /Browser/i,
-  );
-  assert.match(
-    bundle.pages["/museum/cryptography-lab/broken-crypto/lab.html"].description,
-    /fiktiv|sicher/i,
-  );
-  assert.match(
-    bundle.pages["/museum/apollo-dsky/dsky.html"].description,
-    /Browser/i,
-  );
+  assert.match(bundle.pages["/museum/malware-history/love-letter-incident/"].description, /Browser/i);
+  assert.match(bundle.pages["/museum/cryptography-lab/broken-crypto/lab.html"].description, /fiktiv|sicher/i);
+  assert.match(bundle.pages["/museum/apollo-dsky/dsky.html"].description, /Browser/i);
 });
