@@ -3,6 +3,7 @@
 
   const pairs = {
     "/world-observer.html": "/de/world-observer.html",
+    "/world-observer/internet.html": "/de/world-observer/internet.html",
     "/world-observer/environment.html": "/de/world-observer/environment.html",
     "/world-observer/technology.html": "/de/world-observer/technology.html",
     "/world-observer/geomagnetic-storm-observer.html": "/de/world-observer/geomagnetic-storm-observer.html",

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pairs = {
   "/world-observer.html": "/de/world-observer.html",
+  "/world-observer/internet.html": "/de/world-observer/internet.html",
   "/world-observer/environment.html": "/de/world-observer/environment.html",
   "/world-observer/technology.html": "/de/world-observer/technology.html",
   "/world-observer/geomagnetic-storm-observer.html": "/de/world-observer/geomagnetic-storm-observer.html",
@@ -87,9 +88,13 @@ test("canonical German sitemap exposes every dedicated World Observer route", ()
   }
 });
 
-test("World Observer polish covers overview and technology-only strings", () => {
+test("World Observer polish covers overview, Internet hub and Technology strings", () => {
   const bundle = loadBundles();
   assert.equal(bundle.pages["/world-observer.html"].text["Observe. Don't speculate."], "Beobachten. Nicht spekulieren.");
+  assert.equal(bundle.pages["/world-observer/internet.html"].text["Internet Observers"], "Internet-Observer");
+  assert.equal(bundle.pages["/world-observer/internet.html"].text["Active Observers"], "Aktive Observer");
+  assert.equal(bundle.pages["/world-observer/internet.html"].text["Open observer →"], "Observer öffnen →");
+  assert.ok(bundle.pages["/world-observer/internet.html"].phrases.some(([from, to]) => from === "Last update:" && to === "Letzte Aktualisierung:"));
   assert.equal(bundle.pages["/world-observer/technology.html"].text["Space Technology"], "Weltraumtechnik");
   assert.equal(bundle.pages["/world-observer/technology.html"].attributes["Open Space / Satellites observer"], "Observer Weltraum / Satelliten öffnen");
   assert.equal(bundle.pages["/world-observer/technology/debian-package-count.html"].text["Debian Package Count"], "Debian-Paketanzahl");
