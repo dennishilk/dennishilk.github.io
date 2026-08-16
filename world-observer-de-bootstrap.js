@@ -4,6 +4,8 @@
   const pairs = {
     "/de/world-observer.html": "/world-observer.html",
     "/de/world-observer/internet.html": "/world-observer/internet.html",
+    "/de/world-observer/media.html": "/world-observer/media.html",
+    "/de/world-observer/society.html": "/world-observer/society.html",
     "/de/world-observer/environment.html": "/world-observer/environment.html",
     "/de/world-observer/technology.html": "/world-observer/technology.html",
     "/de/world-observer/geomagnetic-storm-observer.html": "/world-observer/geomagnetic-storm-observer.html",
@@ -28,7 +30,7 @@
     "/site-i18n-de.js?v=20260810-c64-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
     "/site-i18n-de-observers.js?v=20260809-observers-1",
-    "/site-i18n-de-world-observer-core.js?v=20260816-internet-1",
+    "/site-i18n-de-world-observer-core.js?v=20260816-media-society-1",
   ];
 
   const loadScript = src => new Promise(resolve => {
