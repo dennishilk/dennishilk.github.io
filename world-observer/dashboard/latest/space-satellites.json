@@ -1,15 +1,15 @@
 {
   "observer": "space-satellites",
   "category": "technology",
-  "date": "2026-08-16",
-  "collected_at_utc": "2026-08-16T00:00:03Z",
-  "status": "partial",
-  "data_status": "partial",
+  "date": "2026-08-17",
+  "collected_at_utc": "2026-08-17T00:00:03Z",
+  "status": "unavailable",
+  "data_status": "unavailable",
   "summary": {
     "groups_requested": 6,
-    "groups_available": 1,
-    "groups_unavailable_or_not_attempted": 5,
-    "freshest_selected_group_epoch_utc": "2026-08-15T15:16:20Z",
+    "groups_available": 0,
+    "groups_unavailable_or_not_attempted": 6,
+    "freshest_selected_group_epoch_utc": null,
     "group_counts_are_memberships": true,
     "groups_may_overlap": true,
     "global_satellite_total_calculated": false
@@ -18,20 +18,14 @@
     "stations": {
       "label": "Space Stations",
       "query_group": "STATIONS",
-      "status": "ok",
-      "record_count": 22,
-      "unique_catalog_ids": 22,
-      "epoch_count": 22,
-      "mean_inclination_deg": 48.8596,
-      "oldest_epoch_utc": "2026-08-15T02:00:30Z",
-      "newest_epoch_utc": "2026-08-15T15:16:20Z",
-      "median_epoch_age_hours": 10.92
+      "status": "unavailable",
+      "reason": "CelesTrak request failed: The read operation timed out"
     },
     "starlink": {
       "label": "Starlink",
       "query_group": "STARLINK",
-      "status": "unavailable",
-      "reason": "CelesTrak request failed: The read operation timed out"
+      "status": "not_attempted",
+      "reason": "collection stopped after the first source error"
     },
     "oneweb": {
       "label": "OneWeb",
@@ -77,22 +71,14 @@
     "no_real_time_position_claims": true
   },
   "diagnostics": {
-    "api_attempts": 2,
+    "api_attempts": 1,
     "retries": 0,
     "http_status": null,
     "stop_reason": "CelesTrak request failed: The read operation timed out",
     "requests": [
       {
         "group": "STATIONS",
-        "status": "ok",
         "url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=STATIONS&FORMAT=CSV",
-        "http_status": 200,
-        "bytes": 3502,
-        "record_count": 22
-      },
-      {
-        "group": "STARLINK",
-        "url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=STARLINK&FORMAT=CSV",
         "http_status": null,
         "status": "error",
         "reason": "CelesTrak request failed: The read operation timed out"
