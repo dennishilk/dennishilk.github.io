@@ -55,8 +55,17 @@
   color: #e8b98f;
   font: 700 .62rem/1 'JetBrains Mono', monospace;
   letter-spacing: .055em;
+  text-decoration: none;
   text-transform: uppercase;
   white-space: nowrap;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.la-edition-status:hover,
+.la-edition-status:focus-visible {
+  border-color: rgba(232, 185, 143, .9);
+  background: rgba(78, 45, 20, .42);
+  color: #f4caa4;
 }
 
 .la-copy-de {
