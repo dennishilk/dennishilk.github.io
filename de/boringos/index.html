@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BoringOS — Eigenständiges x86_64-Betriebssystem von Dennis Hilk</title>
+  <meta name="description" content="BoringOS ist ein eigenständiges experimentelles Desktop-Betriebssystem von Grund auf in C — mit eigenem x86_64-Kernel, nativem Userspace, VFS, RAMFS, Init, Shell und geplantem BoringFS.">
+  <meta name="robots" content="noindex,follow,max-image-preview:large">
+  <meta name="theme-color" content="#020405">
+  <link rel="canonical" href="https://www.dennishilk.com/de/boringos/">
+  <link rel="alternate" hreflang="en" href="https://www.dennishilk.com/boringos/">
+  <link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/boringos/">
+  <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/boringos/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BoringOS — Ein eigenständiges Betriebssystem von Grund auf">
+  <meta property="og:description" content="Eigener x86_64-Kernel. Nativer C-Userspace. VFS/RAMFS. PID 1. Native Shell. BoringFS auf der Roadmap.">
+  <meta property="og:url" content="https://www.dennishilk.com/de/boringos/">
+  <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BoringOS — Ein eigenständiges Betriebssystem von Grund auf">
+  <meta name="twitter:description" content="Eigener x86_64-Kernel, nativer C-Userspace, VFS/RAMFS, Init, Shell und eine Roadmap hin zu BoringFS und einem nativen Desktop.">
+  <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="stylesheet" href="/boringos/boringos.css?v=1">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "BoringOS",
+    "description": "Eigenständiges experimentelles Desktop-Betriebssystem mit eigenem x86_64-Kernel, nativem C-Userspace und zukünftigem nativen BoringWM-Desktop-Stack.",
+    "url": "https://www.dennishilk.com/de/boringos/",
+    "codeRepository": "https://github.com/dennishilk/boringos",
+    "programmingLanguage": "C",
+    "runtimePlatform": "x86_64 / QEMU",
+    "license": "https://opensource.org/license/mit",
+    "author": {"@type": "Person", "name": "Dennis Hilk", "url": "https://www.dennishilk.com/"}
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="shell-topbar">
+    <a class="brand" href="/de/" aria-label="Dennis Hilk Startseite">
+      <span class="brand-mark">boring&gt;</span>
+      <span>BoringOS <small>eigenständiges Systemprojekt</small></span>
+    </a>
+    <nav class="topnav" aria-label="Seitennavigation">
+      <a href="#architecture">Architektur</a>
+      <a href="#shell">Shell</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#boringfs">BoringFS</a>
+      <a href="#principles">Prinzipien</a>
+      <span class="lang-switch" aria-label="Sprache">
+        <a href="/boringos/">EN</a>
+        <a href="/de/boringos/" aria-current="page">DE</a>
+      </span>
+    </nav>
+  </header>
+
+  <main id="main" class="page">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow">BoringKernel 0.0.18-dev · x86_64 · C</div>
+        <h1 id="hero-title">Boring<span>OS</span></h1>
+        <p>
+          Ein eigenständiges experimentelles Desktop-Betriebssystem von Grund auf — keine Linux-Distribution,
+          kein BSD-Userspace und kein Wrapper um einen fremden Kernel. BoringOS ist ein eigener Kernel, ein eigener
+          nativer Userspace und ein bewusst kleiner Weg hin zu einem eigenen Desktop.
+          <span class="motto">boring is not a bug. it's the entire operating system now.</span>
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="https://github.com/dennishilk/boringos">Quellcode auf GitHub</a>
+          <a class="btn" href="#roadmap">Roadmap ansehen</a>
+          <a class="btn" href="#shell">Echten Shell-Beweis ansehen</a>
+        </div>
+        <ul class="status-chips" aria-label="Aktueller Projektstatus">
+          <li><strong>LIVE</strong> eigener x86_64-Kernel</li>
+          <li><strong>LIVE</strong> CPL3-Userspace</li>
+          <li><strong>LIVE</strong> VFS + RAMFS</li>
+          <li><strong>LIVE</strong> PID 1 + Shell</li>
+          <li><strong>JETZT</strong> BoringFS-v0-Codec</li>
+        </ul>
+        <p class="hero-note">Aktuelle Referenzplattform: QEMU x86_64 mit Limine. Echte Hardware kommt später, wenn Plattform- und Storage-Schichten langweilig genug geworden sind.</p>
+      </div>
+
+      <div class="terminal-window" aria-label="BoringOS Terminalausgabe">
+        <div class="terminal-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="terminal-title">serial0 · BoringOS boot</span>
+        </div>
+        <div class="terminal-body"><span class="term-dim">[boot]</span> BoringOS booting...
+<span class="term-cyan">BoringKernel 0.0.18-dev</span>
+<span class="term-dim">[arch]</span> x86_64
+
+<span class="term-green">boring-init: starting</span>
+boring-init: pid 1
+boring-init: online
+boring-init: launching boring-shell
+
+<span class="term-green">boring-shell: starting</span>
+boring-shell: pid 2
+boring-shell ready.
+
+<span class="term-cyan">boring&gt;</span> mkdir Test
+<span class="term-cyan">boring&gt;</span> ls
+<span class="term-green">Test</span>
+<span class="term-cyan">boring&gt;</span> cd Test
+<span class="term-cyan">boring&gt;</span> mkdir Inner
+<span class="term-cyan">boring&gt;</span> ls
+<span class="term-green">Inner</span>
+<span class="term-cyan">boring&gt;</span> <span class="cursor" aria-hidden="true"></span></div>
+      </div>
+    </section>
+
+    <section id="architecture" class="section" aria-labelledby="architecture-title">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">01 · Architektur</div>
+          <h2 id="architecture-title">Ein kleiner Stack, der wirklich uns gehört.</h2>
+        </div>
+        <p>Das Projekt wächst Schicht für Schicht. Jede neue Fähigkeit muss die bisherigen QEMU-Acceptance-Gates grün halten, statt sie durch eine neue Demo zu ersetzen.</p>
+      </div>
+
+      <div class="arch-flow" aria-label="BoringOS Architekturfluss">
+        <div class="flow-node"><small>boot</small><strong>Limine</strong><span>UEFI/QEMU-Bootstrap und defensiv validierte Boot-Metadaten.</span></div>
+        <div class="flow-node"><small>kernel</small><strong>BoringKernel</strong><span>Memory, Exceptions, Timer, Prozesse und Privilegtrennung.</span></div>
+        <div class="flow-node"><small>userspace</small><strong>Ring 3 + ELF</strong><span>Statische ET_EXEC-Programme in unabhängigen Address Spaces.</span></div>
+        <div class="flow-node"><small>system api</small><strong>SYSCALL</strong><span>Kleine BoringOS-native ABI mit geprüftem Userspace-Speicher.</span></div>
+        <div class="flow-node"><small>filesystem</small><strong>VFS → RAMFS</strong><span>Echter mutierbarer Namespace, Prozess-CWD und Backend-Dispatch.</span></div>
+        <div class="flow-node"><small>programme</small><strong>init → shell</strong><span>PID 1 startet PID 2 und übergibt an eine native C-Shell.</span></div>
+      </div>
+
+      <div class="fact-grid">
+        <article class="fact-card"><span class="fact-index">01</span><h3>Eigenständiger Kernel</h3><p>Kein Linux-, BSD- oder Redox-Kernel darunter. BoringKernel besitzt den x86_64-Ausführungspfad des Projekts selbst.</p></article>
+        <article class="fact-card"><span class="fact-index">02</span><h3>Freestanding C-Userspace</h3><p>Native Programme nutzen eine BoringOS-eigene Runtime: keine Host-libc, kein CRT, kein Dynamic Linker und kein PIE.</p></article>
+        <article class="fact-card"><span class="fact-index">03</span><h3>Privilegtrennung</h3><p>Userspace läuft in CPL3 mit getrennten Address Spaces, TSS.RSP0 und einer geprüften nativen <code>SYSCALL/SYSRETQ</code>-Grenze.</p></article>
+        <article class="fact-card"><span class="fact-index">04</span><h3>Echter Filesystem-State</h3><p>Die Shell verändert den tatsächlichen RAMFS-Namespace über Userspace-Syscalls, Prozess-CWD und den generischen VFS.</p></article>
+        <article class="fact-card"><span class="fact-index">05</span><h3>Acceptance-driven</h3><p>Normalboot, Faults, Ring 3, Syscalls, ELF, Runtime, Console, VFS, RAMFS, Init und Shell bleiben als Regressionstest erhalten.</p></article>
+        <article class="fact-card"><span class="fact-index">06</span><h3>Desktop als Ziel</h3><p>Der lange Weg führt zu Framebuffer/Input, einem kleinen nativen Display-Protokoll, BoringWM, Terminal-Clients und später echten Anwendungen.</p></article>
+      </div>
+    </section>
+
+    <section id="shell" class="section" aria-labelledby="shell-title">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">02 · Nativer Userspace</div>
+          <h2 id="shell-title">Der Prompt ist echt.</h2>
+        </div>
+        <p>Der Milestone-17-Test grept keine Fake-Liste. Er injiziert Befehle über die serielle Konsole und prüft spätere unabhängige <span class="inline-code">FS_READDIR</span>-Ausgabe aus dem echten RAMFS.</p>
+      </div>
+
+      <div class="shell-proof">
+        <article class="proof-copy">
+          <h3>PID 1 startet PID 2.</h3>
+          <p><span class="inline-code">boring-init</span> läuft als PID 1 in CPL3. Es betritt den LAUNCH-Syscall, der Kernel bereitet einen unabhängigen PID-2-Address-Space vor, vererbt die retained VFS-CWD und verwandelt den aktiven Trusted-Syscall-Return-Frame in den Shell-Handoff.</p>
+          <ul>
+            <li>Keine verschachtelten lebenden PID1/PID2-Syscall-Frames auf dem globalen Trusted Stack.</li>
+            <li>PID 1 bleibt <span class="inline-code">PROCESS_ALIVE</span>.</li>
+            <li>PID 2 führt eine separate freestanding <span class="inline-code">boring-shell.elf</span> aus.</li>
+            <li>Noch keine FD-Tabelle und keine stdin/stdout/stderr-Abstraktion.</li>
+          </ul>
+        </article>
+        <div class="proof-terminal" aria-label="Interaktiver Filesystem-Beweis"><span class="term-cyan">boring&gt;</span> mkdir Test
+<span class="term-cyan">boring&gt;</span> ls
+<span class="term-green">Test</span>
+
+<span class="term-cyan">boring&gt;</span> mkdir Test
+<span class="term-amber">mkdir: already exists</span>
+
+<span class="term-cyan">boring&gt;</span> cd Test
+<span class="term-cyan">boring&gt;</span> mkdir Inner
+<span class="term-cyan">boring&gt;</span> ls
+<span class="term-green">Inner</span>
+
+<span class="term-cyan">boring&gt;</span> cd ..
+<span class="term-cyan">boring&gt;</span> rmdir Test
+<span class="term-amber">rmdir: directory not empty</span>
+
+<span class="term-cyan">boring&gt;</span> cd Test
+<span class="term-cyan">boring&gt;</span> rmdir Inner
+<span class="term-cyan">boring&gt;</span> cd ..
+<span class="term-cyan">boring&gt;</span> rmdir Test
+<span class="term-cyan">boring&gt;</span> ls
+<span class="term-dim">[leer]</span>
+<span class="term-cyan">boring&gt;</span></div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="section" aria-labelledby="roadmap-title">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">03 · Roadmap</div>
+          <h2 id="roadmap-title">Vom ersten Frame bis zum persistenten nativen Root.</h2>
+        </div>
+        <p>Die öffentliche Roadmap bildet den Repository-Stand ab. „Geplant“ wird nicht als implementiert verkauft. Milestone 18 läuft aktuell und befindet sich noch im Closeout.</p>
+      </div>
+
+      <div class="roadmap-overview">
+        <div class="roadmap-stat"><strong>17</strong><span>Milestones abgeschlossen</span></div>
+        <div class="roadmap-stat"><strong>18</strong><span>aktuell · BoringFS-v0-Codec + Validator</span></div>
+        <div class="roadmap-stat"><strong>25</strong><span>persistentes natives Root als aktuelles Roadmap-Ziel</span></div>
+      </div>
+
+      <div class="roadmap">
+        <article class="roadmap-stage complete">
+          <div class="stage-head"><div><h3>Stage 1–3 · Kernel-Grundlagen</h3><p>Speicher, Interrupts, Scheduling, Prozesse und Ring 3.</p></div><span class="stage-status">COMPLETE</span></div>
+          <div class="milestone-list">
+            <div class="milestone done"><span class="num">01</span><span class="name">Physical Memory Manager</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">02</span><span class="name">Virtual Memory Control</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">03</span><span class="name">Kernel Heap</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">04</span><span class="name">IDT + Exceptions</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">05</span><span class="name">PIC + PIT</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">06</span><span class="name">Cooperative Contexts</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">07</span><span class="name">Timer Preemption</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">08</span><span class="name">Prozesse + Address Spaces</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">09</span><span class="name">Ring-3-Transition</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">10</span><span class="name">Native Syscall-Grenze</span><span class="state">DONE</span></div>
+          </div>
+        </article>
+
+        <article class="roadmap-stage complete">
+          <div class="stage-head"><div><h3>Stage 4–6 · Nativer Userspace</h3><p>Programme laden, mit dem Kernel sprechen, echten Namespace mounten und den Prompt erreichen.</p></div><span class="stage-status">COMPLETE</span></div>
+          <div class="milestone-list">
+            <div class="milestone done"><span class="num">11</span><span class="name">ELF-Userspace-Loader</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">12</span><span class="name">Native C-Runtime</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">13</span><span class="name">Userspace Serial Console</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">14</span><span class="name">Filesystem-unabhängiger VFS</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">15</span><span class="name">Echter mutierbarer RAMFS</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">16</span><span class="name">boring-init · PID 1</span><span class="state">DONE</span></div>
+            <div class="milestone done"><span class="num">17</span><span class="name">boring-shell · PID 2</span><span class="state">DONE</span></div>
+          </div>
+        </article>
+
+        <article class="roadmap-stage next">
+          <div class="stage-head"><div><h3>Stage 7 · BoringFS Host-Tooling</h3><p>Eine exakte Interpretation des On-Disk-Formats etablieren, bevor der Kernel Storage berührt.</p></div><span class="stage-status">IN PROGRESS</span></div>
+          <div class="milestone-list">
+            <div class="milestone active"><span class="num">18</span><span class="name">BoringFS-v0-Codec + Structural Validator</span><span class="state">CURRENT</span></div>
+            <div class="milestone"><span class="num">19</span><span class="name">mkboringfs</span><span class="state">PLANNED</span></div>
+            <div class="milestone"><span class="num">20</span><span class="name">boringfsck</span><span class="state">PLANNED</span></div>
+          </div>
+        </article>
+
+        <article class="roadmap-stage future">
+          <div class="stage-head"><div><h3>Stage 8–9 · Persistenter Storage</h3><p>Erst wenn das Format-Tooling sitzt, fasst der Kernel echte persistente Filesystem-Blöcke an.</p></div><span class="stage-status">PLANNED</span></div>
+          <div class="milestone-list">
+            <div class="milestone"><span class="num">21</span><span class="name">Generischer Block-Device-Layer</span><span class="state">PLANNED</span></div>
+            <div class="milestone"><span class="num">22</span><span class="name">QEMU VirtIO-block</span><span class="state">PLANNED</span></div>
+            <div class="milestone"><span class="num">23</span><span class="name">Read-only BoringFS-Mount</span><span class="state">PLANNED</span></div>
+            <div class="milestone"><span class="num">24</span><span class="name">BoringFS-Mutation</span><span class="state">PLANNED</span></div>
+            <div class="milestone"><span class="num">25</span><span class="name">Persistentes natives Root-Filesystem</span><span class="state">PLANNED</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="boringfs" class="section" aria-labelledby="boringfs-title">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">04 · BoringFS v0</div>
+          <h2 id="boringfs-title">Als Nächstes werden die Bytes langweilig.</h2>
+        </div>
+        <p>Milestone 18 stoppt bewusst vor einem Filesystem-Mount. Er definiert und validiert das exakte Byteformat, das spätere Tools und Kernelcode gemeinsam nutzen sollen.</p>
+      </div>
+
+      <div class="boringfs-grid">
+        <article class="boringfs-card">
+          <h3>Ein Format. Explizite Bytes.</h3>
+          <p>Der Codec nutzt explizite Little-Endian-Loads/Stores statt gepackter nativer C-Structs. Der Validator arbeitet auf caller-provided Byte-Buffern und prüft Layout, Bitmap-Ownership, Objekte, Extents, Directories, UTF-8-Namen, Referenzen, Zyklen, Leaks, Overlaps und Truncation.</p>
+          <div class="format-grid">
+            <div class="format-item"><small>Magic</small><strong>BORINGFS</strong></div>
+            <div class="format-item"><small>Format</small><strong>0.1</strong></div>
+            <div class="format-item"><small>Block</small><strong>4096 Bytes</strong></div>
+            <div class="format-item"><small>Object Record</small><strong>128 Bytes</strong></div>
+            <div class="format-item"><small>Directory Record</small><strong>256 Bytes</strong></div>
+            <div class="format-item"><small>Dateiname</small><strong>240 UTF-8-Bytes</strong></div>
+            <div class="format-item"><small>Extents / Objekt</small><strong>max. 8</strong></div>
+            <div class="format-item"><small>Volume</small><strong>max. 4 GiB (v0)</strong></div>
+          </div>
+        </article>
+
+        <article class="boringfs-card">
+          <h3>v0 Volume-Layout</h3>
+          <div class="disk-map" aria-label="BoringFS v0 Disk-Layout">
+            <div class="disk-block"><strong>Block 0</strong><br>Superblock · Magic, Version, Größen, Layout, Feature-Masks</div>
+            <div class="disk-block"><strong>Allocation Bitmap</strong><br>Metadata- und Data-Ownership auf 4096-Byte-Blockgranularität</div>
+            <div class="disk-block"><strong>Object Table</strong><br>Feste 128-Byte-Object-Records mit IDs, Parent und Extents</div>
+            <div class="disk-block"><strong>Data Area</strong><br>Regular-File-Bytes und logische Directory-Streams</div>
+          </div>
+          <p style="margin-top:1rem">Aktueller M18-Scope: Codec + read-only Structural Validator. Noch kein Formatter-CLI, kein fsck-CLI, kein Blocktreiber und kein Kernel-Mount.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="principles" class="section" aria-labelledby="principles-title">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">05 · Designprinzipien</div>
+          <h2 id="principles-title">Kleine Verträge. Echte Beweise.</h2>
+        </div>
+        <p>BoringOS ist experimentell, aber geplante Schichten werden nicht als bereits implementiert dargestellt.</p>
+      </div>
+      <div class="principles">
+        <article class="principle"><h3>Kein fremder finaler Kernel</h3><p>BoringOS ist ein eigenständiges OS-Projekt. Linux, BSD oder andere Kernel bilden nicht die endgültige Ausführungsbasis.</p></article>
+        <article class="principle"><h3>C zuerst, Assembly nur wo nötig</h3><p>BoringOS-eigene Komponenten sind primär C; kleine isolierte x86_64-Assembly-Stücke bleiben Architekturgrenzen vorbehalten.</p></article>
+        <article class="principle"><h3>Den echten Pfad testen</h3><p>Acceptance bevorzugt beobachtbaren Runtime-State: echte Privilegwechsel, echte User-Memory-Prüfung, echte Namespace-Mutationen und spätere unabhängige Beobachtung.</p></article>
+        <article class="principle"><h3>Kein vorschnelles POSIX-Cosplay</h3><p>Die aktuelle Shell hat bewusst noch keine numerische FD-Tabelle und keine stdin/stdout/stderr-Abstraktion. Schnittstellen kommen erst, wenn die Architektur sie wirklich braucht.</p></article>
+        <article class="principle"><h3>Format vor Persistenz</h3><p>BoringFS bekommt erst einen exakten Codec und Korruptionsvalidator, bevor Formatter-Tools, Block-I/O oder ein Kernel-Filesystem-Backend entstehen.</p></article>
+        <article class="principle"><h3>Das Ziel ist ein Desktop</h3><p>Nach persistentem nativem Storage kann der Weg zu Framebuffer/Input, kompaktem Display-Protokoll, nativem BoringWM und echten grafischen Clients weitergehen.</p></article>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Repository">
+      <div class="repo-panel">
+        <div>
+          <div class="kicker">Source first</div>
+          <h2>Verfolge das Betriebssystem dabei, wie es weniger imaginär wird.</h2>
+          <p>Source, Architektur-Notizen, BoringFS-Formatspezifikation und die maßgebliche Milestone-Roadmap liegen im öffentlichen GitHub-Repository.</p>
+        </div>
+        <div class="repo-actions">
+          <a class="btn primary" href="https://github.com/dennishilk/boringos">GitHub-Repository</a>
+          <a class="btn" href="https://github.com/dennishilk/boringos/blob/main/docs/roadmap.md">Komplette Roadmap</a>
+          <a class="btn" href="https://github.com/dennishilk/boringos/blob/main/docs/boringfs.md">BoringFS-Spezifikation</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div>© 2026 Dennis Hilk · <a href="/de/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS Source</a></div>
+      <div class="footer-motto">boring&gt; notboring doom <span class="term-dim"># irgendwann</span></div>
+    </footer>
+  </main>
+</body>
+</html>
