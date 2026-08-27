@@ -6,9 +6,13 @@
   const CURRENT_MAX_AGE_MS = 90 * 60 * 1000;
   const DELAYED_MAX_AGE_MS = 3 * 60 * 60 * 1000;
   const GENERIC_OOKLA_URL = "https://www.speedtest.net/";
-  const isGerman = Boolean(window.__DENNIS_WORLD_OBSERVER_MIRROR_SOURCE_PATH) ||
+  const readGerman = () => Boolean(window.__DENNIS_WORLD_OBSERVER_MIRROR_SOURCE_PATH) ||
+    window.location?.pathname?.startsWith("/de/") ||
     document.documentElement.lang.toLowerCase().startsWith("de");
-  const locale = isGerman ? "de-DE" : "en-GB";
+  let isGerman = readGerman();
+  let locale = isGerman ? "de-DE" : "en-GB";
+  let lastPayload = null;
+  let unavailable = false;
 
   const translations = {
     en: {
@@ -114,7 +118,7 @@
       sampleAria: (date, value) => `${date}: ${value} Megabit pro Sekunde Download`,
     },
   };
-  const copy = translations[isGerman ? "de" : "en"];
+  let copy = translations[isGerman ? "de" : "en"];
 
   const $ = id => document.getElementById(id);
   const finite = value => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
@@ -287,6 +291,8 @@
       throw new TypeError("invalid home connection telemetry");
     }
     const latest = data.latest;
+    lastPayload = data;
+    unavailable = false;
     const setMetric = (id, value, digits = 1) => { const element = $(id); if (element) element.textContent = number(value, digits); };
     setMetric("home-download", latest.download_mbps, 1);
     setMetric("home-upload", latest.upload_mbps, 1);
@@ -316,6 +322,8 @@
   };
 
   const renderUnavailable = () => {
+    lastPayload = null;
+    unavailable = true;
     setState({ className: "offline", label: copy.offline });
     ["home-download", "home-upload", "home-latency", "home-jitter", "home-packet-loss", "home-test-data", "home-alltime", "home-measured-at", "home-server"].forEach(id => {
       const element = $(id);
@@ -342,7 +350,7 @@
     ENDPOINT,
     CURRENT_MAX_AGE_MS,
     DELAYED_MAX_AGE_MS,
-    copy,
+    get copy() { return copy; },
     formatServer,
     normalizeHistory,
     render,
@@ -355,6 +363,21 @@
   window.HomeConnectionObserver = api;
 
   localizeStatic();
+  // The site-wide switcher can apply German asynchronously, after this script.
+  // Repaint from the existing sample; changing language must not start a test
+  // or fetch another telemetry snapshot.
+  if (typeof MutationObserver !== "undefined") {
+    new MutationObserver(() => {
+      const nextGerman = readGerman();
+      if (nextGerman === isGerman) return;
+      isGerman = nextGerman;
+      locale = isGerman ? "de-DE" : "en-GB";
+      copy = translations[isGerman ? "de" : "en"];
+      localizeStatic();
+      if (lastPayload) render(lastPayload);
+      else if (unavailable) renderUnavailable();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+  }
   if ($("home-connection-card") && !window.__HOME_CONNECTION_DISABLE_AUTO_START__) {
     update();
     window.setInterval(update, POLL_INTERVAL_MS);

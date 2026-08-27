@@ -40,6 +40,10 @@ const makeHarness = (language = 'en') => {
     String,
     TypeError,
     URL,
+    MutationObserver: class {
+      constructor(callback) { this.callback = callback; }
+      observe() { context.changeLanguage = this.callback; }
+    },
     fetch: async () => { throw new Error('fetch disabled in unit test'); },
     document: {
       documentElement: { lang: language },
@@ -95,7 +99,7 @@ test('home connection is the final full-width dashboard panel with shared EN/DE 
   assert.ok(methodIndex > 0 && homeIndex > methodIndex, 'home panel must follow the observation method at the bottom');
   assert.match(css, /\.home-connection-card\s*\{[\s\S]*grid-column:\s*1 \/ -1 !important/);
   assert.match(html, /home-connection\.css\?v=20260827-1/);
-  assert.match(html, /home-connection\.js\?v=20260827-1/);
+  assert.match(html, /home-connection\.js\?v=20260827-i18n-2/);
   assert.match(germanMirror, /world-observer-de-mirror-loader\.js\?v=20260827-traffic-1/);
   assert.match(mirrorLoader, /"\/de\/traffic\.html"/);
 });
@@ -106,6 +110,30 @@ test('English home card contains clean English rather than mixed foundation labe
   assert.match(card, /DOWNLOAD · LATEST MEASUREMENT/);
   assert.match(card, /PUBLIC PERFORMANCE METRICS ONLY/);
   assert.doesNotMatch(card, /HEIMANSCHLUSS|LETZTE MESSUNG|GESAMTTRANSFER|KEINE ÖFFENTLICHE/);
+});
+
+test('language switch repaints existing telemetry in German and back to English', () => {
+  const { api, elements, context } = makeHarness('en');
+  const sample = payload();
+  sample.latest.timestamp = new Date().toISOString();
+  sample.history_24h[0].timestamp = sample.latest.timestamp;
+  api.render(sample);
+  const heading = element();
+  heading.dataset.homeI18n = 'panelTitle';
+  context.document.querySelectorAll = selector => selector === '[data-home-i18n]' ? [heading] : [];
+  context.document.documentElement.lang = 'de';
+  context.changeLanguage();
+  assert.equal(heading.textContent, 'ECHTE STÜNDLICHE VERBINDUNGSTELEMETRIE');
+  assert.equal(elements.get('home-download').textContent, '77,7');
+  assert.equal(elements.get('home-alltime').textContent, '3,22 TB');
+  assert.equal(elements.get('home-connection-state').textContent, 'AKTUELL');
+  assert.equal(elements.get('home-chart-samples').textContent, '1 MESSPUNKT');
+  context.document.documentElement.lang = 'en';
+  context.changeLanguage();
+  assert.equal(heading.textContent, 'REAL HOURLY CONNECTION TELEMETRY');
+  assert.equal(elements.get('home-download').textContent, '77.7');
+  assert.equal(elements.get('home-connection-state').textContent, 'CURRENT');
+  assert.equal(elements.get('home-chart-samples').textContent, '1 SAMPLE');
 });
 
 test('real one-sample payload renders honestly, including nested server and actual Ookla result', () => {

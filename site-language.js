@@ -18,6 +18,8 @@
   ];
 
   const dedicatedRoutes = {
+    "/traffic.html": { en: "/traffic.html", de: "/de/traffic.html" },
+    "/de/traffic.html": { en: "/traffic.html", de: "/de/traffic.html" },
     "/": { en: "/", de: "/de/" },
     "/index.html": { en: "/", de: "/de/" },
     "/de/": { en: "/", de: "/de/" },

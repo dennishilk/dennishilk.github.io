@@ -23,6 +23,7 @@
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="style.css?v=45">
   <link rel="stylesheet" href="home-connection.css?v=20260827-1">
+  <script defer src="/site-language.js?v=20260827-traffic-2" data-site-language-loader></script>
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
@@ -93,7 +94,7 @@
       </article>
       <article class="traffic-card method-card"><h2 data-traffic-i18n="observationMethod">OBSERVATION METHOD</h2><dl><dt data-traffic-i18n="source">Source</dt><dd>worldnode / nginx access logs</dd><dt data-traffic-i18n="humanClassification">Human classification</dt><dd data-traffic-i18n="classificationMethod">request-pattern and user-agent heuristics</dd><dt data-traffic-i18n="privacy">Privacy</dt><dd data-traffic-i18n="noRawIps">no raw visitor IP addresses exposed</dd><dt data-traffic-i18n="retention">Retention</dt><dd data-traffic-i18n="aggregateRetention">aggregated observational data</dd></dl></article>
 
-      <article id="home-connection-card" class="traffic-card home-connection-card" aria-live="polite">
+      <article id="home-connection-card" class="traffic-card home-connection-card" aria-live="polite" data-site-i18n-skip>
         <header class="home-connection-header">
           <div class="home-connection-heading">
             <span class="home-connection-kicker" data-home-i18n="connectionKicker">HOME CONNECTION</span>
@@ -333,10 +334,17 @@
     const hourly = arr(data.hourly); renderPulse(hourly); renderSignalMatrix(hourly); const liveRequests = arr(data.live_requests); renderStream(liveRequests); renderList("top-countries", arr(data.countries)); renderMapPoints(data.countries); renderSignalRoutes(data.countries, liveRequests); renderBars("top-pages", arr(data.top_pages)); renderBars("crawler-species", arr(data.crawler_species)); renderNovelReader(data.novel_reader);
   }).catch(() => { setUnavailable(); renderNovelReader(null); });
   localizeTrafficPage();
+  $("traffic-language-link")?.addEventListener("click", event => {
+    try {
+      const language = event.currentTarget.hreflang;
+      localStorage.setItem("dennishilk-language", language);
+      localStorage.setItem("about-language", language);
+    } catch (_error) {}
+  });
   updateTraffic();
   window.setInterval(updateTraffic, 30_000);
 })();
 </script>
-<script src="home-connection.js?v=20260827-1"></script>
+<script src="home-connection.js?v=20260827-i18n-2"></script>
 </body>
 </html>
