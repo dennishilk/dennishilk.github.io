@@ -22,7 +22,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="avatar.png">
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="style.css?v=45">
-  <link rel="stylesheet" href="home-connection.css?v=20260827-1">
+  <link rel="stylesheet" href="home-connection.css?v=20260827-polish-3">
   <script defer src="/site-language.js?v=20260827-traffic-2" data-site-language-loader></script>
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
@@ -134,32 +134,58 @@
           <section class="home-topology-pane" aria-label="Conceptual Starlink signal path" data-home-aria="topologyAria">
             <div class="home-topology-head"><span class="home-topology-label" data-home-i18n="topologyTitle">CONCEPTUAL SIGNAL PATH</span><span class="home-concept-note" data-home-i18n="conceptOnly">VISUAL MODEL · NOT ORBITAL DATA</span></div>
             <svg class="home-topology-svg" viewBox="0 0 520 270" role="img" aria-label="Conceptual path from a home dish through a satellite to the network" data-home-aria="topologyAria">
+              <defs>
+                <linearGradient id="home-metal" x2=".7" y2="1"><stop stop-color="#e1f4fb"/><stop offset=".45" stop-color="#779daf"/><stop offset="1" stop-color="#203f50"/></linearGradient>
+                <linearGradient id="home-array" x2="1" y2="1"><stop stop-color="#1e536a"/><stop offset="1" stop-color="#071b2c"/></linearGradient>
+                <pattern id="home-solar-cells" width="10" height="8" patternUnits="userSpaceOnUse"><path d="M10 0H0V8" fill="none" stroke="#69dcff" stroke-opacity=".45" stroke-width=".7"/></pattern>
+              </defs>
               <path class="home-orbit-guide" d="M36 96 Q260 4 484 96"/>
-              <path class="home-signal-base" d="M92 210 Q145 118 247 74"/>
-              <path class="home-signal-base" d="M273 74 Q376 118 432 210"/>
-              <path class="home-signal-stream" pathLength="100" d="M92 210 Q145 118 247 74"/>
-              <path class="home-signal-stream down" pathLength="100" d="M273 74 Q376 118 432 210"/>
-              <circle class="home-node-ring" cx="92" cy="210" r="18"/>
-              <circle class="home-node-ring network" cx="432" cy="210" r="18"/>
+              <path class="home-ground-guide" d="M36 235 H484 M56 231 V239 M464 231 V239"/>
+              <path class="home-signal-base" d="M99 182 Q146 104 246 70"/>
+              <path class="home-signal-base" d="M276 70 Q383 106 427 175"/>
+              <path class="home-signal-stream" pathLength="100" d="M99 182 Q146 104 246 70"/>
+              <path class="home-signal-stream echo" pathLength="100" d="M99 182 Q146 104 246 70"/>
+              <path class="home-signal-stream down" pathLength="100" d="M276 70 Q383 106 427 175"/>
+              <path class="home-signal-stream down echo" pathLength="100" d="M276 70 Q383 106 427 175"/>
+              <circle class="home-node-ring" cx="99" cy="182" r="18"/>
+              <circle class="home-node-ring network" cx="427" cy="175" r="18"/>
               <g aria-hidden="true">
-                <path class="home-dish" d="M68 193 Q94 216 116 187 Q93 184 68 193Z"/>
-                <path class="home-dish" d="M94 207 L88 229 M81 229 H102"/>
-                <circle class="home-node-core" cx="92" cy="210" r="3.5"/>
+                <ellipse class="home-node-shadow" cx="94" cy="233" rx="36" ry="4"/>
+                <path class="home-dish" d="M91 196 L88 221 L75 232 H112 L99 222 L102 194Z"/>
+                <path class="home-hardware-detail" d="M95 204 V224 M84 228 H103"/>
+                <g transform="rotate(32 96 189)">
+                  <rect class="home-dish" x="64" y="184" width="64" height="13" rx="6"/>
+                  <rect class="home-dish-face" x="64" y="181" width="64" height="11" rx="5.5"/>
+                  <path class="home-hardware-detail" d="M72 185 H118"/>
+                </g>
+                <circle class="home-node-core" cx="99" cy="182" r="2.5"/>
               </g>
               <g class="home-satellite" aria-hidden="true">
-                <rect class="home-satellite-panel" x="214" y="58" width="31" height="18" rx="2"/>
-                <rect class="home-satellite-panel" x="275" y="58" width="31" height="18" rx="2"/>
-                <path class="home-satellite-body" d="M249 53 H271 L279 67 L270 82 H250 L241 67Z"/>
-                <path class="home-satellite-body" d="M245 67 H214 M275 67 H306 M260 53 V43"/>
+                <g transform="rotate(-12 260 66)">
+                  <path class="home-satellite-body" d="M204 65 H316"/>
+                  <rect class="home-satellite-panel" x="195" y="50" width="48" height="29" rx="2"/>
+                  <rect class="home-satellite-panel" x="278" y="50" width="48" height="29" rx="2"/>
+                  <path class="home-panel-cells" d="M195 50H243V79H195Z M278 50H326V79H278Z"/>
+                  <path class="home-satellite-body" d="M251 49 L269 49 L277 58 V77 L260 85 L245 76 V58Z"/>
+                  <path class="home-hardware-detail" d="M245 58 L260 66 L277 58 M260 66 V85 M252 53 L268 61 M252 58 L268 66"/>
+                  <path class="home-satellite-body" d="M260 49 V36 M255 36 H265 M255 84 L252 93 M266 83 L270 92"/>
+                  <circle class="home-node-core" cx="260" cy="36" r="2"/>
+                </g>
               </g>
               <g aria-hidden="true">
-                <rect class="home-network" x="411" y="187" width="42" height="49" rx="3"/>
-                <path class="home-network" d="M418 198 H446 M418 209 H446 M418 220 H446"/>
-                <circle class="home-node-core" cx="432" cy="210" r="3.5"/>
+                <ellipse class="home-node-shadow" cx="432" cy="235" rx="39" ry="4"/>
+                <path class="home-network" d="M402 179 L412 170 H458 V227 L449 236 H402Z"/>
+                <path class="home-hardware-detail" d="M402 179 H449 V236 M449 179 L458 170"/>
+                <rect class="home-terminal-screen" x="410" y="186" width="31" height="18" rx="2"/>
+                <path class="home-terminal-trace" d="M414 195 L418 191 L422 199 L426 193 H437"/>
+                <path class="home-hardware-detail" d="M410 211 H432 M410 221 H432 M410 228 H432"/>
+                <circle class="home-rack-led" cx="438" cy="212" r="1.8"/>
+                <circle class="home-rack-led secondary" cx="438" cy="222" r="1.8"/>
+                <circle class="home-node-core" cx="427" cy="175" r="2.5"/>
               </g>
-              <text x="48" y="254" data-home-i18n="homeDish">HOME / DISH</text>
-              <text x="229" y="104" data-home-i18n="satellite">SATELLITE</text>
-              <text x="382" y="254" data-home-i18n="network">GROUND / NETWORK</text>
+              <text x="94" y="260" text-anchor="middle" data-home-i18n="homeDish">HOME / DISH</text>
+              <text x="260" y="116" text-anchor="middle" data-home-i18n="satellite">SATELLITE</text>
+              <text x="427" y="260" text-anchor="middle" data-home-i18n="network">GROUND / NETWORK</text>
             </svg>
             <p class="home-topology-disclaimer" data-home-i18n="topologyDisclaimer">CONCEPTUAL ONLY · NO SATELLITE IDENTITY, POSITION, BEAM, GATEWAY OR ROUTE IS CLAIMED</p>
           </section>
@@ -168,9 +194,9 @@
         <section class="home-history-pane">
           <div class="home-history-head">
             <div class="home-chart-title"><span data-home-i18n="historyLabel">24 HOUR HISTORY</span><strong data-home-i18n="historyTitle">REAL DOWNLOAD MEASUREMENTS</strong></div>
-            <div class="home-chart-stats"><span><span data-home-i18n="min">MIN</span> <b id="home-chart-min">—</b></span><span><span data-home-i18n="max">MAX</span> <b id="home-chart-max">—</b></span><span><span data-home-i18n="latest">CURRENT</span> <b id="home-chart-current">—</b></span><span id="home-chart-samples">0 SAMPLES</span></div>
+            <div class="home-chart-stats"><span><span data-home-i18n="min">MIN</span> <b id="home-chart-min">—</b></span><span><span data-home-i18n="max">MAX</span> <b id="home-chart-max">—</b></span><span><span data-home-i18n="latest">CURRENT</span> <b id="home-chart-current">—</b></span><span id="home-chart-samples" data-home-i18n="noSamples">0 SAMPLES</span></div>
           </div>
-          <div id="home-connection-chart" class="home-connection-chart empty" aria-label="Home connection download speed over the last 24 hours" data-home-aria="historyTitle">24H SPEED HISTORY UNAVAILABLE</div>
+          <div id="home-connection-chart" class="home-connection-chart empty" aria-label="Home connection download speed over the last 24 hours" data-home-aria="historyTitle" data-home-i18n="chartUnavailable">24H SPEED HISTORY UNAVAILABLE</div>
           <div class="home-chart-axis"><span data-home-i18n="ago24">24H AGO</span><span data-home-i18n="ago12">12H</span><span data-home-i18n="now">NOW</span></div>
           <p id="home-chart-mode" class="home-chart-mode">—</p>
         </section>
@@ -181,8 +207,9 @@
         </div>
         <div class="home-connection-actions">
           <a id="home-ookla-link" href="https://www.speedtest.net/" target="_blank" rel="noopener noreferrer" data-home-i18n="ooklaResult">VIEW OOKLA RESULT →</a>
-          <a id="home-starlink-link" href="https://starlink.com?referral=RC-DF-12369685-91594-14" target="_blank" rel="noopener noreferrer" data-referral-url="https://starlink.com?referral=RC-DF-12369685-91594-14" data-home-i18n="starlinkDetails">STARLINK REFERRAL · ONE FREE MONTH →</a>
+          <a id="home-starlink-link" href="https://starlink.com?referral=RC-DF-12369685-91594-14" target="_blank" rel="noopener noreferrer" data-referral-url="https://starlink.com?referral=RC-DF-12369685-91594-14" data-home-i18n="starlinkDetails">DENNIS’ STARLINK REFERRAL →</a>
         </div>
+        <p id="home-referral-note" class="home-referral-note"><span data-home-i18n="referralNote">Using Dennis’ personal referral link may give you and Dennis one free month of service, subject to Starlink’s eligibility and market conditions.</span> <a id="home-referral-terms" href="https://starlink.com/referrals" target="_blank" rel="noopener noreferrer" data-home-i18n="referralTerms">Official referral terms ↗</a></p>
         <p class="home-privacy-note" data-home-i18n="privacy">PUBLIC PERFORMANCE METRICS ONLY · NO IP ADDRESS PUBLISHED · NO MAC, INTERFACE, HOSTNAME OR ACCOUNT IDENTIFIER EXPOSED</p>
       </article>
     </section>
@@ -345,6 +372,6 @@
   window.setInterval(updateTraffic, 30_000);
 })();
 </script>
-<script src="home-connection.js?v=20260827-i18n-2"></script>
+<script src="home-connection.js?v=20260827-polish-3"></script>
 </body>
 </html>

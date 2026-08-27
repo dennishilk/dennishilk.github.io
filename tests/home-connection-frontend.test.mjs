@@ -28,7 +28,7 @@ const makeHarness = (language = 'en') => {
     'home-connection-card', 'home-connection-state', 'home-download', 'home-upload', 'home-latency', 'home-jitter', 'home-test-data',
     'home-packet-loss', 'home-packet-loss-unit', 'home-account-usage', 'home-alltime', 'home-usage-since', 'home-usage-updated',
     'home-measured-at', 'home-server', 'home-ookla-link', 'home-starlink-link', 'home-connection-chart', 'home-chart-mode',
-    'home-chart-min', 'home-chart-max', 'home-chart-current', 'home-chart-samples',
+    'home-chart-min', 'home-chart-max', 'home-chart-current', 'home-chart-samples', 'home-referral-note', 'home-referral-terms',
   ];
   const elements = new Map(ids.map(id => [id, element()]));
   const context = {
@@ -98,8 +98,8 @@ test('home connection is the final full-width dashboard panel with shared EN/DE 
   const homeIndex = html.indexOf('id="home-connection-card"');
   assert.ok(methodIndex > 0 && homeIndex > methodIndex, 'home panel must follow the observation method at the bottom');
   assert.match(css, /\.home-connection-card\s*\{[\s\S]*grid-column:\s*1 \/ -1 !important/);
-  assert.match(html, /home-connection\.css\?v=20260827-1/);
-  assert.match(html, /home-connection\.js\?v=20260827-i18n-2/);
+  assert.match(html, /home-connection\.css\?v=20260827-polish-3/);
+  assert.match(html, /home-connection\.js\?v=20260827-polish-3/);
   assert.match(germanMirror, /world-observer-de-mirror-loader\.js\?v=20260827-traffic-1/);
   assert.match(mirrorLoader, /"\/de\/traffic\.html"/);
 });
@@ -175,11 +175,12 @@ test('two or more real samples connect without inventing a 24-hour series', () =
   assert.equal(elements.get('home-chart-max').textContent, '83.4 Mbps');
 });
 
-test('hourly-source status thresholds are current through 90 minutes, delayed through 3 hours, then offline', () => {
+test('hourly-source status thresholds are current through 95 minutes, delayed through 3 hours, then offline', () => {
   const { api } = makeHarness('en');
   const now = Date.parse('2026-08-27T18:00:00Z');
-  assert.equal(api.statusForTimestamp(now - 90 * 60 * 1000, now).key, 'current');
-  assert.equal(api.statusForTimestamp(now - 90 * 60 * 1000 - 1, now).key, 'delayed');
+  assert.equal(api.statusForTimestamp(now - 74 * 60 * 1000, now).key, 'current');
+  assert.equal(api.statusForTimestamp(now - 95 * 60 * 1000, now).key, 'current');
+  assert.equal(api.statusForTimestamp(now - 95 * 60 * 1000 - 1, now).key, 'delayed');
   assert.equal(api.statusForTimestamp(now - 3 * 60 * 60 * 1000, now).key, 'delayed');
   assert.equal(api.statusForTimestamp(now - 3 * 60 * 60 * 1000 - 1, now).key, 'offline');
   assert.equal(api.statusForTimestamp('malformed', now).key, 'offline');
@@ -216,4 +217,50 @@ test('component preserves cache bypass, safe links, reduced motion and responsiv
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation: none !important/);
   assert.match(css, /@media \(max-width: 520px\)[\s\S]*\.home-connection-chart \{ height: 180px; \}/);
   assert.match(css, /font-size:\s*clamp\(3\.7rem, 8vw, 7\.5rem\)/);
+});
+
+
+test('both languages use exact cadence boundaries and never substitute publication time', () => {
+  const now = Date.parse('2026-08-27T18:00:00Z');
+  for (const [language, labels] of [['en', ['CURRENT', 'DELAYED', 'OFFLINE']], ['de', ['AKTUELL', 'VERZÖGERT', 'OFFLINE']]]) {
+    const { api, elements } = makeHarness(language);
+    for (const [age, index] of [[74 * 60000, 0], [95 * 60000, 0], [95 * 60000 + 1, 1], [180 * 60000, 1], [180 * 60000 + 1, 2]]) {
+      assert.equal(api.statusForTimestamp(now - age, now).label, labels[index]);
+    }
+    const data = payload();
+    data.latest.timestamp = null;
+    data.generated_at = new Date(now).toISOString();
+    api.render(data, now);
+    assert.equal(elements.get('home-connection-state').textContent, labels[2]);
+    assert.equal(elements.get('home-measured-at').textContent, '—');
+  }
+});
+
+test('referral fallback removes personal and free-month claims in both languages', () => {
+  for (const language of ['en', 'de']) {
+    const { elements } = makeHarness(language);
+    assert.equal(elements.get('home-referral-note').hidden, true);
+    assert.equal(elements.get('home-starlink-link').href, language === 'de' ? 'https://starlink.com/de/' : 'https://starlink.com/');
+    assert.doesNotMatch(elements.get('home-starlink-link').textContent, /FREE|GRATIS|DENNIS/i);
+    assert.equal(elements.get('home-referral-terms').href, language === 'de' ? 'https://starlink.com/de/referrals' : 'https://starlink.com/referrals');
+  }
+  const { context, elements } = makeHarness('en');
+  elements.get('home-starlink-link').dataset.referralUrl = 'https://starlink.com?referral=RC-DF-12369685-91594-14';
+  context.document.documentElement.lang = 'de';
+  context.changeLanguage();
+  assert.equal(elements.get('home-referral-note').hidden, false);
+  assert.equal(elements.get('home-starlink-link').href, elements.get('home-starlink-link').dataset.referralUrl);
+  assert.equal(elements.get('home-starlink-link').textContent, 'DENNIS’ STARLINK-EMPFEHLUNG →');
+});
+
+test('usage dates are localized and absent usage never becomes a false zero', () => {
+  for (const [language, since] of [['en', 'SINCE 10 JUN 2026'], ['de', 'SEIT 10. JUNI 2026']]) {
+    const { api, elements } = makeHarness(language);
+    const data = payload();
+    api.render(data);
+    assert.equal(elements.get('home-usage-since').textContent, since);
+    data.usage.all_time_gb = null;
+    api.render(data);
+    assert.equal(elements.get('home-account-usage').hidden, true);
+  }
 });

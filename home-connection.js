@@ -3,7 +3,7 @@
 
   const ENDPOINT = "/data/home-connection/current.json";
   const POLL_INTERVAL_MS = 5 * 60 * 1000;
-  const CURRENT_MAX_AGE_MS = 90 * 60 * 1000;
+  const CURRENT_MAX_AGE_MS = 95 * 60 * 1000;
   const DELAYED_MAX_AGE_MS = 3 * 60 * 60 * 1000;
   const GENERIC_OOKLA_URL = "https://www.speedtest.net/";
   const readGerman = () => Boolean(window.__DENNIS_WORLD_OBSERVER_MIRROR_SOURCE_PATH) ||
@@ -52,7 +52,11 @@
       lastMeasurement: "LAST MEASUREMENT",
       speedtestServer: "SPEEDTEST SERVER",
       ooklaResult: "VIEW OOKLA RESULT →",
-      starlinkDetails: "STARLINK REFERRAL · ONE FREE MONTH →",
+      starlinkDetails: "DENNIS’ STARLINK REFERRAL →",
+      starlinkOfficial: "EXPLORE STARLINK →",
+      referralNote: "Using Dennis’ personal referral link may give you and Dennis one free month of service, subject to Starlink’s eligibility and market conditions.",
+      referralTerms: "Official referral terms ↗",
+      noSamples: "0 SAMPLES",
       privacy: "PUBLIC PERFORMANCE METRICS ONLY · NO IP ADDRESS PUBLISHED · NO MAC, INTERFACE, HOSTNAME OR ACCOUNT IDENTIFIER EXPOSED",
       notReported: "NOT REPORTED",
       unavailable: "UNAVAILABLE",
@@ -74,12 +78,12 @@
       current: "AKTUELL",
       delayed: "VERZÖGERT",
       offline: "OFFLINE",
-      latestDownload: "DOWNLOAD · LETZTE MESSUNG",
+      latestDownload: "EMPFANG · LETZTE MESSUNG",
       dataUsed: "DATENVERBRAUCH · GESAMT",
       accountSnapshot: "KONTO-VERBRAUCH · MANUELLER STAND",
-      upload: "UPLOAD",
+      upload: "SENDEN",
       latency: "LATENZ",
-      jitter: "JITTER",
+      jitter: "SCHWANKUNG",
       packetLoss: "PAKETVERLUST",
       testData: "TESTDATEN",
       probeNode: "MESSPUNKT",
@@ -93,7 +97,7 @@
       network: "BODEN / NETZWERK",
       topologyDisclaimer: "NUR KONZEPTUELL · KEINE BEHAUPTUNG ZU SATELLIT, POSITION, FUNKKEULE, GATEWAY ODER ROUTE",
       historyLabel: "24-STUNDEN-VERLAUF",
-      historyTitle: "ECHTE DOWNLOAD-MESSUNGEN",
+      historyTitle: "ECHTE EMPFANGSMESSUNGEN",
       min: "MIN",
       max: "MAX",
       latest: "AKTUELL",
@@ -101,10 +105,14 @@
       ago12: "12H",
       now: "JETZT",
       lastMeasurement: "LETZTE MESSUNG",
-      speedtestServer: "SPEEDTEST-SERVER",
+      speedtestServer: "MESSSERVER",
       ooklaResult: "OOKLA-ERGEBNIS →",
-      starlinkDetails: "STARLINK-EMPFEHLUNG · EIN GRATISTMONAT →",
-      privacy: "NUR ÖFFENTLICHE LEISTUNGSMETRIKEN · KEINE IP-ADRESSE VERÖFFENTLICHT · KEINE MAC-, INTERFACE-, HOSTNAMEN- ODER KONTODATEN OFFENGELEGT",
+      starlinkDetails: "DENNIS’ STARLINK-EMPFEHLUNG →",
+      starlinkOfficial: "STARLINK ENTDECKEN →",
+      referralNote: "Mit Dennis’ persönlichem Empfehlungslink können du und Dennis je einen Gratismonat erhalten. Es gelten Starlinks Teilnahmebedingungen und regionale Verfügbarkeit.",
+      referralTerms: "Offizielle Empfehlungsbedingungen ↗",
+      noSamples: "0 MESSPUNKTE",
+      privacy: "NUR ÖFFENTLICHE LEISTUNGSMETRIKEN · KEINE IP-ADRESSE VERÖFFENTLICHT · KEINE MAC-, SCHNITTSTELLEN-, RECHNERNAMEN- ODER KONTODATEN OFFENGELEGT",
       notReported: "NICHT GEMELDET",
       unavailable: "NICHT VERFÜGBAR",
       chartUnavailable: "24H-GESCHWINDIGKEITSVERLAUF NICHT VERFÜGBAR",
@@ -114,8 +122,8 @@
       since: date => `SEIT ${date}`,
       updated: date => `STAND ${date}`,
       measuredAt: date => date,
-      chartAria: (count, min, max, latest) => `Download-Verlauf des Heimanschlusses mit ${count} echten Messpunkt${count === 1 ? "" : "en"}. Minimum ${min} Megabit pro Sekunde, Maximum ${max}, aktuell ${latest}.`,
-      sampleAria: (date, value) => `${date}: ${value} Megabit pro Sekunde Download`,
+      chartAria: (count, min, max, latest) => `Empfangsverlauf des Heimanschlusses mit ${count} echten Messpunkt${count === 1 ? "" : "en"}. Minimum ${min} Megabit pro Sekunde, Maximum ${max}, aktuell ${latest}.`,
+      sampleAria: (date, value) => `${date}: ${value} Megabit pro Sekunde Empfang`,
     },
   };
   let copy = translations[isGerman ? "de" : "en"];
@@ -129,6 +137,7 @@
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;",
   })[character]);
   const validDate = value => {
+    if (value === null || value === undefined || value === "") return null;
     const date = value instanceof Date ? value : new Date(value);
     return Number.isNaN(date.getTime()) ? null : date;
   };
@@ -154,9 +163,17 @@
       if (typeof value === "string") element.setAttribute("aria-label", value);
     });
     const starlinkLink = $("home-starlink-link");
-    if (starlinkLink && !starlinkLink.dataset.referralUrl) {
-      starlinkLink.href = isGerman ? "https://www.starlink.com/de/" : "https://www.starlink.com/";
+    if (starlinkLink) {
+      // This exact owner-provided URL was already present in the repository.
+      const ownerReferral = "https://starlink.com?referral=RC-DF-12369685-91594-14";
+      const hasReferral = starlinkLink.dataset.referralUrl === ownerReferral;
+      starlinkLink.href = hasReferral ? ownerReferral : (isGerman ? "https://starlink.com/de/" : "https://starlink.com/");
+      starlinkLink.textContent = hasReferral ? copy.starlinkDetails : copy.starlinkOfficial;
+      const note = $("home-referral-note");
+      if (note) note.hidden = !hasReferral;
     }
+    const terms = $("home-referral-terms");
+    if (terms) terms.href = isGerman ? "https://starlink.com/de/referrals" : "https://starlink.com/referrals";
   };
 
   const statusForTimestamp = (timestamp, now = Date.now()) => {
@@ -276,7 +293,7 @@
     const panel = $("home-account-usage");
     if (!panel) return;
     const gb = Number(usage?.all_time_gb);
-    if (!Number.isFinite(gb) || gb < 0) {
+    if (!finite(usage?.all_time_gb) || gb < 0) {
       panel.hidden = true;
       return;
     }
@@ -305,7 +322,8 @@
     if (packetLoss) packetLoss.textContent = finite(latest.packet_loss_percent) ? number(latest.packet_loss_percent, 2) : "—";
     if (packetLossUnit) packetLossUnit.textContent = finite(latest.packet_loss_percent) ? "%" : copy.notReported;
 
-    const timestamp = latest.timestamp ?? data.generated_at;
+    // Freshness describes the measurement, never the publication timestamp.
+    const timestamp = latest.timestamp;
     setState(statusForTimestamp(timestamp, now));
     const measured = $("home-measured-at");
     if (measured) measured.textContent = formatDateTime(timestamp);

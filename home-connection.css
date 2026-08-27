@@ -89,6 +89,7 @@
 }
 
 .home-connection-header h2 {
+  overflow-wrap: anywhere;
   margin: 0 !important;
   color: #f1fbff;
   font-size: clamp(1.2rem, 2vw, 1.7rem) !important;
@@ -325,15 +326,15 @@
   stroke: #dffbff;
   stroke-width: 2;
   stroke-linecap: round;
-  stroke-dasharray: 8 92;
+  stroke-dasharray: 5 95;
   filter: drop-shadow(0 0 5px rgba(105, 220, 255, .9));
-  animation: homeSignalTravel 5.4s linear infinite;
+  animation: homeSignalTravel 3.8s linear infinite;
 }
 
 .home-topology-svg .home-signal-stream.down {
   stroke: var(--home-green);
   filter: drop-shadow(0 0 5px rgba(114, 240, 181, .8));
-  animation-delay: -2.7s;
+  animation-delay: -1.9s;
 }
 
 .home-topology-svg .home-node-ring {
@@ -354,14 +355,14 @@
 .home-topology-svg .home-network,
 .home-topology-svg .home-satellite-body,
 .home-topology-svg .home-satellite-panel {
-  fill: rgba(4, 23, 34, .96);
+  fill: url(#home-metal);
   stroke: #bcefff;
   stroke-width: 1.5;
   vector-effect: non-scaling-stroke;
 }
 
 .home-topology-svg .home-satellite-panel {
-  fill: rgba(105, 220, 255, .14);
+  fill: url(#home-array);
   stroke: var(--home-cyan);
 }
 
@@ -376,6 +377,24 @@
   fill: #e9fbff;
   filter: drop-shadow(0 0 7px rgba(105, 220, 255, .9));
 }
+
+.home-topology-svg .home-signal-stream.echo { animation-delay: -1.25s; stroke-width: 1; opacity: .5; }
+.home-topology-svg .home-signal-stream.down.echo { animation-delay: -3.15s; }
+.home-topology-svg .home-network { fill: #122d3b; }
+.home-topology-svg .home-dish-face { fill: #d6eaf2; stroke: #f0fbff; stroke-width: 1.2; }
+.home-topology-svg .home-panel-cells { fill: url(#home-solar-cells); }
+.home-topology-svg .home-hardware-detail { fill: none; stroke: #83b5ca; stroke-width: 1; }
+.home-topology-svg .home-ground-guide { fill: none; stroke: #69dcff; stroke-opacity: .2; }
+.home-topology-svg .home-node-shadow { fill: #69dcff; opacity: .09; }
+.home-topology-svg .home-terminal-screen { fill: #021017; stroke: #3c697c; }
+.home-topology-svg .home-terminal-trace { fill: none; stroke: #72f0b5; stroke-width: 1.2; }
+.home-topology-svg .home-rack-led { fill: #72f0b5; animation: homeRackPulse 3.8s ease-in-out infinite; }
+.home-topology-svg .home-rack-led.secondary { animation-delay: -1.9s; }
+.home-referral-note { color: #9db1bf; font-size: .73rem; line-height: 1.65; margin: .7rem 0; }
+.home-referral-note a { color: #bcefff; text-decoration: underline; text-underline-offset: .2em; }
+.home-referral-note[hidden] { display: none; }
+.home-connection-card a:focus-visible { outline: 2px solid var(--home-cyan); outline-offset: 4px; }
+@keyframes homeRackPulse { 0%, 100% { opacity: .4; } 45%, 65% { opacity: 1; } }
 
 .home-topology-svg text {
   fill: #9db1bf;
@@ -619,8 +638,8 @@
 }
 
 @keyframes homeSatelliteDrift {
-  0%, 100% { transform: translate(-10px, 3px) rotate(-1deg); }
-  50% { transform: translate(14px, -3px) rotate(1deg); }
+  0%, 100% { transform: translate(-2px, 1px) rotate(-.5deg); }
+  50% { transform: translate(2px, -2px) rotate(.5deg); }
 }
 
 @media (max-width: 1120px) {
@@ -658,9 +677,12 @@
   .home-connection-card::after,
   .home-topology-svg .home-signal-stream,
   .home-topology-svg .home-node-ring,
-  .home-topology-svg .home-satellite {
+  .home-topology-svg .home-satellite,
+  .home-topology-svg .home-rack-led {
     animation: none !important;
   }
 
-  .home-connection-card::after { display: none; }
+  .home-connection-card::after,
+  .home-topology-svg .home-signal-stream,
+  .home-topology-svg .home-node-ring { display: none; }
 }
