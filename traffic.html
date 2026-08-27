@@ -21,7 +21,36 @@
   <link rel="stylesheet" href="style.css?v=45">
   <style>
     .book-download-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    @media (max-width: 620px) { .book-download-facts { grid-template-columns: 1fr; } }
+    .home-connection-card { position: relative; overflow: hidden; --home-cyan: #69dcff; --home-green: #72f0b5; --home-amber: #f3c969; }
+    .home-connection-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(105,220,255,.045) 1px, transparent 1px), linear-gradient(rgba(105,220,255,.035) 1px, transparent 1px); background-size: 28px 28px; mask-image: linear-gradient(to bottom, black, transparent 72%); }
+    .home-connection-card > * { position: relative; z-index: 1; }
+    .home-connection-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin: 10px 0 14px; }
+    .home-primary-label, .home-fact span { display: block; font-size: .72rem; letter-spacing: .12em; opacity: .66; }
+    .home-primary-speed { display: flex; align-items: baseline; gap: 8px; margin-top: 3px; }
+    .home-primary-speed strong { color: var(--home-cyan); font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: .95; letter-spacing: -.06em; text-shadow: 0 0 24px rgba(105,220,255,.18); }
+    .home-primary-speed small { opacity: .72; }
+    .home-state { display: inline-flex; align-items: center; gap: 7px; border: 1px solid currentColor; padding: 5px 8px; font-size: .69rem; letter-spacing: .12em; white-space: nowrap; color: var(--home-amber); }
+    .home-state::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+    .home-state.live { color: var(--home-green); }
+    .home-state.stale { color: var(--home-amber); }
+    .home-state.offline { color: #ff8c8c; }
+    .home-connection-chart { height: 116px; border: 1px solid rgba(105,220,255,.18); background: rgba(0,0,0,.12); position: relative; overflow: hidden; }
+    .home-connection-chart.empty { display: grid; place-items: center; color: rgba(255,255,255,.45); font-size: .76rem; letter-spacing: .06em; }
+    .home-connection-chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
+    .home-chart-grid { stroke: rgba(105,220,255,.12); stroke-width: .45; vector-effect: non-scaling-stroke; }
+    .home-chart-area { fill: rgba(105,220,255,.08); }
+    .home-chart-line { fill: none; stroke: var(--home-cyan); stroke-width: 1.7; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px rgba(105,220,255,.45)); }
+    .home-chart-caption { display: flex; justify-content: space-between; margin-top: 5px; font-size: .68rem; opacity: .55; }
+    .home-connection-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 15px; }
+    .home-fact { border-left: 2px solid rgba(105,220,255,.24); padding: 3px 10px; min-width: 0; }
+    .home-fact strong { display: inline-block; margin-top: 4px; font-size: 1.32rem; color: var(--home-cyan); }
+    .home-fact small { margin-left: 4px; opacity: .62; }
+    .home-connection-meta { display: flex; justify-content: space-between; gap: 14px; align-items: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(105,220,255,.16); font-size: .72rem; }
+    .home-connection-meta span { opacity: .65; }
+    .home-connection-meta a { color: var(--home-cyan); text-decoration: none; white-space: nowrap; }
+    .home-connection-meta a:hover { text-decoration: underline; }
+    .home-privacy-note { margin-bottom: 0; opacity: .58; font-size: .7rem; }
+    @media (max-width: 620px) { .book-download-facts { grid-template-columns: 1fr; } .home-connection-head { align-items: stretch; flex-direction: column; } .home-state { align-self: flex-start; } .home-connection-facts { grid-template-columns: 1fr; } .home-connection-meta { align-items: flex-start; flex-direction: column; } }
   </style>
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
@@ -90,10 +119,24 @@
         <div id="novel-reader-body" class="novel-reader-body unavailable">novel signal unavailable</div>
         <p class="novel-reader-note">Chapter opens are successful page requests, not evidence of completion, reading time, or progress. Only aggregate counts are published.</p>
       </article>
-      <article class="traffic-card novel-reader-card panel-novel-reader" aria-live="polite">
-        <h2>BOOK DOWNLOAD SIGNAL <span>(GITHUB RELEASE)</span></h2>
-        <div id="book-download-body" class="novel-reader-body unavailable">download signal unavailable</div>
-        <p class="novel-reader-note">PDF + EPUB download events by language. Counts are not unique readers.</p>
+      <article class="traffic-card novel-reader-card panel-novel-reader home-connection-card" aria-live="polite">
+        <h2>HOME CONNECTION <span>(24H · HEIMANSCHLUSS)</span></h2>
+        <div class="home-connection-head">
+          <div>
+            <span class="home-primary-label">DOWNLOAD · LETZTE MESSUNG</span>
+            <div class="home-primary-speed"><strong id="home-download">—</strong><small>Mbps ↓</small></div>
+          </div>
+          <span id="home-connection-state" class="home-state">WAITING FOR SIGNAL</span>
+        </div>
+        <div id="home-connection-chart" class="home-connection-chart empty" aria-label="Home connection download speed over the last 24 hours">24h speed history unavailable</div>
+        <div id="home-chart-caption" class="home-chart-caption"><span>24H</span><span>NOW</span></div>
+        <div class="home-connection-facts">
+          <div class="home-fact"><span>UPLOAD · UPSTREAM</span><strong id="home-upload">—</strong><small>Mbps ↑</small></div>
+          <div class="home-fact"><span>LATENCY · LATENZ</span><strong id="home-latency">—</strong><small>ms</small></div>
+          <div class="home-fact"><span>ALL-TIME · GESAMTTRANSFER</span><strong id="home-alltime">3.22 TB</strong></div>
+        </div>
+        <div class="home-connection-meta"><span id="home-connection-meta">private collector · privater Messpunkt</span><a href="https://www.speedtest.net/" target="_blank" rel="noopener noreferrer">Ookla Speedtest ↗</a></div>
+        <p class="home-privacy-note">Public metrics only · no public IP address · keine öffentliche IP-Adresse.</p>
       </article>
       <article class="traffic-card method-card"><h2>OBSERVATION METHOD</h2><dl><dt>Source</dt><dd>worldnode / nginx access logs</dd><dt>Human classification</dt><dd>request-pattern and user-agent heuristics</dd><dt>Privacy</dt><dd>no raw visitor IP addresses exposed</dd><dt>Retention</dt><dd>aggregated observational data</dd></dl></article>
     </section>
@@ -119,12 +162,7 @@
   const redact = (v) => String(v || "").replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[redacted]").replace(/\b(?:[a-f0-9]{1,4}:){2,7}[a-f0-9]{1,4}\b/gi, "[redacted]");
   const safePath = (p) => { const clean = redact(p || "/").replace(/[\u0000-\u001f\u007f-\u009f]+/g, "?"); return clean.length > 140 ? clean.slice(0, 137) + "…" : clean; };
   const WIESMOOR_NODE = [496, 137];
-  const BOOK_RELEASE_ENDPOINT = "https://api.github.com/repos/dennishilk/dennishilk.github.io/releases/tags/the-lost-administrator-v1.0";
-  const BOOK_DOWNLOAD_BASELINE = { english: 94, german: 42 };
-  const BOOK_RELEASE_ASSETS = {
-    english: ["The_Lost_Administrator_English.pdf", "The_Lost_Administrator_English_FINAL.epub"],
-    german: ["The_Lost_Administrator_German.pdf", "The_Lost_Administrator_German_FINAL.epub"]
-  };
+  const HOME_CONNECTION_ENDPOINT = "/data/home-connection/current.json";
   // Visual-only, privacy-safe origins for atmospheric map pings; not derived from visitors, IPs, countries, paths, or identities.
   const decorativeSignalOrigins = [
     { code: "EASTERN_NORTH_AMERICA", xy: [260, 220], kind: "human" },
@@ -186,36 +224,64 @@
   document.addEventListener("visibilitychange", () => { if (document.hidden) cleanupSignalRoutes(); });
   const renderPulse = (hourly) => { const rows = arr(hourly).slice(0,24); if (!rows.length) { $("pulse-chart").classList.add("empty"); $("pulse-chart").textContent = "traffic data unavailable"; return; } const max = Math.max(1, ...rows.flatMap(h => [Number(h.humans ?? h.human ?? 0), Number(h.bots ?? h.crawlers ?? h.bot ?? 0)])); const point = (h, i, key) => `${(i / Math.max(1, rows.length - 1) * 100).toFixed(2)},${(100 - (Number(h[key[0]] ?? h[key[1]] ?? h[key[2]] ?? 0) / max * 86 + 7)).toFixed(2)}`; $("pulse-chart").classList.remove("empty"); $("pulse-chart").innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24 hour sparkline for human and bot requests"><g class="pulse-grid"><path d="M0 25H100M0 50H100M0 75H100"/></g><polyline class="pulse-human" points="${rows.map((h,i)=>point(h,i,["humans","human","human_requests"])).join(" ")}"/><polyline class="pulse-bot" points="${rows.map((h,i)=>point(h,i,["bots","crawlers","bot"])).join(" ")}"/></svg>`; };
   const renderNovelReader = (reader) => { const body = $("novel-reader-body"); if (!body) return; if (!reader || typeof reader !== "object") { body.className = "novel-reader-body unavailable"; body.textContent = "novel signal unavailable"; return; } const today = reader.today || {}, rolling = reader.last_24_hours || {}, allTime = reader.all_time || {}; const facts = [["NOVEL PAGEVIEWS · TODAY", fmt(today.novel_pageviews ?? today.pageviews)], ["EST. READERS · 24H", fmt(rolling.estimated_readers)], ["CHAPTER OPENS · ALL TIME", fmt(allTime.chapter_opens)]]; body.className = "novel-reader-body"; body.innerHTML = `<div class="novel-reader-facts">${facts.map(([k,v]) => `<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("")}</div><a class="novel-reader-link" href="/lost-administrator/novel/" aria-label="Open The Lost Administrator novel"><span>THE LOST ADMINISTRATOR</span><strong>OPEN NOVEL →</strong></a>`; };
-  const renderBookDownloads = (counts) => {
-    const body = $("book-download-body");
-    if (!body) return;
-    if (!counts) {
-      body.className = "novel-reader-body unavailable";
-      body.textContent = "download signal unavailable";
-      return;
-    }
-    const facts = [
-      ["ENGLISH · PDF + EPUB", fmt(counts.english)],
-      ["DEUTSCH · PDF + EPUB", fmt(counts.german)],
-      ["TOTAL · ALL EDITIONS", fmt(counts.english + counts.german)]
-    ];
-    body.className = "novel-reader-body";
-    body.innerHTML = `<div class="novel-reader-facts book-download-facts">${facts.map(([k,v]) => `<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("")}</div><a class="novel-reader-link" href="/lost-administrator/" aria-label="Open The Lost Administrator"><span>THE LOST ADMINISTRATOR</span><strong>OPEN PROJECT →</strong></a>`;
+  const homeNum = (v, digits = 1) => Number.isFinite(Number(v)) ? Number(v).toFixed(digits).replace(/\.0$/, "") : "—";
+  const homeTimestamp = (p) => p?.t ?? p?.time ?? p?.measured_at ?? p?.timestamp ?? p?.date ?? null;
+  const homeDown = (p) => Number(p?.down ?? p?.download_mbps ?? p?.down_mbps ?? p?.download ?? NaN);
+  const setHomeState = (state, text) => { const el = $("home-connection-state"); el.className = `home-state ${state}`; el.textContent = text; };
+  const formatHomeAllTime = (data) => {
+    const tb = Number(data?.all_time_tb ?? data?.usage?.all_time_tb ?? data?.total_transfer_tb);
+    if (Number.isFinite(tb) && tb >= 0) return `${tb.toFixed(tb < 10 ? 2 : 1)} TB`;
+    const directBytes = Number(data?.all_time_bytes ?? data?.usage?.all_time_bytes ?? data?.total_transfer_bytes);
+    const downBytes = Number(data?.all_time_download_bytes ?? data?.usage?.download_bytes);
+    const upBytes = Number(data?.all_time_upload_bytes ?? data?.usage?.upload_bytes);
+    const bytes = Number.isFinite(directBytes) ? directBytes : (Number.isFinite(downBytes) || Number.isFinite(upBytes) ? (Number.isFinite(downBytes) ? downBytes : 0) + (Number.isFinite(upBytes) ? upBytes : 0) : NaN);
+    if (Number.isFinite(bytes) && bytes >= 0) return `${(bytes / 1e12).toFixed(bytes < 10e12 ? 2 : 1)} TB`;
+    const gb = Number(data?.all_time_gb ?? data?.usage?.all_time_gb);
+    if (Number.isFinite(gb) && gb >= 0) return `${(gb / 1000).toFixed(gb < 10000 ? 2 : 1)} TB`;
+    return "3.22 TB";
   };
-  const updateBookDownloads = () => fetch(BOOK_RELEASE_ENDPOINT, { headers: { Accept: "application/vnd.github+json" } })
-    .then((response) => { if (!response.ok) throw new Error("release unavailable"); return response.json(); })
-    .then(({ assets = [] }) => {
-      const byName = new Map(assets.map((asset) => [asset.name, asset]));
-      const sum = (names) => names.reduce((total, name) => {
-        const count = Number(byName.get(name)?.download_count);
-        return total + (Number.isFinite(count) ? count : 0);
-      }, 0);
-      renderBookDownloads({
-        english: BOOK_DOWNLOAD_BASELINE.english + sum(BOOK_RELEASE_ASSETS.english),
-        german: BOOK_DOWNLOAD_BASELINE.german + sum(BOOK_RELEASE_ASSETS.german)
-      });
-    })
-    .catch(() => renderBookDownloads(null));
+  const renderHomeChart = (history) => {
+    const chart = $("home-connection-chart"), caption = $("home-chart-caption");
+    const samples = (Array.isArray(history) ? history : []).map((p) => ({ value: homeDown(p), t: homeTimestamp(p) })).filter(p => Number.isFinite(p.value));
+    if (!samples.length) { chart.className = "home-connection-chart empty"; chart.textContent = "24h speed history unavailable"; caption.innerHTML = "<span>24H</span><span>NOW</span>"; return; }
+    const values = samples.map(p => p.value), min = Math.min(...values), max = Math.max(...values), spread = Math.max(1, max - min), pad = Math.max(2, spread * .16), lo = Math.max(0, min - pad), hi = max + pad, range = Math.max(1, hi - lo);
+    const pointsFor = (items) => items.map((p, i) => `${(i / Math.max(1, items.length - 1) * 100).toFixed(2)},${(92 - ((p.value - lo) / range * 84)).toFixed(2)}`);
+    let points = pointsFor(samples);
+    if (points.length === 1) { const y = points[0].split(",")[1]; points = [`0,${y}`, `100,${y}`]; }
+    const area = `0,100 ${points.join(" ")} 100,100`;
+    chart.className = "home-connection-chart";
+    chart.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24 hour home connection download speed"><g class="home-chart-grid"><path d="M0 25H100M0 50H100M0 75H100M25 0V100M50 0V100M75 0V100"/></g><polygon class="home-chart-area" points="${area}"/><polyline class="home-chart-line" points="${points.join(" ")}"/></svg>`;
+    const firstTime = samples[0].t ? new Date(samples[0].t) : null, lastTime = samples.at(-1).t ? new Date(samples.at(-1).t) : null;
+    const timeLabel = d => d && !Number.isNaN(d.getTime()) ? d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) : "—";
+    caption.innerHTML = `<span>${esc(timeLabel(firstTime))} · ${homeNum(min)} Mbps min</span><span>${homeNum(max)} Mbps max · ${esc(timeLabel(lastTime))}</span>`;
+  };
+  const renderHomeConnection = (data) => {
+    const latest = data?.latest && typeof data.latest === "object" ? data.latest : data || {};
+    const down = latest.download_mbps ?? latest.down_mbps ?? latest.down ?? latest.download;
+    const up = latest.upload_mbps ?? latest.up_mbps ?? latest.up ?? latest.upload;
+    const latency = latest.latency_ms ?? latest.ping_ms ?? latest.ping ?? latest.latency;
+    $("home-download").textContent = homeNum(down);
+    $("home-upload").textContent = homeNum(up);
+    $("home-latency").textContent = homeNum(latency);
+    $("home-alltime").textContent = formatHomeAllTime(data);
+    renderHomeChart(data?.history_24h ?? data?.history ?? []);
+    const stamp = latest.measured_at ?? latest.timestamp ?? latest.t ?? data?.generated_at ?? null;
+    const measured = stamp ? new Date(stamp) : null;
+    const age = measured && !Number.isNaN(measured.getTime()) ? Date.now() - measured.getTime() : Infinity;
+    if (age <= 45 * 60 * 1000) setHomeState("live", "LIVE · AKTUELL");
+    else if (age <= 3 * 60 * 60 * 1000) setHomeState("stale", "STALE · VERZÖGERT");
+    else setHomeState("offline", "OFFLINE · ALT");
+    const bits = [];
+    if (measured && !Number.isNaN(measured.getTime())) bits.push(`measured ${measured.toLocaleString()}`);
+    const server = redact(latest.server_name ?? latest.server ?? data?.server_name ?? "");
+    if (server && server !== "[redacted]") bits.push(`server ${server}`);
+    bits.push("private collector");
+    $("home-connection-meta").textContent = bits.join(" · ");
+  };
+  const updateHomeConnection = () => fetch(`${HOME_CONNECTION_ENDPOINT}?t=${Date.now()}`, { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error("home connection unavailable"); return r.json(); })
+    .then(renderHomeConnection)
+    .catch(() => { setHomeState("offline", "OFFLINE · KEIN SIGNAL"); $("home-connection-meta").textContent = "collector unavailable · public metrics only"; renderHomeChart([]); });
   const renderStream = (rows) => { const clean = arr(rows); $("request-stream").innerHTML = clean.length ? clean.slice(0,8).map(r => { const rawKind = String(r.kind || r.type || 'HUMAN').toUpperCase(); const kind = rawKind.includes('SCAN') || rawKind.includes('NOISE') ? 'SCANNER' : (/BOT|CRAWL/.test(rawKind) ? 'BOT' : 'HUMAN'); return `<div><time>${esc(String(r.time || r.timestamp || "--:--:--").slice(0,8))}</time><strong class="${kind.toLowerCase()}">${kind}</strong><span>${esc(String(r.country || r.country_code || '--').slice(0,2).toUpperCase())}</span><a title="${esc(safePath(r.path || r.url || '/'))}">${esc(safePath(r.path || r.url || '/'))}</a></div>`; }).join("") : "No recent public request stream available."; };
   const updateTraffic = () => fetch(`/data/site-traffic.json?t=${Date.now()}`, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(data => {
     const pageviews = val(data,["pageviews_today","today_pageviews","today"]), last24 = val(data,["requests_total","last_24h","last_24h_pageviews","pageviews_last_24h"]), totalPageviews = val(data,["total_pageviews","pageviews_total","total"]), humans = val(data,["human_requests_today","humans_today","human_today"]), unique = val(data,["estimated_unique_visitors","unique_visitors","visitors_unique"]), bots = val(data,["bot_requests_today","bots_today","crawlers_today","bots_crawlers"]), requests = val(data,["requests_total","requests_24h","requests_last_24h","last_24h_requests","total_requests"]);
@@ -225,8 +291,9 @@
     const hourly = arr(data.hourly); renderPulse(hourly); renderSignalMatrix(hourly); const liveRequests = arr(data.live_requests); renderStream(liveRequests); renderList("top-countries", arr(data.countries)); renderMapPoints(data.countries); renderSignalRoutes(data.countries, liveRequests); renderBars("top-pages", arr(data.top_pages)); renderBars("crawler-species", arr(data.crawler_species)); renderNovelReader(data.novel_reader);
   }).catch(() => { setUnavailable(); renderNovelReader(null); });
   updateTraffic();
-  updateBookDownloads();
+  updateHomeConnection();
   window.setInterval(updateTraffic, 30_000);
+  window.setInterval(updateHomeConnection, 5 * 60_000);
 })();
 </script>
 </body>
