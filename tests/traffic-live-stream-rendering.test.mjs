@@ -7,7 +7,7 @@ const html = readFileSync(new URL('../traffic.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../style.css', import.meta.url), 'utf8');
 const manifest = JSON.parse(readFileSync(new URL('../content/lost-administrator/novel/novel-manifest.json', import.meta.url), 'utf8'));
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>\n?([\s\S]*?)<\/script>/g)];
-const script = scripts.at(-1)?.[1];
+const script = scripts.map(match => match[1]).find(source => source.includes('const decorativeSignalOrigins = ['));
 
 const makeElement = () => {
   const element = {
@@ -94,11 +94,11 @@ const runTrafficScript = async (responses, now = '2026-07-08T18:30:00.000Z', opt
 
 test('traffic dashboard card layout replaces Top Referrers with one compact signal matrix', () => {
   assert.doesNotMatch(html, /TOP REFERRERS/);
-  assert.equal((html.match(/SIGNAL ACTIVITY MATRIX <span>\(24H\)<\/span>/g) || []).length, 1);
+  assert.equal((html.match(/data-traffic-i18n="signalMatrix">SIGNAL ACTIVITY MATRIX<\/span>/g) || []).length, 1);
   assert.doesNotMatch(html, /top-referrers/);
   assert.doesNotMatch(html, /traffic-card timeline wide/);
 
-  const rowPattern = /MOST OBSERVED PAGES[\s\S]*CRAWLER SPECIES[\s\S]*<article class="traffic-card signal-matrix-card"><h2>SIGNAL ACTIVITY MATRIX <span>\(24H\)<\/span>/;
+  const rowPattern = /MOST OBSERVED PAGES[\s\S]*CRAWLER SPECIES[\s\S]*<article class="traffic-card signal-matrix-card"><h2><span data-traffic-i18n="signalMatrix">SIGNAL ACTIVITY MATRIX<\/span> <span>\(24H\)<\/span>/;
   assert.match(html, rowPattern, 'matrix should occupy the former third card position after pages and crawler species');
   assert.match(html, /NOVEL READER SIGNAL/);
   assert.match(html, /OBSERVATION METHOD/);
@@ -211,7 +211,7 @@ test('novel reader hides per-chapter statistics and links to the novel landing p
 
 test('novel reader privacy explanation remains unchanged and non-clickable', () => {
   const note = 'Chapter opens are successful page requests, not evidence of completion, reading time, or progress. Only aggregate counts are published.';
-  assert.match(html, new RegExp(`<p class="novel-reader-note">${note.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/p>`));
+  assert.match(html, new RegExp(`<p class="novel-reader-note"[^>]*>${note.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/p>`));
   const card = html.match(/<article class="traffic-card novel-reader-card panel-novel-reader"[\s\S]*?<\/article>/)?.[0] || '';
   assert.doesNotMatch(card, /<a[^>]*class="novel-reader-note"|class="novel-reader-note"[\s\S]*<a\b/);
 });

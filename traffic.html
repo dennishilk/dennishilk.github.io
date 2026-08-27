@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="canonical" href="https://dennishilk.com/traffic.html">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/traffic.html">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/traffic.html">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/traffic.html">
   <script>
     if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== [127, 0, 0, 1].join(".")) {
       location.replace("https://" + location.hostname + location.pathname + location.search);
@@ -19,39 +22,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="avatar.png">
   <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="style.css?v=45">
-  <style>
-    .book-download-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .home-connection-card { position: relative; overflow: hidden; --home-cyan: #69dcff; --home-green: #72f0b5; --home-amber: #f3c969; }
-    .home-connection-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(105,220,255,.045) 1px, transparent 1px), linear-gradient(rgba(105,220,255,.035) 1px, transparent 1px); background-size: 28px 28px; mask-image: linear-gradient(to bottom, black, transparent 72%); }
-    .home-connection-card > * { position: relative; z-index: 1; }
-    .home-connection-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin: 10px 0 14px; }
-    .home-primary-label, .home-fact span { display: block; font-size: .72rem; letter-spacing: .12em; opacity: .66; }
-    .home-primary-speed { display: flex; align-items: baseline; gap: 8px; margin-top: 3px; }
-    .home-primary-speed strong { color: var(--home-cyan); font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: .95; letter-spacing: -.06em; text-shadow: 0 0 24px rgba(105,220,255,.18); }
-    .home-primary-speed small { opacity: .72; }
-    .home-state { display: inline-flex; align-items: center; gap: 7px; border: 1px solid currentColor; padding: 5px 8px; font-size: .69rem; letter-spacing: .12em; white-space: nowrap; color: var(--home-amber); }
-    .home-state::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
-    .home-state.live { color: var(--home-green); }
-    .home-state.stale { color: var(--home-amber); }
-    .home-state.offline { color: #ff8c8c; }
-    .home-connection-chart { height: 116px; border: 1px solid rgba(105,220,255,.18); background: rgba(0,0,0,.12); position: relative; overflow: hidden; }
-    .home-connection-chart.empty { display: grid; place-items: center; color: rgba(255,255,255,.45); font-size: .76rem; letter-spacing: .06em; }
-    .home-connection-chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
-    .home-chart-grid { stroke: rgba(105,220,255,.12); stroke-width: .45; vector-effect: non-scaling-stroke; }
-    .home-chart-area { fill: rgba(105,220,255,.08); }
-    .home-chart-line { fill: none; stroke: var(--home-cyan); stroke-width: 1.7; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px rgba(105,220,255,.45)); }
-    .home-chart-caption { display: flex; justify-content: space-between; margin-top: 5px; font-size: .68rem; opacity: .55; }
-    .home-connection-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 15px; }
-    .home-fact { border-left: 2px solid rgba(105,220,255,.24); padding: 3px 10px; min-width: 0; }
-    .home-fact strong { display: inline-block; margin-top: 4px; font-size: 1.32rem; color: var(--home-cyan); }
-    .home-fact small { margin-left: 4px; opacity: .62; }
-    .home-connection-meta { display: flex; justify-content: space-between; gap: 14px; align-items: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(105,220,255,.16); font-size: .72rem; }
-    .home-connection-meta span { opacity: .65; }
-    .home-connection-meta a { color: var(--home-cyan); text-decoration: none; white-space: nowrap; }
-    .home-connection-meta a:hover { text-decoration: underline; }
-    .home-privacy-note { margin-bottom: 0; opacity: .58; font-size: .7rem; }
-    @media (max-width: 620px) { .book-download-facts { grid-template-columns: 1fr; } .home-connection-head { align-items: stretch; flex-direction: column; } .home-state { align-self: flex-start; } .home-connection-facts { grid-template-columns: 1fr; } .home-connection-meta { align-items: flex-start; flex-direction: column; } }
-  </style>
+  <link rel="stylesheet" href="home-connection.css?v=20260827-1">
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
@@ -64,81 +35,155 @@
 <canvas id="stars"></canvas>
 <div class="content traffic-shell">
   <header class="traffic-header">
-    <nav class="button-group traffic-global-nav" aria-label="Primary navigation">
+    <nav class="button-group traffic-global-nav" aria-label="Primary navigation" data-traffic-aria="primaryNavigation">
       <div class="buttons">
-        <a href="/">Home</a>
+        <a href="/" data-traffic-i18n="home">Home</a>
+        <a id="traffic-language-link" href="/de/traffic.html" lang="de" hreflang="de">Deutsch</a>
       </div>
     </nav>
-    <nav class="observer-nav" aria-label="World Observer sections">
-      <a href="/world-observer.html">Overview</a>
+    <nav class="observer-nav" aria-label="World Observer sections" data-traffic-aria="observerSections">
+      <a href="/world-observer.html" data-traffic-i18n="overview">Overview</a>
       <a href="/world-observer/internet.html">Internet</a>
-      <a href="/world-observer/media.html">Media</a>
-      <a href="/world-observer/society.html">Society</a>
-      <a href="/world-observer/hometown.html">Hometown</a>
-      <a href="/world-observer/environment.html">Earth &amp; Space</a>
-      <a href="/world-observer/technology.html">Technology</a>
+      <a href="/world-observer/media.html" data-traffic-i18n="media">Media</a>
+      <a href="/world-observer/society.html" data-traffic-i18n="society">Society</a>
+      <a href="/world-observer/hometown.html" data-traffic-i18n="hometown">Hometown</a>
+      <a href="/world-observer/environment.html" data-traffic-i18n="earthSpace">Earth &amp; Space</a>
+      <a href="/world-observer/technology.html" data-traffic-i18n="technology">Technology</a>
       <a href="/traffic.html" class="observer-nav-standalone active" aria-current="page">Traffic</a>
     </nav>
     <div class="traffic-hero-grid">
       <div class="traffic-hero-copy">
         <p class="terminal-command">&gt; tail -f /var/log/nginx/access.log</p>
-        <h1>SITE TRAFFIC OBSERVER</h1>
-        <p>Watching this website from worldnode / nginx<br>Humans, crawlers, pageviews and request patterns.</p>
+        <h1 data-traffic-i18n="heroTitle">SITE TRAFFIC OBSERVER</h1>
+        <p data-traffic-i18n-html="heroDescription">Watching this website from worldnode / nginx<br>Humans, crawlers, pageviews and request patterns.</p>
       </div>
-      <aside class="traffic-live-card" aria-label="Traffic observer status">
-        <strong><span class="live-dot"></span> OBSERVING LIVE</strong>
+      <aside class="traffic-live-card" aria-label="Traffic observer status" data-traffic-aria="trafficStatus">
+        <strong><span class="live-dot"></span><span data-traffic-i18n="observingLive">OBSERVING LIVE</span></strong>
         <span>worldnode / nginx</span>
         <hr>
-        <span>last observation</span>
+        <span data-traffic-i18n="lastObservation">last observation</span>
         <b id="last-observation">—</b>
-        <em id="live-state">offline / unavailable</em>
+        <em id="live-state" data-traffic-i18n="offlineUnavailable">offline / unavailable</em>
       </aside>
     </div>
   </header>
 
   <main class="traffic-dashboard">
-    <section class="traffic-kpis" aria-label="Traffic key metrics">
-      <article class="traffic-card kpi"><span>HUMAN REQUESTS TODAY</span><strong id="kpi-humans">—</strong><small>observed humans</small></article>
-      <article class="traffic-card kpi"><span>PAGEVIEWS TODAY</span><strong id="kpi-pageviews">—</strong><small>today</small></article>
-      <article class="traffic-card kpi"><span>TOTAL PAGEVIEWS</span><strong id="kpi-total-pageviews">—</strong><small>all time</small></article>
-      <article class="traffic-card kpi"><span>ESTIMATED UNIQUE VISITORS</span><strong id="kpi-unique">—</strong><small>country-level only</small></article>
-      <article class="traffic-card kpi"><span>BOT / SCANNER REQUESTS</span><strong id="kpi-bots">—</strong><small>of all requests</small></article>
-      <article class="traffic-card kpi"><span>REQUESTS 24H</span><strong id="kpi-requests">—</strong><small>all requests</small></article>
+    <section class="traffic-kpis" aria-label="Traffic key metrics" data-traffic-aria="trafficMetrics">
+      <article class="traffic-card kpi"><span data-traffic-i18n="humanRequestsToday">HUMAN REQUESTS TODAY</span><strong id="kpi-humans">—</strong><small data-traffic-i18n="observedHumans">observed humans</small></article>
+      <article class="traffic-card kpi"><span data-traffic-i18n="pageviewsToday">PAGEVIEWS TODAY</span><strong id="kpi-pageviews">—</strong><small data-traffic-i18n="today">today</small></article>
+      <article class="traffic-card kpi"><span data-traffic-i18n="totalPageviews">TOTAL PAGEVIEWS</span><strong id="kpi-total-pageviews">—</strong><small data-traffic-i18n="allTime">all time</small></article>
+      <article class="traffic-card kpi"><span data-traffic-i18n="estimatedUnique">ESTIMATED UNIQUE VISITORS</span><strong id="kpi-unique">—</strong><small data-traffic-i18n="countryOnly">country-level only</small></article>
+      <article class="traffic-card kpi"><span data-traffic-i18n="botRequests">BOT / SCANNER REQUESTS</span><strong id="kpi-bots">—</strong><small data-traffic-i18n="ofAllRequests">of all requests</small></article>
+      <article class="traffic-card kpi"><span data-traffic-i18n="requests24h">REQUESTS 24H</span><strong id="kpi-requests">—</strong><small data-traffic-i18n="allRequests">all requests</small></article>
     </section>
 
     <section class="traffic-grid">
-      <article class="traffic-card traffic-pulse panel-pulse"><h2>TRAFFIC PULSE <span>(24H)</span></h2><div id="pulse-chart" class="pulse-chart empty">traffic data unavailable</div><div class="traffic-legend"><span class="human-line">Humans</span><span class="bot-line">Bots / Scanners</span></div></article>
-      <article class="traffic-card live-stream panel-stream"><h2>LIVE REQUEST STREAM <b>LIVE</b></h2><div id="request-stream" class="stream-empty">No recent public request stream available.</div></article>
-      <article class="traffic-card map-card panel-map"><div class="map-layout"><div><h2>GLOBAL SIGNAL MAP</h2><div class="world-map-frame" role="img" aria-label="Country-level world signal map"><img src="assets/traffic-world-map.png" alt="Recognizable world map silhouette for aggregated country-level traffic signals" class="world-map-base"><svg viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet" aria-hidden="true" class="world-signal-overlay"><g class="map-coordinate-plane" transform="translate(0 151.04) scale(1.536)"><g id="map-signal-routes"></g><g id="map-destination-node"></g><g id="map-points"></g></g></svg></div></div><aside><h3>TOP COUNTRIES (24H)</h3><div id="top-countries" class="mini-list"></div><p class="privacy-note">no IP addresses shown<br>country level only</p></aside></div></article>
-      <article class="traffic-card ratio-card panel-ratio"><h2>HUMAN / MACHINE RATIO</h2><div id="ratio-bars" class="ratio-bars unavailable">ratio unavailable</div><p>observed requests<br><strong id="ratio-total">—</strong></p></article>
-      <article class="traffic-card"><h2>MOST OBSERVED PAGES</h2><div id="top-pages" class="bar-list"></div></article>
-      <article class="traffic-card"><h2>CRAWLER SPECIES</h2><div id="crawler-species" class="bar-list purple"></div></article>
-      <article class="traffic-card signal-matrix-card"><h2>SIGNAL ACTIVITY MATRIX <span>(24H)</span></h2><div id="signal-matrix" class="signal-matrix empty">hourly signal data unavailable</div><div class="traffic-legend signal-legend"><span class="matrix-human">Humans</span><span class="matrix-bot">Bots / Crawlers</span><span id="matrix-scanner-legend" class="matrix-scanner" hidden>Scanners</span></div><div id="signal-facts" class="signal-facts"></div></article>
+      <article class="traffic-card traffic-pulse panel-pulse"><h2><span data-traffic-i18n="trafficPulse">TRAFFIC PULSE</span> <span>(24H)</span></h2><div id="pulse-chart" class="pulse-chart empty" data-traffic-i18n="trafficUnavailable">traffic data unavailable</div><div class="traffic-legend"><span class="human-line" data-traffic-i18n="humans">Humans</span><span class="bot-line" data-traffic-i18n="botsScanners">Bots / Scanners</span></div></article>
+      <article class="traffic-card live-stream panel-stream"><h2><span data-traffic-i18n="liveRequestStream">LIVE REQUEST STREAM</span> <b>LIVE</b></h2><div id="request-stream" class="stream-empty" data-traffic-i18n="noRecentStream">No recent public request stream available.</div></article>
+      <article class="traffic-card map-card panel-map"><div class="map-layout"><div><h2 data-traffic-i18n="globalSignalMap">GLOBAL SIGNAL MAP</h2><div class="world-map-frame" role="img" aria-label="Country-level world signal map" data-traffic-aria="worldMap"><img src="assets/traffic-world-map.png" alt="Recognizable world map silhouette for aggregated country-level traffic signals" data-traffic-alt="worldMapImage" class="world-map-base"><svg viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet" aria-hidden="true" class="world-signal-overlay"><g class="map-coordinate-plane" transform="translate(0 151.04) scale(1.536)"><g id="map-signal-routes"></g><g id="map-destination-node"></g><g id="map-points"></g></g></svg></div></div><aside><h3 data-traffic-i18n="topCountries">TOP COUNTRIES (24H)</h3><div id="top-countries" class="mini-list"></div><p class="privacy-note" data-traffic-i18n-html="countryPrivacy">no IP addresses shown<br>country level only</p></aside></div></article>
+      <article class="traffic-card ratio-card panel-ratio"><h2 data-traffic-i18n="humanMachineRatio">HUMAN / MACHINE RATIO</h2><div id="ratio-bars" class="ratio-bars unavailable" data-traffic-i18n="ratioUnavailable">ratio unavailable</div><p><span data-traffic-i18n="observedRequests">observed requests</span><br><strong id="ratio-total">—</strong></p></article>
+      <article class="traffic-card"><h2 data-traffic-i18n="mostObservedPages">MOST OBSERVED PAGES</h2><div id="top-pages" class="bar-list"></div></article>
+      <article class="traffic-card"><h2 data-traffic-i18n="crawlerSpecies">CRAWLER SPECIES</h2><div id="crawler-species" class="bar-list purple"></div></article>
+      <article class="traffic-card signal-matrix-card"><h2><span data-traffic-i18n="signalMatrix">SIGNAL ACTIVITY MATRIX</span> <span>(24H)</span></h2><div id="signal-matrix" class="signal-matrix empty" data-traffic-i18n="hourlyUnavailable">hourly signal data unavailable</div><div class="traffic-legend signal-legend"><span class="matrix-human" data-traffic-i18n="humans">Humans</span><span class="matrix-bot" data-traffic-i18n="botsCrawlers">Bots / Crawlers</span><span id="matrix-scanner-legend" class="matrix-scanner" data-traffic-i18n="scanners" hidden>Scanners</span></div><div id="signal-facts" class="signal-facts"></div></article>
       <article class="traffic-card novel-reader-card panel-novel-reader" aria-live="polite">
-        <h2>NOVEL READER SIGNAL <span class="novel-live-signal"><i aria-hidden="true"></i>(FIRST-PARTY LOGS)</span></h2>
-        <div id="novel-reader-body" class="novel-reader-body unavailable">novel signal unavailable</div>
-        <p class="novel-reader-note">Chapter opens are successful page requests, not evidence of completion, reading time, or progress. Only aggregate counts are published.</p>
+        <h2><span data-traffic-i18n="novelReaderSignal">NOVEL READER SIGNAL</span> <span class="novel-live-signal"><i aria-hidden="true"></i><span data-traffic-i18n="firstPartyLogs">(FIRST-PARTY LOGS)</span></span></h2>
+        <div id="novel-reader-body" class="novel-reader-body unavailable" data-traffic-i18n="novelUnavailable">novel signal unavailable</div>
+        <p class="novel-reader-note" data-traffic-i18n="novelNote">Chapter opens are successful page requests, not evidence of completion, reading time, or progress. Only aggregate counts are published.</p>
       </article>
-      <article class="traffic-card novel-reader-card panel-novel-reader home-connection-card" aria-live="polite">
-        <h2>HOME CONNECTION <span>(24H · HEIMANSCHLUSS)</span></h2>
-        <div class="home-connection-head">
-          <div>
-            <span class="home-primary-label">DOWNLOAD · LETZTE MESSUNG</span>
-            <div class="home-primary-speed"><strong id="home-download">—</strong><small>Mbps ↓</small></div>
+      <article class="traffic-card method-card"><h2 data-traffic-i18n="observationMethod">OBSERVATION METHOD</h2><dl><dt data-traffic-i18n="source">Source</dt><dd>worldnode / nginx access logs</dd><dt data-traffic-i18n="humanClassification">Human classification</dt><dd data-traffic-i18n="classificationMethod">request-pattern and user-agent heuristics</dd><dt data-traffic-i18n="privacy">Privacy</dt><dd data-traffic-i18n="noRawIps">no raw visitor IP addresses exposed</dd><dt data-traffic-i18n="retention">Retention</dt><dd data-traffic-i18n="aggregateRetention">aggregated observational data</dd></dl></article>
+
+      <article id="home-connection-card" class="traffic-card home-connection-card" aria-live="polite">
+        <header class="home-connection-header">
+          <div class="home-connection-heading">
+            <span class="home-connection-kicker" data-home-i18n="connectionKicker">HOME CONNECTION</span>
+            <h2 data-home-i18n="panelTitle">REAL HOURLY CONNECTION TELEMETRY</h2>
+            <p class="home-identity-line"><span class="home-starlink-word">STARLINK</span><small data-home-i18n="residentialProbe">RESIDENTIAL CONNECTION · PRIVATE HOME PROBE</small></p>
           </div>
-          <span id="home-connection-state" class="home-state">WAITING FOR SIGNAL</span>
+          <span id="home-connection-state" class="home-state" data-home-i18n="waiting">WAITING FOR SIGNAL</span>
+        </header>
+
+        <div class="home-overview-grid">
+          <section class="home-metrics-pane" aria-label="Current home connection performance" data-home-aria="metricsAria">
+            <div class="home-primary-row">
+              <div>
+                <span class="home-metric-label" data-home-i18n="latestDownload">DOWNLOAD · LATEST MEASUREMENT</span>
+                <div class="home-primary-speed"><strong id="home-download">—</strong><small>Mbps ↓</small></div>
+              </div>
+              <div id="home-account-usage" class="home-account-usage" hidden>
+                <span data-home-i18n="dataUsed">DATA USED · ALL TIME</span>
+                <strong id="home-alltime">—</strong>
+                <small id="home-usage-since">—</small>
+                <em data-home-i18n="accountSnapshot">ACCOUNT USAGE · MANUAL SNAPSHOT</em>
+                <em id="home-usage-updated">—</em>
+              </div>
+            </div>
+
+            <div class="home-secondary-metrics">
+              <div class="home-metric"><span class="home-metric-label" data-home-i18n="upload">UPLOAD</span><strong id="home-upload">—</strong><small>Mbps ↑</small></div>
+              <div class="home-metric"><span class="home-metric-label" data-home-i18n="latency">LATENCY</span><strong id="home-latency">—</strong><small>ms</small></div>
+              <div class="home-metric"><span class="home-metric-label" data-home-i18n="jitter">JITTER</span><strong id="home-jitter">—</strong><small>ms</small></div>
+              <div class="home-metric"><span class="home-metric-label" data-home-i18n="packetLoss">PACKET LOSS</span><strong id="home-packet-loss">—</strong><small id="home-packet-loss-unit">%</small></div>
+              <div class="home-metric"><span class="home-metric-label" data-home-i18n="testData">TEST DATA</span><strong id="home-test-data">—</strong><small>MB</small></div>
+            </div>
+
+            <div class="home-probe-strip"><span data-home-i18n="probeNode">PROBE NODE</span><strong data-home-i18n="probeDescription">INTEL ATOM D525 · DEBIAN 13 · HOURLY OOKLA CLI</strong></div>
+          </section>
+
+          <section class="home-topology-pane" aria-label="Conceptual Starlink signal path" data-home-aria="topologyAria">
+            <div class="home-topology-head"><span class="home-topology-label" data-home-i18n="topologyTitle">CONCEPTUAL SIGNAL PATH</span><span class="home-concept-note" data-home-i18n="conceptOnly">VISUAL MODEL · NOT ORBITAL DATA</span></div>
+            <svg class="home-topology-svg" viewBox="0 0 520 270" role="img" aria-label="Conceptual path from a home dish through a satellite to the network" data-home-aria="topologyAria">
+              <path class="home-orbit-guide" d="M36 96 Q260 4 484 96"/>
+              <path class="home-signal-base" d="M92 210 Q145 118 247 74"/>
+              <path class="home-signal-base" d="M273 74 Q376 118 432 210"/>
+              <path class="home-signal-stream" pathLength="100" d="M92 210 Q145 118 247 74"/>
+              <path class="home-signal-stream down" pathLength="100" d="M273 74 Q376 118 432 210"/>
+              <circle class="home-node-ring" cx="92" cy="210" r="18"/>
+              <circle class="home-node-ring network" cx="432" cy="210" r="18"/>
+              <g aria-hidden="true">
+                <path class="home-dish" d="M68 193 Q94 216 116 187 Q93 184 68 193Z"/>
+                <path class="home-dish" d="M94 207 L88 229 M81 229 H102"/>
+                <circle class="home-node-core" cx="92" cy="210" r="3.5"/>
+              </g>
+              <g class="home-satellite" aria-hidden="true">
+                <rect class="home-satellite-panel" x="214" y="58" width="31" height="18" rx="2"/>
+                <rect class="home-satellite-panel" x="275" y="58" width="31" height="18" rx="2"/>
+                <path class="home-satellite-body" d="M249 53 H271 L279 67 L270 82 H250 L241 67Z"/>
+                <path class="home-satellite-body" d="M245 67 H214 M275 67 H306 M260 53 V43"/>
+              </g>
+              <g aria-hidden="true">
+                <rect class="home-network" x="411" y="187" width="42" height="49" rx="3"/>
+                <path class="home-network" d="M418 198 H446 M418 209 H446 M418 220 H446"/>
+                <circle class="home-node-core" cx="432" cy="210" r="3.5"/>
+              </g>
+              <text x="48" y="254" data-home-i18n="homeDish">HOME / DISH</text>
+              <text x="229" y="104" data-home-i18n="satellite">SATELLITE</text>
+              <text x="382" y="254" data-home-i18n="network">GROUND / NETWORK</text>
+            </svg>
+            <p class="home-topology-disclaimer" data-home-i18n="topologyDisclaimer">CONCEPTUAL ONLY · NO SATELLITE IDENTITY, POSITION, BEAM, GATEWAY OR ROUTE IS CLAIMED</p>
+          </section>
         </div>
-        <div id="home-connection-chart" class="home-connection-chart empty" aria-label="Home connection download speed over the last 24 hours">24h speed history unavailable</div>
-        <div id="home-chart-caption" class="home-chart-caption"><span>24H</span><span>NOW</span></div>
-        <div class="home-connection-facts">
-          <div class="home-fact"><span>UPLOAD · UPSTREAM</span><strong id="home-upload">—</strong><small>Mbps ↑</small></div>
-          <div class="home-fact"><span>LATENCY · LATENZ</span><strong id="home-latency">—</strong><small>ms</small></div>
-          <div class="home-fact"><span>ALL-TIME · GESAMTTRANSFER</span><strong id="home-alltime">3.22 TB</strong></div>
+
+        <section class="home-history-pane">
+          <div class="home-history-head">
+            <div class="home-chart-title"><span data-home-i18n="historyLabel">24 HOUR HISTORY</span><strong data-home-i18n="historyTitle">REAL DOWNLOAD MEASUREMENTS</strong></div>
+            <div class="home-chart-stats"><span><span data-home-i18n="min">MIN</span> <b id="home-chart-min">—</b></span><span><span data-home-i18n="max">MAX</span> <b id="home-chart-max">—</b></span><span><span data-home-i18n="latest">CURRENT</span> <b id="home-chart-current">—</b></span><span id="home-chart-samples">0 SAMPLES</span></div>
+          </div>
+          <div id="home-connection-chart" class="home-connection-chart empty" aria-label="Home connection download speed over the last 24 hours" data-home-aria="historyTitle">24H SPEED HISTORY UNAVAILABLE</div>
+          <div class="home-chart-axis"><span data-home-i18n="ago24">24H AGO</span><span data-home-i18n="ago12">12H</span><span data-home-i18n="now">NOW</span></div>
+          <p id="home-chart-mode" class="home-chart-mode">—</p>
+        </section>
+
+        <div class="home-connection-meta">
+          <div class="home-meta-item"><span data-home-i18n="lastMeasurement">LAST MEASUREMENT</span><strong id="home-measured-at">—</strong></div>
+          <div class="home-meta-item"><span data-home-i18n="speedtestServer">SPEEDTEST SERVER</span><strong id="home-server">—</strong></div>
         </div>
-        <div class="home-connection-meta"><span id="home-connection-meta">private collector · privater Messpunkt</span><a href="https://www.speedtest.net/" target="_blank" rel="noopener noreferrer">Ookla Speedtest ↗</a></div>
-        <p class="home-privacy-note">Public metrics only · no public IP address · keine öffentliche IP-Adresse.</p>
+        <div class="home-connection-actions">
+          <a id="home-ookla-link" href="https://www.speedtest.net/" target="_blank" rel="noopener noreferrer" data-home-i18n="ooklaResult">VIEW OOKLA RESULT →</a>
+          <a id="home-starlink-link" href="https://starlink.com?referral=RC-DF-12369685-91594-14" target="_blank" rel="noopener noreferrer" data-referral-url="https://starlink.com?referral=RC-DF-12369685-91594-14" data-home-i18n="starlinkDetails">STARLINK REFERRAL · ONE FREE MONTH →</a>
+        </div>
+        <p class="home-privacy-note" data-home-i18n="privacy">PUBLIC PERFORMANCE METRICS ONLY · NO IP ADDRESS PUBLISHED · NO MAC, INTERFACE, HOSTNAME OR ACCOUNT IDENTIFIER EXPOSED</p>
       </article>
-      <article class="traffic-card method-card"><h2>OBSERVATION METHOD</h2><dl><dt>Source</dt><dd>worldnode / nginx access logs</dd><dt>Human classification</dt><dd>request-pattern and user-agent heuristics</dd><dt>Privacy</dt><dd>no raw visitor IP addresses exposed</dd><dt>Retention</dt><dd>aggregated observational data</dd></dl></article>
     </section>
   </main>
 
@@ -153,7 +198,63 @@
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
-  const fmt = (v) => Number.isFinite(Number(v)) ? Number(v).toLocaleString() : "—";
+  const IS_GERMAN = Boolean(window.__DENNIS_WORLD_OBSERVER_MIRROR_SOURCE_PATH) || Boolean(document.documentElement?.lang?.toLowerCase().startsWith("de"));
+  const LOCALE = IS_GERMAN ? "de-DE" : "en-US";
+  const copy = IS_GERMAN ? {
+    unknown: "Unbekannt", unavailable: "nicht verfügbar", trafficUnavailable: "Traffic-Daten nicht verfügbar", hourlyUnavailable: "Stündliche Signaldaten nicht verfügbar",
+    total: "gesamt", humans: "Menschen", botsCrawlers: "Bots/Crawler", scanners: "Scanner", peakHour: "SPITZENSTUNDE", quietestHour: "RUHIGSTE STUNDE", peakRequests: "ANFRAGEN AM MAXIMUM",
+    pulseAria: "24-Stunden-Verlauf für menschliche und automatisierte Anfragen", novelUnavailable: "Romansignal nicht verfügbar", novelPageviews: "ROMAN-SEITENAUFRUFE · HEUTE",
+    estimatedReaders: "GESCHÄTZTE LESER · 24H", chapterOpens: "KAPITELAUFRUFE · GESAMT", openNovel: "ROMAN ÖFFNEN →", openNovelAria: "The Lost Administrator öffnen",
+    noRecentStream: "Kein aktueller öffentlicher Anfrage-Stream verfügbar.", liveActive: "Live-Aktualisierung aktiv", human: "MENSCH", machine: "MASCHINE", ratioUnavailable: "Verhältnis nicht verfügbar",
+  } : {
+    unknown: "Unknown", unavailable: "unavailable", trafficUnavailable: "traffic data unavailable", hourlyUnavailable: "hourly signal data unavailable",
+    total: "total", humans: "humans", botsCrawlers: "bots/crawlers", scanners: "scanners", peakHour: "PEAK HOUR", quietestHour: "QUIETEST HOUR", peakRequests: "PEAK REQUESTS",
+    pulseAria: "24 hour sparkline for human and bot requests", novelUnavailable: "novel signal unavailable", novelPageviews: "NOVEL PAGEVIEWS · TODAY",
+    estimatedReaders: "EST. READERS · 24H", chapterOpens: "CHAPTER OPENS · ALL TIME", openNovel: "OPEN NOVEL →", openNovelAria: "Open The Lost Administrator novel",
+    noRecentStream: "No recent public request stream available.", liveActive: "live update active", human: "HUMAN", machine: "MACHINE", ratioUnavailable: "ratio unavailable",
+  };
+  const germanStatic = {
+    home: "Startseite", overview: "Übersicht", media: "Medien", society: "Gesellschaft", hometown: "Heimat", earthSpace: "Erde & Weltraum", technology: "Technik",
+    heroTitle: "WEBSITE-TRAFFIC-OBSERVER", heroDescription: "Beobachtet diese Website über worldnode / nginx<br>Menschen, Crawler, Seitenaufrufe und Anfragemuster.", observingLive: "LIVE-BEOBACHTUNG",
+    lastObservation: "letzte Beobachtung", offlineUnavailable: "offline / nicht verfügbar", humanRequestsToday: "MENSCHLICHE ANFRAGEN HEUTE", observedHumans: "beobachtete Menschen",
+    pageviewsToday: "SEITENAUFRUFE HEUTE", today: "heute", totalPageviews: "SEITENAUFRUFE GESAMT", allTime: "gesamt", estimatedUnique: "GESCHÄTZTE EINDEUTIGE BESUCHER",
+    countryOnly: "nur Länderebene", botRequests: "BOT- / SCANNER-ANFRAGEN", ofAllRequests: "aller Anfragen", requests24h: "ANFRAGEN 24H", allRequests: "alle Anfragen",
+    trafficPulse: "TRAFFIC-PULS", trafficUnavailable: "Traffic-Daten nicht verfügbar", humans: "Menschen", botsScanners: "Bots / Scanner", liveRequestStream: "LIVE-ANFRAGE-STREAM",
+    noRecentStream: "Kein aktueller öffentlicher Anfrage-Stream verfügbar.", globalSignalMap: "GLOBALE SIGNALKARTE", topCountries: "TOP-LÄNDER (24H)", countryPrivacy: "keine IP-Adressen angezeigt<br>nur Länderebene",
+    humanMachineRatio: "MENSCH-/MASCHINE-VERHÄLTNIS", ratioUnavailable: "Verhältnis nicht verfügbar", observedRequests: "beobachtete Anfragen", mostObservedPages: "MEISTBEOBACHTETE SEITEN",
+    crawlerSpecies: "CRAWLER-ARTEN", signalMatrix: "SIGNALAKTIVITÄTSMATRIX", hourlyUnavailable: "Stündliche Signaldaten nicht verfügbar", botsCrawlers: "Bots / Crawler", scanners: "Scanner",
+    novelReaderSignal: "ROMAN-LESESIGNAL", firstPartyLogs: "(EIGENE LOGS)", novelUnavailable: "Romansignal nicht verfügbar", novelNote: "Kapitelaufrufe sind erfolgreiche Seitenanfragen, kein Nachweis für Abschluss, Lesezeit oder Fortschritt. Veröffentlicht werden nur aggregierte Zählwerte.",
+    observationMethod: "BEOBACHTUNGSMETHODE", source: "Quelle", humanClassification: "Mensch-Klassifizierung", classificationMethod: "Heuristiken aus Anfragemustern und User-Agent", privacy: "Datenschutz",
+    noRawIps: "keine rohen Besucher-IP-Adressen offengelegt", retention: "Aufbewahrung", aggregateRetention: "aggregierte Beobachtungsdaten",
+  };
+  const localizeTrafficPage = () => {
+    if (!IS_GERMAN) return;
+    document.documentElement.lang = "de";
+    document.title = "Website-Traffic-Observer – worldnode / nginx";
+    const setMeta = (selector, value) => { const element = document.querySelector(selector); if (element) element.setAttribute("content", value); };
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.href = "https://dennishilk.com/de/traffic.html";
+    setMeta('meta[name="description"]', "Datenschutzfreundliches Beobachtungsdashboard für Website-Traffic aus worldnode-nginx-Logs sowie echte, anonymisierte Starlink-Heimanschluss-Messwerte.");
+    setMeta('meta[property="og:title"]', "Website-Traffic-Observer");
+    setMeta('meta[property="og:description"]', "Website-Traffic und anonymisierte Heimanschluss-Telemetrie beobachten, ohne rohe IP-Adressen offenzulegen.");
+    setMeta('meta[property="og:url"]', "https://dennishilk.com/de/traffic.html");
+    setMeta('meta[name="twitter:title"]', "Website-Traffic-Observer – worldnode / nginx");
+    setMeta('meta[name="twitter:description"]', "Datenschutzfreundliches Dashboard für Website-Traffic und anonymisierte Heimanschluss-Telemetrie.");
+    document.querySelectorAll("[data-traffic-i18n]").forEach(element => { const value = germanStatic[element.dataset.trafficI18n]; if (value) element.textContent = value; });
+    document.querySelectorAll("[data-traffic-i18n-html]").forEach(element => { const value = germanStatic[element.dataset.trafficI18nHtml]; if (value) element.innerHTML = value; });
+    const germanAria = { primaryNavigation: "Hauptnavigation", observerSections: "World-Observer-Bereiche", trafficStatus: "Status des Traffic-Observers", trafficMetrics: "Traffic-Kennzahlen", worldMap: "Weltkarte aggregierter Traffic-Signale auf Länderebene" };
+    document.querySelectorAll("[data-traffic-aria]").forEach(element => { const value = germanAria[element.dataset.trafficAria]; if (value) element.setAttribute("aria-label", value); });
+    document.querySelectorAll("[data-traffic-alt]").forEach(element => { if (element.dataset.trafficAlt === "worldMapImage") element.setAttribute("alt", "Erkennbare Weltkartensilhouette für aggregierte Traffic-Signale auf Länderebene"); });
+    const localizedLinks = {
+      "/": "/de/", "/world-observer.html": "/de/world-observer.html", "/world-observer/internet.html": "/de/world-observer/internet.html", "/world-observer/media.html": "/de/world-observer/media.html",
+      "/world-observer/society.html": "/de/world-observer/society.html", "/world-observer/hometown.html": "/de/world-observer/hometown.html", "/world-observer/environment.html": "/de/world-observer/environment.html",
+      "/world-observer/technology.html": "/de/world-observer/technology.html", "/traffic.html": "/de/traffic.html",
+    };
+    document.querySelectorAll("a[href]").forEach(link => { if (localizedLinks[link.getAttribute("href")]) link.href = localizedLinks[link.getAttribute("href")]; });
+    const languageLink = $("traffic-language-link");
+    if (languageLink) { languageLink.href = "/traffic.html"; languageLink.textContent = "English"; languageLink.lang = "en"; languageLink.hreflang = "en"; }
+  };
+  const fmt = (v) => Number.isFinite(Number(v)) ? Number(v).toLocaleString(LOCALE) : "—";
   const first = (o, names) => names.find((n) => o?.[n] !== undefined && o?.[n] !== null);
   const val = (o, names) => { const k = first(o, names); return k ? o[k] : null; };
   const arr = (v) => Array.isArray(v) ? v : (v && typeof v === "object" ? Object.entries(v).map(([label,value]) => ({ label, value })) : []);
@@ -162,7 +263,6 @@
   const redact = (v) => String(v || "").replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[redacted]").replace(/\b(?:[a-f0-9]{1,4}:){2,7}[a-f0-9]{1,4}\b/gi, "[redacted]");
   const safePath = (p) => { const clean = redact(p || "/").replace(/[\u0000-\u001f\u007f-\u009f]+/g, "?"); return clean.length > 140 ? clean.slice(0, 137) + "…" : clean; };
   const WIESMOOR_NODE = [496, 137];
-  const HOME_CONNECTION_ENDPOINT = "/data/home-connection/current.json";
   // Visual-only, privacy-safe origins for atmospheric map pings; not derived from visitors, IPs, countries, paths, or identities.
   const decorativeSignalOrigins = [
     { code: "EASTERN_NORTH_AMERICA", xy: [260, 220], kind: "human" },
@@ -179,13 +279,13 @@
     ["kpi-humans","kpi-pageviews","kpi-total-pageviews","kpi-unique","kpi-bots","kpi-requests"].forEach(id => $(id).textContent = "—");
     renderPulse([]); renderSignalMatrix([]); renderMapPoints([]); renderSignalRoutes([], []); renderList("top-countries", []); renderBars("top-pages", []); renderBars("crawler-species", []); renderNovelReader(null);
   };
-  const renderBars = (id, rows) => { const clean = arr(rows).filter(r => Number(r.value ?? r.count ?? r.pageviews ?? 0) > 0 || (r.path || r.name || r.referrer || r.label)); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const label = r.path || r.name || r.referrer || r.label || "Unknown"; const value = Number(r.value ?? r.count ?? r.pageviews ?? 0); return `<div><span title="${esc(redact(label))}">${esc(safePath(label))}</span><i><b style="width:${Math.max(3,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : '<p class="stream-empty">unavailable</p>'; };
-  const renderList = (id, rows) => { const clean = arr(rows).filter(r => r.country || r.code || r.label); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const value = Number(r.value ?? r.count ?? 0); return `<div><span>${esc(String(r.country || r.code || r.label || "").toUpperCase().slice(0,12))}</span><i><b style="width:${Math.max(4,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : '<p class="stream-empty">unavailable</p>'; };
+  const renderBars = (id, rows) => { const clean = arr(rows).filter(r => Number(r.value ?? r.count ?? r.pageviews ?? 0) > 0 || (r.path || r.name || r.referrer || r.label)); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const label = r.path || r.name || r.referrer || r.label || copy.unknown; const value = Number(r.value ?? r.count ?? r.pageviews ?? 0); return `<div><span title="${esc(redact(label))}">${esc(safePath(label))}</span><i><b style="width:${Math.max(3,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : `<p class="stream-empty">${esc(copy.unavailable)}</p>`; };
+  const renderList = (id, rows) => { const clean = arr(rows).filter(r => r.country || r.code || r.label); const max = Math.max(1, ...clean.map(r => Number(r.value ?? r.count ?? r.pageviews ?? 0))); $(id).innerHTML = clean.length ? clean.slice(0,8).map(r => { const value = Number(r.value ?? r.count ?? 0); return `<div><span>${esc(String(r.country || r.code || r.label || "").toUpperCase().slice(0,12))}</span><i><b style="width:${Math.max(4,value/max*100)}%"></b></i><em>${fmt(value)}</em></div>`; }).join("") : `<p class="stream-empty">${esc(copy.unavailable)}</p>`; };
   const hourLabel = (h, i) => String(h.hour ?? h.label ?? i).match(/\d{1,2}/)?.[0]?.padStart(2, "0") || String(i).padStart(2, "0");
   const renderSignalMatrix = (hourly) => {
     const rows = arr(hourly).slice(0, 24);
     const matrix = $("signal-matrix"), facts = $("signal-facts"), scannerLegend = $("matrix-scanner-legend");
-    if (!rows.length) { matrix.classList.add("empty"); matrix.textContent = "hourly signal data unavailable"; facts.innerHTML = ""; scannerLegend.hidden = true; return; }
+    if (!rows.length) { matrix.classList.add("empty"); matrix.textContent = copy.hourlyUnavailable; facts.innerHTML = ""; scannerLegend.hidden = true; return; }
     const hasScanner = rows.some(h => ["scanners", "scanner", "scan", "scanner_requests"].some(k => Number.isFinite(Number(h[k]))));
     scannerLegend.hidden = !hasScanner;
     const bins = Array.from({length:24}, (_, i) => {
@@ -206,13 +306,13 @@
       const humanPct = total ? b.humans / total * 100 : 0;
       const botPct = total ? b.bots / total * 100 : 0;
       const scannerPct = total ? b.scanners / total * 100 : 0;
-      const title = `${b.hour}:00 total ${fmt(total)}; humans ${fmt(b.humans)}; bots/crawlers ${fmt(b.bots)}${hasScanner ? `; scanners ${fmt(b.scanners)}` : ""}`;
+      const title = `${b.hour}:00 ${copy.total} ${fmt(total)}; ${copy.humans} ${fmt(b.humans)}; ${copy.botsCrawlers} ${fmt(b.bots)}${hasScanner ? `; ${copy.scanners} ${fmt(b.scanners)}` : ""}`;
       return `<div class="signal-bin${Number(b.hour) === activeHour ? " current" : ""}" title="${esc(title)}"><i style="height:${height.toFixed(1)}%"><b class="seg-scanner" style="height:${scannerPct.toFixed(1)}%"></b><b class="seg-bot" style="height:${botPct.toFixed(1)}%"></b><b class="seg-human" style="height:${humanPct.toFixed(1)}%"></b></i><span>${esc(b.hour)}</span></div>`;
     }).join("");
     const observed = bins.filter(b => b.total > 0 || b.humans > 0 || b.bots > 0 || b.scanners > 0);
     const peak = observed.reduce((best, b) => !best || b.total > best.total ? b : best, null);
     const quietest = observed.reduce((best, b) => !best || b.total < best.total ? b : best, null);
-    facts.innerHTML = [peak && `PEAK HOUR ${peak.hour}:00`, quietest && `QUIETEST HOUR ${quietest.hour}:00`, peak && `PEAK REQUESTS ${fmt(peak.total)}`].filter(Boolean).map(v => `<span>${esc(v)}</span>`).join("");
+    facts.innerHTML = [peak && `${copy.peakHour} ${peak.hour}:00`, quietest && `${copy.quietestHour} ${quietest.hour}:00`, peak && `${copy.peakRequests} ${fmt(peak.total)}`].filter(Boolean).map(v => `<span>${esc(v)}</span>`).join("");
   };
   const renderDestinationNode = () => { $("map-destination-node").innerHTML = `<g class="destination-node" aria-hidden="true"><circle class="destination-ring" cx="${WIESMOOR_NODE[0]}" cy="${WIESMOOR_NODE[1]}" r="13"/><circle class="destination-core" cx="${WIESMOOR_NODE[0]}" cy="${WIESMOOR_NODE[1]}" r="4.2"/><text x="${WIESMOOR_NODE[0] + 11}" y="${WIESMOOR_NODE[1] - 8}">WIESMOOR</text></g>`; };
   const renderMapPoints = (_countries) => { renderDestinationNode(); $("map-points").innerHTML = ""; };
@@ -222,79 +322,21 @@
   const launchSignalRoute = () => { if (signalState.reduced || document.hidden || signalState.active >= 4 || !signalState.routes.length) return; const layer = $("map-signal-routes"), route = signalState.routes[signalState.index++ % signalState.routes.length]; if (!layer || !route || route.code === "DE") return; const id = `route-${Date.now()}-${Math.random().toString(16).slice(2)}`; const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.setAttribute("class", `signal-route ${route.kind}`); const d = routePath(route.xy, WIESMOOR_NODE); g.innerHTML = `<g class="signal-origin" aria-hidden="true"><circle class="signal-origin-halo" cx="${route.xy[0]}" cy="${route.xy[1]}" r="7.5"/><circle class="signal-origin-core" cx="${route.xy[0]}" cy="${route.xy[1]}" r="2.8"/></g><path class="signal-arc" d="${d}"/><path id="${id}" class="signal-trail" d="${d}"/><circle class="signal-packet" r="3.2"><animateMotion dur="2.9s" begin="0s" fill="freeze" rotate="auto"><mpath href="#${id}"/></animateMotion></circle>`; layer.appendChild(g); signalState.active += 1; window.setTimeout(() => launchImpactPulse(route.kind), 2880); window.setTimeout(() => { g.classList.add("done"); signalState.active = Math.max(0, signalState.active - 1); cleanupSignalRoutes(); }, 3650); };
   const renderSignalRoutes = (_countries, stream) => { window.clearInterval(signalState.timer); $("map-signal-routes").innerHTML = ""; signalState.active = 0; signalState.index = 0; const hasMachineSignal = arr(stream).some(r => /SCAN|BOT|CRAWL|NOISE/i.test(String(r.kind || r.type || ""))); signalState.routes = decorativeSignalOrigins.map((origin, index) => ({ ...origin, kind: hasMachineSignal && index % 3 === 1 ? "bot" : origin.kind })).slice(0, 6); if (signalState.reduced) return; signalState.timer = window.setInterval(launchSignalRoute, 1150); launchSignalRoute(); };
   document.addEventListener("visibilitychange", () => { if (document.hidden) cleanupSignalRoutes(); });
-  const renderPulse = (hourly) => { const rows = arr(hourly).slice(0,24); if (!rows.length) { $("pulse-chart").classList.add("empty"); $("pulse-chart").textContent = "traffic data unavailable"; return; } const max = Math.max(1, ...rows.flatMap(h => [Number(h.humans ?? h.human ?? 0), Number(h.bots ?? h.crawlers ?? h.bot ?? 0)])); const point = (h, i, key) => `${(i / Math.max(1, rows.length - 1) * 100).toFixed(2)},${(100 - (Number(h[key[0]] ?? h[key[1]] ?? h[key[2]] ?? 0) / max * 86 + 7)).toFixed(2)}`; $("pulse-chart").classList.remove("empty"); $("pulse-chart").innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24 hour sparkline for human and bot requests"><g class="pulse-grid"><path d="M0 25H100M0 50H100M0 75H100"/></g><polyline class="pulse-human" points="${rows.map((h,i)=>point(h,i,["humans","human","human_requests"])).join(" ")}"/><polyline class="pulse-bot" points="${rows.map((h,i)=>point(h,i,["bots","crawlers","bot"])).join(" ")}"/></svg>`; };
-  const renderNovelReader = (reader) => { const body = $("novel-reader-body"); if (!body) return; if (!reader || typeof reader !== "object") { body.className = "novel-reader-body unavailable"; body.textContent = "novel signal unavailable"; return; } const today = reader.today || {}, rolling = reader.last_24_hours || {}, allTime = reader.all_time || {}; const facts = [["NOVEL PAGEVIEWS · TODAY", fmt(today.novel_pageviews ?? today.pageviews)], ["EST. READERS · 24H", fmt(rolling.estimated_readers)], ["CHAPTER OPENS · ALL TIME", fmt(allTime.chapter_opens)]]; body.className = "novel-reader-body"; body.innerHTML = `<div class="novel-reader-facts">${facts.map(([k,v]) => `<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("")}</div><a class="novel-reader-link" href="/lost-administrator/novel/" aria-label="Open The Lost Administrator novel"><span>THE LOST ADMINISTRATOR</span><strong>OPEN NOVEL →</strong></a>`; };
-  const homeNum = (v, digits = 1) => Number.isFinite(Number(v)) ? Number(v).toFixed(digits).replace(/\.0$/, "") : "—";
-  const homeTimestamp = (p) => p?.t ?? p?.time ?? p?.measured_at ?? p?.timestamp ?? p?.date ?? null;
-  const homeDown = (p) => Number(p?.down ?? p?.download_mbps ?? p?.down_mbps ?? p?.download ?? NaN);
-  const setHomeState = (state, text) => { const el = $("home-connection-state"); el.className = `home-state ${state}`; el.textContent = text; };
-  const formatHomeAllTime = (data) => {
-    const tb = Number(data?.all_time_tb ?? data?.usage?.all_time_tb ?? data?.total_transfer_tb);
-    if (Number.isFinite(tb) && tb >= 0) return `${tb.toFixed(tb < 10 ? 2 : 1)} TB`;
-    const directBytes = Number(data?.all_time_bytes ?? data?.usage?.all_time_bytes ?? data?.total_transfer_bytes);
-    const downBytes = Number(data?.all_time_download_bytes ?? data?.usage?.download_bytes);
-    const upBytes = Number(data?.all_time_upload_bytes ?? data?.usage?.upload_bytes);
-    const bytes = Number.isFinite(directBytes) ? directBytes : (Number.isFinite(downBytes) || Number.isFinite(upBytes) ? (Number.isFinite(downBytes) ? downBytes : 0) + (Number.isFinite(upBytes) ? upBytes : 0) : NaN);
-    if (Number.isFinite(bytes) && bytes >= 0) return `${(bytes / 1e12).toFixed(bytes < 10e12 ? 2 : 1)} TB`;
-    const gb = Number(data?.all_time_gb ?? data?.usage?.all_time_gb);
-    if (Number.isFinite(gb) && gb >= 0) return `${(gb / 1000).toFixed(gb < 10000 ? 2 : 1)} TB`;
-    return "3.22 TB";
-  };
-  const renderHomeChart = (history) => {
-    const chart = $("home-connection-chart"), caption = $("home-chart-caption");
-    const samples = (Array.isArray(history) ? history : []).map((p) => ({ value: homeDown(p), t: homeTimestamp(p) })).filter(p => Number.isFinite(p.value));
-    if (!samples.length) { chart.className = "home-connection-chart empty"; chart.textContent = "24h speed history unavailable"; caption.innerHTML = "<span>24H</span><span>NOW</span>"; return; }
-    const values = samples.map(p => p.value), min = Math.min(...values), max = Math.max(...values), spread = Math.max(1, max - min), pad = Math.max(2, spread * .16), lo = Math.max(0, min - pad), hi = max + pad, range = Math.max(1, hi - lo);
-    const pointsFor = (items) => items.map((p, i) => `${(i / Math.max(1, items.length - 1) * 100).toFixed(2)},${(92 - ((p.value - lo) / range * 84)).toFixed(2)}`);
-    let points = pointsFor(samples);
-    if (points.length === 1) { const y = points[0].split(",")[1]; points = [`0,${y}`, `100,${y}`]; }
-    const area = `0,100 ${points.join(" ")} 100,100`;
-    chart.className = "home-connection-chart";
-    chart.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="24 hour home connection download speed"><g class="home-chart-grid"><path d="M0 25H100M0 50H100M0 75H100M25 0V100M50 0V100M75 0V100"/></g><polygon class="home-chart-area" points="${area}"/><polyline class="home-chart-line" points="${points.join(" ")}"/></svg>`;
-    const firstTime = samples[0].t ? new Date(samples[0].t) : null, lastTime = samples.at(-1).t ? new Date(samples.at(-1).t) : null;
-    const timeLabel = d => d && !Number.isNaN(d.getTime()) ? d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) : "—";
-    caption.innerHTML = `<span>${esc(timeLabel(firstTime))} · ${homeNum(min)} Mbps min</span><span>${homeNum(max)} Mbps max · ${esc(timeLabel(lastTime))}</span>`;
-  };
-  const renderHomeConnection = (data) => {
-    const latest = data?.latest && typeof data.latest === "object" ? data.latest : data || {};
-    const down = latest.download_mbps ?? latest.down_mbps ?? latest.down ?? latest.download;
-    const up = latest.upload_mbps ?? latest.up_mbps ?? latest.up ?? latest.upload;
-    const latency = latest.latency_ms ?? latest.ping_ms ?? latest.ping ?? latest.latency;
-    $("home-download").textContent = homeNum(down);
-    $("home-upload").textContent = homeNum(up);
-    $("home-latency").textContent = homeNum(latency);
-    $("home-alltime").textContent = formatHomeAllTime(data);
-    renderHomeChart(data?.history_24h ?? data?.history ?? []);
-    const stamp = latest.measured_at ?? latest.timestamp ?? latest.t ?? data?.generated_at ?? null;
-    const measured = stamp ? new Date(stamp) : null;
-    const age = measured && !Number.isNaN(measured.getTime()) ? Date.now() - measured.getTime() : Infinity;
-    if (age <= 45 * 60 * 1000) setHomeState("live", "LIVE · AKTUELL");
-    else if (age <= 3 * 60 * 60 * 1000) setHomeState("stale", "STALE · VERZÖGERT");
-    else setHomeState("offline", "OFFLINE · ALT");
-    const bits = [];
-    if (measured && !Number.isNaN(measured.getTime())) bits.push(`measured ${measured.toLocaleString()}`);
-    const server = redact(latest.server_name ?? latest.server ?? data?.server_name ?? "");
-    if (server && server !== "[redacted]") bits.push(`server ${server}`);
-    bits.push("private collector");
-    $("home-connection-meta").textContent = bits.join(" · ");
-  };
-  const updateHomeConnection = () => fetch(`${HOME_CONNECTION_ENDPOINT}?t=${Date.now()}`, { cache: "no-store" })
-    .then(r => { if (!r.ok) throw new Error("home connection unavailable"); return r.json(); })
-    .then(renderHomeConnection)
-    .catch(() => { setHomeState("offline", "OFFLINE · KEIN SIGNAL"); $("home-connection-meta").textContent = "collector unavailable · public metrics only"; renderHomeChart([]); });
-  const renderStream = (rows) => { const clean = arr(rows); $("request-stream").innerHTML = clean.length ? clean.slice(0,8).map(r => { const rawKind = String(r.kind || r.type || 'HUMAN').toUpperCase(); const kind = rawKind.includes('SCAN') || rawKind.includes('NOISE') ? 'SCANNER' : (/BOT|CRAWL/.test(rawKind) ? 'BOT' : 'HUMAN'); return `<div><time>${esc(String(r.time || r.timestamp || "--:--:--").slice(0,8))}</time><strong class="${kind.toLowerCase()}">${kind}</strong><span>${esc(String(r.country || r.country_code || '--').slice(0,2).toUpperCase())}</span><a title="${esc(safePath(r.path || r.url || '/'))}">${esc(safePath(r.path || r.url || '/'))}</a></div>`; }).join("") : "No recent public request stream available."; };
+  const renderPulse = (hourly) => { const rows = arr(hourly).slice(0,24); if (!rows.length) { $("pulse-chart").classList.add("empty"); $("pulse-chart").textContent = copy.trafficUnavailable; return; } const max = Math.max(1, ...rows.flatMap(h => [Number(h.humans ?? h.human ?? 0), Number(h.bots ?? h.crawlers ?? h.bot ?? 0)])); const point = (h, i, key) => `${(i / Math.max(1, rows.length - 1) * 100).toFixed(2)},${(100 - (Number(h[key[0]] ?? h[key[1]] ?? h[key[2]] ?? 0) / max * 86 + 7)).toFixed(2)}`; $("pulse-chart").classList.remove("empty"); $("pulse-chart").innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="${esc(copy.pulseAria)}"><g class="pulse-grid"><path d="M0 25H100M0 50H100M0 75H100"/></g><polyline class="pulse-human" points="${rows.map((h,i)=>point(h,i,["humans","human","human_requests"])).join(" ")}"/><polyline class="pulse-bot" points="${rows.map((h,i)=>point(h,i,["bots","crawlers","bot"])).join(" ")}"/></svg>`; };
+  const renderNovelReader = (reader) => { const body = $("novel-reader-body"); if (!body) return; if (!reader || typeof reader !== "object") { body.className = "novel-reader-body unavailable"; body.textContent = copy.novelUnavailable; return; } const today = reader.today || {}, rolling = reader.last_24_hours || {}, allTime = reader.all_time || {}; const facts = [[copy.novelPageviews, fmt(today.novel_pageviews ?? today.pageviews)], [copy.estimatedReaders, fmt(rolling.estimated_readers)], [copy.chapterOpens, fmt(allTime.chapter_opens)]]; body.className = "novel-reader-body"; body.innerHTML = `<div class="novel-reader-facts">${facts.map(([k,v]) => `<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("")}</div><a class="novel-reader-link" href="/lost-administrator/novel/" aria-label="${esc(copy.openNovelAria)}"><span>THE LOST ADMINISTRATOR</span><strong>${esc(copy.openNovel)}</strong></a>`; };
+  const renderStream = (rows) => { const clean = arr(rows); $("request-stream").innerHTML = clean.length ? clean.slice(0,8).map(r => { const rawKind = String(r.kind || r.type || 'HUMAN').toUpperCase(); const kind = rawKind.includes('SCAN') || rawKind.includes('NOISE') ? 'SCANNER' : (/BOT|CRAWL/.test(rawKind) ? 'BOT' : 'HUMAN'); const displayKind = IS_GERMAN && kind === "HUMAN" ? copy.human : kind; return `<div><time>${esc(String(r.time || r.timestamp || "--:--:--").slice(0,8))}</time><strong class="${kind.toLowerCase()}">${esc(displayKind)}</strong><span>${esc(String(r.country || r.country_code || '--').slice(0,2).toUpperCase())}</span><a title="${esc(safePath(r.path || r.url || '/'))}">${esc(safePath(r.path || r.url || '/'))}</a></div>`; }).join("") : copy.noRecentStream; };
   const updateTraffic = () => fetch(`/data/site-traffic.json?t=${Date.now()}`, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(data => {
     const pageviews = val(data,["pageviews_today","today_pageviews","today"]), last24 = val(data,["requests_total","last_24h","last_24h_pageviews","pageviews_last_24h"]), totalPageviews = val(data,["total_pageviews","pageviews_total","total"]), humans = val(data,["human_requests_today","humans_today","human_today"]), unique = val(data,["estimated_unique_visitors","unique_visitors","visitors_unique"]), bots = val(data,["bot_requests_today","bots_today","crawlers_today","bots_crawlers"]), requests = val(data,["requests_total","requests_24h","requests_last_24h","last_24h_requests","total_requests"]);
     $("kpi-humans").textContent = fmt(humans); $("kpi-pageviews").textContent = fmt(pageviews); $("kpi-total-pageviews").textContent = fmt(totalPageviews); $("kpi-unique").textContent = fmt(unique); $("kpi-bots").textContent = fmt(bots); $("kpi-requests").textContent = fmt(requests);
-    $("last-observation").textContent = data.generated_at ? new Date(data.generated_at).toLocaleTimeString() : "—"; $("live-state").textContent = "live update active";
-    const h = Number(humans), b = Number(bots), hp = Number(data.human_percent), bp = Number(data.bot_percent), denom = h + b; const humanRatio = Number.isFinite(hp) ? hp : (denom ? h / denom * 100 : NaN); const botRatio = Number.isFinite(bp) ? bp : (denom ? b / denom * 100 : NaN); $("ratio-bars").innerHTML = Number.isFinite(humanRatio) && Number.isFinite(botRatio) ? `<div><span>HUMAN</span><strong>${humanRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, humanRatio)}%"></b></i></div><div><span>MACHINE</span><strong>${botRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, botRatio)}%"></b></i></div>` : "ratio unavailable"; $("ratio-total").textContent = fmt(requests);
+    $("last-observation").textContent = data.generated_at ? new Date(data.generated_at).toLocaleTimeString(LOCALE) : "—"; $("live-state").textContent = copy.liveActive;
+    const h = Number(humans), b = Number(bots), hp = Number(data.human_percent), bp = Number(data.bot_percent), denom = h + b; const humanRatio = Number.isFinite(hp) ? hp : (denom ? h / denom * 100 : NaN); const botRatio = Number.isFinite(bp) ? bp : (denom ? b / denom * 100 : NaN); $("ratio-bars").innerHTML = Number.isFinite(humanRatio) && Number.isFinite(botRatio) ? `<div><span>${copy.human}</span><strong>${humanRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, humanRatio)}%"></b></i></div><div><span>${copy.machine}</span><strong>${botRatio.toFixed(1)}%</strong><i><b style="width:${Math.max(2, botRatio)}%"></b></i></div>` : copy.ratioUnavailable; $("ratio-total").textContent = fmt(requests);
     const hourly = arr(data.hourly); renderPulse(hourly); renderSignalMatrix(hourly); const liveRequests = arr(data.live_requests); renderStream(liveRequests); renderList("top-countries", arr(data.countries)); renderMapPoints(data.countries); renderSignalRoutes(data.countries, liveRequests); renderBars("top-pages", arr(data.top_pages)); renderBars("crawler-species", arr(data.crawler_species)); renderNovelReader(data.novel_reader);
   }).catch(() => { setUnavailable(); renderNovelReader(null); });
+  localizeTrafficPage();
   updateTraffic();
-  updateHomeConnection();
   window.setInterval(updateTraffic, 30_000);
-  window.setInterval(updateHomeConnection, 5 * 60_000);
 })();
 </script>
+<script src="home-connection.js?v=20260827-1"></script>
 </body>
 </html>
