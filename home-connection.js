@@ -25,7 +25,7 @@
       offline: "OFFLINE",
       latestDownload: "DOWNLOAD · LATEST MEASUREMENT",
       dataUsed: "DATA USED · ALL TIME",
-      accountSnapshot: "ACCOUNT USAGE · MANUAL SNAPSHOT",
+      accountSnapshot: "ACCOUNT BASELINE · LOCAL DISH COUNTER",
       upload: "UPLOAD",
       latency: "LATENCY",
       jitter: "JITTER",
@@ -46,11 +46,17 @@
       min: "MIN",
       max: "MAX",
       latest: "CURRENT",
+      peak24h: "24H PEAK",
       ago24: "24H AGO",
       ago12: "12H",
       now: "NOW",
       lastMeasurement: "LAST MEASUREMENT",
       speedtestServer: "SPEEDTEST SERVER",
+      measurementMethod: "MEASUREMENT METHOD",
+      speedMethodLabel: "SPEED",
+      speedMethod: "Intel Atom D525 · Debian 13 · official Ookla CLI · one scheduled measurement per hour against a fixed public test server.",
+      usageMethodLabel: "DATA USAGE",
+      usageMethod: "Starlink account total captured as the baseline · dish queried locally via gRPC every 5 minutes · only newly observed download/upload bytes are added.",
       ooklaResult: "VIEW OOKLA RESULT →",
       starlinkDetails: "DENNIS’ STARLINK REFERRAL →",
       starlinkOfficial: "EXPLORE STARLINK →",
@@ -80,7 +86,7 @@
       offline: "OFFLINE",
       latestDownload: "EMPFANG · LETZTE MESSUNG",
       dataUsed: "DATENVERBRAUCH · GESAMT",
-      accountSnapshot: "KONTO-VERBRAUCH · MANUELLER STAND",
+      accountSnapshot: "KONTOBASIS · LOKALER ANTENNENZÄHLER",
       upload: "SENDEN",
       latency: "LATENZ",
       jitter: "SCHWANKUNG",
@@ -101,11 +107,17 @@
       min: "MIN",
       max: "MAX",
       latest: "AKTUELL",
+      peak24h: "24H-SPITZE",
       ago24: "VOR 24H",
       ago12: "12H",
       now: "JETZT",
       lastMeasurement: "LETZTE MESSUNG",
       speedtestServer: "MESSSERVER",
+      measurementMethod: "MESSMETHODE",
+      speedMethodLabel: "GESCHWINDIGKEIT",
+      speedMethod: "Intel Atom D525 · Debian 13 · offizielle Ookla CLI · eine geplante Messung pro Stunde gegen einen festen öffentlichen Messserver.",
+      usageMethodLabel: "DATENVERBRAUCH",
+      usageMethod: "Starlink-Kontostand als Basis · Antenne lokal alle 5 Minuten per gRPC abgefragt · nur neu beobachtete Download-/Upload-Bytes werden fortlaufend addiert.",
       ooklaResult: "OOKLA-ERGEBNIS →",
       starlinkDetails: "DENNIS’ STARLINK-EMPFEHLUNG →",
       starlinkOfficial: "STARLINK ENTDECKEN →",
@@ -151,6 +163,51 @@
       : validDate(value);
     return date ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date).toUpperCase() : "—";
   };
+  const formatAxisTime = value => new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(value));
+  const niceChartMax = value => {
+    const max = Math.max(0, Number(value) || 0);
+    const step = max <= 100 ? 25 : max <= 250 ? 50 : max <= 500 ? 100 : max <= 1000 ? 200 : 500;
+    return Math.max(step, Math.ceil(max / step) * step);
+  };
+
+  const installRuntimePolish = () => {
+    if (typeof document.querySelector !== "function" || !document.head || $("home-connection-runtime-polish")) return;
+    const style = document.createElement("style");
+    style.id = "home-connection-runtime-polish";
+    style.textContent = `
+      .home-chart-y-axis{position:absolute;inset:0;z-index:2;pointer-events:none}
+      .home-chart-y-axis span{position:absolute;left:.45rem;transform:translateY(-50%);padding:.08rem .25rem;border-radius:2px;color:#8196a5;background:rgba(1,12,19,.72);font-size:.55rem;letter-spacing:.05em;line-height:1.2}
+      .home-chart-peak{position:absolute;z-index:4;transform:translate(-50%,-100%);padding:.25rem .38rem;border:1px solid rgba(105,220,255,.3);background:rgba(1,13,20,.9);color:#dffbff;font-size:.56rem;font-weight:700;letter-spacing:.055em;line-height:1.35;white-space:nowrap;pointer-events:none;box-shadow:0 0 14px rgba(105,220,255,.12)}
+      .home-chart-peak small{display:block;color:#7f95a4;font-size:.52rem;font-weight:500}
+      .home-chart-axis{gap:.6rem}
+      .home-chart-axis span{flex:1;text-align:center}
+      .home-chart-axis span:first-child{text-align:left}
+      .home-chart-axis span:last-child{text-align:right}
+      .home-measurement-method{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:.65rem;padding:.75rem .8rem;border:1px solid rgba(105,220,255,.13);border-left:2px solid rgba(105,220,255,.35);background:rgba(0,0,0,.13)}
+      .home-measurement-method h3{grid-column:1/-1;margin:0;color:#edfaff;font-size:.68rem;letter-spacing:.11em}
+      .home-measurement-method p{margin:0;color:#879aa8;font-size:.64rem;line-height:1.55}
+      .home-measurement-method strong{display:block;margin-bottom:.18rem;color:#9fb8c7;font-size:.58rem;letter-spacing:.08em}
+      @media(max-width:700px){.home-measurement-method{grid-template-columns:1fr}.home-chart-y-axis span{font-size:.5rem}.home-chart-peak{font-size:.51rem}}
+    `;
+    document.head.appendChild(style);
+  };
+
+  const renderMeasurementMethod = () => {
+    if (typeof document.querySelector !== "function" || typeof document.createElement !== "function") return;
+    installRuntimePolish();
+    let method = $("home-measurement-method");
+    if (!method) {
+      const meta = document.querySelector(".home-connection-meta");
+      if (!meta || !meta.parentNode) return;
+      method = document.createElement("section");
+      method.id = "home-measurement-method";
+      method.className = "home-measurement-method";
+      method.setAttribute("aria-label", copy.measurementMethod);
+      meta.insertAdjacentElement("afterend", method);
+    }
+    method.setAttribute("aria-label", copy.measurementMethod);
+    method.innerHTML = `<h3>${escapeHtml(copy.measurementMethod)}</h3><p><strong>${escapeHtml(copy.speedMethodLabel)}</strong>${escapeHtml(copy.speedMethod)}</p><p><strong>${escapeHtml(copy.usageMethodLabel)}</strong>${escapeHtml(copy.usageMethod)}</p>`;
+  };
 
   const localizeStatic = () => {
     if (isGerman) document.documentElement.lang = "de";
@@ -174,6 +231,7 @@
     }
     const terms = $("home-referral-terms");
     if (terms) terms.href = isGerman ? "https://starlink.com/de/referrals" : "https://starlink.com/referrals";
+    renderMeasurementMethod();
   };
 
   const statusForTimestamp = (timestamp, now = Date.now()) => {
@@ -246,24 +304,23 @@
       return [];
     }
 
+    installRuntimePolish();
     const values = samples.map(sample => sample.download);
     const min = Math.min(...values);
     const max = Math.max(...values);
     const latest = values.at(-1);
-    const spread = Math.max(1, max - min);
-    const padding = Math.max(2, spread * .16);
-    const low = Math.max(0, min - padding);
-    const high = max + padding;
-    const range = Math.max(1, high - low);
+    const chartMax = niceChartMax(max);
     const start = now - 24 * 60 * 60 * 1000;
     const plotted = samples.map(sample => ({
       ...sample,
       x: Math.min(98, Math.max(2, (sample.timestamp.getTime() - start) / (24 * 60 * 60 * 1000) * 100)),
-      y: samples.length === 1 ? 50 : 88 - ((sample.download - low) / range * 76),
+      y: samples.length === 1 ? 50 : 88 - (sample.download / chartMax * 76),
     }));
     const linePoints = plotted.map(sample => `${sample.x.toFixed(2)},${sample.y.toFixed(2)}`).join(" ");
     const first = plotted[0];
     const last = plotted.at(-1);
+    const peakIndex = values.indexOf(max);
+    const peak = plotted[peakIndex];
     const areaPoints = samples.length > 1
       ? `${first.x.toFixed(2)},94 ${linePoints} ${last.x.toFixed(2)},94`
       : "";
@@ -272,6 +329,17 @@
     const marker = samples.length === 1
       ? `<line class="home-chart-single-marker" x1="${first.x.toFixed(2)}" y1="8" x2="${first.x.toFixed(2)}" y2="94"/>`
       : "";
+    const yAxis = [1, .75, .5, .25, 0].map(fraction => {
+      const y = 88 - fraction * 76;
+      return `<span style="top:${y.toFixed(2)}%">${escapeHtml(`${number(chartMax * fraction, 0)} Mbps`)}</span>`;
+    }).join("");
+    const peakDate = formatDateTime(peak.timestamp);
+    const peakTime = formatAxisTime(peak.timestamp);
+    const peakX = Math.min(88, Math.max(12, peak.x));
+    const peakY = Math.max(16, peak.y - 2);
+    const peakLabel = samples.length > 1
+      ? `<span class="home-chart-peak" style="left:${peakX.toFixed(2)}%;top:${peakY.toFixed(2)}%" title="${escapeHtml(peakDate)}">${escapeHtml(copy.peak24h)} · ${escapeHtml(number(max, 1))} Mbps<small>${escapeHtml(peakTime)}</small></span>`
+      : "";
     const points = plotted.map((sample, index) => {
       const value = number(sample.download, 2);
       const date = formatDateTime(sample.timestamp);
@@ -279,13 +347,21 @@
     }).join("");
 
     chart.className = `home-connection-chart${samples.length === 1 ? " single" : ""}`;
-    chart.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="home-chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#69dcff" stop-opacity=".22"/><stop offset="1" stop-color="#69dcff" stop-opacity="0"/></linearGradient></defs>${area}${marker}${line}</svg>${points}`;
+    chart.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="home-chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#69dcff" stop-opacity=".22"/><stop offset="1" stop-color="#69dcff" stop-opacity="0"/></linearGradient></defs>${area}${marker}${line}</svg><div class="home-chart-y-axis" aria-hidden="true">${yAxis}</div>${peakLabel}${points}`;
     chart.setAttribute("aria-label", copy.chartAria(samples.length, number(min, 2), number(max, 2), number(latest, 2)));
     if (mode) mode.textContent = samples.length === 1 ? copy.oneMeasurement : copy.measurements(samples.length);
     if (minElement) minElement.textContent = `${number(min, 1)} Mbps`;
     if (maxElement) maxElement.textContent = `${number(max, 1)} Mbps`;
     if (currentElement) currentElement.textContent = `${number(latest, 1)} Mbps`;
     if (sampleElement) sampleElement.textContent = copy.samples(samples.length);
+
+    if (typeof document.querySelector === "function") {
+      const axis = document.querySelector(".home-chart-axis");
+      if (axis) {
+        const ticks = [0, 6, 12, 18, 24].map(hours => start + hours * 60 * 60 * 1000);
+        axis.innerHTML = ticks.map((timestamp, index) => `<span>${escapeHtml(index === ticks.length - 1 ? `${copy.now} ${formatAxisTime(timestamp)}` : formatAxisTime(timestamp))}</span>`).join("");
+      }
+    }
     return samples;
   };
 
@@ -298,7 +374,7 @@
       return;
     }
     panel.hidden = false;
-    $("home-alltime").textContent = `${new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(gb / 1000)} TB`;
+    $("home-alltime").textContent = `${new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(gb / 1024)} TB`;
     $("home-usage-since").textContent = copy.since(formatDateOnly(usage.since));
     $("home-usage-updated").textContent = copy.updated(formatDateOnly(usage.updated_at));
   };
@@ -334,6 +410,7 @@
     if (resultLink) resultLink.href = safeResultUrl(latest.result_url);
     renderUsage(data.usage);
     renderChart(data.history_24h, now);
+    renderMeasurementMethod();
     const card = $("home-connection-card");
     if (card) card.dataset.homeReady = "true";
     return data;
