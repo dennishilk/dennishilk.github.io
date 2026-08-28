@@ -183,11 +183,11 @@
       .home-chart-axis span{flex:1;text-align:center}
       .home-chart-axis span:first-child{text-align:left}
       .home-chart-axis span:last-child{text-align:right}
-      .home-measurement-method{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:.65rem;padding:.75rem .8rem;border:1px solid rgba(105,220,255,.13);border-left:2px solid rgba(105,220,255,.35);background:rgba(0,0,0,.13)}
-      .home-measurement-method h3{grid-column:1/-1;margin:0;color:#edfaff;font-size:.68rem;letter-spacing:.11em}
-      .home-measurement-method p{margin:0;color:#879aa8;font-size:.64rem;line-height:1.55}
-      .home-measurement-method strong{display:block;margin-bottom:.18rem;color:#9fb8c7;font-size:.58rem;letter-spacing:.08em}
-      @media(max-width:700px){.home-measurement-method{grid-template-columns:1fr}.home-chart-y-axis span{font-size:.5rem}.home-chart-peak{font-size:.51rem}}
+      .home-metric-label{display:block}
+      .home-measurement-method{display:none!important}
+      .home-probe-strip strong::after{content:"SPEED · HOURLY OOKLA CLI // USAGE · ACCOUNT BASELINE + LOCAL DISH gRPC EVERY 5 MIN · ONLY NEW BYTES ADDED";display:block;margin-top:.28rem;color:#718694;font-size:.58rem;font-weight:500;line-height:1.45;letter-spacing:.045em}
+      html[lang^="de"] .home-probe-strip strong::after{content:"SPEED · STÜNDLICHE OOKLA-CLI // VERBRAUCH · KONTOBASIS + LOKALE ANTENNEN-gRPC-ABFRAGE ALLE 5 MIN · NUR NEUE BYTES WERDEN ADDIERT"}
+      @media(max-width:700px){.home-chart-y-axis span{font-size:.5rem}.home-chart-peak{font-size:.51rem}}
     `;
     document.head.appendChild(style);
   };
