@@ -187,9 +187,53 @@
       .home-measurement-method{display:none!important}
       .home-probe-strip strong::after{content:"SPEED · HOURLY OOKLA CLI // USAGE · ACCOUNT BASELINE + LOCAL DISH gRPC EVERY 5 MIN · ONLY NEW BYTES ADDED";display:block;margin-top:.28rem;color:#718694;font-size:.58rem;font-weight:500;line-height:1.45;letter-spacing:.045em}
       html[lang^="de"] .home-probe-strip strong::after{content:"SPEED · STÜNDLICHE OOKLA-CLI // VERBRAUCH · KONTOBASIS + LOKALE ANTENNEN-gRPC-ABFRAGE ALLE 5 MIN · NUR NEUE BYTES WERDEN ADDIERT"}
+      .home-topology-svg .home-signal-uplink{stroke:#dffbff;filter:drop-shadow(0 0 6px rgba(105,220,255,.92))}
+      .home-topology-svg .home-signal-downlink{stroke:var(--home-green);filter:drop-shadow(0 0 6px rgba(114,240,181,.9))}
+      .home-topology-svg .home-signal-leg-first{animation-name:homeSignalLegFirst;animation-duration:7.6s;animation-timing-function:linear;animation-iteration-count:infinite}
+      .home-topology-svg .home-signal-leg-second{animation-name:homeSignalLegSecond;animation-duration:7.6s;animation-timing-function:linear;animation-iteration-count:infinite}
+      .home-topology-svg .home-signal-downlink.home-signal-leg-first,.home-topology-svg .home-signal-downlink.home-signal-leg-second{animation-delay:-3.8s}
+      .home-topology-svg .home-signal-uplink.echo.home-signal-leg-first,.home-topology-svg .home-signal-uplink.echo.home-signal-leg-second{animation-delay:-1.9s;opacity:.42}
+      .home-topology-svg .home-signal-downlink.echo.home-signal-leg-first,.home-topology-svg .home-signal-downlink.echo.home-signal-leg-second{animation-delay:-5.7s;opacity:.42}
+      @keyframes homeSignalLegFirst{0%{stroke-dashoffset:0;opacity:0}4%{opacity:1}42%{stroke-dashoffset:-100;opacity:1}46%,100%{stroke-dashoffset:-100;opacity:0}}
+      @keyframes homeSignalLegSecond{0%,42%{stroke-dashoffset:0;opacity:0}46%{opacity:1}84%{stroke-dashoffset:-100;opacity:1}88%,100%{stroke-dashoffset:-100;opacity:0}}
       @media(max-width:700px){.home-chart-y-axis span{font-size:.5rem}.home-chart-peak{font-size:.51rem}}
     `;
     document.head.appendChild(style);
+  };
+
+  const installBidirectionalSignalTraffic = () => {
+    if (typeof document.querySelector !== "function" || typeof document.createElementNS !== "function") return;
+    const svg = document.querySelector(".home-topology-svg");
+    if (!svg || svg.querySelector(".home-signal-uplink-network")) return;
+
+    const leftPrimary = svg.querySelector(".home-signal-stream:not(.down):not(.echo)");
+    const leftEcho = svg.querySelector(".home-signal-stream.echo:not(.down)");
+    const rightPrimary = svg.querySelector(".home-signal-stream.down:not(.echo)");
+    const rightEcho = svg.querySelector(".home-signal-stream.down.echo");
+    const firstNode = svg.querySelector(".home-node-ring");
+    if (!leftPrimary || !leftEcho || !rightPrimary || !rightEcho || !firstNode) return;
+
+    leftPrimary.classList.add("home-signal-uplink", "home-signal-leg-first");
+    leftEcho.classList.add("home-signal-uplink", "home-signal-leg-first");
+
+    rightPrimary.setAttribute("d", "M427 175 Q383 106 276 70");
+    rightEcho.setAttribute("d", "M427 175 Q383 106 276 70");
+    rightPrimary.classList.add("home-signal-downlink", "home-signal-leg-first");
+    rightEcho.classList.add("home-signal-downlink", "home-signal-leg-first");
+
+    const addSignalPath = (className, d) => {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("class", className);
+      path.setAttribute("pathLength", "100");
+      path.setAttribute("d", d);
+      svg.insertBefore(path, firstNode);
+      return path;
+    };
+
+    addSignalPath("home-signal-stream home-signal-uplink home-signal-uplink-network home-signal-leg-second", "M276 70 Q383 106 427 175");
+    addSignalPath("home-signal-stream echo home-signal-uplink home-signal-uplink-network home-signal-leg-second", "M276 70 Q383 106 427 175");
+    addSignalPath("home-signal-stream down home-signal-downlink home-signal-downlink-dish home-signal-leg-second", "M246 70 Q146 104 99 182");
+    addSignalPath("home-signal-stream down echo home-signal-downlink home-signal-downlink-dish home-signal-leg-second", "M246 70 Q146 104 99 182");
   };
 
   const renderMeasurementMethod = () => {
@@ -458,6 +502,7 @@
   window.HomeConnectionObserver = api;
 
   localizeStatic();
+  installBidirectionalSignalTraffic();
   // The site-wide switcher can apply German asynchronously, after this script.
   // Repaint from the existing sample; changing language must not start a test
   // or fetch another telemetry snapshot.
