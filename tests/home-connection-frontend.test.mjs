@@ -86,9 +86,9 @@ const payload = (history = undefined) => ({
   },
   history_24h: history ?? [{ timestamp: '2026-08-27T15:29:44Z', download_mbps: 77.74 }],
   usage: {
-    all_time_gb: 3215,
+    all_time_gb: 3298.981572589,
     since: '2026-06-10',
-    source: 'manual-starlink-account',
+    source: 'starlink-account-baseline-local-dish',
     updated_at: '2026-08-27',
   },
 });
@@ -151,6 +151,7 @@ test('real one-sample payload renders honestly, including nested server and actu
   assert.equal(elements.get('home-connection-state').textContent, 'CURRENT');
   assert.match(elements.get('home-connection-state').className, /current/);
   assert.match(elements.get('home-connection-chart').innerHTML, /home-chart-single-marker/);
+  assert.match(elements.get('home-connection-chart').innerHTML, /home-chart-y-axis/);
   assert.doesNotMatch(elements.get('home-connection-chart').innerHTML, /home-chart-line/);
   assert.match(elements.get('home-chart-mode').textContent, /1 REAL MEASUREMENT/);
   assert.doesNotMatch(elements.get('home-server').textContent, /\[object Object\]/);
@@ -168,6 +169,8 @@ test('two or more real samples connect without inventing a 24-hour series', () =
 
   assert.match(chart.innerHTML, /<polyline class="home-chart-line"/);
   assert.match(chart.innerHTML, /<polygon class="home-chart-area"/);
+  assert.match(chart.innerHTML, /home-chart-y-axis/);
+  assert.match(chart.innerHTML, /24H PEAK · 83\.4 Mbps/);
   assert.equal((chart.innerHTML.match(/home-chart-point/g) || []).length, 3);
   assert.equal(elements.get('home-chart-samples').textContent, '3 SAMPLES');
   assert.match(elements.get('home-chart-mode').textContent, /3 REAL HOURLY MEASUREMENTS/);
@@ -211,6 +214,9 @@ test('frontend only renders allowlisted server fields and rejects unsafe result 
 test('component preserves cache bypass, safe links, reduced motion and responsive layouts', () => {
   assert.equal(makeHarness('en').api.ENDPOINT, '/data/home-connection/current.json');
   assert.match(script, /fetch\(`\$\{ENDPOINT\}\?t=\$\{Date\.now\(\)\}`,[\s\S]*cache: "no-store"/);
+  assert.match(script, /gb \/ 1024/);
+  assert.match(script, /ACCOUNT BASELINE · LOCAL DISH COUNTER/);
+  assert.match(script, /MEASUREMENT METHOD/);
   assert.match(html, /id="home-ookla-link"[^>]*target="_blank" rel="noopener noreferrer"/);
   assert.match(html, /id="home-starlink-link"[^>]*target="_blank" rel="noopener noreferrer"/);
   assert.match(html, /https:\/\/starlink\.com\?referral=RC-DF-12369685-91594-14/);
