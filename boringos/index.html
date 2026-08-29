@@ -1,19 +1,123 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BoringOS 0.0.37-dev — Native x86_64 OS in C</title>
-<meta name="description" content="BoringOS is an independent experimental x86_64 desktop OS written primarily in C. M36 is complete: native BoringWM, graphical terminal, PTYs, SPAWN, real shell and graphical boringfetch.">
-<meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#020405">
-<link rel="canonical" href="https://dennishilk.com/boringos/"><link rel="alternate" hreflang="en" href="https://dennishilk.com/boringos/"><link rel="alternate" hreflang="de" href="https://dennishilk.com/de/boringos/"><link rel="alternate" hreflang="x-default" href="https://dennishilk.com/boringos/">
-<meta property="og:type" content="website"><meta property="og:title" content="BoringOS 0.0.37-dev — BoringWM + graphical terminal"><meta property="og:description" content="Own x86_64 kernel, Ring3 userspace, BoringFS, display service, BoringWM and real graphical shells. M36 complete."><meta property="og:url" content="https://dennishilk.com/boringos/"><meta property="og:image" content="https://dennishilk.com/boringos/m36-dual-terminals-main.png">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="BoringOS 0.0.37-dev"><meta name="twitter:description" content="Independent x86_64 OS in C with native BoringWM and graphical PTY-backed shells."><meta name="twitter:image" content="https://dennishilk.com/boringos/m36-dual-terminals-main.png">
-<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="/boringos/boringos.css?v=2">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Independent experimental x86_64 desktop operating system with its own kernel, native C userspace, BoringFS, BoringWM and graphical terminal.","url":"https://dennishilk.com/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU","softwareVersion":"0.0.37-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://dennishilk.com/"}}</script>
-<style>.hero-proof{position:relative;margin:0;overflow:hidden;aspect-ratio:16/10;border:1px solid var(--line-strong);border-radius:var(--radius);background:#020708;box-shadow:var(--shadow),0 0 60px rgba(0,188,255,.09)}.hero-proof img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;image-rendering:pixelated}.shot img{display:block;width:100%;height:auto;image-rendering:pixelated}.hero-proof figcaption{position:absolute;left:0;right:0;bottom:0;padding:.9rem 1rem .8rem;color:var(--muted);font-size:.72rem;border-top:1px solid var(--line);background:linear-gradient(180deg,rgba(2,7,8,0),rgba(2,7,8,.94) 45%)}.shot div{padding:.8rem 1rem;color:var(--muted);font-size:.72rem;border-top:1px solid var(--line)}.evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}.shot{overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:rgba(5,14,17,.78)}.shot strong{display:block;color:var(--cyan-soft);margin-bottom:.25rem}@media(max-width:780px){.evidence{grid-template-columns:1fr}}</style></head><body>
-<a class="skip-link" href="#main">Skip to content</a><header class="shell-topbar"><a class="brand" href="/"><span class="brand-mark">boring&gt;</span><span>BoringOS <small>independent systems project</small></span></a><nav class="topnav"><a href="#desktop">Desktop</a><a href="#architecture">Architecture</a><a href="#proof">Proof</a><a href="#roadmap">Roadmap</a><a href="#run">Run it</a><span class="lang-switch"><a href="/boringos/" aria-current="page">EN</a><a href="/de/boringos/">DE</a></span></nav></header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BoringOS 0.0.53-dev — Native x86_64 desktop OS in C</title>
+<meta name="description" content="BoringOS is an independent experimental x86_64 desktop operating system written primarily in C. M52 is complete: native BoringWM desktop, terminal, editor, files, hardware inventory and real xHCI HID interrupt-IN transport.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#020405">
+<link rel="canonical" href="https://dennishilk.com/boringos/">
+<link rel="alternate" hreflang="en" href="https://dennishilk.com/boringos/">
+<link rel="alternate" hreflang="de" href="https://dennishilk.com/de/boringos/">
+<link rel="alternate" hreflang="x-default" href="https://dennishilk.com/boringos/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BoringOS 0.0.53-dev — native C desktop + xHCI USB">
+<meta property="og:description" content="Own x86_64 kernel, Ring3 userspace, BoringFS, BoringWM, native apps, real hardware inventory and xHCI HID interrupt-IN transport.">
+<meta property="og:url" content="https://dennishilk.com/boringos/">
+<meta property="og:image" content="https://dennishilk.com/boringos/boringos-boringfetch-preview.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BoringOS 0.0.53-dev">
+<meta name="twitter:description" content="Independent x86_64 desktop OS in C. M52 complete.">
+<meta name="twitter:image" content="https://dennishilk.com/boringos/boringos-boringfetch-preview.webp">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="stylesheet" href="/boringos/boringos.css?v=3">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Independent experimental x86_64 desktop operating system with its own kernel, native C userspace, BoringFS, BoringWM and BoringOS-owned xHCI USB stack.","url":"https://dennishilk.com/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU","softwareVersion":"0.0.53-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://dennishilk.com/"}}</script>
+<style>
+.hero-current{display:block;min-height:auto;padding:clamp(4rem,8vw,7rem) 0 3rem}
+.hero-current .hero-copy{max-width:920px}
+.hero-current .hero-copy>p{max-width:900px}
+.hero-current::before{inset:5% 6% auto auto}
+.hero-proof-current{margin:2.4rem 0 0;overflow:hidden;border:1px solid var(--line-strong);border-radius:var(--radius);background:#020708;box-shadow:var(--shadow),0 0 60px rgba(0,188,255,.09)}
+.hero-proof-current a,.shot-wide a{display:block}
+.hero-proof-current img,.shot-wide img{display:block;width:100%;height:auto;image-rendering:auto}
+.hero-proof-current figcaption,.shot-wide figcaption{padding:.9rem 1rem;color:var(--muted);font-size:.74rem;border-top:1px solid var(--line);background:rgba(5,14,17,.9)}
+.hero-proof-current strong,.shot-wide strong{color:var(--cyan-soft)}
+.evidence-wide{display:grid;grid-template-columns:1fr;gap:2rem}
+.shot-wide{overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:rgba(5,14,17,.78);box-shadow:0 18px 45px rgba(0,0,0,.22)}
+.shot-wide a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.image-note{color:var(--dim);font-size:.7rem}
+.status-line{margin-top:1.2rem;color:var(--muted);font-size:.78rem}
+.usb-ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;margin-top:1rem}
+.usb-step{padding:1rem;border:1px solid var(--line);border-radius:12px;background:rgba(5,14,17,.74)}
+.usb-step small{display:block;color:var(--dim);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em}
+.usb-step strong{display:block;margin-top:.35rem;color:var(--cyan-soft);font-size:.83rem}
+.usb-step span{display:block;margin-top:.35rem;color:var(--muted);font-size:.69rem;line-height:1.45}
+@media(max-width:850px){.usb-ladder{grid-template-columns:1fr 1fr}.hero-current{padding-top:3rem}}
+@media(max-width:560px){.usb-ladder{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="shell-topbar">
+<a class="brand" href="/"><span class="brand-mark">boring&gt;</span><span>BoringOS <small>independent systems project</small></span></a>
+<nav class="topnav"><a href="#desktop">Desktop</a><a href="#architecture">Architecture</a><a href="#usb">USB</a><a href="#roadmap">Roadmap</a><span class="lang-switch"><a href="/boringos/" aria-current="page">EN</a><a href="/de/boringos/">DE</a></span></nav>
+</header>
 <main id="main" class="page">
-<section class="hero"><div class="hero-copy"><div class="eyebrow">BoringKernel 0.0.37-dev · x86_64 · C · M36 COMPLETE</div><h1>Boring<span>OS</span></h1><p>An independent experimental desktop operating system built from scratch — not Linux, not BSD, and not a wrapper around another kernel. BoringOS now has its own kernel, Ring3 userspace, persistent storage stack, display service, native BoringWM and a real graphical terminal.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p><div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">View source on GitHub</a><a class="btn" href="#desktop">See the real desktop proof</a><a class="btn" href="#run">Run M36</a></div><ul class="status-chips"><li><strong>LIVE</strong> own x86_64 kernel</li><li><strong>LIVE</strong> Ring3 + SPAWN</li><li><strong>LIVE</strong> BoringFS + VirtIO</li><li><strong>LIVE</strong> BoringWM + display</li><li><strong>LIVE</strong> graphical terminal + PTY</li></ul><p class="hero-note">Reference platform: QEMU x86_64 with Limine. M36 proves the graphical terminal session. M37 is next: integrate the proven desktop path into normal PID1 startup.</p></div><figure class="hero-proof"><img src="/boringos/m36-dual-terminals-main.png" width="800" height="600" alt="BoringOS M36 with two tiled native graphical terminals in BoringWM"><figcaption>Real merged-main framebuffer · two independent Ring3 terminals · BoringKernel 0.0.37-dev</figcaption></figure></section>
-<section id="desktop" class="section"><div class="section-heading"><div><div class="kicker">01 · M36 desktop proof</div><h2>The terminal is not a mockup anymore.</h2></div><p>Real QMP keyboard input reaches PS/2 hardware, Ring3 BoringWM, a native terminal process, a bounded PTY, the real shell and finally visible framebuffer pixels.</p></div><div class="evidence"><article class="shot"><img src="/boringos/m36-graphical-boringfetch-main.png" width="800" height="600" alt="BoringOS graphical terminal showing boringfetch"><div><strong>Graphical boringfetch</strong>Super+Return → terminal → PTY → shell → SPAWN boringfetch → pixels.</div></article><article class="shot"><img src="/boringos/m36-dual-terminals-main.png" width="800" height="600" alt="Two independent BoringOS graphical terminals"><div><strong>Two independent terminals</strong>Separate processes, CR3 roots, PTYs, M32 buffers, surfaces and input streams.</div></article></div><div class="fact-grid"><article class="fact-card"><span class="fact-index">30</span><h3>Framebuffer</h3><p>Native 800×600 output with deterministic pixel validation.</p></article><article class="fact-card"><span class="fact-index">31</span><h3>Input</h3><p>Native i8042/PS/2 keyboard and mouse path into Ring3.</p></article><article class="fact-card"><span class="fact-index">34</span><h3>Display</h3><p>Ring3 compositor service and software cursor.</p></article><article class="fact-card"><span class="fact-index">35</span><h3>BoringWM</h3><p>Native tiling, focus, reorder, close policy and input routing.</p></article><article class="fact-card"><span class="fact-index">36</span><h3>Terminal + PTY</h3><p>Graphical terminal, PTYs, explicit stdio and VFS SPAWN.</p></article><article class="fact-card"><span class="fact-index">✓</span><h3>Lifecycle</h3><p>Super+Q and shell/terminal death clean up without killing the survivor.</p></article></div></section>
-<section id="architecture" class="section"><div class="section-heading"><div><div class="kicker">02 · Architecture</div><h2>A small native stack that is actually ours.</h2></div><p>The kernel provides bounded primitives; display and window-management policy stays in Ring3.</p></div><div class="arch-flow"><div class="flow-node"><small>boot</small><strong>Limine</strong><span>QEMU x86_64 bootstrap.</span></div><div class="flow-node"><small>kernel</small><strong>BoringKernel</strong><span>Memory, tasks, processes, syscalls.</span></div><div class="flow-node"><small>storage</small><strong>VFS + BoringFS</strong><span>VirtIO-backed persistent root.</span></div><div class="flow-node"><small>services</small><strong>IPC + display</strong><span>Shared buffers and composition.</span></div><div class="flow-node"><small>policy</small><strong>BoringWM</strong><span>Tiling, focus and lifecycle.</span></div><div class="flow-node"><small>client</small><strong>terminal → shell</strong><span>PTY-backed graphical shell.</span></div></div></section>
-<section id="proof" class="section"><div class="section-heading"><div><div class="kicker">03 · Acceptance driven</div><h2>Real paths, not staged screenshots.</h2></div><p>M36 preserved all M0–M35 gates and added permanent PTY, SPAWN, terminal, lifecycle, framebuffer-oracle and exact-bundle reboot gates.</p></div><div class="principles"><article class="principle"><h3>Exact merged-main CI</h3><p>Freeze #464, closeout #465 and merged-main push #466 all passed. The closeout tree equals the main tree.</p></article><article class="principle"><h3>48,806 stack checks</h3><p>SPAWN uses a generic two-page user stack with an unmapped guard page and bounded argv layout.</p></article><article class="principle"><h3>78 PTY checks</h3><p>Generation-safe bounded PTYs cover blocking, wakeup, HUP, EOF, EPIPE, reuse and cleanup.</p></article><article class="principle"><h3>Pixel oracle</h3><p>The validator reconstructs geometry, borders, glyphs, cursor and pointer across every 800×600 reference frame.</p></article></div></section>
-<section id="roadmap" class="section"><div class="section-heading"><div><div class="kicker">04 · Roadmap</div><h2>Thirty-six milestones down. Desktop startup next.</h2></div><p>M37 has not started.</p></div><div class="roadmap-overview"><div class="roadmap-stat"><strong>36</strong><span>milestones complete</span></div><div class="roadmap-stat"><strong>0.0.37-dev</strong><span>current BoringKernel</span></div><div class="roadmap-stat"><strong>M37</strong><span>next · First Complete Desktop</span></div></div><div class="roadmap"><article class="roadmap-stage complete"><div class="stage-head"><div><h3>M18–M29 · Storage + executable userspace</h3><p>BoringFS tooling, block devices, VirtIO, persistent root, process lifecycle, VFS programs and descriptors.</p></div><span class="stage-status">COMPLETE</span></div></article><article class="roadmap-stage complete"><div class="stage-head"><div><h3>M30–M34 · Native graphical platform</h3><p>Framebuffer, PS/2 input, dynamic/shared memory, IPC and Ring3 display/compositor.</p></div><span class="stage-status">COMPLETE</span></div></article><article class="roadmap-stage complete"><div class="stage-head"><div><h3>M35–M36 · BoringWM + terminal</h3><p>Native tiling WM followed by real graphical PTY-backed shells.</p></div><span class="stage-status">COMPLETE</span></div></article><article class="roadmap-stage next"><div class="stage-head"><div><h3>M37 · First Complete Desktop</h3><p>Normal boot → boring-init → display → BoringWM → desktop; Super+Return opens and tiles real terminals.</p></div><span class="stage-status">NEXT</span></div></article></div></section>
-<section id="run" class="section"><div class="section-heading"><div><div class="kicker">05 · Run M36</div><h2>Boot the exact graphical terminal bundle.</h2></div><p>Current reference remains QEMU x86_64; broad bare-metal compatibility is not claimed yet.</p></div><div class="repo-panel"><div><h3>Inside QEMU</h3><p>Capture the keyboard, press <span class="inline-code">Super+Return</span>, type <span class="inline-code">boringfetch</span>, open a second terminal, switch focus with Super+J/K and close with Super+Q.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos/blob/main/docs/RUNNING-M36.md">M36 run instructions</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/docs/roadmap.md">Full roadmap</a><a class="btn" href="https://github.com/dennishilk/boringos">Repository</a></div></div></section>
-<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS source</a></div><div class="footer-motto">boring&gt; Super+Return <span class="term-dim"># it actually works now</span></div></footer></main></body></html>
+
+<section class="hero hero-current">
+<div class="hero-copy">
+<div class="eyebrow">BoringKernel 0.0.53-dev · x86_64 · C · M52 COMPLETE</div>
+<h1>Boring<span>OS</span></h1>
+<p>An independent experimental desktop operating system built from scratch — not Linux, not BSD and not a wrapper around another kernel. BoringOS now has its own kernel, Ring3 userspace, persistent BoringFS root, display service, native tiling BoringWM, graphical terminal, editor and file manager, real hardware inventory and a growing BoringOS-owned xHCI/USB stack.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
+<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">View source on GitHub</a><a class="btn" href="#desktop">See the desktop</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/docs/roadmap.md">Live roadmap</a></div>
+<ul class="status-chips"><li><strong>LIVE</strong> own x86_64 kernel</li><li><strong>LIVE</strong> Ring3 desktop</li><li><strong>LIVE</strong> BoringFS + VirtIO</li><li><strong>LIVE</strong> Edit + Files + Terminal</li><li><strong>LIVE</strong> CPUID + PCI + SMBIOS</li><li><strong>LIVE</strong> xHCI HID report transport</li></ul>
+<p class="hero-note">Primary verified platform: QEMU x86_64 with Limine. M52 is merged. USB HID reports now arrive through real xHCI interrupt-IN transfers, but normal desktop input still uses the proven i8042/PS/2 path until M53 connects USB HID to the existing BoringOS input queue.</p>
+</div>
+<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="BoringOS graphical terminal running boringfetch and showing kernel, CPU, SMBIOS, PCI and display information"></a><figcaption><strong>Real BoringOS desktop.</strong> BoringTerminal running <code>boringfetch</code> with real kernel-owned hardware inventory. <span class="image-note">Screenshot: 0.0.49-dev QEMU preview; current main has advanced to 0.0.53-dev. Click for full size.</span></figcaption></figure>
+</section>
+
+<section id="desktop" class="section">
+<div class="section-heading"><div><div class="kicker">01 · Native desktop</div><h2>It stopped being “just a kernel” a while ago.</h2></div><p>PID 1 starts the real desktop session: boring-display, BoringWM and native Ring3 applications backed by the same filesystem, process, IPC and input primitives as the rest of the system.</p></div>
+<div class="evidence-wide">
+<figure class="shot-wide"><a href="/boringos/boringos-edit-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-edit-preview.webp" width="800" height="629" loading="lazy" alt="BoringEdit editing a text file on the BoringOS graphical desktop"></a><figcaption><strong>BoringEdit.</strong> Native Ring3 text editor with real BoringFS load/save. The screenshot shows an edited <code>untitled.txt</code>. <span class="image-note">Click for full size.</span></figcaption></figure>
+<figure class="shot-wide"><a href="/boringos/boringos-files-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-files-preview.webp" width="1369" height="1000" loading="lazy" alt="BoringFiles showing the root directory of BoringFS on the graphical BoringOS desktop"></a><figcaption><strong>BoringFiles.</strong> Native file manager backed by real VFS/BoringFS directory enumeration, with the visible software cursor and a real BoringOS desktop behind it. <span class="image-note">Click for full size.</span></figcaption></figure>
+</div>
+<div class="fact-grid">
+<article class="fact-card"><span class="fact-index">37–38</span><h3>Desktop session</h3><p>PID 1 starts and supervises the bounded display/WM session from BoringFS.</p></article>
+<article class="fact-card"><span class="fact-index">39–42</span><h3>Native apps</h3><p>BoringEdit, BoringFiles, real WM shortcuts and shared native client foundations.</p></article>
+<article class="fact-card"><span class="fact-index">43–47</span><h3>Hardware facts</h3><p>CPUID, PCI, SMBIOS and honest real-hardware readiness reporting.</p></article>
+</div>
+</section>
+
+<section id="architecture" class="section">
+<div class="section-heading"><div><div class="kicker">02 · Architecture</div><h2>A small native stack that is actually ours.</h2></div><p>The kernel provides bounded primitives; desktop policy remains in Ring3. There is no X11 or Wayland underneath BoringWM.</p></div>
+<div class="arch-flow"><div class="flow-node"><small>boot</small><strong>Limine</strong><span>x86_64 bootstrap + framebuffer.</span></div><div class="flow-node"><small>kernel</small><strong>BoringKernel</strong><span>Memory, scheduling, processes, syscalls.</span></div><div class="flow-node"><small>storage</small><strong>VFS + BoringFS</strong><span>VirtIO-backed writable root.</span></div><div class="flow-node"><small>services</small><strong>IPC + display</strong><span>Shared buffers and composition.</span></div><div class="flow-node"><small>policy</small><strong>BoringWM</strong><span>Tiling, focus and lifecycle.</span></div><div class="flow-node"><small>clients</small><strong>Terminal · Edit · Files</strong><span>Native Ring3 applications.</span></div></div>
+</section>
+
+<section id="usb" class="section">
+<div class="section-heading"><div><div class="kicker">03 · Modern USB path</div><h2>xHCI now delivers real HID reports.</h2></div><p>M48–M52 progressed from PCI controller discovery to actual controller-completed keyboard and tablet report DMA. No fake input is inserted at the decoder boundary.</p></div>
+<div class="usb-ladder">
+<div class="usb-step"><small>M48</small><strong>xHCI controller</strong><span>BAR/MMIO validation, ownership handoff, rings, ports and bounded HID report decoders.</span></div>
+<div class="usb-step"><small>M49</small><strong>Address devices</strong><span>Root-port reset, Enable Slot, Address Device and per-device contexts.</span></div>
+<div class="usb-step"><small>M50–51</small><strong>Descriptors + endpoints</strong><span>EP0 GET_DESCRIPTOR, SET_CONFIGURATION and descriptor-derived Interrupt-IN endpoint setup.</span></div>
+<div class="usb-step"><small>M52</small><strong>Real reports</strong><span>Normal TRBs, DMA buffers, Transfer Events, keyboard/tablet decode and bounded re-arm.</span></div>
+</div>
+<p class="status-line">Deliberate boundary: no hub support, no USB mass storage, and USB reports are not yet fed into the normal desktop input queue. That integration belongs to M53.</p>
+</section>
+
+<section id="roadmap" class="section">
+<div class="section-heading"><div><div class="kicker">04 · Roadmap</div><h2>Fifty-two milestones complete. USB input integration next.</h2></div><p>The project uses Semantic Freeze, exact-head CI, guarded squash merges and merged-main verification for every milestone.</p></div>
+<div class="roadmap-overview"><div class="roadmap-stat"><strong>52</strong><span>milestones complete</span></div><div class="roadmap-stat"><strong>0.0.53-dev</strong><span>current BoringKernel</span></div><div class="roadmap-stat"><strong>M53</strong><span>next · USB HID → input queue</span></div></div>
+<div class="roadmap">
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M18–M29 · Storage + executable userspace</h3><p>BoringFS tooling, VirtIO, persistent root, process lifecycle, VFS programs and file descriptors.</p></div><span class="stage-status">COMPLETE</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M30–M42 · Native graphical desktop</h3><p>Framebuffer, input, IPC, boring-display, BoringWM, graphical terminal, BoringEdit, BoringFiles and shared client foundation.</p></div><span class="stage-status">COMPLETE</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M43–M47 · Hardware inventory + readiness</h3><p>Real CPUID, PCI and SMBIOS data plus an honest physical-hardware readiness boundary.</p></div><span class="stage-status">COMPLETE</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M48–M52 · xHCI / USB HID transport</h3><p>Controller bring-up, device addressing, descriptors, endpoint configuration and real Interrupt-IN report transport.</p></div><span class="stage-status">COMPLETE</span></div></article>
+<article class="roadmap-stage next"><div class="stage-head"><div><h3>M53 · USB HID → BoringOS input queue</h3><p>Feed the already real USB keyboard/tablet reports into the existing source-independent BoringOS input infrastructure.</p></div><span class="stage-status">NEXT</span></div></article>
+</div>
+</section>
+
+<section class="section">
+<div class="section-heading"><div><div class="kicker">05 · Current limits</div><h2>Unsupported still means unsupported.</h2></div><p>BoringOS deliberately separates hardware detection from hardware support.</p></div>
+<div class="principles"><article class="principle"><h3>Graphics</h3><p>Firmware/Limine framebuffer + software composition. No native AMD/NVIDIA/Intel GPU acceleration yet.</p></article><article class="principle"><h3>Storage</h3><p>VirtIO + BoringFS is the verified persistent root. AHCI and NVMe are not implemented yet.</p></article><article class="principle"><h3>Connectivity</h3><p>No networking or audio stack yet. No browser claim, no YouTube claim.</p></article><article class="principle"><h3>Physical PCs</h3><p>Readiness work exists, but QEMU remains the verified platform. A physical-hardware success claim comes only after a real boot.</p></article></div>
+</section>
+
+<section class="section">
+<div class="repo-panel"><div><h3>Source of truth</h3><p>The repository documents the exact active milestone, runtime contracts and acceptance evidence. BoringOS is MIT licensed and primarily written in C.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.md">README</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/docs/roadmap.md">Roadmap</a></div></div>
+</section>
+
+<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS source</a></div><div class="footer-motto">boring&gt; hardware reports are real now <span class="term-dim"># next: put them in the input queue</span></div></footer>
+</main>
+</body>
+</html>
