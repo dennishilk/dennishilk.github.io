@@ -164,5 +164,100 @@
   </footer>
 </div>
 
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const rawDashboardBase = "https://raw.githubusercontent.com/dennishilk/dennishilk.github.io/main/world-observer/dashboard/";
+
+    const setFallbackText = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value ?? "—";
+      }
+    };
+
+    const formatUtc = (value) => {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? (value || "—") : date.toISOString().slice(0, 16).replace("T", " ") + " UTC";
+    };
+
+    const formatAge = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return "—";
+      }
+      const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+      if (seconds >= 86400) return `${Math.floor(seconds / 86400)} d ago`;
+      if (seconds >= 3600) return `${Math.floor(seconds / 3600)} h ago`;
+      if (seconds >= 60) return `${Math.floor(seconds / 60)} min ago`;
+      return "just now";
+    };
+
+    window.setTimeout(async () => {
+      const dashboard = document.getElementById("observer-dashboard");
+      const fallback = document.getElementById("observer-fallback");
+      const total = document.getElementById("observer-total");
+      const needsFallback = !dashboard || dashboard.hidden || !total || total.textContent.trim() === "—";
+
+      if (!needsFallback) {
+        return;
+      }
+
+      try {
+        const cacheBust = Date.now();
+        const [summaryResponse, heartbeatResponse] = await Promise.all([
+          fetch(`${rawDashboardBase}summary.json?cb=${cacheBust}`, { cache: "no-store" }),
+          fetch(`${rawDashboardBase}heartbeat.json?cb=${cacheBust}`, { cache: "no-store" }),
+        ]);
+
+        if (!summaryResponse.ok) {
+          throw new Error(`GitHub raw summary fallback returned ${summaryResponse.status}`);
+        }
+
+        const summary = await summaryResponse.json();
+        setFallbackText("observer-total", summary.observer_count ?? summary.total_observers);
+        setFallbackText("observer-missing", summary.missing_count ?? summary.missing_observers);
+        setFallbackText("observer-degraded", summary.degraded_count ?? summary.degraded_observers);
+        setFallbackText("observer-last-update", formatUtc(summary.generated_at || summary.last_run_utc || summary.latest_date_utc || summary.last_update));
+        setFallbackText("observer-version", summary.dashboard_version ?? "—");
+
+        if (heartbeatResponse.ok) {
+          const heartbeat = await heartbeatResponse.json();
+          const timestamp = heartbeat.latest_heartbeat_utc || heartbeat.timestamp || heartbeat.generated_at || heartbeat.last_update;
+          const status = String(heartbeat.status || heartbeat.freshness_status || "alive").toLowerCase();
+          setFallbackText("heartbeat-status", status);
+          setFallbackText("heartbeat-timestamp", formatUtc(timestamp));
+          setFallbackText("heartbeat-age", formatAge(timestamp));
+
+          const badge = document.getElementById("heartbeat-status-badge");
+          if (badge) {
+            badge.textContent = status.toUpperCase();
+            badge.className = `status-badge ${status === "alive" ? "ok" : "partial"}`;
+          }
+
+          const message = document.getElementById("heartbeat-message");
+          if (message) {
+            message.textContent = "Local dashboard fetch was unavailable; showing the published GitHub fallback export.";
+          }
+
+          const card = document.querySelector(".server-heartbeat");
+          if (card) {
+            card.classList.remove("heartbeat-warning", "heartbeat-error");
+            card.classList.add(status === "alive" ? "heartbeat-ok" : "heartbeat-warning");
+          }
+        }
+
+        if (fallback) {
+          fallback.hidden = true;
+        }
+        if (dashboard) {
+          dashboard.hidden = false;
+        }
+      } catch (error) {
+        console.warn("World Observer GitHub raw fallback failed", error);
+      }
+    }, 1200);
+  });
+</script>
+
 </body>
 </html>
