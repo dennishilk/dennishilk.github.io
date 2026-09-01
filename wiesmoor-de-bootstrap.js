@@ -82,10 +82,12 @@
     if (exact) {
       const leading = original.match(/^\s*/)?.[0] || "";
       const trailing = original.match(/\s*$/)?.[0] || "";
-      node.nodeValue = `${leading}${exact}${trailing}`;
+      const translated = `${leading}${exact}${trailing}`;
+      if (translated !== original) node.nodeValue = translated;
       return;
     }
-    node.nodeValue = replacePhrases(original, spec.phrases);
+    const translated = replacePhrases(original, spec.phrases);
+    if (translated !== original) node.nodeValue = translated;
   };
 
   const translateAttributes = (element, spec) => {
@@ -93,7 +95,8 @@
     for (const name of ["aria-label", "title", "placeholder", "alt"]) {
       const value = element.getAttribute(name);
       if (!value) continue;
-      element.setAttribute(name, spec.attributes[value] || replacePhrases(value, spec.phrases));
+      const translated = spec.attributes[value] || replacePhrases(value, spec.phrases);
+      if (translated !== value) element.setAttribute(name, translated);
     }
   };
 
