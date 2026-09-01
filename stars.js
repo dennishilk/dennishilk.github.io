@@ -94,7 +94,7 @@ if (useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-
 if (useDedicatedGermanWiesmoorUi) {
   if (!document.querySelector('script[data-wiesmoor-de-loader]')) {
     const languageScript = document.createElement('script');
-    languageScript.src = '/wiesmoor-de-bootstrap.js?v=20260815-1';
+    languageScript.src = '/wiesmoor-de-bootstrap.js?v=20260901-1';
     languageScript.dataset.wiesmoorDeLoader = 'true';
     document.head.appendChild(languageScript);
   }
