@@ -218,15 +218,28 @@
     updateDiscoveryMetadata(spec);
     updateJsonLd(spec);
 
-    const observer = new MutationObserver((records) => {
-      for (const record of records) {
-        if (record.type === "characterData") translateText(record.target, spec);
-        record.addedNodes.forEach((node) => {
-          translateTree(node, spec);
-          if (node instanceof Element) rewriteLinksAndAssets();
-        });
+    const observerOptions = {
+      subtree: true,
+      childList: true,
+      characterData: true,
+    };
+    let observer;
+    const startObserver = () => observer.observe(document.body, observerOptions);
+
+    observer = new MutationObserver((records) => {
+      observer.disconnect();
+      try {
+        for (const record of records) {
+          if (record.type === "characterData") translateText(record.target, spec);
+          record.addedNodes.forEach((node) => {
+            translateTree(node, spec);
+            if (node instanceof Element) rewriteLinksAndAssets();
+          });
+        }
+      } finally {
+        startObserver();
       }
     });
-    observer.observe(document.body, { subtree: true, childList: true, characterData: true });
+    startObserver();
   });
 })();

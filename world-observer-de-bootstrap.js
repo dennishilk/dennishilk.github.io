@@ -115,7 +115,8 @@
     if (exact) {
       const leading = original.match(/^\s*/)?.[0] || "";
       const trailing = original.match(/\s*$/)?.[0] || "";
-      node.nodeValue = `${leading}${exact}${trailing}`;
+      const translated = `${leading}${exact}${trailing}`;
+      if (translated !== original) node.nodeValue = translated;
       return;
     }
     const translated = replacePhrases(original, spec.phrases);
@@ -252,23 +253,32 @@
     updateDiscoveryMetadata(spec);
     updateJsonLd(spec);
 
-    const observer = new MutationObserver(records => {
-      for (const record of records) {
-        if (excluded(record.target)) continue;
-        if (record.type === "characterData") translateText(record.target, spec);
-        if (record.type === "attributes") translateAttributes(record.target, spec);
-        record.addedNodes?.forEach(node => {
-          translateTree(node, spec);
-          if (node.nodeType === Node.ELEMENT_NODE) rewriteLinks(node);
-        });
-      }
-    });
-    observer.observe(document.body, {
+    const observerOptions = {
       subtree: true,
       childList: true,
       characterData: true,
       attributes: true,
       attributeFilter: ["aria-label", "title", "placeholder", "alt"],
+    };
+    let observer;
+    const startObserver = () => observer.observe(document.body, observerOptions);
+
+    observer = new MutationObserver(records => {
+      observer.disconnect();
+      try {
+        for (const record of records) {
+          if (excluded(record.target)) continue;
+          if (record.type === "characterData") translateText(record.target, spec);
+          if (record.type === "attributes") translateAttributes(record.target, spec);
+          record.addedNodes?.forEach(node => {
+            translateTree(node, spec);
+            if (node.nodeType === Node.ELEMENT_NODE) rewriteLinks(node);
+          });
+        }
+      } finally {
+        startObserver();
+      }
     });
+    startObserver();
   });
 })();

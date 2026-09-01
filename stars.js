@@ -94,14 +94,14 @@ if (useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-
 if (useDedicatedGermanWiesmoorUi) {
   if (!document.querySelector('script[data-wiesmoor-de-loader]')) {
     const languageScript = document.createElement('script');
-    languageScript.src = '/wiesmoor-de-bootstrap.js?v=20260901-1';
+    languageScript.src = '/wiesmoor-de-bootstrap.js?v=20260901-3';
     languageScript.dataset.wiesmoorDeLoader = 'true';
     document.head.appendChild(languageScript);
   }
 } else if (useDedicatedGermanWorldObserverUi) {
   if (!document.querySelector('script[data-world-observer-de-loader]')) {
     const languageScript = document.createElement('script');
-    languageScript.src = '/world-observer-de-bootstrap.js?v=20260816-internet-1';
+    languageScript.src = '/world-observer-de-bootstrap.js?v=20260901-1';
     languageScript.dataset.worldObserverDeLoader = 'true';
     document.head.appendChild(languageScript);
   }
