@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BoringOS 0.0.62-dev — Physischer BoringWM-Desktop auf x86_64</title>
-<meta name="description" content="BoringOS ist ein eigenständiges x86_64-Desktop-Betriebssystem in C. M61 bootet jetzt auf echter Cthulhu-Hardware mit persistentem BoringWM, USB-Tastatur, nativen Apps, USB-BoringFS-Root und boringfetch.">
+<title>BoringOS 0.0.62-dev — Physischer M63-Desktop, Persistenz, Reboot und Shutdown</title>
+<meta name="description" content="BoringOS ist ein eigenständiges x86_64-Desktop-Betriebssystem in C. M63 ist auf Cthulhu physisch mit BoringWM, persistentem USB-BoringFS, dynamischer Prozess-/Task-Kapazität, echtem Reboot und ACPI-S5-Shutdown bewiesen.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="#020405">
 <link rel="canonical" href="https://dennishilk.com/de/boringos/">
@@ -12,17 +12,17 @@
 <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/boringos/">
 <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/boringos/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="BoringOS 0.0.62-dev — läuft jetzt physisch">
-<meta property="og:description" content="Eigener Kernel, Ring3-Userspace, BoringFS, BoringWM, xHCI-USB-Root und echte Tastatureingabe auf der physischen Maschine Cthulhu.">
+<meta property="og:title" content="BoringOS 0.0.62-dev — M63 physisch bewiesen">
+<meta property="og:description" content="Eigener Kernel, Ring3-Userspace, BoringFS, BoringWM, dynamische Prozesse/Tasks, persistente USB-Writes, echter Reboot und ACPI-S5-Shutdown auf Cthulhu.">
 <meta property="og:url" content="https://dennishilk.com/de/boringos/">
 <meta property="og:image" content="https://dennishilk.com/boringos/boringos-boringfetch-preview.webp">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="BoringOS 0.0.62-dev">
-<meta name="twitter:description" content="M61 Physical Desktop: BoringWM, USB-Tastatur, native Apps und boringfetch laufen jetzt auf Cthulhu.">
+<meta name="twitter:description" content="M63 Physical Baseline: persistentes BoringFS, dynamische Kapazität, echter Reboot und ACPI-S5-Shutdown auf Cthulhu.">
 <meta name="twitter:image" content="https://dennishilk.com/boringos/boringos-boringfetch-preview.webp">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="stylesheet" href="/boringos/boringos.css?v=3">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Eigenständiges experimentelles x86_64-Desktop-Betriebssystem mit eigenem Kernel, nativem C-Userspace, BoringFS, BoringWM, xHCI-USB und physischer Desktop-Validierung.","url":"https://dennishilk.com/de/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU / physischer PC","softwareVersion":"0.0.62-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://dennishilk.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Eigenständiges experimentelles x86_64-Desktop-Betriebssystem mit eigenem Kernel, nativem C-Userspace, BoringFS, BoringWM, xHCI-USB, persistentem Storage und physischer Reboot-/Shutdown-Validierung.","url":"https://dennishilk.com/de/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU / physischer PC","softwareVersion":"0.0.62-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://dennishilk.com/"}}</script>
 
 <style>
 .hero-current{display:block;min-height:auto;padding:clamp(4rem,8vw,7rem) 0 3rem}
@@ -57,37 +57,37 @@
 
 <section class="hero hero-current">
 <div class="hero-copy">
-<div class="eyebrow">BoringKernel 0.0.62-dev · x86_64 · C · M61 PHYSICAL DESKTOP</div>
+<div class="eyebrow">BoringKernel 0.0.62-dev · x86_64 · C · M63 PHYSICAL BASELINE</div>
 <h1>Boring<span>OS</span></h1>
-<p>Ein eigenständiges Desktop-Betriebssystem von Grund auf — kein Linux, kein BSD und kein Wrapper um einen fremden Kernel. BoringOS bootet inzwischen auf der echten Maschine Cthulhu in seinen eigenen persistenten BoringWM-Desktop, verarbeitet echte USB-Tastatureingaben, startet native Anwendungen, tiled und schließt sie, überlebt auch das letzte geschlossene Fenster und führt <code>boringfetch</code> im physischen grafischen Terminal aus.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
-<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Quellcode auf GitHub</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/agent/m61-physical-framebuffer-breadcrumbs">M61 Physical Branch</a><a class="btn" href="#roadmap">Wie es weitergeht</a></div>
-<ul class="status-chips"><li><strong>PHYSICAL</strong> BoringWM-Desktop</li><li><strong>PHYSICAL</strong> USB-Tastatur</li><li><strong>LIVE</strong> USB-Root BoringFS</li><li><strong>LIVE</strong> Terminal + Edit + Files</li><li><strong>LIVE</strong> persistenter leerer Desktop</li><li><strong>LIVE</strong> boringfetch auf Cthulhu</li></ul>
-<p class="hero-note">Der physische Runtime-Kandidat <code>1e3c0e83e8e9159480782a6be624975ccbe0da3a</code> absolvierte Exact-Head-CI mit 26 Erfolgen und 0 Fehlern. Das 96-MiB-M61-Image bootet vom USB-Stick, mountet schreibbares BoringFS und erreicht auf Cthulhu den echten nativen Desktop.</p>
+<p>Ein eigenständiges Desktop-Betriebssystem von Grund auf — kein Linux, kein BSD und kein Wrapper um einen fremden Kernel. BoringOS bootet auf Cthulhu in seinen eigenen BoringWM-Desktop, verarbeitet echte USB-Tastatureingaben, betreibt native Apps weit über der alten Acht-Prozess-Bootstrap-Grenze, schreibt persistente BoringFS-Daten auf USB, rebootet die echte Maschine und schaltet sie über ACPI S5 sauber aus.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
+<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Quellcode auf GitHub</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/m63-system-power-lifecycle-physical-2026-09-05">M63 Physical Freeze</a><a class="btn" href="#roadmap">Wie es weitergeht</a></div>
+<ul class="status-chips"><li><strong>PHYSICAL</strong> BoringWM-Desktop</li><li><strong>PHYSICAL</strong> USB-Tastatur</li><li><strong>LIVE</strong> persistente BoringFS-Writes</li><li><strong>LIVE</strong> dynamische Prozess-/Task-Kapazität</li><li><strong>LIVE</strong> echter Reboot</li><li><strong>LIVE</strong> ACPI-S5-Shutdown</li></ul>
+<p class="hero-note">Der physisch akzeptierte M63-Runtime-Stand ist bei <code>799d1e6529b8eafead37acc340f3fd18dbb2d655</code> eingefroren. Das 96-MiB-USB-Image hat SHA-256 <code>457535a2d27d98e489868a9d33cf8e8c2e2c83de13fc659bcea30e937c9018ab</code> und ist auf Cthulhu physisch für Writes, Persistenz, Reboot, zweiten Boot und Shutdown bewiesen.</p>
 </div>
-<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="BoringOS grafisches Terminal mit boringfetch"></a><figcaption><strong>BoringTerminal + boringfetch.</strong> Dieses Repository-Bild ist noch ein älterer QEMU-Screenshot; derselbe Stack ist inzwischen physisch auf Cthulhu mit echten Ryzen-/B550-/SMBIOS-Daten bewiesen. <span class="image-note">M61 Physical Validation: 04.09.2026.</span></figcaption></figure>
+<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="BoringOS grafisches Terminal mit boringfetch"></a><figcaption><strong>BoringTerminal + boringfetch.</strong> Dieses Repository-Bild ist noch ein älterer QEMU-Screenshot; derselbe Stack ist inzwischen physisch auf Cthulhu mit echten Ryzen-/B550-/SMBIOS-Daten bewiesen. <span class="image-note">M63 Physical Validation: 05.09.2026.</span></figcaption></figure>
 </section>
 
 <section id="physical" class="section">
-<div class="section-heading"><div><div class="kicker">01 · Physischer Beweis</div><h2>Der Desktop ist jetzt wirklich echt.</h2></div><p>Cthulhu ist nicht länger nur ein Readiness-Ziel. BoringOS bootet vom M61-USB-Image, wechselt vom Boot-Dashboard in BoringWM und bleibt als nativer Desktop benutzbar.</p></div>
+<div class="section-heading"><div><div class="kicker">01 · Physischer Beweis</div><h2>Der komplette System-Lifecycle ist jetzt echt.</h2></div><p>Cthulhu bootet das M63-USB-Image in BoringWM, schreibt persistente Daten, rebootet über den echten Plattformpfad, bootet mit intakten Daten erneut und schaltet anschließend über ACPI S5 sauber aus.</p></div>
 <div class="fact-grid">
 <article class="fact-card"><span class="fact-index">HW</span><h3>Cthulhu</h3><p>AMD Ryzen 7 5800X3D, Gigabyte B550 VISION D, 32 GiB installierter Speicher per SMBIOS erkannt und 57 PCI-Geräte in <code>boringfetch</code>.</p></article>
 <article class="fact-card"><span class="fact-index">USB</span><h3>Echter Tastaturpfad</h3><p>Eine direkt angeschlossene Holtek-USB-Tastatur läuft über BoringOS xHCI Interrupt-IN → HID-Decoding → Inputqueue → boring-display → BoringWM.</p></article>
-<article class="fact-card"><span class="fact-index">WM</span><h3>Persistenter Lifecycle</h3><p>Native Apps öffnen, tilen und schließen; alle Fenster schließen; der leere BoringWM-Desktop bleibt aktiv und Apps lassen sich danach erneut starten.</p></article>
+<article class="fact-card"><span class="fact-index">PWR</span><h3>Reboot + Shutdown</h3><p><code>reboot</code> führt einen echten Hardware-Reset mit Firmware-Wiedereintritt aus. <code>shutdown</code> führt nach Storage-Sync einen echten ACPI-S5-Poweroff aus.</p></article>
 </div>
 </section>
 
 <section id="desktop" class="section">
 <div class="section-heading"><div><div class="kicker">02 · Nativer Desktop</div><h2>Kernel, Services, WM und Anwendungen sind BoringOS.</h2></div><p>PID 1 startet den Ring3-Display-Stack aus BoringFS. Darunter gibt es weder X11 noch Wayland.</p></div>
-<div class="arch-flow"><div class="flow-node"><small>boot</small><strong>Limine</strong><span>UEFI-Bootstrap + Firmware-Framebuffer.</span></div><div class="flow-node"><small>kernel</small><strong>BoringKernel</strong><span>Memory, Scheduling, Prozesse und Syscalls.</span></div><div class="flow-node"><small>storage</small><strong>BoringFS</strong><span>Schreibbares USB-Root im physischen M61-Image.</span></div><div class="flow-node"><small>service</small><strong>boring-display</strong><span>Input-Ownership und Software-Komposition.</span></div><div class="flow-node"><small>policy</small><strong>BoringWM</strong><span>Tiling, Fokus, Close und persistenter leerer Desktop.</span></div><div class="flow-node"><small>apps</small><strong>Terminal · Edit · Files</strong><span>Native Ring3-Anwendungen.</span></div></div>
+<div class="arch-flow"><div class="flow-node"><small>boot</small><strong>Limine</strong><span>UEFI-Bootstrap + Firmware-Framebuffer.</span></div><div class="flow-node"><small>kernel</small><strong>BoringKernel</strong><span>Memory, Scheduling, Prozesse und Syscalls.</span></div><div class="flow-node"><small>storage</small><strong>BoringFS</strong><span>Schreibbares USB-Root im physischen M63-Image.</span></div><div class="flow-node"><small>service</small><strong>boring-display</strong><span>Input-Ownership und Software-Komposition.</span></div><div class="flow-node"><small>policy</small><strong>BoringWM</strong><span>Tiling, Fokus, Close und persistenter leerer Desktop.</span></div><div class="flow-node"><small>apps</small><strong>Terminal · Edit · Files</strong><span>Native Ring3-Anwendungen.</span></div></div>
 <div class="evidence-wide">
 <figure class="shot-wide"><a href="/boringos/boringos-edit-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-edit-preview.webp" width="800" height="629" loading="lazy" alt="BoringEdit auf BoringOS"></a><figcaption><strong>BoringEdit.</strong> Nativer Editor mit BoringFS-Laden/Speichern.</figcaption></figure>
 <figure class="shot-wide"><a href="/boringos/boringos-files-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-files-preview.webp" width="1369" height="1000" loading="lazy" alt="BoringFiles auf BoringOS"></a><figcaption><strong>BoringFiles.</strong> Nativer Dateimanager mit echter VFS-/BoringFS-Verzeichnisauflistung.</figcaption></figure>
 </div>
-<p class="status-line">Physisch bewiesen sind inzwischen unter anderem <code>Super+Return</code> für BoringTerminal, <code>Super+E</code> für BoringEdit, <code>Super+F</code> für BoringFiles und <code>Super+Q</code> zum Schließen des fokussierten Clients.</p>
+<p class="status-line">Physisch bewiesen sind <code>Super+Return</code>, <code>Super+E</code>, <code>Super+F</code> und <code>Super+Q</code>. M62 bewies zusätzlich sieben Terminals plus Edit und Files, komplettes Schließen und saubere Capacity-Wiederverwendung.</p>
 </section>
 
 <section id="usb" class="section">
-<div class="section-heading"><div><div class="kicker">03 · USB</div><h2>xHCI funktioniert physisch — als Nächstes kommt die Topologie.</h2></div><p>Der begrenzte USB-Stack ist auf echter Hardware für den aktiven Controller, direkten HID-Tastaturinput und USB Mass Storage bewiesen. Die verbleibenden Lücken sind jetzt Architekturthemen und nicht mehr die Frage, ob USB grundsätzlich funktioniert.</p></div>
+<div class="section-heading"><div><div class="kicker">03 · USB</div><h2>xHCI und dauerhafte USB-Writes funktionieren physisch — als Nächstes die Topologie.</h2></div><p>Aktiver Controller, direkter HID-Tastaturinput und USB Mass Storage sind physisch bewiesen. M63 beweist zusätzlich persistente Writes mit striktem SYNCHRONIZE-CACHE-Pfad und eng validiertem FUA-Fallback für Geräte, die den Flush-Befehl explizit als unsupported melden.</p></div>
 <div class="usb-ladder">
 <div class="usb-step"><small>BEWIESEN</small><strong>Aktiver xHCI-Controller</strong><span>Controller-Bring-up, Rings, direkte Root-Port-Adressierung, Deskriptoren und Konfiguration funktionieren auf Cthulhu.</span></div>
 <div class="usb-step"><small>BEWIESEN</small><strong>Tastatur</strong><span>Die direkte Holtek-Tastatur erreicht Ring3-BoringWM-Shortcuts durch den nativen HID-Pfad.</span></div>
@@ -107,7 +107,7 @@
 </section>
 
 <section id="storage" class="section">
-<div class="section-heading"><div><div class="kicker">05 · Storage + BoringFS</div><h2>Das physische System bootet über seinen eigenen USB-Root-Pfad.</h2></div><p>BoringFS ist das eigene Dateisystem von BoringOS. M61 kombiniert Limine-Bootdateien und ein schreibbares BoringFS-Root in einem festen 96-MiB-USB-Image.</p></div>
+<div class="section-heading"><div><div class="kicker">05 · Storage + BoringFS</div><h2>Das physische USB-Root überlebt jetzt einen vollständigen Reboot-Zyklus.</h2></div><p>BoringFS ist das eigene Dateisystem von BoringOS. M63 beweist physisch mkdir/touch/write auf dem USB-Root, echten Reboot, erneuten erfolgreichen Mount und die ursprünglichen Daten danach weiterhin vorhanden.</p></div>
 <div class="fact-grid">
 <article class="fact-card"><span class="fact-index">FS</span><h3>BoringFS</h3><p>Eigener Codec, Validator, Formatter, <code>boringfsck</code>, Kernel-Mount-Support und schreibbarer Betrieb.</p></article>
 <article class="fact-card"><span class="fact-index">USB</span><h3>Physisches Root</h3><p>xHCI USB Mass Storage, Bulk/BOT/SCSI und die feste BoringFS-Slice werden auf Cthulhu physisch erreicht.</p></article>
@@ -116,29 +116,28 @@
 </section>
 
 <section id="roadmap" class="section">
-<div class="section-heading"><div><div class="kicker">06 · Nach M61</div><h2>Den physischen Desktop einfrieren. Dann die Bootstrap-Grenzen entfernen.</h2></div><p>M61 ist die physische Desktop-Basis. Die nächste Reihenfolge ist bewusst praktisch und hält das jetzt funktionierende System stabil.</p></div>
-<div class="roadmap-overview"><div class="roadmap-stat"><strong>M61</strong><span>physische Desktop-Basis</span></div><div class="roadmap-stat"><strong>0.0.62-dev</strong><span>aktueller BoringKernel-Banner</span></div><div class="roadmap-stat"><strong>26 / 0</strong><span>Exact-Head-CI des physischen Runtime-Kandidaten</span></div></div>
+<div class="section-heading"><div><div class="kicker">06 · Nach M63</div><h2>Die vollständige physische Basis einfrieren. Dann die USB-Topologie fertigstellen.</h2></div><p>M61 bewies den Desktop, M62 entfernte die statische Prozess-/Task-Grenze und M63 beweist persistente Writes plus echten Reboot und Shutdown. Das nächste Hardwareziel ist der Mauspfad.</p></div>
+<div class="roadmap-overview"><div class="roadmap-stat"><strong>M63</strong><span>physische System-Basis</span></div><div class="roadmap-stat"><strong>0.0.62-dev</strong><span>aktueller BoringKernel-Banner</span></div><div class="roadmap-stat"><strong>WRITE · REBOOT · S5</strong><span>physisch auf Cthulhu bewiesen</span></div></div>
 <div class="roadmap">
-<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M61 · Aktuellen physischen Desktop einfrieren</h3><p>USB-Root-Boot, echter BoringWM, Tastatur, native Apps, persistenter leerer Desktop und physisches boringfetch sind bewiesen.</p></div><span class="stage-status">FREEZE</span></div></article>
-<article class="roadmap-stage next"><div class="stage-head"><div><h3>1 · Prozess + Task + Desktop-Kapazitäten</h3><p>Über die aktuelle Acht-Prozess-/Acht-Task-Bootstrap-Grenze hinausgehen und WM-/Display-/IPC-Kapazitäten passend ausrichten.</p></div><span class="stage-status">NEXT</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>2 · USB: Multi-xHCI + Hubs + Maus</h3><p>Alle relevanten Controller übernehmen, Hubs enumerieren und danach die physische ROCCAT-Maus ehrlich validieren.</p></div><span class="stage-status">GEPLANT</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>3 · Native / bessere GOP-Auflösung</h3><p>Den aktuellen 800×600-Firmware-Modus durch eine brauchbare physische Displayauflösung ersetzen und Software-Rendering beibehalten.</p></div><span class="stage-status">GEPLANT</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>4 · Schnellere Software-Grafik / Present</h3><p>Full-Frame-CPU-Arbeit durch schnellere Kopien sowie Damage-/Dirty-Region-Presentation reduzieren.</p></div><span class="stage-status">GEPLANT</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>5 · Die physischen 32 GiB RAM sinnvoll nutzen</h3><p>Den korrekten SMBIOS-Gesamtwert beibehalten und die praktische PMM-Nutzung auf der echten Maschine ausbauen.</p></div><span class="stage-status">GEPLANT</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>Später · eigener AMD-Grafiktreiber</h3><p>Vendor-Modesetting und Beschleunigung kommen erst, wenn der Framebuffer-Desktop bereits brauchbar und schnell ist.</p></div><span class="stage-status">SPÄTER</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M61 · Physischer Desktop</h3><p>USB-Root-Boot, echter BoringWM, Tastatur, native Apps und persistenter leerer Desktop.</p></div><span class="stage-status">FERTIG</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M62 · Dynamische Prozess-/Task-Kapazität</h3><p>Dynamische Runtime-Objekte, 64/64 Policy-Grenzen und physischer Multi-App-Churn weit über der alten festen Grenze.</p></div><span class="stage-status">FERTIG</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M63 · Persistenter Power-Lifecycle</h3><p>Dauerhafte USB-Writes, echter Reboot, zweiter Boot mit intakten Daten und echter ACPI-S5-Shutdown.</p></div><span class="stage-status">EINGEFROREN</span></div></article>
+<article class="roadmap-stage next"><div class="stage-head"><div><h3>Nächstes · Multi-xHCI + Hubs + physische Maus</h3><p>Alle relevanten Controller übernehmen, den Genesys-Hub enumerieren und dann die ROCCAT-Maus in ihrer echten Topologie validieren.</p></div><span class="stage-status">NÄCHSTES</span></div></article>
+<article class="roadmap-stage future"><div class="stage-head"><div><h3>Danach · bessere GOP-Auflösung</h3><p>Über den aktuellen 800×600-Firmware-Framebuffer hinausgehen und den bewiesenen Software-Desktop beibehalten.</p></div><span class="stage-status">GEPLANT</span></div></article>
+<article class="roadmap-stage future"><div class="stage-head"><div><h3>Später · schnelleres Present, mehr RAM, eigener AMD-Treiber</h3><p>Software-Presentation optimieren, die 32 GiB sinnvoller nutzen und erst deutlich später native GPU-Unterstützung bauen.</p></div><span class="stage-status">SPÄTER</span></div></article>
 </div>
 </section>
 
 <section class="section">
 <div class="section-heading"><div><div class="kicker">07 · Aktuelle Grenzen</div><h2>Die verbliebenen Ecken sind jetzt sichtbar — und nützlich.</h2></div><p>Die echte Maschine zeigt inzwischen sehr genau, welche Bootstrap-Annahmen als Nächstes verschwinden sollten.</p></div>
-<div class="principles"><article class="principle"><h3>Prozesse</h3><p><code>KERNEL_PROCESS_MAX</code> und <code>KERNEL_TASK_MAX</code> stehen beide auf 8. Deshalb passen ungefähr zwei vollständige Terminals oder etwa fünf Ein-Prozess-Apps gleichzeitig.</p></article><article class="principle"><h3>USB-Topologie</h3><p>Noch keine Hub-Enumeration und keine Multi-xHCI-Ownership. Direkte Tastatur funktioniert; die Hub-verbundene Maus noch nicht.</p></article><article class="principle"><h3>Grafik</h3><p>Firmware-Framebuffer + CPU-Komposition. Noch kein nativer AMD-/NVIDIA-/Intel-GPU-Treiber.</p></article><article class="principle"><h3>Systembreite</h3><p>Noch kein Netzwerk, Audio, NVMe oder SMP-Runtime. BoringOS bevorzugt weiterhin ein ehrliches kleines System statt erfundenem Support.</p></article></div>
+<div class="principles"><article class="principle"><h3>Prozesse</h3><p>Die alten festen Arrays sind entfernt. Aktuelle Policy-Grenzen: 64 Prozesse / 64 Tasks sowie 16 BoringWM-Clients und 16 WM-/Display-IPC-Peers.</p></article><article class="principle"><h3>USB-Topologie</h3><p>Noch keine Hub-Enumeration und keine Multi-xHCI-Ownership. Direkte Tastatur funktioniert; die Hub-verbundene Maus noch nicht.</p></article><article class="principle"><h3>Grafik</h3><p>Firmware-Framebuffer + CPU-Komposition. Noch kein nativer AMD-/NVIDIA-/Intel-GPU-Treiber.</p></article><article class="principle"><h3>Systembreite</h3><p>Noch kein Netzwerk, Audio, NVMe oder SMP-Runtime. BoringOS bevorzugt weiterhin ein ehrliches kleines System statt erfundenem Support.</p></article></div>
 </section>
 
 <section class="section">
-<div class="repo-panel"><div><h3>Quelle der Wahrheit</h3><p>Das Repository enthält Implementierung, Tests und den exakten physischen M61-Branch. BoringOS steht unter MIT und ist hauptsächlich in C geschrieben.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/agent/m61-physical-framebuffer-breadcrumbs/README.de.md">Aktuelle README</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/agent/m61-physical-framebuffer-breadcrumbs/README.md">English</a></div></div>
+<div class="repo-panel"><div><h3>Quelle der Wahrheit</h3><p><code>main</code> ist der aktuelle Entwicklungsstand. Die exakt physisch akzeptierte M63-Runtime bleibt zusätzlich als immutable-by-policy Freeze-Branch erhalten.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.de.md">Aktuelle README</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/m63-system-power-lifecycle-physical-2026-09-05">M63 Freeze</a></div></div>
 </section>
 
-<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/de/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS-Quellcode</a></div><div class="footer-motto">boring&gt; läuft auf Cthulhu <span class="term-dim"># physical desktop achieved</span></div></footer>
+<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/de/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS-Quellcode</a></div><div class="footer-motto">boring&gt; läuft auf Cthulhu <span class="term-dim"># M63 physical baseline achieved</span></div></footer>
 </main>
 </body>
 </html>
