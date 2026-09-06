@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BoringOS 0.0.62-dev — Physical M63 desktop, persistence, reboot and shutdown</title>
-<meta name="description" content="BoringOS is an independent x86_64 desktop operating system in C. M63 is physically proven on Cthulhu with BoringWM, persistent USB-root BoringFS, dynamic process/task capacity, real reboot and ACPI S5 shutdown.">
+<title>BoringOS 0.0.62-dev — Physical M66 multi-xHCI, USB hub and mouse</title>
+<meta name="description" content="BoringOS is an independent x86_64 desktop operating system in C. M66 is physically proven on Cthulhu with multi-xHCI ownership, a real Genesys USB hub and a real ROCCAT mouse driving the BoringWM cursor and pointer focus.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="#020405">
 <link rel="canonical" href="https://dennishilk.com/boringos/">
@@ -12,17 +12,17 @@
 <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/boringos/">
 <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/boringos/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="BoringOS 0.0.62-dev — M63 physically proven">
-<meta property="og:description" content="Own kernel, Ring3 userspace, BoringFS, BoringWM, dynamic processes/tasks, durable USB writes, real reboot and ACPI S5 shutdown on Cthulhu.">
+<meta property="og:title" content="BoringOS 0.0.62-dev — M66 physical USB topology proven">
+<meta property="og:description" content="Own kernel and Ring3 desktop with physical multi-xHCI, real Genesys hub enumeration and a real ROCCAT mouse moving the BoringWM cursor on Cthulhu.">
 <meta property="og:url" content="https://dennishilk.com/boringos/">
 <meta property="og:image" content="https://dennishilk.com/boringos/boringos-boringfetch-preview.webp">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="BoringOS 0.0.62-dev">
-<meta name="twitter:description" content="M63 physical baseline: persistent BoringFS, dynamic capacity, real reboot and ACPI S5 shutdown on Cthulhu.">
+<meta name="twitter:description" content="M66 physical baseline: multi-xHCI, real USB hub enumeration and a real hub-connected mouse driving BoringWM on Cthulhu.">
 <meta name="twitter:image" content="https://dennishilk.com/boringos/boringos-boringfetch-preview.webp">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="stylesheet" href="/boringos/boringos.css?v=3">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Independent experimental x86_64 desktop operating system with its own kernel, native C userspace, BoringFS, BoringWM, xHCI USB, persistent storage and physical reboot/shutdown validation.","url":"https://dennishilk.com/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU / physical PC","softwareVersion":"0.0.62-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://dennishilk.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Independent experimental x86_64 desktop operating system with its own kernel, native C userspace, BoringFS, BoringWM, physical multi-xHCI USB, hub enumeration, real mouse input and persistent storage.","url":"https://dennishilk.com/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU / physical PC","softwareVersion":"0.0.62-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://dennishilk.com/"}}</script>
 
 <style>
 .hero-current{display:block;min-height:auto;padding:clamp(4rem,8vw,7rem) 0 3rem}
@@ -57,21 +57,21 @@
 
 <section class="hero hero-current">
 <div class="hero-copy">
-<div class="eyebrow">BoringKernel 0.0.62-dev · x86_64 · C · M63 PHYSICAL BASELINE</div>
+<div class="eyebrow">BoringKernel 0.0.62-dev · x86_64 · C · M66 PHYSICAL USB BASELINE</div>
 <h1>Boring<span>OS</span></h1>
-<p>An independent desktop operating system built from scratch — not Linux, not BSD and not a wrapper around another kernel. BoringOS now boots on the real Cthulhu machine into its own BoringWM desktop, accepts real USB keyboard input, runs native applications beyond the old eight-process bootstrap ceiling, writes persistent BoringFS data to USB, performs a real hardware reboot and powers the machine off through ACPI S5.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
-<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">View source on GitHub</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/m63-system-power-lifecycle-physical-2026-09-05">M63 physical freeze</a><a class="btn" href="#roadmap">What's next</a></div>
-<ul class="status-chips"><li><strong>PHYSICAL</strong> BoringWM desktop</li><li><strong>PHYSICAL</strong> USB keyboard</li><li><strong>LIVE</strong> persistent BoringFS writes</li><li><strong>LIVE</strong> dynamic process/task capacity</li><li><strong>LIVE</strong> real reboot</li><li><strong>LIVE</strong> ACPI S5 shutdown</li></ul>
-<p class="hero-note">The physically accepted M63 runtime is frozen at <code>799d1e6529b8eafead37acc340f3fd18dbb2d655</code>. Its 96 MiB USB image has SHA-256 <code>457535a2d27d98e489868a9d33cf8e8c2e2c83de13fc659bcea30e937c9018ab</code> and has been physically proven for write persistence, reboot, second boot and shutdown on Cthulhu.</p>
+<p>An independent desktop operating system built from scratch — not Linux, not BSD and not a wrapper around another kernel. BoringOS now boots on the real Cthulhu machine with independently owned xHCI controllers, enumerates the real Genesys Logic USB hub and receives movement from the real ROCCAT mouse behind it. That physical input moves the existing software cursor and changes BoringWM focus between live windows as the pointer crosses them. The proven BoringFS, reboot and ACPI S5 lifecycle remains intact.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
+<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">View source on GitHub</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/m66-usb-hub-mouse-physical-2026-09-06">M66 physical freeze</a><a class="btn" href="#roadmap">What's next</a></div>
+<ul class="status-chips"><li><strong>PHYSICAL</strong> multi-xHCI</li><li><strong>PHYSICAL</strong> Genesys USB hub</li><li><strong>PHYSICAL</strong> ROCCAT mouse</li><li><strong>PHYSICAL</strong> USB keyboard</li><li><strong>LIVE</strong> persistent BoringFS</li><li><strong>LIVE</strong> reboot + ACPI S5</li></ul>
+<p class="hero-note">The physically accepted M66 runtime is frozen at <code>8ccd618dfc4e8163821de552a3c912bab4e6f36a</code>. Its 96 MiB USB image has SHA-256 <code>84dfb521c2359364ba2f3f78718b686638d81f3d07f35050f32e5a2f91bd0c61</code>. On Cthulhu the real hub-connected mouse visibly moves the cursor and BoringWM pointer hit-testing changes focus between two live windows.</p>
 </div>
-<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="BoringOS graphical terminal running boringfetch"></a><figcaption><strong>BoringTerminal + boringfetch.</strong> This repository image is an earlier QEMU screenshot; the same stack is now physically proven on Cthulhu with real Ryzen/B550/SMBIOS data. <span class="image-note">M63 physical validation: 2026-09-05.</span></figcaption></figure>
+<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="BoringOS graphical terminal running boringfetch"></a><figcaption><strong>BoringTerminal + boringfetch.</strong> This repository image is an earlier QEMU screenshot; the desktop stack is now physically proven on Cthulhu with real multi-xHCI USB, a Genesys hub and a downstream ROCCAT mouse. <span class="image-note">M66 physical validation: 2026-09-06.</span></figcaption></figure>
 </section>
 
 <section id="physical" class="section">
-<div class="section-heading"><div><div class="kicker">01 · Physical proof</div><h2>The system lifecycle is real now.</h2></div><p>Cthulhu boots the M63 USB image into BoringWM, writes persistent data, resets through the real platform reboot path, boots again with that data intact and powers off through ACPI S5.</p></div>
+<div class="section-heading"><div><div class="kicker">01 · Physical proof</div><h2>The USB topology is real now too.</h2></div><p>Cthulhu boots into BoringWM with the existing durable USB root and now also proves multiple xHCI controllers, real hub enumeration and a real downstream mouse reaching the Ring3 desktop.</p></div>
 <div class="fact-grid">
 <article class="fact-card"><span class="fact-index">HW</span><h3>Cthulhu</h3><p>AMD Ryzen 7 5800X3D, Gigabyte B550 VISION D, 32 GiB installed memory detected through SMBIOS and 57 PCI devices reported by <code>boringfetch</code>.</p></article>
-<article class="fact-card"><span class="fact-index">USB</span><h3>Real keyboard path</h3><p>A directly attached Holtek USB keyboard works through BoringOS xHCI Interrupt-IN → HID decode → input queue → boring-display → BoringWM.</p></article>
+<article class="fact-card"><span class="fact-index">USB</span><h3>Real keyboard + mouse path</h3><p>The direct Holtek keyboard and the ROCCAT mouse behind a real Genesys hub reach BoringOS through its own xHCI/HID stack. Mouse movement drives the cursor and live-window pointer focus.</p></article>
 <article class="fact-card"><span class="fact-index">PWR</span><h3>Reboot + shutdown</h3><p><code>reboot</code> performs a real hardware reset and firmware re-entry. <code>shutdown</code> performs a real ACPI S5 power-off after storage synchronization.</p></article>
 </div>
 </section>
@@ -87,12 +87,12 @@
 </section>
 
 <section id="usb" class="section">
-<div class="section-heading"><div><div class="kicker">03 · USB</div><h2>xHCI and durable USB writes work physically — topology is next.</h2></div><p>The active controller, direct HID keyboard input and USB Mass Storage are physically proven. M63 additionally proved persistent writes with strict SYNCHRONIZE CACHE handling and a narrowly validated FUA fallback for devices that explicitly report the flush command unsupported.</p></div>
+<div class="section-heading"><div><div class="kicker">03 · USB</div><h2>Multi-xHCI, the real hub and the real mouse now work physically.</h2></div><p>M64 removed the single-controller assumption, M65 added bounded downstream hub topology and M66 proves the complete physical path on Cthulhu. M63 remains the separate durability baseline for USB Mass Storage and persistent BoringFS.</p></div>
 <div class="usb-ladder">
-<div class="usb-step"><small>PROVEN</small><strong>Active xHCI controller</strong><span>Controller bring-up, rings, direct root-port addressing, descriptors and configuration work on Cthulhu.</span></div>
-<div class="usb-step"><small>PROVEN</small><strong>Keyboard</strong><span>Direct Holtek keyboard reaches Ring3 BoringWM shortcuts through the native HID path.</span></div>
-<div class="usb-step"><small>NEXT</small><strong>Multi-xHCI</strong><span>Cthulhu exposes controller paths at 02:00.0, 29:00.0 and 58:00.3; BoringOS currently owns only one controller instance.</span></div>
-<div class="usb-step"><small>NEXT</small><strong>Hubs + mouse</strong><span>The ROCCAT mouse was behind a Genesys hub. Hub enumeration comes before claiming that mouse as supported.</span></div>
+<div class="usb-step"><small>PROVEN</small><strong>Multi-xHCI</strong><span>Relevant controllers are instance-owned with independent MMIO, command/event rings and device state.</span></div>
+<div class="usb-step"><small>PROVEN</small><strong>Genesys hub</strong><span>Real hub-class descriptor, power, status and bounded asynchronous reset handling work on Cthulhu.</span></div>
+<div class="usb-step"><small>PROVEN</small><strong>ROCCAT mouse</strong><span>The downstream physical mouse reaches HID Interrupt-IN and moves the existing BoringOS software cursor.</span></div>
+<div class="usb-step"><small>PROVEN</small><strong>BoringWM focus</strong><span>With two live windows, moving the pointer across them changes focus through real Ring3 pointer hit-testing.</span></div>
 </div>
 </section>
 
@@ -116,13 +116,14 @@
 </section>
 
 <section id="roadmap" class="section">
-<div class="section-heading"><div><div class="kicker">06 · After M63</div><h2>Freeze the complete physical baseline. Then finish USB topology.</h2></div><p>M61 proved the desktop, M62 removed the static process/task ceiling, and M63 proved persistent writes plus real reboot and shutdown. The next hardware target is the mouse path.</p></div>
-<div class="roadmap-overview"><div class="roadmap-stat"><strong>M63</strong><span>physical system baseline</span></div><div class="roadmap-stat"><strong>0.0.62-dev</strong><span>current BoringKernel banner</span></div><div class="roadmap-stat"><strong>WRITE · REBOOT · S5</strong><span>physically proven on Cthulhu</span></div></div>
+<div class="section-heading"><div><div class="kicker">06 · After M66</div><h2>USB topology is frozen. Polish input, then move on to graphics.</h2></div><p>M61 proved the desktop, M62 capacity, M63 durability/power and M64–M66 now close the multi-xHCI → hub → real mouse chain on physical Cthulhu.</p></div>
+<div class="roadmap-overview"><div class="roadmap-stat"><strong>M66</strong><span>physical USB topology baseline</span></div><div class="roadmap-stat"><strong>0.0.62-dev</strong><span>current BoringKernel banner</span></div><div class="roadmap-stat"><strong>xHCI · HUB · MOUSE</strong><span>physically proven on Cthulhu</span></div></div>
 <div class="roadmap">
 <article class="roadmap-stage complete"><div class="stage-head"><div><h3>M61 · Physical desktop</h3><p>USB-root boot, real BoringWM, keyboard, native apps and persistent empty desktop.</p></div><span class="stage-status">DONE</span></div></article>
 <article class="roadmap-stage complete"><div class="stage-head"><div><h3>M62 · Dynamic process/task capacity</h3><p>Dynamic runtime objects, 64/64 policy limits and physical multi-application churn beyond the old fixed ceiling.</p></div><span class="stage-status">DONE</span></div></article>
 <article class="roadmap-stage complete"><div class="stage-head"><div><h3>M63 · Persistent power lifecycle</h3><p>Durable USB writes, real reboot, second boot with data intact and real ACPI S5 shutdown.</p></div><span class="stage-status">FROZEN</span></div></article>
-<article class="roadmap-stage next"><div class="stage-head"><div><h3>Next · Multi-xHCI + hubs + physical mouse</h3><p>Own all relevant controllers, enumerate the Genesys hub and then validate the ROCCAT mouse on its real topology.</p></div><span class="stage-status">NEXT</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M64–M66 · Multi-xHCI + hub + physical mouse</h3><p>Independent controllers, real Genesys hub enumeration and the real ROCCAT mouse driving cursor movement and pointer focus.</p></div><span class="stage-status">FROZEN</span></div></article>
+<article class="roadmap-stage next"><div class="stage-head"><div><h3>Next · Keyboard held-key repeat</h3><p>Add bounded typematic repeat so Backspace, arrows and ordinary keys repeat naturally while held without repeating WM launcher shortcuts.</p></div><span class="stage-status">NEXT</span></div></article>
 <article class="roadmap-stage future"><div class="stage-head"><div><h3>Then · Better GOP resolution</h3><p>Move beyond the current 800×600 firmware framebuffer while keeping the proven software-rendered desktop.</p></div><span class="stage-status">PLANNED</span></div></article>
 <article class="roadmap-stage future"><div class="stage-head"><div><h3>Later · Faster present, more RAM, native AMD</h3><p>Optimize software presentation, use the installed 32 GiB more meaningfully and only much later build native GPU support.</p></div><span class="stage-status">LATER</span></div></article>
 </div>
@@ -130,14 +131,14 @@
 
 <section class="section">
 <div class="section-heading"><div><div class="kicker">07 · Current limits</div><h2>The remaining rough edges are visible — and useful.</h2></div><p>The physical machine is now exposing exactly which bootstrap assumptions should be removed next.</p></div>
-<div class="principles"><article class="principle"><h3>Processes</h3><p>The old fixed arrays are gone. Current policy limits are 64 processes / 64 tasks, with 16 BoringWM clients and 16 WM/display IPC peers.</p></article><article class="principle"><h3>USB topology</h3><p>No hub enumeration and no multi-xHCI ownership yet. Direct keyboard works; the hub-connected mouse is not yet supported.</p></article><article class="principle"><h3>Graphics</h3><p>Firmware framebuffer + CPU composition. No native AMD/NVIDIA/Intel GPU driver yet.</p></article><article class="principle"><h3>System breadth</h3><p>No networking, audio, NVMe or SMP runtime yet. BoringOS still prefers a truthful small system over pretend support.</p></article></div>
+<div class="principles"><article class="principle"><h3>Processes</h3><p>The old fixed arrays are gone. Current policy limits are 64 processes / 64 tasks, with 16 BoringWM clients and 16 WM/display IPC peers.</p></article><article class="principle"><h3>Keyboard repeat</h3><p>Held USB keys do not typematically repeat yet; Backspace currently needs one press per deletion. This is input polish, not a topology failure.</p></article><article class="principle"><h3>Graphics</h3><p>Firmware framebuffer + CPU composition. No native AMD/NVIDIA/Intel GPU driver yet.</p></article><article class="principle"><h3>System breadth</h3><p>No networking, audio, NVMe or SMP runtime yet. BoringOS still prefers a truthful small system over pretend support.</p></article></div>
 </section>
 
 <section class="section">
-<div class="repo-panel"><div><h3>Source of truth</h3><p><code>main</code> is the current development baseline. The exact physically accepted M63 runtime is retained as an immutable-by-policy freeze branch.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.md">Current README</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/m63-system-power-lifecycle-physical-2026-09-05">M63 freeze</a></div></div>
+<div class="repo-panel"><div><h3>Source of truth</h3><p><code>main</code> now contains the physically accepted M66 runtime plus documentation. The exact runtime is retained separately as an immutable-by-policy freeze branch.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.md">Current README</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/m66-usb-hub-mouse-physical-2026-09-06">M66 freeze</a></div></div>
 </section>
 
-<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS source</a></div><div class="footer-motto">boring&gt; runs on Cthulhu <span class="term-dim"># M63 physical baseline achieved</span></div></footer>
+<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS source</a></div><div class="footer-motto">boring&gt; runs on Cthulhu <span class="term-dim"># M66 real hub mouse achieved</span></div></footer>
 </main>
 </body>
 </html>
