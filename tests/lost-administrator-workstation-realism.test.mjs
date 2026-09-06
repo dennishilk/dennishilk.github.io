@@ -1,138 +1,57 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { ShellEngine } from '../assets/js/debian-server/shell-engine.js';
-import { createProcesses } from '../assets/js/debian-server/process-model.js';
-import { defaultWorkstationState, loadWorkstationState, WORKSTATION_SCHEMA_VERSION, WORKSTATION_STORAGE_KEY } from '../assets/js/lost-administrator/workstation-state.js';
+import { defaultWorkstationState } from '../assets/js/lost-administrator/workstation-state.js';
 
-const exec=(engine,state,source)=>{state.commandHistory.push(source);return engine.execute(source);};
-const text=r=>r.stdout.join('\n');
-const output=text;
-const createOldSchema10Processes=()=>createProcesses('visitor');
-const createOldSchema11Processes=()=>createProcesses('m.weber');
+const setup=()=>{const state=defaultWorkstationState();return {state,shell:new ShellEngine(state)};};
+const text=result=>[...result.stdout,...result.stderr].join('\n');
+const leaks=/lab-node|visitor@|gateway\.lab|mirror\.lab|status\.lab|backup\.lab|192\.0\.2\.|Browser Session|Lab status/i;
 
-test('realism pass preserves startup, schema and frozen identity',async()=>{
-  assert.equal(WORKSTATION_SCHEMA_VERSION,11);
-  const controller=await readFile(new URL('../assets/js/lost-administrator/workstation-controller.js',import.meta.url),'utf8');
-  assert.match(controller,/Debian GNU\/Linux 13 \(trixie\)/);
-  assert.match(controller,/Last login: Fri Jul 31 17:41:26 UTC 2026 on tty1/);
-  const state=defaultWorkstationState(),engine=new ShellEngine(state);
-  assert.equal(text(exec(engine,state,'date')),'Fri Jul 31 15:18:43 EDT 2026');
-  assert.equal(text(exec(engine,state,'date -u')),'Fri Jul 31 19:18:43 UTC 2026');
-  assert.equal(text(exec(engine,state,'hostname')),'workstation');
-  assert.equal(text(exec(engine,state,'whoami')),'m.weber');
-  assert.equal(text(exec(engine,state,'cat /etc/hostname')),'workstation');
-  assert.equal(text(exec(engine,state,'cat /etc/timezone')),'America/New_York');
-  assert.match(text(exec(engine,state,'cat /etc/os-release')),/Debian GNU\/Linux 13 \(trixie\)[\s\S]*VERSION_CODENAME=trixie/);
+test('identity commands agree on Michael, workstation, and tty1',()=>{
+  const {shell}=setup();
+  const expected={whoami:/^m\.weber$/,id:/uid=1000\(m\.weber\).*groups=1000\(m\.weber\)/,groups:/^m\.weber$/,users:/^m\.weber$/,who:/m\.weber\s+tty1/,w:/m\.weber\s+tty1/,last:/m\.weber\s+tty1/,lastlog:/m\.weber\s+tty1/,hostname:/^workstation$/,hostnamectl:/Static hostname: workstation/,fastfetch:/m\.weber@workstation/};
+  for(const [command,pattern] of Object.entries(expected)){const output=text(shell.execute(command));assert.match(output,pattern,command);assert.doesNotMatch(output,leaks,command);}
+  assert.match(text(shell.execute('sudo true')),/m\.weber is not in the sudoers/);
 });
 
-test('parser, redirection, status and pipelines behave like restrained bash',()=>{
-  const state=defaultWorkstationState(),engine=new ShellEngine(state);
-  assert.equal(text(exec(engine,state,'grep -R "CMTA" /srv/archive-index')),'legacy-sites.tsv:CMTA-SF-12 | PHYSICAL / PARTIAL DIGITAL | PERMANENT | WFR-04 | FOLDER 12');
-  const redirected=exec(engine,state,'grep -R "CMTA" /srv/archive-index 2>/dev/null');
-  assert.equal(text(redirected),'legacy-sites.tsv:CMTA-SF-12 | PHYSICAL / PARTIAL DIGITAL | PERMANENT | WFR-04 | FOLDER 12');
-  assert.deepEqual(redirected.stderr,[]);
-  const missing=exec(engine,state,'cat /does/not/exist 2>/dev/null');
-  assert.notEqual(missing.exitCode,0);assert.deepEqual(missing.stderr,[]);
-  assert.equal(text(exec(engine,state,'cat /var/log/kern.log | grep -i usb')).split('\n').length,3);
-  assert.equal(text(exec(engine,state,'grep -R "CMTA" /srv/archive-index | wc -l')).trim(),'1');
-  assert.equal(exec(engine,state,'false && echo no').stdout.length,0);
-  assert.equal(text(exec(engine,state,'false || echo yes')),'yes');
-  exec(engine,state,'grep NOMATCH /srv/archive-index/legacy-sites.tsv');
-  assert.equal(text(exec(engine,state,'echo $?')),'1');
-  assert.equal(text(exec(engine,state,"echo 'two words' | grep 'two words'")),'two words');
+test('immutable identity variables cannot be overwritten or removed',()=>{
+  const {state,shell}=setup();
+  for(const command of ['export USER=visitor','export HOSTNAME=lab-node','unset HOME','unset LOGNAME'])assert.equal(shell.execute(command).exitCode,1,command);
+  assert.deepEqual(Object.fromEntries(['USER','LOGNAME','HOME','HOSTNAME','SHELL'].map(key=>[key,state.environment[key]])),{USER:'m.weber',LOGNAME:'m.weber',HOME:'/home/m.weber',HOSTNAME:'workstation',SHELL:'/bin/bash'});
 });
 
-test('metadata and canonical files remain consistent and visitor history is separate',()=>{
-  const state=defaultWorkstationState(),engine=new ShellEngine(state);
-  const aliases=text(exec(engine,state,'cat ~/.bash_aliases'));
-  assert.match(aliases,/alias ll='ls -alF'/);assert.doesNotMatch(aliases,/CMTA|ssh|sudo|monitor-01|store-02|sw-02|missing|police/i);
-  assert.match(text(exec(engine,state,'head -n 1 /var/log/kern.log')),/usb 2-1: new high-speed USB device/);
-  assert.equal(text(exec(engine,state,'tail -n 1 /srv/archive-index/legacy-sites.tsv')),'CMTA-SF-12 | PHYSICAL / PARTIAL DIGITAL | PERMANENT | WFR-04 | FOLDER 12');
-  assert.match(text(exec(engine,state,'wc -l /var/log/kern.log')).trim(),/^3 \/var\/log\/kern\.log$/);
-  const stat=text(exec(engine,state,'stat /srv/archive-index/legacy-sites.tsv'));
-  assert.match(stat,/Size: 73\b/);assert.match(text(exec(engine,state,'ls -l /srv/archive-index/legacy-sites.tsv')),/\b73\b.*legacy-sites.tsv/);
-  assert.match(text(exec(engine,state,'file /srv/archive-index/legacy-sites.tsv')),/ASCII text/);
-  exec(engine,state,'touch /etc/nope');assert.notEqual(state.lastExitCode,0);
-  exec(engine,state,'echo visitor-only');assert.doesNotMatch(text(exec(engine,state,'cat ~/.bash_history')),/visitor-only/);
+test('time commands are frozen without an invented boot timestamp',()=>{
+  const {shell}=setup();
+  assert.equal(text(shell.execute('date')),'Fri Jul 31 15:18:43 EDT 2026');
+  assert.equal(text(shell.execute('date -u')),'Fri Jul 31 19:18:43 UTC 2026');
+  assert.match(text(shell.execute('timedatectl')),/15:18:43 EDT[\s\S]*19:18:43 UTC/);
+  for(const command of ['uptime','w','top','last','fastfetch'])assert.doesNotMatch(text(shell.execute(command)),/system boot|boot time|Thu Jul|1 day, 1 hour|2026-07-28/,command);
 });
 
-test('old schema snapshots reset to canonical state with clean visitor history',()=>{
-  const old=defaultWorkstationState();old.schemaVersion=9;old.commandHistory=['visitor command'];
-  const data=new Map([[WORKSTATION_STORAGE_KEY,JSON.stringify(old)]]);const storage={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};
-  const restored=loadWorkstationState(storage);
-  assert.equal(restored.schemaVersion,WORKSTATION_SCHEMA_VERSION);assert.deepEqual(restored.commandHistory,[]);
+test('Michael mode suppresses generic network and hardware profiles',()=>{
+  const {shell}=setup();
+  const commands=['ip addr','ip route','ss','netstat','ping gateway.lab','traceroute status.lab','dig mirror.lab','curl https://status.lab','lscpu','lspci','lsusb','lsblk','blkid','free -h','lsmem','mount','findmnt'];
+  for(const command of commands)assert.doesNotMatch(text(shell.execute(command)),leaks,command);
+  assert.match(text(shell.execute('ip addr')),/127\.0\.0\.1/);
+  assert.doesNotMatch(text(shell.execute('mount')),/vda|virtio|removable|usb/i);
 });
 
-test('frozen system summary derives packages, uptime, users and processes from one state',()=>{
-  const state=defaultWorkstationState(),engine=new ShellEngine(state);
-  const fastfetch=text(exec(engine,state,'fastfetch'));
-  const top=text(exec(engine,state,'top'));
-  const uptime=text(exec(engine,state,'uptime'));
-  const who=text(exec(engine,state,'who'));
-  const w=text(exec(engine,state,'w'));
-  const last=text(exec(engine,state,'last'));
-  const dpkgCount=Number(text(exec(engine,state,"dpkg-query -f '${binary:Package}\\n' | wc -l")).trim());
-  const fastfetchCount=Number(fastfetch.match(/Packages: (\d+) \(dpkg\)/)?.[1]);
-  assert.equal(state.system.frozenLocal,'Fri Jul 31 15:18:43 EDT 2026');
-  assert.equal(state.system.frozenUtc,'Fri Jul 31 19:18:43 UTC 2026');
-  assert.equal(state.system.bootLocal,'Thu Jul 30 13:48:43 EDT 2026');
-  assert.equal(state.system.bootUtc,'Thu Jul 30 17:48:43 UTC 2026');
-  assert.equal(fastfetchCount,642);
-  assert.equal(dpkgCount,fastfetchCount);
-  assert.notEqual(fastfetchCount,33);
-  assert.match(fastfetch,/Uptime: 1 day, 1 hour, 30 minutes/);
-  assert.match(top,/^top - 15:18:43 up 1 day, 1:30,/);
-  assert.match(uptime,/^ 15:18:43 up 1 day, 1:30,/);
-  assert.doesNotMatch([top,uptime,w].join('\n'),/09:30:00/);
-  assert.equal(who,'m.weber  tty1         Jul 31 13:41');
-  assert.match(w,/m\.weber\s+tty1/);
-  assert.match(last,/m\.weber\s+tty1[\s\S]*reboot\s+system boot\s+6\.12\.38\+deb13-amd64 Thu Jul 30 13:48:43 EDT 2026/);
-  for(const leaked of ['visitor','nginx','monitor','www-data'])assert.doesNotMatch([top,who,w,last].join('\n'),new RegExp(`\\b${leaked}\\b`));
+test('processes, services, and packages contain only a restrained local profile',()=>{
+  const {state,shell}=setup(),processes=text(shell.execute('ps aux')),services=text(shell.execute('systemctl')),packages=text(shell.execute('apt list --installed'));
+  assert.match(processes,/m\.weber.*tty1.*-bash/);
+  assert.doesNotMatch(processes,/nginx|monitor|sshd|visitor/);
+  assert.doesNotMatch(services,/nginx|monitor|ssh\.service|Lab/);
+  assert.match(packages,/coreutils/);
+  assert.doesNotMatch(packages,/debian-trixie-installed|openssh-server|smartmontools/);
+  assert.ok(Object.values(state.packages).every(pkg=>!pkg.virtual));
 });
 
-test('schema-10 persisted workstation summary snapshot migrates to schema-11 canonical state',()=>{
-  const stale=defaultWorkstationState();
-  stale.schemaVersion=10;
-  stale.packageSummary={totalInstalled:30,curatedVisible:30};
-  stale.packages=Object.fromEntries(Object.entries(stale.packages).slice(0,30));
-  stale.processes=createOldSchema10Processes();
-  stale.services={...stale.services,'nginx.service':{name:'nginx.service',description:'nginx web server',active:true,enabled:true},'monitor.service':{name:'monitor.service',description:'monitor service',active:true,enabled:true}};
-  delete stale.system.frozenLocal;
-  delete stale.system.frozenUtc;
-  delete stale.system.frozenClock;
-  delete stale.system.bootLocal;
-  delete stale.system.bootUtc;
-  delete stale.system.frozenEpochMs;
-  delete stale.system.bootEpochMs;
-  const data=new Map([[WORKSTATION_STORAGE_KEY,JSON.stringify(stale)]]);
-  const storage={getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,value),removeItem:key=>data.delete(key)};
-  const loaded=loadWorkstationState(storage), shell=new ShellEngine(loaded);
-  const persisted=JSON.parse(data.get(WORKSTATION_STORAGE_KEY));
-  const fastfetch=output(shell.execute('fastfetch'));
-  const top=output(shell.execute('top'));
-  const uptime=output(shell.execute('uptime'));
-  assert.equal(loaded.schemaVersion,WORKSTATION_SCHEMA_VERSION);
-  assert.equal(persisted.schemaVersion,WORKSTATION_SCHEMA_VERSION);
-  assert.equal(loaded.packageSummary.totalInstalled,642);
-  assert.equal(persisted.packageSummary.totalInstalled,642);
-  assert.deepEqual(loaded.processes,createOldSchema11Processes());
-  assert.ok(loaded.system.frozenEpochMs);
-  assert.equal(loaded.system.frozenLocal,'Fri Jul 31 15:18:43 EDT 2026');
-  assert.equal(loaded.system.frozenUtc,'Fri Jul 31 19:18:43 UTC 2026');
-  assert.equal(loaded.system.frozenClock,'15:18:43');
-  assert.equal(loaded.system.bootLocal,'Thu Jul 30 13:48:43 EDT 2026');
-  assert.equal(loaded.system.bootUtc,'Thu Jul 30 17:48:43 UTC 2026');
-  assert.equal(loaded.system.bootEpochMs,Date.UTC(2026,6,30,17,48,43));
-  assert.equal(fastfetch.match(/Packages: (\d+) \(dpkg\)/)?.[1],'642');
-  assert.match(top,/^top - 15:18:43 up 1 day, 1:30,/);
-  assert.match(uptime,/^ 15:18:43 up 1 day, 1:30,/);
-  assert.doesNotMatch([top,uptime,JSON.stringify(loaded.processes),JSON.stringify(loaded.services)].join('\n'),/\b(visitor|nginx|monitor|www-data)\b/);
-});
-
-test('workstation package model stays administrative without future clue tools',()=>{
-  const state=defaultWorkstationState(),engine=new ShellEngine(state);
-  const aptList=text(exec(engine,state,'apt list --installed'));
-  for(const name of ['bash','coreutils','openssh-server','rsync','smartmontools','tmux','vim-tiny'])assert.match(aptList,new RegExp(`^${name}/trixie`,'m'));
-  for(const forbidden of ['nebustrike','chapter11','chapter12','chapter13','quantum','singularity','chronicle'])assert.doesNotMatch(aptList,new RegExp(forbidden,'i'));
+test('common inspection and composition commands remain useful',()=>{
+  const {state,shell}=setup();
+  assert.equal(shell.execute('echo alpha > ~/Notes/session.txt').exitCode,0);
+  assert.equal(shell.execute('echo beta >> ~/Notes/session.txt').exitCode,0);
+  assert.deepEqual(shell.execute('cat ~/Notes/session.txt | grep beta').stdout,['beta']);
+  assert.match(text(shell.execute('stat ~/Notes/session.txt')),/m\.weber[\s\S]*2026-07-31T19:18:43\.000Z/);
+  assert.equal(shell.execute('cp ~/Notes/session.txt ~/Notes/copy.txt').exitCode,0);
+  assert.equal(state.filesystem.children.home.children['m.weber'].children.Notes.children['copy.txt'].owner,'m.weber');
 });

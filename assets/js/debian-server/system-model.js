@@ -8,12 +8,10 @@ export const SYSTEM = Object.freeze({
 export const NETWORK_HOSTS=Object.freeze({'gateway.lab':'192.0.2.1','mirror.lab':'192.0.2.10','status.lab':'192.0.2.20','backup.lab':'192.0.2.30','lab-node':'192.0.2.25','localhost':'127.0.0.1'});
 export const MICHAEL_FROZEN_SYSTEM = Object.freeze({
   frozenLocal:'Fri Jul 31 15:18:43 EDT 2026', frozenUtc:'Fri Jul 31 19:18:43 UTC 2026',
-  frozenClock:'15:18:43', bootLocal:'Thu Jul 30 13:48:43 EDT 2026', bootUtc:'Thu Jul 30 17:48:43 UTC 2026',
-  frozenEpochMs:Date.UTC(2026,6,31,19,18,43), bootEpochMs:Date.UTC(2026,6,30,17,48,43),
-  login:{user:'m.weber',tty:'tty1',local:'Jul 31 13:41',utc:'Fri Jul 31 17:41:26 UTC 2026'},
-  packageTotal:642
+  frozenClock:'15:18:43', frozenEpochMs:Date.UTC(2026,6,31,19,18,43),
+  login:{user:'m.weber',tty:'tty1',local:'Jul 31 13:41',utc:'Fri Jul 31 17:41:26 UTC 2026'}
 });
 export function isMichaelWorkstation(state){return state?.environment?.USER==='m.weber'&&state?.environment?.HOSTNAME==='workstation';}
-export function uptimeSeconds(state){return isMichaelWorkstation(state)?Math.max(1,Math.floor((MICHAEL_FROZEN_SYSTEM.frozenEpochMs-MICHAEL_FROZEN_SYSTEM.bootEpochMs)/1000)):Math.max(1,Math.floor((Date.now()-new Date(state.sessionStartedAt).getTime())/1000)+7420);}
-export function humanUptime(state){const s=uptimeSeconds(state),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return `${d?`${d} day${d===1?'':'s'}, `:''}${h}:${String(m).padStart(2,'0')}`;}
-export function humanUptimeWords(state){const s=uptimeSeconds(state),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),parts=[];if(d)parts.push(`${d} day${d===1?'':'s'}`);if(h)parts.push(`${h} hour${h===1?'':'s'}`);parts.push(`${m} minute${m===1?'':'s'}`);return parts.join(', ');}
+export function uptimeSeconds(state){return isMichaelWorkstation(state)?null:Math.max(1,Math.floor((Date.now()-new Date(state.sessionStartedAt).getTime())/1000)+7420);}
+export function humanUptime(state){const s=uptimeSeconds(state);if(s===null)return 'not recorded';const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return `${d?`${d} day${d===1?'':'s'}, `:''}${h}:${String(m).padStart(2,'0')}`;}
+export function humanUptimeWords(state){const s=uptimeSeconds(state);if(s===null)return 'not recorded';const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),parts=[];if(d)parts.push(`${d} day${d===1?'':'s'}`);if(h)parts.push(`${h} hour${h===1?'':'s'}`);parts.push(`${m} minute${m===1?'':'s'}`);return parts.join(', ');}

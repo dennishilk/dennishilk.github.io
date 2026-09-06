@@ -21,9 +21,9 @@ test('cd preserves exact casing and provides only an unambiguous directory fallb
 
 test('direct reads and completion support relative, absolute, home and canonical case',()=>{
   const {state,engine}=setup();
-  assert.match(engine.execute('cat Notes/home.todo').stdout.join('\n'),/printer cartridge/);
+  assert.match(engine.execute('cat Notes/home.todo').stdout.join('\n'),/Pick up Emma — 3:05/);
   assert.match(engine.execute('cat ~/Projects/major-tom/README').stdout.join('\n'),/Printable pages/);
-  assert.match(engine.execute('cat /home/m.weber/Notes/home.todo').stdout.join('\n'),/printer cartridge/);
+  assert.match(engine.execute('cat /home/m.weber/Notes/home.todo').stdout.join('\n'),/Pick up Emma — 3:05/);
   assert.match(engine.execute('cat notes/home.todo').stderr[0],/No such file/);
   const input={value:'cd pro',selectionStart:6,selectionEnd:6};completeTerminalInput(input,state,engine.fs,Object.keys(commands));assert.equal(input.value,'cd Projects/');
   input.value='cd ~/pro';input.selectionStart=input.selectionEnd=input.value.length;completeTerminalInput(input,state,engine.fs,Object.keys(commands));assert.equal(input.value,'cd ~/Projects/');
@@ -32,14 +32,14 @@ test('direct reads and completion support relative, absolute, home and canonical
 
 test('grep performs safe substring searches with supported combined flags',()=>{
   const {engine}=setup();
-  assert.deepEqual(engine.execute('grep printer Notes/home.todo').stdout,['- Check with Emma for the spare printer cartridge at home']);
-  assert.deepEqual(engine.execute('grep -i PRINTER Notes/home.todo').stdout,['- Check with Emma for the spare printer cartridge at home']);
-  assert.deepEqual(engine.execute('grep -n printer Notes/home.todo').stdout,['3:- Check with Emma for the spare printer cartridge at home']);
-  const recursive=engine.execute('grep -R printer Notes');assert.equal(recursive.exitCode,0);assert.ok(recursive.stdout.every(x=>x.startsWith('home.todo:')||x.includes(':')));
+  assert.deepEqual(engine.execute('grep Emma Notes/home.todo').stdout,['- Pick up Emma — 3:05']);
+  assert.deepEqual(engine.execute('grep -i EMMA Notes/home.todo').stdout,['- Pick up Emma — 3:05']);
+  assert.deepEqual(engine.execute('grep -n Emma Notes/home.todo').stdout,['3:- Pick up Emma — 3:05']);
+  const recursive=engine.execute('grep -Ri restore Notes');assert.equal(recursive.exitCode,0);assert.ok(recursive.stdout.every(x=>x.includes(':')));
   assert.match(engine.execute('grep -Rin EMMA ~').stdout.join('\n'),/Mail\/EMMA\/.*:\d+:From: Emma/);
   assert.equal(engine.execute('grep absent-string Notes/home.todo').exitCode,1);
-  assert.match(engine.execute('grep printer missing').stderr[0],/No such file or directory/);
-  assert.match(engine.execute('grep -z printer Notes/home.todo').stderr[0],/invalid option/);
+  assert.match(engine.execute('grep Emma missing').stderr[0],/No such file or directory/);
+  assert.match(engine.execute('grep -z Emma Notes/home.todo').stderr[0],/invalid option/);
 });
 
 test('find validates its subset and traverses deterministically',()=>{
@@ -57,7 +57,7 @@ test('find validates its subset and traverses deterministically',()=>{
 test('ls expands simple nonrecursive globs deterministically and reports no matches',()=>{
   const {engine}=setup();engine.execute('cd Notes');
   const md=engine.execute('ls *.md');assert.equal(md.exitCode,0);assert.deepEqual(md.stdout,[...md.stdout].sort((a,b)=>a.localeCompare(b)));
-  engine.execute('cd ~');assert.match(engine.execute('ls Notes/*.txt').stdout.join('\n'),/project-review\.txt/);
-  assert.match(engine.execute('ls Archive/2024/*').stdout.join('\n'),/kernel-upgrade-checklist\.md/);
+  engine.execute('cd ~');assert.match(engine.execute('ls Notes/*.txt').stdout.join('\n'),/disk-space\.txt/);
+  assert.match(engine.execute('ls Archive/2024/*').stdout.join('\n'),/kernel-upgrade\.md/);
   assert.match(engine.execute('ls *.does-not-exist').stderr[0],/No such file or directory/);
 });

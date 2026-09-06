@@ -1,6 +1,6 @@
 import { baseName, normalizePath, parentPath } from './path-utils.js';
 
-export const LIMITS = { objects: 500, depth: 16, fileSize: 65536, totalBytes:1048576, outputLines:500, outputBytes:131072, pipelineStages:8, processes:32, archiveEntries:100, traversal:600 };
+export const LIMITS = { objects: 500, depth: 16, fileSize: 65536, totalBytes:2097152, outputLines:500, outputBytes:131072, pipelineStages:8, processes:32, archiveEntries:100, traversal:600 };
 const STAMP = '2026-07-28T09:00:00.000Z';
 const dir = (name, children = {}, options = {}) => ({ name, type: 'directory', owner: options.owner || 'root', group: options.group || 'root', mode: options.mode || 'drwxr-xr-x', children, created: STAMP, modified: STAMP, protected: Boolean(options.protected) });
 const file = (name, content, options = {}) => ({ name, type: 'file', owner: options.owner || 'root', group: options.group || 'root', mode: options.mode || '-rw-r--r--', content, created: STAMP, modified: STAMP, protected: Boolean(options.protected) });
@@ -43,16 +43,17 @@ export function createFilesystem() {
 }
 
 export class VirtualFilesystem {
-  constructor(root, options = {}) { this.root = root; this.home = options.home || '/home/visitor'; }
+  constructor(root, options = {}) { this.root = root; this.home = options.home || '/home/visitor'; this.user=options.user||(this.home==='/home/m.weber'?'m.weber':'visitor');this.clock=options.clock||(()=>new Date().toISOString()); }
   get(path, cwd = '/') { let node = this.root; const absolute = normalizePath(path, cwd); for (const part of absolute.split('/').filter(Boolean)) { if (node.type !== 'directory' || !node.children[part]) return null; node = node.children[part]; } return node; }
   denied(path, write = false) { const p = normalizePath(path); if (p === '/root' || p.startsWith('/root/') || (!write && p === '/etc/shadow')) return true; if (!write) return false; return !(p === '/tmp' || p.startsWith('/tmp/') || p === this.home || p.startsWith(`${this.home}/`));
   }
   count() { let count = 0, stack = [this.root]; while (stack.length) { const n = stack.pop(); count++; if (n.type === 'directory') stack.push(...Object.values(n.children)); } return count; }
   bytes() { let total=0,stack=[this.root];while(stack.length){const n=stack.pop();if(n.type==='file')total+=new TextEncoder().encode(n.content).length;else stack.push(...Object.values(n.children));}return total; }
-  add(path, node) { const absolute = normalizePath(path); if (absolute.split('/').filter(Boolean).length > LIMITS.depth) return 'File name too long'; if (this.count() >= LIMITS.objects) return 'No space left on device'; const parent = this.get(parentPath(absolute)); if (!parent) return 'No such file or directory'; if (parent.type !== 'directory') return 'Not a directory'; const name = baseName(absolute); if (parent.children[name]) return 'File exists'; node.name = name; parent.children[name] = node; parent.modified = new Date().toISOString(); return null; }
-  remove(path) { const absolute = normalizePath(path); const parent = this.get(parentPath(absolute)); if (!parent || parent.type !== 'directory') return false; delete parent.children[baseName(absolute)]; parent.modified = new Date().toISOString(); return true; }
+  add(path, node) { const absolute = normalizePath(path); if (absolute.split('/').filter(Boolean).length > LIMITS.depth) return 'File name too long'; if (this.count()+measureNode(node).objects > LIMITS.objects || this.bytes()+measureNode(node).bytes > LIMITS.totalBytes) return 'No space left on device'; const parent = this.get(parentPath(absolute)); if (!parent) return 'No such file or directory'; if (parent.type !== 'directory') return 'Not a directory'; const name = baseName(absolute); if (parent.children[name]) return 'File exists'; node.name = name; parent.children[name] = node; parent.modified = this.clock(); return null; }
+  remove(path) { const absolute = normalizePath(path); const parent = this.get(parentPath(absolute)), node=parent?.children?.[baseName(absolute)]; if (!parent || parent.type !== 'directory' || !node || node.protected) return false; delete parent.children[baseName(absolute)]; parent.modified = this.clock(); return true; }
 }
 
-export function newDirectory(name = '') { return userDir(name); }
-export function newFile(name = '') { return userFile(name); }
-export function cloneNode(node, name = node.name) { const copy = structuredClone(node); copy.name = name; copy.created = copy.modified = new Date().toISOString(); return copy; }
+export function measureNode(node){let objects=0,bytes=0,stack=[node];while(stack.length){const item=stack.pop();objects++;if(item.type==='file')bytes+=new TextEncoder().encode(item.content||'').length;else stack.push(...Object.values(item.children||{}));}return {objects,bytes};}
+export function newDirectory(name = '', owner='visitor', stamp=STAMP) { const node=dir(name, {}, { owner, group:owner });node.created=node.modified=stamp;return node; }
+export function newFile(name = '', owner='visitor', stamp=STAMP) { const node=file(name, '', { owner, group:owner });node.created=node.modified=stamp;return node; }
+export function cloneNode(node, name = node.name, owner=node.owner, stamp=new Date().toISOString()) { const copy = structuredClone(node), stack=[copy]; while(stack.length){const item=stack.pop();item.owner=item.group=owner;item.protected=false;item.created=item.modified=stamp;if(item.type==='directory')stack.push(...Object.values(item.children));}copy.name = name;return copy; }

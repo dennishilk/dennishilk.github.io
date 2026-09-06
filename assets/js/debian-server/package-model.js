@@ -3,5 +3,7 @@ export const WORKSTATION_PACKAGE_TOTAL=642;
 const virtualNames=Array.from({length:WORKSTATION_PACKAGE_TOTAL-curatedNames.length},(_,i)=>`debian-trixie-installed-${String(i+1).padStart(3,'0')}`);
 export const workstationPackageNames=()=>[...curatedNames,...virtualNames];
 export const createPackages=()=>Object.fromEntries(workstationPackageNames().map((name,i)=>[name,{name,version:name==='base-files'?'13.8':name==='fastfetch'?'2.49.0-1':`1:${i+1}.0-1`,arch:name==='base-files'?'all':'amd64',installed:true,virtual:virtualNames.includes(name),description:virtualNames.includes(name)?'Installed Debian dependency package represented in the frozen dpkg database':`Debian ${name} package`} ]));
+const workstationCore=curatedNames.filter(name=>!['dmidecode','htop','mtr-tiny','net-tools','nftables','openssh-server','smartmontools','sudo','tmux'].includes(name));
+export const createWorkstationPackages=()=>Object.fromEntries(workstationCore.map(name=>[name,{name,version:'installed',arch:name==='base-files'?'all':'amd64',installed:true,virtual:false,description:`Debian ${name} package`} ]));
 export const installedPackages=s=>Object.values(s.packages).filter(p=>p.installed).sort((a,b)=>a.name.localeCompare(b.name));
 export const installedPackageCount=s=>s.packageSummary?.totalInstalled||installedPackages(s).length;

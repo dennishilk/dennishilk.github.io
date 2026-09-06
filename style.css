@@ -4472,16 +4472,17 @@ body[data-observer-page="hometown"] .footer-links a,
 .debian-session-heading { align-items: center; display: flex; gap: 1rem; justify-content: space-between; margin-bottom: 1rem; }
 .debian-session-heading h1 { color: #d8f5ff; font: 700 clamp(.78rem, 2vw, .95rem) "Courier New", monospace; letter-spacing: .12em; margin: 0; }
 .debian-session-status { border: 1px solid rgba(103, 241, 170, .55); color: #b8e8ce; font: 700 .68rem "Courier New", monospace; letter-spacing: .09em; padding: .35rem .5rem; }
-.debian-terminal { background: #080d10; border: 1px solid rgba(174, 183, 192, .35); box-sizing: border-box; color: #e1e6e8; cursor: text; font: clamp(.82rem, 2vw, .95rem)/1.45 "Courier New", monospace; min-height: clamp(300px, 52vh, 560px); overflow: auto; padding: clamp(1rem, 2.5vw, 1.5rem); text-align: left; width: 100%; }
+.debian-terminal { background: #080d10; border: 1px solid rgba(174, 183, 192, .35); box-sizing: border-box; color: #e1e6e8; cursor: text; font: clamp(.82rem, 2vw, .95rem)/1.5 "Courier New", monospace; min-height: clamp(300px, 52vh, 560px); overflow: auto; overscroll-behavior:contain; padding: clamp(1rem, 2.5vw, 1.5rem); text-align: left; touch-action:pan-y; width: 100%; -webkit-overflow-scrolling:touch; }
 .debian-terminal:focus-within { border-color: rgba(184, 211, 220, .72); outline: 2px solid rgba(143, 232, 244, .55); outline-offset: 2px; }
 .debian-terminal-history { text-align: left; }
 .debian-terminal-command, .debian-terminal-message, .debian-terminal-output, .debian-terminal-error { overflow-wrap: anywhere; text-align: left; white-space: pre-wrap; }
 .debian-terminal-message { color: #c5cdd0; margin-bottom: 1em; }
 .debian-terminal-error { color: #e1b4ae; }
-.debian-terminal-prompt { align-items: baseline; display: flex; gap: .55rem; text-align: left; width: 100%; }
+.debian-terminal-prompt { align-items: baseline; display: flex; flex-wrap:wrap; gap: .2rem .55rem; text-align: left; width: 100%; }
 .debian-terminal-prompt span { flex: 0 0 auto; }
 .debian-terminal-prompt #terminal-prompt-text{display:inline-flex;gap:0}.debian-prompt-user{color:#a8d8b5}.debian-prompt-host{color:#b8c7d9}.debian-prompt-path{color:#8daee0}.debian-prompt-mark{color:#d7dde0;margin-left:.12em}.debian-terminal-listing{display:flex;flex-wrap:wrap;gap:0}.debian-entry-directory{color:#8daee0;font-weight:700}.debian-entry-executable{color:#9bc69f}.debian-entry-file{color:#e1e6e8}
-.debian-terminal-prompt input { background: transparent; border: 0; caret-color: #fff; color: inherit; flex: 1 1 auto; font: inherit; min-width: 0; outline: 0; padding: 0; text-align: left; }
+.debian-terminal-prompt input { background: transparent; border: 0; caret-color: #fff; color: inherit; flex: 1 1 12rem; font: inherit; min-width: 0; outline: 0; padding: 0; text-align: left; }
+.debian-terminal ::selection{background:#c6d8df;color:#081014}.debian-terminal-prompt input:focus-visible{box-shadow:0 1px 0 rgba(225,230,232,.72)}
 .debian-session-exit { border: 1px solid rgba(174, 183, 192, .45); color: #c9d3d6; display: inline-block; font: 700 .72rem "Courier New", monospace; letter-spacing: .09em; margin-top: 1.25rem; padding: .65rem .8rem; text-decoration: none; }
 .debian-session-exit:hover, .debian-session-exit:focus-visible { border-color: #8fe8f4; color: #fff; outline: 2px solid #8fe8f4; outline-offset: 3px; }
 .debian-session-result { background: rgba(8, 13, 16, .94); border: 1px solid rgba(143, 232, 244, .38); color: #c9d3d6; font-family: "Courier New", monospace; padding: clamp(1.25rem, 4vw, 2.5rem); text-align: left; }
@@ -4552,7 +4553,7 @@ body[data-observer-page="hometown"] .footer-links a,
 .transparency { border-color: rgba(103, 241, 170, .35); line-height: 1.7; }
 @media (max-width: 760px) { .statistics-overview, .archive-results-grid, .curiosity-grid, .patterns-grid { grid-template-columns: 1fr; } .statistics-hero { text-align: left; } }
 
-.workstation-body{background:#05090b;margin:0;min-height:100vh}.workstation-viewport{box-sizing:border-box;display:flex;margin:0 auto;min-height:100vh;padding:clamp(.5rem,2vw,1.5rem);width:min(100%,1440px)}.workstation-viewport .debian-terminal{flex:1;min-height:calc(100vh - clamp(1rem,4vw,3rem));max-height:calc(100vh - clamp(1rem,4vw,3rem))}@media(max-width:600px){.workstation-viewport{padding:.35rem}.workstation-viewport .debian-terminal{min-height:calc(100vh - .7rem);max-height:calc(100vh - .7rem);padding:.8rem}}
+.workstation-body{background:#05090b;margin:0;min-height:100vh;min-height:100dvh}.workstation-viewport{box-sizing:border-box;display:flex;margin:0 auto;min-height:100vh;min-height:100dvh;padding:max(clamp(.5rem,2vw,1.5rem),env(safe-area-inset-top)) max(clamp(.5rem,2vw,1.5rem),env(safe-area-inset-right)) max(clamp(.5rem,2vw,1.5rem),env(safe-area-inset-bottom)) max(clamp(.5rem,2vw,1.5rem),env(safe-area-inset-left));width:min(100%,1440px)}.workstation-viewport .debian-terminal{flex:1;min-height:calc(100dvh - clamp(1rem,4vw,3rem));max-height:calc(100dvh - clamp(1rem,4vw,3rem))}@media(max-width:600px){.workstation-viewport{padding:max(.35rem,env(safe-area-inset-top)) max(.35rem,env(safe-area-inset-right)) max(.35rem,env(safe-area-inset-bottom)) max(.35rem,env(safe-area-inset-left))}.workstation-viewport .debian-terminal{font-size:1rem;min-height:calc(100dvh - .7rem);max-height:calc(100dvh - .7rem);padding:.8rem}}
 
 /* Home Computing Lab — photographic record of the current environment */
 .hcl-today-documentation { display: grid; gap: 1rem; margin: 1.2rem 0 2rem; }
