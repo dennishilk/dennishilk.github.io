@@ -4482,7 +4482,7 @@ body[data-observer-page="hometown"] .footer-links a,
 .debian-terminal-prompt span { flex: 0 0 auto; }
 .debian-terminal-prompt #terminal-prompt-text{display:inline-flex;gap:0}.debian-prompt-user{color:#a8d8b5}.debian-prompt-host{color:#b8c7d9}.debian-prompt-path{color:#8daee0}.debian-prompt-mark{color:#d7dde0;margin-left:.12em}.debian-terminal-listing{display:flex;flex-wrap:wrap;gap:0}.debian-entry-directory{color:#8daee0;font-weight:700}.debian-entry-executable{color:#9bc69f}.debian-entry-file{color:#e1e6e8}
 .debian-terminal-prompt input { background: transparent; border: 0; caret-color: #fff; color: inherit; flex: 1 1 12rem; font: inherit; min-width: 0; outline: 0; padding: 0; text-align: left; }
-.debian-terminal ::selection{background:#c6d8df;color:#081014}.debian-terminal-prompt input:focus-visible{box-shadow:0 1px 0 rgba(225,230,232,.72)}
+.debian-terminal ::selection{background:#c6d8df;color:#081014}.debian-terminal-prompt input:focus-visible{box-shadow:none}
 .debian-session-exit { border: 1px solid rgba(174, 183, 192, .45); color: #c9d3d6; display: inline-block; font: 700 .72rem "Courier New", monospace; letter-spacing: .09em; margin-top: 1.25rem; padding: .65rem .8rem; text-decoration: none; }
 .debian-session-exit:hover, .debian-session-exit:focus-visible { border-color: #8fe8f4; color: #fff; outline: 2px solid #8fe8f4; outline-offset: 3px; }
 .debian-session-result { background: rgba(8, 13, 16, .94); border: 1px solid rgba(143, 232, 244, .38); color: #c9d3d6; font-family: "Courier New", monospace; padding: clamp(1.25rem, 4vw, 2.5rem); text-align: left; }
