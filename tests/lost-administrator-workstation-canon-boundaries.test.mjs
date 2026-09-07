@@ -29,7 +29,18 @@ test('frozen timestamps remain stable while allowed session files are bounded',(
   assert.equal(shell.execute('printf "x" >> ~/Notes/home.todo').exitCode,1);
 });
 
-test('source and UI contain no analytics or unsafe rendering hooks',async()=>{
-  const files=['assets/js/lost-administrator/workstation-controller.js','assets/js/debian-server/terminal-renderer.js','lost-administrator/workstation/index.html'];
-  for(const file of files){const source=await readFile(new URL(`../${file}`,import.meta.url),'utf8');assert.doesNotMatch(source,/innerHTML|outerHTML|eval\s*\(|navigator\.sendBeacon|gtag\s*\(|fetch\s*\(/,file);}
+test('source and UI contain no analytics, network loading, lab residue, or unsafe rendering hooks',async()=>{
+  const files=[
+    'assets/js/lost-administrator/workstation-controller.js',
+    'assets/js/debian-server/terminal-renderer.js',
+    'assets/js/lost-administrator/mail-client.js',
+    'assets/js/lost-administrator/mail-data.js',
+    'assets/js/lost-administrator/mail-ambient-data.js',
+    'lost-administrator/workstation/index.html'
+  ];
+  for(const file of files){
+    const source=await readFile(new URL(`../${file}`,import.meta.url),'utf8');
+    assert.doesNotMatch(source,/innerHTML|outerHTML|eval\s*\(|navigator\.sendBeacon|gtag\s*\(|fetch\s*\(|XMLHttpRequest|WebSocket/i,file);
+    if(file.includes('mail-'))assert.doesNotMatch(source,forbidden,file);
+  }
 });
