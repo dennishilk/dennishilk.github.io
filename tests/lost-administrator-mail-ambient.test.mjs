@@ -64,6 +64,7 @@ test('ambient search, sent mail, threads, read state, and reset remain functiona
   assert.match(text(c.execute('list')),/OPS002/);
   c.execute('folder inbox');
   assert.match(text(c.execute('search subject:certificate')),/OPS028/);
+  c.execute('folder inbox');
   assert.equal(c.isUnread(MAIL_MESSAGES.find(message=>message.id==='OPS001')),true);
   assert.match(text(c.execute('open OPS001')),/THREAD 1 OF 3[\s\S]*queue looks stuck[\s\S]*THREAD 2 OF 3[\s\S]*Queue was wedged[\s\S]*THREAD 3 OF 3[\s\S]*Working again/);
   assert.ok(['OPS001','OPS002','OPS003'].every(id=>state.mail.read[id]===true));
