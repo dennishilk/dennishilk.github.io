@@ -1,3 +1,5 @@
+import { AMBIENT_MAIL_MESSAGES } from './mail-ambient-data.js';
+
 export const MAIL_ACCOUNT = Object.freeze({ name:'Michael Weber', address:'michael.weber@chesapeakesignaltech.com' });
 export const MAIL_FOLDERS = Object.freeze(['INBOX','EMMA','SENT']);
 export const MAIL_FOLDER_METADATA = Object.freeze({
@@ -8,9 +10,11 @@ const emma=Object.freeze({name:'Emma Weber',address:'emma@michamailgate.com'});
 const robodad=Object.freeze({name:'Michael Weber',address:'robodad@michamailgate.com'});
 const printerThread='EMMA-PRINTER-20260731';
 
+export const CANON_MAIL_IDS = Object.freeze(['EMMA0731','EMMA0731R1','EMMA0731R2']);
+
 // A date without a time means the source material does not establish an exact
 // time. Emma's original message has the canonical Day Zero morning timestamp.
-export const MAIL_MESSAGES = Object.freeze([
+export const CANON_MAIL_MESSAGES = Object.freeze([
  Object.freeze({
   id:'EMMA0731',folder:'EMMA',threadId:printerThread,threadOrder:1,
   from:emma,to:robodad,date:'2026-07-31T10:42:00-04:00',subject:'New printer cartridge?',
@@ -31,3 +35,5 @@ export const MAIL_MESSAGES = Object.freeze([
   unread:true,attachments:Object.freeze([]),delivery:Object.freeze({type:'forwarding-alias',forwardedTo:MAIL_ACCOUNT})
  })
 ]);
+
+export const MAIL_MESSAGES = Object.freeze([...CANON_MAIL_MESSAGES,...AMBIENT_MAIL_MESSAGES]);
