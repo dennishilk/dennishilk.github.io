@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ShellEngine } from '../assets/js/debian-server/shell-engine.js';
-import { MAIL_MESSAGES } from '../assets/js/lost-administrator/mail-data.js';
+import { CANON_MAIL_IDS, CANON_MAIL_MESSAGES, MAIL_MESSAGES } from '../assets/js/lost-administrator/mail-data.js';
 import { defaultWorkstationState, loadWorkstationState, WORKSTATION_SCHEMA_VERSION, WORKSTATION_STORAGE_KEY } from '../assets/js/lost-administrator/workstation-state.js';
 
 const setup=()=>{const state=defaultWorkstationState();return {state,shell:new ShellEngine(state)};};
@@ -26,9 +26,11 @@ test('technical archive and projects are coherent and inspectable',()=>{
   assert.match(text(shell.execute('git log --oneline')),/Initial version/);
 });
 
-test('only the exact three-message Emma thread is browsable',()=>{
+test('only the exact three-message Emma story thread is canonical and filesystem-browsable',()=>{
   const {shell}=setup();
-  assert.equal(MAIL_MESSAGES.length,3);
+  assert.deepEqual(CANON_MAIL_IDS,['EMMA0731','EMMA0731R1','EMMA0731R2']);
+  assert.equal(CANON_MAIL_MESSAGES.length,3);
+  assert.deepEqual(MAIL_MESSAGES.filter(message=>CANON_MAIL_IDS.includes(message.id)).map(message=>message.id),CANON_MAIL_IDS);
   assert.deepEqual(shell.execute('find Mail -name *.eml').stdout,['/home/m.weber/Mail/EMMA/2026-07-31-new-printer-cartridge.eml']);
   const thread=text(shell.execute('cat Mail/EMMA/2026-07-31-new-printer-cartridge.eml'));
   for(const line of ['Hey Robodad','Office cabinet, top shelf','I’ll pick you up at 3:05','Major Tom reports'])assert.match(thread,new RegExp(line.replace(/[?]/g,'\\?')));
