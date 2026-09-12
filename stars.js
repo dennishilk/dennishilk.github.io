@@ -182,3 +182,41 @@ if (!isHomepage || !canvas) {
   }
   animate();
 }
+
+if (window.location.pathname === "/museum/home-computing-lab/field-notes/field-note-7/" || window.location.pathname === "/museum/home-computing-lab/field-notes/field-note-7/index.html") {
+  const recordings = document.querySelectorAll(".cisco-recording-pending");
+
+  if (recordings[0]) {
+    recordings[0].outerHTML = `
+      <figure class="hcl-story-evidence">
+        <video controls playsinline preload="metadata">
+          <source src="/assets/home-computing-lab/field-notes/cisco-werner-111-web.mp4" type="video/mp4">
+          Your browser does not support embedded MP4 video.
+        </video>
+        <figcaption><strong>Recording 01 — Werner / 111.</strong> Pressing the <em>Werner</em> speed dial starts the selected scene directly on the Cisco, with video and audio coming from the phone.</figcaption>
+      </figure>
+      <div class="cisco-recording-pending" style="border-style:solid">
+        <strong>DEUTSCH</strong>
+        <p>Ein Druck auf die Kurzwahl <strong>„Werner“</strong> startet die vorbereitete Szene direkt auf dem Cisco — mit Bild und Ton über das Telefon.</p>
+        <p>In der Szene steigt jemand auf einem völlig vereisten Parkplatz aus dem Auto und rutscht sofort hin und her. Darauf sagt Andi sinngemäß: <strong>„Kannst du nicht einmal vernünftig grüßen?“</strong></p>
+        <p>Der Mann macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich fast und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass der Typ mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.</p>
+        <p>Genau an der Stelle hört man auch mein Lachen im Video — weil diese völlig absurde Szene plötzlich tatsächlich auf einem Cisco-Bürotelefon läuft. :D</p>
+        <strong>ENGLISH</strong>
+        <p>Pressing the <strong>“Werner”</strong> speed dial starts the prepared scene directly on the Cisco, with both video and audio playing through the phone.</p>
+        <p>In the scene, a man gets out of a car onto a completely icy parking lot and immediately starts slipping around. Andi then says, roughly, <strong>“Can’t you even say hello properly for once?”</strong></p>
+        <p>The man takes another two or three steps, loses his footing completely, nearly does a half-somersault and lands head-first on the ice. Werner then dryly comments that the guy is going to destroy the whole ice surface with his <strong>“wrecking ball”</strong> — referring to his head.</p>
+        <p>You can also hear me laughing at that exact moment in the recording, because this ridiculous scene is actually playing on a Cisco office phone. :D</p>
+      </div>`;
+  }
+
+  if (recordings[1]) {
+    recordings[1].outerHTML = `
+      <figure class="hcl-story-evidence">
+        <video controls playsinline preload="metadata">
+          <source src="/assets/home-computing-lab/field-notes/cisco-doom-666-web.mp4" type="video/mp4">
+          Your browser does not support embedded MP4 video.
+        </video>
+        <figcaption><strong>Recording 02 — DOOM / 666.</strong> Pressing the <em>DOOM</em> speed dial calls extension 666. Live DOOM from Cthulhu appears on the Cisco display, and the real game audio is audibly coming from the phone speaker.</figcaption>
+      </figure>`;
+  }
+}
