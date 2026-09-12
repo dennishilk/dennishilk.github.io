@@ -34,10 +34,13 @@
   <section>
     <h2>Preventing Part III</h2>
     <p>The real fix is not “pay more attention.” The two systems deliberately look similar, and humans eventually click the wrong terminal.</p>
-    <p>Worldnode therefore needs a shutdown guard: an interactive confirmation that makes the target unmistakable before a power-off or reboot can proceed. Something along the lines of <strong>“REALLY STOP THE WEBSITE, DUDE?”</strong> is considerably harder to ignore than another normal shell prompt.</p>
+    <p>So Worldnode now has a shutdown guard. The usual <code>shutdown</code>, <code>reboot</code>, <code>poweroff</code> and <code>halt</code> commands resolve through guarded wrappers in <code>/usr/local/sbin</code>. Before anything destructive happens, the terminal now makes the target painfully obvious:</p>
+    <p><strong>“REALLY STOP THE WEBSITE, JUNGE?!”</strong></p>
+    <p>It then requires the exact phrase <code>STOP WORLDNODE</code>. A normal Enter, a distracted yes, or muscle memory is not enough.</p>
+    <p>The guard was installed and tested on 12.09.2026. Both <code>sudo shutdown --guard-test</code> and <code>sudo reboot --guard-test</code> confirmed the protection without stopping the machine, and the four guarded commands were verified to resolve to <code>/usr/local/sbin</code>.</p>
   </section>
 
-  <section class="hcl-story-lesson"><h2>Lesson</h2><p>The command wasn't wrong.</p><p>The terminal was.</p><p>Twice.</p></section>
+  <section class="hcl-story-lesson"><h2>Lesson</h2><p>The command wasn't wrong.</p><p>The terminal was.</p><p>Twice.</p><p>Part III now has to get past the guard first.</p></section>
   <p><a class="hcl-archive-return" href="/museum/home-computing-lab/field-notes/">← RETURN TO FIELD NOTES &amp; ARTIFACTS</a></p>
 </article></main></div><footer><div class="nebby-terminal-line"><picture>
 <source srcset="../../../../assets/generated/images/nebby.webp" type="image/webp">
