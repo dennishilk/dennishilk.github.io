@@ -218,28 +218,28 @@
       context.dataset.language = language;
       context.innerHTML = language === "de"
         ? 'Falls du Werner nicht kennst: <strong>Werner</strong> ist die Comicfigur des deutschen Zeichners <strong>Rötger Feldmann („Brösel“)</strong>. Die Eisrennen-Szene mit Nobelschröder stammt aus <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).'
-        : 'If you do not know <a href="https://en.wikipedia.org/wiki/Werner_(comics)" target="_blank" rel="noopener"><strong>Werner</strong></a>: Werner is the comic character created by German cartoonist <strong>Rötger Feldmann (“Brösel”)</strong>. The ice-race scene with Nobelschröder is from <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).';
+        : 'If you do not know Werner: Werner is the comic character created by German cartoonist <a href="https://en.wikipedia.org/wiki/R%C3%B6tger_Feldmann" target="_blank" rel="noopener"><strong>Rötger Feldmann (“Brösel”)</strong></a>. The ice-race scene with Nobelschröder is from <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).';
     };
 
     const patchNobelschroeder = () => {
       const german = document.querySelector('.cisco-recording-pending section[lang="de"]');
       const english = document.querySelector('.cisco-recording-pending section[lang="en"]');
 
-      german?.querySelectorAll("p").forEach(paragraph => {
-        if (paragraph.textContent.startsWith("In der Szene steigt jemand")) {
-          paragraph.innerHTML = 'In der Szene steigt <strong>Nobelschröder</strong> auf einem gefrorenen See aus dem Auto und rutscht sofort hin und her. Darauf sagt Andi: <strong>„Kannst du nicht mal vernünftig grüßen?“</strong>';
-        } else if (paragraph.textContent.startsWith("Der Mann macht noch")) {
-          paragraph.innerHTML = '<strong>Nobelschröder</strong> macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass Nobelschröder mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.';
-        }
-      });
+      const germanParagraphs = german?.querySelectorAll("p");
+      if (germanParagraphs?.[1]) {
+        germanParagraphs[1].innerHTML = 'In der Szene steigt <strong>Nobelschröder</strong> auf einem gefrorenen See aus dem Auto und rutscht sofort hin und her. Werner sagt: <strong>„Sag mal, kannst du nicht vernünftig grüßen?!“</strong> Und Andi: <strong>„Mach mal nen anständigen Diener!“</strong>';
+      }
+      if (germanParagraphs?.[2]) {
+        germanParagraphs[2].innerHTML = '<strong>Nobelschröder</strong> macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass Nobelschröder mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.';
+      }
 
-      english?.querySelectorAll("p").forEach(paragraph => {
-        if (paragraph.textContent.startsWith("In the scene, a man gets out")) {
-          paragraph.innerHTML = 'In the scene, <strong>Nobelschröder</strong> gets out of a car onto a frozen lake and immediately starts sliding around. Andi says: <strong>“Can’t you even say hello properly for once?”</strong>';
-        } else if (paragraph.textContent.startsWith("He takes another two or three steps")) {
-          paragraph.innerHTML = '<strong>Nobelschröder</strong> takes another two or three steps, completely loses his footing, flips over and lands head-first on the ice. Werner then dryly comments that Nobelschröder is going to wreck the whole ice surface with his <strong>“wrecking ball”</strong> — meaning his head.';
-        }
-      });
+      const englishParagraphs = english?.querySelectorAll("p");
+      if (englishParagraphs?.[1]) {
+        englishParagraphs[1].innerHTML = 'In the scene, <strong>Nobelschröder</strong> gets out of a car onto a frozen lake and immediately starts sliding around. Werner says: <strong>“Hey, can’t you greet properly?!”</strong> And Andi adds: <strong>“Give us a proper bow!”</strong>';
+      }
+      if (englishParagraphs?.[2]) {
+        englishParagraphs[2].innerHTML = '<strong>Nobelschröder</strong> takes another two or three steps, completely loses his footing, flips over and lands head-first on the ice. Werner then dryly comments that Nobelschröder is going to wreck the whole ice surface with his <strong>“wrecking ball”</strong> — meaning his head.';
+      }
     };
 
     const moveWernerRecording = () => {
@@ -254,8 +254,8 @@
 
       if (!wernerFigure || !wernerDetails) return;
 
-      if (wernerFigure.parentElement !== wernerSection || wernerDetails.parentElement !== wernerSection) {
-        wernerSection.append(wernerFigure, wernerDetails);
+      if (wernerFigure.parentElement !== wernerSection || wernerDetails.parentElement !== wernerSection || wernerDetails.nextElementSibling !== wernerFigure) {
+        wernerSection.append(wernerDetails, wernerFigure);
       }
 
       const caption = wernerFigure.querySelector("figcaption");
