@@ -9,9 +9,17 @@
   <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/">
   <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/">
   <meta name="robots" content="index,follow,max-image-preview:large">
-  <script>if (location.protocol !== "https:") { location.replace("https://" + location.hostname + location.pathname + location.search); }</script>
+
+  <script>
+    if (location.protocol !== "https:") {
+      location.replace("https://" + location.hostname + location.pathname + location.search);
+    }
+  </script>
+
   <title>Dennis Hilk – Open Source, Linux, World Observer &amp; Computermuseum</title>
+
   <meta name="description" content="Open-Source-Projekte, Linux-Experimente, das Public-Data-Projekt World Observer, interaktive Computermuseum-Ausstellungen und The Lost Administrator von Dennis Hilk.">
+
   <meta property="og:title" content="Dennis Hilk – Open Source, Linux, World Observer &amp; Computermuseum">
   <meta property="og:description" content="Open-Source-Entwicklung, Linux-Experimente, World Observer, interaktives Computermuseum und The Lost Administrator von Dennis Hilk.">
   <meta property="og:image" content="https://dennishilk.com/avatar.png">
@@ -19,13 +27,37 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_DE">
   <meta property="og:locale:alternate" content="en_US">
+
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Dennis Hilk – Open Source, Linux, World Observer &amp; Computermuseum">
   <meta name="twitter:description" content="Open-Source-Projekte, Linux-Experimente, World Observer, interaktive Computermuseum-Ausstellungen und The Lost Administrator von Dennis Hilk.">
   <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+
   <script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Dennis Hilk – Open Source, Linux, World Observer & Computermuseum","url":"https://dennishilk.com/de/","inLanguage":"de"},{"@type":"Person","name":"Dennis Hilk","image":"https://dennishilk.com/avatar.png","url":"https://dennishilk.com/","jobTitle":"Open-Source-Entwickler und Autor","sameAs":["https://github.com/dennishilk","https://youtube.com/dennishilk"]}]}
+{
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Dennis Hilk – Open Source, Linux, World Observer & Computermuseum",
+        "url": "https://dennishilk.com/de/",
+        "inLanguage": "de"
+      },
+      {
+        "@type": "Person",
+        "name": "Dennis Hilk",
+        "image": "https://dennishilk.com/avatar.png",
+        "url": "https://dennishilk.com/",
+        "jobTitle": "Open-Source-Entwickler und Autor",
+        "sameAs": [
+          "https://github.com/dennishilk",
+          "https://youtube.com/dennishilk"
+        ]
+      }
+    ]
+  }
   </script>
+
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
@@ -33,13 +65,23 @@
   <script defer src="/stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
+
 <canvas id="stars"></canvas>
+
 <div class="content">
+
   <header>
     <img src="/avatar.png" alt="Dennis Hilk Avatar" class="avatar">
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Dennis Hilk</span></h1>
+
+    <h1>
+      <span class="prompt">root@nebunix:~$</span>
+      <span class="name">Dennis Hilk</span>
+    </h1>
+
     <p>Open-Source-Entwickler • Linux-Enthusiast • Autor von The Lost Administrator • Entwickler von BoringWM & World Observer</p>
+
     <div class="button-group">
       <div class="buttons">
         <a href="https://github.com/dennishilk" target="_blank"><i class="fab fa-github"></i> GitHub</a>
@@ -50,29 +92,59 @@
         <a href="/about/"><i class="fas fa-user"></i> Über mich</a>
         <a href="/transmissions/" aria-label="Eine Nachricht für den Worldnode-Operator hinterlassen">Gästebuch</a>
       </div>
-      <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button"><i class="fa-solid fa-mug-hot"></i> Spendier mir einen Ostfriesentee</a>
+
+      <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
+        <i class="fa-solid fa-mug-hot"></i> Spendier mir einen Ostfriesentee
+      </a>
     </div>
   </header>
 
   <section class="projects">
     <h2>Ausgewählte Projekte</h2>
+
     <div class="cards">
-      <a href="/lost-administrator/" class="card home-lost-administrator-card"><i class="fa-solid fa-book-open fa-2x"></i><h3>The Lost Administrator</h3><p>Ein Roman mit interaktiver Story-Erfahrung rund um einen verschwundenen Debian-Administrator.</p></a>
-      <a href="https://github.com/dennishilk/world-observer" class="card"><i class="fa-solid fa-globe fa-2x"></i><h3>World Observer</h3><p>Automatisierte Beobachtungsplattform für öffentliche Internet-, Medien- und Infrastrukturindikatoren.</p></a>
-      <a href="/linux-migration-companion/" class="card"><i class="fa-solid fa-arrow-right-arrow-left fa-2x"></i><h3>Linux Migration Companion</h3><p>Lokale Migrationsplanung für Windows-Nutzer, die Linux prüfen möchten – mit geführten Fit-, Hardware- und Bereitschaftschecks.</p></a>
-      <a href="/de/boringos/" class="card"><i class="fa-solid fa-terminal fa-2x"></i><h3>BoringOS</h3><p>Unabhängiges Desktop-Betriebssystem von Grund auf – mit eigenem x86_64-Kernel, nativem C-Userspace, VFS/RAMFS und Shell.</p></a>
-      <a href="https://github.com/dennishilk/boringwm" class="card"><i class="fa-solid fa-border-none fa-2x"></i><h3>BoringWM</h3><p>Ein schneller, minimalistischer dynamischer Tiling-Window-Manager in Rust.</p></a>
+      <a href="/lost-administrator/" class="card home-lost-administrator-card">
+        <i class="fa-solid fa-book-open fa-2x"></i>
+        <h3>The Lost Administrator</h3>
+        <p>Ein Roman mit interaktiver Story-Erfahrung rund um einen verschwundenen Debian-Administrator.</p>
+      </a>
+
+      <a href="https://github.com/dennishilk/world-observer" class="card">
+        <i class="fa-solid fa-globe fa-2x"></i>
+        <h3>World Observer</h3>
+        <p>Automatisierte Beobachtungsplattform für öffentliche Internet-, Medien- und Infrastrukturindikatoren.</p>
+      </a>
+
+      <a href="/linux-migration-companion/" class="card">
+        <i class="fa-solid fa-arrow-right-arrow-left fa-2x"></i>
+        <h3>Linux Migration Companion</h3>
+        <p>Lokale Migrationsplanung für Windows-Nutzer, die Linux prüfen möchten – mit geführten Fit-, Hardware- und Bereitschaftschecks.</p>
+      </a>
+
+      <a href="/de/boringos/" class="card">
+        <i class="fa-solid fa-terminal fa-2x"></i>
+        <h3>BoringOS</h3>
+        <p>Unabhängiges Desktop-Betriebssystem von Grund auf – mit eigenem x86_64-Kernel, nativem C-Userspace, VFS/RAMFS und Shell.</p>
+      </a>
+
+      <a href="https://github.com/dennishilk/boringwm" class="card">
+        <i class="fa-solid fa-border-none fa-2x"></i>
+        <h3>BoringWM</h3>
+        <p>Ein schneller, minimalistischer dynamischer Tiling-Window-Manager in Rust.</p>
+      </a>
     </div>
   </section>
 
   <section class="projects" aria-labelledby="aus-dem-lab-title">
     <h2 id="aus-dem-lab-title">Aus dem Lab</h2>
+
     <div class="cards">
       <a href="/museum/home-computing-lab/field-notes/field-note-7/" class="card">
         <i class="fa-solid fa-phone fa-2x"></i>
         <h3>Kann ein Cisco CP-9951 DOOM?</h3>
         <p>Ein 35-Euro-Bürotelefon, Asterisk, Baresip, H.264 und eine völlig vernünftige Kurzwahl: 666. Live-DOOM kommt von Cthulhu auf das Telefon – inklusive echtem Spielsound.</p>
       </a>
+
       <a href="/museum/home-computing-lab/field-notes/" class="card">
         <i class="fa-solid fa-flask fa-2x"></i>
         <h3>Field Notes &amp; Artifacts</h3>
@@ -82,20 +154,47 @@
   </section>
 
   <footer>
-    <div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby"></picture><span class="coffee-text"><span>Seitenaufrufe gesamt: <strong id="home-total-pageviews">—</strong></span><br>&gt; sudo apt install a cup of East Frisian tea<span class="cursor"></span></span></div>
-    <p class="footer-seo">Open-Source-Linux-Werkzeuge, experimentelle Projekte und interaktive Technik von Dennis Hilk.</p>
-    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a> · <a href="/nothing.html" class="footer-link-muted">Nothing</a></p>
+    <div class="nebby-terminal-line">
+      <picture>
+        <source srcset="/assets/generated/images/nebby.webp" type="image/webp">
+        <img src="/nebby.png" class="nebby" alt="Nebby">
+      </picture>
+      <span class="coffee-text"><span>Seitenaufrufe gesamt: <strong id="home-total-pageviews">—</strong></span><br>&gt; sudo apt install a cup of East Frisian tea<span class="cursor"></span></span>
+    </div>
+
+    <p class="footer-seo">
+      Open-Source-Linux-Werkzeuge, experimentelle Projekte und interaktive Technik von Dennis Hilk.
+    </p>
+
+    <p class="footer-links">
+      © 2026 Dennis Hilk —
+      <a href="/impressum.html">Impressum</a> ·
+      <a href="/datenschutzerklaerung.html">Datenschutz</a> ·
+      <a href="/nothing.html" class="footer-link-muted">Nothing</a>
+    </p>
   </footer>
+
 </div>
+
 <script>
 (() => {
   const output = document.getElementById("home-total-pageviews");
   if (!output) return;
+
   fetch(`/data/site-traffic.json?t=${Date.now()}`, { cache: "no-store" })
-    .then((response) => { if (!response.ok) throw new Error("traffic unavailable"); return response.json(); })
-    .then((data) => { const total = data.total_pageviews ?? data.pageviews_total ?? data.total; output.textContent = Number.isFinite(Number(total)) ? Number(total).toLocaleString("de-DE") : "—"; })
-    .catch(() => { output.textContent = "—"; });
+    .then((response) => {
+      if (!response.ok) throw new Error("traffic unavailable");
+      return response.json();
+    })
+    .then((data) => {
+      const total = data.total_pageviews ?? data.pageviews_total ?? data.total;
+      output.textContent = Number.isFinite(Number(total)) ? Number(total).toLocaleString("de-DE") : "—";
+    })
+    .catch(() => {
+      output.textContent = "—";
+    });
 })();
 </script>
+
 </body>
 </html>
