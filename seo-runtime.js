@@ -227,18 +227,18 @@
 
       const germanParagraphs = german?.querySelectorAll("p");
       if (germanParagraphs?.[1]) {
-        germanParagraphs[1].innerHTML = 'In der Szene steigt <strong>Nobelschröder</strong> auf einem gefrorenen See aus dem Auto und rutscht sofort hin und her. Werner sagt: <strong>„Sag mal, kannst du nicht vernünftig grüßen?!“</strong> Und Andi sagt: <strong>„Mach mal nen anständigen Diener!“</strong>';
+        germanParagraphs[1].innerHTML = 'In der Szene steigt Nobelschröder auf einem gefrorenen See aus dem Auto und rutscht sofort hin und her. Werner sagt: <strong>„Sag mal, kannst du nicht vernünftig grüßen?!“</strong> Und Andi sagt: <strong>„Mach mal nen anständigen Diener!“</strong>';
       }
       if (germanParagraphs?.[2]) {
-        germanParagraphs[2].innerHTML = '<strong>Nobelschröder</strong> macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass Nobelschröder mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.';
+        germanParagraphs[2].innerHTML = 'Nobelschröder macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass Nobelschröder mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.';
       }
 
       const englishParagraphs = english?.querySelectorAll("p");
       if (englishParagraphs?.[1]) {
-        englishParagraphs[1].innerHTML = 'In the scene, <strong>Nobelschröder</strong> gets out of a car onto a frozen lake and immediately starts sliding around. Werner says: <strong>“Hey, can’t you greet properly?!”</strong> And Andi says: <strong>“Give us a proper bow!”</strong>';
+        englishParagraphs[1].innerHTML = 'In the scene, Nobelschröder gets out of a car onto a frozen lake and immediately starts sliding around. Werner says: <strong>“Hey, can’t you greet properly?!”</strong> And Andi says: <strong>“Give us a proper bow!”</strong>';
       }
       if (englishParagraphs?.[2]) {
-        englishParagraphs[2].innerHTML = '<strong>Nobelschröder</strong> takes another two or three steps, completely loses his footing, flips over and lands head-first on the ice. Werner then dryly comments that Nobelschröder is going to wreck the whole ice surface with his <strong>“wrecking ball”</strong> — meaning his head.';
+        englishParagraphs[2].innerHTML = 'Nobelschröder takes another two or three steps, completely loses his footing, flips over and lands head-first on the ice. Werner then dryly comments that Nobelschröder is going to wreck the whole ice surface with his <strong>“wrecking ball”</strong> — meaning his head.';
       }
     };
 
