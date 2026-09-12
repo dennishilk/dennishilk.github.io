@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://dennishilk.com/museum/home-computing-lab/field-notes/field-note-1/">
   <title>The Wrong Terminal – Field Note #001 – Computer Museum</title>
-  <meta name="description" content="A real workshop story about two terminal sessions, one shutdown command and a production server that followed its instructions exactly.">
+  <meta name="description" content="A real workshop story about two terminal sessions, one shutdown command and a production server that followed its instructions exactly — twice.">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="stylesheet" href="/style.css?v=58"><script defer src="/stars.js"></script>
-  <meta property="og:title" content="The Wrong Terminal – Field Note #001 – Computer Museum"><meta property="og:description" content="A real workshop story about two terminal sessions, one shutdown command and a production server that followed its instructions exactly."><meta property="og:url" content="https://dennishilk.com/museum/home-computing-lab/field-notes/field-note-1/"><meta property="og:type" content="article"><meta property="og:image" content="https://dennishilk.com/assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png">
-  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="The Wrong Terminal – Field Note #001 – Computer Museum"><meta name="twitter:description" content="A real workshop story about two terminal sessions, one shutdown command and a production server that followed its instructions exactly."><meta name="twitter:image" content="https://dennishilk.com/assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png">
+  <meta property="og:title" content="The Wrong Terminal – Field Note #001 – Computer Museum"><meta property="og:description" content="A real workshop story about two terminal sessions, one shutdown command and a production server that followed its instructions exactly — twice."><meta property="og:url" content="https://dennishilk.com/museum/home-computing-lab/field-notes/field-note-1/"><meta property="og:type" content="article"><meta property="og:image" content="https://dennishilk.com/assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="The Wrong Terminal – Field Note #001 – Computer Museum"><meta name="twitter:description" content="A real workshop story about two terminal sessions, one shutdown command and a production server that followed its instructions exactly — twice."><meta name="twitter:image" content="https://dennishilk.com/assets/home-computing-lab/field-notes/worldnode-cthulhu-terminals.png">
 </head>
 <body><canvas id="stars"></canvas><div class="content museum-page hcl-page"><div class="museum-exhibit">
 <header class="dashboard-header wo-page-header museum-hero exhibit-hero hcl-hero hcl-field-detail-header"><div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a></div></div><a class="museum-back" href="/museum/home-computing-lab/field-notes/">← FIELD NOTES &amp; ARTIFACTS</a><p class="hcl-kicker">FIELD NOTE #001 · DOCUMENTED 2026</p><h1>THE WRONG TERMINAL</h1><p class="hcl-subtitle">A routine shutdown, two matching terminal sessions and one perfectly obedient server.</p></header>
@@ -18,7 +18,26 @@
   <section><h2>Situation</h2><p>There was one final task before leaving for dinner: shut down the local desktop workstation and walk away. The workstation and the production server were both open side-by-side in terminal windows on the same 3440×1440 ultrawide monitor.</p><p>The desktop workstation on the left and the remote production server on the right intentionally shared the same Sway desktop and terminal appearance. Both terminals were visible at the same time.</p></section>
   <section><h2>What Happened</h2><p>The shutdown command was entered without noticing that the active terminal was not the intended one. The command completed, and the session appeared to be finished.</p><p>Only after standing up to leave for dinner did something feel unusual: the desktop computer was still running.</p><p>That short moment of confusion identified the mistake. The active terminal had been connected to the remote production server, Worldnode, rather than the local workstation, Cthulhu. The production server had shut down exactly as instructed.</p></section>
   <section><h2>Solution</h2><p>The provider console was used to reconnect and start the server again. The website and every World Observer service were then checked and confirmed to be back online.</p></section>
-  <section class="hcl-story-lesson"><h2>Lesson</h2><p>The command wasn't wrong.</p><p>The terminal was.</p></section>
+
+  <section>
+    <h2>Update · 12.09.2026</h2>
+    <h3>THE WRONG TERMINAL II — WORLDNODE STRIKES BACK</h3>
+    <p>It happened again.</p>
+    <p>After spending the day turning a Cisco CP-9951 into a delightfully unnecessary homelab terminal, Cthulhu still had a small forest of terminal windows open. At the end of the evening the intention was simple: shut down the local workstation.</p>
+    <p><code>sudo shutdown now</code> was entered, the remaining windows disappeared and the day appeared to be finished.</p>
+    <p>A little later, Katharina wanted to look at the story from that day on the website. Her report was short: “It doesn't load.”</p>
+    <p>That sentence triggered immediate recognition. The machine that had obediently received the shutdown command was, once again, Worldnode.</p>
+    <p>The workstation had survived. The production server had not.</p>
+    <p>Worldnode was brought back online, the site was checked, and two broken German World Observer routes discovered during the recovery were repaired as well.</p>
+  </section>
+
+  <section>
+    <h2>Preventing Part III</h2>
+    <p>The real fix is not “pay more attention.” The two systems deliberately look similar, and humans eventually click the wrong terminal.</p>
+    <p>Worldnode therefore needs a shutdown guard: an interactive confirmation that makes the target unmistakable before a power-off or reboot can proceed. Something along the lines of <strong>“REALLY STOP THE WEBSITE, DUDE?”</strong> is considerably harder to ignore than another normal shell prompt.</p>
+  </section>
+
+  <section class="hcl-story-lesson"><h2>Lesson</h2><p>The command wasn't wrong.</p><p>The terminal was.</p><p>Twice.</p></section>
   <p><a class="hcl-archive-return" href="/museum/home-computing-lab/field-notes/">← RETURN TO FIELD NOTES &amp; ARTIFACTS</a></p>
 </article></main></div><footer><div class="nebby-terminal-line"><picture>
 <source srcset="../../../../assets/generated/images/nebby.webp" type="image/webp">
