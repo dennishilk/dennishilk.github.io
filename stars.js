@@ -70,6 +70,82 @@ const useDedicatedGermanWorldObserverUi = dedicatedGermanWorldObserverPaths.has(
 const useDedicatedWorldObserverLanguageUi =
   useDedicatedGermanWorldObserverUi || dedicatedWorldObserverEnglishPaths.has(window.location.pathname);
 
+const ciscoFieldNote7Paths = new Set([
+  "/museum/home-computing-lab/field-notes/field-note-7/",
+  "/museum/home-computing-lab/field-notes/field-note-7/index.html",
+]);
+const useCiscoFieldNote7Ui = ciscoFieldNote7Paths.has(window.location.pathname);
+
+if (useCiscoFieldNote7Ui) {
+  const bundle = window.DennisSiteI18nDE || (window.DennisSiteI18nDE = { common: {}, prefixes: {}, pages: {} });
+  bundle.pages ||= {};
+  bundle.pages["/museum/home-computing-lab/field-notes/field-note-7/"] = {
+    title: "Ich habe ein Cisco-Telefon für 35 € gekauft. Natürlich kam DOOM drauf. – Field Note #007",
+    description: "Ein Cisco CP-9951 kam morgens an. Am Nachmittag war es ein SIP/H.264-Thin-Client für Werner und nahezu latenzfreies Live-DOOM von Cthulhu.",
+    text: {
+      "FIELD NOTE #007 · DOCUMENTED 12 SEP 2026": "FIELD NOTE #007 · DOKUMENTIERT AM 12. SEP 2026",
+      "I BOUGHT A €35 CISCO PHONE.": "ICH HABE EIN CISCO-TELEFON FÜR 35 € GEKAUFT.",
+      "NATURALLY, I PUT DOOM ON IT.": "NATÜRLICH HABE ICH DOOM DRAUF GEPACKT.",
+      "A same-day lab experiment turned a Cisco CP-9951 into a SIP/H.264 thin client for Werner and live DOOM from Cthulhu.": "Ein Experiment am selben Tag machte aus einem Cisco CP-9951 einen SIP/H.264-Thin-Client für Werner und Live-DOOM von Cthulhu.",
+      "Morning: a phone arrived": "Morgens: Ein Telefon kommt an",
+      "The day started with a used Cisco Unified IP Phone CP-9951 that had cost €35. The original plan was reconnaissance: identify the interfaces, understand provisioning and find the cleanest supported way to make the phone useful in the home lab.": "Der Tag begann mit einem gebrauchten Cisco Unified IP Phone CP-9951 für 35 €. Der ursprüngliche Plan war reine Erkundung: Schnittstellen identifizieren, Provisionierung verstehen und den saubersten unterstützten Weg finden, das Telefon im Homelab sinnvoll einzusetzen.",
+      "It did not require custom firmware, a bootloader modification or a factory reset. Cthulhu provides DHCP and TFTP, the Cisco loads its normal SEP configuration, and Asterisk handles SIP.": "Dafür waren weder Custom-Firmware noch eine Bootloader-Änderung oder ein Factory-Reset nötig. Cthulhu stellt DHCP und TFTP bereit, das Cisco lädt seine normale SEP-Konfiguration und Asterisk übernimmt SIP.",
+      "One requirement was non-negotiable: the cat background stays.": "Eine Bedingung war nicht verhandelbar: Der Katzen-Hintergrund bleibt.",
+      "First useful discovery: the screen can receive H.264": "Erste nützliche Entdeckung: Das Display kann H.264 empfangen",
+      "The CP-9951 advertises H.264 video reception over SIP/RTP. Provisioning enabled the existing video capability, and the phone negotiated a 640×480 receive stream using the profile expected by the Cisco firmware.": "Das CP-9951 bietet H.264-Videoempfang über SIP/RTP. Durch die Provisionierung wurde die vorhandene Videofunktion aktiviert, und das Telefon handelte einen 640×480-Empfangsstream mit dem von der Cisco-Firmware erwarteten Profil aus.",
+      "That changed the question from “what can this old office phone do?” to “what can we make it display?”": "Damit änderte sich die Frage von „Was kann dieses alte Bürotelefon?“ zu „Was können wir darauf anzeigen lassen?“",
+      "Speed dial 111: Werner": "Kurzwahl 111: Werner",
+      "The first deliberately unnecessary application was Werner.": "Die erste ganz bewusst unnötige Anwendung war Werner.",
+      "A dedicated Baresip endpoint registers with Asterisk as extension 200. Dialling 111 from the Cisco routes to that endpoint, which auto-answers and sends the prepared Werner sequence as real H.264/PCMU media. The video had to be scaled to 640×480, 24 fps, H.264 Baseline/Constrained Baseline Level 3.0 so the Cisco would accept it.": "Ein eigener Baresip-Endpunkt registriert sich bei Asterisk als Nebenstelle 200. Wird am Cisco die 111 gewählt, landet der Anruf dort; der Endpunkt nimmt automatisch ab und sendet die vorbereitete Werner-Sequenz als echtes H.264/PCMU-Medium. Das Video musste auf 640×480 bei 24 fps und H.264 Baseline/Constrained Baseline Level 3.0 gebracht werden, damit das Cisco es akzeptiert.",
+      "Button 2 became Werner → 111. Video and sound both play on the phone.": "Taste 2 wurde zu Werner → 111. Bild und Ton laufen direkt über das Telefon.",
+      "Speed dial 666: live DOOM": "Kurzwahl 666: Live-DOOM",
+      "The second application is not a prerecorded DOOM clip. DOOM Retro is actually running live on Cthulhu under Wayland/Sway, and the Cisco displays the current game output.": "Die zweite Anwendung ist kein vorab aufgenommenes DOOM-Video. DOOM Retro läuft tatsächlich live auf Cthulhu unter Wayland/Sway, und das Cisco zeigt die aktuelle Spielausgabe.",
+      "A separate Baresip instance registers as endpoint 201. The Cisco's third speed dial is DOOM → 666, Asterisk routes 666 to that endpoint, and the live stream is delivered back to the handset.": "Eine zweite Baresip-Instanz registriert sich als Endpunkt 201. Die dritte Kurzwahl des Cisco ist DOOM → 666, Asterisk routet die 666 zu diesem Endpunkt und der Live-Stream wird zurück an das Telefon geliefert.",
+      "The five-second problem": "Das Fünf-Sekunden-Problem",
+      "The first working live path used wf-recorder, a NUT FIFO and Baresip's avformat input. It worked, but the picture arrived roughly five seconds late. Y4M reduced that to around two seconds but introduced visual corruption.": "Der erste funktionierende Live-Pfad nutzte wf-recorder, eine NUT-FIFO und den avformat-Eingang von Baresip. Es funktionierte, aber das Bild kam ungefähr fünf Sekunden zu spät an. Y4M reduzierte das auf etwa zwei Sekunden, verursachte jedoch Bildfehler.",
+      "The fix was to stop treating the live screen as a buffered media file and present it as a virtual camera instead.": "Die Lösung war, den Live-Bildschirm nicht mehr wie eine gepufferte Mediendatei zu behandeln, sondern ihn stattdessen als virtuelle Kamera bereitzustellen.",
+      "With that path, the previous multi-second delay is effectively gone and the phone shows DOOM near realtime.": "Mit diesem Pfad ist die vorherige Verzögerung von mehreren Sekunden praktisch verschwunden und das Telefon zeigt DOOM nahezu in Echtzeit.",
+      "And the sound really comes from the phone": "Und der Ton kommt wirklich aus dem Telefon",
+      "Video alone would have been cheating.": "Nur Video wäre geschummelt gewesen.",
+      "The DOOM instance captures Cthulhu's real PipeWire/Pulse output monitor and sends it as PCMU audio through SIP/RTP. The result is the actual game sound coming from the Cisco speaker with essentially no noticeable delay.": "Die DOOM-Instanz greift Cthulhus echten PipeWire/Pulse-Ausgabemonitor ab und sendet ihn als PCMU-Audio über SIP/RTP. Das Ergebnis ist echter Spielsound aus dem Cisco-Lautsprecher – praktisch ohne wahrnehmbare Verzögerung.",
+      "Workshop recordings": "Werkstattaufnahmen",
+      "Two original recordings belong with this field note because they show the experiment as it actually happened: the button press, the phone reacting and the audio in the room.": "Zu dieser Field Note gehören zwei Originalaufnahmen, weil sie das Experiment genau so zeigen, wie es passiert ist: Tastendruck, Reaktion des Telefons und der Ton im Raum.",
+      "Recording 01 — Werner / 111.": "Aufnahme 01 — Werner / 111.",
+      "Pressing the Werner speed dial starts the selected scene directly on the Cisco, with video and audio coming from the phone.": "Ein Druck auf die Werner-Kurzwahl startet die ausgewählte Szene direkt auf dem Cisco; Bild und Ton kommen aus dem Telefon.",
+      "Recording 02 — DOOM / 666.": "Aufnahme 02 — DOOM / 666.",
+      "Pressing the DOOM speed dial calls extension 666. Live DOOM from Cthulhu appears on the Cisco display, and the real game audio is audibly coming from the phone speaker.": "Ein Druck auf die DOOM-Kurzwahl ruft die 666 an. Live-DOOM von Cthulhu erscheint auf dem Cisco-Display, und der echte Spielsound kommt hörbar aus dem Telefonlautsprecher.",
+      "Current result": "Aktueller Stand",
+      "The phone remains on its normal Cisco firmware. The cat remains on the background. 666 is now a perfectly legitimate speed dial.": "Das Telefon läuft weiterhin mit seiner normalen Cisco-Firmware. Die Katze bleibt im Hintergrund. 666 ist jetzt eine völlig legitime Kurzwahl.",
+      "Result": "Ergebnis",
+      "Can a Cisco CP-9951 run DOOM?": "Kann ein Cisco CP-9951 DOOM ausführen?",
+      "Yes — as a near-realtime SIP/H.264 thin client. :DD": "Ja — als nahezu in Echtzeit arbeitender SIP/H.264-Thin-Client. :DD",
+      "Next experiment": "Nächstes Experiment",
+      "Displaying DOOM is proven. The next step is to make the phone itself the controller: Cisco keypad / DTMF → Asterisk/Baresip → Cthulhu → DOOM.": "DOOM auf dem Display ist bewiesen. Der nächste Schritt ist, das Telefon selbst zum Controller zu machen: Cisco-Tastenfeld / DTMF → Asterisk/Baresip → Cthulhu → DOOM.",
+      "If that works, the answer changes from “DOOM is running on the phone display” to “DOOM is being played with an office phone.”": "Wenn das funktioniert, ändert sich die Antwort von „DOOM läuft auf dem Telefondisplay“ zu „DOOM wird mit einem Bürotelefon gespielt.“",
+      "← RETURN TO FIELD NOTES & ARTIFACTS": "← ZURÜCK ZU FIELD NOTES & ARTEFAKTEN"
+    },
+    phrases: [
+      ["DOCUMENTED", "DOKUMENTIERT"],
+      ["Speed dial", "Kurzwahl"],
+      ["Button", "Taste"],
+      ["forward", "vorwärts"],
+      ["backward", "rückwärts"],
+      ["turn left", "links drehen"],
+      ["turn right", "rechts drehen"],
+      ["fire", "feuern"],
+      ["use / open", "benutzen / öffnen"]
+    ]
+  };
+
+  const languageVisibilityStyle = document.createElement("style");
+  languageVisibilityStyle.textContent = `
+    .cisco-recording-pending > hr { display:none; }
+    body[data-site-language="de"] .cisco-recording-pending section[lang="en"] { display:none; }
+    body[data-site-language="en"] .cisco-recording-pending section[lang="de"] { display:none; }
+  `;
+  document.head.appendChild(languageVisibilityStyle);
+}
+
 if (!document.querySelector('script[data-seo-runtime-loader]')) {
   const seoScript = document.createElement('script');
   seoScript.src = '/seo-runtime.js?v=20260815-1';
