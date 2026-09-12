@@ -189,6 +189,12 @@
     if (!/^\/museum\/home-computing-lab\/field-notes\/field-note-7\/(?:index\.html)?$/.test(path)) return;
 
     const storySections = [...document.querySelectorAll(".hcl-field-story > section")];
+    const currentLanguage = () => {
+      const bodyLanguage = document.body.dataset.siteLanguage;
+      if (bodyLanguage === "de" || bodyLanguage === "en") return bodyLanguage;
+      return document.documentElement.lang === "de" ? "de" : "en";
+    };
+
     const wernerSection = storySections.find(section => {
       const heading = section.querySelector(":scope > h2")?.textContent || "";
       return /Werner/.test(heading) && /111/.test(heading);
@@ -207,12 +213,12 @@
     const syncWernerContext = () => {
       const context = document.getElementById("cisco-werner-context");
       if (!context) return;
-      const language = document.body.dataset.siteLanguage === "de" || document.documentElement.lang === "de" ? "de" : "en";
+      const language = currentLanguage();
       if (context.dataset.language === language) return;
       context.dataset.language = language;
       context.innerHTML = language === "de"
         ? 'Falls du Werner nicht kennst: <strong>Werner</strong> ist die Comicfigur des deutschen Zeichners <strong>Rötger Feldmann („Brösel“)</strong>. Die Eisrennen-Szene mit Nobelschröder stammt aus <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).'
-        : 'If you do not know Werner: <strong>Werner</strong> is the comic character created by German cartoonist <strong>Rötger Feldmann (“Brösel”)</strong>. The ice-race scene with Nobelschröder is from <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).';
+        : 'If you do not know <a href="https://en.wikipedia.org/wiki/Werner_(comics)" target="_blank" rel="noopener"><strong>Werner</strong></a>: Werner is the comic character created by German cartoonist <strong>Rötger Feldmann (“Brösel”)</strong>. The ice-race scene with Nobelschröder is from <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).';
     };
 
     const patchNobelschroeder = () => {
@@ -236,15 +242,59 @@
       });
     };
 
-    syncWernerContext();
-    patchNobelschroeder();
-    setTimeout(() => {
+    const syncCiscoLanguagePolish = () => {
+      const language = currentLanguage();
+      const sections = [...document.querySelectorAll(".hcl-field-story > section")];
+      const doomSection = sections.find(section => /DOOM/i.test(section.querySelector(":scope > h2")?.textContent || ""));
+
+      if (doomSection) {
+        const firstParagraph = doomSection.querySelector(":scope > p");
+        if (firstParagraph) {
+          firstParagraph.textContent = language === "de"
+            ? "Die zweite Anwendung ist kein vorab aufgenommenes DOOM-Video. DOOM Retro läuft tatsächlich live auf Cthulhu unter Wayland/Sway, und das Cisco zeigt die aktuelle Spielausgabe."
+            : "The second application is not a prerecorded DOOM clip. DOOM Retro is actually running live on Cthulhu under Wayland/Sway, and the Cisco displays the current game output.";
+        }
+        const doomImage = doomSection.querySelector("figure img");
+        if (doomImage) {
+          doomImage.alt = language === "de"
+            ? "Live-DOOM-Spiel auf dem Cisco CP-9951"
+            : "Live DOOM gameplay displayed on the Cisco CP-9951";
+        }
+      }
+
+      const catImage = document.querySelector(".hcl-field-story > figure img");
+      if (catImage) {
+        catImage.alt = language === "de"
+          ? "Cisco CP-9951 im Homelab mit dem unverzichtbaren Katzen-Hintergrund"
+          : "Cisco CP-9951 in the home lab with the essential cat background";
+      }
+
+      document.querySelectorAll(".hcl-field-story pre").forEach(pre => {
+        const value = pre.textContent;
+        if (/Werner/.test(value) && /111/.test(value) && /DOOM/.test(value) && /666/.test(value)) {
+          pre.textContent = language === "de"
+            ? "Taste 2: Werner\n  → 111 → Asterisk → Baresip 200\n  → Werner-Video + Ton → Cisco\n\nTaste 3: DOOM\n  → 666 → Asterisk → Baresip 201\n  → Live-Cthulhu-Video + echter Spielsound → Cisco"
+            : "Button 2: Werner\n  → 111 → Asterisk → Baresip 200\n  → Werner video + audio → Cisco\n\nButton 3: DOOM\n  → 666 → Asterisk → Baresip 201\n  → live Cthulhu video + real game audio → Cisco";
+        } else if (/2\s*=/.test(value) && /8\s*=/.test(value) && /5\s*=/.test(value) && /0\s*=/.test(value)) {
+          pre.textContent = language === "de"
+            ? "2 = vorwärts       8 = rückwärts\n4 = links drehen   6 = rechts drehen\n5 = feuern          0 = benutzen / öffnen"
+            : "2 = forward        8 = backward\n4 = turn left      6 = turn right\n5 = fire           0 = use / open";
+        }
+      });
+    };
+
+    const syncCiscoFieldNote7 = () => {
       syncWernerContext();
       patchNobelschroeder();
-    }, 0);
-    setTimeout(patchNobelschroeder, 150);
+      syncCiscoLanguagePolish();
+    };
 
-    const languageObserver = new MutationObserver(syncWernerContext);
+    syncCiscoFieldNote7();
+    setTimeout(syncCiscoFieldNote7, 0);
+    setTimeout(syncCiscoFieldNote7, 150);
+    setTimeout(syncCiscoFieldNote7, 500);
+
+    const languageObserver = new MutationObserver(() => setTimeout(syncCiscoFieldNote7, 0));
     languageObserver.observe(document.body, { attributes: true, attributeFilter: ["data-site-language"] });
   };
 
