@@ -96,6 +96,9 @@ if (useCiscoFieldNote7Ui) {
     const heading = section.querySelector(":scope > h2");
     if (heading?.textContent.trim() === "Morning: a phone arrived") {
       const paragraphs = section.querySelectorAll(":scope > p");
+      if (paragraphs[1]) {
+        paragraphs[1].innerHTML = "A factory reset was necessary because the used phone still contained provisioning and network configuration from its previous organization. Before connecting it to the lab, the old configuration was wiped. On this CP-9951, the working reset procedure was: power off, hold <code>#</code> while powering on, then enter <code>123456789*0#</code>. After that, Cthulhu provided DHCP and TFTP, the Cisco loaded our SEP configuration, and Asterisk handled SIP.";
+      }
       if (paragraphs[2]) {
         paragraphs[2].textContent = "First things first: the cat background. Before Werner, before DOOM, the Cisco got the cat. Essential.";
       }
@@ -106,7 +109,7 @@ if (useCiscoFieldNote7Ui) {
   const germanHtml = new Map([
     ["Morning: a phone arrived", "Morgens: Ein Telefon kommt an"],
     ["The day started with a used Cisco Unified IP Phone CP-9951 that had cost €35. The original plan was reconnaissance: identify the interfaces, understand provisioning and find the cleanest supported way to make the phone useful in the home lab.", "Der Tag begann mit einem gebrauchten Cisco Unified IP Phone CP-9951 für 35 €. Der ursprüngliche Plan war reine Erkundung: Schnittstellen identifizieren, die Provisionierung verstehen und den saubersten unterstützten Weg finden, das Telefon im Homelab sinnvoll einzusetzen."],
-    ["It did not require custom firmware, a bootloader modification or a factory reset. Cthulhu provides DHCP and TFTP, the Cisco loads its normal SEP configuration, and Asterisk handles SIP.", "Dafür waren weder Custom-Firmware noch eine Bootloader-Änderung oder ein Factory-Reset nötig. Cthulhu stellt DHCP und TFTP bereit, das Cisco lädt seine normale SEP-Konfiguration und Asterisk übernimmt SIP."],
+    ["A factory reset was necessary because the used phone still contained provisioning and network configuration from its previous organization. Before connecting it to the lab, the old configuration was wiped. On this CP-9951, the working reset procedure was: power off, hold # while powering on, then enter 123456789*0#. After that, Cthulhu provided DHCP and TFTP, the Cisco loaded our SEP configuration, and Asterisk handled SIP.", "Ein Factory-Reset war nötig, weil auf dem gebrauchten Telefon noch Provisionierungs- und Netzwerkkonfigurationen der vorherigen Organisation gespeichert waren. Bevor es ins Homelab kam, wurde diese alte Konfiguration vollständig entfernt. Bei diesem CP-9951 funktionierte der Reset so: Strom aus, beim Einschalten <code>#</code> gedrückt halten und anschließend <code>123456789*0#</code> eingeben. Danach stellte Cthulhu DHCP und TFTP bereit, das Cisco lud unsere SEP-Konfiguration und Asterisk übernahm SIP."],
     ["First things first: the cat background. Before Werner, before DOOM, the Cisco got the cat. Essential.", "Das Wichtigste zuerst: der Katzen-Hintergrund. Noch vor Werner und DOOM bekam das Cisco die Katze. Essenziell."],
     ["First useful discovery: the screen can receive H.264", "Erste nützliche Entdeckung: Das Display kann H.264 empfangen"],
     ["The CP-9951 advertises H.264 video reception over SIP/RTP. Provisioning enabled the existing video capability, and the phone negotiated a 640×480 receive stream using the profile expected by the Cisco firmware.", "Das CP-9951 bietet H.264-Videoempfang über SIP/RTP. Durch die Provisionierung wurde die vorhandene Videofunktion aktiviert, und das Telefon handelte einen 640×480-Empfangsstream mit dem von der Cisco-Firmware erwarteten Profil aus."],
