@@ -242,6 +242,30 @@
       });
     };
 
+    const moveWernerRecording = () => {
+      if (!wernerSection) return;
+
+      const wernerFigure = [...document.querySelectorAll("figure.hcl-story-evidence")].find(figure =>
+        figure.querySelector('source[src*="cisco-werner-111-web.mp4"]'),
+      );
+      const wernerDetails = [...document.querySelectorAll(".cisco-recording-pending")].find(block =>
+        block.querySelector('section[lang="de"][aria-labelledby="werner-de-title"]'),
+      );
+
+      if (!wernerFigure || !wernerDetails) return;
+
+      if (wernerFigure.parentElement !== wernerSection || wernerDetails.parentElement !== wernerSection) {
+        wernerSection.append(wernerFigure, wernerDetails);
+      }
+
+      const caption = wernerFigure.querySelector("figcaption");
+      if (caption) {
+        caption.innerHTML = currentLanguage() === "de"
+          ? '<strong>Aufnahme 01 — Werner / 111.</strong> Ein Druck auf die <em>Werner</em>-Kurzwahl startet die ausgewählte Szene direkt auf dem Cisco; Bild und Ton kommen aus dem Telefon.'
+          : '<strong>Recording 01 — Werner / 111.</strong> Pressing the <em>Werner</em> speed dial starts the selected scene directly on the Cisco, with video and audio coming from the phone.';
+      }
+    };
+
     const syncCiscoLanguagePolish = () => {
       const language = currentLanguage();
       const sections = [...document.querySelectorAll(".hcl-field-story > section")];
@@ -286,6 +310,7 @@
     const syncCiscoFieldNote7 = () => {
       syncWernerContext();
       patchNobelschroeder();
+      moveWernerRecording();
       syncCiscoLanguagePolish();
     };
 
