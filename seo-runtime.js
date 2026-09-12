@@ -185,8 +185,72 @@
     document.head.appendChild(script);
   };
 
+  const patchCiscoFieldNote7 = () => {
+    if (!/^\/museum\/home-computing-lab\/field-notes\/field-note-7\/(?:index\.html)?$/.test(path)) return;
+
+    const storySections = [...document.querySelectorAll(".hcl-field-story > section")];
+    const wernerSection = storySections.find(section => {
+      const heading = section.querySelector(":scope > h2")?.textContent || "";
+      return /Werner/.test(heading) && /111/.test(heading);
+    });
+
+    if (wernerSection && !document.getElementById("cisco-werner-context")) {
+      const firstParagraph = wernerSection.querySelector(":scope > p");
+      if (firstParagraph) {
+        const context = document.createElement("p");
+        context.id = "cisco-werner-context";
+        context.dataset.siteI18nSkip = "true";
+        firstParagraph.insertAdjacentElement("afterend", context);
+      }
+    }
+
+    const syncWernerContext = () => {
+      const context = document.getElementById("cisco-werner-context");
+      if (!context) return;
+      const language = document.body.dataset.siteLanguage === "de" || document.documentElement.lang === "de" ? "de" : "en";
+      if (context.dataset.language === language) return;
+      context.dataset.language = language;
+      context.innerHTML = language === "de"
+        ? 'Falls du Werner nicht kennst: <strong>Werner</strong> ist die Comicfigur des deutschen Zeichners <strong>Rötger Feldmann („Brösel“)</strong>. Die Eisrennen-Szene mit Nobelschröder stammt aus <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).'
+        : 'If you do not know Werner: <strong>Werner</strong> is the comic character created by German cartoonist <strong>Rötger Feldmann (“Brösel”)</strong>. The ice-race scene with Nobelschröder is from <a href="https://de.wikipedia.org/wiki/Werner_%E2%80%93_Das_mu%C3%9F_kesseln%21%21%21" target="_blank" rel="noopener">Werner – Das muß kesseln!!!</a> (1996).';
+    };
+
+    const patchNobelschroeder = () => {
+      const german = document.querySelector('.cisco-recording-pending section[lang="de"]');
+      const english = document.querySelector('.cisco-recording-pending section[lang="en"]');
+
+      german?.querySelectorAll("p").forEach(paragraph => {
+        if (paragraph.textContent.startsWith("In der Szene steigt jemand")) {
+          paragraph.innerHTML = 'In der Szene steigt <strong>Nobelschröder</strong> auf einem gefrorenen See aus dem Auto und rutscht sofort hin und her. Darauf sagt Andi: <strong>„Kannst du nicht mal vernünftig grüßen?“</strong>';
+        } else if (paragraph.textContent.startsWith("Der Mann macht noch")) {
+          paragraph.innerHTML = '<strong>Nobelschröder</strong> macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass Nobelschröder mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.';
+        }
+      });
+
+      english?.querySelectorAll("p").forEach(paragraph => {
+        if (paragraph.textContent.startsWith("In the scene, a man gets out")) {
+          paragraph.innerHTML = 'In the scene, <strong>Nobelschröder</strong> gets out of a car onto a frozen lake and immediately starts sliding around. Andi says: <strong>“Can’t you even say hello properly for once?”</strong>';
+        } else if (paragraph.textContent.startsWith("He takes another two or three steps")) {
+          paragraph.innerHTML = '<strong>Nobelschröder</strong> takes another two or three steps, completely loses his footing, flips over and lands head-first on the ice. Werner then dryly comments that Nobelschröder is going to wreck the whole ice surface with his <strong>“wrecking ball”</strong> — meaning his head.';
+        }
+      });
+    };
+
+    syncWernerContext();
+    patchNobelschroeder();
+    setTimeout(() => {
+      syncWernerContext();
+      patchNobelschroeder();
+    }, 0);
+    setTimeout(patchNobelschroeder, 150);
+
+    const languageObserver = new MutationObserver(syncWernerContext);
+    languageObserver.observe(document.body, { attributes: true, attributeFilter: ["data-site-language"] });
+  };
+
   applyMetadata();
   ensureRobots();
   ensureAlternates();
   addBreadcrumb();
+  patchCiscoFieldNote7();
 })();
