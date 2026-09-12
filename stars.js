@@ -196,16 +196,21 @@ if (window.location.pathname === "/museum/home-computing-lab/field-notes/field-n
         <figcaption><strong>Recording 01 — Werner / 111.</strong> Pressing the <em>Werner</em> speed dial starts the selected scene directly on the Cisco, with video and audio coming from the phone.</figcaption>
       </figure>
       <div class="cisco-recording-pending" style="border-style:solid">
-        <strong>DEUTSCH</strong>
-        <p>Ein Druck auf die Kurzwahl <strong>„Werner“</strong> startet die vorbereitete Szene direkt auf dem Cisco — mit Bild und Ton über das Telefon.</p>
-        <p>In der Szene steigt jemand auf einem völlig vereisten Parkplatz aus dem Auto und rutscht sofort hin und her. Darauf sagt Andi sinngemäß: <strong>„Kannst du nicht einmal vernünftig grüßen?“</strong></p>
-        <p>Der Mann macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich fast und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass der Typ mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.</p>
-        <p>Genau an der Stelle hört man auch mein Lachen im Video — weil diese völlig absurde Szene plötzlich tatsächlich auf einem Cisco-Bürotelefon läuft. :D</p>
-        <strong>ENGLISH</strong>
-        <p>Pressing the <strong>“Werner”</strong> speed dial starts the prepared scene directly on the Cisco, with both video and audio playing through the phone.</p>
-        <p>In the scene, a man gets out of a car onto a completely icy parking lot and immediately starts slipping around. Andi then says, roughly, <strong>“Can’t you even say hello properly for once?”</strong></p>
-        <p>The man takes another two or three steps, loses his footing completely, nearly does a half-somersault and lands head-first on the ice. Werner then dryly comments that the guy is going to destroy the whole ice surface with his <strong>“wrecking ball”</strong> — referring to his head.</p>
-        <p>You can also hear me laughing at that exact moment in the recording, because this ridiculous scene is actually playing on a Cisco office phone. :D</p>
+        <section lang="de" aria-labelledby="werner-de-title">
+          <strong id="werner-de-title">DEUTSCH</strong>
+          <p>Ein Druck auf die Kurzwahl <strong>„Werner“</strong> startet die vorbereitete Szene direkt auf dem Cisco — mit Bild und Ton über das Telefon.</p>
+          <p>In der Szene steigt jemand auf einem gefrorenen See aus dem Auto und rutscht sofort hin und her. Darauf sagt Andi: <strong>„Kannst du nicht mal vernünftig grüßen?“</strong></p>
+          <p>Der Mann macht noch zwei oder drei Schritte, rutscht dann komplett weg, überschlägt sich und landet mit dem Kopf auf dem Eis. Werner kommentiert trocken, dass der Typ mit seiner <strong>„Abrissbirne“</strong> gleich das ganze Eis kaputtmacht.</p>
+          <p>Genau an der Stelle hört man auch mein Lachen im Video. Ich lache dabei sowieso ständig, weil ich die Werner-Filme einfach feiere. :D</p>
+        </section>
+        <hr style="border:0;border-top:1px solid rgba(137,185,191,.28);margin:1.1rem 0">
+        <section lang="en" aria-labelledby="werner-en-title">
+          <strong id="werner-en-title">ENGLISH</strong>
+          <p>Pressing the <strong>“Werner”</strong> speed dial starts the prepared scene directly on the Cisco, with both video and audio playing through the phone.</p>
+          <p>In the scene, a man gets out of a car onto a frozen lake and immediately starts sliding around. Andi says: <strong>“Can’t you even say hello properly for once?”</strong></p>
+          <p>He takes another two or three steps, completely loses his footing, flips over and lands head-first on the ice. Werner then dryly comments that the guy is going to wreck the whole ice surface with his <strong>“wrecking ball”</strong> — meaning his head.</p>
+          <p>You can hear me laughing in the recording too. I laugh through Werner movies all the time anyway — I just love them. :D</p>
+        </section>
       </div>`;
   }
 
