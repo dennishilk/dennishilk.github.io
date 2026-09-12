@@ -19,7 +19,7 @@
   <section><h2>What Happened</h2><p>The shutdown command was entered without noticing that the active terminal was not the intended one. The command completed, and the session appeared to be finished.</p><p>Only after standing up to leave for dinner did something feel unusual: the desktop computer was still running.</p><p>That short moment of confusion identified the mistake. The active terminal had been connected to the remote production server, Worldnode, rather than the local workstation, Cthulhu. The production server had shut down exactly as instructed.</p></section>
   <section><h2>Solution</h2><p>The provider console was used to reconnect and start the server again. The website and every World Observer service were then checked and confirmed to be back online.</p></section>
 
-  <section>
+  <section id="wrong-terminal-ii">
     <h2>Update · 12.09.2026</h2>
     <h3>THE WRONG TERMINAL II — WORLDNODE STRIKES BACK</h3>
     <p>It happened again.</p>
@@ -31,7 +31,7 @@
     <p>Worldnode was brought back online, the site was checked, and two broken German World Observer routes discovered during the recovery were repaired as well.</p>
   </section>
 
-  <section>
+  <section id="wrong-terminal-guard">
     <h2>Preventing Part III</h2>
     <p>The real fix is not “pay more attention.” The two systems deliberately look similar, and humans eventually click the wrong terminal.</p>
     <p>So Worldnode now has a shutdown guard. The usual <code>shutdown</code>, <code>reboot</code>, <code>poweroff</code> and <code>halt</code> commands resolve through guarded wrappers in <code>/usr/local/sbin</code>. Before anything destructive happens, the terminal now makes the target painfully obvious:</p>
@@ -40,9 +40,72 @@
     <p>The guard was installed and tested on 12.09.2026. Both <code>sudo shutdown --guard-test</code> and <code>sudo reboot --guard-test</code> confirmed the protection without stopping the machine, and the four guarded commands were verified to resolve to <code>/usr/local/sbin</code>.</p>
   </section>
 
-  <section class="hcl-story-lesson"><h2>Lesson</h2><p>The command wasn't wrong.</p><p>The terminal was.</p><p>Twice.</p><p>Part III now has to get past the guard first.</p></section>
+  <section class="hcl-story-lesson" id="wrong-terminal-lesson"><h2>Lesson</h2><p>The command wasn't wrong.</p><p>The terminal was.</p><p>Twice.</p><p>Part III now has to get past the guard first.</p></section>
   <p><a class="hcl-archive-return" href="/museum/home-computing-lab/field-notes/">← RETURN TO FIELD NOTES &amp; ARTIFACTS</a></p>
 </article></main></div><footer><div class="nebby-terminal-line"><picture>
 <source srcset="../../../../assets/generated/images/nebby.webp" type="image/webp">
 <img src="/nebby.png" class="nebby" alt="Nebby mascot">
-</picture><span class="coffee-text">&gt; home-computing-lab --field-note=001<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer></div></body></html>
+</picture><span class="coffee-text">&gt; home-computing-lab --field-note=001<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer></div>
+<script>
+(() => {
+  const update = document.getElementById("wrong-terminal-ii");
+  const guard = document.getElementById("wrong-terminal-guard");
+  const lesson = document.getElementById("wrong-terminal-lesson");
+  if (!update || !guard || !lesson) return;
+
+  const en = {
+    update: update.innerHTML,
+    guard: guard.innerHTML,
+    lesson: lesson.innerHTML,
+  };
+
+  const de = {
+    update: `
+      <h2>Update · 12.09.2026</h2>
+      <h3>THE WRONG TERMINAL II — WORLDNODE STRIKES BACK</h3>
+      <p>Es ist wieder passiert.</p>
+      <p>Den Tag hatte ich damit verbracht, ein Cisco CP-9951 in ein herrlich unnötiges Homelab-Terminal zu verwandeln. Auf Monitor 2 waren noch die Überreste des Experiments offen: SIP-Sitzungen, Cisco-Konfiguration, DOOM, FFmpeg, Baresip und Capture-Terminals. Mit anderen Worten: genug fast identische Shells, damit ein falscher Fokus absolut plausibel war.</p>
+      <p>Am Ende des Abends war die Absicht einfach: die lokale Arbeitsstation Cthulhu herunterfahren. <code>sudo shutdown now</code> wurde eingegeben, die übrigen Fenster verschwanden und der Tag schien beendet.</p>
+      <p>Etwas später wollte Katharina sich die Story von diesem Tag auf der Website ansehen. Ihr Bericht war kurz: „Die lädt nicht.“</p>
+      <p>Dieser Satz sorgte für sofortiges Wiedererkennen. Die Maschine, die den Shutdown-Befehl gehorsam entgegengenommen hatte, war wieder einmal Worldnode.</p>
+      <p>Die Arbeitsstation hatte überlebt. Der Produktionsserver nicht.</p>
+      <p>Worldnode wurde wieder online gebracht, die Website geprüft und zwei während der Wiederherstellung entdeckte kaputte deutsche World-Observer-Routen gleich mit repariert.</p>`,
+    guard: `
+      <h2>Teil III verhindern</h2>
+      <p>Die eigentliche Lösung lautet nicht „besser aufpassen“. Beide Systeme sehen absichtlich ähnlich aus, und irgendwann klickt ein Mensch das falsche Terminal an.</p>
+      <p>Deshalb hat Worldnode jetzt einen Shutdown-Guard. Die üblichen Befehle <code>shutdown</code>, <code>reboot</code>, <code>poweroff</code> und <code>halt</code> laufen über geschützte Wrapper in <code>/usr/local/sbin</code>. Bevor etwas Destruktives passiert, macht das Terminal das Ziel jetzt schmerzhaft eindeutig:</p>
+      <p><strong>„REALLY STOP THE WEBSITE, JUNGE?!“</strong></p>
+      <p>Danach muss exakt <code>STOP WORLDNODE</code> eingegeben werden. Ein normales Enter, ein gedankenloses Ja oder reine Muskelroutine reichen nicht mehr.</p>
+      <p>Der Guard wurde am 12.09.2026 installiert und getestet. Sowohl <code>sudo shutdown --guard-test</code> als auch <code>sudo reboot --guard-test</code> bestätigten den Schutz, ohne die Maschine anzuhalten. Zusätzlich wurde geprüft, dass alle vier geschützten Befehle tatsächlich auf <code>/usr/local/sbin</code> zeigen.</p>`,
+    lesson: `<h2>Lehre</h2><p>Der Befehl war nicht falsch.</p><p>Das Terminal war es.</p><p>Zweimal.</p><p>Teil III muss jetzt erst am Guard vorbei.</p>`,
+  };
+
+  let german = null;
+  const isGerman = () => {
+    try {
+      const stored = localStorage.getItem("dennishilk-language") || localStorage.getItem("about-language");
+      if (stored === "de") return true;
+      if (stored === "en") return false;
+    } catch (error) {}
+    return document.documentElement.lang.toLowerCase().startsWith("de");
+  };
+
+  const render = () => {
+    const next = isGerman();
+    if (next === german) return;
+    german = next;
+    const source = next ? de : en;
+    update.innerHTML = source.update;
+    guard.innerHTML = source.guard;
+    lesson.innerHTML = source.lesson;
+  };
+
+  render();
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+  window.addEventListener("storage", render);
+  window.setTimeout(render, 0);
+  window.setTimeout(render, 250);
+  window.setTimeout(render, 1000);
+})();
+</script>
+</body></html>
