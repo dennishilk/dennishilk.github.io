@@ -266,6 +266,96 @@
       }
     };
 
+    const ensureDoomControllerProof = () => {
+      const story = document.querySelector(".hcl-field-story");
+      if (!story) return;
+
+      let proof = document.getElementById("cisco-doom-controller-proof");
+      if (!proof) {
+        proof = document.createElement("section");
+        proof.id = "cisco-doom-controller-proof";
+        proof.dataset.siteI18nSkip = "true";
+        const currentResult = [...document.querySelectorAll(".hcl-field-story > section")].find(section =>
+          /^(Current result|Aktueller Stand)$/i.test(section.querySelector(":scope > h2")?.textContent?.trim() || ""),
+        );
+        if (currentResult) currentResult.insertAdjacentElement("beforebegin", proof);
+        else story.appendChild(proof);
+      }
+
+      const language = currentLanguage();
+      if (proof.dataset.language === language && proof.dataset.ready === "true") return;
+      proof.dataset.language = language;
+      proof.dataset.ready = "true";
+
+      const copy = language === "de" ? {
+        title: "Aufnahme 03: Das Cisco steuert DOOM wirklich",
+        intro: "Der letzte fehlende Teil war die Eingabe. Die Zifferntasten des CP-9951 senden während des laufenden Calls DTMF über RFC4733 an Asterisk. Ein ausschließlich lokal gebundener AMI-Zugang liefert die empfangenen DTMF-Ereignisse an eine kleine Python-Bridge, die über Linux /dev/uinput echte Tastaturereignisse erzeugt.",
+        caption: "Aufnahme 03 — Cisco-Tasten als DOOM-Controller. Bewegung, Feuern und Türen öffnen werden mit den echten Zifferntasten des CP-9951 ausgelöst.",
+        path: "Cisco CP-9951 Tastenfeld\n        ↓\nDTMF / RFC4733\n        ↓\nAsterisk\n        ↓\nAMI DTMF Events\n        ↓\nlokale Python-Bridge\n        ↓\nLinux /dev/uinput\n        ↓\nDOOM Retro",
+        mapping: "2 = vorwärts       8 = rückwärts\n4 = links drehen   6 = rechts drehen\n5 = feuern          0 = benutzen / öffnen",
+        note: "Der bestehende Video- und Audiopfad blieb dabei unverändert. AMI ist nur auf 127.0.0.1 gebunden; Zugangsdaten werden hier bewusst nicht veröffentlicht.",
+        final: "DOOM läuft nicht nur auf dem Cisco. DOOM wird mit dem Cisco gespielt. :D",
+        fallback: "Dein Browser unterstützt eingebettete MP4-Videos nicht.",
+      } : {
+        title: "Recording 03: the Cisco really controls DOOM",
+        intro: "The final missing piece was input. During the active call, the CP-9951 keypad sends DTMF over RFC4733 to Asterisk. A localhost-only AMI connection exposes the received DTMF events to a tiny Python bridge, which generates real keyboard events through Linux /dev/uinput.",
+        caption: "Recording 03 — Cisco keypad as a DOOM controller. Movement, firing and opening doors are driven by the real number keys on the CP-9951.",
+        path: "Cisco CP-9951 keypad\n        ↓\nDTMF / RFC4733\n        ↓\nAsterisk\n        ↓\nAMI DTMF events\n        ↓\nlocal Python bridge\n        ↓\nLinux /dev/uinput\n        ↓\nDOOM Retro",
+        mapping: "2 = forward        8 = backward\n4 = turn left      6 = turn right\n5 = fire           0 = use / open",
+        note: "The existing video and audio path stayed untouched. AMI is bound to 127.0.0.1 only; credentials are intentionally not published here.",
+        final: "DOOM is not just displayed on the Cisco. DOOM is played with the Cisco. :D",
+        fallback: "Your browser does not support embedded MP4 video.",
+      };
+
+      proof.innerHTML = `
+        <h2>${copy.title}</h2>
+        <p>${copy.intro}</p>
+        <figure class="hcl-story-evidence">
+          <video controls playsinline preload="metadata" style="display:block;width:100%;height:auto">
+            <source src="/assets/home-computing-lab/field-notes/cisco-cp-9951-doom-controller-web.mp4" type="video/mp4">
+            ${copy.fallback}
+          </video>
+          <figcaption>${copy.caption}</figcaption>
+        </figure>
+        <pre>${copy.path}</pre>
+        <pre>${copy.mapping}</pre>
+        <p>${copy.note}</p>
+        <p><strong>${copy.final}</strong></p>`;
+    };
+
+    const syncControllerConclusion = () => {
+      const language = currentLanguage();
+      const sections = [...document.querySelectorAll(".hcl-field-story > section")];
+
+      let lesson = document.getElementById("cisco-doom-final-result") || document.querySelector(".hcl-field-story > section.hcl-story-lesson");
+      if (lesson) {
+        lesson.id = "cisco-doom-final-result";
+        lesson.dataset.siteI18nSkip = "true";
+        lesson.innerHTML = language === "de"
+          ? '<h2>Ergebnis</h2><p>Kann ein Cisco CP-9951 DOOM anzeigen und den echten Spielsound ausgeben? Ja.</p><p>Kann es DOOM auch selbst steuern? Ebenfalls ja. Die echten Telefontasten treiben Bewegung, Feuern und Benutzen/Öffnen über RFC4733, Asterisk AMI und Linux uinput. :DD</p>'
+          : '<h2>Result</h2><p>Can a Cisco CP-9951 display DOOM and play the real game audio? Yes.</p><p>Can it control DOOM too? Also yes. The real phone keys now drive movement, firing and use/open through RFC4733, Asterisk AMI and Linux uinput. :DD</p>';
+      }
+
+      let finalSection = document.getElementById("cisco-doom-controller-final");
+      if (!finalSection) {
+        finalSection = sections.find(section => /^(Next experiment|Nächstes Experiment)$/i.test(section.querySelector(":scope > h2")?.textContent?.trim() || ""));
+        if (finalSection) finalSection.id = "cisco-doom-controller-final";
+      }
+      if (finalSection) {
+        finalSection.dataset.siteI18nSkip = "true";
+        finalSection.innerHTML = language === "de"
+          ? '<h2>Das Telefon ist jetzt der Controller</h2><p>Der frühere „nächste Versuch“ ist damit abgeschlossen. Der vollständige Eingabepfad lautet jetzt:</p><pre>Cisco CP-9951 Tastatur\n  → DTMF / RFC4733\n  → Asterisk AMI\n  → lokale Python-Bridge\n  → Linux /dev/uinput\n  → DOOM Retro</pre><p>Die Belegung ist bewusst simpel: <strong>2/8</strong> vorwärts/rückwärts, <strong>4/6</strong> drehen, <strong>5</strong> feuern und <strong>0</strong> benutzen/öffnen.</p><p><strong>Damit ist das CP-9951 gleichzeitig SIP-Telefon, DOOM-Display, DOOM-Lautsprecher und echter Hardware-Controller.</strong></p>'
+          : '<h2>The phone is now the controller</h2><p>The former “next experiment” is complete. The full input path is now:</p><pre>Cisco CP-9951 keypad\n  → DTMF / RFC4733\n  → Asterisk AMI\n  → local Python bridge\n  → Linux /dev/uinput\n  → DOOM Retro</pre><p>The mapping is deliberately simple: <strong>2/8</strong> forward/backward, <strong>4/6</strong> turn, <strong>5</strong> fire and <strong>0</strong> use/open.</p><p><strong>The CP-9951 is now simultaneously a SIP phone, DOOM display, DOOM speaker and real hardware controller.</strong></p>';
+      }
+
+      const description = language === "de"
+        ? "Ein Cisco CP-9951 wurde zum SIP/H.264-DOOM-Terminal mit echtem Spielsound und realer Tastensteuerung über RFC4733, Asterisk AMI und Linux uinput."
+        : "A Cisco CP-9951 became a SIP/H.264 DOOM terminal with real game audio and real keypad control through RFC4733, Asterisk AMI and Linux uinput.";
+      setMeta('meta[name="description"]', description, { name: "description" });
+      setMeta('meta[property="og:description"]', description, { property: "og:description" });
+      setMeta('meta[name="twitter:description"]', description, { name: "twitter:description" });
+    };
+
     const syncCiscoLanguagePolish = () => {
       const language = currentLanguage();
       const sections = [...document.querySelectorAll(".hcl-field-story > section")];
@@ -294,11 +384,12 @@
       }
 
       document.querySelectorAll(".hcl-field-story pre").forEach(pre => {
+        if (pre.closest("#cisco-doom-controller-proof") || pre.closest("#cisco-doom-controller-final")) return;
         const value = pre.textContent;
         if (/Werner/.test(value) && /111/.test(value) && /DOOM/.test(value) && /666/.test(value)) {
           pre.textContent = language === "de"
-            ? "Taste 2: Werner\n  → 111 → Asterisk → Baresip 200\n  → Werner-Video + Ton → Cisco\n\nTaste 3: DOOM\n  → 666 → Asterisk → Baresip 201\n  → Live-Cthulhu-Video + echter Spielsound → Cisco"
-            : "Button 2: Werner\n  → 111 → Asterisk → Baresip 200\n  → Werner video + audio → Cisco\n\nButton 3: DOOM\n  → 666 → Asterisk → Baresip 201\n  → live Cthulhu video + real game audio → Cisco";
+            ? "Taste 2: Werner\n  → 111 → Asterisk → Baresip 200\n  → Werner-Video + Ton → Cisco\n\nTaste 3: DOOM\n  → 666 → Asterisk → Baresip 201\n  → Live-Cthulhu-Video + echter Spielsound → Cisco\n\nController:\n  → Cisco-Tasten → RFC4733 → Asterisk AMI\n  → lokale Python-Bridge → /dev/uinput → DOOM Retro"
+            : "Button 2: Werner\n  → 111 → Asterisk → Baresip 200\n  → Werner video + audio → Cisco\n\nButton 3: DOOM\n  → 666 → Asterisk → Baresip 201\n  → live Cthulhu video + real game audio → Cisco\n\nController:\n  → Cisco keypad → RFC4733 → Asterisk AMI\n  → local Python bridge → /dev/uinput → DOOM Retro";
         } else if (/2\s*=/.test(value) && /8\s*=/.test(value) && /5\s*=/.test(value) && /0\s*=/.test(value)) {
           pre.textContent = language === "de"
             ? "2 = vorwärts       8 = rückwärts\n4 = links drehen   6 = rechts drehen\n5 = feuern          0 = benutzen / öffnen"
@@ -312,6 +403,8 @@
       patchNobelschroeder();
       moveWernerRecording();
       syncCiscoLanguagePolish();
+      ensureDoomControllerProof();
+      syncControllerConclusion();
     };
 
     syncCiscoFieldNote7();
