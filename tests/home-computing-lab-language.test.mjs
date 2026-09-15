@@ -7,6 +7,9 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const labRoot = path.join(root, "museum", "home-computing-lab");
+const dedicatedBilingualRoutes = new Set([
+  "/museum/home-computing-lab/field-notes/field-note-7/",
+]);
 
 function listHtmlFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true })
@@ -31,16 +34,35 @@ function loadGermanBundle() {
   return context.window.DennisSiteI18nDE;
 }
 
-test("every Home Computing Lab HTML route is declared by the German bundle", () => {
+test("every runtime-translated Home Computing Lab HTML route is declared by the German bundle", () => {
   const bundle = loadGermanBundle();
   const actualRoutes = listHtmlFiles(labRoot).map(routeForFile).sort();
+  const runtimeTranslatedRoutes = actualRoutes.filter(route => !dedicatedBilingualRoutes.has(route));
   const declaredRoutes = [...bundle.audit.homeComputingLab.routes].sort();
 
-  assert.deepEqual(declaredRoutes, actualRoutes);
-  assert.equal(actualRoutes.length, 17);
+  assert.deepEqual(declaredRoutes, runtimeTranslatedRoutes);
+  assert.equal(actualRoutes.length, 18);
 });
 
-test("every Home Computing Lab route has page-level German metadata and content", () => {
+test("dedicated bilingual Home Computing Lab routes have real German counterparts", () => {
+  for (const route of dedicatedBilingualRoutes) {
+    const englishFile = path.join(root, route.replace(/^\//, ""), "index.html");
+    const germanFile = path.join(root, "de", route.replace(/^\//, ""), "index.html");
+    assert.ok(fs.existsSync(englishFile), `${route} is missing its English page`);
+    assert.ok(fs.existsSync(germanFile), `${route} is missing its German counterpart`);
+
+    const english = fs.readFileSync(englishFile, "utf8");
+    const german = fs.readFileSync(germanFile, "utf8");
+    assert.match(english, /hreflang="de"/);
+    assert.match(german, /hreflang="en"/);
+  }
+
+  const languageSource = fs.readFileSync(path.join(root, "site-language.js"), "utf8");
+  assert.match(languageSource, /\/museum\/home-computing-lab\/field-notes\/field-note-7\//);
+  assert.match(languageSource, /\/de\/museum\/home-computing-lab\/field-notes\/field-note-7\//);
+});
+
+test("every Home Computing Lab route in the German bundle has page-level German metadata and content", () => {
   const bundle = loadGermanBundle();
 
   for (const route of bundle.audit.homeComputingLab.routes) {
