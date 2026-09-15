@@ -86,8 +86,15 @@ if (fieldNote7Paths.has(window.location.pathname)) {
     matches.slice(1).forEach(section => section.remove());
   };
 
+  const removeGermanTopLinks = () => {
+    if (!window.location.pathname.startsWith("/de/")) return;
+    document.querySelector(".hcl-field-story > .hcl-story-lesson > .cisco-links")?.remove();
+  };
+
   removeDuplicateControllerRecording();
+  removeGermanTopLinks();
   document.addEventListener("DOMContentLoaded", removeDuplicateControllerRecording, { once: true });
+  document.addEventListener("DOMContentLoaded", removeGermanTopLinks, { once: true });
 
   const story = document.querySelector(".hcl-field-story");
   if (story) {
