@@ -8,7 +8,7 @@
 <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/museum/home-computing-lab/field-notes/field-note-7/">
 <title>Ich kaufte ein 35-€-Cisco-Telefon. Natürlich kam DOOM drauf. – Field Note #007</title>
 <meta name="description" content="Die vollständige Cisco-CP-9951-DOOM-Chronologie: Werner, gestreamtes DOOM, Tastensteuerung, SSH-Shell, Raven-Eingabe, native Ausführung, lokaler Sound, Persistenz und der finale Offline-Kaltstart.">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="stylesheet" href="/style.css?v=60"><script defer src="/stars.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="stylesheet" href="/style.css?v=60"><script defer src="/stars.js?v=20260915-field-note-7-order-1"></script>
 <meta property="og:title" content="Ich kaufte ein 35-€-Cisco-Telefon. Natürlich kam DOOM drauf."><meta property="og:description" content="Vom Kater-Hintergrund und Werner bis zu nativem, persistentem Offline-DOOM auf einem Cisco CP-9951."><meta property="og:url" content="https://dennishilk.com/de/museum/home-computing-lab/field-notes/field-note-7/"><meta property="og:type" content="article"><meta property="og:image" content="https://raw.githubusercontent.com/dennishilk/cisco9951-doom/main/assets/final/cisco_bigmac_background.webp">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Cisco CP-9951 DOOM v.666"><meta name="twitter:description" content="Die echte Chronologie: vom Kater-Hintergrund bis zum Offline-Kaltstart mit nativem DOOM."><meta name="twitter:image" content="https://raw.githubusercontent.com/dennishilk/cisco9951-doom/main/assets/final/cisco_bigmac_background.webp">
 <style>
@@ -41,7 +41,7 @@ Baresip / H.264 RTP
 Asterisk
  ↓
 Cisco CP-9951</pre><div class="cisco-video"><video controls preload="metadata" playsinline><source src="/assets/home-computing-lab/field-notes/cisco-doom-666-web.mp4" type="video/mp4"></video></div><p>Der Wechsel auf <code>v4l2loopback</code> beseitigte die mehrsekündige Pufferverzögerung und machte die Anzeige auf dem Telefon nahezu echtzeitfähig.</p></section>
-<section><h2>3 — Das Cisco wird zum Controller</h2><p>Als Nächstes steuerte die echte Telefontastatur das weiterhin entfernte Spiel. Die Zahlentasten sendeten RFC4733-DTMF während des Anrufs, Asterisk stellte die Ereignisse über AMI bereit, und eine kleine lokale Bridge erzeugte über <code>/dev/uinput</code> echte Linux-Tastaturereignisse.</p><pre>Cisco-Tastatur
+<section><h2>3 — Aufnahme 03: Das Cisco steuert DOOM wirklich</h2><p>Das letzte fehlende Stück in der gestreamten Phase war die Eingabe. Jetzt steuerte die echte Telefontastatur das weiterhin auf Cthulhu laufende Spiel. Die Zahlentasten sendeten RFC4733-DTMF während des Anrufs, Asterisk stellte die Ereignisse über AMI bereit, und eine kleine lokale Bridge erzeugte über <code>/dev/uinput</code> echte Linux-Tastaturereignisse.</p><pre>Cisco-Tastatur
  ↓
 RFC4733 DTMF
  ↓
@@ -51,16 +51,16 @@ Python-Bridge
  ↓
 Linux /dev/uinput
  ↓
-DOOM auf Cthulhu</pre><div class="cisco-video"><video controls preload="metadata" playsinline><source src="/assets/home-computing-lab/field-notes/cisco-cp-9951-doom-controller-web.mp4" type="video/mp4"></video></div><pre>2 = vorwärts       8 = rückwärts
+DOOM auf Cthulhu</pre><figure class="hcl-story-evidence"><video controls preload="metadata" playsinline style="background:#000;display:block;max-width:100%;width:100%"><source src="/assets/home-computing-lab/field-notes/cisco-cp-9951-doom-controller-web.mp4" type="video/mp4"></video><figcaption><strong>Aufnahme 03 — Cisco-Tastenfeld als DOOM-Controller.</strong> Bewegung, Feuern und Türen öffnen werden mit den echten Zahlentasten des CP-9951 gesteuert.</figcaption></figure><pre>2 = vorwärts       8 = rückwärts
 4 = links drehen    6 = rechts drehen
-5 = feuern          0 = benutzen / öffnen</pre><div class="cisco-callout"><strong>Wichtige Zeitgrenze:</strong><p>Das Cisco war jetzt gleichzeitig Anzeige und Controller. <strong>DOOM lief aber immer noch nicht auf dem Telefon.</strong></p></div></section>
+5 = feuern          0 = benutzen / öffnen</pre><p>Der vorhandene Video- und Audiopfad blieb dabei unverändert. Die AMI-Verbindung bleibt auf dem lokalen Host.</p><div class="cisco-callout"><strong>Wichtige Zeitgrenze:</strong><p>Das Cisco war jetzt gleichzeitig Anzeige und Controller. <strong>DOOM lief aber immer noch nicht auf dem Telefon.</strong> Deshalb gehört diese Aufnahme genau hierhin — vor die Shell-Arbeit und vor das native DOOM.</p></div></section>
 <section><h2>4 — Der Wendepunkt: rein in die echte Linux-Shell</h2><p>Hier hörte das Projekt auf, nur ein cleverer SIP-Trick zu sein. Cisco hatte für diese 89xx/99xx-Generation einen Diagnosezugang über SSH vorgesehen. Wir nutzten die bereits funktionierende Provisionierung, statt Firmware oder Bootloader zu ersetzen:</p><pre>Cthulhu
  ↓
 dnsmasq / TFTP
  ↓
 SEPC40ACB4D05D0.cnf.xml
  ↓
-Cisco CP-9951</pre><p>Die funktionierende SEP-Konfiguration wurde zuerst gesichert. Danach kamen die SSH-Zugangsdaten über die Provisionierung hinein und TCP-Port 22 war erreichbar. Der SSH-Server des Telefons ist alt genug, dass ein zeitgenössischer Client die praktische Lösung war:</p><pre>/tmp/putty-0.60/unix/plink -ssh nebu@10.1.1.2</pre><p>Die erste SSH-Anmeldung war nur der äußere Diagnose-Login. Danach erschien auf dem Telefon ein <strong>zweiter Login</strong> für das eingebettete System. Mit Ciscos internem <code>default</code> / <code>cisco</code> landeten wir schließlich hier:</p><pre>Welcome to MontaVista Linux Professional Edition Blackfoot
+Cisco CP-9951</pre><p>Die funktionierende SEP-Konfiguration wurde zuerst gesichert. Danach kamen die SSH-Zugangsdaten über die Provisionierung hinein und TCP-Port 22 war erreichbar. Der SSH-Server des Telefons ist alt genug, dass ein zeitgenössischer Client die praktische Lösung war:</p><pre>/tmp/putty-0.60/unix/plink -ssh nebu@10.1.1.2</pre><p>Die erste SSH-Anmeldung war nur der äußere Diagnose-Login. Danach erschien auf dem Telefon ein <strong>zweiter Login</strong> für das eingebettete System. Von dort landeten wir schließlich direkt in MontaVista Linux:</p><pre>Welcome to MontaVista Linux Professional Edition Blackfoot
 
 Linux 2.6.18_pro500
 ARMv6 / ARMv6TEJ

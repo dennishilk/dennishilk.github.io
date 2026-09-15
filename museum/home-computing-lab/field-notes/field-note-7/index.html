@@ -8,7 +8,7 @@
 <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/museum/home-computing-lab/field-notes/field-note-7/">
 <title>I Bought a €35 Cisco Phone. Naturally, I Put DOOM on It. – Field Note #007</title>
 <meta name="description" content="The complete Cisco CP-9951 DOOM chronology: Werner, streamed DOOM, keypad control, the SSH shell, Raven input, native execution, local sound, persistence and the final offline cold boot.">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="stylesheet" href="/style.css?v=60"><script defer src="/stars.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="stylesheet" href="/style.css?v=60"><script defer src="/stars.js?v=20260915-field-note-7-order-1"></script>
 <meta property="og:title" content="I Bought a €35 Cisco Phone. Naturally, I Put DOOM on It."><meta property="og:description" content="From cat wallpaper and Werner to native, persistent, offline DOOM on a Cisco CP-9951."><meta property="og:url" content="https://dennishilk.com/museum/home-computing-lab/field-notes/field-note-7/"><meta property="og:type" content="article"><meta property="og:image" content="https://raw.githubusercontent.com/dennishilk/cisco9951-doom/main/assets/final/cisco_bigmac_background.webp">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Cisco CP-9951 DOOM v.666"><meta name="twitter:description" content="The real chronology, from the cat wallpaper to an offline cold boot into native DOOM."><meta name="twitter:image" content="https://raw.githubusercontent.com/dennishilk/cisco9951-doom/main/assets/final/cisco_bigmac_background.webp">
 <style>
@@ -41,7 +41,7 @@ Baresip / H.264 RTP
 Asterisk
  ↓
 Cisco CP-9951</pre><div class="cisco-video"><video controls preload="metadata" playsinline><source src="/assets/home-computing-lab/field-notes/cisco-doom-666-web.mp4" type="video/mp4"></video></div><p>Switching to <code>v4l2loopback</code> removed the multi-second buffered delay and made the phone display the live game near realtime.</p></section>
-<section><h2>3 — The Cisco becomes the controller</h2><p>Next the physical phone keypad controlled that still-remote game. The number keys sent RFC4733 DTMF during the call, Asterisk exposed those events over AMI, and a small local bridge generated real Linux keyboard events through <code>/dev/uinput</code>.</p><pre>Cisco keypad
+<section><h2>3 — Recording 03: the Cisco really controls DOOM</h2><p>The final missing piece in the streamed phase was input. The physical phone keypad now controlled that still-remote game. The number keys sent RFC4733 DTMF during the call, Asterisk exposed those events over AMI, and a small local bridge generated real Linux keyboard events through <code>/dev/uinput</code>.</p><pre>Cisco keypad
  ↓
 RFC4733 DTMF
  ↓
@@ -51,9 +51,9 @@ Python bridge
  ↓
 Linux /dev/uinput
  ↓
-DOOM on Cthulhu</pre><div class="cisco-video"><video controls preload="metadata" playsinline><source src="/assets/home-computing-lab/field-notes/cisco-cp-9951-doom-controller-web.mp4" type="video/mp4"></video></div><pre>2 = forward       8 = backward
+DOOM on Cthulhu</pre><figure class="hcl-story-evidence"><video controls preload="metadata" playsinline style="background:#000;display:block;max-width:100%;width:100%"><source src="/assets/home-computing-lab/field-notes/cisco-cp-9951-doom-controller-web.mp4" type="video/mp4"></video><figcaption><strong>Recording 03 — Cisco keypad as a DOOM controller.</strong> Movement, firing and opening doors are driven by the real number keys on the CP-9951.</figcaption></figure><pre>2 = forward       8 = backward
 4 = turn left     6 = turn right
-5 = fire          0 = use / open</pre><div class="cisco-callout"><strong>Chronology boundary:</strong><p>The Cisco was now both display and controller. <strong>DOOM was still not running on the phone.</strong></p></div></section>
+5 = fire          0 = use / open</pre><p>The existing video and audio path stayed untouched. AMI is bound to 127.0.0.1 only; credentials are intentionally not published here.</p><div class="cisco-callout"><strong>Chronology boundary:</strong><p>The Cisco was now both display and controller. <strong>DOOM was still not running on the phone.</strong> This recording therefore belongs here, before the shell work and before native DOOM.</p></div></section>
 <section><h2>4 — The turning point: getting into the real Linux shell</h2><p>This is where the project stopped being a clever SIP trick. Cisco provided a diagnostic SSH-access path for this 89xx/99xx generation. We used the already-working provisioning chain instead of replacing the firmware:</p><pre>Cthulhu
  ↓
 dnsmasq / TFTP
