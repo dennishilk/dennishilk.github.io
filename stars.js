@@ -70,6 +70,25 @@ const useDedicatedGermanWorldObserverUi = dedicatedGermanWorldObserverPaths.has(
 const useDedicatedWorldObserverLanguageUi =
   useDedicatedGermanWorldObserverUi || dedicatedWorldObserverEnglishPaths.has(window.location.pathname);
 
+const fieldNote7Paths = new Set([
+  "/museum/home-computing-lab/field-notes/field-note-7/",
+  "/museum/home-computing-lab/field-notes/field-note-7/index.html",
+  "/de/museum/home-computing-lab/field-notes/field-note-7/",
+  "/de/museum/home-computing-lab/field-notes/field-note-7/index.html",
+]);
+
+if (fieldNote7Paths.has(window.location.pathname)) {
+  const removeDuplicateControllerRecording = () => {
+    const matches = Array.from(document.querySelectorAll(".hcl-field-story > section")).filter(section => {
+      const heading = section.querySelector(":scope > h2")?.textContent?.trim() || "";
+      return /Recording 03|Aufnahme 03/i.test(heading);
+    });
+    matches.slice(1).forEach(section => section.remove());
+  };
+  removeDuplicateControllerRecording();
+  document.addEventListener("DOMContentLoaded", removeDuplicateControllerRecording, { once: true });
+}
+
 if (!document.querySelector('script[data-seo-runtime-loader]')) {
   const seoScript = document.createElement('script');
   seoScript.src = '/seo-runtime.js?v=20260815-1';
