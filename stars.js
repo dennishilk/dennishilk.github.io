@@ -85,8 +85,15 @@ if (fieldNote7Paths.has(window.location.pathname)) {
     });
     matches.slice(1).forEach(section => section.remove());
   };
+
   removeDuplicateControllerRecording();
   document.addEventListener("DOMContentLoaded", removeDuplicateControllerRecording, { once: true });
+
+  const story = document.querySelector(".hcl-field-story");
+  if (story) {
+    const duplicateObserver = new MutationObserver(removeDuplicateControllerRecording);
+    duplicateObserver.observe(story, { childList: true });
+  }
 }
 
 if (!document.querySelector('script[data-seo-runtime-loader]')) {
