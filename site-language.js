@@ -34,6 +34,10 @@
     "/museum/c64/index.html": { en: "/museum/c64/", de: "/de/museum/c64/" },
     "/de/museum/c64/": { en: "/museum/c64/", de: "/de/museum/c64/" },
     "/de/museum/c64/index.html": { en: "/museum/c64/", de: "/de/museum/c64/" },
+    "/museum/home-computing-lab/field-notes/field-note-7/": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
+    "/museum/home-computing-lab/field-notes/field-note-7/index.html": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
+    "/de/museum/home-computing-lab/field-notes/field-note-7/": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
+    "/de/museum/home-computing-lab/field-notes/field-note-7/index.html": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
   };
 
   const MUSEUM_MIRROR_PREFIXES = [
