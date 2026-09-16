@@ -1,1 +1,193 @@
 <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="canonical" href="https://dennishilk.com/museum/failure-lab/">
+  <title>Failure Lab — Computer Museum</title>
+  <meta name="description" content="An interactive browser-only Linux failure simulator: trigger a kernel panic, break DNS, fill a disk, inspect the evidence and follow the diagnostic process.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="./failure-lab.css">
+  <script type="module" src="./failure-lab.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#failure-terminal" data-i18n="skipTerminal">Skip to failure console</a>
+
+  <main class="lab-shell">
+    <header class="lab-header">
+      <section class="lab-intro" aria-labelledby="page-title">
+        <div class="eyebrow-row">
+          <span class="exhibit-badge" data-i18n="interactiveExhibit">INTERACTIVE EXHIBIT</span>
+          <a href="/museum/" data-i18n="museumIndex">← MUSEUM INDEX</a>
+        </div>
+        <h1 id="page-title">FAILURE LAB</h1>
+        <p class="lab-hook" data-i18n="welcome">WELCOME TO THE FAILURE LAB</p>
+        <p class="lab-dek" data-i18n="intro">Select a disaster and observe how a Linux system fails.</p>
+        <p class="lab-disclosure" data-i18n="disclosure">Browser-only educational simulation. No commands leave this page and no real machine is being damaged.</p>
+      </section>
+
+      <section class="lab-topbar" aria-label="Failure lab status" data-i18n-aria="labStatus">
+        <div>
+          <span data-i18n="node">NODE</span>
+          <strong>lab-vm-07</strong>
+          <small>Debian GNU/Linux 13</small>
+        </div>
+        <div>
+          <span data-i18n="mode">MODE</span>
+          <strong class="tone-info" data-i18n="browserSim">BROWSER SIM</strong>
+          <small data-i18n="staticData">HTML · CSS · JavaScript</small>
+        </div>
+        <div>
+          <span data-i18n="scenario">SCENARIO</span>
+          <strong id="top-scenario">KERNEL PANIC</strong>
+          <small id="top-category">KERNEL · CRITICAL</small>
+        </div>
+        <div>
+          <span data-i18n="machineState">MACHINE STATE</span>
+          <strong id="top-state" class="tone-ok">READY</strong>
+          <small id="top-stage">Awaiting operator</small>
+        </div>
+      </section>
+
+      <nav class="language-switch" aria-label="Language">
+        <span data-i18n="language">LANGUAGE</span>
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="de" aria-pressed="false">DE</button>
+      </nav>
+    </header>
+
+    <div class="lab-grid">
+      <aside class="left-rail" aria-label="Scenario and system metrics" data-i18n-aria="leftRail">
+        <section class="panel scenario-panel">
+          <div class="panel-heading">
+            <h2 data-i18n="selectDisaster">Select a disaster</h2>
+            <span>V0.1</span>
+          </div>
+          <div id="scenario-list" class="scenario-list"></div>
+        </section>
+
+        <section class="panel scenario-meta-panel">
+          <h2 data-i18n="scenarioProfile">Scenario profile</h2>
+          <dl class="scenario-meta">
+            <div><dt data-i18n="severity">Severity</dt><dd id="meta-severity"></dd></div>
+            <div><dt data-i18n="category">Category</dt><dd id="meta-category"></dd></div>
+            <div><dt data-i18n="affected">Affected</dt><dd id="meta-affected"></dd></div>
+          </dl>
+          <p id="scenario-summary" class="scenario-summary"></p>
+        </section>
+
+        <section class="panel metrics-panel">
+          <div class="panel-heading">
+            <h2 data-i18n="systemMetrics">System metrics</h2>
+            <span id="metric-sample">T+00:00</span>
+          </div>
+          <div id="metrics" class="metrics" aria-live="polite"></div>
+        </section>
+      </aside>
+
+      <section class="center-stage" aria-labelledby="console-heading">
+        <h2 id="console-heading" class="sr-only" data-i18n="failureConsole">Failure console</h2>
+
+        <div class="machine-frame">
+          <div class="machine-toolbar" aria-label="Simulated machine status" data-i18n-aria="simMachineStatus">
+            <div class="machine-ident">
+              <span class="status-lamp" id="heartbeat-lamp" aria-hidden="true"></span>
+              <span>lab-vm-07</span>
+              <span class="toolbar-divider">/</span>
+              <span id="toolbar-kernel">Linux 6.12.0-lab-amd64</span>
+            </div>
+            <div class="machine-flags">
+              <span id="flag-heartbeat">HEARTBEAT: OK</span>
+              <span id="flag-services">SERVICES: ONLINE</span>
+            </div>
+          </div>
+
+          <div id="failure-terminal" class="failure-terminal" role="log" aria-live="polite" aria-label="Failure simulation terminal" tabindex="0">
+            <div class="terminal-scanlines" aria-hidden="true"></div>
+            <pre id="terminal-output"></pre>
+            <div class="terminal-prompt" aria-hidden="true"><span>root@lab-vm-07:~#</span><span class="terminal-cursor">█</span></div>
+          </div>
+        </div>
+
+        <section class="timeline-panel" aria-labelledby="timeline-title">
+          <div class="timeline-header">
+            <div>
+              <span class="micro-label" data-i18n="scenarioProgress">SCENARIO PROGRESS</span>
+              <strong id="current-stage-label">INTRO</strong>
+            </div>
+            <output id="progress-output">0%</output>
+          </div>
+          <div class="progress-track" aria-hidden="true"><i id="progress-bar"></i></div>
+          <ol id="stage-timeline" class="stage-timeline"></ol>
+        </section>
+
+        <section id="diagnostic-drawer" class="diagnostic-drawer" aria-labelledby="diagnostic-title" hidden>
+          <div class="diagnostic-head">
+            <div>
+              <span class="micro-label" data-i18n="diagnosticBench">DIAGNOSTIC BENCH</span>
+              <h3 id="diagnostic-title" data-i18n="chooseCheck">Choose a check</h3>
+            </div>
+            <button type="button" id="close-diagnostics" class="quiet-button" data-i18n="close">CLOSE</button>
+          </div>
+          <p data-i18n="diagnosticHint">Checks reveal evidence; there is no score and no penalty for investigating the wrong subsystem.</p>
+          <div id="diagnostic-actions" class="diagnostic-actions"></div>
+        </section>
+
+        <section class="control-deck" aria-label="Scenario controls" data-i18n-aria="scenarioControls">
+          <div class="control-group primary-controls">
+            <span class="micro-label" data-i18n="simulationControls">SIMULATION CONTROLS</span>
+            <div class="button-row">
+              <button type="button" id="start-scenario" class="control-button primary" data-i18n="startScenario">START SCENARIO</button>
+              <button type="button" id="next-step" class="control-button" data-i18n="nextEvent" disabled>NEXT EVENT</button>
+              <button type="button" id="run-diagnosis" class="control-button" data-i18n="runDiagnosis" disabled>RUN DIAGNOSIS</button>
+            </div>
+          </div>
+          <div class="control-group secondary-controls">
+            <span class="micro-label" data-i18n="evidenceControls">EVIDENCE</span>
+            <div class="button-row">
+              <button type="button" id="show-logs" class="control-button" data-i18n="showLogs" disabled>SHOW LOGS</button>
+              <button type="button" id="reset-scenario" class="control-button" data-i18n="reset">RESET</button>
+              <button type="button" id="replay-scenario" class="control-button" data-i18n="replay" disabled>REPLAY</button>
+            </div>
+          </div>
+          <div class="control-state">
+            <span class="micro-label" data-i18n="currentStatus">CURRENT STATUS</span>
+            <output id="control-status" class="state-pill state-ready">READY</output>
+            <small id="control-hint" data-i18n="readyHint">Choose a scenario, then start the simulation.</small>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-rail" aria-label="Failure explanation" data-i18n-aria="rightRail">
+        <section class="panel explanation-card" data-card="what">
+          <div class="panel-heading"><h2 data-i18n="whatHappened">What happened?</h2><span>01</span></div>
+          <p id="explain-what"></p>
+        </section>
+        <section class="panel explanation-card" data-card="root">
+          <div class="panel-heading"><h2 data-i18n="rootCause">Root cause</h2><span>02</span></div>
+          <p id="explain-root"></p>
+        </section>
+        <section class="panel explanation-card" data-card="response">
+          <div class="panel-heading"><h2 data-i18n="adminResponse">Admin response</h2><span>03</span></div>
+          <p id="explain-response"></p>
+        </section>
+        <section class="panel explanation-card lesson-card" data-card="lesson">
+          <div class="panel-heading"><h2 data-i18n="lesson">Lesson</h2><span>04</span></div>
+          <p id="explain-lesson"></p>
+        </section>
+        <section class="panel evidence-panel">
+          <div class="panel-heading"><h2 data-i18n="evidenceCollected">Evidence collected</h2><span id="evidence-count">0</span></div>
+          <ul id="evidence-list" class="evidence-list"></ul>
+          <p id="evidence-empty" class="muted" data-i18n="noEvidence">No diagnostic evidence collected yet.</p>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="lab-footer">
+      <p><strong data-i18n="safeLabel">SAFE SIMULATION:</strong> <span data-i18n="safeFooter">All failures, logs, commands and metrics are static browser-side data. Nothing is executed on the host or on a remote system.</span></p>
+      <a href="/museum/" data-i18n="returnMuseum">Return to Computer Museum →</a>
+    </footer>
+  </main>
+</body>
+</html>
