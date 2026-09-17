@@ -11,6 +11,16 @@ const moduleUrl = URL.createObjectURL(new Blob([source], { type: "text/javascrip
 try {
   await import(moduleUrl);
 
+  // Keep the interactive language in sync with the language-specific URL.
+  // This lets /museum/failure-lab/ and /de/museum/failure-lab/ expose stable,
+  // indexable EN/DE documents while still retaining the in-page language switch.
+  const pageLang = (document.documentElement.lang || "en").toLowerCase();
+  const requestedLang = pageLang.startsWith("de") ? "de" : "en";
+  const languageButton = document.querySelector(`button[data-lang="${requestedLang}"]`);
+  if (languageButton && languageButton.getAttribute("aria-pressed") !== "true") {
+    languageButton.click();
+  }
+
   const layoutPolish = document.createElement("style");
   layoutPolish.id = "failure-lab-layout-polish";
   layoutPolish.textContent = `
