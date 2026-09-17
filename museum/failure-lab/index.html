@@ -4,12 +4,77 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="canonical" href="https://dennishilk.com/museum/failure-lab/">
-  <title>Failure Lab — Computer Museum</title>
-  <meta name="description" content="An interactive browser-only Linux failure simulator: trigger a kernel panic, break DNS, fill a disk, inspect the evidence and follow the diagnostic process.">
+  <link rel="alternate" hreflang="en" href="https://dennishilk.com/museum/failure-lab/">
+  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/museum/failure-lab/">
+  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/museum/failure-lab/">
+  <title>Failure Lab: Interactive Linux Failure Simulator | Dennis Hilk</title>
+  <meta name="description" content="Interactive Linux troubleshooting simulator: explore kernel panic, DNS and disk-full failures, inspect logs and metrics, diagnose root causes and learn recovery steps.">
   <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dennis Hilk Computer Museum">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta property="og:title" content="Failure Lab — Interactive Linux Failure Simulator">
+  <meta property="og:description" content="Break a simulated Linux system safely in your browser, inspect the evidence and work through the diagnosis.">
+  <meta property="og:url" content="https://dennishilk.com/museum/failure-lab/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Failure Lab — Interactive Linux Failure Simulator">
+  <meta name="twitter:description" content="A safe browser-based Linux troubleshooting lab with failures, logs, metrics, diagnosis and recovery lessons.">
   <link rel="icon" href="/favicon.png">
-  <link rel="stylesheet" href="./failure-lab.css">
-  <script type="module" src="./failure-lab.js"></script>
+  <link rel="stylesheet" href="/museum/failure-lab/failure-lab.css">
+  <script type="module" src="/museum/failure-lab/failure-lab.js"></script>
+  <style>
+    .failure-lab-about{margin:18px 0;padding:clamp(18px,2.5vw,30px)}
+    .failure-lab-about h2{margin-top:0}
+    .failure-lab-about-grid{display:grid;gap:18px;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px}
+    .failure-lab-about h3{margin:.15rem 0 .55rem}
+    .failure-lab-about p{line-height:1.65}
+    .failure-lab-about-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    .failure-lab-about-links a{border:1px solid currentColor;padding:.55rem .75rem;text-decoration:none}
+    @media(max-width:780px){.failure-lab-about-grid{grid-template-columns:1fr}}
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "LearningResource"],
+        "@id": "https://dennishilk.com/museum/failure-lab/#app",
+        "name": "Failure Lab — Interactive Linux Failure Simulator",
+        "url": "https://dennishilk.com/museum/failure-lab/",
+        "description": "A browser-based educational Linux troubleshooting simulator for exploring failures, logs, system metrics, diagnosis, root causes and recovery steps.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web browser",
+        "browserRequirements": "Requires JavaScript and a modern browser",
+        "isAccessibleForFree": true,
+        "learningResourceType": "Interactive simulation",
+        "educationalUse": "Linux troubleshooting practice",
+        "inLanguage": "en",
+        "creator": {
+          "@type": "Person",
+          "name": "Dennis Hilk",
+          "url": "https://dennishilk.com/"
+        },
+        "about": [
+          {"@type": "Thing", "name": "Linux troubleshooting"},
+          {"@type": "Thing", "name": "Kernel panic"},
+          {"@type": "Thing", "name": "DNS failure"},
+          {"@type": "Thing", "name": "Disk full"},
+          {"@type": "Thing", "name": "System administration"}
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://dennishilk.com/museum/failure-lab/#breadcrumbs",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://dennishilk.com/"},
+          {"@type": "ListItem", "position": 2, "name": "Computer Museum", "item": "https://dennishilk.com/museum/"},
+          {"@type": "ListItem", "position": 3, "name": "Failure Lab", "item": "https://dennishilk.com/museum/failure-lab/"}
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#failure-terminal" data-i18n="skipTerminal">Skip to failure console</a>
@@ -183,6 +248,26 @@
         </section>
       </aside>
     </div>
+
+    <section class="panel failure-lab-about" aria-labelledby="about-failure-lab">
+      <h2 id="about-failure-lab">Interactive Linux failure simulator</h2>
+      <p><strong>Failure Lab</strong> is a browser-based educational Linux troubleshooting simulator. It lets you explore controlled failures such as a kernel panic, DNS problems and a full disk, then inspect simulated logs, system metrics and diagnostic evidence before comparing the root cause and administrator response.</p>
+      <div class="failure-lab-about-grid">
+        <div>
+          <h3>What you can practice</h3>
+          <p>Read symptoms before jumping to conclusions, narrow the failing subsystem, distinguish root causes from secondary effects and follow a repeatable troubleshooting process. The scenarios are designed for learning, not scoring.</p>
+        </div>
+        <div>
+          <h3>Safe by design</h3>
+          <p>Everything shown here is static browser-side simulation data. No shell command is executed on your computer or on a remote host, so you can explore destructive-looking Linux failures without risking a real machine.</p>
+        </div>
+      </div>
+      <div class="failure-lab-about-links">
+        <a href="/de/museum/failure-lab/" hreflang="de">Deutsche Version</a>
+        <a href="/museum/home-computing-lab/field-notes/field-note-7/">Cisco CP-9951 running DOOM natively and offline</a>
+        <a href="/museum/">More Computer Museum exhibits</a>
+      </div>
+    </section>
 
     <footer class="lab-footer">
       <p><strong data-i18n="safeLabel">SAFE SIMULATION:</strong> <span data-i18n="safeFooter">All failures, logs, commands and metrics are static browser-side data. Nothing is executed on the host or on a remote system.</span></p>
