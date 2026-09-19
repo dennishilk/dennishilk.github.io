@@ -73,6 +73,7 @@
     .language { display:flex; gap:5px; align-items:center; font:13px var(--mono) }.language button { appearance:none; border:0; border-bottom:1px solid transparent; background:none; color:var(--muted); padding:5px 4px; cursor:pointer }.language button[aria-pressed="true"] { color:var(--cyan); border-color:var(--cyan) }
     .wrap { max-width:1180px; margin:auto; padding:0 28px }.eyebrow,.caption { font:12px/1.4 var(--mono); letter-spacing:.08em; color:var(--cyan) }
     .hero { padding:70px 0 54px; display:grid; grid-template-columns:.85fr 1.15fr; gap:clamp(30px,7vw,90px); align-items:end }.hero h1 { margin:12px 0 22px; font-size:clamp(3rem,7vw,6.8rem); line-height:.92; letter-spacing:-.06em }.hero p { max-width:620px }.hero figure { margin:0 }.hero img { width:100%; height:auto; display:block }.caption { display:block; margin-top:10px; color:var(--muted); letter-spacing:.03em }
+    .quick-facts { margin:0 0 54px; padding:28px clamp(24px,4vw,40px); background:var(--paper); border:1px solid var(--line) }.quick-facts h2 { margin:8px 0 16px; font-size:clamp(1.8rem,3.5vw,3rem); line-height:1; letter-spacing:-.04em }.quick-facts p { max-width:860px; margin:.7rem 0 }.photo-link { display:block; cursor:zoom-in; text-decoration:none }.photo-link img { transition:transform .16s ease, opacity .16s ease }.photo-link:hover img { transform:scale(1.008); opacity:.96 }.photo-link:focus-visible { outline:3px solid var(--orange); outline-offset:4px }
     .intro { font-size:clamp(1.12rem,2vw,1.35rem); color:#cad6d4 }.grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin:30px 0 76px }.card { background:var(--paper); border:1px solid var(--line); padding:clamp(24px,4vw,40px) }.card h2 { margin:.1rem 0 1rem; font-size:clamp(2rem,4vw,3.1rem); line-height:1; letter-spacing:-.045em }.card p { margin:0 0 1em }.tag { font:12px var(--mono); color:var(--orange); letter-spacing:.08em; text-transform:uppercase }.card-photo { margin:18px 0 22px }.card-photo img { width:100%; height:auto; display:block; border:1px solid var(--line) }.card-photo figcaption { margin-top:8px }
     .story { max-width:900px; margin:0 0 82px; padding-top:42px; border-top:1px solid var(--line) }.story h2 { font-size:clamp(2rem,4vw,3.5rem); line-height:1; letter-spacing:-.045em; margin:10px 0 20px }.story p { max-width:790px }
     .memory { margin:0 0 82px; display:grid; grid-template-columns:1fr .85fr; gap:clamp(28px,6vw,80px); align-items:center; padding-top:42px; border-top:1px solid var(--line) }.memory figure { margin:0 }.memory img { width:100%; height:auto; display:block }.memory h2 { font-size:clamp(2rem,4vw,3.5rem); line-height:1; letter-spacing:-.045em; margin:10px 0 20px }.gallery { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:26px 0 8px }.gallery figure { margin:0 }.gallery img { width:100%; height:100%; aspect-ratio:4/3; object-fit:cover; display:block; border:1px solid var(--line) }.admin-note { border-left:2px solid var(--cyan); padding:12px 0 12px 22px; color:#cad6d4; font-family:var(--mono); margin:28px 0 }.footer { padding:30px 0 55px; border-top:1px solid var(--line); color:var(--muted); font-size:14px }
@@ -97,17 +98,24 @@
         <p class="intro">Geboren im Mai 2020, mit drei Wochen Abstand — und nicht miteinander verwandt, auch wenn man das manchmal meinen könnte. Zwei Katzen mit sehr unterschiedlichen Vorstellungen von Wohnung, Außendienst, Essenspolitik und Änderungsmanagement.</p>
       </div>
       <figure>
-        <img src="/assets/me/cats/bigmacberta1.webp" fetchpriority="high" alt="BigMac and Berta resting together at home.">
+        <a class="photo-link" href="/assets/me/cats/bigmacberta1.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac and Berta resting together at home."><img src="/assets/me/cats/bigmacberta1.webp" fetchpriority="high" alt="BigMac and Berta resting together at home."></a>
         
-        <figcaption class="caption">Lokale Verwaltung. Änderungsfreigaben bleiben unzuverlässig.</figcaption>
+        <figcaption class="caption">Lokale Verwaltung. Änderungsfreigaben bleiben unzuverlässig.</figcaption><span class="caption">Fotos lassen sich anklicken und in voller Größe öffnen.</span>
       </figure>
     </header>
+
+    <section class="quick-facts" aria-labelledby="cat-facts-title">
+      <p class="eyebrow">BigMac &amp; Berta auf einen Blick</p>
+      <h2 id="cat-facts-title">Wie heißen die Katzen von Dennis Hilk?</h2>
+      <p><strong>Dennis Hilks Katzen heißen BigMac und Berta.</strong> Beide wurden im Mai 2020 geboren. Berta ist drei Wochen älter; verwandt sind die beiden nicht, auch wenn sie so süß zusammen sind und oft so geschwisterlich wirken, dass man es leicht glauben könnte.</p>
+      <p>BigMac ist der verschmuste, eher häusliche Kater. Berta ist die deutlich aktivere Freigängerin und Leitung Außendienst. Zusammen übernehmen sie lokale Verwaltung, Krankendienst und einen erstaunlich zuverlässigen Nachschub an Geschichten.</p>
+    </section>
 
     <section class="grid">
       <article class="card">
         <span class="tag" id="bigmac">BigMac</span>
         
-        <h2 >Der Schmusekater</h2><figure class="card-photo"><img src="/assets/me/cats/bigmac3.webp" loading="lazy" decoding="async" alt="BigMac outside looking upward."><figcaption class="caption">BigMac bei einem seiner eher seltenen Außeneinsätze.</figcaption></figure>
+        <h2 >Der Schmusekater</h2><figure class="card-photo"><a class="photo-link" href="/assets/me/cats/bigmac3.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac outside looking upward."><img src="/assets/me/cats/bigmac3.webp" loading="lazy" decoding="async" alt="BigMac outside looking upward."></a><figcaption class="caption">BigMac bei einem seiner eher seltenen Außeneinsätze.</figcaption></figure>
         
         <p >BigMac bekam seinen Namen, weil er damals absurd winzig war. Der überdimensionierte Name passte deshalb einfach zu gut.</p>
         
@@ -120,14 +128,14 @@
       <article class="card">
         <span class="tag" id="berta">Berta</span>
         
-        <h2 >Leitung Außendienst</h2><figure class="card-photo"><img src="/assets/me/cats/bigmacberta2.webp" loading="lazy" decoding="async" alt="Berta and BigMac resting together."><figcaption class="caption">Berta mit BigMac bei einer seltenen gemeinsamen Verwaltungssitzung.</figcaption></figure>
+        <h2 >Leitung Außendienst</h2><figure class="card-photo"><a class="photo-link" href="/assets/me/cats/bigmacberta2.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: Berta and BigMac resting together."><img src="/assets/me/cats/bigmacberta2.webp" loading="lazy" decoding="async" alt="Berta and BigMac resting together."></a><figcaption class="caption">Berta mit BigMac bei einer seltenen gemeinsamen Verwaltungssitzung.</figcaption></figure>
         
         <p >Berta ist drei Wochen älter als BigMac. Benannt habe ich sie nach Berta aus <em>Two and a Half Men</em>, einfach weil ich die Figur schon immer unglaublich witzig fand.</p>
         
         <p >Sie kuschelt zu ihren Bedingungen: Wenn sie Aufmerksamkeit möchte, kommt sie; wenn es reicht, ist die Sitzung beendet. Den größten Teil des Tages ist sie draußen. Essensverhandlungen sind deutlich kürzer und bedeuten meistens: jetzt Hunger, und ein Leckerli wäre ebenfalls angemessen.</p>
-        <figure class="card-photo"><img src="/assets/me/cats/bertatv.webp" loading="lazy" decoding="async" alt="Berta entspannt hinter dem Fernseher zuhause."><figcaption class="caption">Berta hinter dem Fernseher — ihr privates Podcast-Studio.</figcaption></figure>
+        <figure class="card-photo"><a class="photo-link" href="/assets/me/cats/bertatv.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: Berta entspannt hinter dem Fernseher zuhause."><img src="/assets/me/cats/bertatv.webp" loading="lazy" decoding="async" alt="Berta entspannt hinter dem Fernseher zuhause."></a><figcaption class="caption">Berta hinter dem Fernseher — ihr privates Podcast-Studio.</figcaption></figure>
         <p>Dafür, dass Berta so viel draußen ist, hat sie drinnen ein erstaunlich spezielles Ritual: Sie liegt unglaublich gerne hinter dem Fernseher. Wenn wir abends leise Netflix oder Prime schauen, macht sie es sich dort bequem und schnurrt richtig zufrieden vor sich hin — als wären die leisen Stimmen und Hintergrundgeräusche ihr persönlicher Podcast.</p>
-        <figure class="card-photo"><img src="/assets/me/cats/bertabett.webp" loading="lazy" decoding="async" alt="Berta gemütlich zusammengerollt auf einem Bett zuhause."><figcaption class="caption">Außendienst: vorübergehend pausiert.</figcaption></figure>
+        <figure class="card-photo"><a class="photo-link" href="/assets/me/cats/bertabett.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: Berta gemütlich zusammengerollt auf einem Bett zuhause."><img src="/assets/me/cats/bertabett.webp" loading="lazy" decoding="async" alt="Berta gemütlich zusammengerollt auf einem Bett zuhause."></a><figcaption class="caption">Außendienst: vorübergehend pausiert.</figcaption></figure>
         
         <p >Früher hat sie BigMac außerdem das Klettern beigebracht. Er brauchte etwas länger, bis das Konzept überzeugte, aber das Training hat am Ende funktioniert.</p>
       </article>
@@ -143,7 +151,7 @@
         <p >Dieses Foto entstand nur wenige Tage, nachdem BigMac und Berta bei uns eingezogen waren. Die beiden sind nicht verwandt, sehen und verhalten sich aber oft so geschwisterlich, dass man das leicht meinen könnte. Berta ist drei Wochen älter.</p>
       </div>
       <figure>
-        <img src="/assets/me/cats/bigmacberta2020.webp" loading="lazy" decoding="async" alt="BigMac and Berta during their first days in their new home in 2020.">
+        <a class="photo-link" href="/assets/me/cats/bigmacberta2020.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac and Berta during their first days in their new home in 2020."><img src="/assets/me/cats/bigmacberta2020.webp" loading="lazy" decoding="async" alt="BigMac and Berta during their first days in their new home in 2020."></a>
         
         <figcaption class="caption">Sehr frühe lokale Verwaltung, 2020.</figcaption>
       </figure>
@@ -157,7 +165,7 @@
         <p>Verwandt sind sie nicht, aber gerade in solchen Momenten wirken die beiden wirklich wie Geschwister.</p>
       </div>
       <figure>
-        <img src="/assets/me/cats/bigmacbertakatharina.webp" loading="lazy" decoding="async" alt="BigMac und Berta kuscheln zuhause mit Katharina.">
+        <a class="photo-link" href="/assets/me/cats/bigmacbertakatharina.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac und Berta kuscheln zuhause mit Katharina."><img src="/assets/me/cats/bigmacbertakatharina.webp" loading="lazy" decoding="async" alt="BigMac und Berta kuscheln zuhause mit Katharina."></a>
         <figcaption class="caption">BigMac, Berta und Katharina — das lokale Support-Team.</figcaption>
       </figure>
     </section>
@@ -201,9 +209,9 @@
       <p >Eine Zeit lang bekam ich nachts gelegentlich Ärger, weil ich angeblich schnarchte. Die Untersuchung ergab irgendwann einen anderen Verdächtigen: BigMac. Offenbar betreibt die Kuschelabteilung nebenbei auch einen erstaunlich überzeugenden niederfrequenten Audiodienst.</p>
 
       <div class="gallery" aria-label="BigMac and Berta photo gallery">
-        <figure><img src="/assets/me/cats/bigmacberta1.webp" loading="lazy" decoding="async" alt="BigMac and Berta resting together."></figure>
-        <figure><img src="/assets/me/cats/bigmac1.webp" loading="lazy" decoding="async" alt="BigMac cuddling at home."></figure>
-        <figure><img src="/assets/me/cats/bigmac2.webp" loading="lazy" decoding="async" alt="BigMac resting by a window."></figure>
+        <figure><a class="photo-link" href="/assets/me/cats/bigmacberta1.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac and Berta resting together."><img src="/assets/me/cats/bigmacberta1.webp" loading="lazy" decoding="async" alt="BigMac and Berta resting together."></a></figure>
+        <figure><a class="photo-link" href="/assets/me/cats/bigmac1.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac cuddling at home."><img src="/assets/me/cats/bigmac1.webp" loading="lazy" decoding="async" alt="BigMac cuddling at home."></a></figure>
+        <figure><a class="photo-link" href="/assets/me/cats/bigmac2.webp" target="_blank" rel="noopener" aria-label="Foto in voller Größe öffnen: BigMac resting by a window."><img src="/assets/me/cats/bigmac2.webp" loading="lazy" decoding="async" alt="BigMac resting by a window."></a></figure>
       </div>
 
       <div class="admin-note">
