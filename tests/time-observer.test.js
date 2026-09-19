@@ -41,4 +41,4 @@ assert.match(page, /NO NETWORK REQUEST/);
 assert.match(css, /\.guide-grid/);
 assert.equal((tech.match(/>Time Observer</g) || []).length, 1, 'Technology page must expose one Time Observer card');
 assert.match(tech, /Time &amp; Synchronization[\s\S]*time-observer\.html[\s\S]*AVAILABLE/);
-assert.match(fs.readFileSync('sitemap.xml', 'utf8'), /world-observer\/time-observer\.html/);
+assert.match(fs.readFileSync('sitemap-technology-observers.xml', 'utf8'), /world-observer\/time-observer\.html/);

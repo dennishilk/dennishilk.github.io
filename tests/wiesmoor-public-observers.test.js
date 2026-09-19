@@ -46,7 +46,7 @@ test('English and German Hometown pages contain two matching rows of five cards'
 test('all five detail pages have unique SEO, accessible status, and exact data binding', () => {
   for (const slug of slugs) {
     const html = read(`world-observer/${slug}.html`);
-    assert.match(html, new RegExp(`<link rel="canonical" href="https://dennishilk\\.com/world-observer/${slug}\\.html">`));
+    assert.match(html, new RegExp(`<link rel="canonical" href="https://www\\.dennishilk\\.com/world-observer/${slug}\\.html">`));
     assert.match(html, /<meta name="description" content="[^"]+">/);
     assert.match(html, /<script type="application\/ld\+json">\{"@context":"https:\/\/schema\.org","@type":"Dataset"/);
     assert.match(html, new RegExp(`data-public-observer="${slug}"`));
@@ -96,7 +96,7 @@ test('responsive stylesheet covers desktop, tablet, and narrow mobile layouts', 
 test('sitemap exposes all five new observer detail pages', () => {
   const sitemap = read('sitemap.xml');
   for (const slug of slugs) {
-    assert.match(sitemap, new RegExp(`https://dennishilk\\.com/world-observer/${slug}\\.html`));
+    assert.match(sitemap, new RegExp(`https://www\\.dennishilk\\.com/world-observer/${slug}\\.html`));
   }
 });
 

@@ -151,7 +151,7 @@
       canonical.rel = "canonical";
       document.head.appendChild(canonical);
     }
-    canonical.href = `https://dennishilk.com${dePath}`;
+    canonical.href = `https://www.dennishilk.com${dePath}`;
 
     const alternates = { en: enPath, de: dePath, "x-default": enPath };
     Object.entries(alternates).forEach(([language, route]) => {
@@ -162,10 +162,10 @@
         link.hreflang = language;
         document.head.appendChild(link);
       }
-      link.href = `https://dennishilk.com${route}`;
+      link.href = `https://www.dennishilk.com${route}`;
     });
 
-    setMeta('meta[property="og:url"]', `https://dennishilk.com${dePath}`, { property: "og:url" });
+    setMeta('meta[property="og:url"]', `https://www.dennishilk.com${dePath}`, { property: "og:url" });
     setMeta('meta[property="og:locale"]', "de_DE", { property: "og:locale" });
     setMeta('meta[property="og:locale:alternate"]', "en_US", { property: "og:locale:alternate" });
   };
@@ -176,7 +176,7 @@
         const data = JSON.parse(script.textContent);
         const update = (node) => {
           if (!node || typeof node !== "object") return;
-          if (node.url === `https://dennishilk.com${enPath}` || node.url?.endsWith(enPath)) node.url = `https://dennishilk.com${dePath}`;
+          if (node.url === `https://www.dennishilk.com${enPath}` || node.url?.endsWith(enPath)) node.url = `https://www.dennishilk.com${dePath}`;
           if (node["@type"] === "WebPage" || node["@type"] === "Dataset") {
             node.inLanguage = "de";
             if (spec.title) node.name = spec.title.replace(/\s*[–—-]\s*World Observer.*$/, "");

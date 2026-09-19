@@ -25,21 +25,21 @@ test("English and German routes contain localized indexable metadata and H1s", (
   assert.match(en, /<html lang="en">/);
   assert.match(en, /<title>Learn Commodore 64 BASIC in Your Browser \| C64 Programming Lab<\/title>/);
   assert.match(en, /<h1>[\s\S]*Commodore 64 Programming Lab[\s\S]*<\/h1>/);
-  assert.match(en, /<link rel="canonical" href="https:\/\/dennishilk\.com\/museum\/c64\/">/);
+  assert.match(en, /<link rel="canonical" href="https:\/\/www\.dennishilk\.com\/museum\/c64\/">/);
 
   assert.match(de, /<html lang="de">/);
   assert.match(de, /<title>Commodore 64 programmieren lernen \| Interaktives C64 BASIC Lab<\/title>/);
   assert.match(de, /<h1>[\s\S]*Commodore 64 programmieren lernen[\s\S]*<\/h1>/);
-  assert.match(de, /<link rel="canonical" href="https:\/\/dennishilk\.com\/de\/museum\/c64\/">/);
+  assert.match(de, /<link rel="canonical" href="https:\/\/www\.dennishilk\.com\/de\/museum\/c64\/">/);
   assert.match(de, /Die Maschine ist die Ausstellung/);
   assert.match(de, /Genauigkeit und Grenzen/);
 });
 
 test("both pages have reciprocal en/de/x-default hreflang and localized social metadata", () => {
   for (const document of [en, de]) {
-    assert.match(document, /hreflang="en" href="https:\/\/dennishilk\.com\/museum\/c64\/"/);
-    assert.match(document, /hreflang="de" href="https:\/\/dennishilk\.com\/de\/museum\/c64\/"/);
-    assert.match(document, /hreflang="x-default" href="https:\/\/dennishilk\.com\/museum\/c64\/"/);
+    assert.match(document, /hreflang="en" href="https:\/\/www\.dennishilk\.com\/museum\/c64\/"/);
+    assert.match(document, /hreflang="de" href="https:\/\/www\.dennishilk\.com\/de\/museum\/c64\/"/);
+    assert.match(document, /hreflang="x-default" href="https:\/\/www\.dennishilk\.com\/museum\/c64\/"/);
     assert.match(document, /property="og:image:alt"/);
     assert.match(document, /c64-programming-lab-preview\.jpg/);
   }
@@ -133,8 +133,8 @@ test("dedicated language routing preserves the established site language system"
 
 test("both sitemaps contain the reciprocal language pair", () => {
   assert.match(sitemap, /xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml"/);
-  assert.match(sitemap, /<loc>https:\/\/dennishilk\.com\/museum\/c64\/<\/loc>[\s\S]*hreflang="de" href="https:\/\/dennishilk\.com\/de\/museum\/c64\/"/);
-  assert.match(sitemapDe, /<loc>https:\/\/dennishilk\.com\/de\/museum\/c64\/<\/loc>[\s\S]*hreflang="en" href="https:\/\/dennishilk\.com\/museum\/c64\/"/);
+  assert.match(sitemap, /<loc>https:\/\/www\.dennishilk\.com\/museum\/c64\/<\/loc>[\s\S]*hreflang="de" href="https:\/\/www\.dennishilk\.com\/de\/museum\/c64\/"/);
+  assert.match(sitemapDe, /<loc>https:\/\/www\.dennishilk\.com\/de\/museum\/c64\/<\/loc>[\s\S]*hreflang="en" href="https:\/\/www\.dennishilk\.com\/museum\/c64\/"/);
 });
 
 test("supporting HTML is crawlable and the Home Computing Lab supplies one incoming link", () => {

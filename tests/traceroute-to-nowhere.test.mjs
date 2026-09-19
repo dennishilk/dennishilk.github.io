@@ -11,8 +11,8 @@ const styles = readFileSync(new URL("world-observer/traceroute-to-nowhere.css", 
 const headerStyles = readFileSync(new URL("world-observer/traceroute-header-polish.css", root), "utf8");
 const sitemap = readFileSync(new URL("sitemap-internet-observers.xml", root), "utf8");
 
-const enUrl = "https://dennishilk.com/world-observer/traceroute-to-nowhere.html";
-const deUrl = "https://dennishilk.com/de/world-observer/traceroute-to-nowhere.html";
+const enUrl = "https://www.dennishilk.com/world-observer/traceroute-to-nowhere.html";
+const deUrl = "https://www.dennishilk.com/de/world-observer/traceroute-to-nowhere.html";
 
 test("Traceroute showcase has crawlable English and German pages", () => {
   assert.ok(english.includes('<html lang="en">'));

@@ -12,8 +12,8 @@ const css = readFileSync(new URL("world-observer/technology/space-satellites.css
 const technology = readFileSync(new URL("world-observer/technology.html", root), "utf8");
 const dashboardRuntime = readFileSync(new URL("world-observer.js", root), "utf8");
 
-const enUrl = "https://dennishilk.com/world-observer/technology/space-satellites.html";
-const deUrl = "https://dennishilk.com/de/world-observer/technology/space-satellites.html";
+const enUrl = "https://www.dennishilk.com/world-observer/technology/space-satellites.html";
+const deUrl = "https://www.dennishilk.com/de/world-observer/technology/space-satellites.html";
 
 test("Space Satellites has crawlable dedicated EN/DE routes", () => {
   assert.ok(en.includes('<html lang="en">'));

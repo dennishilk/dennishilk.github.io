@@ -20,7 +20,7 @@ const CONFIG = {
   allowedOrigins: new Set([
     "https://dennishilk.com",
     "https://www.dennishilk.com",
-    process.env.WOPR_ALLOWED_ORIGIN || "https://dennishilk.com",
+    process.env.WOPR_ALLOWED_ORIGIN || "https://www.dennishilk.com",
   ]),
   transmissionsDir: process.env.WOPR_TRANSMISSIONS_DIR || "/var/lib/wopr/transmissions",
   securityStateFile: process.env.WOPR_SECURITY_STATE_FILE || "/var/lib/wopr/security/security-state.json",
@@ -374,7 +374,7 @@ function handleLogout(req, res) {
   return sendJson(res, 200, { ok: true }, { "Set-Cookie": cookieHeader("", 0) });
 }
 
-const SELF_CHECK_HOST = "dennishilk.com";
+const SELF_CHECK_HOST = "www.dennishilk.com";
 const SELF_CHECK_PATHS = Object.freeze([
   { path: "/.git/HEAD", expected: [403, 404] },
   { path: "/.git/config", expected: [403, 404] },

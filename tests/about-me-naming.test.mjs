@@ -13,7 +13,7 @@ assert.match(about, /<meta name="twitter:title" content="About Me — Dennis Hil
 assert.match(about, /data-language-content="en">About Me<\/p>/);
 assert.match(about, /data-language-content="de" hidden>Über mich<\/p>/);
 
-assert.match(about, /<link rel="canonical" href="https:\/\/dennishilk\.com\/about\/">/);
-assert.match(about, /<meta property="og:url" content="https:\/\/dennishilk\.com\/about\/">/);
+assert.match(about, /<link rel="canonical" href="https:\/\/www\.dennishilk\.com\/about\/">/);
+assert.match(about, /<meta property="og:url" content="https:\/\/www\.dennishilk\.com\/about\/">/);
 
 console.log('About Me naming regression checks passed');

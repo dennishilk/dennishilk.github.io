@@ -63,9 +63,9 @@ test("German public-data observers expose static German canonical and hreflang m
   for (const slug of staticGermanPublicObservers) {
     const page = read(`de/world-observer/${slug}.html`);
     assert.match(page, /<html lang="de">/);
-    assert.match(page, new RegExp(`<link rel="canonical" href="https://dennishilk\\.com/de/world-observer/${slug}\\.html">`));
-    assert.match(page, new RegExp(`hreflang="en" href="https://dennishilk\\.com/world-observer/${slug}\\.html"`));
-    assert.match(page, new RegExp(`hreflang="de" href="https://dennishilk\\.com/de/world-observer/${slug}\\.html"`));
+    assert.match(page, new RegExp(`<link rel="canonical" href="https://www\\.dennishilk\\.com/de/world-observer/${slug}\\.html">`));
+    assert.match(page, new RegExp(`hreflang="en" href="https://www\\.dennishilk\\.com/world-observer/${slug}\\.html"`));
+    assert.match(page, new RegExp(`hreflang="de" href="https://www\\.dennishilk\\.com/de/world-observer/${slug}\\.html"`));
     assert.match(page, /inLanguage":"de"/);
   }
 });
@@ -74,10 +74,10 @@ test("rendered metadata fallback fixes the five complex German Wiesmoor observer
   for (const slug of ["wiesmoor-weather", "wiesmoor-peatland", "wiesmoor-sky", "east-frisia-water", "horizon-observer"]) {
     assert.ok(bootstrap.includes(`"/de/world-observer/${slug}.html": "/world-observer/${slug}.html"`));
   }
-  assert.match(bootstrap, /canonical\.href = `https:\/\/dennishilk\.com\$\{dePath\}`/);
+  assert.match(bootstrap, /canonical\.href = `https:\/\/www\.dennishilk\.com\$\{dePath\}`/);
   assert.match(bootstrap, /document\.documentElement\.lang = "de"/);
   assert.match(bootstrap, /site-i18n-de-wiesmoor\.js/);
-  assert.match(seoRuntime, /canonical\.href = `https:\/\/dennishilk\.com\$\{de \? dePath : enPath\}`/);
+  assert.match(seoRuntime, /canonical\.href = `https:\/\/www\.dennishilk\.com\$\{de \? dePath : enPath\}`/);
 });
 
 test("core landing hubs carry descriptive static search metadata", () => {

@@ -23,10 +23,10 @@ test("Internet Shrinkage showcase has dedicated English and German routes", () =
 });
 
 test("Internet Shrinkage showcase SEO keeps both language variants crawlable", () => {
-  assert.ok(english.includes('<link rel="canonical" href="https://dennishilk.com/world-observer/internet-shrinkage-index.html">'));
-  assert.ok(german.includes('<link rel="canonical" href="https://dennishilk.com/de/world-observer/internet-shrinkage-index.html">'));
-  assert.ok(english.includes('hreflang="de" href="https://dennishilk.com/de/world-observer/internet-shrinkage-index.html"'));
-  assert.ok(german.includes('hreflang="en" href="https://dennishilk.com/world-observer/internet-shrinkage-index.html"'));
+  assert.ok(english.includes('<link rel="canonical" href="https://www.dennishilk.com/world-observer/internet-shrinkage-index.html">'));
+  assert.ok(german.includes('<link rel="canonical" href="https://www.dennishilk.com/de/world-observer/internet-shrinkage-index.html">'));
+  assert.ok(english.includes('hreflang="de" href="https://www.dennishilk.com/de/world-observer/internet-shrinkage-index.html"'));
+  assert.ok(german.includes('hreflang="en" href="https://www.dennishilk.com/world-observer/internet-shrinkage-index.html"'));
   assert.ok(english.includes('"inLanguage": "en"'));
   assert.ok(german.includes('"inLanguage": "de"'));
 });

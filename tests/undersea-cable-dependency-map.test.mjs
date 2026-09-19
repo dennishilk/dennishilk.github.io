@@ -13,8 +13,8 @@ const latest = JSON.parse(readFileSync(new URL("world-observer/dashboard/latest/
 const history = JSON.parse(readFileSync(new URL("world-observer/dashboard/history/internet-observers.json", root), "utf8"));
 const record = history.observers["undersea-cable-dependency-map"];
 
-const enUrl = "https://dennishilk.com/world-observer/undersea-cable-dependency-map.html";
-const deUrl = "https://dennishilk.com/de/world-observer/undersea-cable-dependency-map.html";
+const enUrl = "https://www.dennishilk.com/world-observer/undersea-cable-dependency-map.html";
+const deUrl = "https://www.dennishilk.com/de/world-observer/undersea-cable-dependency-map.html";
 
 function numericPoints() {
   return record.points.filter((point) => typeof point.value === "number" && Number.isFinite(point.value));

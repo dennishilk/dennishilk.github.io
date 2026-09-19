@@ -174,7 +174,7 @@
       link.hreflang = language;
       document.head.appendChild(link);
     }
-    link.href = `https://dennishilk.com${target}`;
+    link.href = `https://www.dennishilk.com${target}`;
   };
 
   const updateDiscoveryMetadata = spec => {
@@ -195,11 +195,11 @@
       canonical.rel = "canonical";
       document.head.appendChild(canonical);
     }
-    canonical.href = `https://dennishilk.com${dePath}`;
+    canonical.href = `https://www.dennishilk.com${dePath}`;
     ensureAlternate("en", enPath);
     ensureAlternate("de", dePath);
     ensureAlternate("x-default", enPath);
-    setMeta('meta[property="og:url"]', `https://dennishilk.com${dePath}`, { property: "og:url" });
+    setMeta('meta[property="og:url"]', `https://www.dennishilk.com${dePath}`, { property: "og:url" });
     setMeta('meta[property="og:locale"]', "de_DE", { property: "og:locale" });
     setMeta('meta[property="og:locale:alternate"]', "en_US", { property: "og:locale:alternate" });
   };
@@ -210,8 +210,8 @@
         const data = JSON.parse(script.textContent);
         const update = node => {
           if (!node || typeof node !== "object") return;
-          if (typeof node.url === "string" && (node.url === `https://dennishilk.com${enPath}` || node.url.endsWith(enPath))) {
-            node.url = `https://dennishilk.com${dePath}`;
+          if (typeof node.url === "string" && (node.url === `https://www.dennishilk.com${enPath}` || node.url.endsWith(enPath))) {
+            node.url = `https://www.dennishilk.com${dePath}`;
           }
           if (["WebPage", "CollectionPage", "Dataset"].includes(node["@type"])) {
             node.inLanguage = "de";

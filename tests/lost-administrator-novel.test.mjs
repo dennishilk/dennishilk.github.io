@@ -14,7 +14,7 @@ test('project metadata presents the ongoing novel and uses its cover image', asy
   const head = html.slice(0, html.indexOf('</head>'));
   const title = 'The Lost Administrator — Ongoing Novel &amp; Interactive Story Experience';
   const description = 'The Lost Administrator is an ongoing novel and interactive story experience told through published chapters, digital traces and Michael Weber’s reconstructed Debian workstation.';
-  const cover = 'https://dennishilk.com/assets/lost-administrator/thelostadministrator.webp';
+  const cover = 'https://www.dennishilk.com/assets/lost-administrator/thelostadministrator.webp';
   assert.match(head, new RegExp(`<title>${title}</title>`));
   assert.equal((head.match(new RegExp(`content="${description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'g')) || []).length, 3);
   assert.equal((head.match(new RegExp(`content="${cover}"`, 'g')) || []).length, 2);
@@ -441,6 +441,6 @@ test('visual ending is responsive, accessible, canonical, and has no visible nar
   assert.doesNotMatch(main[1], /<h[1-6]|<p|<nav|<a|Chapter 25|THE END/i);
   assert.doesNotMatch(html, /class="novel-(?:next|previous|chapter-nav)"/);
   assert.match(html, /<title>The Lost Administrator — Final Page<\/title>/);
-  assert.match(html, /<link rel="canonical" href="https:\/\/dennishilk\.com\/lost-administrator\/novel\/end\/">/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/www\.dennishilk\.com\/lost-administrator\/novel\/end\/">/);
   assert.match(css, /\.novel-final-image\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*height:\s*auto[^}]*margin:\s*0 auto/);
 });

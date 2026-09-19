@@ -10,8 +10,8 @@ const language = readFileSync(new URL("world-observer/north-korea-language.js", 
 const styles = readFileSync(new URL("world-observer/north-korea-connectivity.css", root), "utf8");
 const sitemap = readFileSync(new URL("sitemap-internet-observers.xml", root), "utf8");
 
-const enUrl = "https://dennishilk.com/world-observer/north-korea-connectivity.html";
-const deUrl = "https://dennishilk.com/de/world-observer/north-korea-connectivity.html";
+const enUrl = "https://www.dennishilk.com/world-observer/north-korea-connectivity.html";
+const deUrl = "https://www.dennishilk.com/de/world-observer/north-korea-connectivity.html";
 
 test("North Korea Connectivity has crawlable English and German showcase pages", () => {
   assert.ok(english.includes('<html lang="en">'));

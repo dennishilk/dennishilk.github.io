@@ -118,7 +118,7 @@
       canonical.rel = "canonical";
       document.head.appendChild(canonical);
     }
-    canonical.href = `https://dennishilk.com${de ? dePath : enPath}`;
+    canonical.href = `https://www.dennishilk.com${de ? dePath : enPath}`;
 
     const values = { en: enPath, de: dePath, "x-default": enPath };
     Object.entries(values).forEach(([language, route]) => {
@@ -129,7 +129,7 @@
         link.hreflang = language;
         document.head.appendChild(link);
       }
-      link.href = `https://dennishilk.com${route}`;
+      link.href = `https://www.dennishilk.com${route}`;
     });
     setMeta('meta[property="og:locale"]', de ? "de_DE" : "en_US", { property: "og:locale" });
     setMeta('meta[property="og:locale:alternate"]', de ? "en_US" : "de_DE", { property: "og:locale:alternate" });
@@ -175,7 +175,7 @@
         "@type": "ListItem",
         position: index + 1,
         name,
-        item: `https://dennishilk.com${route}`,
+        item: `https://www.dennishilk.com${route}`,
       })),
     };
     const script = document.createElement("script");

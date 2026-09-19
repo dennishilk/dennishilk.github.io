@@ -11,8 +11,8 @@ const css = readFileSync(new URL("world-observer/cuba-internet-weather.css", roo
 const dashboard = JSON.parse(readFileSync(new URL("world-observer/dashboard/internet.json", root), "utf8"));
 const history = JSON.parse(readFileSync(new URL("world-observer/dashboard/history/internet-observers.json", root), "utf8"));
 
-const enUrl = "https://dennishilk.com/world-observer/cuba-internet-weather.html";
-const deUrl = "https://dennishilk.com/de/world-observer/cuba-internet-weather.html";
+const enUrl = "https://www.dennishilk.com/world-observer/cuba-internet-weather.html";
+const deUrl = "https://www.dennishilk.com/de/world-observer/cuba-internet-weather.html";
 
 test("Cuba Internet Weather has crawlable English and German showcase pages", () => {
   assert.ok(english.includes('<html lang="en">'));

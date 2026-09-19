@@ -9,8 +9,8 @@ const js = readFileSync(new URL("world-observer/tls-fingerprint-change.js", root
 const language = readFileSync(new URL("world-observer/tls-fingerprint-language.js", root), "utf8");
 const css = readFileSync(new URL("world-observer/tls-fingerprint-change.css", root), "utf8");
 
-const enUrl = "https://dennishilk.com/world-observer/tls-fingerprint-change.html";
-const deUrl = "https://dennishilk.com/de/world-observer/tls-fingerprint-change.html";
+const enUrl = "https://www.dennishilk.com/world-observer/tls-fingerprint-change.html";
+const deUrl = "https://www.dennishilk.com/de/world-observer/tls-fingerprint-change.html";
 
 test("TLS showcase has real English and German routes with dedicated assets", () => {
   assert.ok(en.includes('<html lang="en">'));

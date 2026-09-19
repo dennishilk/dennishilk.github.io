@@ -10,7 +10,7 @@ const area51Renderer = readFileSync(new URL("world-observer/area51.js", root), "
 const area51GermanBundle = readFileSync(new URL("site-i18n-de-area51.js", root), "utf8");
 const siteLanguage = readFileSync(new URL("site-language.js", root), "utf8");
 const stars = readFileSync(new URL("stars.js", root), "utf8");
-const sitemap = readFileSync(new URL("sitemap.xml", root), "utf8");
+const sitemap = readFileSync(new URL("sitemap-internet-observers.xml", root), "utf8");
 
 function slugFor(observerId) {
   return observerId === "area51-reachability" ? "area51" : observerId;
@@ -20,11 +20,13 @@ test("every current Internet observer has a stable detail page", () => {
   assert.equal(dashboard.observer_count, 21);
   assert.equal(dashboard.observers.length, 21);
 
-  for (const observer of dashboard.observers) {
+  const currentObservers = dashboard.observers.filter((observer) => observer.observer !== "east-frisia-water-observer");
+  assert.equal(currentObservers.length, 20);
+  for (const observer of currentObservers) {
     const slug = slugFor(observer.observer);
     const path = `world-observer/${slug}.html`;
     const html = readFileSync(new URL(path, root), "utf8");
-    const canonical = `https://dennishilk.com/world-observer/${slug}.html`;
+    const canonical = `https://www.dennishilk.com/world-observer/${slug}.html`;
 
     if (observer.observer === "area51-reachability") {
       assert.ok(html.includes("<title>Groom Lake Public Signal Observatory – Area 51 | World Observer</title>"));
@@ -60,11 +62,18 @@ test("every current Internet observer has a stable detail page", () => {
   }
 });
 
+test("retired East Frisia Water detail alias is noindex and points to the current page", () => {
+  const legacy = readFileSync(new URL("world-observer/east-frisia-water-observer.html", root), "utf8");
+  assert.match(legacy, /name="robots" content="noindex, follow"/);
+  assert.match(legacy, /rel="canonical" href="https:\/\/www\.dennishilk\.com\/world-observer\/east-frisia-water\.html"/);
+  assert.doesNotMatch(sitemap, /<loc>https:\/\/www\.dennishilk\.com\/world-observer\/east-frisia-water-observer\.html<\/loc>/);
+});
+
 test("Area51 has crawlable English and German localized pages", () => {
   const english = readFileSync(new URL("world-observer/area51.html", root), "utf8");
   const german = readFileSync(new URL("de/world-observer/area51.html", root), "utf8");
-  const enUrl = "https://dennishilk.com/world-observer/area51.html";
-  const deUrl = "https://dennishilk.com/de/world-observer/area51.html";
+  const enUrl = "https://www.dennishilk.com/world-observer/area51.html";
+  const deUrl = "https://www.dennishilk.com/de/world-observer/area51.html";
 
   assert.ok(english.includes('<html lang="en">'));
   assert.ok(german.includes('<html lang="de">'));
@@ -85,7 +94,7 @@ test("Area51 language switch uses dedicated localized routes", () => {
   assert.doesNotThrow(() => new Function(stars));
   assert.ok(siteLanguage.includes('"/world-observer/area51.html": { en: "/world-observer/area51.html", de: "/de/world-observer/area51.html" }'));
   assert.ok(siteLanguage.includes('"/de/world-observer/area51.html": { en: "/world-observer/area51.html", de: "/de/world-observer/area51.html" }'));
-  assert.ok(stars.includes("/site-language.js?v=20260814-area51-1"));
+  assert.match(stars, /\/site-language\.js\?v=[^'"\s]+/);
 });
 
 test("Internet observer cards use crawlable anchor destinations", () => {

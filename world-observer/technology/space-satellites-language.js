@@ -55,7 +55,7 @@
           "@type": "ListItem",
           position: index + 1,
           name,
-          item: `https://dennishilk.com${route}`,
+          item: `https://www.dennishilk.com${route}`,
         })),
       });
       document.head.appendChild(script);

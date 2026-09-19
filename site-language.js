@@ -2,7 +2,7 @@
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
   const VERSION = "2026-08-16-museum-3";
-  const SITE_ORIGIN = "https://dennishilk.com";
+  const SITE_ORIGIN = "https://www.dennishilk.com";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260810-c64-1",
     "/site-i18n-de-extra.js?v=20260809-sitewide-1",
@@ -47,6 +47,7 @@
     "/museum/crt-remote-terminal/",
     "/museum/debian-server-experiment/",
     "/museum/dos-setup/",
+    "/museum/failure-lab/",
     "/museum/ibm-pc-xt/",
     "/museum/linux-game-install/",
     "/museum/modem-lab/",

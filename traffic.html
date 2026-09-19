@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="canonical" href="https://dennishilk.com/traffic.html">
-  <link rel="alternate" hreflang="en" href="https://dennishilk.com/traffic.html">
-  <link rel="alternate" hreflang="de" href="https://dennishilk.com/de/traffic.html">
-  <link rel="alternate" hreflang="x-default" href="https://dennishilk.com/traffic.html">
-  <script>
+  <link rel="canonical" href="https://www.dennishilk.com/traffic.html">
+  <link rel="alternate" hreflang="en" href="https://www.dennishilk.com/traffic.html">
+  <link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/traffic.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/traffic.html">
+
+
+<script>
     if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== [127, 0, 0, 1].join(".")) {
       location.replace("https://" + location.hostname + location.pathname + location.search);
     }
@@ -16,7 +18,7 @@
   <meta name="description" content="Privacy-safe observational dashboard for website traffic seen from worldnode nginx logs: humans, crawlers, pageviews and request patterns.">
   <meta property="og:title" content="Site Traffic Observer">
   <meta property="og:description" content="Watching this website from worldnode / nginx without exposing raw IP addresses.">
-  <meta property="og:url" content="https://dennishilk.com/traffic.html">
+  <meta property="og:url" content="https://www.dennishilk.com/traffic.html">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="avatar.png">
@@ -26,11 +28,11 @@
   <script defer src="/site-language.js?v=20260827-traffic-2" data-site-language-loader></script>
   <script defer src="stars.js"></script>
   <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
-  <meta property="og:image" content="https://dennishilk.com/avatar.png">
+  <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Site Traffic Observer – worldnode / nginx">
   <meta name="twitter:description" content="Privacy-safe observational dashboard for website traffic seen from worldnode nginx logs: humans, crawlers, pageviews and request patterns.">
-  <meta name="twitter:image" content="https://dennishilk.com/avatar.png">
+  <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
 </head>
 <body class="traffic-page">
 <canvas id="stars"></canvas>
@@ -261,11 +263,11 @@
     document.title = "Website-Traffic-Observer – worldnode / nginx";
     const setMeta = (selector, value) => { const element = document.querySelector(selector); if (element) element.setAttribute("content", value); };
     const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.href = "https://dennishilk.com/de/traffic.html";
+    if (canonical) canonical.href = "https://www.dennishilk.com/de/traffic.html";
     setMeta('meta[name="description"]', "Datenschutzfreundliches Beobachtungsdashboard für Website-Traffic aus worldnode-nginx-Logs sowie echte, anonymisierte Starlink-Heimanschluss-Messwerte.");
     setMeta('meta[property="og:title"]', "Website-Traffic-Observer");
     setMeta('meta[property="og:description"]', "Website-Traffic und anonymisierte Heimanschluss-Telemetrie beobachten, ohne rohe IP-Adressen offenzulegen.");
-    setMeta('meta[property="og:url"]', "https://dennishilk.com/de/traffic.html");
+    setMeta('meta[property="og:url"]', "https://www.dennishilk.com/de/traffic.html");
     setMeta('meta[name="twitter:title"]', "Website-Traffic-Observer – worldnode / nginx");
     setMeta('meta[name="twitter:description"]', "Datenschutzfreundliches Dashboard für Website-Traffic und anonymisierte Heimanschluss-Telemetrie.");
     document.querySelectorAll("[data-traffic-i18n]").forEach(element => { const value = germanStatic[element.dataset.trafficI18n]; if (value) element.textContent = value; });

@@ -5,14 +5,24 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 const siteRoot = root.pathname;
-const base = "https://dennishilk.com";
+const base = "https://www.dennishilk.com";
 
 const sitemapMain = readFileSync(new URL("sitemap.xml", root), "utf8");
 const sitemapDe = readFileSync(new URL("sitemap-de.xml", root), "utf8");
 const sitemapInternet = readFileSync(new URL("sitemap-internet-observers.xml", root), "utf8");
 const sitemapTechnology = readFileSync(new URL("sitemap-technology-observers.xml", root), "utf8");
 const sitemapImages = readFileSync(new URL("sitemap-images.xml", root), "utf8");
+const sitemapCisco = readFileSync(new URL("sitemap-cisco-doom.xml", root), "utf8");
 const robots = readFileSync(new URL("robots.txt", root), "utf8");
+const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco];
+
+const excludedHtml = new Set([
+  "404.html",
+  "blog/post.html",
+  "googlebe6f4cac81733577.html",
+  "world-observer/index.html",
+  "world-observer/east-frisia-water-observer.html",
+]);
 
 const internetSlugs = [
   "area51",
@@ -113,6 +123,18 @@ function isIndexableGermanHtml(path) {
   return !hasNoindex(path);
 }
 
+function isIndexableHtml(path) {
+  if (!path.endsWith(".html")) return false;
+  const rel = relative(siteRoot, path).split(sep).join("/");
+  if (excludedHtml.has(rel)) return false;
+  if (rel.startsWith("de/") && isMuseumMirrorWrapper(path)) {
+    const source = germanMirrorSourcePath(path);
+    assert.ok(existsSync(source), `German Museum mirror source missing: ${relative(siteRoot, source)}`);
+    return !hasNoindex(source);
+  }
+  return !hasNoindex(path);
+}
+
 function assertWellFormedEnvelope(name, xml) {
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'), `${name} missing XML declaration`);
   assert.match(xml, /<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/, `${name} missing sitemap namespace`);
@@ -127,6 +149,7 @@ test("all advertised sitemap files use a valid sitemap envelope", () => {
     ["sitemap-internet-observers.xml", sitemapInternet],
     ["sitemap-technology-observers.xml", sitemapTechnology],
     ["sitemap-images.xml", sitemapImages],
+    ["sitemap-cisco-doom.xml", sitemapCisco],
   ]) assertWellFormedEnvelope(name, xml);
   assert.match(sitemapImages, /xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1"/);
 });
@@ -138,23 +161,25 @@ test("robots.txt advertises every maintained sitemap", () => {
     "sitemap-internet-observers.xml",
     "sitemap-technology-observers.xml",
     "sitemap-images.xml",
+    "sitemap-cisco-doom.xml",
   ]) assert.ok(robots.includes(`Sitemap: ${base}/${name}`), `robots.txt missing ${name}`);
 });
 
-test("German sitemap contains every indexable German HTML route exactly once", () => {
-  const actualGermanUrls = walk(join(siteRoot, "de"))
-    .filter(isIndexableGermanHtml)
+test("all sitemaps together contain every indexable HTML route exactly once", () => {
+  const actualUrls = walk(siteRoot)
+    .filter((path) => !path.includes(`${sep}node_modules${sep}`))
+    .filter(isIndexableHtml)
     .map(pathToPublicUrl)
     .sort();
-  const sitemapGermanUrls = locs(sitemapDe).sort();
-  assert.deepEqual(sitemapGermanUrls, actualGermanUrls);
-  assert.equal(new Set(sitemapGermanUrls).size, sitemapGermanUrls.length);
-  for (const url of sitemapGermanUrls) assert.ok(existsSync(publicUrlToPath(url)), `German sitemap points to missing file: ${url}`);
+  const sitemapUrls = allSitemaps.flatMap(locs).sort();
+  assert.deepEqual(sitemapUrls, actualUrls);
+  assert.equal(new Set(sitemapUrls).size, sitemapUrls.length);
+  for (const url of sitemapUrls) assert.ok(existsSync(publicUrlToPath(url)), `sitemap points to missing file: ${url}`);
 });
 
-test("all ten Wiesmoor observers have dedicated German sitemap entries and reciprocal alternates", () => {
-  const entries = new Set(locs(sitemapDe));
-  const links = new Set(alternateLinks(sitemapDe));
+test("all ten Wiesmoor observers have German sitemap entries and reciprocal alternates", () => {
+  const entries = new Set(allSitemaps.flatMap(locs));
+  const links = new Set(allSitemaps.flatMap(alternateLinks));
   for (const slug of wiesmoorSlugs) {
     const en = `${base}/world-observer/${slug}.html`;
     const de = `${base}/de/world-observer/${slug}.html`;
@@ -166,16 +191,16 @@ test("all ten Wiesmoor observers have dedicated German sitemap entries and recip
   }
 });
 
-test("main sitemap contains all ten English Wiesmoor observer routes", () => {
-  const main = new Set(locs(sitemapMain));
+test("the sitemap set contains all ten English Wiesmoor observer routes", () => {
+  const main = new Set(allSitemaps.flatMap(locs));
   for (const slug of wiesmoorSlugs) {
     assert.ok(main.has(`${base}/world-observer/${slug}.html`), `main sitemap missing English Wiesmoor observer: ${slug}`);
   }
 });
 
-test("German sitemap carries reciprocal EN/DE/x-default alternates", () => {
-  const links = new Set(alternateLinks(sitemapDe));
-  for (const deUrl of locs(sitemapDe)) {
+test("German sitemap entries carry reciprocal EN/DE/x-default alternates", () => {
+  const links = new Set(allSitemaps.flatMap(alternateLinks));
+  for (const deUrl of allSitemaps.flatMap(locs).filter((url) => url.startsWith(`${base}/de/`))) {
     const enUrl = deUrl
       .replace(`${base}/de/world-observer/technology/`, `${base}/world-observer/technology/`)
       .replace(`${base}/de/world-observer/`, `${base}/world-observer/`)
@@ -196,10 +221,9 @@ test("Internet observer sitemap covers every bilingual observer pair", () => {
   for (const url of expected) assert.ok(existsSync(publicUrlToPath(url)), `Internet sitemap points to missing file: ${url}`);
 });
 
-test("Main sitemap exposes the Internet and Technology category entry points", () => {
-  const main = new Set(locs(sitemapMain));
-  assert.ok(main.has(`${base}/world-observer/internet.html`));
-  assert.ok(main.has(`${base}/world-observer/technology.html`));
+test("Sitemap owners expose the Internet and Technology category entry points", () => {
+  assert.ok(new Set(locs(sitemapMain)).has(`${base}/world-observer/internet.html`));
+  assert.ok(new Set(locs(sitemapTechnology)).has(`${base}/world-observer/technology.html`));
 });
 
 test("Technology sitemap covers every currently published Technology observer route", () => {
@@ -209,6 +233,10 @@ test("Technology sitemap covers every currently published Technology observer ro
     `${base}/world-observer/technology/debian-package-count.html`,
     `${base}/world-observer/technology/arch-package-count.html`,
     `${base}/world-observer/technology/space-satellites.html`,
+    `${base}/de/world-observer/technology.html`,
+    `${base}/de/world-observer/time-observer.html`,
+    `${base}/de/world-observer/technology/debian-package-count.html`,
+    `${base}/de/world-observer/technology/arch-package-count.html`,
     `${base}/de/world-observer/technology/space-satellites.html`,
   ]);
   assert.deepEqual(new Set(locs(sitemapTechnology)), expected);
@@ -222,14 +250,14 @@ test("Wiesmoor image sitemap references only real local images on both story rou
     `${base}/de/world-observer/wiesmoor.html`,
   ]));
   const images = imageLocs(sitemapImages);
-  assert.equal(images.length, 14);
-  assert.equal(new Set(images).size, 7);
+  assert.equal(images.length, 16);
+  assert.equal(new Set(images).size, 8);
   for (const url of pages) assert.ok(existsSync(publicUrlToPath(url)), `image sitemap page missing: ${url}`);
   for (const url of new Set(images)) assert.ok(existsSync(publicUrlToPath(url)), `image sitemap image missing: ${url}`);
 });
 
-test("specialized bilingual sitemap alternates never point at missing local routes", () => {
-  for (const xml of [sitemapDe, sitemapInternet, sitemapTechnology]) {
+test("bilingual sitemap alternates never point at missing local routes", () => {
+  for (const xml of allSitemaps) {
     for (const url of alternateLinks(xml)) assert.ok(existsSync(publicUrlToPath(url)), `hreflang alternate points to missing file: ${url}`);
   }
 });

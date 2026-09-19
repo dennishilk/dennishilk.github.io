@@ -36,8 +36,8 @@ test("all 19 public Internet observers have German crawlable routes", () => {
 
   for (const [slug, title] of observers) {
     const html = readFileSync(new URL(`de/world-observer/${slug}.html`, root), "utf8");
-    const enUrl = `https://dennishilk.com/world-observer/${slug}.html`;
-    const deUrl = `https://dennishilk.com/de/world-observer/${slug}.html`;
+    const enUrl = `https://www.dennishilk.com/world-observer/${slug}.html`;
+    const deUrl = `https://www.dennishilk.com/de/world-observer/${slug}.html`;
 
     assert.ok(html.includes('<html lang="de">'), slug);
     assert.ok(html.includes(`data-observer-id="${slug}"`), slug);
@@ -110,8 +110,8 @@ test("shared Internet detail runtime localizes remaining generic UI and owns EN/
 });
 
 test("Internet observer language sitemap is advertised and contains all public pairs", () => {
-  assert.ok(robots.includes("Sitemap: https://dennishilk.com/sitemap-internet-observers.xml"));
+  assert.ok(robots.includes("Sitemap: https://www.dennishilk.com/sitemap-internet-observers.xml"));
   assert.equal((sitemap.match(/<url>/g) || []).length, 40);
-  assert.ok(sitemap.includes("https://dennishilk.com/world-observer/area51.html"));
-  assert.ok(sitemap.includes("https://dennishilk.com/de/world-observer/area51.html"));
+  assert.ok(sitemap.includes("https://www.dennishilk.com/world-observer/area51.html"));
+  assert.ok(sitemap.includes("https://www.dennishilk.com/de/world-observer/area51.html"));
 });

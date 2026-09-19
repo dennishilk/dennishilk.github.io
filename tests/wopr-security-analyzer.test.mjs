@@ -149,7 +149,7 @@ test('state generation path runs allowlisted self-check before building state', 
   globalThis.fetch = async (url, options) => {
     requested.push({ url: String(url), method: options?.method });
     const { hostname, pathname } = new URL(String(url));
-    assert.equal(hostname, 'dennishilk.com');
+    assert.equal(hostname, 'www.dennishilk.com');
     const secureSensitive = new Set(['/.git/HEAD', '/.git/config', '/.env', '/.env.production', '/.aws/credentials']);
     return { status: secureSensitive.has(pathname) ? 404 : 200 };
   };
@@ -158,7 +158,7 @@ test('state generation path runs allowlisted self-check before building state', 
     const state = await generateSecurityState([line({ path: '/.git/HEAD', status: 200 })], { now });
     const selfCheckPaths = state.self_check.checks.map(check => check.path);
     assert.deepEqual(selfCheckPaths, ['/.git/HEAD', '/.git/config', '/.env', '/.env.production', '/.aws/credentials', '/', '/sitemap.xml']);
-    assert(requested.every(request => request.url.startsWith('https://dennishilk.com/')));
+    assert(requested.every(request => request.url.startsWith('https://www.dennishilk.com/')));
     assert(requested.every(request => request.method === 'HEAD'));
     assert.equal(state.successful_sensitive_requests, 1);
     assert.equal(state.active_findings, 0);

@@ -359,6 +359,11 @@
     ]
   });
 
+  addPage("/museum/failure-lab/", {
+    title: "Failure Lab: Interaktiver Linux-Fehlersimulator | Dennis Hilk",
+    description: "Interaktiver Linux-Fehlersimulator: Kernel-Panic, DNS- und Speicherplatzfehler untersuchen, Protokolle auswerten und sichere Wiederherstellungsschritte lernen."
+  });
+
   addPage("/transmissions/", {
     title: "Gästebuch / Public Signal Uplink – Dennis Hilk",
     description: "Öffentliches Gästebuch von dennishilk.com. Hinterlasse eine Nachricht, die vor der öffentlichen Anzeige geprüft wird.",

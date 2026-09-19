@@ -137,7 +137,7 @@ function landing(chapters) {
   return page({
     title: 'The Lost Administrator — The Novel',
     description: 'Read all 24 chapters of The Lost Administrator online.',
-    canonical: 'https://dennishilk.com/lost-administrator/novel/',
+    canonical: 'https://www.dennishilk.com/lost-administrator/novel/',
     body: `  <main class="novel-shell">
     <a class="novel-back" href="/lost-administrator/">← BACK TO THE LOST ADMINISTRATOR</a>
     <section class="novel-hero">
@@ -156,7 +156,7 @@ function chapterPage(chapter, previous, next, rendered, endPage) {
     next ? `<a class="novel-next" href="/lost-administrator/novel/chapters/${escapeHtml(next.slug)}/">Next chapter →</a>` :
       endPage ? `<a class="novel-next" href="/lost-administrator/novel/${escapeHtml(endPage.slug)}/">Next page →</a>` : ''
   ].join('');
-  return page({ title: `${chapter.title} — The Lost Administrator`, description, canonical: `https://dennishilk.com/lost-administrator/novel/chapters/${chapter.slug}/`, reader: true,
+  return page({ title: `${chapter.title} — The Lost Administrator`, description, canonical: `https://www.dennishilk.com/lost-administrator/novel/chapters/${chapter.slug}/`, reader: true,
     body: `  <main class="novel-reader"><a class="novel-back" href="/lost-administrator/novel/">← CONTENTS</a><header class="novel-reader-header"><p class="novel-chapter-number">CHAPTER ${chapter.number}</p><h1>${escapeHtml(chapter.title)}</h1></header><article class="novel-prose">${rendered}</article>${navigation ? `<nav class="novel-chapter-nav" aria-label="Chapter navigation">${navigation}</nav>` : ''}</main>` });
 }
 
@@ -164,7 +164,7 @@ function endPage(entry) {
   return page({
     title: 'The Lost Administrator — Final Page',
     description: 'The visual final page of The Lost Administrator.',
-    canonical: `https://dennishilk.com/lost-administrator/novel/${entry.slug}/`,
+    canonical: `https://www.dennishilk.com/lost-administrator/novel/${entry.slug}/`,
     finalPage: true,
     body: `  <main class="novel-final"><img class="novel-final-image" src="${escapeHtml(entry.image)}" alt="${escapeHtml(entry.alt)}"></main>`
   });

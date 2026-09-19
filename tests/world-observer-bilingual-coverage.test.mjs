@@ -81,10 +81,13 @@ test("World Observer route, mirror and bootstrap scripts keep EN and DE identity
 });
 
 test("canonical German sitemap exposes every dedicated World Observer route", () => {
-  const sitemap = fs.readFileSync(path.join(root, "sitemap-de.xml"), "utf8");
+  const sitemap = [
+    "sitemap-de.xml",
+    "sitemap-technology-observers.xml",
+  ].map((file) => fs.readFileSync(path.join(root, file), "utf8")).join("\n");
   for (const [en, de] of Object.entries(pairs)) {
-    assert.ok(sitemap.includes(`https://dennishilk.com${de}`), `${de} missing from sitemap-de.xml`);
-    assert.ok(sitemap.includes(`href="https://dennishilk.com${en}"`), `${en} missing as alternate`);
+    assert.ok(sitemap.includes(`https://www.dennishilk.com${de}`), `${de} missing from German or Technology sitemap`);
+    assert.ok(sitemap.includes(`href="https://www.dennishilk.com${en}"`), `${en} missing as alternate`);
   }
 });
 

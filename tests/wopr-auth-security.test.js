@@ -13,8 +13,8 @@ process.env.WOPR_SECURITY_REVIEWS_FILE = path.join(securityTestDir, 'operator-re
 process.env.WOPR_SECURITY_CASES_FILE = path.join(securityTestDir, 'case-ledger.json');
 const { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, hasTrustedOrigin } = require('../server/wopr-auth/server.js');
 
-test('self-check allows only dennishilk.com allowlisted paths', () => {
-  assert.equal(assertAllowedSelfCheckUrl('/.git/HEAD').href, 'https://dennishilk.com/.git/HEAD');
+test('self-check allows only the canonical www host and allowlisted paths', () => {
+  assert.equal(assertAllowedSelfCheckUrl('/.git/HEAD').href, 'https://www.dennishilk.com/.git/HEAD');
   assert.throws(() => assertAllowedSelfCheckUrl('https://example.com/.git/HEAD'));
   assert.throws(() => assertAllowedSelfCheckUrl('/not-allowlisted'));
   assert(SELF_CHECK_PATHS.every((entry) => entry.path.startsWith('/')));
