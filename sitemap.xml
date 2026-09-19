@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://dennishilk.com/</loc>
     <changefreq>weekly</changefreq>
@@ -12,6 +12,22 @@
   </url>
   <url>
     <loc>https://dennishilk.com/about/cats/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dennishilk.com/about/cats/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://dennishilk.com/de/about/cats/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dennishilk.com/about/cats/" />
+    <image:image><image:loc>https://dennishilk.com/assets/me/cats/bigmacberta1.webp</image:loc></image:image>
+    <image:image><image:loc>https://dennishilk.com/assets/me/cats/bigmacberta2020.webp</image:loc></image:image>
+    <image:image><image:loc>https://dennishilk.com/assets/me/cats/bigmac3.webp</image:loc></image:image>
+    <image:image><image:loc>https://dennishilk.com/assets/me/cats/bigmac1.webp</image:loc></image:image>
+    <image:image><image:loc>https://dennishilk.com/assets/me/cats/bigmac2.webp</image:loc></image:image>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dennishilk.com/de/about/cats/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dennishilk.com/about/cats/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://dennishilk.com/de/about/cats/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dennishilk.com/about/cats/" />
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
