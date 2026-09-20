@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-08-16-museum-3";
+  const VERSION = "2026-09-20-image-converter-1";
   const SITE_ORIGIN = "https://www.dennishilk.com";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20260810-c64-1",
@@ -18,6 +18,10 @@
   ];
 
   const dedicatedRoutes = {
+    "/tools/image-converter/": { en: "/tools/image-converter/", de: "/de/tools/image-converter/" },
+    "/tools/image-converter/index.html": { en: "/tools/image-converter/", de: "/de/tools/image-converter/" },
+    "/de/tools/image-converter/": { en: "/tools/image-converter/", de: "/de/tools/image-converter/" },
+    "/de/tools/image-converter/index.html": { en: "/tools/image-converter/", de: "/de/tools/image-converter/" },
     "/traffic.html": { en: "/traffic.html", de: "/de/traffic.html" },
     "/de/traffic.html": { en: "/traffic.html", de: "/de/traffic.html" },
     "/": { en: "/", de: "/de/" },
