@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kostenloser lokaler Bildkonverter – JPEG, PNG, WebP & AVIF | Dennis Hilk</title>
+  <meta name="description" content="JPEG, PNG, WebP und unterstützte AVIF-Bilder direkt im Browser in WebP, JPEG oder PNG umwandeln. Kein Upload, kein Konto und keine serverseitige Bildspeicherung.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <link rel="canonical" href="https://www.dennishilk.com/de/tools/image-converter/">
+  <link rel="alternate" hreflang="en" href="https://www.dennishilk.com/tools/image-converter/">
+  <link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/tools/image-converter/">
+  <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/tools/image-converter/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Lokaler Bildkonverter — Dennis Hilk">
+  <meta property="og:description" content="Bilder lokal im Browser umwandeln. JPEG, PNG, WebP und unterstütztes AVIF als Eingabe; WebP, JPEG und PNG als Ausgabe.">
+  <meta property="og:url" content="https://www.dennishilk.com/de/tools/image-converter/">
+  <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lokaler Bildkonverter — Dennis Hilk">
+  <meta name="twitter:description" content="Ein datenschutzfreundlicher Bildkonverter, der vollständig im Browser läuft.">
+  <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/tools/image-converter/image-converter.css">
+  <script defer src="/stars.js"></script>
+  <script defer src="/tools/image-converter/image-converter.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Lokaler Bildkonverter",
+        "url": "https://www.dennishilk.com/de/tools/image-converter/",
+        "description": "Ein clientseitiger Bildkonverter für JPEG, PNG, WebP und browserunterstützte AVIF-Bilder mit WebP-, JPEG- und PNG-Ausgabe.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "JavaScript und ein moderner Webbrowser erforderlich",
+        "inLanguage": "de",
+        "author": {
+          "@type": "Person",
+          "name": "Dennis Hilk",
+          "url": "https://www.dennishilk.com/"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "isAccessibleForFree": true
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Werden meine Bilder auf einen Server hochgeladen?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nein. Dekodierung, Größenänderung und Konvertierung finden lokal im Browser statt. Der Konverter lädt die ausgewählten Bilddateien nicht hoch."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Welche Bildformate kann ich umwandeln?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Das Tool akzeptiert JPEG, PNG und WebP. AVIF funktioniert zusätzlich, wenn der Browser AVIF dekodieren kann. Als Ausgabe stehen WebP, JPEG oder PNG zur Verfügung, sofern der Browser das Format erzeugen kann."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Kann ich mehrere Bilder gleichzeitig umwandeln?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja. Mehrere Bilder können hinzugefügt, nacheinander konvertiert und einzeln oder über die Schaltfläche Alle herunterladen gespeichert werden."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Bleiben EXIF- und GPS-Metadaten erhalten?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Der Browser zeichnet das Bild neu und kodiert es anschließend erneut. Ursprüngliche EXIF- und GPS-Metadaten werden deshalb in der Regel nicht in die neue Datei übernommen."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+
+  <nav class="site-nav" aria-label="Hauptnavigation">
+    <a class="brand" href="/de/">DENNIS HILK</a>
+    <div class="nav-links">
+      <a href="/de/">Startseite</a>
+      <a href="/museum/">Computermuseum</a>
+      <a href="/about/">Über mich</a>
+    </div>
+    <div class="language" aria-label="Seitensprache">
+      <a href="/tools/image-converter/" hreflang="en">EN</a>
+      <span aria-hidden="true">|</span>
+      <a aria-current="page" href="/de/tools/image-converter/" hreflang="de">DE</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="hero">
+      <p class="eyebrow">Browser-Werkzeug · kein Upload</p>
+      <h1>Lokaler<br>Bildkonverter</h1>
+      <p class="intro">JPEG, PNG, WebP und vom Browser unterstützte AVIF-Bilder in WebP, JPEG oder PNG umwandeln. Auf Wunsch verkleinern, Qualität einstellen und Dateigrößen vergleichen — ohne die Bilder an einen Server zu senden.</p>
+      <p class="privacy-banner"><strong>100 % clientseitig:</strong> Ausgewählte Bilder bleiben auf deinem Gerät und werden ausschließlich in diesem Browser-Tab verarbeitet.</p>
+    </header>
+
+    <noscript><p class="noscript">Dieser Konverter benötigt JavaScript, weil die komplette Bildverarbeitung lokal in deinem Browser stattfindet.</p></noscript>
+
+    <section class="converter-shell" aria-labelledby="converter-title">
+      <h2 id="converter-title" class="eyebrow">Arbeitsbereich Bildkonvertierung</h2>
+
+      <label class="drop-zone" id="drop-zone">
+        <input id="file-input" type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif">
+        <span class="drop-title">Bilder hier ablegen oder anklicken und auswählen</span>
+        <span class="drop-subtitle">JPEG · PNG · WebP · AVIF, wenn dein Browser es unterstützt</span>
+      </label>
+
+      <div class="settings" aria-label="Konvertierungseinstellungen">
+        <div class="setting">
+          <label for="output-format">Ausgabeformat</label>
+          <select id="output-format">
+            <option value="image/webp" selected>WebP</option>
+            <option value="image/jpeg">JPEG</option>
+            <option value="image/png">PNG</option>
+          </select>
+        </div>
+
+        <div class="setting">
+          <label for="quality">Qualität</label>
+          <div class="quality-row">
+            <input id="quality" type="range" min="0.1" max="1" value="0.82" step="0.01">
+            <span class="quality-value" id="quality-value">82%</span>
+          </div>
+        </div>
+
+        <div class="setting">
+          <span class="setting-label">Maximale Abmessungen</span>
+          <div class="resize-inputs">
+            <input id="max-width" type="number" min="1" max="16384" inputmode="numeric" placeholder="Breite" aria-label="Maximale Breite">
+            <span>×</span>
+            <input id="max-height" type="number" min="1" max="16384" inputmode="numeric" placeholder="Höhe" aria-label="Maximale Höhe">
+          </div>
+          <label class="check-row"><input id="no-upscale" type="checkbox" checked> Kleinere Bilder nicht vergrößern</label>
+        </div>
+
+        <div class="setting">
+          <span class="setting-label">Datenschutz</span>
+          <div class="file-meta">Es gibt keinen Bild-Upload. Die Bilder werden lokal dekodiert, gezeichnet und neu kodiert. Ursprüngliche EXIF-/GPS-Metadaten werden in der Regel nicht übernommen.</div>
+        </div>
+      </div>
+
+      <section class="queue" id="queue" hidden aria-labelledby="queue-title">
+        <div class="section-title">
+          <h2 id="queue-title">Ausgewählte Bilder</h2>
+          <span><span id="queue-count">0</span> Datei(en)</span>
+        </div>
+        <div class="file-list" id="file-list"></div>
+      </section>
+
+      <div class="action-row">
+        <button class="action" id="convert" type="button">Lokal konvertieren</button>
+        <button class="action secondary" id="download-all" type="button">Alle herunterladen</button>
+        <button class="action secondary" id="clear" type="button">Leeren</button>
+      </div>
+
+      <p class="status-line" id="status-line" role="status" aria-live="polite"></p>
+
+      <section class="results" id="results" hidden aria-labelledby="results-title">
+        <div class="section-title">
+          <h2 id="results-title">Konvertierte Bilder</h2>
+          <span><span id="result-count">0</span> Ergebnis(se)</span>
+        </div>
+        <div class="result-list" id="result-list"></div>
+      </section>
+    </section>
+
+    <section class="info-grid" aria-label="Über den Bildkonverter">
+      <article class="info-card">
+        <h2>Formate</h2>
+        <p>JPEG, PNG und WebP werden direkt akzeptiert. AVIF funktioniert zusätzlich, wenn dein Browser es dekodieren kann. Die verfügbaren Ausgabeformate werden vor der Konvertierung im Browser getestet.</p>
+      </article>
+      <article class="info-card">
+        <h2>Mehrere Bilder + Resize</h2>
+        <p>Füge mehrere Bilder auf einmal hinzu. Optionale Maximalwerte für Breite und Höhe behalten das Seitenverhältnis bei, während die Dateien nacheinander verarbeitet werden.</p>
+      </article>
+      <article class="info-card">
+        <h2>Datenschutz by design</h2>
+        <p>Die ausgewählten Dateien werden nicht hochgeladen. Die Konvertierung läuft über Browser-Bildfunktionen, und der erzeugte Download existiert lokal bis zum Neuladen oder Verlassen der Seite.</p>
+      </article>
+    </section>
+
+    <section class="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">Häufige Fragen</h2>
+
+      <details>
+        <summary>Werden meine Bilder irgendwo hochgeladen?</summary>
+        <p>Nein. Diese Seite besitzt keinen Bild-Upload-Workflow. Deine Dateien werden lokal im Browser verarbeitet und die erzeugten Dateien als temporäre lokale Download-URLs bereitgestellt.</p>
+      </details>
+
+      <details>
+        <summary>Warum funktioniert AVIF eventuell nicht in einem älteren Browser?</summary>
+        <p>AVIF als Eingabe hängt vom eingebauten Bilddecoder des Browsers ab. Kann der Browser die Datei nicht lesen, meldet der Konverter einen Fehler, statt sie irgendwohin zu übertragen.</p>
+      </details>
+
+      <details>
+        <summary>Was passiert mit Transparenz?</summary>
+        <p>PNG- und WebP-Ausgabe können transparente Pixel behalten. JPEG besitzt keinen Alphakanal; transparente Bereiche werden deshalb auf einen weißen Hintergrund gesetzt.</p>
+      </details>
+
+      <details>
+        <summary>Bleiben Metadaten erhalten?</summary>
+        <p>In der Regel nicht. Das Bild wird in ein Canvas neu gezeichnet und anschließend neu kodiert. Ursprüngliche EXIF- und GPS-Metadaten werden dabei normalerweise nicht in die neue Datei übernommen.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <p>Lokaler Bildkonverter von Dennis Hilk · <a href="/de/">Startseite</a> · <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
+  </footer>
+</body>
+</html>
