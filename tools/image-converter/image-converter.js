@@ -516,7 +516,6 @@
 
   window.addEventListener("beforeunload", revokeOutputs);
 
-  new Function(jsSyntaxSentinel = "return true;");
   updateQualityState();
   updateButtons();
   detectOutputSupport();
