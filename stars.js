@@ -140,7 +140,7 @@ if (useDedicatedGermanWiesmoorUi) {
   }
 } else if (!useDedicatedInternetLanguageUi && !useDedicatedWiesmoorLanguageUi && !useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
-  languageScript.src = '/site-language.js?v=20260816-museum-3';
+  languageScript.src = '/site-language.js?v=20260920-image-converter-1';
   languageScript.dataset.siteLanguageLoader = 'true';
   document.head.appendChild(languageScript);
 }
