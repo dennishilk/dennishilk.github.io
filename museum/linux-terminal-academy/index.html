@@ -4,29 +4,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://www.dennishilk.com/museum/linux-terminal-academy/">
-  <title>Linux Terminal Academy – Computer Museum</title>
-  <meta name="description" content="A complete browser-only Linux learning environment from the Computer Museum.">
+  <link rel="alternate" hreflang="en" href="https://www.dennishilk.com/museum/linux-terminal-academy/">
+  <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/museum/linux-terminal-academy/">
+  <title>Learn Linux Online in the Browser – Linux Terminal Academy</title>
+  <meta name="description" content="Learn Linux online with eight guided browser labs covering commands, files, permissions, processes, pipes, system administration and recovery—without touching your real computer.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="stylesheet" href="/style.css?v=44">
   <script defer src="/stars.js"></script>
-  <meta property="og:title" content="Linux Terminal Academy – Computer Museum">
-  <meta property="og:description" content="A complete browser-only Linux learning environment.">
+  <meta property="og:title" content="Learn Linux Online in the Browser – Linux Terminal Academy">
+  <meta property="og:description" content="Learn Linux online with eight guided browser labs covering commands, files, permissions, processes, pipes, system administration and recovery—without touching your real computer.">
   <meta property="og:url" content="https://www.dennishilk.com/museum/linux-terminal-academy/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Linux Terminal Academy – Computer Museum">
-  <meta name="twitter:description" content="A complete browser-only Linux learning environment.">
+  <meta name="twitter:title" content="Learn Linux Online in the Browser – Linux Terminal Academy">
+  <meta name="twitter:description" content="Learn Linux online with eight guided browser labs covering commands, files, permissions, processes, pipes, system administration and recovery—without touching your real computer.">
   <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "CreativeWork",
-  "name": "Linux Terminal Academy – Computer Museum",
-  "description": "A complete browser-only Linux learning environment.",
-  "url": "https://www.dennishilk.com/museum/linux-terminal-academy/",
-  "isPartOf": {"@type": "CollectionPage", "name": "Computer Museum", "url": "https://www.dennishilk.com/museum/"}
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "@id": "https://www.dennishilk.com/museum/linux-terminal-academy/#academy",
+      "name": "Linux Terminal Academy",
+      "description": "Learn Linux online with eight guided browser labs covering commands, files, permissions, processes, pipes, system administration and recovery—without touching your real computer.",
+      "url": "https://www.dennishilk.com/museum/linux-terminal-academy/",
+      "inLanguage": "en",
+      "learningResourceType": "Interactive browser labs",
+      "educationalLevel": "Beginner to intermediate",
+      "educationalUse": "Linux command-line and system administration practice",
+      "teaches": [
+        "Linux command line basics",
+        "Linux filesystem navigation",
+        "Files and directories",
+        "Linux permissions and users",
+        "Process management",
+        "Shell pipes",
+        "System administration",
+        "Troubleshooting and recovery"
+      ],
+      "creator": {"@id": "https://www.dennishilk.com/#dennis-hilk"},
+      "isPartOf": {"@id": "https://www.dennishilk.com/museum/#museum"},
+      "about": {"@type": "Thing", "name": "Linux"}
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.dennishilk.com/#dennis-hilk",
+      "name": "Dennis Hilk",
+      "url": "https://www.dennishilk.com/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Dennis Hilk", "item": "https://www.dennishilk.com/"},
+        {"@type": "ListItem", "position": 2, "name": "Interactive Computer Museum", "item": "https://www.dennishilk.com/museum/"},
+        {"@type": "ListItem", "position": 3, "name": "Linux Terminal Academy"}
+      ]
+    }
+  ]
 }
   </script>
 </head>
@@ -42,12 +80,15 @@
       <h1><span class="prompt">museum@linux:~$</span> <span class="name">LINUX TERMINAL ACADEMY</span></h1>
       <p class="linux-academy-subtitle">LEARN LINUX BY BREAKING A COMPUTER YOU CANNOT ACTUALLY BREAK</p>
       <p class="museum-exhibit-summary">A safe place to learn how Linux fits together—one fictional system and eight guided labs.</p>
+      <p class="museum-exhibit-summary">Created by <a href="/about/">Dennis Hilk</a> as part of the Interactive Computer Museum.</p>
     </header>
 
     <main class="museum-exhibit-layout linux-academy-layout">
+      <section class="detail-card linux-academy-note" aria-labelledby="learn-linux-online-title"><h2 id="learn-linux-online-title">LEARN LINUX ONLINE IN A SAFE BROWSER LAB</h2><p>The Linux Terminal Academy teaches practical command-line habits through a fictional, resettable Linux environment. Work through terminal basics, filesystem navigation, permissions, process control, shell pipelines, administration and recovery without installing Linux or connecting to a real shell.</p></section>
+
       <section class="observer-notice museum-notice linux-academy-reassurance" aria-labelledby="real-computer-title">
         <h2 id="real-computer-title">YOUR COMPUTER STAYS UNTOUCHED.</h2>
-        <p>Every future exercise will run only in a fictional browser environment. No real shell, files, processes, services, network, or sudo access.</p>
+        <p>Every exercise runs only in a fictional browser environment. No real shell, files, processes, services, network, or sudo access.</p>
       </section>
 
       <aside class="linux-academy-graduation" aria-labelledby="graduation-challenge-title">
@@ -71,6 +112,8 @@
       </section>
 
       <section class="detail-card linux-academy-note linux-academy-command-context" aria-labelledby="command-context-title"><h2 id="command-context-title">YOU DON'T NEED TO LEARN 1,071 COMMANDS</h2><p>A real Debian server behind this museum currently exposes 1,071 unique terminal commands. You do not need to memorize them.</p><p>Linux is about learning how to navigate, inspect, combine small tools, read manuals, and troubleshoot. These eight labs teach exactly that.</p><p class="linux-academy-command-stats">8 LABS · ~40 CORE COMMANDS · 1,071 COMMANDS ON A REAL DEBIAN SERVER</p></section>
+
+      <section class="detail-card linux-academy-note" aria-labelledby="related-linux-title"><h2 id="related-linux-title">CONTINUE LEARNING IN THE MUSEUM</h2><p>After the guided labs, explore the <a href="/museum/failure-lab/">Linux Failure Lab</a> for troubleshooting practice, <a href="/museum/linux-game-install/">install software in the Linux package-management exhibit</a>, or visit <a href="/museum/home-computing-lab/">The Author's Computing Lab</a> to see the real Linux systems behind the museum.</p></section>
     </main>
   </div>
   <footer><div class="nebby-terminal-line"><picture>
