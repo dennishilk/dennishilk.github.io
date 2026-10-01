@@ -47,6 +47,13 @@
   });
 
   addPage("/museum/linux-terminal-academy/", {
+    title: "Linux online lernen – Linux Terminal Academy",
+    description: "Linux online in acht geführten Browser-Laboren lernen: Befehle, Dateien, Berechtigungen, Prozesse, Pipes, Systemadministration und Recovery – ohne den echten Computer zu verändern.",
+    text: {
+      "Created by Dennis Hilk as part of the Interactive Computer Museum.": "Erstellt von Dennis Hilk als Teil des Interaktiven Computer Museums.",
+      "LEARN LINUX ONLINE IN A SAFE BROWSER LAB": "LINUX ONLINE IN EINEM SICHEREN BROWSER-LABOR LERNEN",
+      "CONTINUE LEARNING IN THE MUSEUM": "IM MUSEUM WEITERLERNEN"
+    },
     html: {
       ".linux-academy-reassurance p": "Jede Übung läuft ausschließlich in einer fiktiven Browser-Umgebung. Kein Zugriff auf eine echte Shell, Dateien, Prozesse, Dienste, Netzwerk oder <code>sudo</code>.",
       ".linux-academy-graduation > div p": "Schließe die finale Recovery-Challenge in Lab 08 ab und du kannst ein druckbares Zertifikat der Linux Terminal Academy erhalten. Übe frei, nutze beim Lernen Hinweise und probiere es so oft du möchtest.",
@@ -62,9 +69,11 @@
       ".linux-lab-card:nth-child(6) p": "Verbinde einfache Werkzeuge zu nützlichen Abläufen und verfolge Daten durch eine Pipeline.",
       ".linux-lab-card:nth-child(7) p": "Lies Hinweise, diagnostiziere einen ausgefallenen fiktiven Dienst und stelle ihn sorgfältig wieder her.",
       ".linux-lab-card:nth-child(8) p": "Führe alle bisherigen Ideen in einer zurücksetzbaren, zusammenhängenden Recovery-Challenge zusammen.",
-      ".linux-academy-note p:nth-of-type(1)": "Ein echter Debian-Server hinter diesem Museum stellt derzeit 1.071 unterschiedliche Terminalbefehle bereit. Du musst sie nicht auswendig lernen.",
-      ".linux-academy-note p:nth-of-type(2)": "Bei Linux geht es darum, navigieren und prüfen zu lernen, kleine Werkzeuge zu kombinieren, Handbücher zu lesen und Fehler zu suchen. Genau das vermitteln diese acht Labore.",
-      ".linux-academy-command-stats": "8 LABORE · ~40 KERNBEFEHLE · 1.071 BEFEHLE AUF EINEM ECHTEN DEBIAN-SERVER"
+      ".linux-academy-command-context p:nth-of-type(1)": "Ein echter Debian-Server hinter diesem Museum stellt derzeit 1.071 unterschiedliche Terminalbefehle bereit. Du musst sie nicht auswendig lernen.",
+      ".linux-academy-command-context p:nth-of-type(2)": "Bei Linux geht es darum, navigieren und prüfen zu lernen, kleine Werkzeuge zu kombinieren, Handbücher zu lesen und Fehler zu suchen. Genau das vermitteln diese acht Labore.",
+      ".linux-academy-command-stats": "8 LABORE · ~40 KERNBEFEHLE · 1.071 BEFEHLE AUF EINEM ECHTEN DEBIAN-SERVER",
+      "[aria-labelledby=\"learn-linux-online-title\"] p": "Die Linux Terminal Academy vermittelt praktische Gewohnheiten für die Kommandozeile in einer fiktiven, jederzeit zurücksetzbaren Linux-Umgebung. Übe Terminal-Grundlagen, Navigation im Dateisystem, Berechtigungen, Prozesskontrolle, Shell-Pipelines, Administration und Wiederherstellung — ohne Linux zu installieren oder eine echte Shell zu öffnen.",
+      "[aria-labelledby=\"related-linux-title\"] p": "Nach den geführten Laboren kannst du im <a href=\"/museum/failure-lab/\">Linux Failure Lab</a> die Fehlersuche üben, im <a href=\"/museum/linux-game-install/\">Linux-Paketmanagement-Exponat Software installieren</a> oder im <a href=\"/museum/home-computing-lab/\">Computing-Labor des Autors</a> die echten Linux-Systeme hinter dem Museum ansehen."
     }
   });
 
