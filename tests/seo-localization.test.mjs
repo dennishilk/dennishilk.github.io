@@ -87,7 +87,7 @@ test("core landing hubs carry descriptive static search metadata", () => {
     ["world-observer.html", /Public Data on Internet, Environment, Society &amp; Technology/, /long-term public-data observations/],
     ["world-observer/internet.html", /DNS, IPv6, Reachability &amp; Network Infrastructure/, /mail infrastructure, TLS, routes and undersea cable context/],
     ["world-observer/technology.html", /Linux, Software Ecosystems, Time &amp; Satellites/, /kernel archives, reference time/],
-    ["museum/index.html", /Interactive Computer Museum – C64 BASIC, Modems, BBS &amp; Retro Computing/, /acoustic couplers, dial-up modems, BBS systems/],
+    ["museum/index.html", /Interactive Computer Museum – Apollo DSKY, Linux Labs &amp; Retro Computing/, /Apollo DSKY recreation, Linux learning labs/],
   ];
   for (const [path, title, description] of pages) {
     const page = read(path);
@@ -105,7 +105,7 @@ test("sitewide SEO metadata replaces generic implementation-oriented hub copy", 
     "DNS, IPv6, Reachability & Network Infrastructure",
     "Linux, Software Ecosystems, Time & Satellites",
     "Wiesmoor Public Data Observer",
-    "Interactive Computer Museum – C64 BASIC, Modems, BBS & Retro Computing",
+    "Interactive Computer Museum – Apollo DSKY, Linux Labs & Retro Computing",
     "Wiesmoor, Germany – History of a Peat & Flower Town",
   ]) assert.ok(seoRuntime.includes(phrase), `missing SEO metadata phrase: ${phrase}`);
 
@@ -119,6 +119,10 @@ test("SEO runtime supplies safe robots enrichment, reciprocal hreflang and Bread
   assert.match(seoRuntime, /hreflang/);
   assert.match(seoRuntime, /BreadcrumbList/);
   assert.match(seoRuntime, /seo-breadcrumb-jsonld/);
+  assert.match(seoRuntime, /normalizedMuseumPath/);
+  assert.match(seoRuntime, /addMuseumWebPageSchema/);
+  assert.match(seoRuntime, /Dennis Hilk Computer Museum/);
+  assert.match(seoRuntime, /https:\/\/www\.dennishilk\.com\/#dennis-hilk/);
 });
 
 test("Space German metadata is natural in static HTML and runtime", () => {
