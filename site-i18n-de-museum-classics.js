@@ -147,6 +147,10 @@
   addPage("/museum/apollo-dsky/", {
     title: "Apollo DSKY interaktiv – Apollo Guidance Computer | Computermuseum",
     description: "Interaktive Browser-Nachbildung des Apollo DSKY – der Display-and-Keyboard-Schnittstelle, mit der Astronauten über VERB- und NOUN-Codes mit dem Apollo Guidance Computer arbeiteten.",
+    html: {
+      ".museum-creator-note": "Erstellt von <a href=\"/about/\">Dennis Hilk</a> als Teil des Interaktiven Computer Museums.",
+      ".museum-related-exhibits p": "Erkunde das Museum weiter im <a href=\"/museum/unix-time-sharing-center/\">UNIX Time Sharing Center</a>, im <a href=\"/museum/c64/\">Commodore 64 Programming Lab</a> oder am <a href=\"/museum/ibm-pc-xt/\">PC XT Command Desk</a>."
+    },
     text: {
       "Created by Dennis Hilk as part of the Interactive Computer Museum.": "Erstellt von Dennis Hilk als Teil des Interaktiven Computer Museums.",
       "Enter two-digit VERB codes for actions and NOUN codes for the data or object involved.": "Gib zweistellige VERB-Codes für Aktionen und NOUN-Codes für die beteiligten Daten oder Objekte ein.",
