@@ -50,6 +50,10 @@
       description: "Explore an interactive computer museum with an Apollo DSKY recreation, Linux learning labs, C64 BASIC, BBS, modem, DOS, UNIX and real computing systems.",
     },
 
+    "/museum/debian-server-experiment/": {
+      title: "Try a Debian Server in Your Browser – Interactive Linux Simulation",
+      description: "Explore a safe browser-based Debian-style Linux system with shell commands, a consistent fictional filesystem and anonymous aggregate exploration statistics.",
+    },
     "/museum/crt-remote-terminal/": {
       title: "CRT Remote Terminal Simulator – Classic Remote Computing | Computer Museum",
       description: "Use a browser-based CRT terminal recreation to explore text terminals, remote hosts and the command-line interaction model of 1970s and 1980s computing.",
