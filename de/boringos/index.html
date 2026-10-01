@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BoringOS 0.0.62-dev — Physischer Low-Latency-Cursor auf Cthulhu</title>
-<meta name="description" content="BoringOS ist ein eigenständiges x86_64-Desktop-Betriebssystem in C. Auf Cthulhu sind Multi-xHCI, echter USB-Hub, ROCCAT-Maus und jetzt auch ein physisch flüssiger Low-Latency-Cursor samt Pointer-Fokus bewiesen.">
+<title>BoringOS – Eigenes x86_64-Betriebssystem von Grund auf in C</title>
+<meta name="description" content="BoringOS ist ein eigenständiges x86_64-Desktop-Betriebssystem von Grund auf in C mit eigenem Kernel, BoringFS, BoringWM und nativem Userspace. M68 läuft physisch mit 1920×1080.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="#020405">
 <link rel="canonical" href="https://www.dennishilk.com/de/boringos/">
@@ -14,17 +14,153 @@
 
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="BoringOS 0.0.62-dev — Cursor und Pointer-Fokus physisch flüssig">
-<meta property="og:description" content="Eigener Kernel und Ring3-Desktop: Auf Cthulhu ist der native USB-Mauspfad jetzt bis zum flüssigen Software-Cursor und nicht blockierenden Pointer-Fokus physisch bewiesen.">
+<meta property="og:title" content="BoringOS – x86_64-Betriebssystem von Grund auf in C">
+<meta property="og:description" content="Eigenständiges x86_64-Desktop-OS in C mit eigenem Kernel, Dateisystem, nativem Userspace und BoringWM. M68 ist auf Cthulhu physisch mit 1920×1080 bewiesen.">
 <meta property="og:url" content="https://www.dennishilk.com/de/boringos/">
 <meta property="og:image" content="https://www.dennishilk.com/boringos/boringos-boringfetch-preview.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="BoringOS 0.0.62-dev">
-<meta name="twitter:description" content="Physisch auf Cthulhu: Multi-xHCI, echter USB-Hub und ein Low-Latency-Cursor, der auch beim Fensterfokus nicht mehr an der Grenze stehen bleibt.">
+<meta name="twitter:title" content="BoringOS – Betriebssystem von Grund auf in C">
+<meta name="twitter:description" content="Eigenständiges x86_64-Betriebssystem mit BoringKernel, BoringFS, nativem C-Userspace und BoringWM. Physisch mit 1920×1080 getestet.">
 <meta name="twitter:image" content="https://www.dennishilk.com/boringos/boringos-boringfetch-preview.webp">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="stylesheet" href="/boringos/boringos.css?v=3">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BoringOS","description":"Eigenständiges experimentelles x86_64-Desktop-Betriebssystem mit eigenem Kernel, nativem C-Userspace, BoringFS, BoringWM, physischem Multi-xHCI-USB, Hub-Enumeration, echter Maus und physisch bewiesenem Low-Latency-Cursor-/Fokuspfad.","url":"https://www.dennishilk.com/de/boringos/","codeRepository":"https://github.com/dennishilk/boringos","programmingLanguage":"C","runtimePlatform":"x86_64 / QEMU / physischer PC","softwareVersion":"0.0.62-dev","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"inLanguage":"de"}</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://www.dennishilk.com/de/boringos/#source",
+      "name": "BoringOS",
+      "description": "BoringOS ist ein eigenständiges x86_64-Desktop-Betriebssystem von Grund auf in C mit BoringKernel, BoringFS, BoringWM und nativem Userspace.",
+      "url": "https://www.dennishilk.com/de/boringos/",
+      "codeRepository": "https://github.com/dennishilk/boringos",
+      "programmingLanguage": [
+        "C",
+        "x86_64 Assembly"
+      ],
+      "runtimePlatform": "x86_64 / QEMU / physical PC",
+      "softwareVersion": "0.0.62-dev",
+      "license": "https://opensource.org/license/mit",
+      "creator": {
+        "@id": "https://www.dennishilk.com/#dennis-hilk"
+      },
+      "inLanguage": "de",
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Operating system development"
+        },
+        {
+          "@type": "Thing",
+          "name": "x86_64"
+        },
+        {
+          "@type": "Thing",
+          "name": "Systems programming"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.dennishilk.com/de/boringos/#webpage",
+      "url": "https://www.dennishilk.com/de/boringos/",
+      "name": "BoringOS – Eigenes x86_64-Betriebssystem von Grund auf in C",
+      "description": "BoringOS ist ein eigenständiges x86_64-Desktop-Betriebssystem von Grund auf in C mit BoringKernel, BoringFS, BoringWM und nativem Userspace.",
+      "inLanguage": "de",
+      "isPartOf": {
+        "@id": "https://www.dennishilk.com/#website"
+      },
+      "mainEntity": {
+        "@id": "https://www.dennishilk.com/de/boringos/#source"
+      },
+      "creator": {
+        "@id": "https://www.dennishilk.com/#dennis-hilk"
+      },
+      "breadcrumb": {
+        "@id": "https://www.dennishilk.com/de/boringos/#breadcrumb"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.dennishilk.com/#dennis-hilk",
+      "name": "Dennis Hilk",
+      "url": "https://www.dennishilk.com/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.dennishilk.com/de/boringos/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Dennis Hilk – Startseite",
+          "item": "https://www.dennishilk.com/de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "BoringOS"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.dennishilk.com/de/boringos/#faq-schema",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Ist BoringOS Linux?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein. BoringOS ist keine Linux-Distribution und verwendet keinen Linux-Kernel. Es besitzt mit BoringKernel einen eigenen Kernel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Basiert BoringOS auf BSD?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein. BoringOS ist weder BSD noch ein Wrapper um einen anderen Betriebssystem-Kernel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "In welcher Sprache ist BoringOS geschrieben?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Die BoringOS-eigenen Systemkomponenten sind hauptsächlich in C geschrieben. Kleine isolierte Teile verwenden x86_64-Assembler, wenn die Architektur es erfordert."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Hat BoringOS einen eigenen Kernel und ein eigenes Dateisystem?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Der Kernel heißt BoringKernel und das eigene schreibbare Dateisystem BoringFS. Der Desktop verwendet außerdem den eigenen Display-Service und BoringWM."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Läuft BoringOS auf echter Hardware?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. BoringOS ist auf der physischen Cthulhu-Workstation getestet. M68 lief dort mit einem softwaregerenderten 1920×1080-Desktop, echter USB-Tastatur und Maus."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ist BoringOS schon ein Ersatz für Windows, Linux oder macOS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein. BoringOS ist ein experimentelles unabhängiges Betriebssystemprojekt. Es dokumentiert bewusst seine aktuellen Grenzen, statt noch nicht vorhandene Alltagstauglichkeit zu behaupten."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 
 <style>
 .hero-current{display:block;min-height:auto;padding:clamp(4rem,8vw,7rem) 0 3rem}
@@ -53,28 +189,38 @@
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
 <header class="shell-topbar">
 <a class="brand" href="/de/"><span class="brand-mark">boring&gt;</span><span>BoringOS <small>eigenständiges Systemprojekt</small></span></a>
-<nav class="topnav"><a href="#physical">Physisch</a><a href="#desktop">Desktop</a><a href="#usb">USB</a><a href="#graphics">Grafik</a><a href="#roadmap">Roadmap</a><span class="lang-switch"><a href="/boringos/">EN</a><a href="/de/boringos/" aria-current="page">DE</a></span></nav>
+<nav class="topnav"><a href="#from-scratch">Von Grund auf</a><a href="#physical">Physisch</a><a href="#desktop">Desktop</a><a href="#graphics">Grafik</a><a href="#roadmap">Roadmap</a><span class="lang-switch"><a href="/boringos/">EN</a><a href="/de/boringos/" aria-current="page">DE</a></span></nav>
 </header>
 <main id="main" class="page">
 
 <section class="hero hero-current">
 <div class="hero-copy">
-<div class="eyebrow">BoringKernel 0.0.62-dev · x86_64 · C · PHYSICAL LOW-LATENCY CURSOR</div>
+<div class="eyebrow">BoringKernel 0.0.62-dev · x86_64 · C · M68 PHYSICAL 1920×1080 DESKTOP</div>
 <h1>Boring<span>OS</span></h1>
-<p>Ein eigenständiges Desktop-Betriebssystem von Grund auf — kein Linux, kein BSD und kein Wrapper um einen fremden Kernel. BoringOS bootet auf Cthulhu mit unabhängig verwalteten xHCI-Controllern, enumeriert den echten Genesys-Logic-USB-Hub und verarbeitet die echte ROCCAT-Maus bis in BoringWM. Der Cursor ist jetzt nicht nur physisch funktionsfähig, sondern reagiert auch bei schneller Bewegung und beim Überqueren von Fenstergrenzen so direkt wie der Sway-Desktop auf derselben Maschine. Der bewiesene BoringFS-/Reboot-/ACPI-S5-Lifecycle bleibt erhalten.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
-<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Quellcode auf GitHub</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/mouse-present-latency-physical-2026-09-10">Physical Cursor Freeze</a><a class="btn" href="#roadmap">Wie es weitergeht</a></div>
-<ul class="status-chips"><li><strong>PHYSICAL</strong> Multi-xHCI</li><li><strong>PHYSICAL</strong> Genesys-USB-Hub</li><li><strong>PHYSICAL</strong> ROCCAT-Maus</li><li><strong>PHYSICAL</strong> Low-Latency-Cursor</li><li><strong>PHYSICAL</strong> Pointer-Fokus</li><li><strong>LIVE</strong> persistentes BoringFS</li><li><strong>LIVE</strong> Reboot + ACPI S5</li></ul>
-<p class="hero-note">Der exakte physisch abgenommene Cursor-/Fokus-Stand ist <code>c5ded88e3d473162b94f963d9509394246ef782c</code>, TREE <code>8a8c01fa61670f8085d8259c7635072d7317f36e</code>. Das 96-MiB-Testimage aus Artifact <code>10154738768</code> hat SHA-256 <code>6ac9e6096849ea4e906f0c70a322a8599de163bec34499bdd8794f6b202ce26f</code>. Auf Cthulhu läuft der Zeiger bei kontinuierlichem Kreuzen zwischen Fenstern ohne den früheren Fokus-„Wand“-Stall weiter.</p>
+<p>Ein eigenständiges x86_64-Desktop-Betriebssystem von Grund auf in C — kein Linux, kein BSD und kein Wrapper um einen fremden Kernel. BoringOS besitzt mit BoringKernel einen eigenen Kernel, das schreibbare BoringFS, einen nativen Ring-3-Userspace, einen eigenen Display-Service und BoringWM. Der aktuelle physische M68-Stand bootet diesen Stack auf Cthulhu mit 1920×1080, echter USB-Tastatur und Maus, begrenztem Display-Damage-Present und dem bewiesenen persistenten USB-Root-Lifecycle.<span class="motto">boring is not a bug. it's the entire operating system now.</span></p>
+<div class="hero-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Quellcode auf GitHub</a><a class="btn" href="https://github.com/dennishilk/boringos/commit/7a9594508bc02b6a5c8d5d13c2ed5c858c9cb54e">M68 Physical Commit</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.de.md">Aktuelle README</a></div>
+<ul class="status-chips"><li><strong>PHYSICAL</strong> 1920×1080 Desktop</li><li><strong>PHYSICAL</strong> Multi-xHCI + USB-Hub</li><li><strong>PHYSICAL</strong> Tastatur + Maus</li><li><strong>LIVE</strong> begrenzter Display-Damage</li><li><strong>LIVE</strong> persistentes BoringFS</li><li><strong>LIVE</strong> Reboot + ACPI S5</li></ul>
+<p class="hero-note">Die physisch abgenommene M68-Referenz mit 1920×1080 ist Commit <code>7a9594508bc02b6a5c8d5d13c2ed5c858c9cb54e</code>. Der frühere physisch abgenommene Low-Latency-Cursor-/Fokuspfad ist <code>c5ded88e3d473162b94f963d9509394246ef782c</code>. Die Entwicklung läuft auf <code>main</code>; physische Checkpoints bleiben über ihre exakten Commits nachvollziehbar.</p>
 </div>
-<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="BoringOS grafisches Terminal mit boringfetch"></a><figcaption><strong>BoringTerminal + boringfetch.</strong> Das Bild ist ein älterer QEMU-Screenshot; der komplette Desktop-Stack ist inzwischen physisch auf Cthulhu mit echtem Multi-xHCI, Genesys-Hub, Downstream-ROCCAT-Maus und dem Low-Latency-Cursor-/Fokuspfad bewiesen. <span class="image-note">Physical Cursor/Focus Validation: 10.09.2026.</span></figcaption></figure>
+<figure class="hero-proof-current"><a href="/boringos/boringos-boringfetch-preview.webp" target="_blank" rel="noopener"><img src="/boringos/boringos-boringfetch-preview.webp" width="812" height="638" alt="Nativer BoringOS-Desktop mit BoringTerminal und boringfetch"></a><figcaption><strong>BoringTerminal + boringfetch.</strong> Das Bild ist ein älterer QEMU-Screenshot. Der aktuelle physische M68-Stand ist auf Cthulhu mit 1920×1080, nativem BoringWM-Desktop, echter USB-Eingabe und begrenztem Display-Damage-Present bewiesen. <span class="image-note">M68 Physical Validation: 16.09.2026.</span></figcaption></figure>
+</section>
+
+<section id="from-scratch" class="section">
+<div class="section-heading"><div><div class="kicker">Von Grund auf</div><h2>Was macht BoringOS zu einem eigenständigen Betriebssystem?</h2></div><p>BoringOS ist keine Linux-Distribution, keine BSD-Variante und keine Desktop-Shell auf einem fremden OS. Limine startet das System, aber Kernel, Userspace, Dateisystem und Desktop-Stack sind BoringOS-Komponenten.</p></div>
+<div class="principles">
+<article class="principle"><h3>BoringKernel</h3><p>Der eigene x86_64-Kernel stellt Speicherverwaltung, Scheduling, Prozessadressräume, Ring 3, Syscalls, ELF64-Userspace, IPC und hardwarenahe Subsysteme bereit.</p></article>
+<article class="principle"><h3>BoringFS</h3><p>Das eigene schreibbare Dateisystem besitzt Formatter, Validator, <code>boringfsck</code>, Kernel-Mount-Support und einen physisch bewiesenen persistenten USB-Root-Lifecycle.</p></article>
+<article class="principle"><h3>Nativer C-Userspace</h3><p><code>boring-init</code>, <code>boring-display</code>, Shell, PTYs und native Anwendungen laufen auf BoringOS-eigenen Syscall- und VFS-Schichten statt auf einem Linux- oder BSD-Userspace.</p></article>
+<article class="principle"><h3>BoringWM-Desktop</h3><p>Display-Service und BoringWM komponieren den Desktop selbst. BoringTerminal, BoringEdit und BoringFiles laufen ohne X11 oder Wayland darunter.</p></article>
+</div>
 </section>
 
 <section id="physical" class="section">
-<div class="section-heading"><div><div class="kicker">01 · Physischer Beweis</div><h2>Der Desktop läuft auf Cthulhu — und die Maus fühlt sich jetzt auch so an.</h2></div><p>Der physische Nachweis endet nicht mehr bei „Maus bewegt Cursor“. Der native Pfad bleibt unter kontinuierlicher Bewegung direkt; auch ein Pointer-Fokuswechsel blockiert die folgende Bewegung nicht mehr synchron.</p></div>
+<div class="section-heading"><div><div class="kicker">01 · Physischer Beweis</div><h2>Der von Grund auf gebaute Desktop läuft physisch mit 1920×1080.</h2></div><p>M68 bootet den nativen BoringWM-Desktop auf Cthulhu physisch mit 1920×1080. Die frühere M66-USB/HID-Basis bleibt vollständig erhalten, einschließlich echtem Hub, Tastatur und Downstream-Maus.</p></div>
 <div class="fact-grid">
 <article class="fact-card"><span class="fact-index">HW</span><h3>Cthulhu</h3><p>AMD Ryzen 7 5800X3D, Gigabyte B550 VISION D, 32 GiB installierter Speicher per SMBIOS erkannt und 57 PCI-Geräte in <code>boringfetch</code>.</p></article>
-<article class="fact-card"><span class="fact-index">PTR</span><h3>Cursor ohne Nachziehen</h3><p>Normale Mausbewegung restauriert und präsentiert nur die alten/neuen 6×12-Cursorregionen. Physisch reagiert der Zeiger jetzt so direkt wie unter Sway auf Cthulhu.</p></article>
-<article class="fact-card"><span class="fact-index">FOC</span><h3>Fokus ohne „Wand“</h3><p>Pointer-Input wird vor der Fokusarbeit bestätigt. Reine Fokuswechsel vermeiden unveränderte Client-<code>CONFIGURE</code>-Roundtrips; der begrenzte Rahmen-Paint läuft erst bei freier Input-/IPC-Queue.</p></article>
+<article class="fact-card"><span class="fact-index">1080</span><h3>1920×1080 physischer Desktop</h3><p>M68 beweist die Firmware-/Limine-Framebuffer-Anforderung mit 1920×1080×32 auf der echten Maschine; BoringWM, Tastatur und Maus funktionieren dabei.</p></article>
+<article class="fact-card"><span class="fact-index">PTR</span><h3>Direkter Maus-/Fokuspfad</h3><p>Der physisch abgenommene Low-Latency-Pfad präsentiert kleine Cursor-/Fokusregionen, sodass kontinuierliche Mausbewegung auch beim Wechsel zwischen Fenstern direkt bleibt.</p></article>
 </div>
 </section>
 
@@ -99,12 +245,12 @@
 </section>
 
 <section id="graphics" class="section">
-<div class="section-heading"><div><div class="kicker">04 · Grafik</div><h2>Software-Rendering — aber Mausbewegung präsentiert nicht mehr den ganzen Bildschirm.</h2></div><p>BoringOS komponiert den Desktop weiterhin auf der CPU und nutzt den Firmware-/Limine-Framebuffer. Der neue schmale Present-Pfad reduziert nur die tatsächlich für Cursor und reinen Fokus geänderten Regionen.</p></div>
+<div class="section-heading"><div><div class="kicker">04 · Grafik</div><h2>1920×1080 ist physisch bewiesen; gerendert wird weiterhin vollständig in Software.</h2></div><p>BoringOS komponiert den Desktop auf der CPU und präsentiert in einen Firmware-/Limine-Framebuffer. M68 ergänzt begrenzten Client- und Layout-Damage und behält die schnellen Cursor-/Fokuspfade. Einen nativen AMD/NVIDIA/Intel-GPU-Treiber gibt es weiterhin nicht.</p></div>
 <div class="usb-ladder">
-<div class="usb-step"><small>JETZT</small><strong>800×600 Framebuffer</strong><span>Der aktuelle physische GOP-/Firmware-Modus ist 800×600×32 mit Pitch 3328.</span></div>
-<div class="usb-step"><small>PHYSICAL</small><strong>Cursor-Regionen</strong><span>Statt 480.000 Pixeln pro Bewegung werden bei vollständig sichtbarem Cursor höchstens zwei 6×12-Regionen präsentiert.</span></div>
-<div class="usb-step"><small>PHYSICAL</small><strong>Fokus deferred</strong><span>Im inputkritischen Fokuspfad gibt es 0 synchrone Scanout-Presents. Border-Regionen werden bei freier Queue nachgezogen und schnelle Wechsel zusammengefasst.</span></div>
-<div class="usb-step"><small>NÄCHSTES</small><strong>Besserer GOP-Modus</strong><span>Als nächster sichtbarer Schritt soll BoringOS über den aktuellen 800×600-Firmware-Modus hinauskommen, ohne schon einen Vendor-GPU-Treiber zu bauen.</span></div>
+<div class="usb-step"><small>PHYSICAL</small><strong>1920×1080×32</strong><span>Der M68-Boot-Eintrag ist auf Cthulhu physisch mit 1920×1080 bewiesen; 800×600 bleibt als auswählbarer Fallback erhalten.</span></div>
+<div class="usb-step"><small>LIVE</small><strong>Begrenzter Damage</strong><span>Client-Schäden und geänderte Fensterlayout-Regionen können komponiert und präsentiert werden, ohne immer den gesamten Framebuffer neu zu zeichnen.</span></div>
+<div class="usb-step"><small>LIVE</small><strong>Schneller Cursor + Fokus</strong><span>Cursorbewegung und Fokusrahmen behalten die früher physisch bewiesenen begrenzten Low-Latency-Present-Pfade.</span></div>
+<div class="usb-step"><small>SPÄTER</small><strong>Nativer GPU-Treiber</strong><span>Native Modesets, VRAM/GTT und GPU-Command-Submission bleiben bewusst spätere Arbeit.</span></div>
 </div>
 </section>
 
@@ -118,31 +264,41 @@
 </section>
 
 <section id="roadmap" class="section">
-<div class="section-heading"><div><div class="kicker">06 · Nach M66</div><h2>Die Maus ist jetzt physisch flüssig. Als Nächstes: bessere Auflösung.</h2></div><p>USB/HID bleibt eingefroren. Der schmale Cursor-/Fokus-Present-Pfad ist physisch abgenommen; Typematic und deutsches Tastaturlayout sind bewusst geparktes Input-Polish.</p></div>
-<div class="roadmap-overview"><div class="roadmap-stat"><strong>M66</strong><span>physische USB/HID-Basis</span></div><div class="roadmap-stat"><strong>10.09.</strong><span>Low-Latency-Cursor physisch abgenommen</span></div><div class="roadmap-stat"><strong>800×600</strong><span>nächste sichtbare Grenze</span></div></div>
+<div class="section-heading"><div><div class="kicker">06 · Nach M68</div><h2>Höhere Auflösung und begrenzter Display-Damage sind bewiesen. Jetzt wird das System breiter.</h2></div><p>M61–M66 etablierten Desktop, Persistenz und USB/HID. Der Cursor-/Fokus-Fix machte den Pointer physisch direkt, und M68 ergänzt einen physisch getesteten 1920×1080-Desktop sowie begrenzten Client-/Layout-Damage.</p></div>
+<div class="roadmap-overview"><div class="roadmap-stat"><strong>M68</strong><span>aktueller physischer Desktop-Meilenstein</span></div><div class="roadmap-stat"><strong>1920×1080</strong><span>physisch auf Cthulhu getestet</span></div><div class="roadmap-stat"><strong>BOUNDED DAMAGE</strong><span>Client + Layout Present</span></div></div>
 <div class="roadmap">
-<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M61 · Physischer Desktop</h3><p>USB-Root-Boot, echter BoringWM, Tastatur, native Apps und persistenter leerer Desktop.</p></div><span class="stage-status">FERTIG</span></div></article>
-<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M62 · Dynamische Prozess-/Task-Kapazität</h3><p>Dynamische Runtime-Objekte, 64/64 Policy-Grenzen und physischer Multi-App-Churn weit über der alten festen Grenze.</p></div><span class="stage-status">FERTIG</span></div></article>
-<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M63 · Persistenter Power-Lifecycle</h3><p>Dauerhafte USB-Writes, echter Reboot, zweiter Boot mit intakten Daten und echter ACPI-S5-Shutdown.</p></div><span class="stage-status">EINGEFROREN</span></div></article>
-<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M64–M66 · Multi-xHCI + Hub + physische Maus</h3><p>Unabhängige Controller, echter Genesys-Hub und die echte ROCCAT-Maus bis zu Cursorbewegung und Pointer-Fokus.</p></div><span class="stage-status">EINGEFROREN</span></div></article>
-<article class="roadmap-stage complete"><div class="stage-head"><div><h3>Cursor-/Fokus-Latenz · physischer Cthulhu-Fix</h3><p>Cursor-only Region-Presents, input-first Fokus-ACK, atomarer Fokus-RPC und deferred/coalesced Border-Paints. Physisch jetzt so flüssig wie Sway auf Cthulhu.</p></div><span class="stage-status">PHYSICAL PASS</span></div></article>
-<article class="roadmap-stage next"><div class="stage-head"><div><h3>Nächstes · bessere GOP-Auflösung</h3><p>Über den aktuellen 800×600-Firmware-Framebuffer hinausgehen und den bewiesenen Software-Desktop samt schnellem Cursor beibehalten.</p></div><span class="stage-status">NÄCHSTES</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>Danach · breiteres Damage/Present + 32 GiB</h3><p>Den jetzt bewiesenen schmalen Region-Pfad später verallgemeinern und Cthulhus installierte 32 GiB physisch sinnvoller nutzbar machen.</p></div><span class="stage-status">GEPLANT</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>Geparkt · Typematic + DE-Tastaturlayout</h3><p>Gehaltene Tasten wiederholen auf echter USB-Hardware noch nicht zuverlässig; die aktuelle Belegung ist praktisch ENG/US. Beides bleibt separates Input-Polish.</p></div><span class="stage-status">SPÄTER</span></div></article>
-<article class="roadmap-stage future"><div class="stage-head"><div><h3>Später · Netzwerk, NVMe, Audio, SMP, nativer AMD-Treiber</h3><p>Die großen Systemblöcke bleiben bewusst nach den aktuellen Desktop-/Hardware-Basics.</p></div><span class="stage-status">SPÄTER</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M61–M63 · Desktop, Kapazität und Persistenz</h3><p>Nativer Ring-3-Desktop, dynamische Prozess-/Task-Objekte, schreibbare USB-Root-Persistenz, echter Reboot und ACPI-S5-Shutdown.</p></div><span class="stage-status">FERTIG</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M64–M66 · Multi-xHCI + Hub + physische Maus</h3><p>Unabhängige USB-Controller, echte Genesys-Hub-Enumeration und Downstream-ROCCAT-Maus bis in BoringWM.</p></div><span class="stage-status">FERTIG</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>Cursor-/Fokus-Latenz · physischer Cthulhu-Fix</h3><p>Begrenzte Cursor-Presents, input-first Fokusbehandlung und deferred/coalesced Border-Paints beseitigten die beobachteten Pointer-Stalls.</p></div><span class="stage-status">PHYSICAL PASS</span></div></article>
+<article class="roadmap-stage complete"><div class="stage-head"><div><h3>M68 · 1920×1080 + begrenzter Display-Damage</h3><p>Höhere Firmware-Framebuffer-Auflösung plus begrenzte Client-/Layout-Komposition und -Präsentation, physisch auf Cthulhu getestet.</p></div><span class="stage-status">PHYSICAL PASS</span></div></article>
+<article class="roadmap-stage next"><div class="stage-head"><div><h3>Nächstes · breitere Software-Grafik und Speichernutzung</h3><p>Weitere vermeidbare Full-Frame-Arbeit reduzieren und Cthulhus installierte 32 GiB praktischer nutzen, ohne den bewiesenen Desktop zu schwächen.</p></div><span class="stage-status">NÄCHSTES</span></div></article>
+<article class="roadmap-stage future"><div class="stage-head"><div><h3>Geparktes Input-Polish · Typematic + DE-Layout</h3><p>Held-key repeat und ein richtiges deutsches Tastaturlayout bleiben separates Input-Polish statt Blocker der aktuellen Desktop-Basis.</p></div><span class="stage-status">SPÄTER</span></div></article>
+<article class="roadmap-stage future"><div class="stage-head"><div><h3>Später · Netzwerk, NVMe, Audio, SMP und nativer GPU-Support</h3><p>Diese größeren Systembereiche liegen weiterhin hinter der aktuell physisch bewiesenen Desktop- und Storage-Basis.</p></div><span class="stage-status">SPÄTER</span></div></article>
 </div>
 </section>
 
 <section class="section">
 <div class="section-heading"><div><div class="kicker">07 · Aktuelle Grenzen</div><h2>Die verbliebenen Ecken sind klar abgegrenzt.</h2></div><p>Die echte Maschine liefert inzwischen einen stabilen Desktop-Baseline-Test und macht die nächsten Baustellen sehr konkret.</p></div>
-<div class="principles"><article class="principle"><h3>Tastatur</h3><p>Gehaltene USB-Tasten wiederholen noch nicht zuverlässig typematisch; außerdem ist die aktuelle Belegung praktisch ENG/US statt eines fertigen DE-Layouts.</p></article><article class="principle"><h3>Grafik</h3><p>Der Cursor-/Fokuspfad ist schnell, aber allgemeine Scene-/Layout-/Client-Änderungen nutzen weiterhin Software-Komposition und Full-Present. Die physische Auflösung bleibt 800×600.</p></article><article class="principle"><h3>Speicher</h3><p>Cthulhu besitzt 32 GiB RAM und BoringOS erkennt sie per SMBIOS; die vollständige praktische Nutzung dieser Kapazität ist noch zukünftige Arbeit.</p></article><article class="principle"><h3>Systembreite</h3><p>Noch kein Netzwerk, Audio, NVMe oder SMP-Runtime und kein nativer GPU-Treiber. BoringOS behauptet nur Support, der tatsächlich implementiert und getestet ist.</p></article></div>
+<div class="principles"><article class="principle"><h3>Tastatur</h3><p>Gehaltene USB-Tasten wiederholen noch nicht zuverlässig typematisch; außerdem ist die aktuelle Belegung praktisch ENG/US statt eines fertigen DE-Layouts.</p></article><article class="principle"><h3>Grafik</h3><p>1920×1080 ist physisch getestet, mehrere Fenster können dort aber weiterhin spürbar fordernd sein. Native 3440×1440 und GPU-Beschleunigung sind nicht implementiert.</p></article><article class="principle"><h3>Speicher</h3><p>Cthulhu besitzt 32 GiB RAM und BoringOS erkennt sie per SMBIOS; die vollständige praktische Nutzung dieser Kapazität ist noch zukünftige Arbeit.</p></article><article class="principle"><h3>Systembreite</h3><p>Noch kein Netzwerk, Audio, NVMe oder SMP-Runtime und kein nativer GPU-Treiber. BoringOS behauptet nur Support, der tatsächlich implementiert und getestet ist.</p></article></div>
+</section>
+
+<section id="faq" class="section">
+<div class="section-heading"><div><div class="kicker">FAQ · Eigenständiges OS</div><h2>BoringOS ohne Umwege erklärt.</h2></div><p>Die kurzen Antworten auf die Fragen, die bei einem Hobby-Betriebssystem mit eigenem Kernel und Desktop fast immer zuerst kommen.</p></div>
+<div class="principles">
+<article class="principle"><h3>Ist BoringOS Linux?</h3><p>Nein. BoringOS ist keine Linux-Distribution und verwendet keinen Linux-Kernel. Es besitzt mit BoringKernel einen eigenen x86_64-Kernel.</p></article>
+<article class="principle"><h3>Basiert BoringOS auf BSD?</h3><p>Nein. Es ist weder BSD noch ein Wrapper um einen anderen Betriebssystem-Kernel.</p></article>
+<article class="principle"><h3>In welcher Sprache ist BoringOS geschrieben?</h3><p>Die BoringOS-eigenen Systemkomponenten sind hauptsächlich in C geschrieben; kleine isolierte Teile verwenden x86_64-Assembler, wenn die Architektur es erfordert.</p></article>
+<article class="principle"><h3>Hat es einen eigenen Kernel und ein eigenes Dateisystem?</h3><p>Ja. BoringKernel bildet die Kernel-Basis und BoringFS ist das schreibbare native Dateisystem des physischen USB-Root-Systems.</p></article>
+<article class="principle"><h3>Läuft BoringOS auf echter Hardware?</h3><p>Ja. Es wird physisch auf Cthulhu getestet; M68 lief dort mit nativem softwaregerendertem 1920×1080-Desktop sowie echter USB-Tastatur und Maus.</p></article>
+<article class="principle"><h3>Ist es ein Ersatz für Windows, Linux oder macOS?</h3><p>Heute nicht. BoringOS ist ein experimentelles eigenständiges Betriebssystemprojekt und kein behaupteter Daily-Driver-Ersatz. Fehlende Bereiche werden ausdrücklich dokumentiert.</p></article>
+</div>
 </section>
 
 <section class="section">
-<div class="repo-panel"><div><h3>Quelle der Wahrheit</h3><p><code>main</code> enthält nach der physischen Abnahme den Low-Latency-Cursor-/Fokuspfad plus aktualisierte README-Dokumentation. Die exakt getestete Runtime bleibt separat als immutable-by-policy Freeze erhalten.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.de.md">Aktuelle README</a><a class="btn" href="https://github.com/dennishilk/boringos/tree/freeze/mouse-present-latency-physical-2026-09-10">Cursor Physical Freeze</a></div></div>
+<div class="repo-panel"><div><h3>Quelle der Wahrheit</h3><p><code>main</code> ist die aktive Entwicklungslinie. Physisch getestete Checkpoints bleiben über exakte Commit-IDs in der Repository-Historie erhalten, einschließlich der M68-1920×1080-Referenz.</p></div><div class="repo-actions"><a class="btn primary" href="https://github.com/dennishilk/boringos">Repository</a><a class="btn" href="https://github.com/dennishilk/boringos/blob/main/README.de.md">Aktuelle README</a><a class="btn" href="https://github.com/dennishilk/boringos/commit/7a9594508bc02b6a5c8d5d13c2ed5c858c9cb54e">M68 Physical Commit</a></div></div>
 </section>
 
-<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/de/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS-Quellcode</a></div><div class="footer-motto">boring&gt; läuft auf Cthulhu <span class="term-dim"># pointer focus now stays out of the way</span></div></footer>
+<footer class="site-footer"><div>© 2026 Dennis Hilk · <a href="/de/">dennishilk.com</a> · <a href="https://github.com/dennishilk/boringos">BoringOS-Quellcode</a></div><div class="footer-motto">boring&gt; läuft auf Cthulhu <span class="term-dim"># M68 1920x1080 physical desktop</span></div></footer>
 </main>
 </body>
 </html>
