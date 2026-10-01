@@ -206,6 +206,9 @@
   const applyMetadata = () => {
     const entry = metadata[path];
     if (!entry) return;
+    const germanInPlaceMuseum = path.startsWith("/museum/") &&
+      (document.documentElement.lang === "de" || document.body?.dataset.siteLanguage === "de");
+    if (germanInPlaceMuseum) return;
     document.title = entry.title;
     setMeta('meta[name="description"]', entry.description, { name: "description" });
     setMeta('meta[property="og:title"]', entry.title, { property: "og:title" });
