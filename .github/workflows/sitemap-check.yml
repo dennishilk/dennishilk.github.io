@@ -11,6 +11,8 @@ on:
       - "robots.txt"
       - "de/**"
       - "museum/**"
+      - "tools/image-converter/**"
+      - "tools/image-converter/**"
       - "site-i18n-de*.js"
       - "museum-de-mirror-loader.js"
       - "world-observer/**"
@@ -21,6 +23,8 @@ on:
       - "tests/sitemaps.test.mjs"
       - "tests/seo-localization.test.mjs"
       - "tests/museum-seo.test.mjs"
+      - "tests/image-converter-seo.test.mjs"
+      - "tests/image-converter-seo.test.mjs"
       - ".github/workflows/sitemap-check.yml"
   push:
     branches:
@@ -63,6 +67,8 @@ jobs:
         run: node --test tests/seo-localization.test.mjs
       - name: Validate Computer Museum SEO contracts
         run: node --test tests/museum-seo.test.mjs
+      - name: Validate Image Converter SEO contracts
+        run: node --test tests/image-converter-seo.test.mjs
       - name: Check SEO JavaScript syntax
         run: |
           node --check seo-runtime.js
