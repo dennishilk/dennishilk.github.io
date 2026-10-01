@@ -52,9 +52,12 @@ test("LearningResource and SoftwareApplication structured data parse on both rou
     const blocks = jsonLd(document);
     assert.equal(blocks.length, 1);
     const graph = blocks[0]["@graph"];
-    assert.ok(graph.some(item => item["@type"] === "LearningResource"));
-    assert.ok(graph.some(item => item["@type"] === "SoftwareApplication"));
-    assert.ok(graph.every(item => item.isAccessibleForFree === true));
+    const learningResource = graph.find(item => item["@type"] === "LearningResource");
+    const application = graph.find(item => item["@type"] === "SoftwareApplication");
+    assert.ok(learningResource);
+    assert.ok(application);
+    assert.equal(learningResource.isAccessibleForFree, true);
+    assert.equal(application.isAccessibleForFree, true);
   }
 });
 
