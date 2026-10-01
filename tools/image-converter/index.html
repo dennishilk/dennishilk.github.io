@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Free Local Image Converter – JPEG, PNG, WebP & AVIF | Dennis Hilk</title>
-  <meta name="description" content="Convert JPEG, PNG, WebP and supported AVIF images to WebP, JPEG or PNG directly in your browser. No upload, no account and no server-side image storage.">
+  <title>Free Image Converter – JPG, PNG, WebP &amp; AVIF | No Upload</title>
+  <meta name="description" content="Convert JPG/JPEG, PNG, WebP and supported AVIF images to WebP, JPG or PNG in your browser. Batch resize and adjust quality. Free, no upload or signup.">
   <meta name="robots" content="index,follow,max-image-preview:large">
 
   <link rel="canonical" href="https://www.dennishilk.com/tools/image-converter/">
@@ -13,15 +13,15 @@
   <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/tools/image-converter/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Local Image Converter — Dennis Hilk">
-  <meta property="og:description" content="Convert images locally in your browser. JPEG, PNG, WebP and supported AVIF input; WebP, JPEG and PNG output.">
+  <meta property="og:title" content="Free Image Converter – JPG, PNG, WebP &amp; AVIF">
+  <meta property="og:description" content="Convert JPG/JPEG, PNG, WebP and supported AVIF images locally in your browser. Free, no upload, no signup.">
   <meta property="og:url" content="https://www.dennishilk.com/tools/image-converter/">
   <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Local Image Converter — Dennis Hilk">
-  <meta name="twitter:description" content="A privacy-friendly image converter that runs entirely in your browser.">
+  <meta name="twitter:title" content="Free Image Converter – JPG, PNG, WebP &amp; AVIF">
+  <meta name="twitter:description" content="Convert images locally in your browser with resize and quality controls. No image upload or signup.">
   <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
 
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
@@ -32,69 +32,135 @@
   <script defer src="/tools/image-converter/image-converter.js"></script>
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebApplication",
-        "name": "Local Image Converter",
-        "url": "https://www.dennishilk.com/tools/image-converter/",
-        "description": "A client-side image converter for JPEG, PNG, WebP and browser-supported AVIF images with WebP, JPEG and PNG output.",
-        "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "Any",
-        "browserRequirements": "Requires JavaScript and a modern web browser",
-        "inLanguage": "en",
-        "author": {
-          "@type": "Person",
-          "name": "Dennis Hilk",
-          "url": "https://www.dennishilk.com/"
-        },
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "EUR"
-        },
-        "isAccessibleForFree": true
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.dennishilk.com/tools/image-converter/#app",
+      "name": "Free Image Converter",
+      "alternateName": "Local Image Converter",
+      "url": "https://www.dennishilk.com/tools/image-converter/",
+      "description": "Convert JPG/JPEG, PNG, WebP and supported AVIF images to WebP, JPG or PNG in your browser. Batch resize and adjust quality. Free, no upload or signup.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript and a modern web browser",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "creator": {
+        "@id": "https://www.dennishilk.com/#dennis-hilk"
       },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Are my images uploaded to a server?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. Image decoding, resizing and conversion happen locally in your browser. The converter does not upload your selected image files."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Which image formats can I convert?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The tool accepts JPEG, PNG and WebP. AVIF input also works when the browser can decode AVIF. Output is WebP, JPEG or PNG when supported by the browser."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I convert several images at once?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. You can add multiple images, convert them sequentially and download the results individually or with the Download all button."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does conversion keep EXIF and GPS metadata?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The browser redraws and re-encodes the image, so original EXIF and GPS metadata is generally not copied into the converted file."
-            }
-          }
-        ]
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "featureList": [
+        "Convert JPG/JPEG to WebP",
+        "Convert PNG to WebP",
+        "Convert WebP to JPG",
+        "Convert WebP to PNG",
+        "Batch image conversion",
+        "Resize images while converting",
+        "Client-side processing without image upload"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.dennishilk.com/tools/image-converter/#webpage",
+      "url": "https://www.dennishilk.com/tools/image-converter/",
+      "name": "Free Image Converter",
+      "description": "Convert JPG/JPEG, PNG, WebP and supported AVIF images to WebP, JPG or PNG in your browser. Batch resize and adjust quality. Free, no upload or signup.",
+      "inLanguage": "en",
+      "isPartOf": {
+        "@id": "https://www.dennishilk.com/#website"
+      },
+      "mainEntity": {
+        "@id": "https://www.dennishilk.com/tools/image-converter/#app"
+      },
+      "breadcrumb": {
+        "@id": "https://www.dennishilk.com/tools/image-converter/#breadcrumb"
       }
-    ]
-  }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.dennishilk.com/#dennis-hilk",
+      "name": "Dennis Hilk",
+      "url": "https://www.dennishilk.com/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.dennishilk.com/tools/image-converter/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Dennis Hilk – Home",
+          "item": "https://www.dennishilk.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Free Image Converter"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.dennishilk.com/tools/image-converter/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I convert JPG or JPEG to WebP?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Choose one or more JPG or JPEG images, select WebP as the output format, adjust quality or maximum dimensions if needed, and start the local conversion. The images are not uploaded."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I convert PNG to WebP without uploading it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Choose the PNG file and select WebP as the output format. Conversion runs in your browser on your device. Transparent pixels can remain transparent in WebP output."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I convert WebP to JPG or PNG?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Choose a WebP image as input and select JPG/JPEG or PNG as the output. When converting to JPEG, transparent areas are flattened onto a white background."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are my images uploaded to a server?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Image decoding, resizing and conversion happen locally in your browser. The converter does not upload your selected image files."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which image formats can I convert?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The tool accepts JPG/JPEG, PNG and WebP. AVIF input also works when the browser can decode AVIF. Output is WebP, JPG/JPEG or PNG when supported by the browser."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I convert several images at once?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You can add multiple images, convert them sequentially on your device and download the results individually or with the Download all button."
+          }
+        }
+      ]
+    }
+  ]
+}
   </script>
 </head>
 <body>
@@ -106,6 +172,7 @@
       <a href="/">Home</a>
       <a href="/museum/">Computer Museum</a>
       <a href="/about/">About Me</a>
+      <a href="/de/tools/image-converter/" hreflang="de" lang="de">DE</a>
     </div>
     <span class="nav-spacer" aria-hidden="true"></span>
   </nav>
@@ -113,8 +180,13 @@
   <main class="wrap">
     <header class="hero">
       <p class="eyebrow">Browser utility · no upload</p>
-      <h1>Local Image<br>Converter</h1>
-      <p class="intro">Convert JPEG, PNG, WebP and browser-supported AVIF images to WebP, JPEG or PNG. Resize them if you want, adjust quality and compare file sizes — without sending the images to a server.</p>
+      <h1>Free Image<br>Converter</h1>
+      <p class="intro">Convert JPG/JPEG, PNG, WebP and browser-supported AVIF images to WebP, JPG or PNG. Resize images, adjust quality and compare file sizes — free and without sending the images to a server.</p>
+      <nav class="format-links" aria-label="Popular image conversions">
+        <a href="#jpg-to-webp">JPG → WebP</a>
+        <a href="#png-to-webp">PNG → WebP</a>
+        <a href="#webp-to-jpg">WebP → JPG / PNG</a>
+      </nav>
       <p class="privacy-banner"><strong>100% client-side:</strong> selected images stay on your device and are processed inside this browser tab.</p>
     </header>
 
@@ -188,6 +260,35 @@
       </section>
     </section>
 
+    <section class="conversion-guide" aria-labelledby="popular-conversions-title">
+      <p class="eyebrow">Popular conversions</p>
+      <h2 id="popular-conversions-title">Convert JPG, PNG and WebP directly in your browser</h2>
+      <p class="section-intro">One converter handles the common format changes without creating an upload copy of your image on a server.</p>
+      <div class="info-grid conversion-grid">
+        <article class="info-card" id="jpg-to-webp">
+          <h3>JPG / JPEG to WebP</h3>
+          <p>Choose a JPG or JPEG image, select WebP and adjust the quality slider if needed. You can also set maximum dimensions to resize the image while converting it.</p>
+        </article>
+        <article class="info-card" id="png-to-webp">
+          <h3>PNG to WebP</h3>
+          <p>Convert PNG images to WebP locally. WebP can keep transparent pixels, while the quality control lets you balance visual quality and file size.</p>
+        </article>
+        <article class="info-card" id="webp-to-jpg">
+          <h3>WebP to JPG or PNG</h3>
+          <p>Open a WebP image and convert it back to JPG/JPEG or PNG. PNG can keep transparency; JPEG has no alpha channel, so transparent areas become white.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="how-to" aria-labelledby="how-to-title">
+      <h2 id="how-to-title">How to convert an image in 3 steps</h2>
+      <ol>
+        <li><strong>Choose your images.</strong> Drop in JPG/JPEG, PNG, WebP or browser-supported AVIF files.</li>
+        <li><strong>Choose the output.</strong> Select WebP, JPG/JPEG or PNG, then optionally set quality and maximum dimensions.</li>
+        <li><strong>Convert and download.</strong> Processing happens locally on your device; download each result or use Download all.</li>
+      </ol>
+    </section>
+
     <section class="info-grid" aria-label="About the image converter">
       <article class="info-card">
         <h2>Formats</h2>
@@ -207,23 +308,38 @@
       <h2 id="faq-title">Frequently asked questions</h2>
 
       <details>
-        <summary>Are my images uploaded anywhere?</summary>
-        <p>No. This page has no image-upload workflow. Your selected files are processed locally in the browser and the generated files are exposed to you as temporary local download URLs.</p>
+        <summary>How do I convert JPG or JPEG to WebP?</summary>
+        <p>Choose one or more JPG or JPEG images, select WebP as the output format, adjust quality or maximum dimensions if needed, and start the local conversion. The images are not uploaded.</p>
       </details>
 
       <details>
-        <summary>Why might AVIF not work on an older browser?</summary>
-        <p>AVIF input depends on the browser's own image decoder. If the browser cannot decode the file, the converter will report an error instead of sending it elsewhere.</p>
+        <summary>How do I convert PNG to WebP without uploading it?</summary>
+        <p>Choose the PNG file and select WebP as the output format. Conversion runs in your browser on your device. Transparent pixels can remain transparent in WebP output.</p>
       </details>
 
       <details>
-        <summary>What happens to transparency?</summary>
-        <p>PNG and WebP output can keep transparent pixels. JPEG has no alpha channel, so transparent areas are flattened onto a white background.</p>
+        <summary>Can I convert WebP to JPG or PNG?</summary>
+        <p>Yes. Choose a WebP image as input and select JPG/JPEG or PNG as the output. When converting to JPEG, transparent areas are flattened onto a white background.</p>
       </details>
 
       <details>
-        <summary>Is metadata preserved?</summary>
-        <p>Usually not. The image is redrawn into a canvas and encoded again, so original EXIF and GPS metadata is generally not copied into the new file.</p>
+        <summary>Are my images uploaded to a server?</summary>
+        <p>No. Image decoding, resizing and conversion happen locally in your browser. The converter does not upload your selected image files.</p>
+      </details>
+
+      <details>
+        <summary>Which image formats can I convert?</summary>
+        <p>The tool accepts JPG/JPEG, PNG and WebP. AVIF input also works when the browser can decode AVIF. Output is WebP, JPG/JPEG or PNG when supported by the browser.</p>
+      </details>
+
+      <details>
+        <summary>Can I convert several images at once?</summary>
+        <p>Yes. You can add multiple images, convert them sequentially on your device and download the results individually or with the Download all button.</p>
+      </details>
+
+      <details>
+        <summary>What happens to EXIF, GPS metadata and transparency?</summary>
+        <p>The image is redrawn and re-encoded, so original EXIF and GPS metadata is generally not copied. PNG and WebP output can keep transparent pixels; JPEG output uses a white background.</p>
       </details>
     </section>
   </main>
