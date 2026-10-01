@@ -55,6 +55,7 @@
       "CONTINUE LEARNING IN THE MUSEUM": "IM MUSEUM WEITERLERNEN"
     },
     html: {
+      ".museum-creator-note": "Erstellt von <a href=\"/about/\">Dennis Hilk</a> als Teil des Interaktiven Computer Museums.",
       ".linux-academy-reassurance p": "Jede Übung läuft ausschließlich in einer fiktiven Browser-Umgebung. Kein Zugriff auf eine echte Shell, Dateien, Prozesse, Dienste, Netzwerk oder <code>sudo</code>.",
       ".linux-academy-graduation > div p": "Schließe die finale Recovery-Challenge in Lab 08 ab und du kannst ein druckbares Zertifikat der Linux Terminal Academy erhalten. Übe frei, nutze beim Lernen Hinweise und probiere es so oft du möchtest.",
       ".linux-academy-graduation ul li:nth-child(1)": "Hinweise in den Laboren 01–07 sind völlig in Ordnung.",
