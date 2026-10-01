@@ -149,3 +149,24 @@ test("German museum translation mappings use stable selectors for new SEO conten
   assert.match(classics, /Gib zweistellige VERB-Codes/);
   assert.match(classics, /Erstellt von Dennis Hilk als Teil des Interaktiven Computer Museums/);
 });
+
+test("Debian Server experiment is live, indexable and present in both sitemaps", () => {
+  const en = source(path.join(root, "museum/debian-server-experiment/index.html"));
+  const de = source(path.join(root, "de/museum/debian-server-experiment/index.html"));
+  const sitemap = source(path.join(root, "sitemap.xml"));
+  const sitemapDe = source(path.join(root, "sitemap-de.xml"));
+
+  assert.match(robots(en), /index,follow/i);
+  assert.doesNotMatch(en, /PLANNED|status=planned|Planned Interactive Experiment/i);
+  assert.match(en, /AVAILABLE/);
+  assert.match(title(en), /Debian.*Browser|Browser.*Debian/i);
+  assert.match(metaContent(en, "description"), /Debian.*Linux|Linux.*Debian/i);
+
+  assert.match(robots(de), /index,follow/i);
+  assert.match(title(de), /Debian.*Browser|Browser.*Debian/i);
+  assert.match(metaContent(de, "description"), /Debian.*Linux|Linux.*Debian/i);
+
+  assert.match(sitemap, /https:\/\/www\.dennishilk\.com\/museum\/debian-server-experiment\//);
+  assert.match(sitemapDe, /https:\/\/www\.dennishilk\.com\/de\/museum\/debian-server-experiment\//);
+});
+
