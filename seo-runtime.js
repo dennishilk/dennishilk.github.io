@@ -42,12 +42,149 @@
       description: "Zehn datenschutzfreundliche Public-Data-Observer rund um Wiesmoor in Ostfriesland: Wetter, Moor, Himmel, Wasser, Bevölkerung, Energie, Grundwasser, Planung und Stadtfinanzen.",
     },
     "/museum/": {
-      title: "Interactive Computer Museum – C64 BASIC, Modems, BBS & Retro Computing",
-      description: "Explore interactive browser exhibits about C64 BASIC, acoustic couplers, dial-up modems, BBS systems, retro computers and the real computing lab behind the museum.",
+      title: "Interactive Computer Museum – Apollo DSKY, Linux Labs & Retro Computing",
+      description: "Explore an interactive computer museum with an Apollo DSKY recreation, Linux learning labs, C64 BASIC, BBS, modem, DOS, UNIX and real computing systems.",
     },
     "/museum/index.html": {
-      title: "Interactive Computer Museum – C64 BASIC, Modems, BBS & Retro Computing",
-      description: "Explore interactive browser exhibits about C64 BASIC, acoustic couplers, dial-up modems, BBS systems, retro computers and the real computing lab behind the museum.",
+      title: "Interactive Computer Museum – Apollo DSKY, Linux Labs & Retro Computing",
+      description: "Explore an interactive computer museum with an Apollo DSKY recreation, Linux learning labs, C64 BASIC, BBS, modem, DOS, UNIX and real computing systems.",
+    },
+
+    "/museum/crt-remote-terminal/": {
+      title: "CRT Remote Terminal Simulator – Classic Remote Computing | Computer Museum",
+      description: "Use a browser-based CRT terminal recreation to explore text terminals, remote hosts and the command-line interaction model of 1970s and 1980s computing.",
+    },
+    "/museum/telephone-exchange/": {
+      title: "Manual Telephone Exchange Simulator – Interactive Computer Museum",
+      description: "Operate a browser-based manual telephone exchange recreation and explore how operators connected calls before automated switching became universal.",
+    },
+    "/museum/unix-time-sharing-center/": {
+      title: "UNIX Time-Sharing Center – Multi-User UNIX Simulation | Computer Museum",
+      description: "Explore a browser-based multi-user UNIX time-sharing environment with terminals, users, processes and the shared-computing ideas that shaped modern operating systems.",
+    },
+    "/museum/ibm-pc-xt/": {
+      title: "DOS PC XT Command Line Simulator – Interactive Computer Museum",
+      description: "Explore a browser-based DOS-style PC XT environment and learn classic commands, drives, directories and early personal-computer workflows.",
+    },
+
+    "/museum/cryptography-lab/": {
+      title: "Interactive Cryptography Lab – Enigma, RSA, AES, PGP & Post-Quantum",
+      description: "Explore cryptography history and concepts in browser-based exhibits covering Caesar and XOR, Enigma, public-key cryptography, DES and AES, PGP, password hashing and post-quantum cryptography.",
+    },
+    "/museum/cryptography-lab/enigma-machine/": {
+      title: "Enigma Machine Simulator – Interactive Cryptography Lab",
+      description: "Explore a browser-based educational Enigma I reconstruction with rotors, plugboard concepts and step-by-step explanations of historical machine encryption.",
+    },
+    "/museum/cryptography-lab/des-to-aes/": {
+      title: "DES to AES – Block Cipher History & Interactive Cryptography Lab",
+      description: "Explore the transition from DES to AES through a safe browser-based educational exhibit about block ciphers, key sizes and changing cryptographic standards.",
+    },
+
+    "/museum/malware-history/early-experiments/": {
+      title: "Early Malware Experiments – Malware History Lab",
+      description: "Explore early self-replicating software experiments and the historical ideas that preceded later computer malware in this safe, non-operational museum chapter.",
+    },
+    "/museum/malware-history/floppy-era/": {
+      title: "Floppy Disk Malware Era – Malware History Lab",
+      description: "Explore how removable floppy disks shaped early malware spread, boot-sector risks and defensive habits in this safe historical museum chapter.",
+    },
+    "/museum/malware-history/dos-virus-era/": {
+      title: "DOS Virus Era – File Infectors & Boot-Sector Malware History",
+      description: "Explore DOS-era viruses, file infection and boot-sector malware as historical concepts, together with the defensive practices that grew around personal computers.",
+    },
+    "/museum/malware-history/macro-viruses/": {
+      title: "Macro Virus History – Documents, Email & Defensive Computing",
+      description: "Explore how document macros changed malware distribution in the 1990s and why safer defaults, scanning and user awareness became important defenses.",
+    },
+    "/museum/malware-history/internet-worms/": {
+      title: "Internet Worm History – Morris, Code Red, Slammer & Sasser",
+      description: "Explore the history of automated network worms, rapid propagation and the defensive lessons that shaped patching, filtering and incident response.",
+    },
+    "/museum/malware-history/email-social-engineering/": {
+      title: "Email Malware & Social Engineering History – Malware History Lab",
+      description: "Explore the rise of email-borne malware and social engineering, and why attachments, trust and user behavior became part of computer security.",
+    },
+    "/museum/malware-history/trojans-botnets/": {
+      title: "Trojans & Botnets – Malware History Lab",
+      description: "Explore the historical development of trojans and botnets through safe concepts covering disguised software, remote control and networks of compromised machines.",
+    },
+    "/museum/malware-history/modern-malware/": {
+      title: "Modern Malware History – Ransomware, Theft & Layered Defense",
+      description: "Explore modern malware as a historical and defensive topic, including ransomware, credential theft, persistence and the need for layered security and recovery.",
+    },
+    "/museum/malware-history/defense-lab/": {
+      title: "Malware Defense Lab – Prevention, Detection, Containment & Recovery",
+      description: "Explore how malware defense evolved from signatures toward layered prevention, detection, containment, recovery and post-incident learning.",
+    },
+
+    "/museum/home-computing-lab/": {
+      title: "Dennis Hilk's Computing Lab – Linux Workstation, Homelab & Retro PC",
+      description: "Explore Dennis Hilk's real computing lab: an Arch Linux workstation, homelab rack, Windows 98 retro PC, storage, networking and Worldnode server infrastructure.",
+    },
+    "/museum/home-computing-lab/architecture/": {
+      title: "Computing Lab Architecture – Linux, Retro PC, Homelab & Worldnode",
+      description: "See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment.",
+    },
+    "/museum/home-computing-lab/cthulhu/": {
+      title: "Cthulhu – Arch Linux Workstation, Ryzen 5800X3D & Radeon RX 9060 XT",
+      description: "Explore Cthulhu, Dennis Hilk's Arch Linux workstation with Ryzen 7 5800X3D, Radeon RX 9060 XT, sway and preserved hardware and software history.",
+    },
+    "/museum/home-computing-lab/network/": {
+      title: "Home Network Lab – Linux, Homelab & Legacy Systems",
+      description: "Explore the protected home network connecting modern Linux, homelab services and legacy computers, with routing, firewall, DNS and Samba concepts.",
+    },
+    "/museum/home-computing-lab/storage/": {
+      title: "Computer Storage Across Generations – IDE, SSD, NAS & Network Shares",
+      description: "Trace storage across generations in the Author's Computing Lab, from removable media and local drives to SSDs, NAS storage and network shares.",
+    },
+    "/museum/home-computing-lab/icq/": {
+      title: "ICQ 2000b on Windows 98 in 2026 – OSCAR Compatibility Lab",
+      description: "Explore how ICQ 2000b on Windows 98 can still communicate through a private OSCAR-compatible server and modern Linux clients.",
+    },
+    "/museum/home-computing-lab/homelab/": {
+      title: "Home Server Rack & Homelab – Real Infrastructure | Dennis Hilk",
+      description: "Explore the real homelab rack behind Dennis Hilk's projects, including server, storage and networking infrastructure documented as physical museum artifacts.",
+    },
+    "/museum/home-computing-lab/worldnode/": {
+      title: "Worldnode Server – Debian, nginx & Public Web Infrastructure",
+      description: "Explore the documented server infrastructure behind dennishilk.com, World Observer and the Computer Museum, including a preserved earlier Worldnode server stage.",
+    },
+    "/museum/home-computing-lab/retro-pc/": {
+      title: "Windows 98 Retro Internet Workstation – Real Hardware Museum Record",
+      description: "Explore a real preserved Windows 98 workstation, its hardware, software and networking role inside the Author's Computing Lab.",
+    },
+
+    "/museum/linux-terminal-academy/terminal-first-steps/": {
+      title: "Linux Terminal Basics – Learn pwd, ls, cd & man in the Browser",
+      description: "Learn Linux terminal basics safely in your browser with pwd, whoami, uname, date, ls, cd, clear, help and man in a fictional resettable system.",
+    },
+    "/museum/linux-terminal-academy/filesystem-explorer/": {
+      title: "Linux Filesystem Explorer – Learn Paths, /, ~ and cd in Browser",
+      description: "Learn Linux filesystem navigation with absolute and relative paths, /, ~, ., .., cd, pwd, ls and cat in a safe browser-only lab.",
+    },
+    "/museum/linux-terminal-academy/files-directories/": {
+      title: "Linux Files & Directories – Practice mkdir, cp, mv and rm",
+      description: "Practice Linux file and directory concepts with mkdir, touch, cp, mv, rm, cat and ls in a fictional browser-only filesystem you can reset anytime.",
+    },
+    "/museum/linux-terminal-academy/permissions-users/": {
+      title: "Linux Permissions & Users – Learn rwx, chmod, root and sudo Concepts",
+      description: "Learn Linux users, groups and rwx permissions with whoami, id, ls -l and chmod concepts in a safe fictional browser environment.",
+    },
+    "/museum/linux-terminal-academy/process-control/": {
+      title: "Linux Process Control – Learn ps, top, PIDs and Signals",
+      description: "Learn Linux process concepts with ps, a top-style view, PIDs, CPU clues and signals in a safe browser-only process-control lab.",
+    },
+    "/museum/linux-terminal-academy/pipes-shell-power/": {
+      title: "Linux Pipes & Shell Tools – Practice grep, wc, head and tail",
+      description: "Learn how Linux pipelines connect small text tools with |, grep, wc, head and tail using a deterministic fictional log in your browser.",
+    },
+    "/museum/linux-terminal-academy/system-admin-crash-lab/": {
+      title: "Linux System Administration Lab – systemctl, journalctl & Recovery",
+      description: "Practice Linux service troubleshooting with fictional systemctl status, journalctl evidence, configuration repair, restart and verification in your browser.",
+    },
+    "/museum/linux-terminal-academy/break-it-recover/": {
+      title: "Linux Troubleshooting & Recovery Challenge – Terminal Academy",
+      description: "Combine Linux process, service, journal and permission skills in a resettable browser-only recovery challenge that rewards diagnosis before repair.",
     },
     "/world-observer/wiesmoor.html": {
       title: "Wiesmoor, Germany – History of a Peat & Flower Town | World Observer",
@@ -165,9 +302,68 @@
       : [["Home", "/"], ["World Observer", "/world-observer.html"], ["Hometown Observer", "/world-observer/hometown.html"], [currentName, path]];
   };
 
+  const normalizedMuseumPath = () => {
+    const raw = path.startsWith("/de/museum/") ? path.slice(3) : path;
+    return raw.endsWith("/index.html") ? raw.slice(0, -"index.html".length) : raw;
+  };
+
+  const museumCurrentName = () => {
+    const named = document.querySelector("h1 .name")?.textContent?.trim();
+    if (named) return named;
+    const heading = document.querySelector("h1")?.textContent?.replace(/\s+/g, " ")?.trim();
+    if (heading) return heading.replace(/^[^\s]+@[^\s]+:\S*\$\s*/, "");
+    return document.title.split(/\s+[|–—]\s+/)[0]?.trim() || "Computer Museum";
+  };
+
+  const museumBreadcrumb = () => {
+    const route = normalizedMuseumPath();
+    if (!route.startsWith("/museum/") || route === "/museum/") return null;
+    const current = museumCurrentName();
+    const items = [[de ? "Startseite" : "Home", de ? "/de/" : "/"], ["Computer Museum", "/museum/"]];
+
+    const cluster = (prefix, label) => {
+      if (!route.startsWith(prefix)) return false;
+      if (route === prefix) items.push([label, path]);
+      else {
+        const parent = path.startsWith("/de/museum/") ? "/de" + prefix : prefix;
+        items.push([label, parent], [current, path]);
+      }
+      return true;
+    };
+
+    if (cluster("/museum/cryptography-lab/", de ? "Kryptografie-Labor" : "Cryptography Lab")) return items;
+    if (cluster("/museum/malware-history/", de ? "Malware-Geschichte" : "Malware History Lab")) return items;
+    if (cluster("/museum/linux-terminal-academy/", "Linux Terminal Academy")) return items;
+
+    if (route.startsWith("/museum/home-computing-lab/")) {
+      items.push([de ? "Computing-Labor des Autors" : "The Author's Computing Lab", "/museum/home-computing-lab/"]);
+      if (route === "/museum/home-computing-lab/") return items;
+      if (route.startsWith("/museum/home-computing-lab/field-notes/")) {
+        items.push([de ? "Field Notes & Artefakte" : "Field Notes & Artifacts", "/museum/home-computing-lab/field-notes/"]);
+        if (route === "/museum/home-computing-lab/field-notes/") return items;
+      }
+      items.push([current, path]);
+      return items;
+    }
+
+    items.push([current, path]);
+    return items;
+  };
+
+  const hasJsonLdType = type => {
+    for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+      try {
+        const data = JSON.parse(script.textContent);
+        const nodes = Array.isArray(data) ? data : Array.isArray(data?.["@graph"]) ? data["@graph"] : [data];
+        if (nodes.some(node => node?.["@type"] === type || (Array.isArray(node?.["@type"]) && node["@type"].includes(type)))) return true;
+      } catch (error) {}
+    }
+    return false;
+  };
+
   const addBreadcrumb = () => {
-    const items = breadcrumbs.get(path) || breadcrumbForWiesmoorObserver();
-    if (!items || document.getElementById("seo-breadcrumb-jsonld")) return;
+    const items = breadcrumbs.get(path) || breadcrumbForWiesmoorObserver() || museumBreadcrumb();
+    if (!items || document.getElementById("seo-breadcrumb-jsonld") || hasJsonLdType("BreadcrumbList")) return;
     const payload = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -183,6 +379,49 @@
     script.type = "application/ld+json";
     script.textContent = JSON.stringify(payload);
     document.head.appendChild(script);
+  };
+
+  const addMuseumWebPageSchema = () => {
+    const route = normalizedMuseumPath();
+    if (!route.startsWith("/museum/")) return;
+    const robots = document.querySelector('meta[name="robots"]')?.getAttribute("content") || "";
+    if (/\bnoindex\b/i.test(robots) || document.getElementById("seo-museum-webpage-jsonld")) return;
+
+    const canonical = document.querySelector('link[rel="canonical"]')?.href || location.href.split("#")[0];
+    const description = document.querySelector('meta[name="description"]')?.getAttribute("content") || "";
+    const payload = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": canonical + "#webpage",
+      url: canonical,
+      name: document.title,
+      description,
+      inLanguage: document.documentElement.lang === "de" ? "de" : "en",
+      creator: {"@id": "https://www.dennishilk.com/#dennis-hilk"},
+      isPartOf: {"@id": "https://www.dennishilk.com/museum/#museum"},
+    };
+    const script = document.createElement("script");
+    script.id = "seo-museum-webpage-jsonld";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(payload);
+    document.head.appendChild(script);
+  };
+
+  const enrichMuseumMetadata = () => {
+    const route = normalizedMuseumPath();
+    if (!route.startsWith("/museum/")) return;
+    const canonical = document.querySelector('link[rel="canonical"]')?.href || location.href.split("#")[0];
+    const description = document.querySelector('meta[name="description"]')?.getAttribute("content") || "";
+    const title = document.title;
+
+    setMeta('meta[property="og:site_name"]', "Dennis Hilk Computer Museum", { property: "og:site_name" });
+    setMeta('meta[property="og:type"]', "website", { property: "og:type" });
+    setMeta('meta[property="og:url"]', canonical, { property: "og:url" });
+    setMeta('meta[property="og:title"]', title, { property: "og:title" });
+    setMeta('meta[property="og:description"]', description, { property: "og:description" });
+    setMeta('meta[name="twitter:card"]', "summary_large_image", { name: "twitter:card" });
+    setMeta('meta[name="twitter:title"]', title, { name: "twitter:title" });
+    setMeta('meta[name="twitter:description"]', description, { name: "twitter:description" });
   };
 
   const patchCiscoFieldNote7 = () => {
@@ -419,6 +658,8 @@
   applyMetadata();
   ensureRobots();
   ensureAlternates();
+  enrichMuseumMetadata();
   addBreadcrumb();
+  addMuseumWebPageSchema();
   patchCiscoFieldNote7();
 })();
