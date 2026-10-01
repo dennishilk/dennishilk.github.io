@@ -145,9 +145,16 @@
     ],
   });
   addPage("/museum/apollo-dsky/", {
-    title: "Apollo DSKY – Computer Museum",
-    description: "Eigenständige didaktische Browser-Nachbildung der Apollo-DSKY-Anzeige und -Tastatur mit kompakter VERB-/NOUN-Bedienung.",
+    title: "Apollo DSKY interaktiv – Apollo Guidance Computer | Computermuseum",
+    description: "Interaktive Browser-Nachbildung des Apollo DSKY – der Display-and-Keyboard-Schnittstelle, mit der Astronauten über VERB- und NOUN-Codes mit dem Apollo Guidance Computer arbeiteten.",
     text: {
+      "Created by Dennis Hilk as part of the Interactive Computer Museum.": "Erstellt von Dennis Hilk als Teil des Interaktiven Computer Museums.",
+      "Enter two-digit VERB codes for actions and NOUN codes for the data or object involved.": "Gib zweistellige VERB-Codes für Aktionen und NOUN-Codes für die beteiligten Daten oder Objekte ein.",
+      "Watch compact PROG, VERB, NOUN and register displays respond to educational simulated commands.": "Beobachte, wie die kompakten PROG-, VERB-, NOUN- und Registeranzeigen auf didaktisch simulierte Befehle reagieren.",
+      "See how annunciator lamps communicate activity, operator errors and a controlled alarm demonstration.": "Sieh, wie Signallampen Aktivität, Bedienfehler und eine kontrollierte Alarmdemonstration anzeigen.",
+      "Learn why limited computing and display resources encouraged terse, disciplined interaction.": "Erfahre, warum begrenzte Rechen- und Anzeigeressourcen eine knappe, disziplinierte Bedienung begünstigten.",
+      "Explore more computing history": "Mehr Computergeschichte erkunden",
+      "Continue through the museum with the UNIX Time Sharing Center, the Commodore 64 Programming Lab or the PC XT Command Desk.": "Erkunde das Museum weiter im UNIX Time Sharing Center, im Commodore 64 Programming Lab oder am PC XT Command Desk.",
       "Explore a tactile, browser-only educational recreation inspired by the Apollo DSKY — the Display and Keyboard interface astronauts used to communicate with the Apollo Guidance Computer through compact numeric codes.": "Erkunde eine taktile, nur im Browser laufende didaktische Nachbildung der Apollo DSKY — jener Anzeige- und Tastaturschnittstelle, über die Astronauten mit kompakten Zahlencodes mit dem Apollo Guidance Computer kommunizierten.",
       "DSKY means Display and Keyboard. The DSKY was the astronaut-facing interface to the Apollo Guidance Computer; this exhibit recreates selected interface ideas, not the larger guidance computer itself.": "DSKY steht für Display and Keyboard. Die DSKY war die von den Astronauten bediente Schnittstelle zum Apollo Guidance Computer; diese Ausstellung bildet ausgewählte Bedienkonzepte nach, nicht den vollständigen Guidance Computer.",
       "Astronauts used numeric codes because the interface had only a small keypad, lamps and compact numeric registers. VERB described what to do; NOUN identified the data to display or act on; ENTR confirmed each code.": "Astronauten verwendeten Zahlencodes, weil die Schnittstelle nur über eine kleine Tastatur, Lampen und kompakte Zahlenregister verfügte. VERB beschrieb die Aktion, NOUN die anzuzeigenden oder zu bearbeitenden Daten und ENTR bestätigte den jeweiligen Code.",
