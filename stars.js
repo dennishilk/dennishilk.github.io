@@ -105,7 +105,7 @@ if (fieldNote7Paths.has(window.location.pathname)) {
 
 if (!document.querySelector('script[data-seo-runtime-loader]')) {
   const seoScript = document.createElement('script');
-  seoScript.src = '/seo-runtime.js?v=20260815-1';
+  seoScript.src = '/seo-runtime.js?v=20261001-museum-1';
   seoScript.dataset.seoRuntimeLoader = 'true';
   document.head.appendChild(seoScript);
 }
@@ -140,7 +140,7 @@ if (useDedicatedGermanWiesmoorUi) {
   }
 } else if (!useDedicatedInternetLanguageUi && !useDedicatedWiesmoorLanguageUi && !useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
-  languageScript.src = '/site-language.js?v=20260920-image-converter-1';
+  languageScript.src = '/site-language.js?v=20261001-museum-1';
   languageScript.dataset.siteLanguageLoader = 'true';
   document.head.appendChild(languageScript);
 }
