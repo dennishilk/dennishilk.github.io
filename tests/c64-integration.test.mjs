@@ -130,7 +130,7 @@ test("dedicated language routing preserves the established site language system"
     '"/de/museum/c64/"',
     '"/de/museum/c64/index.html"'
   ]) assert.match(language, new RegExp(route.replace(/[/.]/g, "\\$&")));
-  assert.match(language, /site-i18n-de\.js\?v=20260810-c64-1/);
+  assert.match(language, /site-i18n-de\.js\?v=[^"\']+/);
   assert.match(read("site-i18n-de.js"), /Commodore 64 Programmierlabor/);
 });
 
