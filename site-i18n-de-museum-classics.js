@@ -355,7 +355,8 @@
     text: {
       "INTERACTIVE EXPERIMENT": "INTERAKTIVES EXPERIMENT",
       "Try a Debian Server": "Einen Debian-Server ausprobieren",
-      "A small Debian system will be available for free exploration.": "Ein kleines Debian-System steht zur freien Erkundung bereit.",
+      "A small Debian-style system is available for free exploration directly in your browser.": "Ein kleines Debian-artiges System steht direkt im Browser zur freien Erkundung bereit.",
+      "Created by Dennis Hilk as part of the Interactive Computer Museum.": "Erstellt von Dennis Hilk als Teil des Interaktiven Computer Museums.",
       "No tutorial. No predefined path. You decide what to inspect, test, create, modify, or remove.": "Kein Tutorial. Kein vorgegebener Weg. Du entscheidest, was du untersuchst, testest, erstellst, veränderst oder entfernst.",
       "EXPERIMENT FLOW": "ABLAUF DES EXPERIMENTS",
       "START SESSION": "SITZUNG STARTEN",
@@ -412,8 +413,8 @@
     ],
   });
   addPage("/museum/debian-server-experiment/", {
-    title: "Einen Debian-Server ausprobieren — Geplantes interaktives Experiment",
-    description: "Plan für ein frei erkundbares, browserbasiertes Debian-Server-Experiment im Computer Museum.",
+    title: "Debian-Server im Browser ausprobieren – Interaktive Linux-Simulation",
+    description: "Erkunde eine sichere Debian-artige Linux-Umgebung im Browser mit Shell-Befehlen, konsistentem fiktivem Dateisystem und anonymen aggregierten Erkundungsstatistiken.",
   });
   addPage("/museum/debian-server-experiment/session/", {
     title: "Debian-Sitzung — Computer Museum",
