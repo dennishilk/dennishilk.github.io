@@ -26,10 +26,14 @@ function relative(file) {
 }
 
 function metaContent(html, name) {
-  const a = html.match(new RegExp('<meta\\s+[^>]*name=["\\\']' + name + '["\\\'][^>]*content=["\\\']([^"\\\']*)["\\\']', "i"));
-  if (a) return a[1].trim();
-  const b = html.match(new RegExp('<meta\\s+[^>]*content=["\\\']([^"\\\']*)["\\\'][^>]*name=["\\\']' + name + '["\\\']', "i"));
-  return b?.[1]?.trim() || "";
+  for (const quote of ['"', "'"]) {
+    const escaped = quote === '"' ? '[^"]*' : "[^']*";
+    const a = html.match(new RegExp('<meta\\s+[^>]*name=["\\\']' + name + '["\\\'][^>]*content=' + quote + '(' + escaped + ')' + quote, "i"));
+    if (a) return a[1].trim();
+    const b = html.match(new RegExp('<meta\\s+[^>]*content=' + quote + '(' + escaped + ')' + quote + '[^>]*name=["\\\']' + name + '["\\\']', "i"));
+    if (b) return b[1].trim();
+  }
+  return "";
 }
 
 function canonical(html) {
