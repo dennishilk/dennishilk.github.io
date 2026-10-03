@@ -130,8 +130,8 @@
       description: "See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment.",
     },
     "/museum/home-computing-lab/cthulhu/": {
-      title: "Cthulhu – Arch Linux Workstation, Ryzen 5800X3D & Radeon RX 9060 XT",
-      description: "Explore Cthulhu, Dennis Hilk's Arch Linux workstation with Ryzen 7 5800X3D, Radeon RX 9060 XT, sway and preserved hardware and software history.",
+      title: "Cthulhu – NixOS Workstation, Ryzen 5800X3D & Radeon RX 9060 XT",
+      description: "Explore Cthulhu, Dennis Hilk's NixOS workstation with Ryzen 7 5800X3D, Radeon RX 9060 XT, Plasma 6, dual displays and dedicated game and homelab storage.",
     },
     "/museum/home-computing-lab/network/": {
       title: "Home Network Lab – Linux, Homelab & Legacy Systems",
