@@ -790,4 +790,198 @@
       "Gentoo Linux XMonad desktop running Steam and Kitty on Cthulhu's Ryzen 7 5800X3D and RTX 3060 Ti configuration": "Gentoo-Linux-XMonad-Desktop mit Steam und Kitty auf Cthulhus Ryzen-7-5800X3D- und RTX-3060-Ti-Konfiguration",
     },
   });
+
+
+  /* Home Computing Lab rebuild · October 2026 */
+  addPage("/museum/home-computing-lab/", {
+    title: "Dennis Hilks Home Computing Lab – NixOS, Homelab, Retro-PC & Worldnode",
+    description: "Dennis Hilks reales Home Computing Lab mit Cthulhu auf NixOS, Laptops, Windows-98-Retro-PC, segmentiertem Homelab, Speicher, Netzwerk, Worldnode und echten Field Notes.",
+    text: {
+      "LIVING ARCHIVE · OCTOBER 2026": "LEBENDIGES ARCHIV · OKTOBER 2026",
+      "REAL SYSTEMS · REAL FAILURES · REAL PROJECTS": "ECHTE SYSTEME · ECHTE FEHLER · ECHTE PROJEKTE",
+      "The Home Computing Lab": "Das Home Computing Lab",
+      "A working lab that happens to have a museum around it": "Ein Arbeitslabor, um das ganz nebenbei ein Museum gewachsen ist",
+      "THE LAB TODAY": "DAS LAB HEUTE",
+      "Built to be used, not displayed behind glass": "Zum Benutzen gebaut, nicht für die Glasvitrine",
+      "STATUS: ACTIVE / EVOLVING": "STATUS: AKTIV / WÄCHST WEITER",
+      "PRIMARY ADMIN: CTHULHU": "PRIMÄRER ADMIN: CTHULHU",
+      "THE WORKSPACE": "DER ARBEITSPLATZ",
+      "Development machine, laptops, retro hardware and rack infrastructure all belong to the same working environment.": "Entwicklungsrechner, Laptops, Retro-Hardware und Rack-Infrastruktur gehören alle zur selben Arbeitsumgebung.",
+      "“I try technology because I want to understand how it works. If it has no real purpose afterwards, it gets removed.”": "„Ich probiere Technik aus, weil ich verstehen will, wie sie funktioniert. Wenn sie danach keinen echten Zweck hat, fliegt sie wieder raus.“",
+      "One admin workstation": "Eine Admin-Arbeitsstation",
+      "Cthulhu is the only general-purpose administration machine. Infrastructure management, SSH and dangerous buttons stay there; everything else is a client.": "Cthulhu ist die einzige allgemeine Admin-Arbeitsstation. Infrastrukturverwaltung, SSH und gefährliche Knöpfe bleiben dort; alles andere ist ein Client.",
+      "Useful beats fashionable": "Nützlich schlägt modisch",
+      "Tailscale was tested and removed. Grafana was a fun weekend project and removed. UniFi Controller starts only when changes are needed. Technical curiosity does not obligate permanent operation.": "Tailscale wurde getestet und wieder entfernt. Grafana war ein schönes Wochenendprojekt und wurde wieder entfernt. Der UniFi Controller startet nur, wenn Änderungen nötig sind. Technische Neugier verpflichtet nicht zum Dauerbetrieb.",
+      "Back up by pain": "Backup nach Wiederherstellungsaufwand",
+      "Important projects, configuration and hard-to-rebuild data get multiple layers of history. Downloadable games do not. Backup policy follows replacement effort, not raw size.": "Wichtige Projekte, Konfigurationen und schwer wiederherstellbare Daten bekommen mehrere Historienebenen. Herunterladbare Spiele nicht. Die Backup-Politik richtet sich nach Wiederherstellungsaufwand, nicht nach Datenmenge.",
+      "FIELD NOTES FROM THE LAB": "MAL LÄUFT’S, MAL NICHT",
+      "Sometimes it works. Sometimes it becomes a story.": "Manchmal läuft’s. Manchmal wird eine Geschichte daraus.",
+      "7 DOCUMENTED FIELD NOTES": "7 DOKUMENTIERTE FIELD NOTES",
+      "Real repair mistakes, weird upgrades, a forgotten Ethernet cable and the €35 Cisco office phone that ended up running DOOM.": "Echte Reparaturfehler, seltsame Upgrades, ein vergessenes Ethernet-Kabel und das 35-Euro-Cisco-Bürotelefon, auf dem am Ende DOOM lief.",
+      "OPEN THE FIELD NOTES →": "FIELD NOTES ÖFFNEN →",
+      "COMPUTERS": "RECHNER",
+      "Machines that actually get used": "Rechner, die wirklich benutzt werden",
+      "PRIMARY WORKSTATION": "HAUPTRECHNER",
+      "Ryzen 7 5800X3D, Radeon RX 9060 XT, NixOS 26.05, Plasma 6 and the single administrative control point for the lab.": "Ryzen 7 5800X3D, Radeon RX 9060 XT, NixOS 26.05, Plasma 6 und der einzige zentrale Administrationspunkt des Labs.",
+      "OTHER WORKSTATIONS": "WEITERE RECHNER",
+      "ThinkPad X1 Carbon Gen 12, Katharina's Toshiba L500, workshop PC, Eee PC, Raspberry Pi and the former T480.": "ThinkPad X1 Carbon Gen 12, Katharinas Toshiba L500, Werkstatt-PC, Eee PC, Raspberry Pi und der frühere T480.",
+      "CLIENTS · EXPERIMENTS · DAILY USE": "CLIENTS · EXPERIMENTE · ALLTAG",
+      "A preserved Windows 98 SE environment with ICQ 2000b, games, WRP, ZIP media and Duke Nukem 3D.": "Eine erhaltene Windows-98-SE-Umgebung mit ICQ 2000b, Spielen, WRP, ZIP-Medien und Duke Nukem 3D.",
+      "FROZEN LEGACY ENVIRONMENT": "EINGEFRORENE LEGACY-UMGEBUNG",
+      "HOMELAB & INFRASTRUCTURE": "HOMELAB & INFRASTRUKTUR",
+      "Small rack, surprisingly long story": "Kleines Rack, überraschend lange Geschichte",
+      "10U rack, four Supermicro systems, HP ProCurve, QNAP, APC Smart-UPS and the HP MicroServer sitting on top.": "10U-Rack, vier Supermicro-Systeme, HP ProCurve, QNAP, APC Smart-UPS und der HP MicroServer oben drauf.",
+      "Starlink, OPNsense, purpose-based VLANs, three UniFi APs and dedicated 10G/40G point-to-point links.": "Starlink, OPNsense, zweckbasierte VLANs, drei UniFi-APs und dedizierte 10G/40G-Punkt-zu-Punkt-Verbindungen.",
+      "QNAP primary storage, TrueNAS backup, snapshots, independent history and tested disaster recovery.": "QNAP als Primärspeicher, TrueNAS-Backup, Snapshots, unabhängige Historie und getestete Disaster-Recovery.",
+      "RETRO & PRESERVATION": "RETRO & ERHALTUNG",
+      "Old software is more interesting when it still talks": "Alte Software ist spannender, wenn sie noch miteinander reden kann",
+      "FROM THE RACK TO THE PUBLIC INTERNET": "VOM RACK INS ÖFFENTLICHE INTERNET",
+      "Worldnode grew out of the homelab": "Worldnode ist aus dem Homelab gewachsen",
+      "Why it ended up like this": "Warum es am Ende so aussieht",
+      "Open the Living Lab Map →": "Living Lab Map öffnen →"
+    }
+  });
+
+  addPage("/museum/home-computing-lab/workstations/", {
+    title: "Weitere Rechner – ThinkPad X1, Toshiba L500, Werkstatt-PC & Raspberry Pi",
+    description: "Die weiteren Rechner in Dennis Hilks Home Lab: ThinkPad X1 Carbon, Debian-Toshiba L500, Werkstatt-PC, Eee PC, Raspberry Pi und der frühere T480.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "CLIENTS · LAPTOPS · SMALL MACHINES": "CLIENTS · LAPTOPS · KLEINE RECHNER",
+      "Other Workstations": "Weitere Rechner",
+      "One admin workstation. Everything else is a client.": "Eine Admin-Arbeitsstation. Alles andere ist ein Client.",
+      "“One admin workstation. Everything else is a client.”": "„Eine Admin-Arbeitsstation. Alles andere ist ein Client.“",
+      "ACTIVE SYSTEMS": "AKTIVE SYSTEME",
+      "Machines around Cthulhu": "Rechner rund um Cthulhu",
+      "DAILY LAPTOP": "ALLTAGS-LAPTOP",
+      "FAMILY CLIENT": "FAMILIEN-CLIENT",
+      "TOOL TERMINAL": "WERKZEUG-TERMINAL",
+      "TINY CLIENT": "KLEINER CLIENT",
+      "EXPERIMENTAL SBC": "EXPERIMENTELLER SBC",
+      "FORMER SYSTEM": "FRÜHERES SYSTEM",
+      "Client isolation by design": "Client-Isolation mit Absicht"
+    },
+    phrases: [
+      ["The SSD is LUKS-encrypted because the laptop leaves the house.", "Die SSD ist LUKS-verschlüsselt, weil der Laptop das Haus verlässt."],
+      ["Updates are manual.", "Updates erfolgen manuell."],
+      ["No personal accounts and no homelab access.", "Keine persönlichen Konten und kein Homelab-Zugriff."],
+      ["It has eaten two SD cards and is now on card #3", "Er hat bereits zwei SD-Karten gefressen und läuft jetzt auf Karte #3"]
+    ]
+  });
+
+  addPage("/museum/home-computing-lab/homelab/", {
+    title: "Das Homelab-Rack – Supermicro, QNAP, TrueNAS, Proxmox & APC-USV",
+    description: "Ein reales 10U-Homelab mit vier Supermicro-Systemen, QNAP, TrueNAS-Backup, Proxmox, HP ProCurve und APC Smart-UPS.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "10U RACK · SMALL SERVERS · USEFUL WEIRDNESS": "10U-RACK · KLEINE SERVER · NÜTZLICHE SELTSAMKEITEN",
+      "The Homelab Rack": "Das Homelab-Rack",
+      "Private infrastructure behind the desktop": "Private Infrastruktur hinter dem Desktop",
+      "CURRENT RACK": "AKTUELLES RACK",
+      "Why a rack?": "Warum ein Rack?",
+      "Airflow": "Luftstrom",
+      "Power": "Strom",
+      "THE FOUR SUPERMICROS": "DIE VIER SUPERMICROS",
+      "Old hardware kept because it still has a job": "Alte Hardware bleibt, weil sie noch einen Job hat",
+      "SWISS ARMY KNIFE": "SCHWEIZER TASCHENMESSER",
+      "BACKUP HELPER": "BACKUP-HELFER",
+      "PLAYGROUND": "SPIELWIESE",
+      "UPS policy: safety first first first": "USV-Politik: Sicherheit zuerst zuerst zuerst",
+      "Things deliberately not running": "Dinge, die bewusst nicht laufen"
+    }
+  });
+
+  addPage("/museum/home-computing-lab/network/", {
+    title: "Heimnetz – OPNsense, VLANs, Starlink, 10G & 40G",
+    description: "Das Netzwerk hinter dem Homelab: Starlink, OPNsense, HP ProCurve, UniFi-WLAN, zweckbasierte VLANs und dedizierte 10G/40G-Verbindungen.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "SEGMENTATION · FAST PATHS · NO DRAMA": "SEGMENTIERUNG · FAST PATHS · KEIN DRAMA",
+      "The Home Network": "Das Heimnetz",
+      "1G where it is enough. 10G and 40G where moving data is the point.": "1G, wo es reicht. 10G und 40G, wo Datentransfer der Punkt ist.",
+      "OPNsense at the edge": "OPNsense am Rand",
+      "Guest means guest": "Gast heißt Gast",
+      "Three UniFi APs": "Drei UniFi-APs",
+      "VLANs by purpose, not paranoia": "VLANs nach Zweck, nicht nach Paranoia",
+      "FAST PATHS": "SCHNELLE PFADE",
+      "Direct links for the traffic that actually benefits": "Direkte Links für den Verkehr, der wirklich davon profitiert",
+      "“40G, because it worked.”": "„40G, weil es funktioniert hat.“",
+      "The 1G switch is still enough": "Der 1G-Switch reicht weiterhin",
+      "One deliberately separate Wi-Fi": "Ein bewusst separates WLAN"
+    }
+  });
+
+  addPage("/museum/home-computing-lab/storage/", {
+    title: "Speicher & Backup – QNAP, TrueNAS, Snapshots und getestete Wiederherstellung",
+    description: "So schützt das Homelab Daten mit QNAP TS-435XeU, HP MicroServer mit TrueNAS, Snapshots, unabhängiger Historie und echten Restore-Tests.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "PRIMARY STORAGE · SECONDARY BACKUP · RESTORE TESTS": "PRIMÄRSPEICHER · SEKUNDÄRBACKUP · RESTORE-TESTS",
+      "Storage & Backup": "Speicher & Backup",
+      "Back up by replacement pain, not by terabytes.": "Backup nach Wiederherstellungsaufwand, nicht nach Terabytes.",
+      "Games are not sacred": "Spiele sind nicht heilig",
+      "Primary history on QNAP": "Primäre Historie auf QNAP",
+      "The HP only wakes up for backup work": "Der HP wacht nur für Backup-Arbeit auf",
+      "Activity-aware shutdown": "Aktivitätsabhängiges Herunterfahren",
+      "“If GitHub and the final HP backup cannot rebuild Cthulhu, the backup is not good enough.”": "„Wenn GitHub und das finale HP-Backup Cthulhu nicht wieder aufbauen können, ist das Backup nicht gut genug.“",
+      "Disaster recovery is actually tested": "Disaster Recovery wird wirklich getestet"
+    }
+  });
+
+  addPage("/museum/home-computing-lab/worldnode/", {
+    title: "Worldnode – Vom Atom-Heimserver zum öffentlichen Proxmox-Host",
+    description: "Die Entwicklung von Worldnode vom Atom-D525-Heimserver zum Ryzen-9-9900X3D-Proxmox-Host und die Architektur hinter World Observer.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "FROM THE HOME RACK TO THE PUBLIC INTERNET": "VOM HEIMRACK INS ÖFFENTLICHE INTERNET",
+      "The public side of a project that started on a tiny Atom box": "Die öffentliche Seite eines Projekts, das auf einer kleinen Atom-Kiste begann",
+      "The first Worldnode": "Der erste Worldnode",
+      "The current Worldnode": "Der aktuelle Worldnode",
+      "Administration": "Administration",
+      "World Observer started as a private curiosity": "World Observer begann als private Neugier",
+      "Central schedule": "Zentraler Zeitplan",
+      "Retry without lying": "Retry ohne zu lügen",
+      "Missing means missing": "Fehlend heißt fehlend",
+      "Collector measures. Website gives the measurement meaning.": "Der Collector misst. Die Website gibt der Messung Bedeutung.",
+      "Heartbeat: a separate pulse": "Heartbeat: ein eigener Puls",
+      "History matters more than code": "Historie ist wichtiger als Code",
+      "The code can be redeployed. The history cannot be recollected.": "Der Code kann neu ausgerollt werden. Die Historie kann nicht nachträglich neu gesammelt werden.",
+      "A strange but useful measurement philosophy": "Eine seltsame, aber nützliche Messphilosophie"
+    }
+  });
+
+  addPage("/museum/home-computing-lab/architecture/", {
+    title: "Living Lab Map – So verbinden sich Cthulhu, Speicher, VLANs, Retro-PC & Worldnode",
+    description: "Die lebende Architekturkarte des Home Computing Lab mit Starlink, OPNsense, VLANs, direkten 10G/40G-Verbindungen, Speicher, Retro-Systemen und Worldnode.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "LIVING LAB MAP · LOGICAL VIEW": "LIVING LAB MAP · LOGISCHE SICHT",
+      "How Everything Connects": "Wie alles verbunden ist",
+      "A network that grew organically, then got documented.": "Ein Netzwerk, das organisch gewachsen ist und danach dokumentiert wurde.",
+      "LIVING LAB MAP": "LIVING LAB MAP",
+      "Fast where useful. Segmented where useful.": "Schnell, wo es nützt. Segmentiert, wo es nützt.",
+      "This is a logical map, not a disclosure of addresses, VLAN IDs or firewall rules.": "Dies ist eine logische Karte, keine Veröffentlichung von Adressen, VLAN-IDs oder Firewall-Regeln.",
+      "Fast paths": "Schnelle Pfade",
+      "Segmentation": "Segmentierung",
+      "Storage flow": "Speicherfluss",
+      "Compute nodes": "Compute-Knoten",
+      "External infrastructure": "Externe Infrastruktur",
+      "“There was no master plan. One useful experiment needed another useful box, then another cable, then apparently 40 gigabits.”": "„Es gab keinen Masterplan. Ein nützliches Experiment brauchte eine weitere nützliche Kiste, dann noch ein Kabel und offenbar irgendwann 40 Gigabit.“"
+    }
+  });
+
+  addPage("/museum/home-computing-lab/icq/", {
+    title: "ICQ 2000b im Jahr 2026 – Privates OSCAR-Netz auf Windows 98",
+    description: "So läuft ICQ 2000b auf einem erhaltenen Windows-98-PC über einen privaten OSCAR-kompatiblen Dienst auf Debian mit Pidgin und isoliertem Retro-Netz.",
+    text: {
+      "DOCUMENTED · OCTOBER 2026": "DOKUMENTIERT · OKTOBER 2026",
+      "RETRO & PRESERVATION": "RETRO & ERHALTUNG",
+      "ICQ 2000b — Keeping a Legacy Messenger Alive": "ICQ 2000b — Einen Legacy-Messenger am Leben halten",
+      "The original service is gone. The protocol still has something to say.": "Der ursprüngliche Dienst ist weg. Das Protokoll hat noch etwas zu sagen.",
+      "Private compatibility service": "Privater Kompatibilitätsdienst",
+      "The project started with a physical-layer joke": "Das Projekt begann mit einem Witz auf der physikalischen Schicht",
+      "WRP beside OSCAR": "WRP neben OSCAR"
+    }
+  });
+
 })();
