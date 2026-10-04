@@ -24,6 +24,10 @@
 <a href="/museum/home-computing-lab/field-notes/">Field Notes</a>
 </nav>
 <main class="museum-exhibit-layout hcl-layout">
+<section class="hcl-documentation" aria-label="ICQ preservation photography"><div class="hcl-photo-records">
+<figure><a class="cthulhu-image-link" href="/assets/home-computing-lab/field-notes/icq-retro-workstation.png" target="_blank" rel="noopener"><img src="/assets/home-computing-lab/field-notes/icq-retro-workstation.png" alt="Windows 98 retro workstation running the ICQ preservation environment" loading="lazy"></a><figcaption><strong>ICQ 2000b ON THE REAL WINDOWS 98 MACHINE</strong><span>The legacy client is preserved on the physical workstation while the service it expects is recreated privately on modern Linux infrastructure.</span></figcaption></figure>
+</div></section>
+
 <section class="hcl-quote"><p>“This Windows 98 computer still uses ICQ in 2026 — not because the original network survived, but because the lab recreates the service the client expects.”</p></section>
 <section class="hcl-flow" aria-label="ICQ compatibility flow"><b>ICQ 2000b<br><small>Windows 98 SE</small></b><i>→<small>OSCAR</small></i><b>Supermicro B<br><small>Debian 13</small></b><i>→</i><b>Pidgin<br><small>modern Linux</small></b></section>
 <section class="detail-card"><h2>Private compatibility service</h2><p>The Windows 98 machine uses the historical ICQ 2000b client. It does not connect to the original ICQ network. Supermicro B runs a heavily modified service based on <code>mk6i/open-oscar-server</code> that reproduces enough OSCAR behavior for the legacy client and a modern Pidgin client to talk to each other.</p><p>The retro PC stays on its own VLAN. Cthulhu can administer the environment; ordinary clients do not need access.</p></section>
