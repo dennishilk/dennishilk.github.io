@@ -122,12 +122,12 @@
     },
 
     "/museum/home-computing-lab/": {
-      title: "Dennis Hilk's Computing Lab – Linux Workstation, Homelab & Retro PC",
-      description: "Explore Dennis Hilk's real computing lab: an Arch Linux workstation, homelab rack, Windows 98 retro PC, storage, networking and Worldnode server infrastructure.",
+      title: "Dennis Hilk's Home Computing Lab – NixOS, Homelab, Retro PC & Worldnode",
+      description: "Explore Dennis Hilk's real home computing lab: Cthulhu on NixOS, laptops, Windows 98, segmented networking, storage, Worldnode and field notes from real experiments.",
     },
     "/museum/home-computing-lab/architecture/": {
-      title: "Computing Lab Architecture – Linux, Retro PC, Homelab & Worldnode",
-      description: "See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment.",
+      title: "Living Lab Map – Cthulhu, Storage, VLANs, Retro PC & Worldnode",
+      description: "See how Starlink, OPNsense, VLANs, dedicated 10G and 40G links, storage, retro systems and the external Worldnode fit together.",
     },
     "/museum/home-computing-lab/cthulhu/": {
       title: "Cthulhu – NixOS Workstation, Ryzen 5800X3D & Radeon RX 9060 XT",
