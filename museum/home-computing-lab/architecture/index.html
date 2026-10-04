@@ -1,24 +1,65 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="canonical" href="https://www.dennishilk.com/museum/home-computing-lab/architecture/"><title>Computing Lab Architecture – Linux, Retro PC, Homelab &amp; Worldnode</title><meta name="description" content="See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment."><meta name="robots" content="index,follow,max-image-preview:large"><link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="stylesheet" href="/style.css?v=46"><script defer src="/stars.js"></script><meta property="og:title" content="Computing Lab Architecture – Linux, Retro PC, Homelab & Worldnode"><meta property="og:description" content="See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment."><meta property="og:url" content="https://www.dennishilk.com/museum/home-computing-lab/architecture/"><meta property="og:type" content="website"><meta property="og:image" content="https://www.dennishilk.com/avatar.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Computing Lab Architecture – Linux, Retro PC, Homelab & Worldnode"><meta name="twitter:description" content="See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment."><meta name="twitter:image" content="https://www.dennishilk.com/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","name":"Computing Lab Architecture – Linux, Retro PC, Homelab & Worldnode","description":"See how the Linux workstation, Windows 98 retro PC, homelab, storage, network and Worldnode server fit together in one documented computing environment.","url":"https://www.dennishilk.com/museum/home-computing-lab/architecture/","isPartOf":{"@type":"CollectionPage","name":"Computer Museum","url":"https://www.dennishilk.com/museum/"}}</script></head>
-<body><canvas id="stars"></canvas><div class="content museum-page hcl-page"><div class="museum-exhibit"><header class="dashboard-header wo-page-header museum-hero exhibit-hero hcl-hero"><div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a></div></div><a class="museum-back" href="/museum/">← BACK TO COMPUTER MUSEUM</a><span class="museum-status planned">PLANNED EXHIBIT</span><p class="hcl-kicker">REAL ENVIRONMENT · 1998–PRESENT</p><h1><span class="prompt">museum@author-lab:~$</span> <span class="name">How Everything Connects</span></h1><p class="hcl-subtitle">One environment across decades of computing</p></header><nav class="hcl-nav" aria-label="The Author's Computing Lab sections"><a href="/museum/home-computing-lab/">Overview</a><a href="/museum/home-computing-lab/cthulhu/">Cthulhu</a><a href="/museum/home-computing-lab/homelab/">Homelab</a><a href="/museum/home-computing-lab/retro-pc/">Retro PC</a><a href="/museum/home-computing-lab/workstations/">Workstations</a><a href="/museum/home-computing-lab/icq/">ICQ</a><a href="/museum/home-computing-lab/storage/">Storage</a><a href="/museum/home-computing-lab/network/">Network</a><a href="/museum/home-computing-lab/worldnode/">Worldnode</a><a href="/museum/home-computing-lab/architecture/" aria-current="page">Architecture</a></nav><main class="museum-exhibit-layout hcl-layout"><section class="hcl-architecture" aria-labelledby="architecture-title"><p class="museum-section-label">SIMPLIFIED ARCHITECTURE</p><h2 id="architecture-title">One environment, many layers</h2><pre>INTERNET
-   │
-STARLINK / INTERNET CONNECTION
-   │
-HOME NETWORK
-   ├───────────────┬────────────────┐
-   ▼               ▼                ▼
-CTHULHU         HOME LAB         RETRO PC
-Arch Linux      Linux services   Windows 98
-Workstation     Samba · Docker   ICQ 2000b
-                  │                │
-                  └─ OSCAR server ─┘
-                         │
-                    Pidgin client
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="https://www.dennishilk.com/museum/home-computing-lab/architecture/">
+<title>Living Lab Map – How Cthulhu, Storage, VLANs, Retro PC & Worldnode Connect</title><meta name="description" content="A living architecture map of the home computing lab: Starlink and OPNsense, VLANs, direct 10G/40G links, storage, retro systems and the external Worldnode."><meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
+<link rel="stylesheet" href="/style.css?v=61"><script defer src="/stars.js"></script>
+<meta property="og:title" content="Living Lab Map – How Cthulhu, Storage, VLANs, Retro PC & Worldnode Connect"><meta property="og:description" content="A living architecture map of the home computing lab: Starlink and OPNsense, VLANs, direct 10G/40G links, storage, retro systems and the external Worldnode."><meta property="og:url" content="https://www.dennishilk.com/museum/home-computing-lab/architecture/"><meta property="og:type" content="website"><meta property="og:image" content="https://www.dennishilk.com/assets/home-computing-lab/lab-today-workspace-view.jpg">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Living Lab Map – How Cthulhu, Storage, VLANs, Retro PC & Worldnode Connect"><meta name="twitter:description" content="A living architecture map of the home computing lab: Starlink and OPNsense, VLANs, direct 10G/40G links, storage, retro systems and the external Worldnode."><meta name="twitter:image" content="https://www.dennishilk.com/assets/home-computing-lab/lab-today-workspace-view.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","name":"Living Lab Map – How Cthulhu, Storage, VLANs, Retro PC & Worldnode Connect","description":"A living architecture map of the home computing lab: Starlink and OPNsense, VLANs, direct 10G/40G links, storage, retro systems and the external Worldnode.","url":"https://www.dennishilk.com/museum/home-computing-lab/architecture/","isPartOf":{"@type":"CollectionPage","name":"Computer Museum","url":"https://www.dennishilk.com/museum/"}}</script>
+</head><body><canvas id="stars"></canvas><div class="content museum-page hcl-page"><div class="museum-exhibit">
+<header class="dashboard-header wo-page-header museum-hero exhibit-hero hcl-hero"><div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a></div></div><a class="museum-back" href="/museum/">← BACK TO COMPUTER MUSEUM</a><span class="museum-status available">DOCUMENTED · OCTOBER 2026</span><p class="hcl-kicker">LIVING LAB MAP · LOGICAL VIEW</p><h1><span class="prompt">museum@author-lab:~$</span> <span class="name">How Everything Connects</span></h1><p class="hcl-subtitle">A network that grew organically, then got documented.</p></header>
+<nav class="hcl-nav" aria-label="The Author's Computing Lab sections">
+<a href="/museum/home-computing-lab/">Overview</a>
+<a href="/museum/home-computing-lab/cthulhu/">Cthulhu</a>
+<a href="/museum/home-computing-lab/workstations/">Workstations</a>
+<a href="/museum/home-computing-lab/homelab/">Homelab</a>
+<a href="/museum/home-computing-lab/network/">Network</a>
+<a href="/museum/home-computing-lab/storage/">Storage</a>
+<a href="/museum/home-computing-lab/retro-pc/">Retro PC</a>
+<a href="/museum/home-computing-lab/icq/">ICQ</a>
+<a href="/museum/home-computing-lab/worldnode/">Worldnode</a>
+<a href="/museum/home-computing-lab/architecture/" aria-current="page">Architecture</a>
+<a href="/museum/home-computing-lab/field-notes/">Field Notes</a>
+</nav>
+<main class="museum-exhibit-layout hcl-layout">
+<section class="hcl-architecture" aria-labelledby="map-title"><p class="museum-section-label">LIVING LAB MAP</p><h2 id="map-title">Fast where useful. Segmented where useful.</h2><pre>                                  PUBLIC INTERNET
+                                        │
+                                  [  STARLINK  ]
+                                        │
+                                  [  OPNsense  ]
+                                 Supermicro A
+                                        │ 1G
+                                [ HP PROCURVE ]
+                    ┌───────────────┼─────────────────────┐
+                    │               │                     │
+              VLAN clients      Retro VLAN           Servers / AP
+             X1 · Toshiba       Windows 98          Supermicro B
+             Workshop · WiFi       │                UniFi · QNAP
+                    │               └── OSCAR / WRP ───────┘
+                    │
+                [ CTHULHU ]  ←──── administrative control point
+                 │   │   │
+        10G QNAP │   │   │ 40G Supermicro C
+        10G HP   │   │   └ 40G Supermicro D / Proxmox
+                 │   │
+                 │   └──────────── large-transfer fast paths
+                 │
+         ┌───────┴────────┐
+      [ QNAP ] --1G--> [ HP TrueNAS ]
+       primary             backup
+       snapshots           independent history
 
-INTERNET  ───────────────▼
-                     WORLDNODE
-                       Debian
-             Website · Observer · Museum</pre><p>This is a conceptual service map, not a physical network diagram or a security configuration.</p></section><section class="hcl-three"><article><h2>Hardware</h2><p>Workstations, the rack, storage, network equipment and remote servers make the physical foundation visible.</p></article><article><h2>Software &amp; protocols</h2><p>Operating systems run applications; Samba, OSCAR, HTTPS and other protocols define how those applications communicate.</p></article><article><h2>People &amp; services</h2><p>Infrastructure exists to support people: learning, preserving software, publishing work and maintaining useful connections.</p></article></section><section class="detail-card"><h2>A system is rarely one computer</h2><p>Modern computing is a network of hardware, operating systems, applications, protocols, services, storage and people. The The Author's Computing Lab uses one real environment to show how those layers can span decades without losing their individual histories.</p></section></main></div><footer><div class="nebby-terminal-line"><picture>
-<source srcset="../../../assets/generated/images/nebby.webp" type="image/webp">
-<img src="/nebby.png" class="nebby" alt="Nebby mascot">
-</picture><span class="coffee-text">&gt; home-computing-lab --documentation=planned<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer></div></body></html>
+HOME LAB  ─────────────────────────────────────────────────────────
+
+PUBLIC INTERNET ───────────── [ WORLDNODE ]
+                              External datacenter, Germany
+                              “Falkenstein? 😉” — no, near Braunschweig.</pre>
+<p>This is a logical map, not a disclosure of addresses, VLAN IDs or firewall rules.</p></section>
+
+<section class="hcl-three"><article><h2>Fast paths</h2><p>Cthulhu owns two 10GbE Intel X520 links for QNAP and TrueNAS, plus two 40GbE Mellanox links for Supermicro C and D. Bulk transfers do not need to cross the central 1G switch.</p></article><article><h2>Segmentation</h2><p>Retro, laptops, guests, WLAN/IoT, storage and server roles are separated by purpose. Cthulhu is the only general administrative client across those boundaries.</p></article><article><h2>Storage flow</h2><p>Important client data lands on QNAP first. QNAP keeps snapshots and later feeds the HP TrueNAS box over a dedicated 1G link. The backup server does not need a permanent normal-LAN or Internet connection.</p></article></section>
+
+<section class="detail-card"><h2>Compute nodes</h2><p>Supermicro A routes. B does a little of everything. C helps with backup/utility work. D is the Proxmox playground. Cthulhu remains the human-facing workstation and administrative control point. Old machines are not kept because they are old; they are kept because they still have jobs.</p></section>
+<section class="detail-card"><h2>External infrastructure</h2><p>Worldnode is intentionally outside the home topology. Public website and observer workloads live in a datacenter and can remain available even if the home rack is powered down. Administration still comes from Cthulhu under normal conditions.</p></section>
+<section class="hcl-quote"><p>“There was no master plan. One useful experiment needed another useful box, then another cable, then apparently 40 gigabits.”</p></section></main></div><footer><div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; home-computing-lab --archive=living<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer></div></body></html>
