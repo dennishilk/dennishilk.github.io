@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="canonical" href="https://www.dennishilk.com/museum/home-computing-lab/field-notes/field-note-8/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/museum/home-computing-lab/field-notes/field-note-8/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/museum/home-computing-lab/field-notes/field-note-8/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/museum/home-computing-lab/field-notes/field-note-8/">
+<title>RX 9060 XT Linux Black Screen &amp; Hard-Lock – Field Note #008</title>
+<meta name="description" content="A real NixOS/RDNA4 troubleshooting record: Radeon RX 9060 XT hard-locks, amdgpu ring timeouts, MES reset failures, Mesa 26.2.4, PCIe 4.0 x16 and the riser/topology breakthrough.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/avatar.png"><link rel="stylesheet" href="/style.css?v=61"><script defer src="/stars.js"></script>
+<meta property="og:title" content="RX 9060 XT Linux Black Screen &amp; Hard-Lock – Field Note #008"><meta property="og:description" content="A real NixOS/RDNA4 troubleshooting record: amdgpu hard-locks, Mesa experiments and the first stable PCIe 4.0 x16 result."><meta property="og:url" content="https://www.dennishilk.com/museum/home-computing-lab/field-notes/field-note-8/"><meta property="og:type" content="article"><meta property="og:image" content="https://www.dennishilk.com/assets/home-computing-lab/lab-today-workstation.jpg"><meta property="article:published_time" content="2026-10-05">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="RX 9060 XT Linux Black Screen &amp; Hard-Lock"><meta name="twitter:description" content="Kernel changes, Mesa rollbacks, RADV flags and power limits failed. Then the PCIe path changed."><meta name="twitter:image" content="https://www.dennishilk.com/assets/home-computing-lab/lab-today-workstation.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RX 9060 XT Linux Black Screen & Hard-Lock","description":"A real NixOS/RDNA4 troubleshooting record covering amdgpu hard-locks, ring timeouts, MES reset failures, Mesa 26.2.4 and a PCIe 4.0 x16 topology breakthrough.","datePublished":"2026-10-05","dateModified":"2026-10-05","inLanguage":"en","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"image":"https://www.dennishilk.com/assets/home-computing-lab/lab-today-workstation.jpg","mainEntityOfPage":"https://www.dennishilk.com/museum/home-computing-lab/field-notes/field-note-8/","keywords":["Radeon RX 9060 XT","RDNA4","Navi44","Linux","NixOS","amdgpu","Mesa","RADV","PCIe 4.0","GPU hard-lock","black screen"]}</script>
+<style>
+.field8-lang,.field8-tags{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:1rem 0 0}.field8-lang a,.field8-tags span{border:1px solid rgba(0,180,255,.35);border-radius:999px;color:#bff6ff;font-size:.75rem;padding:.28rem .55rem;text-decoration:none}.field8-lang a[aria-current="page"]{background:rgba(79,211,255,.16);border-color:#4fd3ff;color:#fff}.field8-callout{background:rgba(2,13,18,.78);border:1px solid rgba(137,185,191,.38);border-left:4px solid #4fd3ff;margin:1rem 0;padding:1rem 1.1rem}.field8-warning{border-left-color:#f0ba63}.field8-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr));margin:1rem 0}.field8-grid article{background:rgba(2,13,18,.62);border:1px solid rgba(137,185,191,.28);padding:1rem}.hcl-field-story pre{background:#020d12;border:1px solid rgba(137,185,191,.34);color:#bff6ff;line-height:1.55;margin:.8rem 0;overflow:auto;padding:1rem;text-align:left;white-space:pre-wrap}.field8-status{font-weight:700}@media(max-width:760px){.field8-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><canvas id="stars"></canvas><div class="content museum-page hcl-page"><div class="museum-exhibit">
+<header class="dashboard-header wo-page-header museum-hero exhibit-hero hcl-hero hcl-field-detail-header">
+<div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
+<div class="field8-lang" aria-label="Language"><a href="/museum/home-computing-lab/field-notes/field-note-8/" lang="en" aria-current="page">ENGLISH</a><a href="/de/museum/home-computing-lab/field-notes/field-note-8/" lang="de">DEUTSCH</a></div>
+<a class="museum-back" href="/museum/home-computing-lab/field-notes/">← FIELD NOTES &amp; ARTIFACTS</a>
+<p class="hcl-kicker">FIELD NOTE #008 · DOCUMENTED 5 OCT 2026 · INVESTIGATION STILL OPEN</p>
+<h1>THE RX 9060 XT HARD-LOCK<br>THAT SURVIVED EVERYTHING</h1>
+<p class="hcl-subtitle">Kernel switches, Mesa rollbacks, RADV flags, power limits and reset experiments kept failing. Then the PCIe path changed.</p>
+<div class="field8-tags"><span>RX 9060 XT 16 GB</span><span>NAVI44 / RDNA4</span><span>NIXOS</span><span>AMDGPU</span><span>MESA 26.2.4</span><span>PCIE 4.0 x16</span></div>
+</header>
+<main class="museum-exhibit-layout hcl-layout"><article class="hcl-field-story">
+<section class="hcl-story-lesson"><h2>Short version</h2>
+<p>Cthulhu's PowerColor Radeon RX 9060 XT could run light games for hours, yet heavy titles repeatedly produced stalls, black screens and sometimes a full GPU hard-lock with the fans at 100 percent.</p>
+<p>After a long software investigation, <strong>Mesa 26.2.4 alone still crashed on the old PCIe setup within seconds</strong>. I then simplified the hardware path in one maintenance window: the GPU went directly into the motherboard, the Corsair riser came out, the Intel 10 GbE card came out, and the BIOS link setting returned from forced Gen3 to Gen4/Auto.</p>
+<p>The external GPU link changed from <strong>8 GT/s x8</strong> to <strong>16 GT/s x16</strong>. In that state, S.T.A.L.K.E.R. 2 ran for about 25 minutes with no traversal stalls or black screen, followed by roughly 20 minutes of Arma 3 with no problem at all.</p>
+<div class="field8-callout field8-warning"><strong>Important:</strong><p>This is the strongest lead so far, not a final root-cause proof. Several hardware variables changed together. The current evidence says the PCIe/topology change matters; it does not yet tell us whether the decisive part was the riser, lane allocation, Gen3 versus Gen4, the removed 10 GbE card, or an interaction between them. Mesa 26.2.4 may also contribute, but it was not sufficient by itself on the old topology.</p></div>
+</section>
+
+<section><h2>The machine and the symptom</h2>
+<p>The workstation is Cthulhu: Ryzen 7 5800X3D, PowerColor Radeon RX 9060 XT 16 GiB, Gigabyte B550 VISION D, NixOS, Plasma/Wayland and two displays. The GPU identifies as Navi44 / RDNA4 / GFX1200, PCI ID <code>1002:7590</code>, subsystem <code>148c:2437</code>.</p>
+<p>The failure was never one clean bug. That distinction turned out to matter.</p>
+<div class="field8-grid">
+<article><h3>Traversal stalls</h3><p>S.T.A.L.K.E.R. 2 could stand still, shoot and reload normally, but moving through the world produced one- to several-second freezes. During captured stalls there was often no amdgpu timeout in the kernel log.</p></article>
+<article><h3>Black screen, audio alive</h3><p>Some runs lost the display while audio continued and the GPU fans stayed normal. That looked more like a display/presentation or render wedge than the catastrophic failure.</p></article>
+<article><h3>Black screen, fans at 100%</h3><p>The nasty one. Heavy games could make both monitors go black, the GPU fans jump to full speed and the entire machine require a hard reboot.</p></article>
+<article><h3>Arma 3 as the brutal trigger</h3><p>Arma became the most reproducible test: joining a game could trigger the hard-lock almost immediately.</p></article>
+</div>
+</section>
+
+<section><h2>The kernel finally left a fingerprint</h2>
+<p>Some crashes died too hard to leave anything useful. Others produced a much better signature. The interesting part was not just that the graphics ring timed out; recovery itself also failed:</p>
+<pre>amdgpu: ring gfx_0.0.0 timeout
+MES(1) failed to respond to msg=RESET
+failed to reset legacy queue
+reset via MES failed and try pipe reset -110
+The CPFW hasn't support pipe reset yet.
+GPU reset begin!
+amdgpu: device lost from bus!
+GPU Recovery Failed: -19</pre>
+<p>That changed the working model. The MES failure could be a <em>recovery failure after the initiating hang</em>, not necessarily the original cause.</p>
+</section>
+
+<section><h2>Firmware inventory instead of guessing</h2>
+<p>Before blaming “old firmware” in the abstract, I read what the card had actually loaded:</p>
+<pre>ME   feature 29  firmware 0x00000c12
+PFP  feature 29  firmware 0x00000c76
+MEC  feature 29  firmware 0x00000d7a
+SMC  firmware 0x00664700 (102.71.0)
+DMCUB firmware 0x0a004b00
+MES  feature 1   firmware 0x00000093</pre>
+<p>That was useful because it stopped the investigation from turning into “install a newer blob and hope.” The loaded SMU was not obviously obsolete, while newer upstream display firmware existed and remained relevant mainly to the normal-fan black-screen class.</p>
+</section>
+
+<section><h2>What we tested — and what did not fix it</h2>
+<p>The rule was simple: change one software variable where possible, reproduce the same workload, read the actual error, and do not declare victory because one run happened to last longer.</p>
+<div class="field8-grid">
+<article><h3>Kernels</h3><p>Linux 7.2.8 remained the preferred baseline. Linux 6.18.54 was worse: S.T.A.L.K.E.R. could black-screen with 100% fans immediately. Linux 7.3-rc6, despite relevant GFX12 fixes, also black-screened almost immediately in the first S.T.A.L.K.E.R. movement test.</p></article>
+<article><h3>Older Mesa</h3><p>Mesa 25.1.7 was not a known-good fallback. At a location where 26.1.8 usually stalled, 25.1.7 produced a persistent black screen with audio continuing.</p></article>
+<article><h3>Scheduler and power knobs</h3><p><code>amdgpu.uni_mes=0</code>, <code>amdgpu.async_gfx_ring=0</code>, GFXOFF inhibition, RADV synchronous shaders and GPU power caps from 112 W through the normal 160 W did not remove the problem.</p></article>
+<article><h3>Rendering paths</h3><p>Arma also crashed with <code>PROTON_USE_WINED3D=1</code>, so DXVK/Vulkan was not required for the catastrophic class. <code>RADV_DEBUG=nodcc</code> did not save S.T.A.L.K.E.R. either.</p></article>
+<article><h3>Storage</h3><p>The game was moved from the SATA game SSDs to NVMe. The traversal stalls remained. The Samsung SATA drives do have real transport errors of their own, but they are a separate maintenance problem, not a complete explanation for the GPU hard-lock.</p></article>
+<article><h3>Specific upstream workarounds</h3><p>A targeted GFX12 SDMA/DCC kernel workaround was backported and tested. It did not change the S.T.A.L.K.E.R. stalls. Steam shader pre-caching was also tested and did not prevent another hard-lock.</p></article>
+</div>
+</section>
+
+<section><h2>ASPM looked promising — until we measured it</h2>
+<p>A very similar PowerColor RX 9060 XT case had reportedly become stable with global PCIe ASPM disabled. The subsystem ID even matched ours, so this deserved a proper check.</p>
+<p>Instead of adding another boot parameter blindly, every relevant hop was inspected. Root port, upstream switch, downstream switch and GPU all reported:</p>
+<pre>LnkCtl: ASPM Disabled</pre>
+<p>The L1 substates were also disabled. That made <code>pcie_aspm=off</code> a poor candidate for Cthulhu: the relevant path was already running with ASPM off.</p>
+</section>
+
+<section><h2>Then Mesa 26.2.4 fought back in a very NixOS way</h2>
+<p>The first attempt to pull Mesa 26.2.4 directly from a newer nixpkgs snapshot produced a clean example of why mixing package sets can be dangerous:</p>
+<pre>libm.so.6: version 'GLIBC_2.44' not found
+required by ... libLLVM.so.21.1
+loader_icd_scan: Failed loading ... libvulkan_radeon.so</pre>
+<p>No GPU mystery there — just an ABI mismatch. That experiment was rolled back immediately.</p>
+<p>Instead, Mesa 26.2.4 was rebuilt from its upstream source using Cthulhu's current NixOS package set and toolchain, for both 64-bit and 32-bit graphics. The result loaded correctly:</p>
+<pre>driverName = radv
+driverInfo = Mesa 26.2.4
+
+driverName = llvmpipe
+driverInfo = Mesa 26.2.4 (LLVM 21.1.8)</pre>
+<p>Then S.T.A.L.K.E.R. entered the game and still hard-locked after only a few seconds on the old PCIe arrangement. That was an important negative result: <strong>Mesa 26.2.4 by itself was not the fix.</strong></p>
+</section>
+
+<section><h2>The hardware simplification</h2>
+<p>At that point the software tree had been shaken hard enough. Instead of doing another dozen reboots, the next test deliberately simplified the physical path as much as possible in one shutdown:</p>
+<pre>GPU: Corsair riser  → removed
+GPU: indirect mount → direct motherboard slot
+Intel dual-port 10 GbE → removed for the test
+BIOS PCIe mode: forced Gen3 → Gen4 / Auto
+software: Linux 7.2.8 + Mesa 26.2.4 → unchanged</pre>
+<p>This was intentionally <em>not</em> a one-variable experiment. Its purpose was to answer a different question: can the machine become stable when the PCIe environment is stripped down?</p>
+<p>Before the change, the outer GPU link had been:</p>
+<pre>LnkSta: Speed 8GT/s (downgraded), Width x8 (downgraded)</pre>
+<p>After the GPU went directly into the board:</p>
+<pre>00:03.1 root port
+LnkCap: Speed 16GT/s, Width x16
+LnkSta: Speed 16GT/s, Width x16
+
+53:00.0 GPU upstream port
+LnkSta: Speed 16GT/s (downgraded), Width x16</pre>
+<p>The card still exposes its own AMD switch functions internally, but the motherboard-facing path had changed from PCIe 3.0 x8 to PCIe 4.0 x16.</p>
+</section>
+
+<section><h2>The first result that actually felt different</h2>
+<p>S.T.A.L.K.E.R. 2 had previously been able to fail within seconds. In the simplified PCIe 4.0 x16 configuration it ran for about <strong>25 minutes</strong> with no traversal stalls, no black screen and no 100%-fan hard-lock.</p>
+<p>Arma 3 had been our nastiest reproducer. A quick test turned into roughly <strong>20 minutes</strong> of normal play with no problem at all.</p>
+<div class="field8-callout"><strong>This was the first genuinely different result:</strong><p>Not “the crash took a little longer.” Not “the power limit changed the symptom.” The two workloads that had repeatedly exposed the problem suddenly behaved normally.</p></div>
+</section>
+
+<section><h2>One more PCIe detail: sticky lane errors</h2>
+<p>After booting the direct Gen4 x16 setup, the root port initially showed sticky lane-error bits on lanes 3, 7, 11 and 15:</p>
+<pre>LnkSta: Speed 16GT/s, Width x16
+LaneErrStat: LaneErr at lane: 3 7 11 15</pre>
+<p>Those bits can be left behind by link training, so they were cleared to establish a clean baseline. Read-back then showed:</p>
+<pre>00000000</pre>
+<p>The useful test is not whether training ever set a bit. It is whether new lane errors appear after sustained gaming load. That check is still pending.</p>
+</section>
+
+<section><h2>What I think now</h2>
+<p>The strongest evidence currently points toward the <strong>PCIe path / lane topology / riser environment</strong> being part of the real problem. There is historical support too: on the previous Arch installation, removing the riser had already stopped a separate WoW Classic black-screen behavior.</p>
+<p>I do <strong>not</strong> think the Intel 10 GbE card is the leading suspect. The NAS at the other end was not even active during these tests, so network traffic was irrelevant. Still, the card can affect PCIe lane allocation simply by being installed, so it is not scientifically eliminated yet.</p>
+<p>Windows remaining stable on the old physical setup is also important. It argues against the simplistic conclusion “the riser is broken.” A marginal link, lane-layout interaction or reset/power-state edge case can be tolerated differently by Windows and Linux. The Linux GFX12 stack may simply be much less forgiving when the GPU stops responding.</p>
+<p>Mesa 26.2.4 may be helping as well, but the evidence is asymmetric: it failed quickly on the old topology, while the new topology has not yet been tested with Mesa 26.1.8. So the honest statement is <strong>PCIe/topology change: strongly implicated; Mesa 26.2.4: plausible contributor; exact root cause: still open.</strong></p>
+</section>
+
+<section><h2>What comes next</h2>
+<p>The next step is deliberately boring: leave the stable state alone and play longer sessions. After that, read <code>LaneErrStat</code> again. If the system remains clean, the Intel 10 GbE card can be reinstalled first while keeping the GPU direct at Gen4 x16. If that stays stable, the NIC drops further down the list. The riser and x8/bifurcation path can then be isolated separately.</p>
+<p>No more “change five kernel parameters and reboot” roulette. We finally have a useful reference state.</p>
+</section>
+
+<section class="hcl-story-lesson"><h2>Lesson</h2>
+<p>The biggest mistake would have been treating every black screen as the same bug.</p>
+<p>One class looked like a display/render wedge. Another produced a graphics-ring timeout followed by a failed MES recovery and device loss. The traversal stalls could happen without either.</p>
+<p>Once those were separated, the investigation became much more useful: <strong>measure the layer that failed, preserve the known-good variables, and only then change the next one.</strong></p>
+<p>And after what felt like reboot number 224, sometimes the most valuable command is not another kernel parameter.</p>
+<p>Sometimes it is a screwdriver.</p>
+</section>
+
+<p><a class="hcl-archive-return" href="/museum/home-computing-lab/field-notes/">← RETURN TO FIELD NOTES &amp; ARTIFACTS</a></p>
+</article></main></div>
+<footer><div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cthulhu --gpu=rx9060xt --pcie=gen4x16 --status=promising<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+</div></body></html>
