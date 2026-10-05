@@ -70,6 +70,18 @@ MES  feature 1   firmware 0x00000093</pre>
 <p>That was useful because it stopped the investigation from turning into “install a newer blob and hope.” The loaded SMU was not obviously obsolete, while newer upstream display firmware existed and remained relevant mainly to the normal-fan black-screen class.</p>
 </section>
 
+<section><h2>The terminal became the lab notebook</h2>
+<p>The most useful part of the process was keeping the commands boring and repeatable. One read-only check at a time made it much easier to tell whether a new theory had actually changed anything.</p>
+<pre>journalctl -b -1 -k --no-pager | grep -Ei 'amdgpu|ring|timeout|reset|mes|device lost|gpu recovery|gpuvm|fault|pcie|aer' | tail -n 100
+
+sudo cat /sys/kernel/debug/dri/0000:55:00.0/amdgpu_firmware_info
+
+nix-shell -p pciutils --run 'sudo lspci -s 00:03.1 -vv'
+
+vulkaninfo --summary | grep -E 'driverName|driverInfo'</pre>
+<p>Those four checks kept answering four different questions: what failed, what firmware was loaded, how PCIe was actually negotiated, and which Mesa driver a fresh process really saw. That separation prevented several false conclusions.</p>
+</section>
+
 <section><h2>What we tested — and what did not fix it</h2>
 <p>The rule was simple: change one software variable where possible, reproduce the same workload, read the actual error, and do not declare victory because one run happened to last longer.</p>
 <div class="field8-grid">
@@ -162,4 +174,5 @@ LaneErrStat: LaneErr at lane: 3 7 11 15</pre>
 <p><a class="hcl-archive-return" href="/museum/home-computing-lab/field-notes/">← RETURN TO FIELD NOTES &amp; ARTIFACTS</a></p>
 </article></main></div>
 <footer><div class="nebby-terminal-line"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" class="nebby" alt="Nebby mascot"></picture><span class="coffee-text">&gt; cthulhu --gpu=rx9060xt --pcie=gen4x16 --status=promising<span class="cursor"></span></span></div><p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p></footer>
+<script>document.querySelectorAll('.field8-lang a[lang]').forEach(link=>link.addEventListener('click',()=>{try{localStorage.setItem('dennishilk-language',link.lang==='de'?'de':'en')}catch(error){}}));</script>
 </div></body></html>
