@@ -182,6 +182,7 @@
       "A growing archive of genuine workshop stories and personally meaningful technical objects. Every record is based on a real event or real artifact from the author’s computing journey.": "Ein wachsendes Archiv echter Werkstattgeschichten und persönlich bedeutsamer technischer Objekte. Jeder Eintrag basiert auf einem realen Ereignis oder einem echten Artefakt aus der Computing-Reise des Autors.",
       "WORKSHOP RECORDS · AUTHENTIC EVENTS ONLY": "WERKSTATTAUFZEICHNUNGEN · NUR AUTHENTISCHE EREIGNISSE",
       "FIELD NOTES": "FIELD NOTES",
+      "DOCUMENTED · 5 OCT 2026": "DOKUMENTIERT · 5. OKT 2026",
       "The RX 9060 XT Hard-Lock": "Der RX-9060-XT-Hard-Lock",
       "Kernel swaps, Mesa tests, hard reboots — then one PCIe 4.0 x16 hardware change finally made the games behave.": "Kernelwechsel, Mesa-Tests, harte Neustarts — dann brachte eine PCIe-4.0-x16-Hardwareänderung die Spiele plötzlich zur Ruhe.",
       "The Wrong Terminal": "Das falsche Terminal",
