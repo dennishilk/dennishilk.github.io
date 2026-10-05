@@ -9,6 +9,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const labRoot = path.join(root, "museum", "home-computing-lab");
 const dedicatedBilingualRoutes = new Set([
   "/museum/home-computing-lab/field-notes/field-note-7/",
+  "/museum/home-computing-lab/field-notes/field-note-8/",
 ]);
 
 function listHtmlFiles(directory) {
@@ -41,7 +42,7 @@ test("every runtime-translated Home Computing Lab HTML route is declared by the 
   const declaredRoutes = [...bundle.audit.homeComputingLab.routes].sort();
 
   assert.deepEqual(declaredRoutes, runtimeTranslatedRoutes);
-  assert.equal(actualRoutes.length, 18);
+  assert.equal(actualRoutes.length, 19);
 });
 
 test("dedicated bilingual Home Computing Lab routes have real German counterparts", () => {
@@ -60,6 +61,8 @@ test("dedicated bilingual Home Computing Lab routes have real German counterpart
   const languageSource = fs.readFileSync(path.join(root, "site-language.js"), "utf8");
   assert.match(languageSource, /\/museum\/home-computing-lab\/field-notes\/field-note-7\//);
   assert.match(languageSource, /\/de\/museum\/home-computing-lab\/field-notes\/field-note-7\//);
+  assert.match(languageSource, /\/museum\/home-computing-lab\/field-notes\/field-note-8\//);
+  assert.match(languageSource, /\/de\/museum\/home-computing-lab\/field-notes\/field-note-8\//);
 });
 
 test("every Home Computing Lab route in the German bundle has page-level German metadata and content", () => {
