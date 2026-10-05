@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
-  const VERSION = "2026-10-01-museum-seo-2";
+  const VERSION = "2026-10-05-field-note-8-1";
   const SITE_ORIGIN = "https://www.dennishilk.com";
   const BUNDLE_SRCS = [
     "/site-i18n-de.js?v=20261001-museum-seo-2",
@@ -10,7 +10,7 @@
     "/site-i18n-de-wiesmoor.js?v=20260813-public-1",
     "/site-i18n-de-peatland-polish.js?v=20260809-peatland-2",
     "/site-i18n-de-personnel.js?v=20260809-personnel-1",
-    "/site-i18n-de-home-computing.js?v=20260815-hcl-1",
+    "/site-i18n-de-home-computing.js?v=20261005-field-note-8-1",
     "/site-i18n-de-museum-classics.js?v=20261001-museum-seo-2",
     "/site-i18n-de-museum-crypto.js?v=20260816-museum-1",
     "/site-i18n-de-museum-malware.js?v=20260816-museum-1",
@@ -42,6 +42,10 @@
     "/museum/home-computing-lab/field-notes/field-note-7/index.html": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
     "/de/museum/home-computing-lab/field-notes/field-note-7/": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
     "/de/museum/home-computing-lab/field-notes/field-note-7/index.html": { en: "/museum/home-computing-lab/field-notes/field-note-7/", de: "/de/museum/home-computing-lab/field-notes/field-note-7/" },
+    "/museum/home-computing-lab/field-notes/field-note-8/": { en: "/museum/home-computing-lab/field-notes/field-note-8/", de: "/de/museum/home-computing-lab/field-notes/field-note-8/" },
+    "/museum/home-computing-lab/field-notes/field-note-8/index.html": { en: "/museum/home-computing-lab/field-notes/field-note-8/", de: "/de/museum/home-computing-lab/field-notes/field-note-8/" },
+    "/de/museum/home-computing-lab/field-notes/field-note-8/": { en: "/museum/home-computing-lab/field-notes/field-note-8/", de: "/de/museum/home-computing-lab/field-notes/field-note-8/" },
+    "/de/museum/home-computing-lab/field-notes/field-note-8/index.html": { en: "/museum/home-computing-lab/field-notes/field-note-8/", de: "/de/museum/home-computing-lab/field-notes/field-note-8/" },
   };
 
   const MUSEUM_MIRROR_PREFIXES = [
