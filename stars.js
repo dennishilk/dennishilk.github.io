@@ -140,7 +140,7 @@ if (useDedicatedGermanWiesmoorUi) {
   }
 } else if (!useDedicatedInternetLanguageUi && !useDedicatedWiesmoorLanguageUi && !useDedicatedWorldObserverLanguageUi && !document.querySelector('script[data-site-language-loader]')) {
   const languageScript = document.createElement('script');
-  languageScript.src = '/site-language.js?v=20261001-museum-1';
+  languageScript.src = '/site-language.js?v=20261005-field-note-8-1';
   languageScript.dataset.siteLanguageLoader = 'true';
   document.head.appendChild(languageScript);
 }
