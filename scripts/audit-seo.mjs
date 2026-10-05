@@ -35,7 +35,7 @@ const importantImagePages = new Set([
   `${origin}/museum/`,
   `${origin}/museum/home-computing-lab/`,
   `${origin}/museum/home-computing-lab/field-notes/`,
-  ...Array.from({ length: 7 }, (_, index) => `${origin}/museum/home-computing-lab/field-notes/field-note-${index + 1}/`),
+  ...Array.from({ length: 8 }, (_, index) => `${origin}/museum/home-computing-lab/field-notes/field-note-${index + 1}/`),
 ]);
 
 function walk(directory) {
