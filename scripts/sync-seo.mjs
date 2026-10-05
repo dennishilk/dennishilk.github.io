@@ -356,6 +356,8 @@ const explicitImages = new Map([
   ["lost-administrator/index.html", [`${origin}/assets/lost-administrator/thelostadministrator.webp`]],
   ["museum/home-computing-lab/field-notes/field-note-7/index.html", [`${origin}/assets/home-computing-lab/field-notes/cisco-9951-cat-card.webp`]],
   ["de/museum/home-computing-lab/field-notes/field-note-7/index.html", [`${origin}/assets/home-computing-lab/field-notes/cisco-9951-cat-card.webp`]],
+  ["museum/home-computing-lab/field-notes/field-note-8/index.html", [`${origin}/assets/home-computing-lab/lab-today-workstation.jpg`]],
+  ["de/museum/home-computing-lab/field-notes/field-note-8/index.html", [`${origin}/assets/home-computing-lab/lab-today-workstation.jpg`]],
   ["world-observer/wiesmoor.html", [
     "1783513449100.jpg", "1783513449217.jpg", "1783513449513.jpg", "1783513449676.jpg",
     "1783513449869.jpg", "1783513449947.jpg", "1783513449999.jpg",
