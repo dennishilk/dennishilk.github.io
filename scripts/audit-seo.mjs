@@ -10,6 +10,7 @@ const sitemapNames = [
   "sitemap-technology-observers.xml",
   "sitemap-images.xml",
   "sitemap-cisco-doom.xml",
+  "sitemap-blog.xml",
 ];
 
 const technicalPages = new Set([
@@ -175,6 +176,12 @@ const byPath = new Map(indexablePages.map(page => [page.path, page]));
 const byUrl = new Map(indexablePages.map(page => [page.url, page]));
 
 const failures = [];
+const sitemapIndex = readFileSync(join(root, "sitemap-index.xml"), "utf8");
+if (!/<sitemapindex\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/.test(sitemapIndex)
+    || !sitemapIndex.trimEnd().endsWith("</sitemapindex>")) failures.push("invalid sitemap index envelope");
+const indexedSitemaps = [...sitemapIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
+if (indexedSitemaps.length !== sitemapNames.length
+    || sitemapNames.some(name => !indexedSitemaps.includes(`${origin}/${name}`))) failures.push("sitemap index does not list every maintained sitemap exactly once");
 const classificationCounts = Object.fromEntries([...new Set(pages.map(page => page.className))].sort().map(name => [name, pages.filter(page => page.className === name).length]));
 
 const sitemapDocuments = sitemapNames.map(name => ({ name, source: readFileSync(join(root, name), "utf8") }));

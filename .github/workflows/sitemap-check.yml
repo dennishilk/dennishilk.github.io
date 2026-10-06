@@ -5,11 +5,14 @@ on:
     paths:
       - "sitemap.xml"
       - "sitemap-de.xml"
+      - "sitemap-blog.xml"
+      - "sitemap-index.xml"
       - "sitemap-internet-observers.xml"
       - "sitemap-technology-observers.xml"
       - "sitemap-images.xml"
       - "robots.txt"
       - "de/**"
+      - "blog/**"
       - "museum/**"
       - "boringos/**"
       - "tools/image-converter/**"
@@ -21,6 +24,9 @@ on:
       - "wiesmoor-de-bootstrap.js"
       - "wiesmoor-language-route.js"
       - "tests/sitemaps.test.mjs"
+      - "tests/seo-sitemap-generator.test.mjs"
+      - "scripts/sync-seo.mjs"
+      - "scripts/audit-seo.mjs"
       - "tests/seo-localization.test.mjs"
       - "tests/museum-seo.test.mjs"
       - "tests/image-converter-seo.test.mjs"
@@ -32,11 +38,14 @@ on:
     paths:
       - "sitemap.xml"
       - "sitemap-de.xml"
+      - "sitemap-blog.xml"
+      - "sitemap-index.xml"
       - "sitemap-internet-observers.xml"
       - "sitemap-technology-observers.xml"
       - "sitemap-images.xml"
       - "robots.txt"
       - "de/**"
+      - "blog/**"
       - "museum/**"
       - "boringos/**"
       - "tools/image-converter/**"
@@ -48,6 +57,9 @@ on:
       - "wiesmoor-de-bootstrap.js"
       - "wiesmoor-language-route.js"
       - "tests/sitemaps.test.mjs"
+      - "tests/seo-sitemap-generator.test.mjs"
+      - "scripts/sync-seo.mjs"
+      - "scripts/audit-seo.mjs"
       - "tests/seo-localization.test.mjs"
       - "tests/museum-seo.test.mjs"
       - "tests/image-converter-seo.test.mjs"
@@ -67,6 +79,10 @@ jobs:
           node-version: "22"
       - name: Validate sitemap contracts
         run: node --test tests/sitemaps.test.mjs
+      - name: Validate translated article sitemap generation
+        run: node --test tests/seo-sitemap-generator.test.mjs
+      - name: Audit all crawlable URLs and language pairs
+        run: node scripts/audit-seo.mjs
       - name: Validate SEO and localization contracts
         run: node --test tests/seo-localization.test.mjs
       - name: Validate Computer Museum SEO contracts

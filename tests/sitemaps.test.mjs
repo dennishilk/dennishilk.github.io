@@ -13,8 +13,10 @@ const sitemapInternet = readFileSync(new URL("sitemap-internet-observers.xml", r
 const sitemapTechnology = readFileSync(new URL("sitemap-technology-observers.xml", root), "utf8");
 const sitemapImages = readFileSync(new URL("sitemap-images.xml", root), "utf8");
 const sitemapCisco = readFileSync(new URL("sitemap-cisco-doom.xml", root), "utf8");
+const sitemapBlog = readFileSync(new URL("sitemap-blog.xml", root), "utf8");
+const sitemapIndex = readFileSync(new URL("sitemap-index.xml", root), "utf8");
 const robots = readFileSync(new URL("robots.txt", root), "utf8");
-const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco];
+const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco, sitemapBlog];
 
 const excludedHtml = new Set([
   "404.html",
@@ -157,6 +159,7 @@ test("all advertised sitemap files use a valid sitemap envelope", () => {
     ["sitemap-technology-observers.xml", sitemapTechnology],
     ["sitemap-images.xml", sitemapImages],
     ["sitemap-cisco-doom.xml", sitemapCisco],
+    ["sitemap-blog.xml", sitemapBlog],
   ]) assertWellFormedEnvelope(name, xml);
   assert.match(sitemapImages, /xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1"/);
 });
@@ -169,7 +172,36 @@ test("robots.txt advertises every maintained sitemap", () => {
     "sitemap-technology-observers.xml",
     "sitemap-images.xml",
     "sitemap-cisco-doom.xml",
+    "sitemap-blog.xml",
+    "sitemap-index.xml",
   ]) assert.ok(robots.includes(`Sitemap: ${base}/${name}`), `robots.txt missing ${name}`);
+});
+
+test("one sitemap index discovers every maintained sitemap", () => {
+  assert.match(sitemapIndex, /<sitemapindex\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/);
+  assert.ok(sitemapIndex.trimEnd().endsWith("</sitemapindex>"));
+  const names = [
+    "sitemap.xml", "sitemap-de.xml", "sitemap-internet-observers.xml",
+    "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml", "sitemap-blog.xml",
+  ];
+  assert.deepEqual(locs(sitemapIndex).sort(), names.map(name => `${base}/${name}`).sort());
+});
+
+test("blog sitemap includes every guide in both languages with its actual localized slug", () => {
+  const blogPages = walk(siteRoot)
+    .filter(path => !path.includes(`${sep}node_modules${sep}`))
+    .filter(isIndexableHtml)
+    .filter(path => /^(?:de\/)?blog\//.test(relative(siteRoot, path).split(sep).join("/")));
+  assert.deepEqual(locs(sitemapBlog).sort(), blogPages.map(pathToPublicUrl).sort());
+  for (const [entry] of sitemapBlog.matchAll(/<url>[\s\S]*?<\/url>/g)) {
+    const pageUrl = locs(entry)[0];
+    const html = readFileSync(publicUrlToPath(pageUrl), "utf8");
+    const links = alternateLanguages(entry);
+    for (const code of ["en", "de", "x-default"]) {
+      assert.ok(html.includes(`hreflang="${code}" href="${links.get(code)}"`), `${pageUrl} has a different HTML language pair`);
+      assert.ok(existsSync(publicUrlToPath(links.get(code))), `missing ${code} counterpart for ${pageUrl}`);
+    }
+  }
 });
 
 test("all sitemaps together contain every indexable HTML route exactly once", () => {

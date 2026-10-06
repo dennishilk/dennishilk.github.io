@@ -4,6 +4,11 @@ import vm from "node:vm";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://www.dennishilk.com";
+const sitemapNames = [
+  "sitemap.xml", "sitemap-de.xml", "sitemap-internet-observers.xml",
+  "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml",
+  "sitemap-blog.xml",
+];
 
 const i18nFiles = [
   "site-i18n-de.js",
@@ -267,7 +272,7 @@ function synchronizeMetadata() {
 
   for (const [path, file] of indexable) {
     if (!path.startsWith("de/")) continue;
-    const englishPath = path.slice("de/".length);
+    const englishPath = declaredAlternatePath(file, "en") || path.slice("de/".length);
     const englishFile = indexable.get(englishPath);
     if (!englishFile) throw new Error(`Indexable German page lacks an indexable English counterpart: ${path}`);
 
@@ -333,6 +338,17 @@ function tagAttributes(tag) {
   return Object.fromEntries([...tag.matchAll(/([:\w-]+)\s*=\s*(["'])(.*?)\2/gs)].map(match => [match[1].toLowerCase(), match[3]]));
 }
 
+function declaredAlternatePath(file, language) {
+  const source = readFileSync(file, "utf8");
+  const alternate = [...source.matchAll(/<link\b[^>]*>/gi)]
+    .map(([tag]) => tagAttributes(tag))
+    .find(attributes => attributes.rel === "alternate" && attributes.hreflang === language);
+  if (!alternate) return null;
+  const url = new URL(alternate.href, origin);
+  if (url.origin !== origin) throw new Error(`Foreign language alternate in ${rel(file)}: ${alternate.href}`);
+  return rel(htmlFileForPublicPath(url.pathname));
+}
+
 function localImageUrls(file) {
   const source = readFileSync(file, "utf8");
   const pageUrl = publicUrl(file);
@@ -374,6 +390,7 @@ function imagesFor(file) {
 
 function sitemapOwner(path) {
   const basePath = path.startsWith("de/") ? path.slice("de/".length) : path;
+  if (basePath.startsWith("blog/")) return "sitemap-blog.xml";
   if (ciscoRoutes.has(path)) return "sitemap-cisco-doom.xml";
   if (imageRoutes.has(path)) return "sitemap-images.xml";
   const internetMatch = basePath.match(/^world-observer\/([^/]+)\.html$/);
@@ -404,14 +421,15 @@ function videoXml() {
   ].join("\n");
 }
 
-function sitemapEntry(file, indexablePaths) {
+function sitemapEntry(file, indexablePaths, lastmods) {
   const path = rel(file);
   const url = publicUrl(file);
   const lines = ["  <url>", `    <loc>${xmlEscape(url)}</loc>`];
+  if (lastmods.has(url)) lines.push(`    <lastmod>${xmlEscape(lastmods.get(url))}</lastmod>`);
   const counterpartPath = path.startsWith("de/") ? path.slice("de/".length) : `de/${path}`;
-  if (indexablePaths.has(counterpartPath)) {
-    const englishPath = path.startsWith("de/") ? counterpartPath : path;
-    const germanPath = path.startsWith("de/") ? path : counterpartPath;
+  const englishPath = declaredAlternatePath(file, "en") || (path.startsWith("de/") ? counterpartPath : path);
+  const germanPath = declaredAlternatePath(file, "de") || (path.startsWith("de/") ? path : counterpartPath);
+  if (indexablePaths.has(englishPath) && indexablePaths.has(germanPath)) {
     const englishUrl = publicUrl(englishPath);
     const germanUrl = publicUrl(germanPath);
     lines.push(`    <xhtml:link rel="alternate" hreflang="en" href="${xmlEscape(englishUrl)}" />`);
@@ -429,14 +447,15 @@ function sitemapEntry(file, indexablePaths) {
 function synchronizeSitemaps() {
   const files = htmlFiles().filter(file => isIndexable(file));
   const indexablePaths = new Set(files.map(rel));
-  const groups = new Map([
-    ["sitemap.xml", []],
-    ["sitemap-de.xml", []],
-    ["sitemap-internet-observers.xml", []],
-    ["sitemap-technology-observers.xml", []],
-    ["sitemap-images.xml", []],
-    ["sitemap-cisco-doom.xml", []],
-  ]);
+  // Preserve recorded dates when moving URLs between sitemap groups.
+  const lastmods = new Map(sitemapNames.flatMap(name => {
+    const file = join(root, name);
+    if (!existsSync(file)) return [];
+    return [...readFileSync(file, "utf8").matchAll(/<url>[\s\S]*?<\/url>/g)]
+      .map(([entry]) => [entry.match(/<loc>([^<]+)<\/loc>/)?.[1], entry.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1]])
+      .filter(([url, date]) => url && date);
+  }));
+  const groups = new Map(sitemapNames.map(name => [name, []]));
 
   for (const file of files) groups.get(sitemapOwner(rel(file))).push(file);
 
@@ -446,13 +465,22 @@ function synchronizeSitemaps() {
     const xml = [
       '<?xml version="1.0" encoding="UTF-8"?>',
       `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"${videoNamespace}>`,
-      ...entries.map(file => sitemapEntry(file, indexablePaths)),
+      ...entries.map(file => sitemapEntry(file, indexablePaths, lastmods)),
       "</urlset>",
       "",
     ].join("\n");
     writeFileSync(join(root, name), xml);
   }
+
+  const index = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...sitemapNames.map(name => `  <sitemap><loc>${origin}/${name}</loc></sitemap>`),
+    '</sitemapindex>',
+    '',
+  ].join('\n');
+  writeFileSync(join(root, 'sitemap-index.xml'), index);
 }
 
-synchronizeMetadata();
+if (!process.argv.includes("--sitemaps-only")) synchronizeMetadata();
 synchronizeSitemaps();
