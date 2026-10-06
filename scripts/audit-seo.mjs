@@ -277,8 +277,12 @@ failures.push(...nonWwwMetadata.map(item => `non-www metadata URL: ${item}`));
 
 const hreflangErrors = [];
 for (const german of indexablePages.filter(page => page.path.startsWith("de/"))) {
-  const english = byPath.get(german.path.slice("de/".length));
+  // Translated article slugs can differ; the declared alternate is the page pair.
+  const englishUrl = links(german.source, "alternate")
+    .find(link => link.attributes.hreflang?.toLowerCase() === "en")?.attributes.href;
+  const english = englishUrl ? byUrl.get(englishUrl) : byPath.get(german.path.slice("de/".length));
   if (!english) hreflangErrors.push(`${german.path}: missing indexable English counterpart`);
+  else if (language(english.source) !== "en") hreflangErrors.push(`${german.path}: English counterpart has language ${language(english.source)}`);
   else hreflangErrors.push(...reciprocalAlternateErrors(english, german));
 }
 failures.push(...hreflangErrors.map(item => `broken hreflang pair: ${item}`));

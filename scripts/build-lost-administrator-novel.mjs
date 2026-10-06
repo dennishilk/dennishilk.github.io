@@ -88,6 +88,8 @@ function page({ title, description, canonical, body, reader = false, finalPage =
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="stylesheet" href="/style.css?v=60">
   <link rel="stylesheet" href="/lost-administrator/novel/novel.css?v=4">
+  <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+  <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
 </head>
 <body class="novel-page${reader ? ' novel-reader-page' : ''}${finalPage ? ' novel-final-page' : ''}">
 <div class="content museum-page lost-admin-page">

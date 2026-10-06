@@ -1,4 +1,16 @@
 (() => {
+  if (!document.querySelector('link[href*="/assets/css/language-toggle.css"]')) {
+    const style = document.createElement("link");
+    style.rel = "stylesheet";
+    style.href = "/assets/css/language-toggle.css?v=20261006";
+    document.head.appendChild(style);
+  }
+  if (!document.querySelector('script[src*="/assets/js/language-toggle.js"]')) {
+    const script = document.createElement("script");
+    script.src = "/assets/js/language-toggle.js?v=20261006";
+    document.head.appendChild(script);
+  }
+
   const STORAGE_KEY = "dennishilk-language";
   const LEGACY_KEYS = ["about-language"];
   const VERSION = "2026-10-05-field-note-8-1";
