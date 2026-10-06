@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Understand and fix SPDIF audio delay on Linux · Dennis Hilk</title>
+<meta name="description" content="Missing the first SPDIF sound after an idle period on Linux? Explore suspend, PulseAudio, PipeWire and a local SoX keepalive with the SPDIF-Fix project.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/spdif-tonverzoegerung-linux/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understand and fix SPDIF audio delay on Linux">
+<meta property="og:description" content="Missing the first SPDIF sound after an idle period on Linux? Explore suspend, PulseAudio, PipeWire and a local SoX keepalive with the SPDIF-Fix project.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Understand and fix SPDIF audio delay on Linux">
+<meta name="twitter:description" content="Missing the first SPDIF sound after an idle period on Linux? Explore suspend, PulseAudio, PipeWire and a local SoX keepalive with the SPDIF-Fix project.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006-2">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/","url":"https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/","headline":"SPDIF audio delay on Linux: Why the first sound disappears and what helps","description":"Missing the first SPDIF sound after an idle period on Linux? Explore suspend, PulseAudio, PipeWire and a local SoX keepalive with the SPDIF-Fix project.","inLanguage":"en","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Linux & Audio","wordCount":1054},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"SPDIF audio delay on Linux: Why the first sound disappears and what helps","item":"https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/spdif-tonverzoegerung-linux/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Audio</span></nav>
+<header class="article-header">
+<p class="eyebrow">Linux &amp; Audio</p>
+<h1>SPDIF audio delay on Linux: Why the first sound disappears and what helps</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6 October 2026</time><span>6 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Local fix without audio uploads</span><p>The scripts work with your local audio system. They do not upload recordings to a service; the keepalive generates its own test signal.</p></div>
+</header>
+<div class="article-layout">
+<article class="article-copy" aria-label="SPDIF audio delay on Linux: Why the first sound disappears and what helps">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#symptom">Wake-up delay or continuous audio latency?</a></li><li><a href="#check">Reproduce the problem first</a></li><li><a href="#keepalive">Use the SoX keepalive for a focused test</a></li><li><a href="#menu">What does the interactive menu script change?</a></li><li><a href="#wireplumber">The important PipeWire and WirePlumber limitation</a></li><li><a href="#restore">Back up configuration and check the return path</a></li><li><a href="#privacy">Privacy and local operation</a></li><li><a href="#questions">Frequently asked questions</a></li><li><a href="#sources">Project and technical sources</a></li></ol></details>
+<p>You open a short video and miss its first syllables. A notification sound disappears altogether, while longer music plays normally once it starts. With an amplifier connected over SPDIF, this can involve the audio device waking up or the receiver reacquiring the digital signal.</p>
+<p>My <a href="https://github.com/dennishilk/spdif-fix">SPDIF-Fix project</a> offers two local approaches: a menu script that changes audio configuration and a small SoX keepalive. This guide helps you identify the symptom first and then test a suitable approach.</p>
+<h2 id="symptom">Wake-up delay or continuous audio latency?</h2>
+<p>S/PDIF carries digital audio, commonly through optical TOSLINK or a coaxial connection. After an idle period, the audio system may suspend a device. The receiver may also need time to lock onto the signal again. A short sound can lose its beginning during that interval.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Compare audio symptoms"><table>
+<thead><tr><th>Observation</th><th>What to investigate first</th></tr></thead>
+<tbody>
+<tr><td>Only the first sound after a pause is missing</td><td>Suspend or signal reacquisition</td></tr>
+<tr><td>Audio stays out of sync throughout a video</td><td>Playback latency and synchronisation</td></tr>
+<tr><td>Continuous dropouts or crackling</td><td>Routing, format, driver and audio buffers</td></tr>
+<tr><td>Even ongoing music stays silent</td><td>Output, profile, volume and connection</td></tr>
+</tbody></table></div>
+<p>A keepalive targets the first symptom. It does not repair a broken cable or every form of audio latency. Making this distinction helps you avoid changing the entire audio configuration for an unrelated problem.</p>
+<h2 id="check">Reproduce the problem first</h2>
+<ol>
+<li>Select your actual SPDIF output and verify it with a longer piece of music.</li>
+<li>Stop playback and wait until the idle condition that normally triggers the problem.</li>
+<li>Play a short sound, then play it again soon afterwards. Is only the beginning of the first attempt missing?</li>
+<li>Compare the behaviour with and without a running keepalive. Leave other settings unchanged during this comparison.</li>
+</ol>
+<p>If a PulseAudio interface is available, this command shows information about the server and default output:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>pactl info</code></pre>
+<p>PipeWire can provide the PulseAudio interface. Working <code>pactl</code> commands therefore do not establish that a standalone PulseAudio server is running. If your system uses WirePlumber and the command is available, also check:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>wpctl status</code></pre>
+<h2 id="keepalive">Use the SoX keepalive for a focused test</h2>
+<p>The helper <code>soundfixforautostart.sh</code> waits three seconds and then starts SoX's <code>play</code> command. It generates a continuous stereo sine wave at a very low level (<code>gain -100</code>). This is a generated signal, not a recording or perfect digital silence.</p>
+<p>If that keeps your receiver locked onto the signal, short sounds after a pause may play completely again. The result depends on output, routing and hardware. The helper uses the output SoX selects in your session, so check that it actually reaches SPDIF.</p>
+<p>With Git installed, download the project:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>git clone https://github.com/dennishilk/spdif-fix.git</code></pre>
+<p>Enter its directory:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>cd spdif-fix</code></pre>
+<p>Once SoX and its <code>play</code> command are installed, test the helper in a terminal in your normal user session:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>bash ./soundfixforautostart.sh</code></pre>
+<p>Stop it with <kbd>Ctrl</kbd> + <kbd>C</kbd> in that terminal. Compare the behaviour after another idle period. Configure autostart only after you can reproduce the improvement and confirm that the signal uses the intended output.</p>
+<p>Keeping the audio path open can prevent the device or amplifier from entering a lower-power idle state. An additional playback stream may also be unsuitable for exclusive audio output or bitstream passthrough.</p>
+<h2 id="menu">What does the interactive menu script change?</h2>
+<p>The <code>spdif-fix.sh</code> script offers apply, reset and exit options. Read its <a href="https://github.com/dennishilk/spdif-fix/blob/main/spdif-fix.sh">source code</a> before applying configuration changes. Depending on detected processes, it works in several places:</p>
+<ul>
+<li><strong>PulseAudio:</strong> It attempts to unload <code>module-suspend-on-idle</code>, backs up an existing <code>/etc/pulse/default.pa</code> as <code>.bak</code> and comments out matching lines.</li>
+<li><strong>PipeWire:</strong> It may create a user copy of <code>pipewire.conf</code>, back it up and comment out lines containing <code>suspend-on-idle</code>.</li>
+<li><strong>ALSA:</strong> If <code>~/.asoundrc</code> does not already exist, it creates a definition named <code>spdif_keepalive</code>. That definition does not itself start continuous playback.</li>
+</ul>
+<p>It then attempts to restart detected sound servers, which can interrupt playback. Start the menu in your normal user session; the script requests <code>sudo</code> specifically for the system-wide PulseAudio file:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>bash ./spdif-fix.sh</code></pre>
+<h2 id="wireplumber">The important PipeWire and WirePlumber limitation</h2>
+<p>On current PipeWire systems, WirePlumber often manages device suspend. Its documented <code>session.suspend-timeout-seconds</code> property controls this behaviour; a value of <code>0</code> disables suspend for the matching node.</p>
+<p>The existing menu script does not create such a WirePlumber rule. Commenting out a line in <code>pipewire.conf</code> may therefore have no effect on your system. The script's “fix applied” message does not confirm a successful listening test.</p>
+<p>For a persistent WirePlumber adjustment, check your installed version and the official documentation, which describes configuration fragments. A rule targeting the actual SPDIF output is more appropriate than a blanket change to every device.</p>
+<h2 id="restore">Back up configuration and check the return path</h2>
+<p>Keep a separate copy of existing audio configuration before testing the menu script. Its generated <code>.bak</code> files are not a version history; applying the fix again can overwrite them.</p>
+<p><strong>The reset option removes an existing <code>~/.asoundrc</code> without checking who created it.</strong> It is therefore not a dependable full restore of an individually configured ALSA file that existed beforehand. Compare changes and use your own backup if you have such a configuration.</p>
+<p>The keepalive is easier to evaluate as a first test: it runs as a playback process and can be stopped without changing those files.</p>
+<h2 id="privacy">Privacy and local operation</h2>
+<p>The scripts use local audio functions and configuration files. The SoX helper generates its own signal; it does not record your microphone or upload audio files. Downloading the project and, if necessary, installing SoX connects to GitHub or your package sources.</p>
+<p>When asking for help, the sound server, output profile and precise symptom are often enough. Review terminal output and screenshots for personal information before sharing them.</p>
+<h2 id="questions">Frequently asked questions</h2>
+<h3>Does it work on every Linux system?</h3>
+<p>That cannot be promised. The audio stack, configuration version, routing and receiver determine the result. The menu path in particular is not a universal WirePlumber fix.</p>
+<h3>Is the keepalive completely silent?</h3>
+<p>It generates a very quiet sine wave. Whether anything is audible also depends on amplification and hardware. Check it in your own setup.</p>
+<h3>Do I need both approaches at once?</h3>
+<p>Start with one test. That lets you identify which change affects the behaviour. A demonstrably useful keepalive does not automatically require additional configuration changes.</p>
+<h2 id="sources">Project and technical sources</h2>
+<p>This description was checked against the scripts. Reviewed on 6 October 2026.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/spdif-fix">SPDIF-Fix project</a></li>
+<li><a href="https://github.com/dennishilk/spdif-fix/blob/main/spdif-fix.sh">Interactive menu script</a></li>
+<li><a href="https://github.com/dennishilk/spdif-fix/blob/main/soundfixforautostart.sh">SoX keepalive source</a></li>
+<li><a href="https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html">WirePlumber: ALSA configuration and suspend</a></li>
+<li><a href="https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/modifying_configuration.html">WirePlumber: modify configuration using fragments</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/">← All articles</a><a href="#page-top">Back to top ↑</a></nav>
+</article>
+<aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#symptom">Wake-up delay or continuous audio latency?</a></li><li><a href="#check">Reproduce the problem first</a></li><li><a href="#keepalive">Use the SoX keepalive for a focused test</a></li><li><a href="#menu">What does the interactive menu script change?</a></li><li><a href="#wireplumber">The important PipeWire and WirePlumber limitation</a></li><li><a href="#restore">Back up configuration and check the return path</a></li><li><a href="#privacy">Privacy and local operation</a></li><li><a href="#questions">Frequently asked questions</a></li><li><a href="#sources">Project and technical sources</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/spdif-fix">Project on GitHub <span aria-hidden="true">↗</span></a></aside>
+</div>
+<aside class="related-guide"><p class="eyebrow">More to explore</p><a href="/blog/install-nvidia-drivers-debian/">Install NVIDIA drivers on Debian 12 and 13: APT, CUDA and Secure Boot <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

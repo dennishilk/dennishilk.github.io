@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dateien unter Linux löschen: HDD, SSD und TRIM · Dennis Hilk</title>
+<meta name="description" content="Skynet Shredder erklärt: Dateien und Ordner unter Linux lokal löschen. So unterscheiden sich HDD-Überschreiben und SSD-TRIM – mit wichtigen Grenzen.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/delete-files-linux-hdd-ssd/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/delete-files-linux-hdd-ssd/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dateien unter Linux löschen: HDD, SSD und TRIM">
+<meta property="og:description" content="Skynet Shredder erklärt: Dateien und Ordner unter Linux lokal löschen. So unterscheiden sich HDD-Überschreiben und SSD-TRIM – mit wichtigen Grenzen.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dateien unter Linux löschen: HDD, SSD und TRIM">
+<meta name="twitter:description" content="Skynet Shredder erklärt: Dateien und Ordner unter Linux lokal löschen. So unterscheiden sich HDD-Überschreiben und SSD-TRIM – mit wichtigen Grenzen.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006-2">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/","url":"https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/","headline":"Dateien unter Linux löschen: Was HDD, SSD und TRIM für Skynet Shredder bedeuten","description":"Skynet Shredder erklärt: Dateien und Ordner unter Linux lokal löschen. So unterscheiden sich HDD-Überschreiben und SSD-TRIM – mit wichtigen Grenzen.","inLanguage":"de","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Linux & Daten","wordCount":1086},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Dateien unter Linux löschen: Was HDD, SSD und TRIM für Skynet Shredder bedeuten","item":"https://www.dennishilk.com/de/blog/dateien-linux-loeschen-hdd-ssd/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/delete-files-linux-hdd-ssd/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Daten</span></nav>
+<header class="article-header">
+<p class="eyebrow">Linux &amp; Daten</p>
+<h1>Dateien unter Linux löschen: Was HDD, SSD und TRIM für Skynet Shredder bedeuten</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6. Oktober 2026</time><span>7 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Dateien bleiben auf deinem Gerät</span><p>Der Shredder bearbeitet lokale Dateien ohne Datei-Upload. Ob alte Datenreste verschwinden, hängt zusätzlich von Speichergerät, Dateisystem und Kopien ab.</p></div>
+</header>
+<div class="article-layout">
+<article class="article-copy" aria-label="Dateien unter Linux löschen: Was HDD, SSD und TRIM für Skynet Shredder bedeuten">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#oberflaeche">Was bringt die grafische Oberfläche?</a></li><li><a href="#vergleich">Löschen, Überschreiben und TRIM unterscheiden</a></li><li><a href="#erkennung">Wie erkennt das Tool HDD und SSD?</a></li><li><a href="#hdd">Der HDD-Weg: GNU shred und seine Voraussetzungen</a></li><li><a href="#ssd">Der SSD-Weg: Dateilöschen und optionales fstrim</a></li><li><a href="#start">Installieren und zuerst mit einer Testdatei arbeiten</a></li><li><a href="#ablauf">Ein kontrollierter erster Durchlauf</a></li><li><a href="#datenschutz">Datenschutz betrifft auch Kopien und Aufbewahrung</a></li><li><a href="#fragen">Häufige Fragen</a></li><li><a href="#quellen">Projekt und technische Quellen</a></li></ol></details>
+<p>Eine vertrauliche Datei soll vom Linux-Rechner verschwinden. Der Papierkorb ist dafür nicht der letzte Schritt – und auch nach dem Entfernen eines Dateinamens ist nicht automatisch geklärt, was mit den früher gespeicherten Daten passiert. Auf HDD und SSD gelten dabei unterschiedliche Bedingungen.</p>
+<p>Mein <a href="https://github.com/dennishilk/skynet-shredder">Skynet Shredder</a> bietet eine lokale grafische Oberfläche für Dateien und Ordner. Er verwendet vorhandene Linux-Werkzeuge, zeigt erkannte Speicherinformationen und protokolliert seine Aktionen. Dieser Ratgeber erklärt den Ablauf und hilft dir, die Grenzen der Ergebnisse zu verstehen.</p>
+<h2 id="oberflaeche">Was bringt die grafische Oberfläche?</h2>
+<p>Du kannst Dateien und Ordner per Drag-and-drop oder Auswahl hinzufügen, die Liste vor dem Start überprüfen und Einträge wieder entfernen. Das Werkzeug verarbeitet Ordner rekursiv, bietet eine Pass-Auswahl und fragt vor dem Beginn der Löschaktion nach einer Bestätigung.</p>
+<ul>
+<li><strong>Ziele sichtbar auswählen:</strong> Die Liste zeigt die Pfade, bevor du eine Aktion startest.</li>
+<li><strong>Ablauf beobachten:</strong> Das Protokoll nennt Mountpoint, Gerät, erkannte Art und die ausgeführten Aktionen.</li>
+<li><strong>Lokale Werkzeuge verwenden:</strong> Unter anderem kommen <code>findmnt</code>, <code>lsblk</code>, GNU <code>shred</code> und optional <code>fstrim</code> zum Einsatz.</li>
+</ul>
+<p>Das ist hilfreich, wenn du die Dateiauswahl in einem Fenster kontrollieren möchtest. Die Bestätigung ist trotzdem keine Undo-Funktion: Bereits gelöschte oder überschriebene Daten lassen sich dadurch nicht zurückholen.</p>
+<h2 id="vergleich">Löschen, Überschreiben und TRIM unterscheiden</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Löschmethoden vergleichen"><table>
+<thead><tr><th>Verfahren</th><th>Was passiert?</th><th>Was es nicht belegt</th></tr></thead>
+<tbody>
+<tr><td>Normales Dateilöschen</td><td>Der Dateieintrag wird entfernt, Speicher wird freigegeben.</td><td>Dass alle früheren physischen Datenblöcke gelöscht sind</td></tr>
+<tr><td>Überschreiben einer HDD-Datei</td><td>Neue Daten werden über den erreichbaren Dateiinhalt geschrieben.</td><td>Dass weitere Kopien oder umgeleitete Blöcke verschwinden</td></tr>
+<tr><td>TRIM auf einer SSD</td><td>Freie Blöcke des Dateisystems werden zum Discard gemeldet.</td><td>Einen vollständigen physischen Löschbeleg für die SSD</td></tr>
+</tbody></table></div>
+<p>Eine Datei zu entfernen, ihre erreichbaren Inhalte zu überschreiben und ein komplettes Speichergerät vollständig zu bereinigen sind verschiedene Aufgaben. Skynet Shredder ist eine Dateianwendung; seine Oberfläche führt keinen vollständigen Hersteller-Secure-Erase für ein Laufwerk aus.</p>
+<h2 id="erkennung">Wie erkennt das Tool HDD und SSD?</h2>
+<p>Der Shredder fragt Mountpoint und Quellgerät mit <code>findmnt</code> ab. Anschließend versucht er, mit <code>lsblk</code> und dem Linux-Eintrag <code>/sys/block/…/queue/rotational</code> eine rotierende oder nicht rotierende Speicherart zu erkennen.</p>
+<p>Diese Erkennung ist eine praktische Hilfe, kein Gutachten über die tatsächliche Speichertechnik. USB-Bridges, virtuelle Datenträger, RAID und verschachtelte Speicherpfade können die Zuordnung erschweren. „Unknown“ bedeutet, dass keine zuverlässige Einordnung gelang.</p>
+<p>Im derzeitigen Quellcode entscheidet diese erkannte Speicherart über den Löschzweig. Bei unbekannter Art versucht das Tool den <code>shred</code>-Weg, wenn das Programm verfügbar ist. Das ist kein automatischer Nachweis, dass Überschreiben zu deinem Speicher passt. Prüfe Gerät und Dateisystem selbst.</p>
+<h2 id="hdd">Der HDD-Weg: GNU shred und seine Voraussetzungen</h2>
+<p>Bei einer als HDD erkannten Datei ruft das Tool GNU <code>shred</code> mit der gewählten Pass-Anzahl, einem abschließenden Null-Durchlauf und Entfernung der Datei auf. Die Oberfläche erlaubt 1 bis 35 Durchläufe und startet mit 3. Die Option „Gutmann (35x)“ setzt im <code>shred</code>-Aufruf <code>-n 35</code>; der Name allein belegt keine besondere Garantie.</p>
+<p>GNU weist darauf hin, dass Überschreiben voraussetzt, dass Dateisystem und Hardware tatsächlich dieselben Speicherstellen ersetzen. Copy-on-write und bestimmte Journal-Modi können das verhindern. Snapshots und Backups bleiben eigenständige Kopien.</p>
+<p>Ist <code>shred</code> nicht verfügbar, enthält das Programm Ersatzwege mit abweichendem Verhalten. Deshalb gehört ein installiertes <code>coreutils</code>-Paket zu den Voraussetzungen. Verlasse dich nicht darauf, dass jeder Fallback denselben Umfang wie der normale <code>shred</code>-Weg hat.</p>
+<h2 id="ssd">Der SSD-Weg: Dateilöschen und optionales fstrim</h2>
+<p>Bei als SSD erkannten Dateien versucht der Code zunächst Schreibzugriffe am Dateianfang und bei größeren Dateien am Ende. Danach entfernt er die Datei. Bei aktivierter TRIM-Option ruft er nach der Verarbeitung <code>fstrim -v</code> für betroffene Mountpoints auf.</p>
+<p>SSD-Wear-Leveling kann Schreibzugriffe auf andere physische Speicherbereiche lenken. Deshalb beweist das Überschreiben einer Datei dort nicht die Beseitigung ihrer alten Daten. Mehr Durchläufe lösen diese Zuordnung nicht.</p>
+<p><code>fstrim</code> meldet unbenutzte Blöcke des gemounteten Dateisystems zum Discard. Der Aufruf betrifft freie Bereiche dieses Dateisystems, nicht ausschließlich die ausgewählte Datei. Die gemeldete Byte-Zahl ist kein Zertifikat für physisch vernichtete Daten.</p>
+<p>Ob TRIM funktioniert, hängt von Rechten, Dateisystem und dem gesamten Speicherpfad ab. Das GUI fordert dafür nicht automatisch erhöhte Rechte an. Eine Meldung über fehlende Berechtigung oder fehlende Unterstützung muss im Protokoll beachtet werden.</p>
+<h2 id="start">Installieren und zuerst mit einer Testdatei arbeiten</h2>
+<p>Für den Debian-/Ubuntu-Paketweg werden Python 3, PyQt5, Coreutils und util-linux benötigt. Das Repository enthält ein APT-basiertes Installationsskript für Abhängigkeiten und einen benutzerspezifischen Menüeintrag. Es ist kein universeller Installer für jede Distribution.</p>
+<p>Lade bei vorhandenem Git das Projekt:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>git clone https://github.com/dennishilk/skynet-shredder.git</code></pre>
+<p>Wechsle in den Projektordner:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>cd skynet-shredder</code></pre>
+<p>Wenn die Abhängigkeiten bereits installiert sind, starte die Anwendung direkt:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>python3 ./skynet_shredder.py</code></pre>
+<p>Alternativ kannst du nach dem Lesen des Installationsskripts dessen Paketweg verwenden:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>bash ./install.sh</code></pre>
+<p>Der Installer fordert <code>sudo</code> für APT an. Die Anwendung selbst kannst du anschließend als normaler Benutzer öffnen; dadurch kann sie nur mit deinen verfügbaren Dateirechten arbeiten. Starte die gesamte Oberfläche nicht allein wegen eines fehlgeschlagenen TRIM-Aufrufs pauschal als Root.</p>
+<h2 id="ablauf">Ein kontrollierter erster Durchlauf</h2>
+<ol>
+<li>Erstelle eine entbehrliche Testdatei in einem eigenen Testordner. Verwende für den ersten Versuch keine vertraulichen Originale, verknüpften Dateien oder Systemordner.</li>
+<li>Füge diese Datei hinzu und kontrolliere den vollständigen Pfad. Ein ausgewählter Ordner umfasst auch enthaltene Dateien.</li>
+<li>Prüfe die Einstellungen und bestätige nur die beabsichtigte Testaktion.</li>
+<li>Lies das Protokoll: Welche Speicherart wurde erkannt? Welche Methode wurde ausgeführt? Gibt es Fehler oder TRIM-Warnungen?</li>
+<li>Prüfe anschließend, ob die Datei tatsächlich entfernt wurde. Das allein ist weiterhin kein Nachweis, dass sämtliche Datenreste verschwunden sind.</li>
+</ol>
+<p>Ein Fortschrittsbalken oder „Finished“ ersetzt die Prüfung des Protokolls nicht. Einzelne Löschfehler werden dort ausgegeben; die Anwendung bestätigt damit keine geprüfte vollständige Datenvernichtung.</p>
+<h2 id="datenschutz">Datenschutz betrifft auch Kopien und Aufbewahrung</h2>
+<p>Skynet Shredder benötigt keinen Datei-Upload und keine Cloud-Auswertung. Die Löschaktionen laufen auf deinem Gerät. GitHub-Downloads und die Paketinstallation benötigen trotzdem Netzwerkverbindungen.</p>
+<p>Suche vor einer wichtigen Löschentscheidung nach weiteren Kopien: Backups, Snapshots, synchronisierte Ordner, E-Mail-Anhänge oder Exporte werden nicht automatisch mitbereinigt. Das lokale Protokoll enthält Dateipfade; prüfe es vor dem Teilen.</p>
+<p>Wenn du einen ganzen Rechner oder eine SSD weitergeben möchtest, brauchst du einen passenden Ablauf für das vollständige Gerät. Plane Datensicherung, Verschlüsselung und ein zum Laufwerk passendes Löschverfahren separat. Eine Dateiliste in diesem GUI erledigt diese Aufgabe nicht.</p>
+<h2 id="fragen">Häufige Fragen</h2>
+<h3>Sind 35 Durchläufe automatisch sicherer?</h3>
+<p>Die Zahl allein reicht nicht. Der Speicherpfad und vorhandene Kopien bestimmen, ob Überschreiben alte Daten überhaupt erreicht. Zusätzliche Durchläufe beheben diese Grenzen nicht.</p>
+<h3>Garantiert TRIM, dass niemand SSD-Daten wiederherstellen kann?</h3>
+<p>Nein. Ein erfolgreicher Discard-Aufruf ist kein vollständiger physischer Löschbeleg und ersetzt kein geeignetes Verfahren für das gesamte Gerät.</p>
+<h3>Kann das Tool einen gesamten Datenträger sicher löschen?</h3>
+<p>Die Oberfläche wählt Dateien und Ordner aus. Sie bietet keinen vollständigen Laufwerks-Secure-Erase. Eine rekursive Dateilöschung ist davon zu unterscheiden.</p>
+<h2 id="quellen">Projekt und technische Quellen</h2>
+<p>Beschrieben wird der vorhandene Dateiablauf mit seinen Grenzen. Stand: 6. Oktober 2026.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/skynet-shredder">Skynet Shredder: Projekt</a></li>
+<li><a href="https://github.com/dennishilk/skynet-shredder/blob/main/skynet_shredder.py">Speichererkennung und Löschablauf im Quellcode</a></li>
+<li><a href="https://www.gnu.org/software/coreutils/manual/html_node/shred-invocation.html">GNU Coreutils: shred und seine Voraussetzungen</a></li>
+<li><a href="https://manpages.debian.org/trixie/util-linux/fstrim.8.en.html">util-linux: fstrim-Handbuch bei Debian</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/">← Alle Artikel</a><a href="#page-top">Nach oben ↑</a></nav>
+</article>
+<aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#oberflaeche">Was bringt die grafische Oberfläche?</a></li><li><a href="#vergleich">Löschen, Überschreiben und TRIM unterscheiden</a></li><li><a href="#erkennung">Wie erkennt das Tool HDD und SSD?</a></li><li><a href="#hdd">Der HDD-Weg: GNU shred und seine Voraussetzungen</a></li><li><a href="#ssd">Der SSD-Weg: Dateilöschen und optionales fstrim</a></li><li><a href="#start">Installieren und zuerst mit einer Testdatei arbeiten</a></li><li><a href="#ablauf">Ein kontrollierter erster Durchlauf</a></li><li><a href="#datenschutz">Datenschutz betrifft auch Kopien und Aufbewahrung</a></li><li><a href="#fragen">Häufige Fragen</a></li><li><a href="#quellen">Projekt und technische Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/skynet-shredder">Projekt auf GitHub <span aria-hidden="true">↗</span></a></aside>
+</div>
+<aside class="related-guide"><p class="eyebrow">Auch interessant</p><a href="/de/blog/windows-netzwerkverkehr-analysieren/">Windows-Netzwerkverkehr analysieren: Welcher Prozess verbindet sich wohin? <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

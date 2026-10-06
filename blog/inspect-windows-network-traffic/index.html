@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inspect Windows network traffic by process · Dennis Hilk</title>
+<meta name="description" content="Use Windows Telemetry Inspector to investigate Windows 11 network traffic by process, service and DNS – locally, without uploading your capture.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/inspect-windows-network-traffic/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/inspect-windows-network-traffic/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/inspect-windows-network-traffic/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Inspect Windows network traffic by process">
+<meta property="og:description" content="Use Windows Telemetry Inspector to investigate Windows 11 network traffic by process, service and DNS – locally, without uploading your capture.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/inspect-windows-network-traffic/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Inspect Windows network traffic by process">
+<meta name="twitter:description" content="Use Windows Telemetry Inspector to investigate Windows 11 network traffic by process, service and DNS – locally, without uploading your capture.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006-2">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/inspect-windows-network-traffic/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/inspect-windows-network-traffic/","url":"https://www.dennishilk.com/blog/inspect-windows-network-traffic/","headline":"Inspect Windows network traffic: Which process connects where?","description":"Use Windows Telemetry Inspector to investigate Windows 11 network traffic by process, service and DNS – locally, without uploading your capture.","inLanguage":"en","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Windows & Privacy","wordCount":999},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Inspect Windows network traffic: Which process connects where?","item":"https://www.dennishilk.com/blog/inspect-windows-network-traffic/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/windows-netzwerkverkehr-analysieren/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Windows &amp; Privacy</span></nav>
+<header class="article-header">
+<p class="eyebrow">Windows &amp; Privacy</p>
+<h1>Inspect Windows network traffic: Which process connects where?</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6 October 2026</time><span>6 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Captures stay local</span><p>Connection data is analysed on your Windows PC. The diagnostic workflow requires neither cloud analysis nor an upload of your capture.</p></div>
+</header>
+<div class="article-layout">
+<article class="article-copy" aria-label="Inspect Windows network traffic: Which process connects where?">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#benefits">What does Windows Telemetry Inspector show?</a></li><li><a href="#etw">How does ETW capture work?</a></li><li><a href="#getting-started">Download and first launch</a></li><li><a href="#workflow">Investigate a connection in five steps</a></li><li><a href="#privacy">Privacy: analyse locally, share captures deliberately</a></li><li><a href="#limits">What can you conclude from the results?</a></li><li><a href="#questions">Frequently asked questions</a></li><li><a href="#project">Start with a clear question</a></li><li><a href="#sources">Sources and technical basis</a></li></ol></details>
+<p>Your PC is downloading something even though no browser window is open. Or you want to know whether a connection belongs to an update, a background service or an application. A destination IP rarely answers that on its own. Seeing the process, timestamp and service together gives you a more useful starting point.</p>
+<p>My <a href="https://github.com/dennishilk/windows-telemetry-inspector">Windows Telemetry Inspector</a> is a local diagnostic tool for Windows 11. It associates observed network events with processes and adds service and DNS information. You can investigate a specific question without sending your capture to an analysis service.</p>
+<h2 id="benefits">What does Windows Telemetry Inspector show?</h2>
+<p>The interface includes Live Traffic, process and service views, DNS observations, a timeline and summaries. Filters cover process name, PID, protocol, category, service and destination address. Selecting an event reveals the additional information available for that observation.</p>
+<ul>
+<li><strong>Investigate one application:</strong> Filter its process and watch which destinations appear during a particular action.</li>
+<li><strong>Understand background activity:</strong> Service names can help associate a connection with something like Windows Update.</li>
+<li><strong>Compare activity over time:</strong> Record a short session and reopen it later rather than relying on a fleeting live view.</li>
+</ul>
+<p>“Telemetry Inspector” does not mean every displayed connection is telemetry. Updates, time synchronisation and ordinary application traffic are also part of the observed network activity.</p>
+<h2 id="etw">How does ETW capture work?</h2>
+<p>ETW means Event Tracing for Windows. The Inspector starts an event session and processes Windows kernel network events for TCP and UDP, including IPv6. Windows DNS Client events can be enabled too. The application adds process metadata and known services to this information.</p>
+<p>The result describes connections and activity: timestamps, processes, local and remote addresses, ports and available byte counts. HTTPS is not decrypted and message contents are not inspected. The tool installs no custom kernel driver and changes no firewall rules.</p>
+<p>Full capture needs administrator privileges. The interface can open without them, but the kernel provider may deny capture. The status explains the limitation and offers an explicit restart with elevated privileges.</p>
+<h2 id="getting-started">Download and first launch</h2>
+<p>The project targets <strong>Windows 11 x64</strong>. Its <a href="https://github.com/dennishilk/windows-telemetry-inspector/releases">GitHub Releases page</a> contains the published EXE and its SHA-256 checksum. The self-contained build needs no separately installed .NET SDK.</p>
+<p>Current builds are unsigned, so Windows may show a SmartScreen message. Download from the linked project and, if needed, compare the file checksum with the release information. In the directory containing the downloaded file, use this PowerShell command:</p>
+<pre tabindex="0" aria-label="Terminal command"><code>Get-FileHash .\WindowsTelemetryInspector.exe -Algorithm SHA256</code></pre>
+<p>A matching checksum confirms that the file matches that release asset. It does not replace code signing or a review of the program. If you prefer to build from source, the repository includes .NET 8 build instructions and a Windows verification checklist.</p>
+<h2 id="workflow">Investigate a connection in five steps</h2>
+<ol>
+<li>Launch the Inspector and choose <strong>Start Capture</strong>. Check that the kernel provider is active and whether DNS observation is available.</li>
+<li>If privileges are missing, use the offered elevated restart and start capture again.</li>
+<li>Perform one identifiable action: open a website or check for updates, for example. Note its time.</li>
+<li>Filter Live Traffic by the expected process or destination. Select matching events and compare their process, service and DNS details.</li>
+<li>Stop capture. Use <strong>Record Capture</strong> or JSONL export to save data locally and reopen it later under Captures.</li>
+</ol>
+<p>Short, focused captures are easier to interpret than hours of activity. Repeat the action if necessary and compare it with a period in which you do nothing. This gives you better evidence about which events are associated with your action.</p>
+<h2 id="privacy">Privacy: analyse locally, share captures deliberately</h2>
+<p>The Inspector does not use external geolocation or ASN lookups to enrich destinations. The diagnostic workflow requires no account and does not upload your capture to a cloud service. The network activity of the applications you observe naturally continues.</p>
+<p>Saved captures default to <code>%LOCALAPPDATA%\WindowsTelemetryInspector\Captures</code>; you can change the folder in Settings. JSONL stores readable events that you can use in your own analysis.</p>
+<p>These files may contain IP addresses, hostnames, usernames, process paths, command lines, service names and scheduled-task names. Review and redact an export before attaching it to a public issue or forum post. Screenshots of event details can expose personal information too.</p>
+<h2 id="limits">What can you conclude from the results?</h2>
+<p>Categories use known process and service names together with DNS heuristics. A connection classified as “Telemetry” is an investigation lead, not proof of a particular transmitted payload. Confidence describes the rule-based classification; it is not a malware or privacy score.</p>
+<p>DNS names can be missing because of encrypted DNS, cached answers or unavailable provider events. Process details may be incomplete after a process exits. A scheduled task close in time does not prove that it caused the connection.</p>
+<p>Byte counters are diagnostic figures, not billing-grade measurements. Events can be missing, so check provider status and dropped-event indications. An empty table by itself does not establish that the computer has no network activity.</p>
+<h2 id="questions">Frequently asked questions</h2>
+<h3>Can it disable Windows telemetry?</h3>
+<p>The Inspector observes connections. It does not block destinations or change Windows privacy settings. Its observations can help you make more informed decisions afterwards.</p>
+<h3>Can I see the contents of an HTTPS connection?</h3>
+<p>No. The tool does not decrypt TLS. The SNI field provided in the export model is not currently collected either.</p>
+<h3>Does an unfamiliar IP address mean something is wrong?</h3>
+<p>That alone tells you very little. Consider process, service, timing and repeatable behaviour together. The Inspector provides context and does not replace a security investigation.</p>
+<h2 id="project">Start with a clear question</h2>
+<p>The <a href="https://github.com/dennishilk/windows-telemetry-inspector/releases">downloads</a>, <a href="https://github.com/dennishilk/windows-telemetry-inspector">source code and instructions</a> are available on GitHub. Begin with a familiar application and a short session. That makes it easier to learn the views and interpret what you see.</p>
+<p>If these observations make you reconsider your operating system, the <a href="/blog/windows-to-linux-migration-checklist/">Windows-to-Linux migration guide</a> helps you prepare.</p>
+<h2 id="sources">Sources and technical basis</h2>
+<p>The described features were checked against the project README and source code. Reviewed on 6 October 2026.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/windows-telemetry-inspector">Windows Telemetry Inspector: project and documentation</a></li>
+<li><a href="https://github.com/dennishilk/windows-telemetry-inspector/blob/main/src/NetworkTransparency.Core/Capture/EtwCaptureSession.cs">ETW capture implementation</a></li>
+<li><a href="https://github.com/dennishilk/windows-telemetry-inspector/blob/main/src/NetworkTransparency.Core/Correlation/Classifier.cs">Classification rules in the source code</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/etw/about-event-tracing">Microsoft: About Event Tracing for Windows</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/">← All articles</a><a href="#page-top">Back to top ↑</a></nav>
+</article>
+<aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#benefits">What does Windows Telemetry Inspector show?</a></li><li><a href="#etw">How does ETW capture work?</a></li><li><a href="#getting-started">Download and first launch</a></li><li><a href="#workflow">Investigate a connection in five steps</a></li><li><a href="#privacy">Privacy: analyse locally, share captures deliberately</a></li><li><a href="#limits">What can you conclude from the results?</a></li><li><a href="#questions">Frequently asked questions</a></li><li><a href="#project">Start with a clear question</a></li><li><a href="#sources">Sources and technical basis</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/windows-telemetry-inspector">Project on GitHub <span aria-hidden="true">↗</span></a></aside>
+</div>
+<aside class="related-guide"><p class="eyebrow">More to explore</p><a href="/blog/delete-files-linux-hdd-ssd/">Delete files on Linux: What HDDs, SSDs and TRIM mean for Skynet Shredder <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

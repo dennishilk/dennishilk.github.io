@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NVIDIA-Treiber unter Debian 12/13 installieren · Dennis Hilk</title>
+<meta name="description" content="NVIDIA-Treiber unter Debian 12 und 13 mit APT installieren: Das Skript erklärt Stable, Backports, optionales CUDA, Kernel-Header und Secure Boot.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/install-nvidia-drivers-debian/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/install-nvidia-drivers-debian/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NVIDIA-Treiber unter Debian 12/13 installieren">
+<meta property="og:description" content="NVIDIA-Treiber unter Debian 12 und 13 mit APT installieren: Das Skript erklärt Stable, Backports, optionales CUDA, Kernel-Header und Secure Boot.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NVIDIA-Treiber unter Debian 12/13 installieren">
+<meta name="twitter:description" content="NVIDIA-Treiber unter Debian 12 und 13 mit APT installieren: Das Skript erklärt Stable, Backports, optionales CUDA, Kernel-Header und Secure Boot.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006-2">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/","url":"https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/","headline":"NVIDIA-Treiber unter Debian 12 und 13 installieren: APT, CUDA und Secure Boot","description":"NVIDIA-Treiber unter Debian 12 und 13 mit APT installieren: Das Skript erklärt Stable, Backports, optionales CUDA, Kernel-Header und Secure Boot.","inLanguage":"de","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Debian & NVIDIA","wordCount":968},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"NVIDIA-Treiber unter Debian 12 und 13 installieren: APT, CUDA und Secure Boot","item":"https://www.dennishilk.com/de/blog/nvidia-treiber-debian-installieren/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/install-nvidia-drivers-debian/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Debian &amp; NVIDIA</span></nav>
+<header class="article-header">
+<p class="eyebrow">Debian &amp; NVIDIA</p>
+<h1>NVIDIA-Treiber unter Debian 12 und 13 installieren: APT, CUDA und Secure Boot</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6. Oktober 2026</time><span>6 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Debian-Pakete statt zusätzlichem Treiber-Repository</span><p>Das Skript arbeitet auf deinem Rechner. Für die Installation lädt APT Pakete aus deinen eingerichteten Quellen; ein Diagnose-Upload ist nicht vorgesehen.</p></div>
+</header>
+<div class="article-layout">
+<article class="article-copy" aria-label="NVIDIA-Treiber unter Debian 12 und 13 installieren: APT, CUDA und Secure Boot">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#apt">Was bringt der APT-basierte Weg?</a></li><li><a href="#voraussetzungen">Für welche Systeme ist das Skript gedacht?</a></li><li><a href="#start">Skript laden und bewusst starten</a></li><li><a href="#menue">Stable, Backports oder CUDA: Was wähle ich?</a></li><li><a href="#kernel">Kernel-Header, DKMS und Secure Boot verstehen</a></li><li><a href="#pruefen">Installation nach dem Neustart prüfen</a></li><li><a href="#daten">Welche Daten und Verbindungen entstehen?</a></li><li><a href="#fragen">Häufige Fragen</a></li><li><a href="#projekt">Mit einem nachvollziehbaren Installationsweg beginnen</a></li><li><a href="#quellen">Quellen und technische Grundlage</a></li></ol></details>
+<p>Ein NVIDIA-Treiber unter Debian ist mehr als eine heruntergeladene Datei. Paketquellen, Kernel-Header, DKMS und eventuell Secure Boot müssen zusammenpassen. Wer Anleitungen für verschiedene Distributionen mischt, verliert dabei schnell den Überblick.</p>
+<p>Mein <a href="https://github.com/dennishilk/nvidia-driver">NVIDIA-Installationsskript für Debian 12 und 13</a> führt durch einen APT-basierten Ablauf. Der normale Installationsweg nutzt Debians eigene Pakete. Du entscheidest im Menü zwischen Stable, bereits eingerichteten Backports und den Optionen zum Entfernen des Treibers. Das CUDA Toolkit ist eine separate Auswahl.</p>
+<h2 id="apt">Was bringt der APT-basierte Weg?</h2>
+<p>Treiber und Abhängigkeiten bleiben im Paketmanagement sichtbar. Das macht spätere Aktualisierungen und die Suche nach Installationsproblemen nachvollziehbarer. Das Skript legt im normalen APT-Weg kein zusätzliches NVIDIA-Repository an und erzwingt keinen Wechsel von Wayland zu Xorg.</p>
+<ul>
+<li><strong>Vorbedingungen prüfen:</strong> Debian-Version, Architektur, NVIDIA-Grafikgerät und Paketquellen werden vor der Menüaktion überprüft.</li>
+<li><strong>Passende Bauteile vorbereiten:</strong> Das Skript installiert unter anderem DKMS und verfügbare Kernel-Header.</li>
+<li><strong>Entscheidungen sichtbar machen:</strong> Stable, Backports und CUDA werden ausdrücklich ausgewählt.</li>
+<li><strong>Fehler nachlesen:</strong> Die Ausgabe wird zusätzlich unter <code>/var/log/nvidia-optimizer.log</code> protokolliert.</li>
+</ul>
+<p>Trotz des Log-Dateinamens ist das keine automatische FPS-Optimierung. Der Nutzen liegt im geführten Installationsablauf. Leistung und Kompatibilität hängen weiterhin von GPU, Treiberversion, Anwendung und System ab.</p>
+<h2 id="voraussetzungen">Für welche Systeme ist das Skript gedacht?</h2>
+<p>Unterstützt werden <strong>Debian 12 Bookworm und Debian 13 Trixie</strong> mit <code>amd64</code> oder <code>arm64</code>. Das Skript erwartet ein erkanntes NVIDIA-PCI-Grafikgerät und Root-Rechte. Es ist keine allgemeine Anleitung für Ubuntu, Arch Linux oder andere Distributionen.</p>
+<p>Die Architekturprüfung allein garantiert nicht, dass Debians ausgewählter Treiber jede Grafikkarte unterstützt. Prüfe vor der Installation, ob dein GPU-Modell zu diesem Treiberzweig passt. Gerade ältere Karten können einen anderen Zweig benötigen.</p>
+<p>Die eingerichteten Debian-Quellen müssen die benötigten Bereiche <code>main</code>, <code>contrib</code>, <code>non-free</code> und <code>non-free-firmware</code> bereitstellen. Das Skript prüft klassische <code>.list</code>-Dateien und das deb822-Format <code>.sources</code>. Fehlen Bereiche, zeigt es Hinweise; es schreibt deine Quellen nicht automatisch um.</p>
+<h2 id="start">Skript laden und bewusst starten</h2>
+<p>Lies zunächst die Anleitung und die Skriptdatei im <a href="https://github.com/dennishilk/nvidia-driver">Repository</a>. Das Werkzeug installiert und entfernt Systempakete und aktualisiert die initramfs. Sichere wichtige Daten und plane einen Neustart ein. Falls früher ein NVIDIA-<code>.run</code>-Installer verwendet wurde, kläre diese bestehende Installation zuerst.</p>
+<p>Wenn Git installiert ist, lade das Projekt:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>git clone https://github.com/dennishilk/nvidia-driver.git</code></pre>
+<p>Wechsle in den Projektordner:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>cd nvidia-driver</code></pre>
+<p>Nach dem Lesen des Skripts startest du es mit Root-Rechten:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>sudo bash ./install-nvidia-cuda.sh</code></pre>
+<p>Bei laufenden APT- oder dpkg-Prozessen wartet das Skript begrenzt und bricht gegebenenfalls ab. Es beendet keine Paketmanager und löscht keine Sperrdateien. Lass eine bereits laufende Paketinstallation fertig werden, bevor du erneut startest.</p>
+<h2 id="menue">Stable, Backports oder CUDA: Was wähle ich?</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Installationsoptionen"><table>
+<thead><tr><th>Auswahl</th><th>Gedacht für</th><th>Voraussetzung</th></tr></thead>
+<tbody>
+<tr><td>Debian Stable</td><td>Der normale APT-Installationsweg des Skripts</td><td>Passende GPU und verfügbare Debian-Pakete</td></tr>
+<tr><td>Debian Backports</td><td>Ein dort verfügbarer, für deine Hardware benötigter Treiber</td><td>Backports deiner Debian-Version sind bereits eingerichtet</td></tr>
+<tr><td>CUDA Toolkit</td><td>Entwickeln oder Kompilieren mit CUDA</td><td>Optional; Paket <code>nvidia-cuda-toolkit</code> verfügbar</td></tr>
+<tr><td>Nouveau / Entfernen</td><td>Den NVIDIA-Paketweg verlassen</td><td>Entfernungsliste und Konsequenzen vorher prüfen</td></tr>
+</tbody></table></div>
+<p>Für einen gewöhnlichen Desktop brauchst du nicht automatisch das vollständige CUDA Toolkit. Manche Anwendungen bringen passende Laufzeitbibliotheken mit; entscheidend ist deren Dokumentation. Das optionale Debian-Paket ist keine Zusage, dass eine bestimmte Anwendung jede CUDA-Version akzeptiert.</p>
+<p>Das Menü enthält außerdem einen fortgeschrittenen <code>.run</code>-Weg für amd64. Er verlässt den normalen Debian-Paketweg und kann mit APT-Installationen kollidieren. Für den hier beschriebenen Ablauf bleibst du bei den APT-Optionen.</p>
+<h2 id="kernel">Kernel-Header, DKMS und Secure Boot verstehen</h2>
+<p>DKMS baut das benötigte Kernel-Modul. Dafür müssen die Header zum Kernel passen. Das Skript versucht sowohl das Header-Metapaket der Architektur als auch die Header des laufenden Kernels zu installieren, sofern diese verfügbar sind.</p>
+<p>Ist nur der Header-Satz eines neueren Debian-Kernels verfügbar, kann zunächst ein Neustart in diesen Kernel nötig sein. Dein aktuell laufender Kernel lässt sich so anzeigen:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>uname -r</code></pre>
+<p>Den Zustand der DKMS-Builds zeigt:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>dkms status</code></pre>
+<p>Mit aktiviertem Secure Boot kann ein nicht vertrautes Kernel-Modul trotz installierter Pakete am Laden gehindert werden. Das Skript gibt Hinweise zur MOK-Einschreibung, führt sie aber nicht automatisch aus. Prüfe die DKMS-Anleitung für dein System und ob das erwartete Zertifikat existiert. Bei vorhandenem <code>mokutil</code> zeigt dieser Befehl den Secure-Boot-Status:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>mokutil --sb-state</code></pre>
+<p>Eine notwendige Einschreibung verlangt anschließend einen bewussten Schritt im MOK Manager beim Neustart. Der Abschluss der Paketinstallation allein bestätigt diesen Schritt nicht.</p>
+<h2 id="pruefen">Installation nach dem Neustart prüfen</h2>
+<p>Starte nach der Installation neu und prüfe den Treiber:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>nvidia-smi</code></pre>
+<p>Wenn du das CUDA Toolkit installiert hast, kannst du zusätzlich den Compiler prüfen:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>nvcc --version</code></pre>
+<p>Fehlt <code>nvcc</code>, obwohl der Treiber funktioniert, ist das nicht automatisch ein Treiberfehler. Treiber und Toolkit sind unterschiedliche Komponenten. Meldet <code>nvidia-smi</code> ein Problem, vergleiche Kernel, DKMS-Status, Secure Boot und das Installationsprotokoll, bevor du weitere Installationswege vermischst.</p>
+<h2 id="daten">Welche Daten und Verbindungen entstehen?</h2>
+<p>Das Skript enthält keinen vorgesehenen Diagnose-Upload und keine Cloud-Auswertung deiner Systemdaten. APT kontaktiert aber deine Paketquellen und lädt Pakete herunter. Beim fortgeschrittenen <code>.run</code>-Weg werden zusätzlich Metadaten und ein Installer von NVIDIA abgerufen. „Lokal ausgeführt“ bedeutet hier also nicht „offline“.</p>
+<p>Das lokale Protokoll kann System- und Hardwareangaben enthalten. Teile bei einer Fehlermeldung nur die relevanten, geprüften Ausschnitte. Der Bash-Quellcode ist einsehbar; du kannst den Ablauf vor der Ausführung nachvollziehen.</p>
+<h2 id="fragen">Häufige Fragen</h2>
+<h3>Installiert das Skript immer den neuesten NVIDIA-Treiber?</h3>
+<p>Im APT-Weg installiert es den verfügbaren Kandidaten aus den gewählten Debian-Quellen. Das muss nicht die neueste Veröffentlichung auf der NVIDIA-Website sein.</p>
+<h3>Richtet es Backports automatisch ein?</h3>
+<p>Nein. Die Backports-Option setzt passende eingerichtete Quellen voraus. Auch dort muss das benötigte Paket für deine Architektur vorhanden sein.</p>
+<h3>Kann ich damit auf Nouveau zurückwechseln?</h3>
+<p>Das Menü bietet das Entfernen installierter <code>nvidia-*</code>-Pakete und das Aktivieren von Nouveau an. Prüfe die gezeigte Paketliste. Diese Aktion ist kein vollständiger Rollback aller früheren, manuell vorgenommenen Grafikänderungen.</p>
+<h2 id="projekt">Mit einem nachvollziehbaren Installationsweg beginnen</h2>
+<p>Im <a href="https://github.com/dennishilk/nvidia-driver">NVIDIA-Debian-Projekt</a> findest du das Skript, die Voraussetzungen und die Hinweise zur Fehlersuche. Wenn du Linux erst vorbereitest, starte mit der <a href="/de/blog/von-windows-zu-linux-wechseln/">Checkliste für den Windows-zu-Linux-Umstieg</a> und teste deine Hardware vor der Installation.</p>
+<h2 id="quellen">Quellen und technische Grundlage</h2>
+<p>Beschrieben ist der im Repository vorhandene Ablauf. Stand: 6. Oktober 2026.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/nvidia-driver">NVIDIA Driver: Projekt und README</a></li>
+<li><a href="https://github.com/dennishilk/nvidia-driver/blob/main/install-nvidia-cuda.sh">Installationsskript im Quellcode</a></li>
+<li><a href="https://packages.debian.org/trixie/nvidia-driver">Debian: Paket nvidia-driver für Trixie</a></li>
+<li><a href="https://packages.debian.org/trixie/nvidia-cuda-toolkit">Debian: Paket nvidia-cuda-toolkit für Trixie</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/">← Alle Artikel</a><a href="#page-top">Nach oben ↑</a></nav>
+</article>
+<aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#apt">Was bringt der APT-basierte Weg?</a></li><li><a href="#voraussetzungen">Für welche Systeme ist das Skript gedacht?</a></li><li><a href="#start">Skript laden und bewusst starten</a></li><li><a href="#menue">Stable, Backports oder CUDA: Was wähle ich?</a></li><li><a href="#kernel">Kernel-Header, DKMS und Secure Boot verstehen</a></li><li><a href="#pruefen">Installation nach dem Neustart prüfen</a></li><li><a href="#daten">Welche Daten und Verbindungen entstehen?</a></li><li><a href="#fragen">Häufige Fragen</a></li><li><a href="#projekt">Mit einem nachvollziehbaren Installationsweg beginnen</a></li><li><a href="#quellen">Quellen und technische Grundlage</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/nvidia-driver">Projekt auf GitHub <span aria-hidden="true">↗</span></a></aside>
+</div>
+<aside class="related-guide"><p class="eyebrow">Auch interessant</p><a href="/de/blog/spdif-tonverzoegerung-linux/">SPDIF-Ton unter Linux verzögert: Warum der erste Ton fehlt und was hilft <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

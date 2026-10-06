@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Windows-Netzwerkverkehr pro Prozess analysieren · Dennis Hilk</title>
+<meta name="description" content="Windows Telemetry Inspector erklärt: Netzwerkverkehr unter Windows 11 nach Prozess, Dienst und DNS untersuchen – lokal, ohne Upload der Aufzeichnung.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/inspect-windows-network-traffic/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/inspect-windows-network-traffic/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows-Netzwerkverkehr pro Prozess analysieren">
+<meta property="og:description" content="Windows Telemetry Inspector erklärt: Netzwerkverkehr unter Windows 11 nach Prozess, Dienst und DNS untersuchen – lokal, ohne Upload der Aufzeichnung.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Windows-Netzwerkverkehr pro Prozess analysieren">
+<meta name="twitter:description" content="Windows Telemetry Inspector erklärt: Netzwerkverkehr unter Windows 11 nach Prozess, Dienst und DNS untersuchen – lokal, ohne Upload der Aufzeichnung.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006-2">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/","url":"https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/","headline":"Windows-Netzwerkverkehr analysieren: Welcher Prozess verbindet sich wohin?","description":"Windows Telemetry Inspector erklärt: Netzwerkverkehr unter Windows 11 nach Prozess, Dienst und DNS untersuchen – lokal, ohne Upload der Aufzeichnung.","inLanguage":"de","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Windows & Datenschutz","wordCount":932},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Windows-Netzwerkverkehr analysieren: Welcher Prozess verbindet sich wohin?","item":"https://www.dennishilk.com/de/blog/windows-netzwerkverkehr-analysieren/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/inspect-windows-network-traffic/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Windows &amp; Datenschutz</span></nav>
+<header class="article-header">
+<p class="eyebrow">Windows &amp; Datenschutz</p>
+<h1>Windows-Netzwerkverkehr analysieren: Welcher Prozess verbindet sich wohin?</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6. Oktober 2026</time><span>6 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Aufzeichnungen bleiben lokal</span><p>Die Diagnose verarbeitet Verbindungsdaten auf deinem Windows-PC. Eine Cloud-Auswertung oder ein Upload der Aufzeichnung ist dafür nicht erforderlich.</p></div>
+</header>
+<div class="article-layout">
+<article class="article-copy" aria-label="Windows-Netzwerkverkehr analysieren: Welcher Prozess verbindet sich wohin?">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#nutzen">Was zeigt der Windows Telemetry Inspector?</a></li><li><a href="#technik">Wie funktioniert die Beobachtung mit ETW?</a></li><li><a href="#start">Download und erster Start</a></li><li><a href="#ablauf">Eine Verbindung in fünf Schritten untersuchen</a></li><li><a href="#datenschutz">Datenschutz: lokal analysieren, Aufzeichnungen bewusst teilen</a></li><li><a href="#grenzen">Was lässt sich aus den Ergebnissen ableiten?</a></li><li><a href="#fragen">Häufige Fragen</a></li><li><a href="#projekt">Mit einer klaren Frage beginnen</a></li><li><a href="#quellen">Quellen und technische Grundlage</a></li></ol></details>
+<p>Der PC lädt etwas herunter, obwohl gerade kein Browserfenster offen ist. Oder du möchtest wissen, welche Verbindung zu einem Update, einem Hintergrunddienst oder einer Anwendung gehört. Eine Ziel-IP allein erklärt das selten. Hilfreicher wird die Beobachtung, wenn Prozess, Zeitpunkt und Dienst zusammen sichtbar sind.</p>
+<p>Mein <a href="https://github.com/dennishilk/windows-telemetry-inspector">Windows Telemetry Inspector</a> ist ein lokales Diagnosewerkzeug für Windows 11. Er ordnet beobachtete Netzwerkereignisse Prozessen zu und ergänzt Informationen über Dienste und DNS. So kannst du einer konkreten Frage nachgehen, ohne deine Aufzeichnung an einen Analysedienst zu schicken.</p>
+<h2 id="nutzen">Was zeigt der Windows Telemetry Inspector?</h2>
+<p>Die Oberfläche bietet Live Traffic, Prozess- und Dienstansichten, DNS-Beobachtungen, eine Zeitleiste und Zusammenfassungen. Du kannst nach Prozessname, PID, Protokoll, Kategorie, Dienst oder Zieladresse filtern. Bei einem ausgewählten Ereignis zeigt die Detailansicht die verfügbaren Zusatzinformationen.</p>
+<ul>
+<li><strong>Ein Programm gezielt untersuchen:</strong> Filtere dessen Prozess und beobachte, welche Ziele während einer bestimmten Aktion auftauchen.</li>
+<li><strong>Hintergrundaktivität einordnen:</strong> Dienstnamen helfen dabei, eine Verbindung etwa mit Windows Update in Zusammenhang zu bringen.</li>
+<li><strong>Abläufe vergleichen:</strong> Zeichne einen kurzen Zeitraum auf und öffne die Datei später erneut, statt nur einen flüchtigen Moment zu betrachten.</li>
+</ul>
+<p>Der Name „Telemetry Inspector“ bedeutet nicht, dass jede angezeigte Verbindung Telemetrie ist. Updates, Zeitsynchronisation und gewöhnlicher Anwendungsverkehr gehören ebenfalls zum beobachteten Netzwerkverkehr.</p>
+<h2 id="technik">Wie funktioniert die Beobachtung mit ETW?</h2>
+<p>ETW steht für Event Tracing for Windows. Der Inspector startet eine Ereignissitzung und verarbeitet Netzwerkereignisse des Windows-Kernels für TCP und UDP, einschließlich IPv6. Optional kommen Ereignisse des Windows-DNS-Clients hinzu. Die Anwendung ergänzt Prozessmetadaten und bekannte Dienste.</p>
+<p>Dadurch entsteht eine Ansicht von Verbindungen und Aktivität: Zeitpunkt, Prozess, lokale und entfernte Adresse, Ports und verfügbare Byte-Angaben. HTTPS wird dabei nicht entschlüsselt; der Inspector liest keine Nachrichteninhalte mit. Er installiert keinen eigenen Kernel-Treiber und verändert keine Firewall-Regeln.</p>
+<p>Für die vollständige Erfassung werden Administratorrechte benötigt. Ohne diese Rechte lässt sich die Oberfläche öffnen, der Kernel-Provider kann aber den Start verweigern. Der Status erklärt das und bietet einen ausdrücklichen Neustart mit erhöhten Rechten an.</p>
+<h2 id="start">Download und erster Start</h2>
+<p>Das Projekt richtet sich an <strong>Windows 11 x64</strong>. Auf der <a href="https://github.com/dennishilk/windows-telemetry-inspector/releases">GitHub-Releases-Seite</a> findest du die veröffentlichte EXE und die zugehörige SHA-256-Prüfsumme. Die eigenständige Ausgabe benötigt kein separat installiertes .NET SDK.</p>
+<p>Aktuelle Builds sind nicht mit einem Herausgeberzertifikat signiert. Windows kann deshalb eine SmartScreen-Meldung anzeigen. Lade die Datei aus dem verlinkten Projekt und vergleiche bei Bedarf ihre Prüfsumme mit der Release-Angabe. Im Ordner der heruntergeladenen Datei lautet der PowerShell-Befehl:</p>
+<pre tabindex="0" aria-label="Terminalbefehl"><code>Get-FileHash .\WindowsTelemetryInspector.exe -Algorithm SHA256</code></pre>
+<p>Eine übereinstimmende Prüfsumme bestätigt die Übereinstimmung mit dieser Release-Datei. Sie ersetzt keine Signatur oder Prüfung des Programms. Wer selbst bauen möchte, findet die .NET-8-Bauanleitung und die Windows-Prüfschritte im Repository.</p>
+<h2 id="ablauf">Eine Verbindung in fünf Schritten untersuchen</h2>
+<ol>
+<li>Starte den Inspector und wähle <strong>Start Capture</strong>. Prüfe, ob der Kernel-Provider aktiv ist und DNS-Beobachtung zur Verfügung steht.</li>
+<li>Wenn Rechte fehlen, nutze den angebotenen Neustart mit Administratorrechten und beginne die Erfassung erneut.</li>
+<li>Führe genau eine nachvollziehbare Aktion aus: Öffne beispielsweise eine Website oder starte die Update-Suche. Notiere den Zeitpunkt.</li>
+<li>Filtere Live Traffic nach dem vermuteten Prozess oder Ziel. Öffne passende Ereignisse und vergleiche Prozess-, Dienst- und DNS-Angaben.</li>
+<li>Beende die Erfassung. Mit <strong>Record Capture</strong> oder dem JSONL-Export kannst du Daten lokal sichern und unter Captures später wieder öffnen.</li>
+</ol>
+<p>Kurze, gezielte Aufzeichnungen sind leichter auszuwerten als stundenlange Mitschnitte. Wiederhole die Aktion bei Bedarf und vergleiche sie mit einem Zeitraum ohne diese Aktion. Das liefert bessere Hinweise darauf, welche Aktivität tatsächlich zusammenhängt.</p>
+<h2 id="datenschutz">Datenschutz: lokal analysieren, Aufzeichnungen bewusst teilen</h2>
+<p>Der Inspector nutzt keine externen Geolocation- oder ASN-Abfragen, um Zieladressen anzureichern. Die Diagnose benötigt kein Konto und lädt deine Aufzeichnung nicht in eine Cloud. Der untersuchte Netzwerkverkehr der anderen Programme findet natürlich weiterhin statt.</p>
+<p>Standardmäßig liegen gespeicherte Captures unter <code>%LOCALAPPDATA%\WindowsTelemetryInspector\Captures</code>; der Ordner lässt sich in den Einstellungen ändern. JSONL enthält lesbare Ereignisse und kann zur eigenen Auswertung weiterverwendet werden.</p>
+<p>Solche Dateien können IP-Adressen, Hostnamen, Benutzernamen, Prozesspfade, Befehlszeilen sowie Dienst- und Aufgabennamen enthalten. Prüfe und bereinige einen Export, bevor du ihn in einem öffentlichen Issue oder Forum anhängst. Auch ein Screenshot der Detailansicht kann persönliche Angaben zeigen.</p>
+<h2 id="grenzen">Was lässt sich aus den Ergebnissen ableiten?</h2>
+<p>Kategorien beruhen auf bekannten Prozess- und Dienstnamen sowie DNS-Heuristiken. Eine als „Telemetry“ eingeordnete Verbindung ist ein Untersuchungshinweis, kein Beweis für einen bestimmten übertragenen Inhalt. Die angezeigte Confidence beschreibt die Regelzuordnung; sie ist kein Malware- oder Datenschutz-Score.</p>
+<p>DNS-Namen können fehlen, etwa wegen verschlüsselter DNS-Abfragen, vorhandener Caches oder nicht verfügbarer Provider-Ereignisse. Prozessdetails können nach dem Ende eines Prozesses unvollständig sein. Eine zeitlich benachbarte geplante Aufgabe beweist ebenfalls nicht, dass sie die Verbindung verursacht hat.</p>
+<p>Byte-Zähler eignen sich für die Diagnose, nicht als verbindliche Abrechnung. Ereignisse können fehlen; beachte deshalb Provider-Status und Hinweise auf verworfene Ereignisse. Eine leere Tabelle allein beweist nicht, dass ein Rechner keine Verbindungen aufbaut.</p>
+<h2 id="fragen">Häufige Fragen</h2>
+<h3>Kann ich damit Windows-Telemetrie abschalten?</h3>
+<p>Der Inspector beobachtet Verbindungen. Er blockiert keine Ziele und ändert keine Windows-Datenschutzeinstellungen. Die Beobachtung kann dir helfen, anschließende Entscheidungen gezielter zu treffen.</p>
+<h3>Sehe ich den Inhalt einer HTTPS-Verbindung?</h3>
+<p>Nein. Das Tool führt keine TLS-Entschlüsselung durch. Auch das im Exportmodell vorgesehene SNI-Feld wird derzeit nicht erfasst.</p>
+<h3>Ist eine unbekannte IP-Adresse verdächtig?</h3>
+<p>Allein daraus folgt nichts. Prüfe Prozess, Dienst, Zeitpunkt und wiederholbares Verhalten zusammen. Der Inspector liefert Kontext und ersetzt keine Sicherheitsanalyse.</p>
+<h2 id="projekt">Mit einer klaren Frage beginnen</h2>
+<p>Die <a href="https://github.com/dennishilk/windows-telemetry-inspector/releases">Downloads</a>, der <a href="https://github.com/dennishilk/windows-telemetry-inspector">Quellcode und die Anleitung</a> sind auf GitHub verfügbar. Beginne mit einem bekannten Programm und einem kurzen Zeitraum. So lernst du die Ansichten kennen und kannst die Ergebnisse sinnvoll einordnen.</p>
+<p>Wenn dich diese Beobachtung zum Nachdenken über dein Betriebssystem bringt, hilft der Ratgeber zum <a href="/de/blog/von-windows-zu-linux-wechseln/">Wechsel von Windows zu Linux</a> bei der Vorbereitung.</p>
+<h2 id="quellen">Quellen und technische Grundlage</h2>
+<p>Die beschriebenen Funktionen wurden mit README und Quellcode des Projekts abgeglichen. Stand: 6. Oktober 2026.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/windows-telemetry-inspector">Windows Telemetry Inspector: Projekt und Anleitung</a></li>
+<li><a href="https://github.com/dennishilk/windows-telemetry-inspector/blob/main/src/NetworkTransparency.Core/Capture/EtwCaptureSession.cs">ETW-Erfassung im Quellcode</a></li>
+<li><a href="https://github.com/dennishilk/windows-telemetry-inspector/blob/main/src/NetworkTransparency.Core/Correlation/Classifier.cs">Klassifikationsregeln im Quellcode</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/etw/about-event-tracing">Microsoft: Grundlagen von Event Tracing for Windows</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/">← Alle Artikel</a><a href="#page-top">Nach oben ↑</a></nav>
+</article>
+<aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#nutzen">Was zeigt der Windows Telemetry Inspector?</a></li><li><a href="#technik">Wie funktioniert die Beobachtung mit ETW?</a></li><li><a href="#start">Download und erster Start</a></li><li><a href="#ablauf">Eine Verbindung in fünf Schritten untersuchen</a></li><li><a href="#datenschutz">Datenschutz: lokal analysieren, Aufzeichnungen bewusst teilen</a></li><li><a href="#grenzen">Was lässt sich aus den Ergebnissen ableiten?</a></li><li><a href="#fragen">Häufige Fragen</a></li><li><a href="#projekt">Mit einer klaren Frage beginnen</a></li><li><a href="#quellen">Quellen und technische Grundlage</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/windows-telemetry-inspector">Projekt auf GitHub <span aria-hidden="true">↗</span></a></aside>
+</div>
+<aside class="related-guide"><p class="eyebrow">Auch interessant</p><a href="/de/blog/dateien-linux-loeschen-hdd-ssd/">Dateien unter Linux löschen: Was HDD, SSD und TRIM für Skynet Shredder bedeuten <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>
