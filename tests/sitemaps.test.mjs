@@ -68,6 +68,13 @@ function alternateLinks(xml) {
   return [...xml.matchAll(/<xhtml:link\s+[^>]*href="([^"]+)"[^>]*\/>/g)].map((match) => match[1]);
 }
 
+function alternateLanguages(xml) {
+  return new Map([...xml.matchAll(/<xhtml:link\b([^>]*)\/>/g)].map((match) => [
+    match[1].match(/\bhreflang="([^"]+)"/)?.[1],
+    match[1].match(/\bhref="([^"]+)"/)?.[1],
+  ]));
+}
+
 function imageLocs(xml) {
   return [...xml.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map((match) => match[1]);
 }
@@ -199,15 +206,18 @@ test("the sitemap set contains all ten English Wiesmoor observer routes", () => 
 });
 
 test("German sitemap entries carry reciprocal EN/DE/x-default alternates", () => {
-  const links = new Set(allSitemaps.flatMap(alternateLinks));
-  for (const deUrl of allSitemaps.flatMap(locs).filter((url) => url.startsWith(`${base}/de/`))) {
-    const enUrl = deUrl
-      .replace(`${base}/de/world-observer/technology/`, `${base}/world-observer/technology/`)
-      .replace(`${base}/de/world-observer/`, `${base}/world-observer/`)
-      .replace(`${base}/de/museum/`, `${base}/museum/`)
-      .replace(`${base}/de/`, `${base}/`);
-    assert.ok(links.has(deUrl), `missing DE alternate for ${deUrl}`);
-    assert.ok(links.has(enUrl), `missing EN/x-default alternate for ${deUrl}`);
+  const entries = new Map(allSitemaps.flatMap((xml) =>
+    [...xml.matchAll(/<url>[\s\S]*?<\/url>/g)].map(([entry]) => [locs(entry)[0], entry])
+  ));
+  for (const [deUrl, entry] of entries) {
+    if (!deUrl.startsWith(`${base}/de/`)) continue;
+    const links = alternateLanguages(entry);
+    const enUrl = links.get("en");
+    assert.ok(enUrl?.startsWith(`${base}/`), `missing EN alternate for ${deUrl}`);
+    assert.equal(links.get("de"), deUrl, `missing DE self-reference for ${deUrl}`);
+    assert.equal(links.get("x-default"), enUrl, `incorrect x-default alternate for ${deUrl}`);
+    assert.ok(entries.has(enUrl), `missing English sitemap entry for ${deUrl}`);
+    assert.equal(alternateLanguages(entries.get(enUrl)).get("de"), deUrl, `missing reciprocal DE alternate for ${enUrl}`);
   }
 });
 

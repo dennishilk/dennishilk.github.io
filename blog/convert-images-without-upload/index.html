@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Convert Images Without Upload: JPG, PNG &amp; WebP Guide · Dennis Hilk</title>
+<meta name="description" content="Convert and resize JPG, PNG and WebP locally in your browser. Learn about format choice, quality, transparency, metadata and browser support.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/convert-images-without-upload/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/convert-images-without-upload/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/bilder-ohne-upload-konvertieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/convert-images-without-upload/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Convert Images Without Upload: JPG, PNG &amp; WebP Guide">
+<meta property="og:description" content="Convert and resize JPG, PNG and WebP locally in your browser. Learn about format choice, quality, transparency, metadata and browser support.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/convert-images-without-upload/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Convert Images Without Upload: JPG, PNG &amp; WebP Guide">
+<meta name="twitter:description" content="Convert and resize JPG, PNG and WebP locally in your browser. Learn about format choice, quality, transparency, metadata and browser support.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/convert-images-without-upload/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/convert-images-without-upload/","url":"https://www.dennishilk.com/blog/convert-images-without-upload/","headline":"Convert images without uploading them: JPG, PNG and WebP explained","description":"Convert and resize JPG, PNG and WebP locally in your browser. Learn about format choice, quality, transparency, metadata and browser support.","inLanguage":"en","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Images & Formats"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Convert images without uploading them: JPG, PNG and WebP explained","item":"https://www.dennishilk.com/blog/convert-images-without-upload/"}]}]}</script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/bilder-ohne-upload-konvertieren/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header><main id="main" class="article-main"><nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Images & Formats</span></nav><header class="article-header"><p class="eyebrow">Images & Formats</p><h1>Convert images without uploading them: JPG, PNG and WebP explained</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6 October 2026</time><span>6 minute read</span></div><div class="article-privacy"><span class="privacy-badge">No image upload</span><p>Selected images are processed on your device. No image upload or account is required.</p></div></header><div class="article-layout"><article class="article-copy" aria-label="Convert images without uploading them: JPG, PNG and WebP explained"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#what-does-without-uploading-mean">What does “without uploading” mean?</a></li><li><a href="#jpg-png-or-webp-which-should-you-choose">JPG, PNG or WebP: Which should you choose?</a></li><li><a href="#convert-an-image-in-three-steps">Convert an image in three steps</a></li><li><a href="#resize-images-before-chasing-smaller-files">Resize images before chasing smaller files</a></li><li><a href="#transparency-and-metadata">Transparency and metadata</a></li><li><a href="#why-is-an-output-format-unavailable-in-my-browser">Why is an output format unavailable in my browser?</a></li><li><a href="#frequently-asked-questions">Frequently asked questions</a></li><li><a href="#start-with-one-of-your-own-images">Start with one of your own images</a></li><li><a href="#sources-and-technical-background">Sources and technical background</a></li></ol></details><p>A photo is too large for a website, a screenshot needs a transparent background, or a WebP image has to be sent as a JPG. A useful image converter should produce the format you selected and let you control dimensions and quality.</p>
+<p>My <a href="/tools/image-converter/">free image converter</a> converts and resizes images directly in your browser. The selected image files are processed on your device instead of being uploaded to a server. This guide explains how to choose a format and check the result.</p>
+<h2 id="what-does-without-uploading-mean">What does “without uploading” mean?</h2>
+<p>Your browser opens the file you select, redraws the image and creates a new file for download. My converter uses the browser&#39;s own image APIs. You do not need an account or a separate image-editing application.</p>
+<p>This is particularly useful for private photos or screenshots containing personal information: conversion does not require you to leave another copy with a service. You decide whether and where to share the finished file.</p>
+<p>Opening the website still downloads HTML, scripts and other page resources. “No image upload” describes how your selected images are handled; it does not mean that visiting the website creates no connection to a web server. The <a href="/datenschutzerklaerung.html">privacy policy</a> explains the hosting side.</p>
+<h2 id="jpg-png-or-webp-which-should-you-choose">JPG, PNG or WebP: Which should you choose?</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Useful for</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JPG / JPEG</td>
+<td>Photos and recipients that require JPG</td>
+<td>Lossy compression; no transparent background</td>
+</tr>
+<tr>
+<td>PNG</td>
+<td>Screenshots, text-heavy images and transparent graphics</td>
+<td>Lossless raster export; photos may produce large files</td>
+</tr>
+<tr>
+<td>WebP</td>
+<td>Website images and applications that support it</td>
+<td>Can preserve transparency; compare quality and file size</td>
+</tr>
+</tbody></table></div>
+<p>JPG and JPEG refer to the same image format. Changing a filename extension does not convert the file.</p>
+<p>For a website photo, WebP is worth comparing with your original. For a screenshot with small text, inspect the edges carefully. PNG may be a better fit even if it produces a larger file. If the recipient specifically needs JPG, meeting that requirement matters more than producing the smallest possible download.</p>
+<p>The converter accepts JPG/JPEG, PNG and WebP. AVIF works as an input when your browser can decode the file. Output is JPG/JPEG, PNG or WebP, depending on the formats your browser can encode. AVIF export is not included.</p>
+<h2 id="convert-an-image-in-three-steps">Convert an image in three steps</h2>
+<ol>
+<li>Open the <a href="/tools/image-converter/">image converter</a> and select one or more image files. You can also drag them into the file area.</li>
+<li>Choose an output format. Adjust quality and maximum width or height if needed.</li>
+<li>Start local conversion, inspect the result and download the files.</li>
+</ol>
+<p>Keep the originals until you have checked the export. Conversion creates a new file; it cannot restore detail that was already missing from the source.</p>
+<p>To <strong>convert JPG to WebP</strong>, choose WebP as the output. To <strong>convert WebP to JPG</strong>, choose JPG/JPEG. If a transparent WebP background needs to stay transparent, PNG is usually the more appropriate alternative to JPG.</p>
+<p>You can select several images and process them sequentially. For a large batch, try a representative file first before applying the same settings to everything.</p>
+<h2 id="resize-images-before-chasing-smaller-files">Resize images before chasing smaller files</h2>
+<p>Changing the format is only part of reducing an image&#39;s size. A 6,000 × 4,000 image contains 24 million pixels. Resizing the same composition to 1,500 × 1,000 leaves 1.5 million pixels: one sixteenth of the original pixel count.</p>
+<p>That is a dimensions example, not a measured file-size saving. The final byte size also depends on the subject, format and encoder.</p>
+<p>Choose dimensions for the intended use. A small thumbnail has different needs from a photograph readers should be able to open at full size. The converter preserves the aspect ratio. Its “Do not enlarge smaller images” option avoids scaling up a source that is already small.</p>
+<p>JPG and WebP also allow quality adjustments. After exporting, inspect small text, hair, sharp edges and gradients. A lower setting may reduce the file size while introducing visible artifacts. Quality percentages across different formats are not a shared measurement scale. The quality slider does not have a comparable effect on PNG export.</p>
+<h2 id="transparency-and-metadata">Transparency and metadata</h2>
+<p>PNG and WebP can preserve transparent pixels. JPEG has no alpha channel. When my converter exports a JPG, it places transparent areas on a white background. Check that result if the image will later be displayed against a dark page.</p>
+<p>Redrawing and re-encoding normally leaves the original EXIF and GPS metadata behind. This is not complete anonymization. A name in a screenshot, a house number in a photograph or other visible information remains part of the image.</p>
+<p>The converter is intended for static raster images. It is not a replacement for tools that preserve animations, edit vector artwork or prepare colour-managed print production files.</p>
+<h2 id="why-is-an-output-format-unavailable-in-my-browser">Why is an output format unavailable in my browser?</h2>
+<p>A browser may be able to display an image format without being able to export it. My converter therefore tests encoding support and checks the actual type of the generated file.</p>
+<p>This matters because the Canvas API can fall back to PNG when a requested format is unsupported. Giving that result a <code>.webp</code> extension would not make it a WebP image. The converter marks unsupported output options accordingly.</p>
+<p>Choose an available format or try another current browser if an export is unavailable. For AVIF input, the browser must also be able to decode the source.</p>
+<h2 id="frequently-asked-questions">Frequently asked questions</h2>
+<h3 id="is-webp-always-smaller-than-jpg-or-png">Is WebP always smaller than JPG or PNG?</h3>
+<p>No. The source, dimensions and settings all matter. Compare the displayed file sizes and the visible result. An image that is already heavily compressed cannot be reduced indefinitely.</p>
+<h3 id="does-converting-jpg-to-png-make-the-photo-lossless-again">Does converting JPG to PNG make the photo lossless again?</h3>
+<p>The PNG stores the pixels it receives without further lossy compression. It cannot reconstruct information lost during earlier JPG compression.</p>
+<h3 id="can-i-convert-avif-to-jpg">Can I convert AVIF to JPG?</h3>
+<p>Yes, if your browser can read the AVIF file. Select JPG/JPEG as the output. The converter does not produce AVIF files.</p>
+<h3 id="are-my-images-uploaded">Are my images uploaded?</h3>
+<p>The selected image files are processed locally in this converter. They are not sent to an upload endpoint for conversion.</p>
+<h2 id="start-with-one-of-your-own-images">Start with one of your own images</h2>
+<p>Open the <a href="/tools/image-converter/">image converter without upload</a>, choose a typical file and compare two suitable settings. The useful result is an image that looks right in its intended context and opens in the recipient&#39;s application.</p>
+<p>Find more practical tools and computing stories in the <a href="/blog/">blog</a> and <a href="/museum/">Computer Museum</a>.</p>
+<h2 id="sources-and-technical-background">Sources and technical background</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/dennishilk.github.io/tree/main/tools/image-converter">Image converter source code on GitHub</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Image_types">MDN: Image file types and formats</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob">MDN: Canvas export with toBlob()</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/">← All articles</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#what-does-without-uploading-mean">What does “without uploading” mean?</a></li><li><a href="#jpg-png-or-webp-which-should-you-choose">JPG, PNG or WebP: Which should you choose?</a></li><li><a href="#convert-an-image-in-three-steps">Convert an image in three steps</a></li><li><a href="#resize-images-before-chasing-smaller-files">Resize images before chasing smaller files</a></li><li><a href="#transparency-and-metadata">Transparency and metadata</a></li><li><a href="#why-is-an-output-format-unavailable-in-my-browser">Why is an output format unavailable in my browser?</a></li><li><a href="#frequently-asked-questions">Frequently asked questions</a></li><li><a href="#start-with-one-of-your-own-images">Start with one of your own images</a></li><li><a href="#sources-and-technical-background">Sources and technical background</a></li></ol></nav><a class="sidebar-tool" href="/tools/image-converter/">Open the image converter <span aria-hidden="true">↗</span></a></aside></div><aside class="related-guide"><p class="eyebrow">More to explore</p><a href="/blog/windows-to-linux-migration-checklist/">Switching from Windows to Linux: What to check first <span aria-hidden="true">→</span></a></aside></main><footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer></body></html>

@@ -61,133 +61,27 @@
 
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="avatar.png">
-  <link rel="preload" href="JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/style.css?v=60">
+  <script>window.__DENNIS_FORCE_SITE_LANGUAGE="en";</script>
   <script defer src="stars.js"></script>
-  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
   <meta name="twitter:title" content="Dennis Hilk – Open Source, Linux, World Observer &amp; Computer Museum">
   <meta name="twitter:description" content="Open-source projects, Linux experiments, World Observer, interactive Computer Museum exhibits and The Lost Administrator by Dennis Hilk.">
   <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/assets/css/home.css?v=20261006">
 </head>
 
-<body>
+<body class="home-editorial">
+<a class="home-skip-link" href="#home-main">Skip to content</a><nav class="home-topbar" aria-label="Main navigation"><a class="home-brand" href="/">Dennis Hilk</a><div><a href="#projects">Projects</a><a href="/museum/">Museum</a><a href="/blog/">Blog</a><a href="/about/">About</a><a class="home-language" lang="de" hreflang="de" href="/de/">DE</a></div></nav>
 
 <canvas id="stars"></canvas>
 
 <div class="content">
 
   <!-- HEADER -->
-  <header>
-    <img src="avatar.png" alt="Dennis Hilk Avatar" class="avatar">
-
-    <h1>
-      <span class="prompt">root@nebunix:~$</span>
-      <span class="name">Dennis Hilk</span>
-    </h1>
-
-    <p>Open-Source Developer • Linux Enthusiast • Author of The Lost Administrator • Creator of BoringWM & World Observer</p>
-
-    <div class="button-group">
-      <div class="buttons">
-        <a href="https://github.com/dennishilk" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-        <a href="/linux-migration-companion/"><i class="fa-solid fa-arrow-right-arrow-left"></i> Linux Migration Companion</a>
-        <a href="world-observer.html"><i class="fas fa-globe"></i> World Observer</a>
-        <a href="/museum/"><i class="fas fa-microchip"></i> Computer Museum</a>
-        <a href="news.html"><i class="fas fa-newspaper"></i> News</a>
-        <a href="/about/"><i class="fas fa-user"></i> About Me</a>
-        <a href="/transmissions/" aria-label="Leave a message for the Worldnode operator">Guestbook</a>
-      </div>
-
-      <a href="https://buymeacoffee.com/dennishilk" target="_blank" class="tea-button">
-        <i class="fa-solid fa-mug-hot"></i> Buy me an East Frisian tea
-      </a>
-    </div>
-  </header>
-
-  <!-- PROJECTS -->
-  <section class="projects">
-    <h2>Featured Projects</h2>
-
-    <div class="cards">
-      <a href="/lost-administrator/" class="card home-lost-administrator-card">
-        <i class="fa-solid fa-book-open fa-2x"></i>
-        <h3>The Lost Administrator</h3>
-        <p>An ongoing novel and interactive story experience built around a missing Debian administrator.</p>
-      </a>
-
-      <a href="https://github.com/dennishilk/world-observer" class="card">
-        <i class="fa-solid fa-globe fa-2x"></i>
-        <h3>World Observer</h3>
-        <p>Automated observational platform collecting public Internet, media and infrastructure indicators.</p>
-      </a>
-
-      <a href="/linux-migration-companion/" class="card">
-        <i class="fa-solid fa-arrow-right-arrow-left fa-2x"></i>
-        <h3>Linux Migration Companion</h3>
-        <p>Local-first migration planning for Windows users evaluating Linux, with guided fit, hardware and readiness checks.</p>
-      </a>
-
-      <a href="/boringos/" class="card">
-        <i class="fa-solid fa-terminal fa-2x"></i>
-        <h3>BoringOS</h3>
-        <p>Independent desktop operating system built from scratch with its own x86_64 kernel, native C userspace, VFS/RAMFS and shell.</p>
-      </a>
-
-      <a href="/tools/image-converter/" class="card">
-        <i class="fa-solid fa-images fa-2x"></i>
-        <h3>Free Image Converter</h3>
-        <p>Convert JPG/JPEG, PNG, WebP and supported AVIF images to WebP, JPG or PNG directly in your browser — with resize controls and no image upload.</p>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- COMPUTER MUSEUM HIGHLIGHTS -->
-  <section class="projects" aria-labelledby="museum-highlights-title">
-    <h2 id="museum-highlights-title">Explore the Interactive Computer Museum</h2>
-
-    <div class="cards">
-      <a href="/museum/apollo-dsky/" class="card">
-        <i class="fa-solid fa-shuttle-space fa-2x"></i>
-        <h3>Apollo DSKY Interactive Recreation</h3>
-        <p>Explore the Display and Keyboard interface astronauts used to communicate with the Apollo Guidance Computer through compact VERB and NOUN codes.</p>
-      </a>
-
-      <a href="/museum/linux-terminal-academy/" class="card">
-        <i class="fa-solid fa-terminal fa-2x"></i>
-        <h3>Linux Terminal Academy</h3>
-        <p>Learn Linux in eight guided browser labs covering the command line, files, permissions, processes, pipes, administration and recovery.</p>
-      </a>
-
-      <a href="/museum/home-computing-lab/" class="card">
-        <i class="fa-solid fa-server fa-2x"></i>
-        <h3>The Author's Computing Lab</h3>
-        <p>Explore the real Windows 98, Linux, homelab and server systems behind the museum, experiments and open-source projects.</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- LATEST FROM THE LAB -->
-  <section class="projects" aria-labelledby="from-the-lab-title">
-    <h2 id="from-the-lab-title">From the Lab</h2>
-
-    <div class="cards">
-      <a href="/museum/home-computing-lab/field-notes/field-note-7/" class="card">
-        <i class="fa-solid fa-phone fa-2x"></i>
-        <h3>Can a Cisco CP-9951 run DOOM?</h3>
-        <p>A €35 office phone, Asterisk, Baresip, H.264 and one entirely reasonable speed dial: 666. Live DOOM now reaches the handset from Cthulhu with real game audio.</p>
-      </a>
-
-      <a href="/museum/home-computing-lab/field-notes/" class="card">
-        <i class="fa-solid fa-flask fa-2x"></i>
-        <h3>Field Notes &amp; Artifacts</h3>
-        <p>Real workshop stories, experiments, mistakes, repairs and technical objects from The Author's Computing Lab.</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
+  <header class="home-hero"><p class="home-kicker">Open source · Linux · Unusual computers</p><h1><span class="prompt">root@nebunix:~$</span><span class="name">Dennis Hilk</span></h1><p class="home-intro">I build tools, explore old hardware and make computers understandable. Find my projects and the interactive Computer Museum here.</p></header>
+<main id="home-main"><section class="home-section" id="projects" aria-labelledby="projects-title"><div class="home-section-heading"><h2 id="projects-title">Tools & projects</h2><a href="https://github.com/dennishilk">All on GitHub ↗</a></div><div class="home-project-grid"><a class="home-project" href="/tools/image-converter/"><span class="home-project-tag">Local browser tool</span><h3>Image Converter</h3><p>Convert and resize images. Selected files stay on your device.</p><span class="home-project-action">Open the tool →</span></a><a class="home-project" href="/linux-migration-companion/"><span class="home-project-tag">Plan your migration</span><h3>Linux Migration Companion</h3><p>Check software, hardware and data before moving to Linux. Your plan stays in your browser.</p><span class="home-project-action">Start planning →</span></a><a class="home-project" href="/boringos/"><span class="home-project-tag">Built from scratch</span><h3>BoringOS</h3><p>An independent x86_64 operating system in C, with BoringKernel, BoringFS and BoringWM.</p><span class="home-project-action">Explore the project →</span></a></div><div class="home-secondary-projects"><a href="/world-observer.html"><strong>World Observer</strong><span>Observing public data</span></a><a href="/lost-administrator/"><strong>The Lost Administrator</strong><span>Novel and interactive story</span></a></div></section><section class="home-section home-museum" aria-labelledby="museum-title"><div><p class="home-kicker">Boot. Explore. Learn.</p><h2 id="museum-title">Computer Museum</h2><p>Try historical interfaces, learn Linux in browser labs and explore the real systems behind my projects.</p><a class="home-text-link" href="/museum/">Enter the museum →</a></div><nav aria-label="Museum highlights"><a href="/museum/linux-terminal-academy/">Linux Terminal Academy</a><a href="/museum/apollo-dsky/">Apollo DSKY</a><a href="/museum/home-computing-lab/">Home Computing Lab</a><a href="/museum/home-computing-lab/field-notes/">Field Notes & Artifacts</a></nav></section><section class="home-section" aria-labelledby="blog-title"><div class="home-section-heading"><h2 id="blog-title">From the blog</h2><a href="/blog/">All articles →</a></div><div class="home-article-list"><a href="/blog/convert-images-without-upload/"><span class="home-project-tag">Images & Formats</span><h3>Convert images without uploading them: JPG, PNG and WebP explained</h3><span class="home-row-arrow" aria-hidden="true">→</span></a><a href="/blog/windows-to-linux-migration-checklist/"><span class="home-project-tag">Linux Migration</span><h3>Switching from Windows to Linux: What to check first</h3><span class="home-row-arrow" aria-hidden="true">→</span></a></div></section></main>
+<footer>
+<nav class="home-footer-nav" aria-label="More links"><a href="/news.html">News</a><a href="/transmissions/">Guestbook</a><a href="https://github.com/dennishilk">GitHub</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav>
     <div class="nebby-terminal-line">
       <picture>
 <source srcset="assets/generated/images/nebby.webp" type="image/webp">
@@ -232,3 +126,4 @@
 
 </body>
 </html>
+

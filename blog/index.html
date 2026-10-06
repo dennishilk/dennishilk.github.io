@@ -1,150 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link rel="canonical" href="https://www.dennishilk.com/blog/">
-
-  <title>Blog – Dennis Hilk</title>
-
-  <meta name="description" content="Notes from real Linux systems. Built, broken, fixed, and lived with.">
-  <meta name="keywords" content="Linux, XMonad, NixOS, OBS, NVENC, system philosophy">
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
-
-  <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/style.css?v=41">
-
-  <!-- Same background system as main page -->
-  <script defer src="/stars.js"></script>
-  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
-  <meta property="og:title" content="Blog – Dennis Hilk">
-  <meta property="og:description" content="Notes from real Linux systems. Built, broken, fixed, and lived with.">
-  <meta property="og:url" content="https://www.dennishilk.com/blog/">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Blog – Dennis Hilk">
-  <meta name="twitter:description" content="Notes from real Linux systems. Built, broken, fixed, and lived with.">
-  <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog: Images, Linux and Local Browser Tools · Dennis Hilk</title>
+<meta name="description" content="Practical guides by Dennis Hilk: convert images without uploads and prepare a Windows-to-Linux migration with local browser tools.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Blog: Images, Linux and Local Browser Tools">
+<meta property="og:description" content="Practical guides by Dennis Hilk: convert images without uploads and prepare a Windows-to-Linux migration with local browser tools.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog: Images, Linux and Local Browser Tools">
+<meta name="twitter:description" content="Practical guides by Dennis Hilk: convert images without uploads and prepare a Windows-to-Linux migration with local browser tools.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Blog","@id":"https://www.dennishilk.com/blog/#blog","url":"https://www.dennishilk.com/blog/","name":"Blog: Images, Linux and Local Browser Tools","description":"Practical guides by Dennis Hilk: convert images without uploads and prepare a Windows-to-Linux migration with local browser tools.","inLanguage":"en","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"}},{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"url":"https://www.dennishilk.com/blog/convert-images-without-upload/","name":"Convert images without uploading them: JPG, PNG and WebP explained"},{"@type":"ListItem","position":2,"url":"https://www.dennishilk.com/blog/windows-to-linux-migration-checklist/","name":"Switching from Windows to Linux: What to check first"}]}]}</script>
 </head>
-
-<body>
-
-<canvas id="stars"></canvas>
-
-<div class="content">
-
-  <!-- HEADER -->
-  <header>
-    <h1>
-      <span class="prompt">root@nebunix:~$</span>
-      <span class="name">Blog</span>
-    </h1>
-
-    <p>Notes from real systems. Built, broken, fixed, and lived with.</p>
-
-    <div class="button-group">
-      <div class="buttons">
-        <a href="/" class="btn">Home</a>
-        <a href="/world-observer.html" class="btn">World Observer</a>
-        <a href="/news.html" class="btn">News</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- CLUSTERS (DESCRIPTIVE ONLY) -->
-  <section class="projects">
-    <h2>Clusters</h2>
-
-    <div class="cards">
-
-      <div class="card">
-        <h3>What Actually Works</h3>
-        <p>
-          Systems, tools, and decisions that survived real usage.
-          No hype cycles — only setups that kept working after weeks and months.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Window Managers in the Real World</h3>
-        <p>
-          Beyond screenshots and dotfile worship.
-          What stayed, what broke, and what quietly did its job.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Linux Gaming & OBS — No Marketing Edition</h3>
-        <p>
-          How gaming and recording actually behave.
-          NVIDIA, NVENC, OBS — without promises or slides.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Hardware Notes</h3>
-        <p>
-          Hardware as part of the system, not an afterthought.
-          Why some components disappear from thought — and others never do.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Tools, Automation & Small Leverage</h3>
-        <p>
-          Small tools that remove repeated mental effort.
-          Built because something was annoying more than once.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Notes, Fails & System Philosophy</h3>
-        <p>
-          Reflections on paths taken and paths abandoned.
-          Lessons extracted from systems that were actually used.
-        </p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- POSTS -->
-  <section class="projects">
-    <h2>Notes, Fails & System Philosophy</h2>
-
-    <div class="cards">
-
-      <div class="card">
-        <a href="/blog/posts/why-i-rolled-back-a-perfect-setup.html">
-          Why I Rolled Back a “Perfect” Setup
-        </a>
-        <p class="post-meta">January 2026</p>
-      </div>
-
-      <div class="card">
-        <a href="/blog/posts/when-tinkering-becomes-noise.html">
-          When Tinkering Becomes Noise
-        </a>
-        <p class="post-meta">January 2026</p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <p class="footer-links">
-      © 2026 Dennis Hilk —
-      <a href="/impressum.html">Impressum</a> ·
-      <a href="/datenschutzerklaerung.html">Datenschutz</a>
-    </p>
-  </footer>
-
-</div>
-
-</body>
-</html>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="page">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header><main id="main" class="blog-main"><section class="blog-intro"><p class="eyebrow">Guides from projects I build</p><h1>Practical computing.<br>Clearly explained.</h1><p class="intro">Convert images, prepare for Linux and understand the tools you use. Practical steps, with a clear account of how your data is handled.</p></section><aside class="privacy-note"><span class="privacy-label">Local processing</span><div><h2>Your images and migration plan stay with you.</h2><p>Both tools process this data locally on your device. The guides explain the workflow, browser storage and the limits of that statement.</p></div></aside><section class="guides-section" aria-labelledby="guides-title"><div class="section-heading"><h2 id="guides-title">Guides</h2><span>02</span></div><div class="guide-grid"><article class="guide-card"><a class="card-link" href="/blog/convert-images-without-upload/"><div class="guide-top"><span class="category">Images & Formats</span><span class="reading-time">6 minute read</span></div><h2>Convert images without uploading them: JPG, PNG and WebP explained</h2><p>Choose a suitable image format, resize files and understand transparency, metadata and browser encoding support.</p><span class="privacy-badge">No image upload</span><span class="read-link">Read the guide <span aria-hidden="true">→</span></span></a></article><article class="guide-card"><a class="card-link" href="/blog/windows-to-linux-migration-checklist/"><div class="guide-top"><span class="category">Linux Migration</span><span class="reading-time">7 minute read</span></div><h2>Switching from Windows to Linux: What to check first</h2><p>Check your applications, games, devices and data before deciding how Linux fits into everyday work.</p><span class="privacy-badge">Your plan stays local</span><span class="read-link">Read the guide <span aria-hidden="true">→</span></span></a></article></div></section><section class="tool-strip" aria-labelledby="direct-tools"><h2 id="direct-tools">Go straight to the tools</h2><a href="/tools/image-converter/">Image converter <span aria-hidden="true">↗</span></a><a href="/linux-migration-companion/">Linux Migration Companion <span aria-hidden="true">↗</span></a></section></main><footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer></body></html>

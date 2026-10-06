@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Von Windows zu Linux wechseln: Vorbereitung &amp; Tests · Dennis Hilk</title>
+<meta name="description" content="Linux-Umstieg vorbereiten: Programme, Spiele, Hardware, Live-Tests und Datenübernahme prüfen. Mit dem lokalen Linux Migration Companion.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/windows-to-linux-migration-checklist/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/windows-to-linux-migration-checklist/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Von Windows zu Linux wechseln: Vorbereitung &amp; Tests">
+<meta property="og:description" content="Linux-Umstieg vorbereiten: Programme, Spiele, Hardware, Live-Tests und Datenübernahme prüfen. Mit dem lokalen Linux Migration Companion.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Von Windows zu Linux wechseln: Vorbereitung &amp; Tests">
+<meta name="twitter:description" content="Linux-Umstieg vorbereiten: Programme, Spiele, Hardware, Live-Tests und Datenübernahme prüfen. Mit dem lokalen Linux Migration Companion.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261006">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/","url":"https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/","headline":"Von Windows zu Linux wechseln: Was du vorher prüfen solltest","description":"Linux-Umstieg vorbereiten: Programme, Spiele, Hardware, Live-Tests und Datenübernahme prüfen. Mit dem lokalen Linux Migration Companion.","inLanguage":"de","datePublished":"2026-10-06","dateModified":"2026-10-06","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Linux-Umstieg"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Von Windows zu Linux wechseln: Was du vorher prüfen solltest","item":"https://www.dennishilk.com/de/blog/von-windows-zu-linux-wechseln/"}]}]}</script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/windows-to-linux-migration-checklist/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header><main id="main" class="article-main"><nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux-Umstieg</span></nav><header class="article-header"><p class="eyebrow">Linux-Umstieg</p><h1>Von Windows zu Linux wechseln: Was du vorher prüfen solltest</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-06">6. Oktober 2026</time><span>7 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Migrationsplan bleibt lokal</span><p>Deine Angaben und Testergebnisse bleiben im Browser. Ein Export erfolgt auf deine Initiative.</p></div></header><div class="article-layout"><article class="article-copy" aria-label="Von Windows zu Linux wechseln: Was du vorher prüfen solltest"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#was-der-linux-migration-companion-macht">Was der Linux Migration Companion macht</a></li><li><a href="#1-programme-nach-arbeitsablaufen-prufen">1. Programme nach Arbeitsabläufen prüfen</a></li><li><a href="#2-eine-distribution-nach-deinem-alltag-auswahlen">2. Eine Distribution nach deinem Alltag auswählen</a></li><li><a href="#3-hardware-erkennen-und-funktionen-testen">3. Hardware erkennen und Funktionen testen</a></li><li><a href="#4-linux-vor-der-installation-ausprobieren">4. Linux vor der Installation ausprobieren</a></li><li><a href="#5-datenubernahme-und-ruckweg-vorbereiten">5. Datenübernahme und Rückweg vorbereiten</a></li><li><a href="#6-den-passenden-umstieg-wahlen">6. Den passenden Umstieg wählen</a></li><li><a href="#wo-wird-dein-migrationsplan-gespeichert">Wo wird dein Migrationsplan gespeichert?</a></li><li><a href="#haufige-fragen-zum-wechsel">Häufige Fragen zum Wechsel</a></li><li><a href="#mit-deinem-wichtigsten-arbeitsablauf-anfangen">Mit deinem wichtigsten Arbeitsablauf anfangen</a></li><li><a href="#quellen-und-projektdokumentation">Quellen und Projektdokumentation</a></li></ol></details><p>Wenn du von Windows zu Linux wechseln möchtest, beginne mit den Aufgaben, für die du deinen Rechner brauchst: Programme, Spiele, Geräte und Dateien. Eine passende Linux-Distribution hilft dir wenig, wenn ein unverzichtbarer Arbeitsablauf anschließend nicht funktioniert.</p>
+<p>Mein <a href="/linux-migration-companion/">Linux Migration Companion</a> führt dich durch diese Vorbereitung. Er läuft kostenlos im Browser, unterstützt Deutsch und Englisch und sammelt deine Anforderungen, offenen Fragen und Testergebnisse in einem lokalen Migrationsplan. Dieser Artikel zeigt, welche Entscheidungen vor einer Installation sinnvoll sind.</p>
+<h2 id="was-der-linux-migration-companion-macht">Was der Linux Migration Companion macht</h2>
+<p>Der Companion unterstützt dich beim Einschätzen deiner Bedürfnisse, beim Vergleich von Distributionen sowie bei Software-, Hardware- und Live-Tests. Anschließend kannst du Datenübernahme und die ersten Schritte nach einem möglichen Wechsel planen.</p>
+<p>Er erklärt seine Empfehlungen und unterscheidet zwischen bekannten Informationen, selbst gemeldeten Angaben und tatsächlich geprüften Funktionen. Er berechnet keine vermeintliche Kompatibilitätswahrscheinlichkeit.</p>
+<p>Die Anwendung installiert keine Pakete, partitioniert keine Laufwerke und schreibt keinen USB-Stick. Der Plan soll dir helfen, die nächsten Schritte bewusst außerhalb des Tools durchzuführen.</p>
+<h2 id="1-programme-nach-arbeitsablaufen-prufen">1. Programme nach Arbeitsabläufen prüfen</h2>
+<p>Schreibe auf, was du tatsächlich erledigen musst. „Office“ ist dafür oft zu ungenau. Ein einfacher Text, ein gemeinsam bearbeitetes Dokument und eine Tabellenkalkulation mit speziellen Makros sind unterschiedliche Anforderungen.</p>
+<p>Dass es unter Linux eine Anwendung derselben Kategorie gibt, beweist noch nicht, dass sie deinen Arbeitsablauf ersetzen kann. Teste eine typische Datei und prüfe die Übergabe an Kollegen oder andere Geräte.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Vergleichstabelle"><table>
+<thead>
+<tr>
+<th>Bereich</th>
+<th>Konkreter Test</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dokumente und Tabellen</td>
+<td>Eine typische Datei öffnen, bearbeiten und wieder im benötigten Format abgeben</td>
+</tr>
+<tr>
+<td>Kreativarbeit</td>
+<td>Ein bestehendes Projekt samt Plugins, Schriften und Exportanforderungen prüfen</td>
+</tr>
+<tr>
+<td>Beruf oder Ausbildung</td>
+<td>VPN, Besprechungssoftware und vorgeschriebene Anwendungen testen</td>
+</tr>
+<tr>
+<td>Spiele</td>
+<td>Die tatsächlich wichtigen Spiele samt Multiplayer und Eingabegeräten prüfen</td>
+</tr>
+</tbody></table></div>
+<p>Markiere jede Anforderung als unverzichtbar, ersetzbar oder optional. Im Companion können wichtige Software- und Workflow-Probleme die Umstiegsbewertung begrenzen, selbst wenn dir eine Distribution ansonsten gut gefällt.</p>
+<p>Bei Spielen ist der einzelne Titel entscheidend. Ein erfolgreicher Start eines Spiels sagt wenig über ein anderes aus; Multiplayer, Anti-Cheat und zusätzliche Launcher gehören zum jeweiligen Test. Prüfe aktuelle Informationen und führe einen eigenen repräsentativen Versuch durch.</p>
+<h2 id="2-eine-distribution-nach-deinem-alltag-auswahlen">2. Eine Distribution nach deinem Alltag auswählen</h2>
+<p>Wie viel Pflege möchtest du übernehmen? Wie wohl fühlst du dich bei Fehlersuche und Terminalbefehlen? Brauchst du einen möglichst vertrauten Desktop oder möchtest du bewusst etwas Neues lernen?</p>
+<p>Diese Fragen helfen mehr als eine Rangliste „der besten Linux-Distributionen“. Der Companion verknüpft deine Antworten mit Gründen und Abwägungen. Eine Empfehlung ersetzt trotzdem keinen Test der benötigten Programme und Geräte.</p>
+<p>Vergleiche zunächst wenige Kandidaten. Halte für jeden fest, warum er infrage kommt und welche offene Frage ihn ausschließen könnte. So bleibt die Auswahl überschaubar.</p>
+<h2 id="3-hardware-erkennen-und-funktionen-testen">3. Hardware erkennen und Funktionen testen</h2>
+<p>Ein Modellname ist ein Ausgangspunkt für Recherche. Er beweist nicht, dass auf deinem konkreten Rechner jede Funktion zuverlässig läuft.</p>
+<p>Der Companion hält diese Unterschiede im Hardwarebereich fest. Du kannst Angaben selbst dokumentieren und optional einen lokalen Hardware-Snapshot importieren. Die bereitgestellten Collector-Werkzeuge lesen dafür ausgewählte Hardwareinformationen. Ein erkannter Adapter bleibt aber etwas anderes als ein erfolgreich getesteter Adapter.</p>
+<p>Prüfe besonders die Funktionen, die du täglich brauchst: Netzwerk, Bildschirme, Audio, Standby und Aufwachen, Drucker, Scanner oder Spezialgeräte. Bei einem Notebook gehören auch Kamera, Mikrofon und die für dich wichtigen Tasten dazu.</p>
+<p>Ein Bildschirm, der nach dem ersten Start ein Bild zeigt, bestätigt noch keinen stabilen Standby-Zyklus oder funktionierenden zweiten Monitor. Formuliere deshalb einen konkreten Test statt nur „Hardware funktioniert“ anzukreuzen.</p>
+<h2 id="4-linux-vor-der-installation-ausprobieren">4. Linux vor der Installation ausprobieren</h2>
+<p>Eine Live-Umgebung kann dir ermöglichen, Linux auf deinem Rechner auszuprobieren, während Windows installiert bleibt. Wie du das Startmedium erstellst und den Testmodus öffnest, beschreibt die jeweilige Distribution in ihrer offiziellen Dokumentation.</p>
+<p>Für Ubuntu gibt es beispielsweise eine <a href="https://ubuntu.com/tutorials/try-ubuntu-before-you-install">Anleitung zum Ausprobieren vor der Installation</a>. Das ist ein Beispiel für den Testweg, keine pauschale Distributionsempfehlung.</p>
+<p>Prüfe in der Live-Umgebung die grundlegenden Gerätefunktionen und notiere die Ergebnisse im Companion. Ein Live-Test hat Grenzen: Eine vollständige Installation, Treibereinrichtung oder längere Nutzung kann weitere Probleme sichtbar machen. Auch Spiele lassen sich nicht immer repräsentativ in einer kurzen Live-Sitzung bewerten.</p>
+<p>Der Companion bietet geführte Funktionstests und hält offene Nachweise fest. Du musst nicht jede Unsicherheit sofort lösen; du solltest aber wissen, welche davon deine Entscheidung beeinflusst.</p>
+<h2 id="5-datenubernahme-und-ruckweg-vorbereiten">5. Datenübernahme und Rückweg vorbereiten</h2>
+<p>Ein Ordner mit kopierten Dateien ist noch kein vollständiger Umzugsplan. Manche Daten lassen sich direkt kopieren, andere müssen exportiert, synchronisiert oder in einer neuen Anwendung eingerichtet werden.</p>
+<p>Prüfe beispielsweise Dokumente, Fotos, Browserdaten, E-Mails und Projektdateien einzeln. Denke auch an lokale Daten, die nicht automatisch in einem Cloud-Konto liegen.</p>
+<p>Vor Änderungen an Partitionen brauchst du eine unabhängige Sicherung wichtiger Daten und einen bekannten Rückweg. Öffne einige Dateien aus der Sicherung und prüfe, ob du mit der vorhandenen Kopie tatsächlich weiterarbeiten könntest. Zugangsdaten, Wiederherstellungsschlüssel und Lizenzen gehören in deine dafür vorgesehenen sicheren Ablagen.</p>
+<p>Der Datenbereich des Companion hilft dir, unterschiedliche Übernahmewege festzuhalten. Er kopiert die Dateien nicht selbst und setzt nicht voraus, dass jede Anwendung ihre Daten auf dieselbe Weise speichert.</p>
+<h2 id="6-den-passenden-umstieg-wahlen">6. Den passenden Umstieg wählen</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Vergleichstabelle"><table>
+<thead>
+<tr>
+<th>Strategie</th>
+<th>Wann sie sinnvoll sein kann</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Weiter testen</td>
+<td>Wichtige Programme oder Geräte sind noch nicht ausreichend geprüft</td>
+</tr>
+<tr>
+<td>Windows für bestimmte Aufgaben behalten</td>
+<td>Ein unverzichtbarer Arbeitsablauf braucht weiterhin Windows</td>
+</tr>
+<tr>
+<td>Dual Boot planen</td>
+<td>Du brauchst beide Systeme auf demselben Rechner und willst den zusätzlichen Aufwand bewusst übernehmen</td>
+</tr>
+<tr>
+<td>Linux als Hauptsystem nutzen</td>
+<td>Die entscheidenden Arbeitsabläufe sind belegt und Datenübernahme sowie Rückweg vorbereitet</td>
+</tr>
+</tbody></table></div>
+<p>Windows für einzelne Aufgaben zu behalten, kann eine passende Entscheidung sein. Der Companion berücksichtigt solche Abhängigkeiten und kann auch fehlende Nachweise oder einen blockierten Umstieg ausweisen.</p>
+<p>Entscheidend ist der dokumentierte nächste Schritt: etwa einen Drucker testen, ein Projekt exportieren oder ein bestimmtes Spiel prüfen. Ein allgemeines Gefühl von Bereitschaft ersetzt diesen Nachweis nicht.</p>
+<h2 id="wo-wird-dein-migrationsplan-gespeichert">Wo wird dein Migrationsplan gespeichert?</h2>
+<p>Der Migrationsplan liegt im lokalen Browserspeicher. Du kannst ihn als JSON-Datei exportieren und später wieder importieren. Sichere einen Export, bevor du Browserdaten löschst oder zu einem anderen Browserprofil wechselst.</p>
+<p>Die Anwendung hat keinen Account und sendet deinen Plan oder einen importierten Hardware-Snapshot nicht an einen Anwendungsserver. Beim Laden der Website fallen dennoch die üblichen Verbindungen zum Hosting an.</p>
+<p>Eine Liste deiner Programme, Geräte und Arbeitsabläufe kann einiges über deinen Alltag verraten. Für die Planung brauchst du diese Angaben hier nicht bei einem zusätzlichen Onlinedienst zu hinterlegen. Du behältst die Kontrolle über deinen Plan und entscheidest selbst, ob du einen Export weitergibst.</p>
+<p>Der lokale Browserspeicher wird von der Anwendung nicht verschlüsselt. Trage deshalb keine Passwörter, privaten Schlüssel oder andere Geheimnisse in Notizen ein. Auch ein exportierter Plan kann persönliche Softwareentscheidungen und Hardwareangaben enthalten; prüfe ihn vor dem Teilen.</p>
+<h2 id="haufige-fragen-zum-wechsel">Häufige Fragen zum Wechsel</h2>
+<h3 id="kann-der-companion-sicher-bestatigen-dass-mein-pc-linux-unterstutzt">Kann der Companion sicher bestätigen, dass mein PC Linux unterstützt?</h3>
+<p>Er kann Informationen und Testergebnisse strukturieren. Eine erkannte Komponente oder eine Empfehlung ist kein vollständiger Kompatibilitätsnachweis. Prüfe die Funktionen auf deinem eigenen Rechner.</p>
+<h3 id="installiert-das-tool-linux-fur-mich">Installiert das Tool Linux für mich?</h3>
+<p>Nein. Es unterstützt die Vorbereitung und erklärt nächste Schritte. Installation, Startmedium und Änderungen an Laufwerken erfolgen außerhalb der Anwendung.</p>
+<h3 id="kann-ich-den-companion-nutzen-ohne-windows-zu-ersetzen">Kann ich den Companion nutzen, ohne Windows zu ersetzen?</h3>
+<p>Ja. Testen, offene Anforderungen dokumentieren und Windows für bestimmte Aufgaben behalten sind sinnvolle mögliche Ergebnisse.</p>
+<h2 id="mit-deinem-wichtigsten-arbeitsablauf-anfangen">Mit deinem wichtigsten Arbeitsablauf anfangen</h2>
+<p>Öffne den <a href="/linux-migration-companion/">Linux Migration Companion</a> und beginne mit der Aufgabe, die auf deinem Rechner unbedingt weiter funktionieren muss. Arbeite dich von dieser Anforderung zur passenden Strategie vor.</p>
+<p>Wenn du parallel die Kommandozeile kennenlernen möchtest, bietet meine <a href="/museum/linux-terminal-academy/">Linux Terminal Academy</a> geführte Übungen in einer fiktiven Browserumgebung. Die echten Systeme hinter den Projekten findest du im <a href="/museum/home-computing-lab/">Home Computing Lab</a>.</p>
+<h2 id="quellen-und-projektdokumentation">Quellen und Projektdokumentation</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/linux-migration-companion">Linux Migration Companion auf GitHub</a></li>
+<li><a href="https://github.com/dennishilk/linux-migration-companion/blob/main/docs/DECISION_MODEL.md">Entscheidungsmodell und Grenzen der Empfehlungen</a></li>
+<li><a href="https://github.com/dennishilk/linux-migration-companion/blob/main/PRIVACY.md">Datenschutz und lokaler Browserspeicher</a></li>
+<li><a href="https://ubuntu.com/tutorials/try-ubuntu-before-you-install">Ubuntu: Vor der Installation ausprobieren</a></li>
+</ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/">← Alle Artikel</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#was-der-linux-migration-companion-macht">Was der Linux Migration Companion macht</a></li><li><a href="#1-programme-nach-arbeitsablaufen-prufen">1. Programme nach Arbeitsabläufen prüfen</a></li><li><a href="#2-eine-distribution-nach-deinem-alltag-auswahlen">2. Eine Distribution nach deinem Alltag auswählen</a></li><li><a href="#3-hardware-erkennen-und-funktionen-testen">3. Hardware erkennen und Funktionen testen</a></li><li><a href="#4-linux-vor-der-installation-ausprobieren">4. Linux vor der Installation ausprobieren</a></li><li><a href="#5-datenubernahme-und-ruckweg-vorbereiten">5. Datenübernahme und Rückweg vorbereiten</a></li><li><a href="#6-den-passenden-umstieg-wahlen">6. Den passenden Umstieg wählen</a></li><li><a href="#wo-wird-dein-migrationsplan-gespeichert">Wo wird dein Migrationsplan gespeichert?</a></li><li><a href="#haufige-fragen-zum-wechsel">Häufige Fragen zum Wechsel</a></li><li><a href="#mit-deinem-wichtigsten-arbeitsablauf-anfangen">Mit deinem wichtigsten Arbeitsablauf anfangen</a></li><li><a href="#quellen-und-projektdokumentation">Quellen und Projektdokumentation</a></li></ol></nav><a class="sidebar-tool" href="/linux-migration-companion/">Migration Companion öffnen <span aria-hidden="true">↗</span></a></aside></div><aside class="related-guide"><p class="eyebrow">Auch interessant</p><a href="/de/blog/bilder-ohne-upload-konvertieren/">Bilder ohne Upload konvertieren: JPG, PNG und WebP sinnvoll nutzen <span aria-hidden="true">→</span></a></aside></main><footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer></body></html>
