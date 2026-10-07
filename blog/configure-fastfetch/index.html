@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configure Fastfetch: Image logo, modules and borders explained · Dennis Hilk</title>
+<meta name="description" content="My Fastfetch configuration explained: screenshot, Kitty image logo, Nerd Fonts, JSONC modules, disks and an age counter. Start with a small local test file.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/configure-fastfetch/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-fastfetch/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/fastfetch-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-fastfetch/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Configure Fastfetch: Image logo, modules and borders explained">
+<meta property="og:description" content="My Fastfetch configuration explained: screenshot, Kitty image logo, Nerd Fonts, JSONC modules, disks and an age counter. Start with a small local test file.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/configure-fastfetch/">
+<meta property="og:image" content="https://www.dennishilk.com/assets/blog/cthulhu-fastfetch-nixos-2026-10.webp">
+<meta property="og:image:width" content="2011">
+<meta property="og:image:height" content="1251">
+<meta property="og:image:alt" content="Cthulhu desktop with Fastfetch in Kitty: custom image logo, cyan borders, and NixOS, hardware, memory and disk information.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-07">
+<meta property="article:modified_time" content="2026-10-07">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Configure Fastfetch: Image logo, modules and borders explained">
+<meta name="twitter:description" content="My Fastfetch configuration explained: screenshot, Kitty image logo, Nerd Fonts, JSONC modules, disks and an age counter. Start with a small local test file.">
+<meta name="twitter:image" content="https://www.dennishilk.com/assets/blog/cthulhu-fastfetch-nixos-2026-10.webp">
+<meta name="twitter:image:alt" content="Cthulhu desktop with Fastfetch in Kitty: custom image logo, cyan borders, and NixOS, hardware, memory and disk information.">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-fastfetch">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/configure-fastfetch/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/configure-fastfetch/","url":"https://www.dennishilk.com/blog/configure-fastfetch/","headline":"Configure Fastfetch: My Cthulhu system overview step by step","description":"My Fastfetch configuration explained: screenshot, Kitty image logo, Nerd Fonts, JSONC modules, disks and an age counter. Start with a small local test file.","inLanguage":"en","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/assets/blog/cthulhu-fastfetch-nixos-2026-10.webp","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Fastfetch & Terminal","wordCount":1654},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Configure Fastfetch: My Cthulhu system overview step by step","item":"https://www.dennishilk.com/blog/configure-fastfetch/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/fastfetch-konfigurieren/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Fastfetch &amp; Terminal</span></nav>
+<header class="article-header"><p class="eyebrow">Fastfetch &amp; Terminal</p><h1>Configure Fastfetch: My Cthulhu system overview step by step</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7 October 2026</time><span>10 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Your system overview stays local</span><p>This configuration reads local system information and a file timestamp. Downloads need internet access; added network modules or custom commands can introduce additional connections.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Configure Fastfetch: My Cthulhu system overview step by step">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#overview">What does my Fastfetch screenshot show?</a></li><li><a href="#files">The three files in my repository</a></li><li><a href="#test-file">Start with a small test file</a></li><li><a href="#modules">Understand modules, borders and placeholders</a></li><li><a href="#image-logo">Display the image logo with Kitty</a></li><li><a href="#disks">Choose the right root, games and homelab paths</a></li><li><a href="#age">What does the custom age counter mean?</a></li><li><a href="#troubleshooting">When an image, icon or data line is missing</a></li><li><a href="#privacy">Choose which local details to publish</a></li><li><a href="#sources">Configuration and checked references</a></li></ol></details>
+<p>A terminal can offer more than an empty prompt. Fastfetch gives me a compact overview of Cthulhu's system, hardware, memory and disks. My setup combines a custom image logo with a framed list, and the files are public in the <a href="https://github.com/dennishilk/cthulhu/tree/main/Fastfetch/fastfetch">Cthulhu repository</a>.</p>
+<p>This guide includes the actual screenshot, explains the configuration piece by piece and starts beginners with a small test file. You can reuse the design while adapting the details to your computer. The underlying system file has its own <a href="/blog/nixos-configuration-nix-explained/">NixOS introduction</a>.</p>
+<figure class="article-figure"><a href="/assets/blog/cthulhu-fastfetch-nixos-2026-10.webp" aria-label="Open the full-size screenshot"><img src="/assets/blog/cthulhu-fastfetch-nixos-2026-10.webp" width="2011" height="1251" alt="Cthulhu desktop with Fastfetch in Kitty: custom image logo, cyan borders, and NixOS, hardware, memory and disk information." loading="lazy" decoding="async"></a><figcaption>My Cthulhu desktop on 7 October 2026: Fastfetch in Kitty on NixOS with KWin/Wayland. The values describe the moment the screenshot was taken. <a href="/assets/blog/cthulhu-fastfetch-nixos-2026-10.webp">Open the full-size screenshot</a>.</figcaption></figure>
+<h2 id="overview">What does my Fastfetch screenshot show?</h2>
+<p>The image file sits on the left and the system overview on the right. The screenshot shows my user <code>nebu</code>, the hostname <code>cthulhu</code>, Linux 7.2.8, KWin on Wayland, Kitty and fish. It also includes the Ryzen 7 5800X3D, Radeon RX 9060 XT, two displays, memory usage and several disks.</p>
+<p>This arrangement helps identify a computer quickly and document a setup. Memory usage, disk usage and uptime change over time. Fastfetch provides a snapshot here; reproducible performance testing requires additional tools and controlled conditions.</p>
+<p>The <code>I use NixOS btw</code> line is explicitly written into my OS module as a format string. It is personal branding. When using this file on another system, change the text or remove that custom <code>format</code> to let the module use its normal operating-system output.</p>
+<h2 id="files">The three files in my repository</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Reference table"><table><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody><tr><td><code>config.jsonc</code></td><td>Display order, labels, formats and logo settings</td></tr><tr><td><code>1.png</code></td><td>The image shown beside the system details</td></tr><tr><td><code>cthulhu-born</code></td><td>An empty marker file; its modification time provides the reference for the age counter</td></tr></tbody></table></div><p>The usual configuration path is <code>~/.config/fastfetch/config.jsonc</code>. A custom <code>XDG_CONFIG_HOME</code> can change the default search location; my published image path and age command explicitly target <code>~/.config/fastfetch</code>. Check these personal paths when adapting the setup.</p>
+<p>JSONC is JSON with comments. The examples here are valid plain JSON too. <code>$schema</code> supports suggestions and validation in compatible editors. The linked development schema can change, and your installed Fastfetch version also determines which options are available.</p>
+<h2 id="test-file">Start with a small test file</h2>
+<p>You need an installed copy of Fastfetch. Check its version:</p><pre tabindex="0" aria-label="Code example"><code>fastfetch --version</code></pre><p>On NixOS you can add <code>fastfetch</code> to your package list; the <a href="/blog/nixos-configuration-nix-explained/#packages">NixOS article</a> explains the process. Create a separate practice directory:</p><pre tabindex="0" aria-label="Code example"><code>mkdir -p ~/fastfetch-tutorial</code></pre><p>Save the following complete file in your editor as <code>~/fastfetch-tutorial/config.jsonc</code>. If that folder already contains your own work, use another practice directory. This starting point uses a built-in text logo and needs neither image rendering nor Nerd Font icons:</p><pre tabindex="0" aria-label="Code example"><code>{
+  &quot;$schema&quot;: &quot;https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json&quot;,
+  &quot;logo&quot;: {
+    &quot;type&quot;: &quot;builtin&quot;,
+    &quot;source&quot;: &quot;nixos&quot;
+  },
+  &quot;display&quot;: {
+    &quot;separator&quot;: &quot; &quot;,
+    &quot;color&quot;: {
+      &quot;keys&quot;: &quot;cyan&quot;
+    }
+  },
+  &quot;modules&quot;: [
+    {
+      &quot;type&quot;: &quot;custom&quot;,
+      &quot;key&quot;: &quot;╭───────────╮&quot;,
+      &quot;format&quot;: &quot;&quot;
+    },
+    {
+      &quot;type&quot;: &quot;title&quot;,
+      &quot;key&quot;: &quot;│ user      │&quot;,
+      &quot;format&quot;: &quot;{user-name}&quot;
+    },
+    {
+      &quot;type&quot;: &quot;os&quot;,
+      &quot;key&quot;: &quot;│ distro    │&quot;
+    },
+    {
+      &quot;type&quot;: &quot;kernel&quot;,
+      &quot;key&quot;: &quot;│ kernel    │&quot;
+    },
+    {
+      &quot;type&quot;: &quot;memory&quot;,
+      &quot;key&quot;: &quot;│ memory    │&quot;
+    },
+    {
+      &quot;type&quot;: &quot;custom&quot;,
+      &quot;key&quot;: &quot;╰───────────╯&quot;,
+      &quot;format&quot;: &quot;&quot;
+    }
+  ]
+}</code></pre><p>Run this file explicitly:</p><pre tabindex="0" aria-label="Code example"><code>fastfetch --config ~/fastfetch-tutorial/config.jsonc</code></pre><p>You should see a NixOS text logo and four framed data lines. On another Linux system, selecting this logo does not change the detected distribution: it is a design choice. Fastfetch exits after printing; it does not create a persistent dashboard. This test leaves your regular configuration in place.</p>
+<h2 id="modules">Understand modules, borders and placeholders</h2>
+<p>The entries in <code>modules</code> print in their listed order. <code>type</code> selects the data source, <code>key</code> designs the label on the left, and <code>format</code> controls the output on the right. My borders are <code>custom</code> entries using Unicode characters; they do not collect hardware information themselves.</p><div class="table-scroll" tabindex="0" role="region" aria-label="Reference table"><table><thead><tr><th>Building block</th><th>Example from my setup</th></tr></thead><tbody><tr><td><code>title</code></td><td>Separate lines for <code>{user-name}</code> and <code>{host-name}</code></td></tr><tr><td><code>uptime</code>, <code>kernel</code>, <code>wm</code></td><td>Uptime, kernel and detected window manager</td></tr><tr><td><code>terminal</code>, <code>shell</code>, <code>cpu</code></td><td>Terminal, shell and processor</td></tr><tr><td><code>disk</code>, <code>memory</code>, <code>swap</code></td><td>Filesystem usage, RAM and swap</td></tr><tr><td><code>host</code>, <code>gpu</code>, <code>display</code></td><td>Computer/mainboard information, graphics card and displays</td></tr><tr><td><code>colors</code></td><td>Colored circles from the terminal palette</td></tr></tbody></table></div><p>The small icons in my original require suitable glyphs, typically provided by a Nerd Font. Select that font in your terminal. If you see empty boxes, replace the icons with text first. The simplified example still keeps the border characters.</p>
+<p>Some of my hardware formats use numbered placeholders. In the checked reference, the host format <code>{5} {1} ({2})</code> means vendor, product family and product name. The GPU format's <code>{12}</code> refers to frequency. An empty space after <code>@</code> in the screenshot can simply mean that the value was unavailable.</p>
+<p>Named placeholders can make your own formats easier to read. Check the list for your installed version:</p><pre tabindex="0" aria-label="Code example"><code>fastfetch -h gpu-format</code></pre><p>For a small exercise, change only <code>"keys": "cyan"</code> to <code>"keys": "green"</code> in the test file, save it and run it again. The labels should turn green. To undo the change, set the value back to <code>cyan</code>.</p>
+<h2 id="image-logo">Display the image logo with Kitty</h2>
+<p>My original points to <code>/home/nebu/.config/fastfetch/1.png</code> and selects <code>kitty-icat</code> for image output. This method uses <code>kitten icat</code>, which comes with Kitty. This setup needs Kitty-compatible image rendering and an available <code>kitten</code> program.</p>
+<p>The repository places logo options such as <code>logoType</code> and <code>logoWidth</code> at the top level. The documentation and schema checked on 7 October 2026 put these settings inside a <code>logo</code> object. Use the documented structure for a current configuration:</p><pre tabindex="0" aria-label="Code example"><code>{
+  &quot;logo&quot;: {
+    &quot;type&quot;: &quot;kitty-icat&quot;,
+    &quot;source&quot;: &quot;/home/nebu/.config/fastfetch/1.png&quot;,
+    &quot;width&quot;: 30,
+    &quot;height&quot;: 15,
+    &quot;padding&quot;: {
+      &quot;top&quot;: 1,
+      &quot;left&quot;: 2,
+      &quot;right&quot;: 4
+    }
+  }
+}</code></pre><p>This is a fragment: it replaces the existing <code>logo</code> entry in the test file. When adapting the original, also remove the separate <code>logoType</code>, <code>logoWidth</code>, <code>logoHeight</code> and <code>logoPadding</code> entries. Otherwise, Fastfetch may report unknown options.</p>
+<p>Replace the image path with the absolute path on your computer. <code>width</code> and <code>height</code> reserve terminal columns and rows, not CSS pixels. Padding gives the image and data list room; changing the font size or window dimensions changes the result.</p>
+<p>You can find <code>1.png</code> in the <a href="https://github.com/dennishilk/cthulhu/tree/main/Fastfetch/fastfetch">Fastfetch directory</a>. To inspect the repository locally, clone it:</p><pre tabindex="0" aria-label="Code example"><code>git clone https://github.com/dennishilk/cthulhu.git</code></pre><p>Then open <code>cthulhu/Fastfetch/fastfetch/</code> and read the configuration before running it. You can use the included image or your own graphic. For a text terminal, keep the built-in logo from the first example.</p>
+<h2 id="disks">Choose the right root, games and homelab paths</h2>
+<p>My four <code>disk</code> entries read <code>/</code>, <code>/mnt/Games.Vol1</code>, <code>/mnt/Games.Vol2</code> and <code>/mnt/Homelab</code>. The names <code>game1</code>, <code>game2</code> and <code>lab</code> are labels I chose to keep the overview compact.</p><pre tabindex="0" aria-label="Code example"><code>{
+  &quot;type&quot;: &quot;disk&quot;,
+  &quot;key&quot;: &quot;│ ├ game1   │&quot;,
+  &quot;folders&quot;: &quot;/mnt/Games.Vol1&quot;
+}</code></pre><p>This is one entry for the <code>modules</code> array; remember the comma separating adjacent entries. Remove extra disk modules if you do not use those mountpoints, or enter your own paths. These settings do not mount any drives.</p>
+<p>For an unexpected value, first check which filesystem actually contains the path:</p><pre tabindex="0" aria-label="Code example"><code>findmnt -T /mnt/Games.Vol1</code></pre><p>An existing directory can still belong to the root filesystem when the intended drive is not mounted. A usage figure alone therefore does not confirm the expected mount. Correct paths make these disk lines useful for a reliable overview.</p>
+<h2 id="age">What does the custom age counter mean?</h2>
+<p>The counter uses a <code>command</code> module. My command reads the modification time of <code>cthulhu-born</code> with <code>stat -c %Y</code>, subtracts it from the current Unix time and divides the difference by 86,400. The result is whole days since that marker.</p>
+<p>This is a personal reference point for Cthulhu, rather than automatic detection of the operating-system installation date. The empty file contains no date. A normal Git clone gives it a new filesystem timestamp. For your computer, choose a meaningful marker and preserve its timestamp in backups.</p>
+<p>This variant displays <code>n/a</code> when the marker file is missing:</p><pre tabindex="0" aria-label="Code example"><code>{
+  &quot;type&quot;: &quot;command&quot;,
+  &quot;key&quot;: &quot;│ └ age     │&quot;,
+  &quot;text&quot;: &quot;if [ -f \&quot;$HOME/.config/fastfetch/cthulhu-born\&quot; ]; then start=$(stat -c %Y \&quot;$HOME/.config/fastfetch/cthulhu-born\&quot;); now=$(date +%s); printf &#x27;%s days\\n&#x27; \&quot;$(((now - start) / 86400))\&quot;; else printf &#x27;n/a\\n&#x27;; fi&quot;
+}</code></pre><p>It assumes the GNU <code>stat</code> syntax commonly used on Linux. Other Unix-like systems with different <code>stat</code> options need an adaptation. You can also leave the counter out entirely.</p>
+<p>The name <code>command</code> is literal: Fastfetch executes the included command with your user permissions. My example only reads file and time information. Inspect the commands in configurations you download before running those files.</p>
+<h2 id="troubleshooting">When an image, icon or data line is missing</h2>
+<ul><li><strong>Unknown JSON option:</strong> Compare the reported setting with your Fastfetch version and the documented structure, especially the logo options.</li><li><strong>No image:</strong> Check the absolute file path, the terminal and the availability of <code>kitten</code>. Test outside tmux first.</li><li><strong>Boxes instead of icons:</strong> Select a suitable Nerd Font in the terminal or use plain text labels.</li><li><strong>Unexpected disk figures:</strong> Check the mountpoints and the underlying filesystem.</li><li><strong>Empty GPU frequency:</strong> Check supported format fields and whether that value is available; a missing value alone does not establish a hardware fault.</li><li><strong>Unexpected age:</strong> Check the marker's modification time, especially after cloning or restoring files.</li></ul>
+<p>Ask Fastfetch to show errors for the test file:</p><pre tabindex="0" aria-label="Code example"><code>fastfetch --config ~/fastfetch-tutorial/config.jsonc --show-errors</code></pre><p>If image rendering still gets in the way, restore the built-in text logo from the first example. Before replacing your regular configuration later, back it up using the steps in the <a href="/blog/backup-linux-configuration/">backup article</a>. Closing the terminal and keeping your original file gives you the way back from this exercise.</p>
+<h2 id="privacy">Choose which local details to publish</h2>
+<p>The standard modules shown here read local information. The age command also uses local file and time data. This system overview requires no Fastfetch account. Downloading the Git repository and installing packages do require network access.</p>
+<p>A shared screenshot can reveal usernames, hostnames, hardware, the kernel, disks and their usage. Choose your modules deliberately before publishing. My file contains no public-IP or weather query; later additions can contact external services. Custom <code>command</code> modules can also do more than read information.</p>
+<p>A separate test file lets you learn the display and data sources first. You can then move the modules you need into your regular configuration and back it up together with the image and, if used, the marker file.</p>
+<h2 id="sources">Configuration and checked references</h2>
+<p>My files and the official references were checked on 7 October 2026. The screenshot documents my actual desktop; the small test file is a separate learning example.</p><ul><li><a href="https://github.com/dennishilk/cthulhu/tree/main/Fastfetch/fastfetch">My Fastfetch directory</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/Fastfetch/fastfetch/config.jsonc">My config.jsonc</a></li><li><a href="https://github.com/fastfetch-cli/fastfetch/wiki/Configuration">Fastfetch: configuration</a></li><li><a href="https://github.com/fastfetch-cli/fastfetch/wiki/Logo-options">Fastfetch: image logos and Kitty</a></li><li><a href="https://github.com/fastfetch-cli/fastfetch/wiki/Format-String-Guide">Fastfetch: format placeholders</a></li><li><a href="https://github.com/fastfetch-cli/fastfetch/wiki/Modules-Command">Fastfetch: command module</a></li></ul>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← All tutorials</a><a href="#page-top">Back to top ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#overview">What does my Fastfetch screenshot show?</a></li><li><a href="#files">The three files in my repository</a></li><li><a href="#test-file">Start with a small test file</a></li><li><a href="#modules">Understand modules, borders and placeholders</a></li><li><a href="#image-logo">Display the image logo with Kitty</a></li><li><a href="#disks">Choose the right root, games and homelab paths</a></li><li><a href="#age">What does the custom age counter mean?</a></li><li><a href="#troubleshooting">When an image, icon or data line is missing</a></li><li><a href="#privacy">Choose which local details to publish</a></li><li><a href="#sources">Configuration and checked references</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/tree/main/Fastfetch/fastfetch">Configuration on GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Useful next steps</p><a href="/blog/nixos-configuration-nix-explained/">NixOS for beginners: My configuration.nix explained <span aria-hidden="true">→</span></a><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>
