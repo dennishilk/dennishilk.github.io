@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux-Konfiguration sichern: Dotfiles und Backups · Dennis Hilk</title>
+<meta name="description" content="Linux-Backups verständlich planen: Dotfiles, Paketlisten, NixOS-Dateien und persönliche Daten unterscheiden. Mit Cthulhu-Beispielen und Restore-Prüfung.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/backup-linux-configuration/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/backup-linux-configuration/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux-Konfiguration sichern: Dotfiles und Backups">
+<meta property="og:description" content="Linux-Backups verständlich planen: Dotfiles, Paketlisten, NixOS-Dateien und persönliche Daten unterscheiden. Mit Cthulhu-Beispielen und Restore-Prüfung.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linux-Konfiguration sichern: Dotfiles und Backups">
+<meta name="twitter:description" content="Linux-Backups verständlich planen: Dotfiles, Paketlisten, NixOS-Dateien und persönliche Daten unterscheiden. Mit Cthulhu-Beispielen und Restore-Prüfung.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/","url":"https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/","headline":"Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups","description":"Linux-Backups verständlich planen: Dotfiles, Paketlisten, NixOS-Dateien und persönliche Daten unterscheiden. Mit Cthulhu-Beispielen und Restore-Prüfung.","inLanguage":"de","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Linux & Backups","wordCount":938},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups","item":"https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/backup-linux-configuration/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Backups</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Backups</p><h1>Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7. Oktober 2026</time><span>6 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Sicherungen bewusst lokal halten</span><p>Lokale Sicherungen benötigen keinen Upload. Konfigurationen und Logs können persönliche Angaben enthalten; entscheide vor einem Git-Push, was veröffentlicht wird.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#umfang">Was willst du später wiederherstellen?</a></li><li><a href="#system">Was speichert Cthulhu als Systemstand?</a></li><li><a href="#core">Welche Desktop-Dateien sind tatsächlich erfasst?</a></li><li><a href="#start">Das Projekt lesen und einen lokalen Snapshot prüfen</a></li><li><a href="#wiederherstellen">Was kann die aktuelle Restore-Funktion?</a></li><li><a href="#test">Eine Wiederherstellung ausprobieren</a></li><li><a href="#datenschutz">Git ist Versionierung, Veröffentlichung ist eine Entscheidung</a></li><li><a href="#quellen">Quellen und geprüfter Umfang</a></li></ol></details>
+<p>Nach einem Desktop-Umbau möchtest du die vertrauten Tasten und Einstellungen wiederhaben. Nach einem Laufwerksausfall brauchst du dagegen auch Dokumente, Projekte und weitere Daten. Beides wird oft „Backup“ genannt, löst aber unterschiedliche Aufgaben. Mein <a href="https://github.com/dennishilk/cthulhu">Cthulhu-Repository</a> macht diese Trennung gut sichtbar.</p>
+<p>Cthulhu sammelt persönliche Konfigurationen und Systeminformationen aus meiner Linux-Praxis. Es ist ein Ausgangspunkt zum Verstehen und Nachbauen, kein vollständiges Abbild einer Festplatte. Dieser Artikel erklärt den aktuellen Skriptumfang und einen überschaubaren Weg, die eigene Sicherung zu prüfen.</p>
+<h2 id="umfang">Was willst du später wiederherstellen?</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Vergleichstabelle"><table><thead><tr><th>Sicherungsart</th><th>Hilft bei</th><th>Fehlt ohne zusätzliche Maßnahmen</th></tr></thead><tbody>
+<tr><td>Dotfiles und Desktop-Dateien</td><td>Tasten, Leisten, Farben und Programmeinstellungen</td><td>Installierte Programme und deren Abhängigkeiten</td></tr>
+<tr><td>Paketlisten</td><td>Nachvollziehen, welche Pakete installiert waren</td><td>Dateiinhalte und garantiert dieselbe Paketversion</td></tr>
+<tr><td>NixOS-Module</td><td>Beschreiben eines Systemaufbaus</td><td>Nicht erfasste Module, Quellenstände und persönliche Daten</td></tr>
+<tr><td>Datensicherung</td><td>Dokumente, Projekte und andere ausdrücklich ausgewählte Daten zurückholen</td><td>Alles, was nicht im Sicherungsumfang liegt</td></tr>
+</tbody></table></div>
+<p>Definiere ein Ziel: „Nach einer Neuinstallation soll Rofi wieder so aussehen“ ist überprüfbarer als „Alles ist irgendwo in Git“. Notiere auch den erwarteten Betriebssystemstand und die Programme, die die gesicherten Dateien lesen.</p>
+<h2 id="system">Was speichert Cthulhu als Systemstand?</h2>
+<p><code>tools/save_system.sh</code> erkennt die Distribution und schreibt einen Ordner mit Datum. Im geprüften Stand sind diese Zweige vorhanden:</p>
+<ul><li><strong>Arch:</strong> ausdrücklich installierte und fremde Pakete sowie der Kernelstand.</li><li><strong>Debian:</strong> dpkg-Auswahl, APT-Quelldateien und Kernelstand.</li><li><strong>Gentoo:</strong> verfügbare Paketliste, <code>emerge --info</code>, world-Datei und Kernelstand.</li><li><strong>NixOS:</strong> die vorhandene <code>/etc/nixos/configuration.nix</code>, gegebenenfalls <code>/etc/nixos/flake.nix</code>, NixOS-Version und Channel-Liste.</li></ul>
+<p>Gerade bei NixOS ist der Umfang wichtig: Das Skript kopiert nicht automatisch ganz <code>/etc/nixos</code>. Eine importierte <code>hardware-configuration.nix</code>, weitere Module oder eine <code>flake.lock</code> müssen zusätzlich gesichert werden. Ein vorhandener Hauptdatei-Name belegt noch keine vollständige Wiederherstellbarkeit.</p>
+<p>Ein erneuter System-Snapshot am selben Tag ersetzt den vorhandenen datierten Ordner. Prüfe deshalb den Zielordner und bewahre wichtige ältere Stände separat auf. Das Datum ist hier keine beliebig feine Versionierung jeder Ausführung.</p>
+<h2 id="core">Welche Desktop-Dateien sind tatsächlich erfasst?</h2>
+<p><code>tools/save_core.sh</code> enthält feste Pfadpaare. Dazu gehören Fastfetch, Rofi, Picom, Dunst, einige Window-Manager-Verzeichnisse und ausgewählte Desktop-Konfigurationen. Vorhandene Dateien werden vor dem Ersetzen im Repository mit einem Sicherungsnamen verschoben; fehlende Quellen landen als Hinweise im Log.</p>
+<p>Die aktuelle XMonad-Zuordnung liest <code>~/.xmonad</code>. Mein neuerer Gruvnode-Aufbau liegt hingegen unter <code>~/.config/xmonad</code>. Sway und Waybar sind im Repository vorhanden, aber im geprüften <code>save_core.sh</code> keine automatisch gesicherten Pfadpaare. Auch Kitty und Shell-Konfigurationen sind dort nicht pauschal erfasst.</p>
+<p>Erstelle deshalb eine eigene Liste deiner aktiven Pfade. Für Sway etwa <code>~/.config/sway</code>, für Waybar <code>~/.config/waybar</code> und für Gruvnode zusätzlich XMonad, Xmobar, Rofi, Kitty und <code>~/.xinitrc</code>. Trenne kopierbare Desktop-Einstellungen von Zugangsdaten und Laufzeitdateien.</p>
+<h2 id="start">Das Projekt lesen und einen lokalen Snapshot prüfen</h2>
+<p>Arbeite in einer eigenen lokalen Kopie. Der Clone holt meinen veröffentlichten Stand; er lädt nicht automatisch deine späteren Sicherungen hoch:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>git clone https://github.com/dennishilk/cthulhu.git</code></pre>
+<p>Wechsle in den Ordner:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>cd cthulhu</code></pre>
+<p>Lies zuerst die genannten Skripte und ihre Pfadpaare. Falls die Ausführungsrechte fehlen, setze sie:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>chmod +x tools/cthulhu tools/*.sh</code></pre>
+<p>Zeige zunächst die verfügbaren Core-Komponenten an:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>./tools/cthulhu list core</code></pre>
+<p>Wenn der Sicherungsumfang zu deinem System passt, erstelle einen lokalen System-Snapshot:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>./tools/cthulhu save system</code></pre>
+<p>Kontrolliere anschließend den ausgegebenen datierten Ordner und <code>logs/cthulhu.log</code>. Sind die benötigten Dateien vorhanden und lesbar? Fehlende optionale Werkzeuge können protokolliert werden, ohne den gesamten Lauf zu stoppen. Für Desktop-Dateien gibt es zusätzlich <code>./tools/cthulhu save core</code>, dessen konkrete Pfade du vorher mit deiner Liste abgleichst.</p>
+<h2 id="wiederherstellen">Was kann die aktuelle Restore-Funktion?</h2>
+<p>Core-Restore kopiert ausgewählte Komponenten zurück. Bei einem bestehenden Ziel fragt der Helfer nach; die bisherige Konfiguration wird unter <code>~/.config/cthulhu-backup-DATUM/</code> gesichert. Es ersetzt danach das ausgewählte Zielverzeichnis. Prüfe daher zuerst Quelle, Ziel und Sicherung, und schließe betroffene Anwendungen.</p>
+<p>Für eine zuvor geprüfte Rofi-Sicherung lautet der einzelne Komponentenaufruf:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>./tools/cthulhu restore core rofi</code></pre>
+<p>Mehrere Wiederherstellungen am selben Tag verwenden denselben Sicherungswurzelordner. Bewahre einen wichtigen Ausgangsstand deshalb separat auf. Ein abschließender Text allein genügt nicht: Öffne Rofi anschließend und prüfe sein tatsächliches Verhalten.</p>
+<p><strong>System-Restore ist im derzeitigen Quellcode noch kein automatischer Wiederaufbau.</strong> Die Funktion prüft den Snapshot-Ordner, zeigt ihn an und protokolliert die Anfrage. Sie kopiert keine Systemdateien zurück und installiert keine Pakete. Die Systeminformationen dienen als Grundlage für einen bewussten manuellen Aufbau.</p>
+<h2 id="test">Eine Wiederherstellung ausprobieren</h2>
+<p>Teste eine unkritische einzelne Komponente, bevor du einen Ausfall hast. Notiere den Originalpfad, sichere den bisherigen Stand separat und stelle den Snapshot in einer Testumgebung oder unter einem anderen Pfad bereit. Vergleiche Dateien und starte das passende Programm.</p>
+<ol><li>Prüfe, ob die Sicherung die erwartete Konfigurationsdatei wirklich enthält.</li><li>Stelle sie zunächst in einem eigenen Testordner bereit.</li><li>Vergleiche Inhalt, Dateirechte und gegebenenfalls ausführbare Helferskripte.</li><li>Teste die Anwendung mit den benötigten Paketen und passenden Versionen.</li><li>Halte fest, welche zusätzlichen Dateien oder Schritte gefehlt haben.</li></ol>
+<p>Bei NixOS gehört etwa ein Build zur Prüfung; bei XMonad die Kompilierung. Eine kopierte Textdatei kann trotzdem auf ein fehlendes Hintergrundbild, einen nicht installierten Launcher oder einen alten Modulnamen verweisen. Der <a href="/de/blog/nixos-configuration-nix-verstehen/">NixOS-Einstieg</a> zeigt einen kleinen Build-und-Test-Ablauf.</p>
+<h2 id="datenschutz">Git ist Versionierung, Veröffentlichung ist eine Entscheidung</h2>
+<p>Lokale Sicherungen brauchen keinen Cloud-Upload. Ein Git-Push veröffentlicht beziehungsweise überträgt aber die ausgewählten Inhalte an den konfigurierten Remote. Prüfe vor einem Commit Konfigurationen, Logs, Pfade und enthaltene Schlüssel. Für persönliche Sicherungen ist eine bewusst private Ablage sinnvoll.</p>
+<p>Der Cthulhu-Befehl <code>push</code> verwendet aktuell <code>git add -A</code> und erfasst damit alle Änderungen im Repository. Er gehört deshalb nicht zu unserer ersten Sicherungsübung. Eine <code>.gitignore</code> kann neue Dateien ausnehmen; bereits verfolgte Dateien oder Geheimnisse in früheren Commits verschwinden dadurch nicht aus der Geschichte.</p>
+<p>Ein Repository auf derselben ausgefallenen Platte rettet deine Daten nicht. Bewahre wichtige Sicherungen auf einem unabhängigen Medium auf, schütze vertrauliche Kopien passend und teste den Zugriff samt Wiederherstellung. Deine persönlichen Dokumente benötigen zusätzlich ihren eigenen festgelegten Sicherungsumfang.</p>
+<h2 id="quellen">Quellen und geprüfter Umfang</h2>
+<p>Die Aussagen über Cthulhu beziehen sich auf die Skripte vom 7. Oktober 2026. Der Quellcode ist für den aktuellen Umfang maßgeblich.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/save_system.sh">Cthulhu: System-Snapshots</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/save_core.sh">Cthulhu: feste Core-Pfade</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/restore.sh">Cthulhu: Restore-Implementierung</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/utils.sh">Kopierhilfen und Sicherungsziele</a></li><li><a href="https://git-scm.com/docs/gitignore">Git: Möglichkeiten und Grenzen von gitignore</a></li></ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Alle Tutorials</a><a href="#page-top">Nach oben ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#umfang">Was willst du später wiederherstellen?</a></li><li><a href="#system">Was speichert Cthulhu als Systemstand?</a></li><li><a href="#core">Welche Desktop-Dateien sind tatsächlich erfasst?</a></li><li><a href="#start">Das Projekt lesen und einen lokalen Snapshot prüfen</a></li><li><a href="#wiederherstellen">Was kann die aktuelle Restore-Funktion?</a></li><li><a href="#test">Eine Wiederherstellung ausprobieren</a></li><li><a href="#datenschutz">Git ist Versionierung, Veröffentlichung ist eine Entscheidung</a></li><li><a href="#quellen">Quellen und geprüfter Umfang</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Quellcode auf GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/nixos-configuration-nix-verstehen/">NixOS für Einsteiger: Meine configuration.nix verständlich erklärt <span aria-hidden="true">→</span></a><a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: Mein einfacher XMonad-Desktop vom T480 zum X1 Carbon <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

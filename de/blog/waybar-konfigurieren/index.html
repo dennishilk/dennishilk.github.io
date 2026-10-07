@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Waybar konfigurieren: JSONC, Module und CSS erklärt · Dennis Hilk</title>
+<meta name="description" content="Waybar für Einsteiger: Meine Sway-Leiste verstehen, JSONC und CSS trennen, eine eigene Testleiste starten und Uhr, Lautstärke sowie CPU ergänzen.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/waybar-konfigurieren/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-waybar/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/waybar-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-waybar/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Waybar konfigurieren: JSONC, Module und CSS erklärt">
+<meta property="og:description" content="Waybar für Einsteiger: Meine Sway-Leiste verstehen, JSONC und CSS trennen, eine eigene Testleiste starten und Uhr, Lautstärke sowie CPU ergänzen.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/waybar-konfigurieren/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Waybar konfigurieren: JSONC, Module und CSS erklärt">
+<meta name="twitter:description" content="Waybar für Einsteiger: Meine Sway-Leiste verstehen, JSONC und CSS trennen, eine eigene Testleiste starten und Uhr, Lautstärke sowie CPU ergänzen.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/waybar-konfigurieren/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/waybar-konfigurieren/","url":"https://www.dennishilk.com/de/blog/waybar-konfigurieren/","headline":"Waybar konfigurieren: Eine verständliche Statusleiste für Sway","description":"Waybar für Einsteiger: Meine Sway-Leiste verstehen, JSONC und CSS trennen, eine eigene Testleiste starten und Uhr, Lautstärke sowie CPU ergänzen.","inLanguage":"de","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Waybar & Desktop","wordCount":888},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Waybar konfigurieren: Eine verständliche Statusleiste für Sway","item":"https://www.dennishilk.com/de/blog/waybar-konfigurieren/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/configure-waybar/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Waybar &amp; Desktop</span></nav>
+<header class="article-header"><p class="eyebrow">Waybar &amp; Desktop</p><h1>Waybar konfigurieren: Eine verständliche Statusleiste für Sway</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7. Oktober 2026</time><span>5 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Statusanzeigen ohne Cloud-Dienst</span><p>Die hier gezeigten Module lesen lokale Uhr-, Audio- und Systemdaten. Eigene Skripte oder später ergänzte Netzwerkmodule können zusätzliche Datenwege eröffnen.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Waybar konfigurieren: Eine verständliche Statusleiste für Sway">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#dateien">Zwei Dateien, zwei Aufgaben</a></li><li><a href="#meine-leiste">Was zeigt meine veröffentlichte Leiste?</a></li><li><a href="#testdatei">Eine eigene, kleine Testkonfiguration</a></li><li><a href="#css">Ein lesbares Gruvbox-artiges Design</a></li><li><a href="#start">Die Testleiste starten und wieder schließen</a></li><li><a href="#cpu">Übung: Die CPU-Anzeige ergänzen</a></li><li><a href="#fehler">Wenn ein Modul oder die gesamte Leiste fehlt</a></li><li><a href="#datenschutz">Datenschutz und der Übergang zum Alltag</a></li><li><a href="#quellen">Beispiel und Referenzen</a></li></ol></details>
+<p>Eine kleine Uhr und eine Lautstärkeanzeige reichen oft aus, um einen minimalistischen Desktop angenehm zu benutzen. Meine <a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/waybar/config.jsonc">Waybar-Datei im Cthulhu-Repository</a> ist deshalb ein guter Einstieg. Sie zeigt, wie aus wenigen Einstellungen eine Statusleiste entsteht.</p>
+<p>Dieses Tutorial setzt eine laufende Sway-Sitzung und installiertes Waybar voraus. Wir legen eine eigene Testkonfiguration an und starten sie aus einem Terminal. Dadurch bleibt deine bisherige Leiste erhalten, während du Inhalt und Gestaltung kennenlernst. Den zugehörigen Desktop erklärt der <a href="/de/blog/sway-konfiguration-verstehen/">Sway-Artikel</a>.</p>
+<h2 id="dateien">Zwei Dateien, zwei Aufgaben</h2>
+<p>Die Konfiguration heißt üblicherweise <code>config</code> oder <code>config.jsonc</code> unter <code>~/.config/waybar/</code>. JSONC beschreibt Inhalte und Verhalten und erlaubt auch Kommentare. Die CSS-Datei gestaltet Schrift, Farben und Abstände.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Vergleichstabelle"><table><thead><tr><th>Datei</th><th>Typische Aufgabe</th></tr></thead><tbody><tr><td><code>config.jsonc</code></td><td>Position, Monitor, sichtbare Module, Format und Aktualisierung</td></tr><tr><td><code>style.css</code></td><td>Hintergrund, Textfarbe, Schrift und Modulabstände</td></tr></tbody></table></div>
+<p>Eine falsche Modulliste löst du in der Konfiguration. Eine schlecht lesbare Textfarbe löst du in CSS. Waybar verwendet GTK-CSS; nicht jede CSS-Eigenschaft aus einem Webbrowser steht hier genauso zur Verfügung.</p>
+<h2 id="meine-leiste">Was zeigt meine veröffentlichte Leiste?</h2>
+<p>Die entscheidenden Zeilen meines Beispiels lauten:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>"position": "top",
+"output": "DP-1",
+"modules-left": [],
+"modules-center": ["clock"],
+"modules-right": ["pulseaudio"]</code></pre>
+<p>Die Uhr steht mittig, die Lautstärke rechts, und die Leiste erscheint auf meinem Ausgang <code>DP-1</code>. Diesen Monitornamen musst du an deinen Rechner anpassen oder die Auswahl weglassen. Die Uhr hat Sekunden und öffnet bei einem Klick gsimplecal; die Lautstärke öffnet pavucontrol. Diese Programme müssen separat vorhanden sein.</p>
+<p>Die Datei definiert außerdem Netzwerk-, CPU-, Temperatur- und Speicheroptionen. Sie stehen aber nicht in den sichtbaren Modullisten. Ein definierter Block allein zeigt daher noch nichts an. Das ist der wichtigste Unterschied zwischen „konfiguriert“ und „auf der Leiste eingeblendet“.</p>
+<h2 id="testdatei">Eine eigene, kleine Testkonfiguration</h2>
+<p>Lege bei Bedarf den Konfigurationsordner an:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>mkdir -p ~/.config/waybar</code></pre>
+<p>Speichere die folgende vollständige JSON-Datei mit deinem Editor als <code>~/.config/waybar/tutorial.jsonc</code>. Verwende einen anderen Namen, wenn dort schon eine eigene Datei liegt. Die Testleiste sitzt unten und benötigt keine Symbole aus einer Nerd Font:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>{
+  "layer": "top",
+  "position": "bottom",
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio"],
+  "clock": {
+    "format": "{:%H:%M}",
+    "interval": 60
+  },
+  "pulseaudio": {
+    "format": "Vol {volume}%",
+    "format-muted": "Muted"
+  }
+}</code></pre>
+<p>Kommas trennen Eigenschaften; nach der letzten Eigenschaft eines Objekts steht hier kein Komma. Die geschweiften Klammern in <code>{volume}</code> gehören zum Format des Audiomoduls. Die Uhr verwendet ihre eigenen Zeitformat-Platzhalter.</p>
+<p>Das Modul <code>pulseaudio</code> nutzt die entsprechende Audioschnittstelle. Diese kann bei einem PipeWire-Aufbau durch PipeWire-Pulse bereitgestellt werden. Der Name des Moduls verlangt nicht automatisch einen zweiten, eigenständigen PulseAudio-Dienst.</p>
+<h2 id="css">Ein lesbares Gruvbox-artiges Design</h2>
+<p>Speichere als zweite Testdatei <code>~/.config/waybar/tutorial.css</code>:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>* {
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+window#waybar {
+  background: #282828;
+  color: #ebdbb2;
+}
+
+#clock, #pulseaudio, #cpu {
+  padding: 0 10px;
+}</code></pre>
+<p>Der dunkle Hintergrund und die helle Schrift passen zur Farbwelt meines Desktops. Der einfache Systemfont hält den Einstieg unabhängig von besonderen Symbolschriften. <code>#clock</code> bezeichnet das Uhrmodul; die Selektoren beziehen sich auf Waybars Elemente.</p>
+<p>Beginne mit Kontrast und Lesbarkeit. Farben, Rahmen und zusätzliche Effekte kannst du danach einzeln ergänzen. Eine beeindruckende Leiste hilft wenig, wenn du den Batteriestand oder eine Stummschaltung kaum erkennen kannst.</p>
+<h2 id="start">Die Testleiste starten und wieder schließen</h2>
+<p>Starte genau die beiden angelegten Dateien:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>waybar -c ~/.config/waybar/tutorial.jsonc -s ~/.config/waybar/tutorial.css</code></pre>
+<p>Unten sollten Uhr und Lautstärke erscheinen. Das Terminal bleibt mit diesem Prozess verbunden und zeigt seine Meldungen. Eine zusätzlich laufende Leiste kann dabei Bildschirmfläche beanspruchen; das ist die getrennte Vorschau, keine zweite dauerhaft eingerichtete Autostart-Leiste.</p>
+<p>Beende diese Vorschau mit Strg + C im zugehörigen Terminal. Deine normale Leiste bleibt bestehen. Änderungen kannst du anschließend speichern und denselben Vorschau-Befehl erneut ausführen. Für den Einstieg ist das nachvollziehbarer als pauschal alle Waybar-Prozesse zu beenden.</p>
+<h2 id="cpu">Übung: Die CPU-Anzeige ergänzen</h2>
+<p>Ersetze in der Testdatei die rechte Modulliste durch:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>"modules-right": ["cpu", "pulseaudio"]</code></pre>
+<p>Ergänze auf derselben Objektebene einen CPU-Block. Achte auf das trennende Komma vor oder nach diesem neuen Eintrag:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>"cpu": {
+  "format": "CPU {usage}%",
+  "interval": 2
+}</code></pre>
+<p>Nach dem nächsten Vorschau-Start sollte rechts vor der Lautstärke ein CPU-Prozentwert erscheinen. Er ist eine kurze Auslastungsanzeige, keine umfassende Diagnose eines langsamen Systems. Entferne zum Zurücknehmen <code>cpu</code> wieder aus der Modulliste; der ungenutzte Einstellungsblock kann stehen bleiben.</p>
+<h2 id="fehler">Wenn ein Modul oder die gesamte Leiste fehlt</h2>
+<ul><li><strong>Keine Leiste:</strong> Prüfe die Ausgabe im Terminal, den Dateipfad und ob du den Befehl in der laufenden Sway-Sitzung gestartet hast.</li><li><strong>JSON-Fehler:</strong> Kontrolliere Kommas, Anführungszeichen und geschlossene Klammern an der gemeldeten Stelle.</li><li><strong>Ein Modul fehlt:</strong> Prüfe seine Schreibweise in der sichtbaren Liste und die Verfügbarkeit im installierten Waybar-Build.</li><li><strong>Kein Audiowert:</strong> Prüfe den laufenden Audiostack und dessen Standardausgabe, statt zuerst die Farben zu ändern.</li><li><strong>Leere Kästchen statt Icons:</strong> Prüfe die verwendete Schrift. Unser Textbeispiel umgeht diese Abhängigkeit.</li></ul>
+<p>Bei übernommenen Konfigurationen ist auch ein falscher <code>output</code>-Name eine häufige Ursache. Die Testdatei lässt ihn bewusst weg. In Sway liefert <code>swaymsg -t get_outputs</code> deine tatsächlichen Ausgänge.</p>
+<h2 id="datenschutz">Datenschutz und der Übergang zum Alltag</h2>
+<p>Die gezeigten Anzeigen lesen lokale Zeit-, Audio- und CPU-Daten. Sie brauchen keinen Cloud-Dienst. Das gilt nicht automatisch für jede fremde Waybar-Konfiguration: Ein Custom-Modul kann ein Skript starten, das beispielsweise Wetterdaten aus dem Netz abruft. Prüfe deshalb auch solche Skripte.</p>
+<p>Wenn dir die Testleiste gefällt, sichere deine regulären Konfigurationsdateien und übernimm die gewünschten Änderungen gezielt. Richte nur einen passenden Autostart-Aufruf ein. Meine Sway-Datei startet Waybar bereits; zusätzliche Einträge können doppelte Leisten verursachen. Für den Rückweg reichen bei dieser Übung Strg + C und das Beibehalten deiner ursprünglichen Dateien.</p>
+<h2 id="quellen">Beispiel und Referenzen</h2>
+<p>Meine Datei und die Waybar-Dokumentation wurden am 7. Oktober 2026 geprüft. Die Testdateien hier sind bewusst vereinfachte Lernbeispiele.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/waybar/config.jsonc">Meine Waybar-Konfiguration</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/waybar/style.css">Die zugehörige Gestaltung</a></li><li><a href="https://github.com/Alexays/Waybar/wiki/Configuration">Waybar: Konfiguration und sichtbare Module</a></li><li><a href="https://github.com/Alexays/Waybar/wiki/Styling">Waybar: GTK-CSS</a></li><li><a href="https://github.com/Alexays/Waybar/wiki/Module:-Clock">Waybar: Uhrmodul und Zeitformat</a></li></ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Alle Tutorials</a><a href="#page-top">Nach oben ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#dateien">Zwei Dateien, zwei Aufgaben</a></li><li><a href="#meine-leiste">Was zeigt meine veröffentlichte Leiste?</a></li><li><a href="#testdatei">Eine eigene, kleine Testkonfiguration</a></li><li><a href="#css">Ein lesbares Gruvbox-artiges Design</a></li><li><a href="#start">Die Testleiste starten und wieder schließen</a></li><li><a href="#cpu">Übung: Die CPU-Anzeige ergänzen</a></li><li><a href="#fehler">Wenn ein Modul oder die gesamte Leiste fehlt</a></li><li><a href="#datenschutz">Datenschutz und der Übergang zum Alltag</a></li><li><a href="#quellen">Beispiel und Referenzen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Quellcode auf GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/sway-konfiguration-verstehen/">Sway für Einsteiger: Meine Wayland-Konfiguration erklärt <span aria-hidden="true">→</span></a><a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: Mein einfacher XMonad-Desktop vom T480 zum X1 Carbon <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

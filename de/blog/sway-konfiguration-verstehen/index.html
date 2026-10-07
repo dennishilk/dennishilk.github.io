@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sway konfigurieren: Monitore, Workspaces und Tasten · Dennis Hilk</title>
+<meta name="description" content="Sway an meiner Konfiguration lernen: Variablen, zwei Monitore, Workspaces, Tastenkürzel, Fensterregeln und ein kleiner Test mit sicherem Rückweg.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/sway-configuration-explained/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/sway-configuration-explained/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sway konfigurieren: Monitore, Workspaces und Tasten">
+<meta property="og:description" content="Sway an meiner Konfiguration lernen: Variablen, zwei Monitore, Workspaces, Tastenkürzel, Fensterregeln und ein kleiner Test mit sicherem Rückweg.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sway konfigurieren: Monitore, Workspaces und Tasten">
+<meta name="twitter:description" content="Sway an meiner Konfiguration lernen: Variablen, zwei Monitore, Workspaces, Tastenkürzel, Fensterregeln und ein kleiner Test mit sicherem Rückweg.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/","url":"https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/","headline":"Sway für Einsteiger: Meine Wayland-Konfiguration erklärt","description":"Sway an meiner Konfiguration lernen: Variablen, zwei Monitore, Workspaces, Tastenkürzel, Fensterregeln und ein kleiner Test mit sicherem Rückweg.","inLanguage":"de","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Sway & Wayland","wordCount":934},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Sway für Einsteiger: Meine Wayland-Konfiguration erklärt","item":"https://www.dennishilk.com/de/blog/sway-konfiguration-verstehen/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/sway-configuration-explained/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Sway &amp; Wayland</span></nav>
+<header class="article-header"><p class="eyebrow">Sway &amp; Wayland</p><h1>Sway für Einsteiger: Meine Wayland-Konfiguration erklärt</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7. Oktober 2026</time><span>6 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Lokale Datei, kontrollierbare Einstellungen</span><p>Die Konfiguration und Fensterdiagnose bleiben lokal. Diagnoseausgaben können Fenstertitel enthalten; gestartete Anwendungen haben eigene Datenwege.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Sway für Einsteiger: Meine Wayland-Konfiguration erklärt">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#grundlagen">Sway, Wayland und der restliche Desktop</a></li><li><a href="#variablen">Variablen und Tastenkürzel lesen</a></li><li><a href="#monitore">Zwei Monitore richtig zuordnen</a></li><li><a href="#workspaces">Workspaces und Fenster zuordnen</a></li><li><a href="#regeln">Fensterregeln: app_id und class unterscheiden</a></li><li><a href="#autostart">Autostart, Audio und die Statusleiste</a></li><li><a href="#uebung">Übung: Fensterabstände ändern und prüfen</a></li><li><a href="#rueckweg">Änderung zurücknehmen und Daten bewusst teilen</a></li><li><a href="#quellen">Konfiguration und offizielle Referenzen</a></li></ol></details>
+<p>Sway ordnet Fenster automatisch an und lässt sich über eine Textdatei steuern. Meine <a href="https://github.com/dennishilk/cthulhu/blob/main/WM/sway/config">Sway-Konfiguration im Cthulhu-Repository</a> zeigt einen praktischen Desktop mit zwei Monitoren, wenigen Workspaces und eigenen Programmstarts. Wir lesen die wichtigen Stellen und testen eine kleine Änderung.</p>
+<p>Das Tutorial setzt eine bereits laufende Sway-Sitzung voraus. Es erklärt die veröffentlichte Datei, nicht die gesamte Installation einer Distribution. Im Repository liegt auch eine ältere <a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/sway/config">Arch-Kopie</a>; diese Anleitung verwendet den Stand unter <code>WM/sway/config</code>, geprüft am 7. Oktober 2026.</p>
+<h2 id="grundlagen">Sway, Wayland und der restliche Desktop</h2>
+<p>Sway ist ein Wayland-Compositor mit einer an i3 angelehnten Bedienung. Er organisiert Fenster und die Ausgabe auf Bildschirmen. Programme wie Terminal, Launcher, Statusleiste und Audio-Werkzeuge kommen hinzu. Tiling bedeutet, dass normale Fenster die verfügbare Fläche in einer Anordnung teilen.</p>
+<p>Die Konfiguration installiert diese Programme nicht. Alacritty, Rofi, Waybar, <code>wpctl</code> oder <code>playerctl</code> müssen zum jeweiligen Aufbau passen. Prüfe insbesondere, ob dein Programmstarter Wayland unterstützt. Wer zuerst den Unterschied zu meinem X11-Aufbau verstehen möchte, findet ihn im <a href="/de/blog/xmonad-hs-verstehen/">XMonad-Artikel</a>.</p>
+<h2 id="variablen">Variablen und Tastenkürzel lesen</h2>
+<p>Der Anfang benennt wiederverwendbare Werte:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>set $mod Mod4
+set $term alacritty
+set $menu rofi -show drun -show-icons</code></pre>
+<p><code>$mod</code> ist hier Super, normalerweise die Windows-Taste. <code>$term</code> enthält das Terminalkommando, <code>$menu</code> den Programmstarter. Dadurch lässt sich ein Programm an einer Stelle ändern, ohne jeden Tasteneintrag umzuschreiben.</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+q kill
+bindsym $mod+f fullscreen toggle
+bindsym $mod+Shift+f floating toggle
+bindsym $mod+Shift+c reload</code></pre>
+<p><code>bindsym</code> verbindet eine Tastenkombination mit einer Aktion. <code>exec</code> startet ein Programm; <code>kill</code> schließt das fokussierte Fenster. Floating löst ein Fenster aus der Kachelanordnung. Die genannten Tasten stammen aus meiner Datei und können von der Standardkonfiguration deiner Distribution abweichen.</p>
+<h2 id="monitore">Zwei Monitore richtig zuordnen</h2>
+<p>In meiner Datei steht der Hauptmonitor links, der zweite rechts daneben:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>output DP-1 resolution 3440x1440@144.000Hz position 0,0 adaptive_sync off
+output HDMI-A-1 resolution 1920x1080@60Hz position 3440,0 adaptive_sync off</code></pre>
+<p>Die zweite X-Position beginnt bei <code>3440</code>, der Breite des ersten Bildschirms in diesem Aufbau. Namen, Auflösungen und Bildraten sind persönliche Hardwarewerte. Adaptive Sync ist hier ausgeschaltet; das ist keine allgemeine Empfehlung für alle Monitore.</p>
+<p>Frage in deiner laufenden Sway-Sitzung zuerst die tatsächlichen Ausgänge und verfügbaren Modi ab:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>swaymsg -t get_outputs</code></pre>
+<p>Vergleiche Name und Modus mit deinem eigenen Aufbau, bevor du Monitorzeilen übernimmst. Bei Skalierung musst du auch die logische Anordnung beachten. Für einen Laptop mit nur einem internen Display ist mein Zwei-Monitor-Block unnötig. Auch die Hintergrundbilder unter <code>/home/nebu/...</code> brauchen eigene, vorhandene Pfade.</p>
+<h2 id="workspaces">Workspaces und Fenster zuordnen</h2>
+<p>Workspaces sind Arbeitsflächen. Meine Datei benennt zwei und weist sie den Monitoren zu:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>set $ws1 "1"
+set $ws2 "2"
+workspace $ws1 output DP-1
+workspace $ws2 output HDMI-A-1
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+Shift+1 move container to workspace number $ws1</code></pre>
+<p>Super + 1 öffnet Workspace 1. Mit Super + Shift + 1 verschiebst du das fokussierte Fenster dorthin. Die entsprechende Belegung für Workspace 2 steht ebenfalls in der Datei. Eine Monitorzuordnung bestimmt, wo diese Arbeitsfläche erscheinen soll; sie ist keine feste Regel für jede gestartete Anwendung.</p>
+<p>Die veröffentlichte Datei hat eigene, knappe Belegungen. Für zusätzliche Fokus- und Split-Tasten kannst du dich an der Sway-Standardkonfiguration orientieren und sie bewusst ergänzen. Das vollständige Ersetzen einer vorhandenen Datei kann sonst vertraute Tasten entfernen.</p>
+<h2 id="regeln">Fensterregeln: app_id und class unterscheiden</h2>
+<p>Ein Dialog oder eine virtuelle Maschine ist oft als schwebendes Fenster angenehmer. Meine Datei enthält beispielsweise:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>for_window [app_id="virt-manager"] floating enable, resize set 1000 700, move position center
+for_window [class="Steam"] floating enable</code></pre>
+<p><code>app_id</code> identifiziert native Wayland-Fenster, <code>class</code> X11-Fenster über XWayland. Der richtige Wert hängt vom tatsächlichen Programm und dessen Fenster ab. Um Eigenschaften zu untersuchen, verwende:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>swaymsg -t get_tree</code></pre>
+<p>Suche das gewünschte Fenster und prüfe seine Kennung. Titelbasierte Regeln können zu breit greifen; teste eine Regel mit einem klar erkennbaren Fenster. Die persönlichen Regeln für Spiele, Videoeditoren und Emulatoren zeigen meinen Bedarf, garantieren aber keinen allgemeinen Fix für deren Verhalten.</p>
+<h2 id="autostart">Autostart, Audio und die Statusleiste</h2>
+<p><code>exec</code> startet einen Befehl beim Sitzungsstart. <code>exec_always</code> führt ihn zusätzlich bei Reloads erneut aus. Meine Datei verwendet Letzteres für autotiling und einen verzögerten Waybar-Neustart. Ein Reload kann deshalb weitere Prozesse starten oder die Leiste neu aufbauen.</p>
+<p>Die Lautstärketasten rufen <code>wpctl</code> auf, die Mediensteuerung <code>playerctl</code>. Der Print-Eintrag startet <code>xfce4-screenshooter</code>; dessen Eignung ist in der jeweiligen Wayland-Umgebung zu prüfen. Ein Tasteneintrag ist noch kein Nachweis, dass der Helfer installiert ist oder auf jedem System funktioniert.</p>
+<p>Ein Umgebungsaufruf aktualisiert außerdem Wayland-/Desktop-Werte für D-Bus-aktivierte Programme. Die genaue Portal-Einrichtung gehört zur Distribution. Die Leiste selbst wird im <a href="/de/blog/waybar-konfigurieren/">Waybar-Tutorial</a> mit einer getrennten Testdatei erklärt.</p>
+<h2 id="uebung">Übung: Fensterabstände ändern und prüfen</h2>
+<p>Verwende deinen tatsächlich aktiven Konfigurationspfad. Das folgende Beispiel nimmt <code>~/.config/sway/config</code> an; ältere oder ausdrücklich anders gestartete Setups können einen anderen Pfad laden. Sichere die Datei:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>cp -a --backup=numbered ~/.config/sway/config ~/.config/sway/config.before-tutorial</code></pre>
+<p>Ändere nur den vorhandenen inneren Abstand, etwa von <code>8</code> auf <code>12</code>:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>gaps inner 12</code></pre>
+<p>Prüfe die bearbeitete Datei innerhalb deiner funktionierenden Sitzung:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sway --validate --config ~/.config/sway/config</code></pre>
+<p>Korrigiere gemeldete Konfigurationsfehler vor dem nächsten Schritt. Die Validierung prüft keine Hardwareeignung und nicht jedes externe Programm. Bei erfolgreicher Prüfung lade die Konfiguration:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>swaymsg reload</code></pre>
+<p>Öffne zwei gekachelte Fenster. Der Zwischenraum sollte sich verändern. Beachte auch die Antwort von Sway und mögliche Meldungen der Autostart-Helfer. Für diese Übung bleiben Monitor- und Netzwerkangaben unverändert.</p>
+<h2 id="rueckweg">Änderung zurücknehmen und Daten bewusst teilen</h2>
+<p>Setze den Abstand auf den bisherigen Wert zurück oder stelle die Sicherung wieder her, wenn keine späteren Änderungen verloren gehen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>cp -a ~/.config/sway/config.before-tutorial ~/.config/sway/config</code></pre>
+<p>Validiere die wiederhergestellte Datei und führe danach erneut <code>swaymsg reload</code> aus. Bearbeiten und Prüfen bleiben lokal. Fensterbäume können Dokumenttitel und Programminformationen enthalten; sie gehören vor einem öffentlichen Hilfe-Post durchgesehen. Das gilt auch für persönliche Dateipfade in der Konfiguration.</p>
+<h2 id="quellen">Konfiguration und offizielle Referenzen</h2>
+<p>Quellcode und Befehlsreferenzen wurden am 7. Oktober 2026 geprüft.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/sway/config">Meine Sway-Konfiguration</a></li><li><a href="https://github.com/swaywm/sway/blob/master/sway/sway.5.scd">Sway: Konfigurationsreferenz</a></li><li><a href="https://github.com/swaywm/sway/blob/master/swaymsg/swaymsg.1.scd">Sway: IPC und swaymsg</a></li><li><a href="https://manpages.debian.org/testing/sway/sway.1.en.html">Sway-Handbuch: Konfigurationspfade und Validierung</a></li></ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Alle Tutorials</a><a href="#page-top">Nach oben ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#grundlagen">Sway, Wayland und der restliche Desktop</a></li><li><a href="#variablen">Variablen und Tastenkürzel lesen</a></li><li><a href="#monitore">Zwei Monitore richtig zuordnen</a></li><li><a href="#workspaces">Workspaces und Fenster zuordnen</a></li><li><a href="#regeln">Fensterregeln: app_id und class unterscheiden</a></li><li><a href="#autostart">Autostart, Audio und die Statusleiste</a></li><li><a href="#uebung">Übung: Fensterabstände ändern und prüfen</a></li><li><a href="#rueckweg">Änderung zurücknehmen und Daten bewusst teilen</a></li><li><a href="#quellen">Konfiguration und offizielle Referenzen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Quellcode auf GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/waybar-konfigurieren/">Waybar konfigurieren: Eine verständliche Statusleiste für Sway <span aria-hidden="true">→</span></a><a href="/de/blog/xmonad-hs-verstehen/">XMonad verstehen: Meine xmonad.hs Schritt für Schritt <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

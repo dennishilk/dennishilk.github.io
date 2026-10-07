@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gruvnode: Arch and XMonad on the ThinkPad X1 Carbon · Dennis Hilk</title>
+<meta name="description" content="Gruvnode explained: from a Debian T480 to an Arch X1 Carbon. Understand the installer, XMonad, Xmobar, audio, Wi-Fi, configuration backups and first startup.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/gruvnode-x1-carbon-xmonad/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gruvnode: Arch and XMonad on the ThinkPad X1 Carbon">
+<meta property="og:description" content="Gruvnode explained: from a Debian T480 to an Arch X1 Carbon. Understand the installer, XMonad, Xmobar, audio, Wi-Fi, configuration backups and first startup.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gruvnode: Arch and XMonad on the ThinkPad X1 Carbon">
+<meta name="twitter:description" content="Gruvnode explained: from a Debian T480 to an Arch X1 Carbon. Understand the installer, XMonad, Xmobar, audio, Wi-Fi, configuration backups and first startup.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/","url":"https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/","headline":"Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon","description":"Gruvnode explained: from a Debian T480 to an Arch X1 Carbon. Understand the installer, XMonad, Xmobar, audio, Wi-Fi, configuration backups and first startup.","inLanguage":"en","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Gruvnode & ThinkPad","wordCount":1191},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon","item":"https://www.dennishilk.com/blog/gruvnode-x1-carbon-xmonad/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/gruvnode-x1-carbon-xmonad/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Gruvnode &amp; ThinkPad</span></nav>
+<header class="article-header"><p class="eyebrow">Gruvnode &amp; ThinkPad</p><h1>Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7 October 2026</time><span>7 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Your configuration, no Gruvnode account</span><p>The desktop is configured locally. Pacman, Git and the AUR download software; Chrome and other applications have their own privacy settings.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#generations">Two laptop generations, two profiles</a></li><li><a href="#components">How does this become a complete desktop?</a></li><li><a href="#installer">What exactly does the X1 installer do?</a></li><li><a href="#installation">Install in steps you can follow</a></li><li><a href="#workflow">The first few minutes on the desktop</a></li><li><a href="#xmobar">Understand the XMonad–Xmobar connection</a></li><li><a href="#checks">Check audio, Wi-Fi and battery deliberately</a></li><li><a href="#backups">Updates and returning to your own files</a></li><li><a href="#sources">Privacy and reviewed sources</a></li></ol></details>
+<p>Gruvnode is my personal laptop desktop: understandable, keyboard-driven and something I can provision again after reinstalling. The setup began on my former ThinkPad T480. Today, the active profile for my ThinkPad X1 Carbon lives in the same <a href="https://github.com/dennishilk/gruvnode">repository</a>.</p>
+<p>My “easy-going installer” handles repeated provisioning steps while keeping the configuration readable. This guide explains the current Arch profile, the installer workflow and the connection between XMonad and Xmobar. For Haskell basics, the <a href="/blog/xmonad-hs-explained/">XMonad introduction</a> starts with a smaller file.</p>
+<h2 id="generations">Two laptop generations, two profiles</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table><thead><tr><th>Profile</th><th>System</th><th>Role in the repository</th></tr></thead><tbody><tr><td><code>thinkpad-t480/</code></td><td>Debian 13, X11 and XMonad</td><td>Historical setup for the previous laptop</td></tr><tr><td><code>thinkpad-x1-carbon/</code></td><td>Arch Linux, X11 and XMonad</td><td>Current profile for my X1 Carbon with 16 GB RAM</td></tr></tbody></table></div>
+<p>The T480 remains as a readable record of the earlier setup. Its Intel Xorg and power settings are not automatically carried into the X1 profile. The newer profile uses the normal Xorg modesetting/libinput foundation and includes neither the old TLP configuration nor the T480 power tweaks.</p>
+<p>Portable desktop decisions can move with the laptop. Hardware adjustments need evidence from the current machine. My <a href="/museum/home-computing-lab/workstations/">museum workstation section</a> gives more context about the daily laptop.</p>
+<h2 id="components">How does this become a complete desktop?</h2>
+<ul><li><strong>XMonad</strong> arranges windows and manages keybindings.</li><li><strong>Xmobar</strong> displays the clock, battery and volume; the XMonad connection is prepared.</li><li><strong>Rofi and Kitty</strong> launch applications and provide a terminal.</li><li><strong>Picom and feh</strong> handle compositing and the wallpaper.</li><li><strong>PipeWire and WirePlumber</strong> supply audio and its management.</li><li><strong>NetworkManager with iwd</strong> handles networking and the Wi-Fi backend.</li><li><strong>BlueZ, Blueman, Thunar and Mousepad</strong> add Bluetooth and everyday file work.</li></ul>
+<p>Firmware packages, diagnostic utilities, OBS and other helpers complete the selection. Fastfetch is installed without being injected into shell startup. Gruvnode's desktop configuration therefore stays separate from your preferred shell presentation.</p>
+<h2 id="installer">What exactly does the X1 installer do?</h2>
+<p><code>thinkpad-x1-carbon/install.sh</code> first checks that it is running on Arch as a normal user. It uses <code>sudo</code> for specific system operations. The source separates the workflow into these steps:</p>
+<ol><li>Fully update Arch and install the official package list.</li><li>Build <code>yay</code> from the AUR if needed, then install Google Chrome through yay.</li><li>Configure NetworkManager for iwd, enable networking/Bluetooth and start the audio user services.</li><li>Deploy managed user files and helper scripts.</li><li>Link the shared wallpaper and run <code>xmonad --recompile</code>.</li></ol>
+<p>Gruvnode does not install Arch itself. It assumes an installed system with a normal user and sudo. Chrome currently belongs to the X1 profile. Official packages come through pacman; the AUR build is a separate step. Read the package list and AUR build files before adopting the setup.</p>
+<p>The installer automatically confirms package operations and restarts NetworkManager. Run initial provisioning locally on the laptop and account for the network interruption. A small desktop does not mean the installer only changes one Haskell file.</p>
+<h2 id="installation">Install in steps you can follow</h2>
+<p>Start with a working Arch installation. Before a full update, check <a href="https://archlinux.org/news/">Arch news</a> for required manual intervention. If Git is missing, install it as part of a complete update:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo pacman -Syu --needed git</code></pre>
+<p>Clone the repository:</p>
+<pre tabindex="0" aria-label="Code example"><code>git clone https://github.com/dennishilk/gruvnode.git</code></pre>
+<p>Enter the current profile explicitly:</p>
+<pre tabindex="0" aria-label="Code example"><code>cd gruvnode/thinkpad-x1-carbon</code></pre>
+<p>Read its README and <code>install.sh</code>. The included validation checks files, shell syntax and expected configuration entries:</p>
+<pre tabindex="0" aria-label="Code example"><code>bash tests/validate.sh</code></pre>
+<p>Optional Shellcheck and Haskell checks run only when their tools are available. Passing validation is therefore not a hardware test. Make the installer executable:</p>
+<pre tabindex="0" aria-label="Code example"><code>chmod +x install.sh</code></pre>
+<p>Run it as your normal user without putting sudo in front:</p>
+<pre tabindex="0" aria-label="Code example"><code>./install.sh</code></pre>
+<p>Read the final output, including any backup path. After the first firmware/audio/Wi-Fi provisioning run, the profile recommends a reboot. Log in on a TTY afterwards and start the X11 session:</p>
+<pre tabindex="0" aria-label="Code example"><code>startx</code></pre>
+<p><code>~/.xinitrc</code> sets the desktop environment and launches XMonad. The installer does not provision a complete graphical login manager.</p>
+<h2 id="workflow">The first few minutes on the desktop</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table><thead><tr><th>Keys</th><th>X1 profile action</th></tr></thead><tbody><tr><td>Super + Enter</td><td>Kitty</td></tr><tr><td>Super + D</td><td>Rofi</td></tr><tr><td>Super + B / O / T</td><td>Chrome / OBS / Thunar</td></tr><tr><td>Super + J / K</td><td>Change window focus</td></tr><tr><td>Super + H / L</td><td>Shrink or expand the master area</td></tr><tr><td>Super + Space</td><td>Cycle Tall and Full</td></tr><tr><td>Super + Shift + R</td><td>Compile and restart XMonad</td></tr><tr><td>Print</td><td>Screenshot under <code>~/Pictures/Screenshots/</code></td></tr></tbody></table></div>
+<p>Mousepad opens through Rofi and deliberately has no dedicated binding. Normal windows tile; detected dialogs are centred and floated. Volume keys use PipeWire through <code>wpctl</code>; brightness keys call <code>brightnessctl</code>.</p>
+<h2 id="xmobar">Understand the XMonad–Xmobar connection</h2>
+<p>In <code>xmonad.hs</code>, <code>statusBarProp</code> writes status information to the X11 property <code>_XMONAD_LOG</code>. <code>withSB</code> manages the associated bar within XMonad's lifecycle. Xmobar's <code>Run XMonadLog</code> plugin can read that information.</p>
+<p>The current Xmobar template actually displays the clock, battery and volume:</p>
+<pre tabindex="0" aria-label="Code example"><code>, template = "}{ %date%  %battery%  %volume% "</code></pre>
+<p>Although the XMonadLog plugin is configured, its visible placeholder is absent. To display workspaces and the prepared window title as well, first back up the file:</p>
+<pre tabindex="0" aria-label="Code example"><code>cp -a --backup=numbered ~/.config/xmobar/xmobarrc ~/.config/xmobar/xmobarrc.before-tutorial</code></pre>
+<p>Replace only the existing template line with this example:</p>
+<pre tabindex="0" aria-label="Code example"><code>, template = "%XMonadLog% }{ %date%  %battery%  %volume% "</code></pre>
+<p>Restart XMonad so its managed bar starts again:</p>
+<pre tabindex="0" aria-label="Code example"><code>xmonad --restart</code></pre>
+<p>Check the left side while switching workspaces. Restore the original template line and restart to undo the exercise. The installed network helper is not automatically displayed in the current template either.</p>
+<h2 id="checks">Check audio, Wi-Fi and battery deliberately</h2>
+<p>If the bar shows <code>vol n/a</code>, the helper could not query a usable default output. Start with:</p>
+<pre tabindex="0" aria-label="Code example"><code>wpctl status</code></pre>
+<p>To inspect network devices and their state, use:</p>
+<pre tabindex="0" aria-label="Code example"><code>nmcli device</code></pre>
+<p>NetworkManager manages Wi-Fi through its iwd backend. The profile does not call for separately enabling independent iwd management. The battery helper finds the first available <code>BAT*</code> device rather than assuming <code>BAT0</code>; a standalone <code>AC</code> can also mean it did not find a battery device.</p>
+<p>Use <code>xrandr</code> to inspect external displays initially. The profile does not invent a dock's or monitor's identifiers in advance. Cameras and audio devices still need testing on the actual laptop.</p>
+<h2 id="backups">Updates and returning to your own files</h2>
+<p>Existing managed user files are backed up before replacement under <code>${XDG_STATE_HOME:-~/.local/state}/gruvnode/backups/</code>, in a dated run directory. The installer reports the precise path. This covers its selected files rather than providing a full system backup or automatic uninstaller.</p>
+<p>If necessary, restore individual files from the reported backup. Compile a restored XMonad file and restart only after success. Package upgrades, AUR installations, services and NetworkManager system settings need their own return path; copying back a desktop file does not remove them.</p>
+<p>To update the profile, return to its directory and fetch changes:</p>
+<pre tabindex="0" aria-label="Code example"><code>git pull --ff-only</code></pre>
+<p>Review the diff before running <code>./install.sh</code> again. Save local customisations deliberately. The <a href="/blog/backup-linux-configuration/">backup guide</a> explains which extra paths and dependencies belong in your recovery plan.</p>
+<h2 id="sources">Privacy and reviewed sources</h2>
+<p>Gruvnode requires no account of its own and does not automatically upload configuration backups. Software downloads contact GitHub, package repositories and the AUR. Chrome, OBS and other applications retain their own network and privacy behaviour. Bars and screenshots may display window titles or file paths.</p>
+<p>The guide follows the current X1 profile and historical T480 installer, reviewed on 7 October 2026.</p>
+<ul><li><a href="https://github.com/dennishilk/gruvnode">Gruvnode and its generations</a></li><li><a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/install.sh">X1 installer</a></li><li><a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/xmonad/xmonad.hs">X1 XMonad configuration</a></li><li><a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/xmobar/xmobarrc">Xmobar modules and template</a></li><li><a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/tests/validate.sh">Profile validation and its limits</a></li><li><a href="https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Hooks-StatusBar.html">XMonad StatusBar and property logging</a></li><li><a href="https://man.archlinux.org/man/pacman.8.en">Arch pacman manual</a></li></ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← All tutorials</a><a href="#page-top">Back to top ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#generations">Two laptop generations, two profiles</a></li><li><a href="#components">How does this become a complete desktop?</a></li><li><a href="#installer">What exactly does the X1 installer do?</a></li><li><a href="#installation">Install in steps you can follow</a></li><li><a href="#workflow">The first few minutes on the desktop</a></li><li><a href="#xmobar">Understand the XMonad–Xmobar connection</a></li><li><a href="#checks">Check audio, Wi-Fi and battery deliberately</a></li><li><a href="#backups">Updates and returning to your own files</a></li><li><a href="#sources">Privacy and reviewed sources</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/gruvnode">Source on GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Useful next steps</p><a href="/blog/xmonad-hs-explained/">Understanding XMonad: My xmonad.hs step by step <span aria-hidden="true">→</span></a><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

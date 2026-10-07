@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configure Waybar: JSONC, modules and CSS explained · Dennis Hilk</title>
+<meta name="description" content="Waybar for beginners: understand my Sway bar, separate JSONC from CSS, preview a small configuration and add a clock, volume and CPU display.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/configure-waybar/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-waybar/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/waybar-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-waybar/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Configure Waybar: JSONC, modules and CSS explained">
+<meta property="og:description" content="Waybar for beginners: understand my Sway bar, separate JSONC from CSS, preview a small configuration and add a clock, volume and CPU display.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/configure-waybar/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Configure Waybar: JSONC, modules and CSS explained">
+<meta name="twitter:description" content="Waybar for beginners: understand my Sway bar, separate JSONC from CSS, preview a small configuration and add a clock, volume and CPU display.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/configure-waybar/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/configure-waybar/","url":"https://www.dennishilk.com/blog/configure-waybar/","headline":"Configure Waybar: A clear status bar for Sway","description":"Waybar for beginners: understand my Sway bar, separate JSONC from CSS, preview a small configuration and add a clock, volume and CPU display.","inLanguage":"en","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Waybar & Desktop","wordCount":938},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Configure Waybar: A clear status bar for Sway","item":"https://www.dennishilk.com/blog/configure-waybar/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/waybar-konfigurieren/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Waybar &amp; Desktop</span></nav>
+<header class="article-header"><p class="eyebrow">Waybar &amp; Desktop</p><h1>Configure Waybar: A clear status bar for Sway</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7 October 2026</time><span>6 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Status displays without a cloud service</span><p>These modules read local time, audio and system information. Custom scripts or modules added later may involve additional data handling.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Configure Waybar: A clear status bar for Sway">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#files">Two files with different jobs</a></li><li><a href="#my-bar">What does my published bar actually show?</a></li><li><a href="#test-config">Create a small test configuration</a></li><li><a href="#styling">Readable styling with Gruvbox-like colours</a></li><li><a href="#preview">Start and stop the preview</a></li><li><a href="#cpu">Exercise: Add a CPU display</a></li><li><a href="#troubleshooting">If a module or the entire bar is missing</a></li><li><a href="#privacy">Privacy and moving from preview to daily use</a></li><li><a href="#sources">Example and reference material</a></li></ol></details>
+<p>A small clock and volume indicator are often enough to make a minimal desktop comfortable. My <a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/waybar/config.jsonc">Waybar configuration in the Cthulhu repository</a> is a useful starting point. It shows how a few settings become a status bar.</p>
+<p>This tutorial assumes a running Sway session with Waybar installed. We will create separate test files and launch them from a terminal. Your existing bar remains in place while you learn how content and styling work. The <a href="/blog/sway-configuration-explained/">Sway guide</a> explains the desktop around it.</p>
+<h2 id="files">Two files with different jobs</h2>
+<p>The configuration is normally called <code>config</code> or <code>config.jsonc</code> under <code>~/.config/waybar/</code>. JSONC describes content and behaviour and also permits comments. A CSS file controls fonts, colours and spacing.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table><thead><tr><th>File</th><th>Typical role</th></tr></thead><tbody><tr><td><code>config.jsonc</code></td><td>Position, output, visible modules, formats and update intervals</td></tr><tr><td><code>style.css</code></td><td>Background, text colour, fonts and module spacing</td></tr></tbody></table></div>
+<p>Fix a wrong module list in the configuration. Fix an unreadable text colour in CSS. Waybar uses GTK CSS, so not every CSS property from a web browser works the same way here.</p>
+<h2 id="my-bar">What does my published bar actually show?</h2>
+<p>The important lines in my example are:</p>
+<pre tabindex="0" aria-label="Code example"><code>"position": "top",
+"output": "DP-1",
+"modules-left": [],
+"modules-center": ["clock"],
+"modules-right": ["pulseaudio"]</code></pre>
+<p>The clock sits in the centre, volume on the right, and the bar appears on my <code>DP-1</code> output. Adapt that monitor name or omit the selection. My clock shows seconds and opens gsimplecal when clicked; the volume display opens pavucontrol. Those applications must exist separately.</p>
+<p>The file also defines network, CPU, temperature and memory settings. However, none is included in the visible module lists. A configured block alone therefore does not display anything. This distinction between configuration and visibility is essential.</p>
+<h2 id="test-config">Create a small test configuration</h2>
+<p>Create the configuration directory if needed:</p>
+<pre tabindex="0" aria-label="Code example"><code>mkdir -p ~/.config/waybar</code></pre>
+<p>Use your editor to save this complete JSON file as <code>~/.config/waybar/tutorial.jsonc</code>. Choose another name if a personal file already exists there. The preview sits at the bottom and needs no Nerd Font icons:</p>
+<pre tabindex="0" aria-label="Code example"><code>{
+  "layer": "top",
+  "position": "bottom",
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio"],
+  "clock": {
+    "format": "{:%H:%M}",
+    "interval": 60
+  },
+  "pulseaudio": {
+    "format": "Vol {volume}%",
+    "format-muted": "Muted"
+  }
+}</code></pre>
+<p>Commas separate properties; there is no comma after the last property in an object here. The braces in <code>{volume}</code> belong to the audio module's format. The clock uses its own time-format placeholders.</p>
+<p>The <code>pulseaudio</code> module uses that audio interface. A PipeWire system can supply it through PipeWire-Pulse. The module name does not automatically require a second, independent PulseAudio service.</p>
+<h2 id="styling">Readable styling with Gruvbox-like colours</h2>
+<p>Save a second test file as <code>~/.config/waybar/tutorial.css</code>:</p>
+<pre tabindex="0" aria-label="Code example"><code>* {
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+window#waybar {
+  background: #282828;
+  color: #ebdbb2;
+}
+
+#clock, #pulseaudio, #cpu {
+  padding: 0 10px;
+}</code></pre>
+<p>The dark background and light text fit my desktop's colour palette. A basic system font keeps this introduction independent of special icon fonts. <code>#clock</code> selects the clock module; these selectors refer to Waybar's elements.</p>
+<p>Start with contrast and readability. Add colours, borders or effects individually afterwards. An elaborate bar is less useful if you can barely read its battery indicator or mute state.</p>
+<h2 id="preview">Start and stop the preview</h2>
+<p>Launch the two files you just created:</p>
+<pre tabindex="0" aria-label="Code example"><code>waybar -c ~/.config/waybar/tutorial.jsonc -s ~/.config/waybar/tutorial.css</code></pre>
+<p>A clock and volume display should appear at the bottom. The terminal stays attached to this process and shows its messages. An additional bar can reserve screen space; this is a separate preview, not a second permanent startup bar.</p>
+<p>Stop this preview with Ctrl + C in its terminal. Your normal bar remains. Save further edits and run the same preview command again. For a first experiment, this is easier to follow than terminating every Waybar process.</p>
+<h2 id="cpu">Exercise: Add a CPU display</h2>
+<p>Replace the right-hand module list in the test file with:</p>
+<pre tabindex="0" aria-label="Code example"><code>"modules-right": ["cpu", "pulseaudio"]</code></pre>
+<p>Add a CPU block at the same object level, remembering the separating comma before or after the new property:</p>
+<pre tabindex="0" aria-label="Code example"><code>"cpu": {
+  "format": "CPU {usage}%",
+  "interval": 2
+}</code></pre>
+<p>On the next preview launch, a CPU percentage should appear before volume on the right. It is a short utilisation indicator rather than a complete diagnosis of a slow computer. To undo the change, remove <code>cpu</code> from the module list again; its unused settings can remain.</p>
+<h2 id="troubleshooting">If a module or the entire bar is missing</h2>
+<ul><li><strong>No bar:</strong> Check terminal output, file paths and whether you launched it inside the running Sway session.</li><li><strong>JSON error:</strong> Inspect commas, quotation marks and closed braces at the reported position.</li><li><strong>Missing module:</strong> Check its spelling in the visible list and availability in the installed Waybar build.</li><li><strong>No volume value:</strong> Inspect your audio stack and default output before changing colours.</li><li><strong>Boxes instead of icons:</strong> Check the font. Our text example avoids that dependency.</li></ul>
+<p>A wrong <code>output</code> name is another common cause when adopting configurations. The preview omits it deliberately. Within Sway, <code>swaymsg -t get_outputs</code> shows your actual outputs.</p>
+<h2 id="privacy">Privacy and moving from preview to daily use</h2>
+<p>The examples display local time, audio and CPU data. They need no cloud service. That does not automatically apply to every configuration you find: a custom module can run a script that fetches weather over the network, for example. Read those scripts too.</p>
+<p>If you like the preview, back up your regular configuration and adopt the desired changes deliberately. Keep one appropriate startup command. My Sway file already launches Waybar, so additional entries can produce duplicate bars. For this exercise, Ctrl + C and keeping your original files provide the return path.</p>
+<h2 id="sources">Example and reference material</h2>
+<p>My file and the Waybar documentation were reviewed on 7 October 2026. The test files here are deliberately simplified learning examples.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/waybar/config.jsonc">My Waybar configuration</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/Arch/waybar/style.css">Its accompanying stylesheet</a></li><li><a href="https://github.com/Alexays/Waybar/wiki/Configuration">Waybar configuration and visible modules</a></li><li><a href="https://github.com/Alexays/Waybar/wiki/Styling">Waybar GTK CSS</a></li><li><a href="https://github.com/Alexays/Waybar/wiki/Module:-Clock">Waybar clock module and time formatting</a></li></ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← All tutorials</a><a href="#page-top">Back to top ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#files">Two files with different jobs</a></li><li><a href="#my-bar">What does my published bar actually show?</a></li><li><a href="#test-config">Create a small test configuration</a></li><li><a href="#styling">Readable styling with Gruvbox-like colours</a></li><li><a href="#preview">Start and stop the preview</a></li><li><a href="#cpu">Exercise: Add a CPU display</a></li><li><a href="#troubleshooting">If a module or the entire bar is missing</a></li><li><a href="#privacy">Privacy and moving from preview to daily use</a></li><li><a href="#sources">Example and reference material</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Source on GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Useful next steps</p><a href="/blog/sway-configuration-explained/">Sway for beginners: My Wayland configuration explained <span aria-hidden="true">→</span></a><a href="/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

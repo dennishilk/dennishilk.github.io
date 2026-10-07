@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux gaming: Steam, Proton, Lutris and MangoHud · Dennis Hilk</title>
+<meta name="description" content="Linux gaming for beginners: understand Steam, Proton, Lutris, GameMode and MangoHud, test one game deliberately and inspect the Linux Gaming Toolkit scope.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-gaming-steam-proton-lutris/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux gaming: Steam, Proton, Lutris and MangoHud">
+<meta property="og:description" content="Linux gaming for beginners: understand Steam, Proton, Lutris, GameMode and MangoHud, test one game deliberately and inspect the Linux Gaming Toolkit scope.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linux gaming: Steam, Proton, Lutris and MangoHud">
+<meta name="twitter:description" content="Linux gaming for beginners: understand Steam, Proton, Lutris, GameMode and MangoHud, test one game deliberately and inspect the Linux Gaming Toolkit scope.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/","url":"https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/","headline":"Understand Linux gaming: Steam, Proton, Lutris and MangoHud","description":"Linux gaming for beginners: understand Steam, Proton, Lutris, GameMode and MangoHud, test one game deliberately and inspect the Linux Gaming Toolkit scope.","inLanguage":"en","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Linux & Gaming","wordCount":1053},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Understand Linux gaming: Steam, Proton, Lutris and MangoHud","item":"https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/linux-gaming-steam-proton-lutris/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Gaming</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Gaming</p><h1>Understand Linux gaming: Steam, Proton, Lutris and MangoHud</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7 October 2026</time><span>6 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Use downloads and game accounts deliberately</span><p>Launchers and games can require accounts, downloads and online services. Configuration and diagnostics stay local unless you choose to share them.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Understand Linux gaming: Steam, Proton, Lutris and MangoHud">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#components">Organise the components by purpose</a></li><li><a href="#proton">What do Proton and Wine provide?</a></li><li><a href="#lutris">Lutris and separate game environments</a></li><li><a href="#drivers">Check the graphics foundation first</a></li><li><a href="#toolkit">What does the Toolkit currently install?</a></li><li><a href="#mangohud">Exercise: Observe a working game with MangoHud</a></li><li><a href="#gamemode">Treat GameMode as a separate experiment</a></li><li><a href="#privacy">Privacy, logs and your next step</a></li><li><a href="#sources">Source code and technical references</a></li></ol></details>
+<p>Steam, Proton, Wine, Lutris, GameMode and MangoHud: getting into Linux gaming introduces many names. They solve different problems. Separating their roles makes it easier to decide what your first game actually needs.</p>
+<p>My <a href="https://github.com/dennishilk/linux-gaming-toolkit">Linux Gaming Toolkit</a> groups some installation steps into a Bash menu. This guide first explains the components, then the script's actual current scope. Our exercise adds one display to a game that already works. It assumes a functioning Linux desktop with an appropriate graphics driver.</p>
+<h2 id="components">Organise the components by purpose</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table><thead><tr><th>Component</th><th>Role</th><th>When it is useful</th></tr></thead><tbody>
+<tr><td>Steam</td><td>Library, downloads, launching and platform features</td><td>For games in your Steam library</td></tr>
+<tr><td>Proton</td><td>Windows compatibility within Steam Play</td><td>For suitable Windows games in Steam</td></tr>
+<tr><td>Lutris</td><td>Manage games and appropriate runners</td><td>For other games, launchers and custom installations</td></tr>
+<tr><td>Heroic</td><td>An additional game launcher</td><td>When its supported libraries fit your games</td></tr>
+<tr><td>GameMode</td><td>Request temporary system optimisations</td><td>As an addition to test independently</td></tr>
+<tr><td>MangoHud</td><td>Display performance information in a game</td><td>For observation and comparison</td></tr>
+</tbody></table></div>
+<p>A launcher is not a graphics driver. An overlay does not automatically make an incompatible game work. Start with one title and the smallest appropriate combination, then add other tools deliberately.</p>
+<h2 id="proton">What do Proton and Wine provide?</h2>
+<p>Proton is Valve's compatibility tool for Steam Play, using Wine and additional components. It lets many Windows games run on Linux. Beginners normally use the Proton versions supplied by Steam rather than building Proton themselves.</p>
+<p>The stack also includes graphics translation components such as DXVK and VKD3D-Proton. These are not extra launchers. Installing every named component globally is not a useful first step for an ordinary Steam Proton game.</p>
+<p>Compatibility remains specific to the game. Launchers, copy protection or multiplayer requirements can introduce other constraints. Check your exact title and its publisher's guidance first. Successfully launching a different game does not establish compatibility for this one.</p>
+<h2 id="lutris">Lutris and separate game environments</h2>
+<p>Lutris organises games and runners, including different Wine environments. A Wine prefix contains the corresponding Windows-like file structure and settings. Keep such environments separate so changes for one game need not affect other installations.</p>
+<p>Before rebuilding an environment, save relevant game saves and existing settings. Record which runner version and launch command belong to a working setup. Replacing a prefix is different from reinstalling a launcher.</p>
+<p>Lutris is useful where its workflow fits; a working Steam game does not need to be moved out of Steam for that reason. Choose according to your title and library.</p>
+<h2 id="drivers">Check the graphics foundation first</h2>
+<p>Graphics drivers, Vulkan support and sometimes 32-bit libraries are foundational. Their packages and configuration differ between distributions. Inspect the graphics hardware:</p>
+<pre tabindex="0" aria-label="Code example"><code>lspci -nn</code></pre>
+<p>Look for display/VGA/3D devices rather than inferring the GPU from any AMD or Intel line in the entire PCI listing. Multiple graphics devices can be present. If <code>vulkan-tools</code> is installed, also run:</p>
+<pre tabindex="0" aria-label="Code example"><code>vulkaninfo --summary</code></pre>
+<p>This helps identify the device and Vulkan driver. It is not a stress test or a guarantee of every game's stability. NixOS systems configure the foundation declaratively; the <a href="/blog/nixos-configuration-nix-explained/">configuration.nix guide</a> explains that starting point.</p>
+<h2 id="toolkit">What does the Toolkit currently install?</h2>
+<p>The reviewed <code>linux-gaming-setup.sh</code> provides menu choices for GPU detection, drivers, gaming tools and benchmarks. Its gaming function includes Steam, GameMode/MangoHud, Heroic through Flatpak and OBS with a Flatpak fallback. Other functions use graphics and benchmark packages.</p>
+<p>The README mentions additional components. However, the current script has no dedicated installation steps for Lutris, WineHQ, itch.io or Discord, and does not build Proton separately. Steam supplies suitable Proton tools in a Steam setup. Distinguish the project overview from functions actually executed.</p>
+<p>You can download the code without installing its gaming stack:</p>
+<pre tabindex="0" aria-label="Code example"><code>git clone https://github.com/dennishilk/linux-gaming-toolkit.git</code></pre>
+<p>Enter the directory actually created:</p>
+<pre tabindex="0" aria-label="Code example"><code>cd linux-gaming-toolkit</code></pre>
+<p>Read the script:</p>
+<pre tabindex="0" aria-label="Code example"><code>less linux-gaming-setup.sh</code></pre>
+<p>The installer requires root. Before showing the menu, it configures package sources or additional architecture support and Flathub. Even choosing “Detect GPU” after a normal script launch is therefore not a purely observational workflow.</p>
+<p><strong>The current installer needs review for the specific distribution.</strong> GPU detection searches the entire PCI listing, and some package names do not fit every target system. Its Arch preparation uses <code>pacman -Sy</code>; Arch does not support partial-update workflows of that kind. A regular complete Arch update uses <code>pacman -Syu</code>. This guide therefore does not recommend an unchecked full script run.</p>
+<h2 id="mangohud">Exercise: Observe a working game with MangoHud</h2>
+<p>Choose a game that already runs without extra launch options. Install MangoHud according to your distribution's instructions first. Record the resolution and graphics settings and choose a repeatable scene.</p>
+<p>In that game's Steam properties, enter the following <strong>launch option</strong>. It is not a terminal command:</p>
+<pre tabindex="0" aria-label="Code example"><code>mangohud %command%</code></pre>
+<p>Restart the game. If the overlay works with its graphics path, information such as FPS and utilisation appears. Compare the same scene with the same settings. CPU or GPU utilisation alone does not identify the cause of a stutter.</p>
+<p>Remove the launch option to return to the previous game configuration. If the game fails to start with it, remove it first and inspect MangoHud's instructions for the relevant graphics API.</p>
+<h2 id="gamemode">Treat GameMode as a separate experiment</h2>
+<p>GameMode requests certain system optimisations while a game runs. The result depends on the system and workload. If installed, a separate Steam launch option is:</p>
+<pre tabindex="0" aria-label="Code example"><code>gamemoderun %command%</code></pre>
+<p>Test GameMode and MangoHud individually at first. Otherwise, a changed result does not reveal which addition caused it. Remove the corresponding launch option to undo that experiment. This does not uninstall packages or revert earlier system modifications by an installer.</p>
+<h2 id="privacy">Privacy, logs and your next step</h2>
+<p>Linux gaming is not automatically offline or account-free. Platforms, games, downloads and online features have their own data handling. Local diagnostics and configuration need not be uploaded for this exercise.</p>
+<p>The Toolkit normally logs to <code>/var/log/linux-gaming-toolkit.log</code>, with a fallback under <code>/tmp</code>. Review logs and screenshots before sharing them: paths, usernames and device information may appear. Back up game saves and important configuration before larger changes.</p>
+<p>If you are still preparing a move from Windows, start with the <a href="/blog/windows-to-linux-migration-checklist/">Linux migration checklist</a>. Build a working library one game at a time, recording results and making changes you can trace.</p>
+<h2 id="sources">Source code and technical references</h2>
+<p>The project scope and references were reviewed on 7 October 2026.</p>
+<ul><li><a href="https://github.com/dennishilk/linux-gaming-toolkit/blob/main/linux-gaming-setup.sh">Linux Gaming Toolkit: current script</a></li><li><a href="https://github.com/ValveSoftware/Proton">Valve: Proton</a></li><li><a href="https://lutris.net/about">Lutris and its runners</a></li><li><a href="https://github.com/flightlessmango/MangoHud">MangoHud usage and graphics APIs</a></li><li><a href="https://github.com/FeralInteractive/gamemode">GameMode behaviour and launch options</a></li><li><a href="https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported">Arch: partial upgrades are unsupported</a></li></ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← All tutorials</a><a href="#page-top">Back to top ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#components">Organise the components by purpose</a></li><li><a href="#proton">What do Proton and Wine provide?</a></li><li><a href="#lutris">Lutris and separate game environments</a></li><li><a href="#drivers">Check the graphics foundation first</a></li><li><a href="#toolkit">What does the Toolkit currently install?</a></li><li><a href="#mangohud">Exercise: Observe a working game with MangoHud</a></li><li><a href="#gamemode">Treat GameMode as a separate experiment</a></li><li><a href="#privacy">Privacy, logs and your next step</a></li><li><a href="#sources">Source code and technical references</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/linux-gaming-toolkit">Source on GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Useful next steps</p><a href="/blog/nixos-configuration-nix-explained/">NixOS for beginners: My configuration.nix explained <span aria-hidden="true">→</span></a><a href="/blog/sway-configuration-explained/">Sway for beginners: My Wayland configuration explained <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

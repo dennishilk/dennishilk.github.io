@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NixOS configuration.nix explained for beginners · Dennis Hilk</title>
+<meta name="description" content="Understand NixOS through my configuration.nix: packages, services, Plasma, PipeWire and hardware, with a small change you can build, test and undo.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/nixos-configuration-nix-explained/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/nixos-configuration-nix-explained/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/nixos-configuration-nix-explained/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NixOS configuration.nix explained for beginners">
+<meta property="og:description" content="Understand NixOS through my configuration.nix: packages, services, Plasma, PipeWire and hardware, with a small change you can build, test and undo.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/nixos-configuration-nix-explained/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NixOS configuration.nix explained for beginners">
+<meta name="twitter:description" content="Understand NixOS through my configuration.nix: packages, services, Plasma, PipeWire and hardware, with a small change you can build, test and undo.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/nixos-configuration-nix-explained/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/nixos-configuration-nix-explained/","url":"https://www.dennishilk.com/blog/nixos-configuration-nix-explained/","headline":"NixOS for beginners: My configuration.nix explained","description":"Understand NixOS through my configuration.nix: packages, services, Plasma, PipeWire and hardware, with a small change you can build, test and undo.","inLanguage":"en","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"NixOS & Configuration","wordCount":1075},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"NixOS for beginners: My configuration.nix explained","item":"https://www.dennishilk.com/blog/nixos-configuration-nix-explained/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/nixos-configuration-nix-verstehen/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>NixOS &amp; Configuration</span></nav>
+<header class="article-header"><p class="eyebrow">NixOS &amp; Configuration</p><h1>NixOS for beginners: My configuration.nix explained</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7 October 2026</time><span>6 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Configuration stays on your computer</span><p>You edit local files. Nix may download packages and sources when building; personal secrets should not be embedded in system configuration.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="NixOS for beginners: My configuration.nix explained">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#structure">How do you read configuration.nix?</a></li><li><a href="#packages">Installing packages and enabling services</a></li><li><a href="#desktop">What do Plasma and PipeWire configure?</a></li><li><a href="#hardware">Which parts depend on my computer?</a></li><li><a href="#try-it">A small exercise: Add jq</a></li><li><a href="#undo">How do you undo the change?</a></li><li><a href="#privacy">Privacy, generations and stateVersion</a></li><li><a href="#sources">Configuration and further reading</a></li></ol></details>
+<p>NixOS lets you describe much of your system in configuration: which programs exist, which services run and how the desktop is set up. My <a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">configuration.nix in the Cthulhu repository</a> provides a concrete example. The long file consists of many small decisions that you can understand separately.</p>
+<p>This introduction assumes that you already have a working NixOS installation. By the end, you should be able to identify the main blocks and test one package change. The examples refer to the published file reviewed on 7 October 2026. It describes Cthulhu with Plasma and Radeon graphics; another computer needs its own hardware settings.</p>
+<h2 id="structure">How do you read configuration.nix?</h2>
+<p>The file is a NixOS module. Its opening receives values including <code>pkgs</code>, which provides access to packages. The attribute set that follows contains settings. A small excerpt looks like this:</p>
+<pre tabindex="0" aria-label="Code example"><code>{ config, pkgs, ... }:
+{
+  imports = [ ./hardware-configuration.nix ];
+  networking.networkmanager.enable = true;
+  time.timeZone = "Europe/Berlin";
+}</code></pre>
+<p>Braces group attributes; square brackets contain a list. Strings have quotation marks, and Boolean values are <code>true</code> and <code>false</code>. Assignments end in semicolons. A dot in an option name takes you into a nested setting.</p>
+<p><code>imports</code> connects other modules to this file. The hardware file contains details such as detected filesystems and modules needed by this machine. Keep your own hardware file when learning. Add examples inside your existing configuration rather than replacing its hardware foundation with mine.</p>
+<h2 id="packages">Installing packages and enabling services</h2>
+<p>Everyday applications appear in <code>environment.systemPackages</code>. With <code>with pkgs;</code>, their names do not need a repeated <code>pkgs.</code> prefix. This excerpt deliberately shortens my list:</p>
+<pre tabindex="0" aria-label="Code example"><code>environment.systemPackages = with pkgs; [
+  kitty
+  curl
+  git
+  tree
+];</code></pre>
+<p>This makes the programs available system-wide. A background service needs more: it has to be configured and started. Appropriate NixOS modules handle that, as with <code>networking.networkmanager.enable = true;</code>. Adding a package name therefore does not replace configuring its service.</p>
+<p>Applications can also have dedicated modules. My file uses <code>programs.firefox.enable = true;</code>. Look up a setting in the <a href="https://search.nixos.org/options">NixOS option search</a> with the appropriate NixOS release selected. An example found elsewhere may use an option path that has since changed.</p>
+<h2 id="desktop">What do Plasma and PipeWire configure?</h2>
+<p>My configuration enables SDDM for login and Plasma 6 for the desktop. The key settings are:</p>
+<pre tabindex="0" aria-label="Code example"><code>services.displayManager.sddm.enable = true;
+services.desktopManager.plasma6.enable = true;</code></pre>
+<p>Xserver support and a German XKB keyboard layout are configured separately. Their presence does not mean every Plasma session runs on X11. The desktop environment, display manager and session type are different parts of the setup.</p>
+<p>For audio, the file enables PipeWire, WirePlumber and ALSA/PulseAudio compatibility. The separate PulseAudio service is disabled. Applications using a PulseAudio interface can still play audio. When something fails, first identify which audio path is active; competing services make the setup harder to understand.</p>
+<h2 id="hardware">Which parts depend on my computer?</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table><thead><tr><th>Block in my file</th><th>What you can learn from it</th></tr></thead><tbody>
+<tr><td>User <code>nebu</code> and groups</td><td>A normal user account with deliberate permissions; adapt the name and groups.</td></tr>
+<tr><td>Timezone, locale and keyboard</td><td>The distinction between language, console keyboard and graphical keyboard layout.</td></tr>
+<tr><td>Radeon graphics and 32-bit support</td><td>The purpose of the options; check your own graphics driver separately.</td></tr>
+<tr><td>Mounts under <code>/mnt</code></td><td>How filesystems are described; these labels and mount points belong to my drives.</td></tr>
+<tr><td>KVM, libvirt and <code>virbr0</code></td><td>The relationship to virtual machines; use the network rule only with a corresponding setup.</td></tr>
+</tbody></table></div>
+<p>The file also selects a current kernel, ZRAM and personal boot settings. These choices are not prerequisites for using NixOS. Start with your working system and change one area at a time. That keeps the connection between an edit and its result visible.</p>
+<h2 id="try-it">A small exercise: Add jq</h2>
+<p>Our example adds <code>jq</code>, a command-line JSON processor. First save your current main file. This command keeps a numbered copy of any existing backup destination:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo cp -a --backup=numbered /etc/nixos/configuration.nix /etc/nixos/configuration.nix.before-tutorial</code></pre>
+<p>Back up other imported files too if you will edit them. Open your configuration in an editor and add <code>jq</code> to the existing package list. The excerpt is shortened: keep your other package names. Avoid creating a second assignment to the same option.</p>
+<pre tabindex="0" aria-label="Code example"><code>environment.systemPackages = with pkgs; [
+  kitty
+  curl
+  git
+  tree
+  jq
+];</code></pre>
+<p>The following commands fit a traditional local configuration. If your system uses flakes, keep its existing rebuild invocation and appropriate <code>--flake</code> target. Build first without activating the result:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo nixos-rebuild build</code></pre>
+<p>A successful build establishes that evaluation and construction completed. It does not replace checking actual behaviour. Next, test the configuration in the running session:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo nixos-rebuild test</code></pre>
+<p><code>test</code> activates changes without making them the new boot default. Services can change during activation. Check the added application:</p>
+<pre tabindex="0" aria-label="Code example"><code>jq --version</code></pre>
+<p>If a version number appears and the rest of the system behaves as expected, make the configuration the new persistent system generation:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo nixos-rebuild switch</code></pre>
+<h2 id="undo">How do you undo the change?</h2>
+<p>For this exercise, remove <code>jq</code> from the list and rebuild. Alternatively, restore your saved file if no later edits need to be preserved:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo cp -a /etc/nixos/configuration.nix.before-tutorial /etc/nixos/configuration.nix</code></pre>
+<p>After copying back the file, build and activate it again with <code>sudo nixos-rebuild switch</code>. As an alternative to that rebuild, after a previously committed <code>switch</code> you can activate the previous system generation if it still exists:</p>
+<pre tabindex="0" aria-label="Code example"><code>sudo nixos-rebuild switch --rollback</code></pre>
+<p>A rollback does not revert your edited source file or restore personal documents. A later rebuild uses the configuration on disk again. After a plain <code>test</code>, the previous boot default remains; rebooting normally returns to it. There is no automatic rollback during the running session.</p>
+<h2 id="privacy">Privacy, generations and stateVersion</h2>
+<p>Configuration files are local text, but may contain usernames, disk labels and network details. Nix places many evaluated contents into the Nix store, which is commonly readable locally. Passwords, private keys and access tokens should therefore not appear in plain text in these examples or a public repository.</p>
+<p><code>system.stateVersion</code> does not select the latest package release. It influences compatibility defaults for persistent system state. Keep the deliberately chosen value for your installation rather than copying my <code>26.05</code>. Generations help you return to a system configuration; they do not replace data backups. Continue with the <a href="/blog/backup-linux-configuration/">configuration backup guide</a> for that distinction.</p>
+<h2 id="sources">Configuration and further reading</h2>
+<p>This guide is based on the published Cthulhu file and NixOS documentation, reviewed on 7 October 2026. The exercise deliberately adds one package; it is not a complete replacement for your system configuration.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">My configuration.nix</a></li><li><a href="https://nixos.org/manual/nixos/stable/">NixOS manual: configuration, modules and system state</a></li><li><a href="https://nix.dev/manual/nix/latest/language/syntax">Nix language syntax</a></li><li><a href="https://wiki.nixos.org/wiki/Nixos-rebuild">Official NixOS wiki: nixos-rebuild</a></li></ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← All tutorials</a><a href="#page-top">Back to top ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#structure">How do you read configuration.nix?</a></li><li><a href="#packages">Installing packages and enabling services</a></li><li><a href="#desktop">What do Plasma and PipeWire configure?</a></li><li><a href="#hardware">Which parts depend on my computer?</a></li><li><a href="#try-it">A small exercise: Add jq</a></li><li><a href="#undo">How do you undo the change?</a></li><li><a href="#privacy">Privacy, generations and stateVersion</a></li><li><a href="#sources">Configuration and further reading</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Source on GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Useful next steps</p><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a><a href="/blog/xmonad-hs-explained/">Understanding XMonad: My xmonad.hs step by step <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

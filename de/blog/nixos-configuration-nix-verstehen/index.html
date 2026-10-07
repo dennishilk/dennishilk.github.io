@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NixOS: configuration.nix für Einsteiger erklärt · Dennis Hilk</title>
+<meta name="description" content="NixOS anhand meiner configuration.nix verstehen: Pakete, Dienste, Plasma, PipeWire und Hardware trennen, eine Änderung bauen und wieder zurücknehmen.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/nixos-configuration-nix-explained/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/nixos-configuration-nix-explained/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NixOS: configuration.nix für Einsteiger erklärt">
+<meta property="og:description" content="NixOS anhand meiner configuration.nix verstehen: Pakete, Dienste, Plasma, PipeWire und Hardware trennen, eine Änderung bauen und wieder zurücknehmen.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NixOS: configuration.nix für Einsteiger erklärt">
+<meta name="twitter:description" content="NixOS anhand meiner configuration.nix verstehen: Pakete, Dienste, Plasma, PipeWire und Hardware trennen, eine Änderung bauen und wieder zurücknehmen.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/","url":"https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/","headline":"NixOS für Einsteiger: Meine configuration.nix verständlich erklärt","description":"NixOS anhand meiner configuration.nix verstehen: Pakete, Dienste, Plasma, PipeWire und Hardware trennen, eine Änderung bauen und wieder zurücknehmen.","inLanguage":"de","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"NixOS & Konfiguration","wordCount":1006},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"NixOS für Einsteiger: Meine configuration.nix verständlich erklärt","item":"https://www.dennishilk.com/de/blog/nixos-configuration-nix-verstehen/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/nixos-configuration-nix-explained/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>NixOS &amp; Konfiguration</span></nav>
+<header class="article-header"><p class="eyebrow">NixOS &amp; Konfiguration</p><h1>NixOS für Einsteiger: Meine configuration.nix verständlich erklärt</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7. Oktober 2026</time><span>6 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Konfiguration bleibt auf deinem Rechner</span><p>Du bearbeitest lokale Dateien. Nix kann beim Bauen Pakete und Quellen herunterladen; persönliche Dateien gehören nicht als Geheimnisse in die Systemkonfiguration.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="NixOS für Einsteiger: Meine configuration.nix verständlich erklärt">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#aufbau">Wie liest man eine configuration.nix?</a></li><li><a href="#pakete">Pakete installieren und Dienste einschalten</a></li><li><a href="#desktop">Was richten Plasma und PipeWire ein?</a></li><li><a href="#rechner">Welche Teile sind persönlich oder hardwareabhängig?</a></li><li><a href="#ausprobieren">Eine kleine Änderung: jq ergänzen</a></li><li><a href="#zurueck">Wie nehme ich die Änderung zurück?</a></li><li><a href="#datenschutz">Datenschutz, Generationen und stateVersion</a></li><li><a href="#quellen">Konfiguration und weiterführende Quellen</a></li></ol></details>
+<p>Unter NixOS beschreibst du einen großen Teil deines Systems in einer Konfiguration: welche Programme vorhanden sind, welche Dienste laufen und wie der Desktop eingerichtet ist. Meine <a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">configuration.nix aus dem Cthulhu-Repository</a> ist dafür ein konkretes Beispiel. Hinter der langen Datei stehen viele kleine, verständliche Entscheidungen.</p>
+<p>Dieser Einstieg setzt eine bereits funktionierende NixOS-Installation voraus. Am Ende kannst du wichtige Blöcke zuordnen und eine einzelne Paketänderung testen. Die Beispiele beziehen sich auf die veröffentlichte Datei vom 7. Oktober 2026. Sie beschreibt Cthulhu mit Plasma und Radeon; andere Rechner brauchen ihre eigenen Hardwareangaben.</p>
+<h2 id="aufbau">Wie liest man eine configuration.nix?</h2>
+<p>Die Datei ist ein NixOS-Modul. Der Anfang nimmt unter anderem <code>pkgs</code> entgegen, den Zugriff auf Pakete. Im folgenden Attributsatz stehen Einstellungen. Ein kleiner Ausschnitt sieht so aus:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>{ config, pkgs, ... }:
+{
+  imports = [ ./hardware-configuration.nix ];
+  networking.networkmanager.enable = true;
+  time.timeZone = "Europe/Berlin";
+}</code></pre>
+<p>Geschweifte Klammern gruppieren Einstellungen; eckige Klammern enthalten eine Liste. Zeichenketten stehen in Anführungszeichen, Wahrheitswerte heißen <code>true</code> und <code>false</code>. Zuweisungen enden mit einem Semikolon. Der Punkt in einem Namen führt zu einer untergeordneten Einstellung.</p>
+<p><code>imports</code> verbindet weitere Module mit der Datei. Die Hardwaredatei enthält etwa erkannte Dateisysteme und benötigte Module für diesen Rechner. Sie bleibt beim Lernen erhalten. Ergänze Beispiele innerhalb deiner vorhandenen Konfiguration, statt deren Hardwaregrundlage durch meine zu ersetzen.</p>
+<h2 id="pakete">Pakete installieren und Dienste einschalten</h2>
+<p>In meiner Datei stehen Alltagsprogramme in <code>environment.systemPackages</code>. Mit <code>with pkgs;</code> lassen sich ihre Namen ohne ein wiederholtes <code>pkgs.</code> schreiben. Hier ist die Liste bewusst auf wenige Einträge verkürzt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>environment.systemPackages = with pkgs; [
+  kitty
+  curl
+  git
+  tree
+];</code></pre>
+<p>Das macht diese Programme systemweit verfügbar. Ein Hintergrunddienst hat zusätzliche Aufgaben: Er muss eingerichtet und gestartet werden. Dafür dienen passende NixOS-Module, etwa <code>networking.networkmanager.enable = true;</code>. Ein Paketname allein ist daher kein Ersatz für eine Dienstkonfiguration.</p>
+<p>Auch Programme können ein eigenes Modul haben. In meiner Datei steht <code>programs.firefox.enable = true;</code>. Suche eine gewünschte Einstellung in der <a href="https://search.nixos.org/options">NixOS-Optionsuche</a> und wähle die passende NixOS-Version. Ein Internetbeispiel kann einen inzwischen anders benannten Optionspfad verwenden.</p>
+<h2 id="desktop">Was richten Plasma und PipeWire ein?</h2>
+<p>Meine Datei aktiviert SDDM für die Anmeldung und Plasma 6 für den Desktop. Die entscheidenden Einstellungen sind:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>services.displayManager.sddm.enable = true;
+services.desktopManager.plasma6.enable = true;</code></pre>
+<p>Daneben sind Xserver-Unterstützung und ein deutsches XKB-Layout konfiguriert. Daraus folgt nicht, dass jede gestartete Plasma-Sitzung X11 verwendet. Desktop, Anmeldemanager und Sitzungsart sind verschiedene Teile des Aufbaus.</p>
+<p>Für Audio aktiviert die Datei PipeWire, WirePlumber sowie ALSA- und PulseAudio-Kompatibilität. Der separate PulseAudio-Dienst ist deaktiviert. Programme mit einer PulseAudio-Schnittstelle können deshalb trotzdem Audio ausgeben. Bei einem Problem hilft zuerst die Frage, welcher Audioweg tatsächlich aktiv ist; mehrere konkurrierende Dienste machen den Aufbau schwerer verständlich.</p>
+<h2 id="rechner">Welche Teile sind persönlich oder hardwareabhängig?</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Vergleichstabelle"><table><thead><tr><th>Block in meiner Datei</th><th>Was du daraus übernehmen kannst</th></tr></thead><tbody>
+<tr><td>Benutzer <code>nebu</code> und Gruppen</td><td>Das Prinzip eines normalen Benutzers und bewusst vergebener Rechte; Namen und Gruppen anpassen.</td></tr>
+<tr><td>Zeitzone, Sprache und Tastatur</td><td>Die Trennung zwischen Sprache, Konsolentastatur und grafischem Tastaturlayout.</td></tr>
+<tr><td>Radeon-Grafik und 32-Bit-Unterstützung</td><td>Den Zweck der Optionen; den eigenen Grafiktreiber gesondert prüfen.</td></tr>
+<tr><td>Mounts unter <code>/mnt</code></td><td>Wie Dateisysteme beschrieben werden; Labels und Einhängepunkte gehören zu meinen Laufwerken.</td></tr>
+<tr><td>KVM, libvirt und <code>virbr0</code></td><td>Den Zusammenhang mit virtuellen Maschinen; die Netzwerkregel nur bei entsprechendem Aufbau verwenden.</td></tr>
+</tbody></table></div>
+<p>Die Datei enthält außerdem einen aktuellen Kernel, ZRAM und persönliche Boot-Einstellungen. Diese Entscheidungen sind keine Voraussetzung für NixOS. Beginne mit deinem funktionierenden System und ändere einen Bereich nach dem anderen. So bleibt erkennbar, welche Änderung welches Ergebnis verursacht.</p>
+<h2 id="ausprobieren">Eine kleine Änderung: jq ergänzen</h2>
+<p>Als Übung ergänzen wir das Kommandozeilenprogramm <code>jq</code> zum Lesen von JSON. Sichere zuerst deine bestehende Hauptdatei. Der Befehl erhält die vorherige Sicherungsdatei als nummerierte Kopie, falls sie bereits vorhanden ist:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sudo cp -a --backup=numbered /etc/nixos/configuration.nix /etc/nixos/configuration.nix.before-tutorial</code></pre>
+<p>Bei weiteren importierten Dateien sichere auch diese. Öffne danach deine Konfiguration im Editor und füge <code>jq</code> zur vorhandenen Paketliste hinzu. Der Ausschnitt ist verkürzt: Behalte deine anderen Paketnamen bei. Lege keinen zweiten Block mit derselben Zuweisung an.</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>environment.systemPackages = with pkgs; [
+  kitty
+  curl
+  git
+  tree
+  jq
+];</code></pre>
+<p>Die folgenden Befehle passen zur klassischen lokalen Konfiguration. Falls dein System Flakes verwendet, nutze dessen bestehenden Rebuild-Aufruf mit dem passenden <code>--flake</code>-Ziel. Baue zuerst, ohne die neue Konfiguration zu aktivieren:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sudo nixos-rebuild build</code></pre>
+<p>Ein erfolgreicher Build zeigt, dass Auswertung und Bau funktioniert haben. Er ersetzt noch keinen Funktionstest. Teste anschließend die Konfiguration in der laufenden Sitzung:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sudo nixos-rebuild test</code></pre>
+<p><code>test</code> aktiviert Änderungen, legt sie aber nicht als neuen Boot-Standard fest. Dienste können dabei verändert werden. Prüfe jetzt das hinzugefügte Programm:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>jq --version</code></pre>
+<p>Erscheint eine Versionsnummer und funktioniert der Rest des Systems wie erwartet, kannst du die Konfiguration dauerhaft als neue Systemgeneration übernehmen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sudo nixos-rebuild switch</code></pre>
+<h2 id="zurueck">Wie nehme ich die Änderung zurück?</h2>
+<p>Entferne für diese Übung <code>jq</code> wieder aus der Liste und führe den Rebuild erneut aus. Du kannst stattdessen die gesicherte Datei zurückkopieren, wenn seitdem keine anderen Änderungen erhalten bleiben müssen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sudo cp -a /etc/nixos/configuration.nix.before-tutorial /etc/nixos/configuration.nix</code></pre>
+<p>Nach dem Zurückkopieren der Datei baust und aktivierst du sie erneut mit <code>sudo nixos-rebuild switch</code>. Als Alternative zu diesem Neubau kannst du nach einem zuvor übernommenen <code>switch</code> die vorherige noch vorhandene Systemgeneration aktivieren:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>sudo nixos-rebuild switch --rollback</code></pre>
+<p>Ein Rollback setzt deine bearbeitete Quelldatei nicht zurück und stellt keine persönlichen Dokumente wieder her. Ein späterer Rebuild verwendet wieder die Datei auf der Festplatte. Nach einem reinen <code>test</code> bleibt der bisherige Boot-Standard erhalten; ein Neustart startet normalerweise diesen Stand. Automatisches Zurückrollen während der Sitzung ist damit nicht verbunden.</p>
+<h2 id="datenschutz">Datenschutz, Generationen und stateVersion</h2>
+<p>Konfigurationen sind lokale Textdateien, können aber Benutzernamen, Laufwerkslabels oder Netzwerkangaben enthalten. Nix übernimmt viele ausgewertete Inhalte in den häufig lokal lesbaren Nix Store. Passwörter, private Schlüssel und Zugriffstoken gehören deshalb nicht als Klartext in diese Beispiele oder in ein öffentliches Repository.</p>
+<p><code>system.stateVersion</code> ist keine Auswahl der neuesten Paketversion. Die Einstellung beeinflusst Kompatibilitätsvorgaben für gespeicherten Systemzustand. Behalte den bewusst gesetzten Wert deines Systems, statt meine <code>26.05</code> beim Kopieren zu übernehmen. Generationen helfen beim Zurückgehen zu einem Systemstand, ersetzen jedoch keine Datensicherung. Dazu passt der <a href="/de/blog/linux-konfiguration-sichern/">Artikel über Konfigurations-Backups</a>.</p>
+<h2 id="quellen">Konfiguration und weiterführende Quellen</h2>
+<p>Grundlage sind die veröffentlichte Cthulhu-Datei und die NixOS-Dokumentation, geprüft am 7. Oktober 2026. Die Übung ergänzt gezielt ein Paket; sie ist kein kompletter Ersatz für deine Systemkonfiguration.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Meine configuration.nix</a></li><li><a href="https://nixos.org/manual/nixos/stable/">NixOS-Handbuch: Konfiguration, Module und Systemzustand</a></li><li><a href="https://nix.dev/manual/nix/latest/language/syntax">Nix-Handbuch: Syntax</a></li><li><a href="https://wiki.nixos.org/wiki/Nixos-rebuild">Offizielles NixOS-Wiki: nixos-rebuild</a></li></ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Alle Tutorials</a><a href="#page-top">Nach oben ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#aufbau">Wie liest man eine configuration.nix?</a></li><li><a href="#pakete">Pakete installieren und Dienste einschalten</a></li><li><a href="#desktop">Was richten Plasma und PipeWire ein?</a></li><li><a href="#rechner">Welche Teile sind persönlich oder hardwareabhängig?</a></li><li><a href="#ausprobieren">Eine kleine Änderung: jq ergänzen</a></li><li><a href="#zurueck">Wie nehme ich die Änderung zurück?</a></li><li><a href="#datenschutz">Datenschutz, Generationen und stateVersion</a></li><li><a href="#quellen">Konfiguration und weiterführende Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Quellcode auf GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/linux-konfiguration-sichern/">Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups <span aria-hidden="true">→</span></a><a href="/de/blog/xmonad-hs-verstehen/">XMonad verstehen: Meine xmonad.hs Schritt für Schritt <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

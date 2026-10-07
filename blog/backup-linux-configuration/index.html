@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Back up Linux configuration: Dotfiles and data · Dennis Hilk</title>
+<meta name="description" content="Plan Linux backups clearly: distinguish dotfiles, package lists, NixOS files and personal data, with Cthulhu examples and practical restore checks.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/backup-linux-configuration/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/backup-linux-configuration/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-konfiguration-sichern/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/backup-linux-configuration/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Back up Linux configuration: Dotfiles and data">
+<meta property="og:description" content="Plan Linux backups clearly: distinguish dotfiles, package lists, NixOS files and personal data, with Cthulhu examples and practical restore checks.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/backup-linux-configuration/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Back up Linux configuration: Dotfiles and data">
+<meta name="twitter:description" content="Plan Linux backups clearly: distinguish dotfiles, package lists, NixOS files and personal data, with Cthulhu examples and practical restore checks.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/backup-linux-configuration/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/backup-linux-configuration/","url":"https://www.dennishilk.com/blog/backup-linux-configuration/","headline":"Back up Linux configuration: Dotfiles, package lists and data backups","description":"Plan Linux backups clearly: distinguish dotfiles, package lists, NixOS files and personal data, with Cthulhu examples and practical restore checks.","inLanguage":"en","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Linux & Backups","wordCount":998},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Back up Linux configuration: Dotfiles, package lists and data backups","item":"https://www.dennishilk.com/blog/backup-linux-configuration/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/linux-konfiguration-sichern/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Backups</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Backups</p><h1>Back up Linux configuration: Dotfiles, package lists and data backups</h1>
+<div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7 October 2026</time><span>6 minute read</span></div>
+<div class="article-privacy"><span class="privacy-badge">Keep backups local deliberately</span><p>Local backups need no upload. Configuration and logs can contain personal information; decide what will be shared before pushing to Git.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Back up Linux configuration: Dotfiles, package lists and data backups">
+<details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#scope">What do you want to recover?</a></li><li><a href="#system">What does Cthulhu save about a system?</a></li><li><a href="#core">Which desktop files are actually included?</a></li><li><a href="#start">Read the project and inspect a local snapshot</a></li><li><a href="#restore">What does the current restore implementation do?</a></li><li><a href="#test">Try a recovery before you need it</a></li><li><a href="#privacy">Git tracks versions; sharing is a separate decision</a></li><li><a href="#sources">Sources and reviewed scope</a></li></ol></details>
+<p>After rebuilding your desktop, you want your familiar keys and settings back. After a drive failure, you also need documents, projects and other data. Both are often called a backup, but they solve different problems. My <a href="https://github.com/dennishilk/cthulhu">Cthulhu repository</a> makes that distinction visible.</p>
+<p>Cthulhu collects personal configuration and system information from my Linux work. It is material for understanding and rebuilding a setup, not a complete disk image. This guide explains the current script scope and a manageable way to check your own backup.</p>
+<h2 id="scope">What do you want to recover?</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table"><table><thead><tr><th>Backup type</th><th>Helps recover</th><th>Still missing without extra work</th></tr></thead><tbody>
+<tr><td>Dotfiles and desktop configuration</td><td>Keys, bars, colours and application preferences</td><td>Installed applications and dependencies</td></tr>
+<tr><td>Package lists</td><td>A record of installed packages</td><td>File contents and guaranteed identical package versions</td></tr>
+<tr><td>NixOS modules</td><td>A description of a system setup</td><td>Uncaptured modules, source revisions and personal data</td></tr>
+<tr><td>Data backup</td><td>Documents, projects and other explicitly selected data</td><td>Anything outside the chosen scope</td></tr>
+</tbody></table></div>
+<p>Choose a specific goal. “Restore my Rofi appearance after reinstalling” is easier to check than “everything is somewhere in Git”. Also record the operating system and applications expected to read those saved files.</p>
+<h2 id="system">What does Cthulhu save about a system?</h2>
+<p><code>tools/save_system.sh</code> detects the distribution and writes a dated directory. The reviewed version contains these branches:</p>
+<ul><li><strong>Arch:</strong> explicitly installed packages, foreign packages and the kernel version.</li><li><strong>Debian:</strong> dpkg selections, APT source files and the kernel version.</li><li><strong>Gentoo:</strong> available installed-package information, <code>emerge --info</code>, the world file and kernel version.</li><li><strong>NixOS:</strong> existing <code>/etc/nixos/configuration.nix</code>, optionally <code>/etc/nixos/flake.nix</code>, the NixOS version and channel list.</li></ul>
+<p>The NixOS scope matters particularly: the script does not automatically copy all of <code>/etc/nixos</code>. An imported <code>hardware-configuration.nix</code>, additional modules or <code>flake.lock</code> need separate inclusion. Finding a main configuration file does not establish complete recoverability.</p>
+<p>Running another system snapshot on the same day replaces the existing dated directory. Inspect the destination and keep important older states separately. A date here does not provide unlimited per-run history.</p>
+<h2 id="core">Which desktop files are actually included?</h2>
+<p><code>tools/save_core.sh</code> uses fixed source/destination pairs. These include Fastfetch, Rofi, Picom, Dunst, selected window-manager directories and desktop settings. Before replacing an existing repository destination, the helper moves it to a backup name. Missing sources are noted in the log.</p>
+<p>The current XMonad mapping reads <code>~/.xmonad</code>. My newer Gruvnode setup uses <code>~/.config/xmonad</code>. Sway and Waybar files exist in the repository, but neither is an automatic source pair in the reviewed <code>save_core.sh</code>. Kitty and shell configurations are not automatically included there either.</p>
+<p>Make your own inventory of active paths. Sway uses a path such as <code>~/.config/sway</code>, Waybar <code>~/.config/waybar</code>. For Gruvnode, also consider XMonad, Xmobar, Rofi, Kitty and <code>~/.xinitrc</code>. Separate portable desktop settings from credentials and runtime files.</p>
+<h2 id="start">Read the project and inspect a local snapshot</h2>
+<p>Work in your own local copy. Cloning downloads my published state; it does not automatically upload your later backups:</p>
+<pre tabindex="0" aria-label="Code example"><code>git clone https://github.com/dennishilk/cthulhu.git</code></pre>
+<p>Enter the directory:</p>
+<pre tabindex="0" aria-label="Code example"><code>cd cthulhu</code></pre>
+<p>Read the scripts and their path mappings first. If executable permissions are missing, set them:</p>
+<pre tabindex="0" aria-label="Code example"><code>chmod +x tools/cthulhu tools/*.sh</code></pre>
+<p>Begin by listing available core components:</p>
+<pre tabindex="0" aria-label="Code example"><code>./tools/cthulhu list core</code></pre>
+<p>If the scope fits your system, create a local system snapshot:</p>
+<pre tabindex="0" aria-label="Code example"><code>./tools/cthulhu save system</code></pre>
+<p>Inspect the reported dated directory and <code>logs/cthulhu.log</code>. Are the files you need present and readable? Missing optional tools can be logged without stopping the whole run. Desktop snapshots use <code>./tools/cthulhu save core</code>; compare its actual paths against your inventory before running it.</p>
+<h2 id="restore">What does the current restore implementation do?</h2>
+<p>Core restore copies selected components back. If a destination exists, the helper asks first and backs up the previous configuration under <code>~/.config/cthulhu-backup-DATE/</code>. It then replaces that selected destination directory. Check source, destination and backup before proceeding, and close affected applications.</p>
+<p>For an already inspected Rofi snapshot, the individual component command is:</p>
+<pre tabindex="0" aria-label="Code example"><code>./tools/cthulhu restore core rofi</code></pre>
+<p>Multiple restores on the same day share a backup root. Keep an important starting state separately. A completion message alone is insufficient: open Rofi afterwards and check how it actually behaves.</p>
+<p><strong>System restore is not an automatic rebuild in the current source.</strong> The function checks the snapshot directory, prints it and logs the request. It neither copies system files back nor installs packages. That information is a basis for deliberate manual reconstruction.</p>
+<h2 id="test">Try a recovery before you need it</h2>
+<p>Test one uncritical component before a failure. Record its original path, keep the current state separately and place the snapshot in a test environment or another directory. Compare the files and launch the corresponding application.</p>
+<ol><li>Check that the backup actually contains the expected configuration file.</li><li>First restore it into a separate test directory.</li><li>Compare contents, file permissions and any executable helper scripts.</li><li>Test the application with its required packages and appropriate versions.</li><li>Record any extra files or steps that were missing.</li></ol>
+<p>For NixOS, a build belongs in the check; for XMonad, compilation does. A copied text file can still point at a missing wallpaper, an unavailable launcher or an outdated module name. The <a href="/blog/nixos-configuration-nix-explained/">NixOS introduction</a> provides a small build-and-test workflow.</p>
+<h2 id="privacy">Git tracks versions; sharing is a separate decision</h2>
+<p>Local backups need no cloud upload. A Git push does transmit selected contents to the configured remote and may publish them. Review configurations, logs, paths and keys before committing. Personal backups benefit from a deliberately private destination.</p>
+<p>Cthulhu's current <code>push</code> command uses <code>git add -A</code>, staging all repository changes. It is therefore not part of this first snapshot exercise. A <code>.gitignore</code> can exclude new files; it does not remove already tracked files or secrets from earlier commits.</p>
+<p>A repository on the same failed disk cannot rescue its data. Keep important copies on an independent medium, protect confidential backups appropriately and test access and recovery. Your personal documents also need their own explicitly chosen backup scope.</p>
+<h2 id="sources">Sources and reviewed scope</h2>
+<p>The Cthulhu descriptions refer to the scripts reviewed on 7 October 2026. Source code determines their current scope.</p>
+<ul><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/save_system.sh">Cthulhu system snapshots</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/save_core.sh">Cthulhu's fixed core paths</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/restore.sh">Cthulhu restore implementation</a></li><li><a href="https://github.com/dennishilk/cthulhu/blob/main/tools/utils.sh">Copy helpers and backup destinations</a></li><li><a href="https://git-scm.com/docs/gitignore">Git: the scope of gitignore</a></li></ul>
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← All tutorials</a><a href="#page-top">Back to top ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In this article"><h2>In this article</h2><ol><li><a href="#scope">What do you want to recover?</a></li><li><a href="#system">What does Cthulhu save about a system?</a></li><li><a href="#core">Which desktop files are actually included?</a></li><li><a href="#start">Read the project and inspect a local snapshot</a></li><li><a href="#restore">What does the current restore implementation do?</a></li><li><a href="#test">Try a recovery before you need it</a></li><li><a href="#privacy">Git tracks versions; sharing is a separate decision</a></li><li><a href="#sources">Sources and reviewed scope</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu">Source on GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Useful next steps</p><a href="/blog/nixos-configuration-nix-explained/">NixOS for beginners: My configuration.nix explained <span aria-hidden="true">→</span></a><a href="/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

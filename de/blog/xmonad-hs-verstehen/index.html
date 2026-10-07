@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>XMonad für Einsteiger: xmonad.hs erklärt · Dennis Hilk</title>
+<meta name="description" content="Meine xmonad.hs verständlich erklärt: Super-Taste, Tall und Full, Tastenkürzel, Hooks und eine kleine Änderung mit Recompile, Neustart und Rückweg.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/xmonad-hs-explained/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/xmonad-hs-explained/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XMonad für Einsteiger: xmonad.hs erklärt">
+<meta property="og:description" content="Meine xmonad.hs verständlich erklärt: Super-Taste, Tall und Full, Tastenkürzel, Hooks und eine kleine Änderung mit Recompile, Neustart und Rückweg.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="XMonad für Einsteiger: xmonad.hs erklärt">
+<meta name="twitter:description" content="Meine xmonad.hs verständlich erklärt: Super-Taste, Tall und Full, Tastenkürzel, Hooks und eine kleine Änderung mit Recompile, Neustart und Rückweg.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261007-guides">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/","url":"https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/","headline":"XMonad verstehen: Meine xmonad.hs Schritt für Schritt","description":"Meine xmonad.hs verständlich erklärt: Super-Taste, Tall und Full, Tastenkürzel, Hooks und eine kleine Änderung mit Recompile, Neustart und Rückweg.","inLanguage":"de","datePublished":"2026-10-07","dateModified":"2026-10-07","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"XMonad & X11","wordCount":948},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"XMonad verstehen: Meine xmonad.hs Schritt für Schritt","item":"https://www.dennishilk.com/de/blog/xmonad-hs-verstehen/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/xmonad-hs-explained/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>XMonad &amp; X11</span></nav>
+<header class="article-header"><p class="eyebrow">XMonad &amp; X11</p><h1>XMonad verstehen: Meine xmonad.hs Schritt für Schritt</h1>
+<div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-07">7. Oktober 2026</time><span>6 Minuten Lesezeit</span></div>
+<div class="article-privacy"><span class="privacy-badge">Dein Desktop, deine lokale Datei</span><p>Die Konfiguration wird auf deinem Rechner kompiliert. Programme, die du damit startest, behalten ihre eigenen Netzwerk- und Datenschutzeinstellungen.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="XMonad verstehen: Meine xmonad.hs Schritt für Schritt">
+<details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#einordnung">Was übernimmt XMonad?</a></li><li><a href="#datei">Wo liegt die Datei und wie beginnt sie?</a></li><li><a href="#layouts">Tall und Full: Was bedeuten die Zahlen?</a></li><li><a href="#tasten">Die wichtigsten Tastenkürzel in meiner Datei</a></li><li><a href="#hooks">Was machen die Hooks?</a></li><li><a href="#uebung">Übung: Eine Rahmenfarbe ändern</a></li><li><a href="#rueckweg">Zurück zur bisherigen Konfiguration</a></li><li><a href="#datenschutz">Lokale Konfiguration und nächster Schritt</a></li><li><a href="#quellen">Quellcode und Dokumentation</a></li></ol></details>
+<p>Ein Fenster öffnen, mit einer Taste daneben arbeiten und ohne Maus zwischen Anwendungen wechseln: Das ist der Einstieg in XMonad. Mein <a href="https://github.com/dennishilk/xmonad-setup/blob/main/xmonad/xmonad.hs">kleines Debian-X11-Beispiel</a> zeigt die wichtigsten Teile in einer überschaubaren <code>xmonad.hs</code>. Du musst dafür kein komplettes Haskell-Projekt verstehen.</p>
+<p>Wir lesen die Datei abschnittsweise und ändern anschließend nur eine Rahmenfarbe. Voraussetzung für die Übung sind eine funktionierende XMonad-Sitzung, die benötigten Haskell-Bibliotheken und Zugriff auf die aktive Konfigurationsdatei. Die Installation des gesamten Desktops ist ein eigener Schritt; <a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode</a> beschreibt meinen fertig eingerichteten Laptop.</p>
+<h2 id="einordnung">Was übernimmt XMonad?</h2>
+<p>XMonad ist ein Window Manager für X11. Er entscheidet über Position, Größe und Fokus von Fenstern. Ein Layout teilt den Bildschirm automatisch auf. Ein vollständiger Desktop besteht zusätzlich aus Terminal, Programmstarter, Audio, Netzwerk und gegebenenfalls einer Statusleiste.</p>
+<p>In diesem Beispiel sind Kitty, dmenu und feh solche Begleiter. Sie sind eigenständige Programme. Eine Zeile, die Kitty startet, installiert Kitty nicht. Anders als bei einem integrierten Desktop werden viele dieser Bausteine ausdrücklich ausgewählt. Für die Wayland-Variante folgt der <a href="/de/blog/sway-konfiguration-verstehen/">Sway-Einstieg</a>.</p>
+<h2 id="datei">Wo liegt die Datei und wie beginnt sie?</h2>
+<p>XMonad unterstützt unter anderem <code>~/.config/xmonad/xmonad.hs</code>, das ältere <code>~/.xmonad/xmonad.hs</code> und eigens konfigurierte Verzeichnisse. Prüfe zuerst deinen bestehenden Aufbau. Die Sicherungsbefehle weiter unten verwenden den üblichen XDG-Pfad; bei einem anderen aktiven Pfad passt du beide Dateinamen an.</p>
+<p><code>import</code>-Zeilen laden Funktionen aus Bibliotheken. Darunter stellt <code>main</code> die Konfiguration zusammen. Mein Beispiel baut auf <code>def</code>, den Standardwerten von XMonad, auf und ersetzt einzelne Felder:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>{ terminal           = "kitty"
+, modMask            = mod4Mask
+, borderWidth        = 2
+, focusedBorderColor = "#89b4fa"
+, normalBorderColor  = "#1e1e2e"
+, layoutHook         = myLayout
+, manageHook         = myManageHook
+, startupHook        = myStartupHook
+}</code></pre>
+<p>Das ist ein Ausschnitt aus dem bestehenden <code>def</code>-Block, keine vollständige Datei. <code>mod4Mask</code> steht hier für Super, meistens die Windows-Taste. Die Funktionen <code>myLayout</code>, <code>myManageHook</code> und <code>myStartupHook</code> sind weiter unten definiert. Dadurch bleiben die Themen voneinander lesbar.</p>
+<h2 id="layouts">Tall und Full: Was bedeuten die Zahlen?</h2>
+<p>Die veröffentlichte Datei definiert diese Layoutfolge:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>myLayout =
+  smartBorders
+    $ spacingWithEdge 6
+    $ Tall 1 (3 / 100) (1 / 2)
+      ||| Full</code></pre>
+<p><code>Tall</code> hat einen Hauptbereich und einen Bereich für weitere Fenster. Die <code>1</code> legt ein Fenster im Hauptbereich fest. <code>3 / 100</code> ist die Schrittweite beim Ändern seiner Breite; <code>1 / 2</code> ist der anfängliche Anteil am Bildschirm. <code>|||</code> verbindet auswählbare Layouts.</p>
+<p><code>spacingWithEdge 6</code> ergänzt Abstände, <code>smartBorders</code> passt Rahmen situationsabhängig an. <code>Full</code> zeigt im Layout ein Fenster groß an. Der echte Vollbildmodus einer Anwendung wird zusätzlich über die Fullscreen-Hooks behandelt; beide Begriffe sind nicht in jeder Situation dasselbe.</p>
+<h2 id="tasten">Die wichtigsten Tastenkürzel in meiner Datei</h2>
+<p><code>additionalKeysP</code> ergänzt beziehungsweise überschreibt Tastenkürzel. <code>M</code> bezeichnet den gewählten Modifikator, <code>S</code> Shift. Die tatsächlichen Belegungen im Quellcode lauten:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Vergleichstabelle"><table><thead><tr><th>Tasten</th><th>Aktion</th></tr></thead><tbody>
+<tr><td>Super + Enter</td><td>Kitty starten</td></tr><tr><td>Super + D</td><td>dmenu öffnen</td></tr><tr><td>Super + J / K</td><td>Fokus zwischen Fenstern wechseln</td></tr><tr><td>Super + Shift + J / K</td><td>Fenster in der Anordnung vertauschen</td></tr><tr><td>Super + H / L</td><td>Hauptbereich schmaler oder breiter machen</td></tr><tr><td>Super + Leertaste</td><td>Zum nächsten Layout wechseln</td></tr><tr><td>Super + Q</td><td>Das fokussierte Fenster schließen</td></tr><tr><td>Super + Shift + R</td><td>Konfiguration kompilieren und bei Erfolg neu laden</td></tr></tbody></table></div>
+<p>Super + Q ist hier ausdrücklich zum Schließen belegt. Verlasse dich bei einer eigenen Konfiguration auf deren Belegung und nicht auf die Standardtasten aus einem anderen Tutorial. Super + Shift + Q beendet die XMonad-Sitzung; sichere offene Arbeit vorher.</p>
+<h2 id="hooks">Was machen die Hooks?</h2>
+<p><code>layoutHook</code> wählt die Anordnung. <code>manageHook</code> behandelt neue Fenster; mein kurzer Aufbau lässt erkannte Vollbildfenster frei über die Fläche gehen. <code>startupHook</code> führt Aktionen beim Start aus. Hier setzt <code>spawnOnce</code> ein Hintergrundbild mit feh.</p>
+<p>Der Bildpfad muss bei dir existieren. Gleiches gilt für gestartete Anwendungen wie Chrome sowie die Helfer für Lautstärke und Helligkeit. Meine Datei verwendet dafür <code>pamixer</code> und <code>brightnessctl</code>. Auf Gruvnode wird Lautstärke dagegen mit <code>wpctl</code> gesteuert.</p>
+<p><code>ewmh</code> und <code>ewmhFullscreen</code> ergänzen die Zusammenarbeit mit Anwendungen, die entsprechende Desktop- und Vollbildinformationen erwarten. Die zusätzliche Zeile <code>setWMName "LG3D"</code> ist eine persönliche Kompatibilitätseinstellung; sie ist kein allgemeiner Nachweis dafür, dass ein beliebiges Wine- oder Proton-Problem damit behoben wird.</p>
+<h2 id="uebung">Übung: Eine Rahmenfarbe ändern</h2>
+<p>Sichere die aktive Datei. Dieser Befehl verwendet den XDG-Standardpfad und bewahrt eine bereits vorhandene Sicherung nummeriert auf:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>cp -a --backup=numbered ~/.config/xmonad/xmonad.hs ~/.config/xmonad/xmonad.hs.before-tutorial</code></pre>
+<p>Ändere im vorhandenen Block nur <code>focusedBorderColor</code>, etwa von Blau zu Grün:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>, focusedBorderColor = "#93dfc1"</code></pre>
+<p>Lass Kommas und Anführungszeichen stehen. Prüfe die Datei zuerst, ohne die laufende Sitzung neu zu laden:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>xmonad --recompile</code></pre>
+<p>Bei einem Compilerfehler lies die genannte Zeile und korrigiere sie. Typische Ursachen sind ein fehlendes Komma, ein unbekannter Name oder eine nicht installierte Bibliothek. Erst nach erfolgreicher Kompilierung folgt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>xmonad --restart</code></pre>
+<p>Öffne zwei Fenster im Tall-Layout und wechsle den Fokus mit Super + J oder K. Der sichtbare Rahmen des fokussierten Fensters sollte die neue Farbe haben. Bei einem einzelnen Fenster oder Full können die intelligenten Rahmen ausgeblendet sein.</p>
+<h2 id="rueckweg">Zurück zur bisherigen Konfiguration</h2>
+<p>Wenn du nur die Übung zurücknehmen willst, setze den Farbwert zurück. Alternativ kopiere die gesicherte Datei zurück, sofern du keine späteren Änderungen verlieren würdest:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>cp -a ~/.config/xmonad/xmonad.hs.before-tutorial ~/.config/xmonad/xmonad.hs</code></pre>
+<p>Kompiliere die wiederhergestellte Datei erneut:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>xmonad --recompile</code></pre>
+<p>Starte XMonad nach erfolgreicher Prüfung neu:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code>xmonad --restart</code></pre>
+<p>Arbeite zunächst an einer einzigen Einstellung. Wenn Farbe, Layout, Autostart und Bibliotheken gleichzeitig geändert werden, lässt sich ein Fehler deutlich schlechter eingrenzen.</p>
+<h2 id="datenschutz">Lokale Konfiguration und nächster Schritt</h2>
+<p>Lesen, Bearbeiten und Kompilieren dieser Datei erfordern keinen Upload. Paketinstallationen greifen auf Repositories zu; Browser und andere gestartete Programme haben ihre eigenen Datenwege. Tastenkürzel können persönliche Pfade enthalten: Prüfe sie, bevor du die Datei veröffentlichst.</p>
+<p>Für den Alltag fehlen in dieser kleinen Datei bewusst viele Laptop-Bausteine. Der <a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode-Artikel</a> verbindet XMonad mit Xmobar, Rofi, Audio und Netzwerk und erklärt den Installer für meinen aktuellen X1 Carbon.</p>
+<h2 id="quellen">Quellcode und Dokumentation</h2>
+<p>Belegungen und Ausschnitte wurden am 7. Oktober 2026 am Quellcode geprüft.</p>
+<ul><li><a href="https://github.com/dennishilk/xmonad-setup/blob/main/xmonad/xmonad.hs">Meine kurze xmonad.hs</a></li><li><a href="https://xmonad.org/TUTORIAL.html">XMonad: offizielles Konfigurations-Tutorial</a></li><li><a href="https://xmonad.org/manpage.html">XMonad-Handbuch: Recompile und Restart</a></li><li><a href="https://github.com/dennishilk/gruvnode">Gruvnode: vollständiger Laptop-Aufbau</a></li></ul>
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Alle Tutorials</a><a href="#page-top">Nach oben ↑</a></nav>
+</article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="In diesem Artikel"><h2>In diesem Artikel</h2><ol><li><a href="#einordnung">Was übernimmt XMonad?</a></li><li><a href="#datei">Wo liegt die Datei und wie beginnt sie?</a></li><li><a href="#layouts">Tall und Full: Was bedeuten die Zahlen?</a></li><li><a href="#tasten">Die wichtigsten Tastenkürzel in meiner Datei</a></li><li><a href="#hooks">Was machen die Hooks?</a></li><li><a href="#uebung">Übung: Eine Rahmenfarbe ändern</a></li><li><a href="#rueckweg">Zurück zur bisherigen Konfiguration</a></li><li><a href="#datenschutz">Lokale Konfiguration und nächster Schritt</a></li><li><a href="#quellen">Quellcode und Dokumentation</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/xmonad-setup">Quellcode auf GitHub <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: Mein einfacher XMonad-Desktop vom T480 zum X1 Carbon <span aria-hidden="true">→</span></a><a href="/de/blog/sway-konfiguration-verstehen/">Sway für Einsteiger: Meine Wayland-Konfiguration erklärt <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>
