@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Git pull scheitert: abweichende Branches, Merge und Rebase · Dennis Hilk</title>
+<meta name="description" content="Git meldet divergierende Branches? Verstehe Fast-forward, Merge und Rebase anhand meines Server-Updates. Mit Diagnose, Konfliktlösung und Rückweg.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/git-pull-diverging-branches/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/git-pull-diverging-branches/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git pull scheitert: abweichende Branches, Merge und Rebase">
+<meta property="og:description" content="Git meldet divergierende Branches? Verstehe Fast-forward, Merge und Rebase anhand meines Server-Updates. Mit Diagnose, Konfliktlösung und Rückweg.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Git pull scheitert: abweichende Branches, Merge und Rebase">
+<meta name="twitter:description" content="Git meldet divergierende Branches? Verstehe Fast-forward, Merge und Rebase anhand meines Server-Updates. Mit Diagnose, Konfliktlösung und Rückweg.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/","url":"https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/","headline":"Git pull scheitert: abweichende Branches, Merge und Rebase","description":"Git meldet divergierende Branches? Verstehe Fast-forward, Merge und Rebase anhand meines Server-Updates. Mit Diagnose, Konfliktlösung und Rückweg.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Git & Server-Workflow","wordCount":869},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Git pull scheitert: abweichende Branches, Merge und Rebase","item":"https://www.dennishilk.com/de/blog/git-pull-divergierende-branches/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/git-pull-diverging-branches/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Git &amp; Server-Workflow</span></nav>
+<header class="article-header"><p class="eyebrow">Git &amp; Server-Workflow</p><h1>Git pull scheitert: abweichende Branches, Merge und Rebase</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Historie erst lokal verstehen</span><p>Status und Historienvergleich lesen lokale Git-Daten. Fetch und Pull verbinden sich mit dem eingetragenen Remote. Commits, Pfade und Diff-Ausgaben können persönliche Inhalte enthalten.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Git pull scheitert: abweichende Branches, Merge und Rebase"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#was-fast-forward-eigentlich-bedeutet">Was Fast-forward eigentlich bedeutet</a></li><li><a href="#erst-den-arbeitszustand-pruefen">Erst den Arbeitszustand prüfen</a></li><li><a href="#lokal-und-remote-vergleichen">Lokal und Remote vergleichen</a></li><li><a href="#merge-und-rebase-als-zwei-integrationswege">Merge und Rebase als zwei Integrationswege</a></li><li><a href="#den-lokalen-ausgangspunkt-behalten-und-rebasen">Den lokalen Ausgangspunkt behalten und rebasen</a></li><li><a href="#konflikte-verstaendlich-loesen-oder-abbrechen">Konflikte verständlich lösen oder abbrechen</a></li><li><a href="#regelmaessige-server-updates-und-grenzen">Regelmäßige Server-Updates und Grenzen</a></li><li><a href="#quellen">Quellen</a></li></ol></details>
+<p>Du möchtest ein Website-Update auf dem Server einspielen, aber <code>git pull --ff-only</code> bricht ab. Git hat damit oft keinen Downloadfehler gemeldet: Lokal und auf dem Remote existieren inzwischen unterschiedliche neue Commits. Ein reines Vorspulen kann diese beiden Entwicklungen nicht verbinden.</p>
+<p>Genau das passierte am 6. Oktober 2026 bei meinem worldnode-Checkout. Der Server hatte einen eigenen World-Observer-Dashboard-Commit, während auf GitHub eine Website-Änderung angekommen war. Der anschließend ausgeführte Rebase war erfolgreich. Dieses konkrete Beispiel macht die Begriffe greifbar.</p>
+<h2 id="was-fast-forward-eigentlich-bedeutet">Was Fast-forward eigentlich bedeutet</h2>
+<p>Ein Fast-forward verschiebt den lokalen Branchzeiger entlang einer bereits vorhandenen Historie nach vorn. Dafür darf es keine zusätzliche lokale Entwicklung geben, die mit dem Ziel verbunden werden müsste.</p>
+<p>Wenn lokal ein eigener Commit entsteht und das Remote parallel einen anderen bekommt, liegen beide hinter demselben gemeinsamen Ausgangspunkt. Weder ersetzt der eine den anderen noch sind sie automatisch in einer einzigen Reihenfolge angeordnet. <code>--ff-only</code> verlangt genau den einfachen Fall und bricht sonst ab.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Zustand</th>
+<th>Was ein einfacher Pull benötigt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nur Remote hat neue Commits</td>
+<td>Fast-forward kann möglich sein</td>
+</tr>
+<tr>
+<td>Nur lokal gibt es neue Commits</td>
+<td>Remote ist möglicherweise bereits enthalten</td>
+</tr>
+<tr>
+<td>Beide Seiten haben eigene Commits</td>
+<td>Eine bewusste Integration</td>
+</tr>
+<tr>
+<td>Uncommittete lokale Dateien</td>
+<td>Zuerst ihren Zustand und Zweck klären</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="erst-den-arbeitszustand-pruefen">Erst den Arbeitszustand prüfen</h2>
+<p>Für meinen Website-Pfad lautet die lesende Prüfung:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io status
+</code></pre>
+<p>Der Pfad gilt für meinen Server. Passe ihn an deinen Checkout an. Ein sauberer Arbeitsbaum ist eine gute Voraussetzung für die folgende Integration. Uncommittete Änderungen verdienen zuerst eine Entscheidung: bewusst committen oder gezielt sichern. Automatisch alles zu stagen kann fremde oder sensible Dateien aufnehmen.</p>
+<p>Hole danach die Remote-Informationen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io fetch origin main
+</code></pre>
+<p><code>fetch</code> aktualisiert die bekannten Remote-Daten, integriert sie aber noch nicht in deinen aktuellen Arbeitsbaum. Prüfe, ob <code>origin</code> tatsächlich das gewünschte Repository bezeichnet. Ein alter <code>origin/main</code>-Stand kann einen Historienvergleich irreführend machen.</p>
+<h2 id="lokal-und-remote-vergleichen">Lokal und Remote vergleichen</h2>
+<p>Der Vergleich zeigt nur die Commits, die jeweils einer Seite fehlen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io log --oneline --left-right -15 HEAD...origin/main
+</code></pre>
+<p>In meinem damaligen Verlauf standen diese zwei Einträge:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-text">&lt; 843d8827 world-observer: publish dashboard 2026-10-06
+&gt; 3fa0277a Restore homepage styling and unify the site language toggle
+</code></pre>
+<p><code>&lt;</code> gehörte zur lokalen Seite <code>HEAD</code>, <code>&gt;</code> zu <code>origin/main</code>. Die Hashes und Titel sind der beobachtete Fall vom 6. Oktober, keine erwartete Ausgabe jedes Servers. Damit war klar: Der lokale Dashboard-Commit sollte erhalten bleiben und die Website-Änderung dazukommen.</p>
+<p>Sieh dir bei Bedarf die betroffenen Änderungen an, bevor du einen Integrationsweg auswählst. Commit-Titel allein erklären nicht alle Dateien und Auswirkungen.</p>
+<h2 id="merge-und-rebase-als-zwei-integrationswege">Merge und Rebase als zwei Integrationswege</h2>
+<p>Ein Merge verbindet die Historien und behält die vorhandenen Commit-Identitäten. Bei tatsächlich auseinanderlaufender Entwicklung entsteht gewöhnlich ein zusätzlicher Merge-Commit. Das ist passend, wenn die ursprüngliche verzweigte Historie erhalten bleiben soll.</p>
+<p>Ein Rebase setzt lokale Commits auf die ausgewählte neue Basis. Ihre Änderungen werden erneut angewendet und erhalten dabei neue Commit-Identitäten. Im Serverfall lag der lokale Dashboard-Commit anschließend hinter dem Website-Update.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Entscheidung</th>
+<th>Typischer Bezug</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Merge</td>
+<td>Bereits gemeinsam verwendete Historie erhalten</td>
+</tr>
+<tr>
+<td>Rebase</td>
+<td>Eigene, noch nicht geteilte Commits auf die neue Basis setzen</td>
+</tr>
+<tr>
+<td><code>--ff-only</code></td>
+<td>Nur den einfachen Vorspulfad erlauben</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ein bereits veröffentlichter Commit gehört nicht beiläufig in einen Rebase. Andere Rechner können darauf aufbauen. Der gewählte Serverweg war passend für den dortigen lokalen Commit; daraus folgt keine Regel, jede divergierende gemeinsame Historie umzuschreiben.</p>
+<h2 id="den-lokalen-ausgangspunkt-behalten-und-rebasen">Den lokalen Ausgangspunkt behalten und rebasen</h2>
+<p>Nach sauberem Status kannst du vor einer Integration einen neuen lokalen Sicherungszeiger setzen. Verwende einen bislang freien Namen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io branch backup-vor-update-20261008
+</code></pre>
+<p>Diese Referenz bewahrt den damaligen Commit als Vergleichspunkt. Sie sichert keine uncommitteten Dateien und ist kein unabhängiges Datenbackup.</p>
+<p>Der im konkreten Serverfall gewählte Integrationsbefehl lautete:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io rebase origin/main
+</code></pre>
+<p>Wenn die Änderungen zusammenpassen, beendet Git den Vorgang erfolgreich. Prüfe anschließend <code>git status</code>, die relevante Website und die Historie. Erfolgreiche Git-Integration bedeutet noch nicht, dass jede Anwendungsfunktion getestet ist.</p>
+<h2 id="konflikte-verstaendlich-loesen-oder-abbrechen">Konflikte verständlich lösen oder abbrechen</h2>
+<p>Falls Git anhält, zeigt <code>git status</code> die Konfliktdateien. Lies beide Änderungen und entscheide anhand des gewünschten Endzustands. Für HTML ist es wichtig, nicht nur Konfliktmarker zu entfernen, sondern auch Navigation, Sprachlinks und Struktur zu bewahren.</p>
+<p>Markiere <strong>jede bewusst gelöste Datei einzeln</strong> als erledigt. <code>PFAD/ZUR/DATEI</code> ist ein Platzhalter:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io add PFAD/ZUR/DATEI
+</code></pre>
+<p>Setze den laufenden Rebase fort:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io rebase --continue
+</code></pre>
+<p>Willst du stattdessen zum Start dieses laufenden Rebase zurückkehren:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io rebase --abort
+</code></pre>
+<p><code>--abort</code> gehört zu einem noch laufenden Rebase. Es ist kein universeller Rückspulbefehl nach jedem abgeschlossenen Update. Ein <code>--skip</code> würde eine Änderung überspringen; verwende es nicht bloß, um eine Konfliktmeldung loszuwerden.</p>
+<h2 id="regelmaessige-server-updates-und-grenzen">Regelmäßige Server-Updates und Grenzen</h2>
+<p>Wenn der Server bewusst eigene noch nicht geteilte Dashboard-Commits erzeugt, ist ein ausdrücklich gewählter Pull mit Rebase nachvollziehbar:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git -C /srv/www/dennishilk.github.io pull --rebase origin main
+</code></pre>
+<p>Auch dieser Befehl kann an Konflikten oder lokalen Dateien stoppen. Er ist keine Aufforderung zu <code>reset --hard</code>, Force-Push oder pauschalem Löschen. Prüfe die Änderung, bewahre sinnvolle lokale Arbeit und teste das Ergebnis.</p>
+<h2 id="quellen">Quellen</h2>
+<ul>
+<li><a href="https://git-scm.com/docs/git-pull">Git pull</a>: Fetch und gewählter Integrationsweg.</li>
+<li><a href="https://git-scm.com/docs/git-rebase">Git rebase</a>: neue Basis, Konflikte und Abbruch.</li>
+<li><a href="https://git-scm.com/docs/git-merge">Git merge</a> und <a href="https://git-scm.com/docs/git-log">Git log</a>.</li>
+<li><a href="https://github.com/dennishilk/dennishilk.github.io">Website-Repository</a>.</li>
+</ul>
+<p>Der Serverfall stammt vom 6. Oktober 2026; Referenzen geprüft am 8. Oktober 2026. Die Befehle gehören in den jeweils geprüften Checkout.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#workflows">← Alltag &amp; Workflows</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#was-fast-forward-eigentlich-bedeutet">Was Fast-forward eigentlich bedeutet</a></li><li><a href="#erst-den-arbeitszustand-pruefen">Erst den Arbeitszustand prüfen</a></li><li><a href="#lokal-und-remote-vergleichen">Lokal und Remote vergleichen</a></li><li><a href="#merge-und-rebase-als-zwei-integrationswege">Merge und Rebase als zwei Integrationswege</a></li><li><a href="#den-lokalen-ausgangspunkt-behalten-und-rebasen">Den lokalen Ausgangspunkt behalten und rebasen</a></li><li><a href="#konflikte-verstaendlich-loesen-oder-abbrechen">Konflikte verständlich lösen oder abbrechen</a></li><li><a href="#regelmaessige-server-updates-und-grenzen">Regelmäßige Server-Updates und Grenzen</a></li><li><a href="#quellen">Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://git-scm.com/docs/git-pull">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/ssh-schluessel-linux-server/">SSH-Schlüssel unter Linux: sicher vom Laptop zum Server <span aria-hidden="true">→</span></a><a href="/de/blog/linux-konfiguration-sichern/">Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups <span aria-hidden="true">→</span></a><a href="/de/blog/source2reel-github-erklaervideo-lokal/">Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

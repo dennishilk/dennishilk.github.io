@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NixOS rollback: understand generations and undo an update · Dennis Hilk</title>
+<meta name="description" content="Understand NixOS generations: boot an older system, roll back with nixos-rebuild and repair your configuration. Cthulhu provides the concrete example.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/nixos-generations-rollback/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/nixos-generations-rollback/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/nixos-generationen-rollback/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/nixos-generations-rollback/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NixOS rollback: understand generations and undo an update">
+<meta property="og:description" content="Understand NixOS generations: boot an older system, roll back with nixos-rebuild and repair your configuration. Cthulhu provides the concrete example.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/nixos-generations-rollback/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NixOS rollback: understand generations and undo an update">
+<meta name="twitter:description" content="Understand NixOS generations: boot an older system, roll back with nixos-rebuild and repair your configuration. Cthulhu provides the concrete example.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/nixos-generations-rollback/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/nixos-generations-rollback/","url":"https://www.dennishilk.com/blog/nixos-generations-rollback/","headline":"NixOS rollback: understand generations and undo an update","description":"Understand NixOS generations: boot an older system, roll back with nixos-rebuild and repair your configuration. Cthulhu provides the concrete example.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"NixOS & Recovery","wordCount":822},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"NixOS rollback: understand generations and undo an update","item":"https://www.dennishilk.com/blog/nixos-generations-rollback/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/nixos-generationen-rollback/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>NixOS &amp; Recovery</span></nav>
+<header class="article-header"><p class="eyebrow">NixOS &amp; Recovery</p><h1>NixOS rollback: understand generations and undo an update</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>5 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Select retained system versions locally</span><p>Retained generations live in the local Nix store. Rebuilding can download packages and sources. Rollbacks do not replace backups of documents, game saves or databases.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="NixOS rollback: understand generations and undo an update"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#a-generation-is-not-a-full-disk-snapshot">A generation is not a full disk snapshot</a></li><li><a href="#inspect-the-running-system-and-retained-generations">Inspect the running system and retained generations</a></li><li><a href="#roll-back-while-the-desktop-is-accessible">Roll back while the desktop is accessible</a></li><li><a href="#recover-through-the-boot-menu">Recover through the boot menu</a></li><li><a href="#correct-the-source-configuration-afterwards">Correct the source configuration afterwards</a></li><li><a href="#distinguish-build-test-boot-and-switch">Distinguish build, test, boot and switch</a></li><li><a href="#understand-retention-and-stateversion">Understand retention and stateVersion</a></li><li><a href="#references">References</a></li></ol></details>
+<p>A NixOS change leaves your desktop behaving incorrectly. An earlier system configuration can provide a useful way back. NixOS retains built system configurations as generations while their required store paths remain available.</p>
+<p>This article extends my <a href="/blog/nixos-configuration-nix-explained/">configuration.nix introduction</a>. Cthulhu supplies a concrete example: its current file uses systemd-boot, limits displayed configurations to five and deliberately disables automatic garbage collection. These choices support considered recovery but do not replace data backups.</p>
+<h2 id="a-generation-is-not-a-full-disk-snapshot">A generation is not a full disk snapshot</h2>
+<p>A system generation links built programs, services and system configuration into an activatable version. Built outputs remain in the Nix store, so returning to an older configuration does not require manually downgrading every package.</p>
+<p>Your home directory, databases and many mutable application files are separate. A newer application may already have migrated a database; an older version may not understand that format. A rollback also does not restore a deleted personal file.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Included or referenced</th>
+<th>Back up separately</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Built system packages and service configuration</td>
+<td>Documents and game saves</td>
+</tr>
+<tr>
+<td>Kernel and system store outputs</td>
+<td>Databases and mutable application data</td>
+</tr>
+<tr>
+<td>Activatable system configuration</td>
+<td>Your edited configuration source files</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="inspect-the-running-system-and-retained-generations">Inspect the running system and retained generations</h2>
+<p>Display the running system path:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">readlink -f /run/current-system
+</code></pre>
+<p>List generations of the usual system profile:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo nix-env --profile /nix/var/nix/profiles/system --list-generations
+</code></pre>
+<p>The output includes generation numbers, times and a current-profile marker. An intentionally older boot and the profile selection do not necessarily describe the same state. Record both the running path and profile list before changing anything.</p>
+<p>This inspection deletes no generation. A shortened history may result from earlier cleanup or another profile arrangement. Select versions whose origin you understand.</p>
+<h2 id="roll-back-while-the-desktop-is-accessible">Roll back while the desktop is accessible</h2>
+<p>Use the usual command to select the previous system-profile generation:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo nixos-rebuild switch --rollback
+</code></pre>
+<p>The previous profile generation is not automatically the last boot you personally tested successfully. Services may restart during activation. Save open work and perform the switch deliberately.</p>
+<p>A kernel change takes full effect only after booting the corresponding kernel. Check the previously failing function after switching, and reboot when a kernel change requires it. Choose an appropriate time, particularly on a machine providing active services.</p>
+<p>Retained store outputs avoid a fresh build. If required paths were removed or damaged, recovery may still fail. A rollback has prerequisites; it cannot guarantee recovery from every system or storage failure.</p>
+<h2 id="recover-through-the-boot-menu">Recover through the boot menu</h2>
+<p>Choose a known older NixOS generation from the boot menu. Cthulhu uses systemd-boot; other systems may use GRUB. Access depends on the bootloader, firmware and timeout.</p>
+<p>My file contains:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-nix">boot.loader.systemd-boot.configurationLimit = 5;
+boot.loader.timeout = 2;
+</code></pre>
+<p>Two seconds is short. Learn how to reach your menu before a change becomes critical. The limit of five controls bootloader configurations; it does not mean every other store object is automatically deleted.</p>
+<p>After successfully booting an older version, investigate the failed change and make the configuration source understandable again. If no suitable version boots, installation media and targeted repair may be needed. This article does not provide a universal live-USB repair procedure.</p>
+<h2 id="correct-the-source-configuration-afterwards">Correct the source configuration afterwards</h2>
+<p>A rollback does not automatically rewind your hand-edited <code>/etc/nixos/configuration.nix</code> or Git repository. Leaving the faulty change in that source may reintroduce it at the next build.</p>
+<p>Compare recently changed options against your backed-up or versioned configuration. Undo the relevant change deliberately. My <a href="/blog/backup-linux-configuration/">backup guide</a> explains why configuration files and data backups serve different purposes.</p>
+<p>Build before activating:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo nixos-rebuild build
+</code></pre>
+<p>A successful build confirms construction, rather than actual behaviour on your hardware. Test the intended configuration deliberately and record which generation you verified as working.</p>
+<h2 id="distinguish-build-test-boot-and-switch">Distinguish build, test, boot and switch</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build</code></td>
+<td>Build without switching the running system</td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td>Activate without updating the normal boot default</td>
+</tr>
+<tr>
+<td><code>boot</code></td>
+<td>Prepare the next boot without activating now</td>
+</tr>
+<tr>
+<td><code>switch</code></td>
+<td>Activate and update the boot default</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>test</code> can still change running services and disrupt a session. Its benefit is the separate boot default, rather than a risk-free simulation. A working recovery route matters particularly for graphical and networking changes.</p>
+<p>Cthulhu uses a channel-based configuration importing <code>hardware-configuration.nix</code>; it does not enable flakes. With flakes, your actual flake selection and lock file belong to the process. Do not copy another computer's project path into a system command.</p>
+<h2 id="understand-retention-and-stateversion">Understand retention and stateVersion</h2>
+<p>Deleting old generations and garbage collection can remove an earlier recovery option. Clean up only after checking the new version sufficiently and backing up the required data. This exercise deliberately includes no generation-deletion command.</p>
+<p><code>system.stateVersion</code> does not select a rollback and should not be bumped automatically with every update. Cthulhu specifies <code>26.05</code>, documenting compatibility choices from the initial system setup. Changing it requires a separate, justified review.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/NixOS/configuration.nix">Checked Cthulhu configuration</a>: bootloader, retention choices and setup.</li>
+<li><a href="https://nixos.org/manual/nixos/stable/#sec-rollback">NixOS manual: rollbacks</a>.</li>
+<li><a href="https://nixos.org/manual/nixos/stable/#sec-changing-config">NixOS manual: changing configuration</a>.</li>
+<li><a href="https://nix.dev/manual/nix/stable/command-ref/nix-env/list-generations.html">Nix manual: listing generations</a>.</li>
+</ul>
+<p>Sources checked on 8 October 2026. Recovery should refer to a known generation and a specific observed problem.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#system-guides">← System &amp; Diagnostics</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#a-generation-is-not-a-full-disk-snapshot">A generation is not a full disk snapshot</a></li><li><a href="#inspect-the-running-system-and-retained-generations">Inspect the running system and retained generations</a></li><li><a href="#roll-back-while-the-desktop-is-accessible">Roll back while the desktop is accessible</a></li><li><a href="#recover-through-the-boot-menu">Recover through the boot menu</a></li><li><a href="#correct-the-source-configuration-afterwards">Correct the source configuration afterwards</a></li><li><a href="#distinguish-build-test-boot-and-switch">Distinguish build, test, boot and switch</a></li><li><a href="#understand-retention-and-stateversion">Understand retention and stateVersion</a></li><li><a href="#references">References</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/nixos-configuration-nix-explained/">NixOS for beginners: My configuration.nix explained <span aria-hidden="true">→</span></a><a href="/blog/journalctl-linux-troubleshooting/">journalctl for beginners: find Linux errors in system logs <span aria-hidden="true">→</span></a><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

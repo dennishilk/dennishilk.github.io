@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt · Dennis Hilk</title>
+<meta name="description" content="Dunst einrichten und verstehen: meine Cthulhu-Farben, Position, Timeout und Regeln. Teste lokale Benachrichtigungen und finde typische Fehler.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/dunst-konfigurieren/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-dunst/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/dunst-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-dunst/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt">
+<meta property="og:description" content="Dunst einrichten und verstehen: meine Cthulhu-Farben, Position, Timeout und Regeln. Teste lokale Benachrichtigungen und finde typische Fehler.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/dunst-konfigurieren/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt">
+<meta name="twitter:description" content="Dunst einrichten und verstehen: meine Cthulhu-Farben, Position, Timeout und Regeln. Teste lokale Benachrichtigungen und finde typische Fehler.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/dunst-konfigurieren/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/dunst-konfigurieren/","url":"https://www.dennishilk.com/de/blog/dunst-konfigurieren/","headline":"Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt","description":"Dunst einrichten und verstehen: meine Cthulhu-Farben, Position, Timeout und Regeln. Teste lokale Benachrichtigungen und finde typische Fehler.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Dunst & Benachrichtigungen","wordCount":781},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt","item":"https://www.dennishilk.com/de/blog/dunst-konfigurieren/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+<script defer src="/blog/navigation.js?v=20261008"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/configure-dunst/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Dunst &amp; Benachrichtigungen</span></nav>
+<header class="article-header"><p class="eyebrow">Dunst &amp; Benachrichtigungen</p><h1>Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Benachrichtigungen lokal darstellen</span><p>Dunst stellt Mitteilungen über den lokalen Sitzungsbus dar. Die sendende App kann selbst online sein; ergänzte Dunst-Skripte können Daten weitergeben. Vertrauliche Meldungen gehören nicht in öffentliche Screenshots.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Dunst konfigurieren: Linux-Benachrichtigungen verständlich erklärt"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#wer-zeigt-eine-benachrichtigung-an">Wer zeigt eine Benachrichtigung an?</a></li><li><a href="#die-abschnitte-meiner-datei-lesen">Die Abschnitte meiner Datei lesen</a></li><li><a href="#eine-separate-uebungsdatei-anlegen">Eine separate Übungsdatei anlegen</a></li><li><a href="#position-und-timeout-praktisch-testen">Position und Timeout praktisch testen</a></li><li><a href="#eine-regel-nur-fuer-den-testnamen">Eine Regel nur für den Testnamen</a></li><li><a href="#fehler-eingrenzen-und-zurueckkehren">Fehler eingrenzen und zurückkehren</a></li><li><a href="#datenschutz-und-quellen">Datenschutz und Quellen</a></li></ol></details>
+<p>Eine Benachrichtigung sollte sichtbar und verständlich sein, ohne den ganzen Desktop zu überdecken. Dunst ist ein schlanker Benachrichtigungsdienst, der besonders gut zu selbst zusammengestellten Linux-Desktops passt. Seine Einstellungen liegen in einer lokalen Textdatei.</p>
+<p>Im <a href="https://github.com/dennishilk/cthulhu/blob/main/Dunst/dunst/dunstrc">Cthulhu-Repository liegt meine dunstrc</a>. Diese Datei ist der Ausgangspunkt des Artikels. Sie belegt eine veröffentlichte Konfiguration, aber nicht, dass Dunst in jeder meiner aktuellen Sitzungen der aktive Dienst ist: Ein vollständiger Desktop wie Plasma bringt seine eigene Benachrichtigungsverwaltung mit.</p>
+<h2 id="wer-zeigt-eine-benachrichtigung-an">Wer zeigt eine Benachrichtigung an?</h2>
+<p>Eine Anwendung sendet eine Nachricht über den Sitzungsbus an den zuständigen Benachrichtigungsdienst. Dunst zeichnet das Fenster, legt Darstellung und Regeln fest und kann Mitteilungen später wieder anzeigen. Der Browser oder Messenger bleibt für den Inhalt verantwortlich.</p>
+<p>Prüfe vor dem Test, ob du tatsächlich Dunst verwendest:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">dunstctl debug
+</code></pre>
+<p>Der Befehl versucht, Dunst zu erreichen und typische Verbindungsprobleme zu erkennen. Wenn ein anderer Dienst zuständig ist, solltest du nicht einfach zusätzlich Dunst starten und den bestehenden Desktop-Dienst verdrängen. Die folgende Übung setzt eine laufende Dunst-Sitzung voraus. Für die Einrichtung eines neuen Dienstes sind der Startmechanismus deines Desktops und die Paketdokumentation maßgeblich.</p>
+<h2 id="die-abschnitte-meiner-datei-lesen">Die Abschnitte meiner Datei lesen</h2>
+<p>Mein globaler Abschnitt lautet:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-ini">[global]
+frame_color = "#8aadf4"
+separator_color = "#8aadf4"
+font = JetBrainsMono Nerd Font 10
+corner_radius = 8
+</code></pre>
+<p><code>[global]</code> enthält allgemeine Vorgaben. Die Rahmen- und Trennfarbe ist ein helles Blau; die Schrift wird als Familienname und Größe angegeben. Runde Ecken betreffen die Darstellung des Benachrichtigungsfensters.</p>
+<p>Darunter stehen drei Dringlichkeitsabschnitte. Mein normaler Hintergrund ist dunkel, die kritische Stufe rosa mit dunklem Text. Diese Farben sind eine andere Gestaltung als die Gruvbox-Palette meines X1-Gruvnode-Profils.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Abschnitt</th>
+<th>Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[urgency_low]</code></td>
+<td>Weniger dringliche Mitteilungen</td>
+</tr>
+<tr>
+<td><code>[urgency_normal]</code></td>
+<td>Gewöhnliche Mitteilungen</td>
+</tr>
+<tr>
+<td><code>[urgency_critical]</code></td>
+<td>Kritische Mitteilungen</td>
+</tr>
+</tbody>
+</table></div>
+<p>Die sendende Anwendung bestimmt zunächst die Dringlichkeit. Farbe allein erkennt also nicht zuverlässig die Bedeutung einer Nachricht. Mein veröffentlichter Ausschnitt enthält noch keine persönlichen Positions-, Timeout- oder App-Regeln; die folgenden Ergänzungen sind eigene Lernbeispiele.</p>
+<h2 id="eine-separate-uebungsdatei-anlegen">Eine separate Übungsdatei anlegen</h2>
+<p>Erstelle einen neuen Ordner:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">mkdir -p ~/dunst-tutorial
+</code></pre>
+<p>Speichere diese Datei als <code>~/dunst-tutorial/dunstrc</code>. Die Offset-Schreibweise orientiert sich an aktuellen Dunst-Versionen; bei älteren Versionen prüfst du das mitgelieferte Handbuch:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-ini">[global]
+font = monospace 11
+origin = top-right
+offset = (20, 40)
+width = 320
+frame_width = 2
+frame_color = "#8aadf4"
+corner_radius = 8
+
+[urgency_low]
+background = "#181926"
+foreground = "#cad3f5"
+timeout = 4s
+
+[urgency_normal]
+background = "#1e2030"
+foreground = "#cad3f5"
+timeout = 8s
+
+[urgency_critical]
+background = "#ed8796"
+foreground = "#181926"
+timeout = 0
+</code></pre>
+<p>Eine aktuelle laufende Instanz kann ausdrücklich diese Datei laden:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">dunstctl reload ~/dunst-tutorial/dunstrc
+</code></pre>
+<p>Dadurch ändern sich vorübergehend auch echte Benachrichtigungen dieser Sitzung. Die reguläre Datei wird nicht überschrieben. Um zu den beim ursprünglichen Dunst-Start gewählten Dateien zurückzukehren, verwendest du später <code>dunstctl reload</code> ohne Dateinamen.</p>
+<h2 id="position-und-timeout-praktisch-testen">Position und Timeout praktisch testen</h2>
+<p>Sende eine normale Übungsmeldung mit <code>notify-send</code>, das beispielsweise über das libnotify-Paket erhältlich ist:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">notify-send --app-name=DunstTutorial --urgency=normal "Dunst-Test" "Position und Lesbarkeit prüfen"
+</code></pre>
+<p>Die Meldung sollte oben rechts erscheinen, mit Abstand zum Rand. <code>origin</code> wählt den Bezugspunkt; <code>offset</code> verschiebt die Fläche von dort. Passe zuerst nur den vertikalen Wert an und lade die Datei erneut.</p>
+<p><code>timeout</code> beschreibt die gewünschte Anzeigedauer. Anwendungen können eigene Timeout-Vorgaben senden; Regeln und Dunst-Einstellungen beeinflussen, welche Vorgabe gilt. Mit <code>timeout = 0</code> bleibt eine Meldung nach Dunsts Einstellung stehen, bis sie geschlossen wird. Teste die kritische Stufe separat:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">notify-send --app-name=DunstTutorial --urgency=critical "Dunst-Test" "Diese Übungsmeldung bewusst schließen"
+</code></pre>
+<p>Schließe die Meldung über die verfügbaren Dunst-Bedienelemente oder per:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">dunstctl close
+</code></pre>
+<h2 id="eine-regel-nur-fuer-den-testnamen">Eine Regel nur für den Testnamen</h2>
+<p>Ergänze am Dateiende einen benannten Abschnitt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-ini">[tutorial]
+appname = DunstTutorial
+background = "#285577"
+foreground = "#ffffff"
+</code></pre>
+<p>Nach dem Reload betrifft diese Farbe nur Nachrichten mit dem gezeigten App-Namen. Sende die normale Testmeldung erneut und vergleiche. Mehrere Filter in einer Regel müssen zusammen passen; Reihenfolge und spätere Regeln können das Ergebnis verändern.</p>
+<p>Für echte Anwendungen ist ein stabiler <code>desktop_entry</code>-Filter oft geeigneter als ein übersetzbarer App-Name. Die Übung benutzt bewusst einen selbst gesetzten Namen, damit du den Zusammenhang kontrollieren kannst. Übernimm nicht unbesehen den sichtbaren Fenstertitel eines Messengers als vermeintlichen Filterwert.</p>
+<h2 id="fehler-eingrenzen-und-zurueckkehren">Fehler eingrenzen und zurückkehren</h2>
+<p>Kommt keine Meldung, prüfe zuerst <code>dunstctl debug</code>, die Pause-Einstellung und den zuständigen Dienst. Ein Timeout- oder Farbproblem beginnt dagegen bei der geladenen Datei und den Regeln. Unter Wayland stammen globale Tastenkürzel üblicherweise vom Compositor; eine alte X11-Shortcut-Zeile kann dort wirkungslos sein.</p>
+<p>Der Rückweg zur ursprünglichen Konfiguration lautet:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">dunstctl reload
+</code></pre>
+<p>Teste anschließend eine normale Meldung. Erst danach überträgst du gewünschte Werte mit deinem Editor in die reguläre Datei, üblicherweise <code>~/.config/dunst/dunstrc</code>. Aktuelle Dunst-Versionen unterstützen auch Drop-ins; zusätzliche Dateien können Einstellungen überschreiben.</p>
+<h2 id="datenschutz-und-quellen">Datenschutz und Quellen</h2>
+<p>Benachrichtigungen können Namen, Nachrichteninhalte oder Einmalcodes enthalten. Auch ein lokal laufender Dienst macht einen geteilten Screenshot nicht automatisch unkritisch. Ergänzte Aktionen und Skripte verdienen dieselbe Prüfung wie Shell-Befehle; für das Tutorial sind keine solchen Erweiterungen nötig.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/Dunst/dunst/dunstrc">Geprüfte Cthulhu-dunstrc</a>.</li>
+<li><a href="https://dunst-project.org/documentation/">Dunst-Konfigurationsreferenz</a>: Position, Dringlichkeit und Regeln.</li>
+<li><a href="https://dunst-project.org/documentation/dunstctl/">dunstctl-Handbuch</a>: Reload und Steuerung.</li>
+<li><a href="https://dunst-project.org/documentation/dunst/">Dunst-Dateisuche</a>: Basisdateien und Drop-ins.</li>
+</ul>
+<p>Quellen und Konfiguration geprüft am 8. Oktober 2026.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Desktop &amp; Terminal</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#wer-zeigt-eine-benachrichtigung-an">Wer zeigt eine Benachrichtigung an?</a></li><li><a href="#die-abschnitte-meiner-datei-lesen">Die Abschnitte meiner Datei lesen</a></li><li><a href="#eine-separate-uebungsdatei-anlegen">Eine separate Übungsdatei anlegen</a></li><li><a href="#position-und-timeout-praktisch-testen">Position und Timeout praktisch testen</a></li><li><a href="#eine-regel-nur-fuer-den-testnamen">Eine Regel nur für den Testnamen</a></li><li><a href="#fehler-eingrenzen-und-zurueckkehren">Fehler eingrenzen und zurückkehren</a></li><li><a href="#datenschutz-und-quellen">Datenschutz und Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/blob/main/Dunst/dunst/dunstrc">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/xmonad-hs-verstehen/">XMonad verstehen: Meine xmonad.hs Schritt für Schritt <span aria-hidden="true">→</span></a><a href="/de/blog/journalctl-linux-fehler-finden/">journalctl für Einsteiger: Linux-Fehler in Systemlogs finden <span aria-hidden="true">→</span></a><a href="/de/blog/linux-konfiguration-sichern/">Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder · Dennis Hilk</title>
+<meta name="description" content="Kitty Schritt für Schritt einrichten: meine Gruvnode-Konfiguration, Schriften, Farben, Transparenz und Bildanzeige. Mit einer separaten Testdatei.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/kitty-konfigurieren/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-kitty/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/kitty-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-kitty/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder">
+<meta property="og:description" content="Kitty Schritt für Schritt einrichten: meine Gruvnode-Konfiguration, Schriften, Farben, Transparenz und Bildanzeige. Mit einer separaten Testdatei.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/kitty-konfigurieren/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder">
+<meta name="twitter:description" content="Kitty Schritt für Schritt einrichten: meine Gruvnode-Konfiguration, Schriften, Farben, Transparenz und Bildanzeige. Mit einer separaten Testdatei.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/kitty-konfigurieren/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/kitty-konfigurieren/","url":"https://www.dennishilk.com/de/blog/kitty-konfigurieren/","headline":"Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder","description":"Kitty Schritt für Schritt einrichten: meine Gruvnode-Konfiguration, Schriften, Farben, Transparenz und Bildanzeige. Mit einer separaten Testdatei.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Kitty & Terminal","wordCount":867},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder","item":"https://www.dennishilk.com/de/blog/kitty-konfigurieren/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/configure-kitty/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Kitty &amp; Terminal</span></nav>
+<header class="article-header"><p class="eyebrow">Kitty &amp; Terminal</p><h1>Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Lokale Einstellungen für dein Terminal</span><p>Die Testdatei und angezeigte Bilder bleiben auf deinem Rechner. Paketdownloads benötigen Internet; offizielle Kitty-Binärpakete können auf Updates prüfen. Befehle innerhalb des Terminals haben ihre eigenen Datenwege.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#terminal-und-shell-auseinanderhalten">Terminal und Shell auseinanderhalten</a></li><li><a href="#meine-kurze-konfiguration-lesen">Meine kurze Konfiguration lesen</a></li><li><a href="#eine-testdatei-statt-der-bestehenden-datei">Eine Testdatei statt der bestehenden Datei</a></li><li><a href="#schrift-und-nerd-font-symbole-pruefen">Schrift und Nerd-Font-Symbole prüfen</a></li><li><a href="#transparenz-braucht-unterstuetzung-vom-desktop">Transparenz braucht Unterstützung vom Desktop</a></li><li><a href="#ein-eigenes-bild-im-terminal-anzeigen">Ein eigenes Bild im Terminal anzeigen</a></li><li><a href="#aenderungen-uebernehmen-und-datenwege-verstehen">Änderungen übernehmen und Datenwege verstehen</a></li><li><a href="#konfiguration-und-quellen">Konfiguration und Quellen</a></li></ol></details>
+<p>Ein Terminal soll angenehm lesbar sein, jeden Tag zuverlässig funktionieren und zum eigenen Desktop passen. Kitty verbindet eine lokale Textkonfiguration mit GPU-gestützter Darstellung und einem Protokoll für Bilder. Eine kleine Datei reicht, um Schrift, Hintergrund und Scrollback gezielt einzustellen.</p>
+<p>Als Ausgangspunkt dient meine echte <a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/kitty/kitty.conf">Kitty-Konfiguration im Gruvnode-X1-Profil</a>. Wir beginnen mit einer separaten Testdatei. Du brauchst ein installiertes Kitty und eine grafische Linux-Sitzung; dein reguläres Terminal bleibt währenddessen offen.</p>
+<h2 id="terminal-und-shell-auseinanderhalten">Terminal und Shell auseinanderhalten</h2>
+<p>Kitty ist das Fenster, das Text und Tastatureingaben vermittelt. fish oder Bash sind die Programme darin, die Befehle interpretieren. Eine andere Kitty-Schrift ändert deshalb weder deine Login-Shell noch die Syntax deiner Skripte. Auch XMonad und Sway übernehmen andere Aufgaben: Sie verwalten Fenster beziehungsweise die Wayland-Sitzung.</p>
+<p>Diese Trennung hilft bei der Fehlersuche. Fehlt ein Zeichen, prüfst du zuerst die Schrift. Meldet ein Befehl einen Syntaxfehler, prüfst du die Shell. Bleibt die Transparenz unter X11 aus, ist zusätzlich der Compositor relevant. Mein <a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode-Artikel</a> erklärt das Zusammenspiel auf dem X1 Carbon.</p>
+<p>Prüfe zunächst deine Kitty-Version:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">kitty --version
+</code></pre>
+<h2 id="meine-kurze-konfiguration-lesen">Meine kurze Konfiguration lesen</h2>
+<p>Der folgende Ausschnitt stammt aus dem X1-Profil:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-conf">font_family JetBrains Mono
+font_size 11.0
+background #1d2021
+foreground #ebdbb2
+background_opacity 0.8
+dynamic_background_opacity no
+scrollback_lines 10000
+enable_audio_bell no
+</code></pre>
+<p>Eine Zeile besteht aus Optionsname und Wert. Es gibt keine geschweiften Klammern oder Semikolons. Kommentare stehen auf eigenen Zeilen mit <code>#</code> am Anfang; bei einer Farbe gehört das <code>#</code> dagegen zum Farbwert.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Einstellung</th>
+<th>Wirkung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>font_family</code></td>
+<td>Gewünschte Schriftfamilie</td>
+</tr>
+<tr>
+<td><code>font_size</code></td>
+<td>Ausgangsgröße in Punkten</td>
+</tr>
+<tr>
+<td><code>background</code> / <code>foreground</code></td>
+<td>Standardhintergrund und Standardtext</td>
+</tr>
+<tr>
+<td><code>background_opacity</code></td>
+<td>Deckkraft des Hintergrunds von 0 bis 1</td>
+</tr>
+<tr>
+<td><code>scrollback_lines</code></td>
+<td>Zurückgehaltene Ausgabezeilen</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mein Original definiert außerdem Cursor und Markierungsfarben. Es setzt noch keine vollständige Palette für alle ANSI-Farben. Ein Programm mit eigenen Farben kann daher anders aussehen als der Standardtext.</p>
+<h2 id="eine-testdatei-statt-der-bestehenden-datei">Eine Testdatei statt der bestehenden Datei</h2>
+<p>Lege einen Übungsordner an; falls du den Namen bereits verwendest, wähle einen anderen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">mkdir -p ~/kitty-tutorial
+</code></pre>
+<p>Speichere mit deinem Editor folgende Datei als <code>~/kitty-tutorial/kitty.conf</code>. Für den ersten Durchgang bleiben wir vollständig deckend:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-conf">font_family monospace
+font_size 12.0
+background #1d2021
+foreground #ebdbb2
+cursor #ebdbb2
+background_opacity 1.0
+scrollback_lines 5000
+enable_audio_bell no
+</code></pre>
+<p>Starte ein eigenes Fenster mit dieser Datei:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">kitty --config ~/kitty-tutorial/kitty.conf
+</code></pre>
+<p>Du solltest einen dunklen Hintergrund, hellen Text und eine neue Shell sehen. Die Datei unter <code>~/.config/kitty/kitty.conf</code> wird dabei nicht ersetzt. Zum Rückweg schließt du nur das Testfenster.</p>
+<h2 id="schrift-und-nerd-font-symbole-pruefen">Schrift und Nerd-Font-Symbole prüfen</h2>
+<p>Ändere zuerst allein <code>font_size</code>, etwa von <code>12.0</code> auf <code>13.0</code>, und starte das Testfenster erneut. Bei Bedarf kannst du eine vorhandene Konfiguration mit <code>Strg</code> + <code>Umschalt</code> + <code>F5</code> neu laden. Ein Neustart des Testfensters ist für Einsteiger der klare Weg, weil einige Einstellungen erst beim Start greifen.</p>
+<p>Für <code>JetBrains Mono</code> muss die passende Schrift installiert sein. Die Schriftfamilien auf deinem Rechner listet Kitty so auf:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">kitty +list-fonts
+</code></pre>
+<p>Übernimm den tatsächlich angebotenen Namen. JetBrains Mono und die um zusätzliche Icons erweiterte JetBrainsMono Nerd Font sind unterschiedliche Familiennamen. Wer meine <a href="/de/blog/fastfetch-konfigurieren/">Fastfetch-Konfiguration</a> mit ihren Symbolen übernimmt, benötigt passende Glyphen. Kästchen statt Icons sind zunächst ein Schriftproblem; ein funktionierendes Textlogo hilft beim Eingrenzen.</p>
+<h2 id="transparenz-braucht-unterstuetzung-vom-desktop">Transparenz braucht Unterstützung vom Desktop</h2>
+<p>Setze in der Testdatei <code>background_opacity 0.8</code> und öffne ein neues Fenster. <code>0.8</code> bedeutet 80 Prozent Deckkraft. Die Schrift selbst soll lesbar bleiben; zu starke Transparenz macht besonders vor unruhigen Hintergrundbildern anstrengend.</p>
+<p>Unter X11 braucht dieser Effekt einen Compositor, auf meinem Gruvnode-Desktop Picom. Unter Wayland gehört die Darstellung zum Compositor der Sitzung, etwa KWin oder Sway. Picom zusätzlich in einer Wayland-Sitzung zu starten ist keine passende Lösung.</p>
+<p>Mein Profil verwendet <code>dynamic_background_opacity no</code>. Damit ist das dynamische Ändern der Deckkraft über Kitty-Funktionen nicht aktiviert. Für diese Übung ändern wir die Datei und starten das Testfenster neu. Auch ein Editor mit eigenem, deckendem Zellenhintergrund kann Teile der Fläche weiterhin deckend zeichnen.</p>
+<h2 id="ein-eigenes-bild-im-terminal-anzeigen">Ein eigenes Bild im Terminal anzeigen</h2>
+<p>Öffne das Testfenster und führe darin den nächsten Befehl aus. Ersetze den Beispielpfad durch eine vorhandene lokale Bilddatei; Anführungszeichen schützen Leerzeichen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">kitten icat "$HOME/Bilder/mein-logo.png"
+</code></pre>
+<p>Kitty zeigt das Bild innerhalb des Terminals. Das ist eine andere Funktion als ein Desktop-Hintergrund. Zum Leeren der Bildanzeige dient:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">kitten icat --clear
+</code></pre>
+<p>Fehlt das Bild, prüfe Pfad, Leserechte und ob du den Befehl tatsächlich in einem unterstützenden Terminal ausführst. SSH, Multiplexer und andere Terminalprogramme können zusätzliche Bedingungen mitbringen. Teste zunächst direkt in einem lokalen Kitty-Fenster. Der Fastfetch-Artikel baut auf genau dieser Trennung zwischen Bilddatei, Terminaldarstellung und Konfiguration auf.</p>
+<h2 id="aenderungen-uebernehmen-und-datenwege-verstehen">Änderungen übernehmen und Datenwege verstehen</h2>
+<p>Passt die Testdatei, sichere eine vorhandene reguläre Datei vor dem Bearbeiten. Übertrage anschließend nur die gewünschten Zeilen mit deinem Editor. Kitty sucht üblicherweise unter <code>~/.config/kitty/kitty.conf</code>; ein anderes <code>XDG_CONFIG_HOME</code> oder <code>KITTY_CONFIG_DIRECTORY</code> verändert den Suchort.</p>
+<p>Die gezeigten Einstellungen lesen lokale Dateien. Das Terminal führt aber auch Netzwerkbefehle aus, wenn du sie startest. Offizielle Kitty-Binärbuilds können zudem Updates prüfen; Distributionspakete und Quellbuilds verhalten sich laut Dokumentation anders. Eine lokale Konfiguration ist deshalb ein kontrollierbarer Baustein, keine pauschale Zusicherung über jedes darin gestartete Programm.</p>
+<h2 id="konfiguration-und-quellen">Konfiguration und Quellen</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/gruvnode/blob/b67787e9689467b08ecdd576b4c031e96534fb60/thinkpad-x1-carbon/configs/kitty/kitty.conf">Mein X1-Kitty-Profil auf GitHub</a>: geprüfter Ausgangsstand.</li>
+<li><a href="https://sw.kovidgoyal.net/kitty/conf/">Kitty-Konfigurationsreferenz</a>: Optionen, Suchpfade und Laden.</li>
+<li><a href="https://sw.kovidgoyal.net/kitty/kittens/icat/">Kitty icat</a>: Bilddarstellung und Voraussetzungen.</li>
+<li><a href="https://sw.kovidgoyal.net/kitty/kittens/choose-fonts/">Kitty-Schriften</a>: Schriftwahl und Familiennamen.</li>
+</ul>
+<p>Konfiguration und Referenzen geprüft am 8. Oktober 2026. Die Übung richtet sich an lokale Linux-Desktops; sie ersetzt keinen Test auf deiner Grafikhardware.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Desktop &amp; Terminal</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#terminal-und-shell-auseinanderhalten">Terminal und Shell auseinanderhalten</a></li><li><a href="#meine-kurze-konfiguration-lesen">Meine kurze Konfiguration lesen</a></li><li><a href="#eine-testdatei-statt-der-bestehenden-datei">Eine Testdatei statt der bestehenden Datei</a></li><li><a href="#schrift-und-nerd-font-symbole-pruefen">Schrift und Nerd-Font-Symbole prüfen</a></li><li><a href="#transparenz-braucht-unterstuetzung-vom-desktop">Transparenz braucht Unterstützung vom Desktop</a></li><li><a href="#ein-eigenes-bild-im-terminal-anzeigen">Ein eigenes Bild im Terminal anzeigen</a></li><li><a href="#aenderungen-uebernehmen-und-datenwege-verstehen">Änderungen übernehmen und Datenwege verstehen</a></li><li><a href="#konfiguration-und-quellen">Konfiguration und Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/kitty/kitty.conf">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/picom-x11-konfigurieren/">Picom unter X11: Transparenz, Schatten und Fehler verstehen <span aria-hidden="true">→</span></a><a href="/de/blog/fastfetch-konfigurieren/">Fastfetch konfigurieren: Mein Cthulhu-Systemüberblick Schritt für Schritt <span aria-hidden="true">→</span></a><a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: Mein einfacher XMonad-Desktop vom T480 zum X1 Carbon <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

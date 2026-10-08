@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Picom on X11: understand transparency, shadows and errors · Dennis Hilk</title>
+<meta name="description" content="Picom for X11 explained using my Gruvnode profile: Kitty transparency, shadows and common errors. Try a separate configuration with a clear way back.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/configure-picom-x11/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-picom-x11/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/picom-x11-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-picom-x11/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Picom on X11: understand transparency, shadows and errors">
+<meta property="og:description" content="Picom for X11 explained using my Gruvnode profile: Kitty transparency, shadows and common errors. Try a separate configuration with a clear way back.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/configure-picom-x11/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Picom on X11: understand transparency, shadows and errors">
+<meta name="twitter:description" content="Picom for X11 explained using my Gruvnode profile: Kitty transparency, shadows and common errors. Try a separate configuration with a clear way back.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/configure-picom-x11/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/configure-picom-x11/","url":"https://www.dennishilk.com/blog/configure-picom-x11/","headline":"Picom on X11: understand transparency, shadows and errors","description":"Picom for X11 explained using my Gruvnode profile: Kitty transparency, shadows and common errors. Try a separate configuration with a clear way back.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Picom & X11","wordCount":842},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Picom on X11: understand transparency, shadows and errors","item":"https://www.dennishilk.com/blog/configure-picom-x11/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/picom-x11-konfigurieren/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Picom &amp; X11</span></nav>
+<header class="article-header"><p class="eyebrow">Picom &amp; X11</p><h1>Picom on X11: understand transparency, shadows and errors</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>5 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Compose your desktop locally</span><p>Picom composes local X11 windows. The shown profile needs no cloud service. Package downloads and programs inside those windows have their own network connections.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Picom on X11: understand transparency, shadows and errors"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#separate-the-window-manager-from-the-compositor">Separate the window manager from the compositor</a></li><li><a href="#read-my-profile-line-by-line">Read my profile line by line</a></li><li><a href="#why-kitty-can-still-be-transparent">Why Kitty can still be transparent</a></li><li><a href="#test-one-process-with-a-separate-file">Test one process with a separate file</a></li><li><a href="#try-shadows-as-a-single-change">Try shadows as a single change</a></li><li><a href="#identify-common-problems">Identify common problems</a></li><li><a href="#references-and-local-data-flows">References and local data flows</a></li></ol></details>
+<p>You enable transparency in your terminal, yet the background stays opaque. A lightweight X11 desktop may be missing a compositor. Picom supplies this additional display layer: it combines windows into the final image and can apply transparency or shadows.</p>
+<p>My <a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/picom/picom.conf">Picom file in the X1 Gruvnode profile</a> is deliberately small. This article explains its choices and a controlled test. It targets X11, for example XMonad; you do not need this setup for a Sway or Plasma Wayland session.</p>
+<h2 id="separate-the-window-manager-from-the-compositor">Separate the window manager from the compositor</h2>
+<p>XMonad decides where windows go and which receives focus. Picom then composes their X11 surfaces. They cooperate but remain separate processes. A complete desktop may already combine these responsibilities in its own window manager.</p>
+<p>Only one compositor should own this task. Do not add Picom if KWin already handles composition in an X11 session. Under Wayland, the compositor is part of the session itself; Picom is not a general replacement for missing effects there.</p>
+<p>Check the session type:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">printenv XDG_SESSION_TYPE
+</code></pre>
+<p>A missing value does not establish that the session is X11. In that case, check what you selected at login. The concrete reference here is my X1 profile running XMonad on X11.</p>
+<h2 id="read-my-profile-line-by-line">Read my profile line by line</h2>
+<p>The published file contains:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-conf">backend = "xrender";
+vsync = true;
+use-damage = true;
+shadow = false;
+fading = false;
+inactive-opacity = 1.0;
+active-opacity = 1.0;
+frame-opacity = 1.0;
+detect-client-opacity = true;
+detect-rounded-corners = true;
+</code></pre>
+<p>Unlike Kitty, this syntax uses <code>=</code>, quoted strings and semicolons. <code>xrender</code> selects a rendering backend. Available backends and options depend on the installed Picom version.</p>
+<p>Shadows and fade animations are disabled. Active windows, inactive windows and frames receive no extra global transparency factor, leaving Kitty in charge of its terminal opacity. <code>use-damage</code> considers changes reported by the X server instead of always treating unchanged areas as new content. The best combination for a particular GPU requires a real test.</p>
+<h2 id="why-kitty-can-still-be-transparent">Why Kitty can still be transparent</h2>
+<p>Kitty chooses its background rendering through <code>background_opacity</code>; Picom processes the resulting surface. Setting <code>inactive-opacity = 0.8</code> in Picom would additionally affect whole inactive windows. That can change text and controls too, and is a different effect.</p>
+<p>Start with my profile's absence of global window transparency. In the <a href="/blog/configure-kitty/">Kitty tutorial</a>, compare terminal backgrounds at <code>1.0</code> and <code>0.8</code> independently. This helps you identify which component controls the appearance.</p>
+<p><code>vsync = true</code> requests a display behaviour; it is not a promise to eliminate all tearing. The backend, driver and version also matter. Record that combination when a problem persists rather than combine unrelated options from different Picom forks.</p>
+<h2 id="test-one-process-with-a-separate-file">Test one process with a separate file</h2>
+<p>Check the version:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">picom --version
+</code></pre>
+<p>Check for an existing Picom process:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">pgrep -a picom
+</code></pre>
+<p>No output does not rule out another compositor. This exercise assumes an X11 session with no active compositor. If Picom already starts automatically, inspect that process's configuration instead of forcing a second instance.</p>
+<p>Create an exercise directory:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">mkdir -p ~/picom-tutorial
+</code></pre>
+<p>Save the file shown above as <code>~/picom-tutorial/picom.conf</code>. Start Picom in the foreground:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">picom --config ~/picom-tutorial/picom.conf
+</code></pre>
+<p>The terminal remains occupied and displays messages. From a second terminal, open a Kitty test window with reduced background opacity. To undo the experiment, press <code>Ctrl</code> + <code>C</code> in the first terminal to stop the Picom process you started. Your regular configuration file has not been replaced.</p>
+<h2 id="try-shadows-as-a-single-change">Try shadows as a single change</h2>
+<p>Stop the test process, change only <code>shadow = false;</code> to <code>shadow = true;</code> in the exercise file, then run the same command again. Compare the effect around an ordinary application window.</p>
+<p>Some windows may eventually need exclusion rules, such as panels or special popups. Keep the first test small nevertheless. Changing shadows, rounding, blur and backend at once makes it harder to identify the cause of display problems.</p>
+<p>Return the shadow setting to <code>false</code> and stop the process when finished. Add a session startup command only after testing. My Gruvnode profile starts Picom through the XMonad setup; avoid adding another invocation to several login files.</p>
+<h2 id="identify-common-problems">Identify common problems</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>First check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Another compositor already owns the display</td>
+<td>Identify the session's compositor</td>
+</tr>
+<tr>
+<td>File is not being read</td>
+<td>Check the explicit <code>--config</code> path and semicolons</td>
+</tr>
+<tr>
+<td>Kitty remains opaque</td>
+<td>Check Kitty's value, session type and rendering support</td>
+</tr>
+<tr>
+<td>Black surfaces or flickering</td>
+<td>Undo one change and record backend/version</td>
+</tr>
+<tr>
+<td>Two instances after login</td>
+<td>Inspect startup locations for duplicate commands</td>
+</tr>
+</tbody>
+</table></div>
+<p>Picom usually searches <code>~/.config/picom.conf</code>, then <code>~/.config/picom/picom.conf</code>, according to XDG directories. An explicit path removes this ambiguity in the exercise. Foreground messages are more useful during diagnosis than a process immediately sent into the background.</p>
+<h2 id="references-and-local-data-flows">References and local data flows</h2>
+<p>The shown profile composes local window surfaces. It does not inspect online accounts or require a web service. Applications within windows can still be online, and screenshots may contain their private content.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/gruvnode/blob/b67787e9689467b08ecdd576b4c031e96534fb60/thinkpad-x1-carbon/configs/picom/picom.conf">Checked Gruvnode Picom profile</a>.</li>
+<li><a href="https://picom.app/">Official Picom manual</a>: backends, options and file search.</li>
+<li><a href="https://github.com/yshui/picom">Picom project</a>: source and version-specific changes.</li>
+<li><a href="https://sw.kovidgoyal.net/kitty/conf/#opt-kitty.background_opacity">Kitty transparency</a>: terminal background and compositor requirements.</li>
+</ul>
+<p>Sources checked on 8 October 2026. This article does not establish that any particular driver/GPU combination is universally free of rendering problems.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← Desktop &amp; Terminal</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#separate-the-window-manager-from-the-compositor">Separate the window manager from the compositor</a></li><li><a href="#read-my-profile-line-by-line">Read my profile line by line</a></li><li><a href="#why-kitty-can-still-be-transparent">Why Kitty can still be transparent</a></li><li><a href="#test-one-process-with-a-separate-file">Test one process with a separate file</a></li><li><a href="#try-shadows-as-a-single-change">Try shadows as a single change</a></li><li><a href="#identify-common-problems">Identify common problems</a></li><li><a href="#references-and-local-data-flows">References and local data flows</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/picom/picom.conf">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/configure-kitty/">Configure Kitty: fonts, colours, transparency and terminal images <span aria-hidden="true">→</span></a><a href="/blog/xmonad-hs-explained/">Understanding XMonad: My xmonad.hs step by step <span aria-hidden="true">→</span></a><a href="/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

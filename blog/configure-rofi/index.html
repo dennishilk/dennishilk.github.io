@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configure Rofi: an app launcher, shortcuts and custom themes · Dennis Hilk</title>
+<meta name="description" content="Rofi for beginners: understand drun and run, read my Gruvnode theme and test a separate Rasi file. Includes XMonad shortcuts and troubleshooting.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/configure-rofi/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-rofi/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/rofi-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-rofi/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Configure Rofi: an app launcher, shortcuts and custom themes">
+<meta property="og:description" content="Rofi for beginners: understand drun and run, read my Gruvnode theme and test a separate Rasi file. Includes XMonad shortcuts and troubleshooting.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/configure-rofi/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Configure Rofi: an app launcher, shortcuts and custom themes">
+<meta name="twitter:description" content="Rofi for beginners: understand drun and run, read my Gruvnode theme and test a separate Rasi file. Includes XMonad shortcuts and troubleshooting.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/configure-rofi/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/configure-rofi/","url":"https://www.dennishilk.com/blog/configure-rofi/","headline":"Configure Rofi: an app launcher, shortcuts and custom themes","description":"Rofi for beginners: understand drun and run, read my Gruvnode theme and test a separate Rasi file. Includes XMonad shortcuts and troubleshooting.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Rofi & Desktop","wordCount":813},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Configure Rofi: an app launcher, shortcuts and custom themes","item":"https://www.dennishilk.com/blog/configure-rofi/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/rofi-konfigurieren/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Rofi &amp; Desktop</span></nav>
+<header class="article-header"><p class="eyebrow">Rofi &amp; Desktop</p><h1>Configure Rofi: an app launcher, shortcuts and custom themes</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>5 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Choose programs on your own computer</span><p>The launcher searches local programs and desktop files. Apps you launch and additional scripts can use network connections. Package and repository downloads need internet access.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Configure Rofi: an app launcher, shortcuts and custom themes"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#drun-and-run-serve-different-purposes">drun and run serve different purposes</a></li><li><a href="#read-my-rasi-file">Read my Rasi file</a></li><li><a href="#create-a-small-independent-test-file">Create a small independent test file</a></li><li><a href="#adjust-size-spacing-and-selection-colours">Adjust size, spacing and selection colours</a></li><li><a href="#connect-rofi-to-an-xmonad-shortcut">Connect Rofi to an XMonad shortcut</a></li><li><a href="#troubleshoot-missing-apps-and-icons">Troubleshoot missing apps and icons</a></li><li><a href="#local-selection-and-launched-applications">Local selection and launched applications</a></li><li><a href="#configuration-and-references">Configuration and references</a></li></ol></details>
+<p>A quick application launcher removes a lot of friction from a keyboard-driven desktop. Open Rofi, type part of a name and press Enter. My Gruvnode profile on the X1 Carbon uses a compact launcher with dark Gruvbox colours.</p>
+<p>This guide explains the <a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/rofi/config.rasi">published Rofi file</a> and a small configuration you can test separately. You need Rofi installed in a compatible graphical session. My concrete reference is XMonad on X11; check your installed Rofi version's support when using Wayland.</p>
+<h2 id="drun-and-run-serve-different-purposes">drun and run serve different purposes</h2>
+<p><code>drun</code> lists applications from desktop files, usually the same programs a desktop menu knows. A desktop file can specify a readable name, icon and launch command. <code>run</code> works with executable commands, for example those available through your <code>PATH</code>.</p>
+<p>For a beginner, <code>drun</code> is a useful starting point because you search for an application name rather than know its full command. A command available in <code>run</code> does not necessarily have a desktop entry for <code>drun</code>. This difference matters for Flatpak apps and programs you build yourself.</p>
+<p>Try the launcher before adding your own theme:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">rofi -show drun
+</code></pre>
+<p>Type a name, move the selection with the arrow keys and launch with Enter. Escape closes the window without launching anything.</p>
+<h2 id="read-my-rasi-file">Read my Rasi file</h2>
+<p>Rasi is Rofi's configuration and theme syntax. The beginning of my file controls behaviour:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-rasi">configuration {
+    modi: "drun,run";
+    show-icons: true;
+    display-drun: "Apps";
+    font: "JetBrains Mono 11";
+    drun-display-format: "{name}";
+}
+</code></pre>
+<p><code>modi</code> selects available modes; <code>-show drun</code> selects the opening mode. <code>show-icons</code> enables icon display but does not install an icon theme. <code>display-drun</code> changes the label, while <code>drun-display-format</code> limits the displayed entry information to its name.</p>
+<p>The theme section styles widgets such as <code>window</code>, <code>inputbar</code>, <code>listview</code> and <code>element selected</code>. My global colours live in the <code>*</code> block. A reference such as <code>@foreground</code> reuses a value elsewhere, allowing one colour change to update multiple widgets.</p>
+<h2 id="create-a-small-independent-test-file">Create a small independent test file</h2>
+<p>Make a separate directory:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">mkdir -p ~/rofi-tutorial
+</code></pre>
+<p>Save this complete exercise as <code>~/rofi-tutorial/config.rasi</code>. It is an original teaching example rather than a complete replacement for my theme:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-rasi">configuration {
+    modi: "drun,run";
+    show-icons: false;
+    font: "monospace 12";
+}
+* {
+    background-color: #1d2021;
+    text-color: #ebdbb2;
+}
+window {
+    width: 40%;
+    padding: 16px;
+}
+listview {
+    lines: 6;
+}
+element selected {
+    background-color: #504945;
+    text-color: #b8bb26;
+}
+</code></pre>
+<p>Launch specifically that file:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">rofi -config ~/rofi-tutorial/config.rasi -show drun
+</code></pre>
+<p>Expect a dark window, six visible list rows and a differently coloured selection. Your usual <code>~/.config/rofi/config.rasi</code> is preserved. Escape ends the exercise; launching without <code>-config</code> uses the normal configuration again.</p>
+<h2 id="adjust-size-spacing-and-selection-colours">Adjust size, spacing and selection colours</h2>
+<p>My original uses <code>width: 38%</code>, twelve pixels of window padding and eight list rows. These choices suit my display. A percentage width can help on smaller screens, while long application names may need more room.</p>
+<p>Change one test-file value at a time: first <code>lines</code>, then <code>width</code>. Reopen Rofi after each edit to see what that setting controls. Changing the font, size and colours simultaneously makes it harder to identify the cause of a problem.</p>
+<p>Rasi needs semicolons after properties and matching braces. A colour such as <code>#b8bb26</code> is unquoted; strings such as <code>"drun,run"</code> are quoted. When Rofi reports an error, inspect both the indicated line and the property just before it.</p>
+<h2 id="connect-rofi-to-an-xmonad-shortcut">Connect Rofi to an XMonad shortcut</h2>
+<p>On my X1, <code>Super</code> + <code>D</code> opens the launcher. The window manager essentially runs <code>rofi -show drun</code>. The global shortcut therefore belongs in XMonad, while the colours and dimensions belong in Rasi.</p>
+<p>Within an existing shortcut list set up with <code>EZConfig</code>, an entry can look like this:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-haskell">("M-d", spawn "rofi -show drun")
+</code></pre>
+<p>This is not a complete <code>xmonad.hs</code>. Read the <a href="/blog/xmonad-hs-explained/">XMonad introduction</a> before adding the entry in the right place. Check whether <code>M-d</code> already has a binding. Make sure the terminal command works before connecting it to a shortcut.</p>
+<h2 id="troubleshoot-missing-apps-and-icons">Troubleshoot missing apps and icons</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Observation</th>
+<th>Useful next check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App missing from <code>drun</code></td>
+<td>Check its desktop file and installation</td>
+</tr>
+<tr>
+<td>Command missing from <code>run</code></td>
+<td>Check <code>PATH</code> and the executable</td>
+</tr>
+<tr>
+<td>Icons missing</td>
+<td>Try <code>show-icons: false</code>, then inspect the icon theme</td>
+</tr>
+<tr>
+<td>Unexpected font</td>
+<td>Use an installed family name</td>
+</tr>
+<tr>
+<td>Shortcut does nothing</td>
+<td>Test the command first, then the XMonad binding</td>
+</tr>
+</tbody>
+</table></div>
+<p>Rofi does not install a selected application. It launches programs already configured on the computer. Likewise, a pleasant theme cannot correct an invalid desktop-file command. Keep appearance, application entries and window-manager shortcuts separate during diagnosis.</p>
+<h2 id="local-selection-and-launched-applications">Local selection and launched applications</h2>
+<p>The selection shown here needs no cloud account. A browser or game launcher you start afterwards can still go online. Rofi also supports additional modes and scripts whose behaviour depends on their code. Read their inputs, file access and commands before using them.</p>
+<h2 id="configuration-and-references">Configuration and references</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/gruvnode/blob/b67787e9689467b08ecdd576b4c031e96534fb60/thinkpad-x1-carbon/configs/rofi/config.rasi">My checked X1 Rofi profile</a>.</li>
+<li><a href="https://davatorium.github.io/rofi/current/rofi.1/">Rofi manual</a>: modes and command options.</li>
+<li><a href="https://davatorium.github.io/rofi/current/rofi-theme.5/">Rofi theme reference</a>: widgets and Rasi properties.</li>
+<li><a href="https://github.com/dennishilk/gruvnode">Gruvnode on GitHub</a>: the complete laptop setup.</li>
+</ul>
+<p>Sources checked on 8 October 2026. This tutorial explains the X11 setup; Wayland support and default themes can differ between Rofi versions.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← Desktop &amp; Terminal</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#drun-and-run-serve-different-purposes">drun and run serve different purposes</a></li><li><a href="#read-my-rasi-file">Read my Rasi file</a></li><li><a href="#create-a-small-independent-test-file">Create a small independent test file</a></li><li><a href="#adjust-size-spacing-and-selection-colours">Adjust size, spacing and selection colours</a></li><li><a href="#connect-rofi-to-an-xmonad-shortcut">Connect Rofi to an XMonad shortcut</a></li><li><a href="#troubleshoot-missing-apps-and-icons">Troubleshoot missing apps and icons</a></li><li><a href="#local-selection-and-launched-applications">Local selection and launched applications</a></li><li><a href="#configuration-and-references">Configuration and references</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/rofi/config.rasi">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: My simple XMonad desktop from the T480 to the X1 Carbon <span aria-hidden="true">→</span></a><a href="/blog/xmonad-hs-explained/">Understanding XMonad: My xmonad.hs step by step <span aria-hidden="true">→</span></a><a href="/blog/configure-kitty/">Configure Kitty: fonts, colours, transparency and terminal images <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

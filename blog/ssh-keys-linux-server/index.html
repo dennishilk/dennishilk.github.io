@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SSH keys on Linux: connect from your laptop to a server · Dennis Hilk</title>
+<meta name="description" content="Set up SSH keys step by step: Ed25519, public and private keys, ssh-copy-id, server identity checks and a readable client configuration.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/ssh-keys-linux-server/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/ssh-keys-linux-server/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/ssh-keys-linux-server/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH keys on Linux: connect from your laptop to a server">
+<meta property="og:description" content="Set up SSH keys step by step: Ed25519, public and private keys, ssh-copy-id, server identity checks and a readable client configuration.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/ssh-keys-linux-server/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SSH keys on Linux: connect from your laptop to a server">
+<meta name="twitter:description" content="Set up SSH keys step by step: Ed25519, public and private keys, ssh-copy-id, server identity checks and a readable client configuration.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/ssh-keys-linux-server/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/ssh-keys-linux-server/","url":"https://www.dennishilk.com/blog/ssh-keys-linux-server/","headline":"SSH keys on Linux: connect from your laptop to a server","description":"Set up SSH keys step by step: Ed25519, public and private keys, ssh-copy-id, server identity checks and a readable client configuration.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"SSH & Servers","wordCount":892},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"SSH keys on Linux: connect from your laptop to a server","item":"https://www.dennishilk.com/blog/ssh-keys-linux-server/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/ssh-schluessel-linux-server/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>SSH &amp; Servers</span></nav>
+<header class="article-header"><p class="eyebrow">SSH &amp; Servers</p><h1>SSH keys on Linux: connect from your laptop to a server</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>5 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Private keys stay on your device</span><p>The private key stays on the client; the server receives the public key. SSH encrypts the connection, while both endpoints still know connection metadata.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="SSH keys on Linux: connect from your laptop to a server"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#two-keys-with-different-responsibilities">Two keys with different responsibilities</a></li><li><a href="#create-a-dedicated-key">Create a dedicated key</a></li><li><a href="#verify-the-server-before-signing-in">Verify the server before signing in</a></li><li><a href="#transfer-only-the-public-key">Transfer only the public key</a></li><li><a href="#add-a-readable-host-alias">Add a readable host alias</a></li><li><a href="#understand-passphrases-and-the-ssh-agent">Understand passphrases and the SSH agent</a></li><li><a href="#troubleshoot-and-undo-deliberately">Troubleshoot and undo deliberately</a></li><li><a href="#references-and-the-next-server-step">References and the next server step</a></li></ol></details>
+<p>An SSH key makes regular server work easier to manage. For my website, worldnode provides the concrete context: its checkout lives at <code>/srv/www/dennishilk.github.io</code>. A dedicated key and short host alias can simplify that daily connection.</p>
+<p>This guide describes a general Linux/OpenSSH workflow. <code>server.example.com</code> and the client configuration below are <strong>examples to adapt</strong>. They do not claim to reproduce an existing SSH configuration on my server. You need a server account and an already authorized way to sign in.</p>
+<h2 id="two-keys-with-different-responsibilities">Two keys with different responsibilities</h2>
+<p><code>ssh-keygen</code> creates a key pair. The private half stays on the laptop. The public half, usually ending in <code>.pub</code>, can be installed for your account on the server.</p>
+<p>During authentication, the server checks whether the client possesses the corresponding private key. You do not need to copy that private key to the server. A passphrase additionally protects the local key file; it is separate from the server account password.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id_ed25519_worldnode</code></td>
+<td>Keep private on the client</td>
+</tr>
+<tr>
+<td><code>id_ed25519_worldnode.pub</code></td>
+<td>Install for the intended server account</td>
+</tr>
+<tr>
+<td><code>authorized_keys</code></td>
+<td>Allowed public keys on the server</td>
+</tr>
+<tr>
+<td><code>known_hosts</code></td>
+<td>Known SSH server identities on the client</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="create-a-dedicated-key">Create a dedicated key</h2>
+<p>Create the local SSH directory if needed:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">mkdir -p ~/.ssh
+</code></pre>
+<p>Check through a directory listing or file manager that the following name is unused. Choose a different name otherwise; do not overwrite an existing key.</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_worldnode -C "laptop-worldnode"
+</code></pre>
+<p>Choose a passphrase in the interactive dialog. The comment is a readable label, not server authorization. It need not contain an email address. The private file and public <code>.pub</code> file are created separately.</p>
+<p>Inspect the public key's fingerprint:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh-keygen -lf ~/.ssh/id_ed25519_worldnode.pub
+</code></pre>
+<p>This fingerprint identifies <strong>your user key</strong>. It is different from the server's host-key fingerprint checked next.</p>
+<h2 id="verify-the-server-before-signing-in">Verify the server before signing in</h2>
+<p>The first connection often reports an unknown host key. Compare its fingerprint through an already trusted route, such as the server console or established administrative documentation.</p>
+<p>A hostname and plausible IP address do not establish identity by themselves. A changed host key also needs an explanation. A reinstalled server is one possible cause, rather than a reason to dismiss every warning or blindly remove the old entry.</p>
+<p>Host verification establishes that you are talking to the intended server. The user key then answers a separate question: may you sign in to this account? Both checks belong in the workflow.</p>
+<h2 id="transfer-only-the-public-key">Transfer only the public key</h2>
+<p>Replace <code>server.example.com</code> with the actual server and <code>nebu</code> with your account if necessary:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh-copy-id -i ~/.ssh/id_ed25519_worldnode.pub nebu@server.example.com
+</code></pre>
+<p>The command needs a working existing login, often initially the account password. It installs the selected public key in the target account's authorized-key list. The private file is not transferred.</p>
+<p>Test explicitly with the new key:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519_worldnode nebu@server.example.com
+</code></pre>
+<p>A local passphrase prompt can be expected. Another server-password prompt may indicate a different authentication route. Check the connected account and host. Keep an established working login open until the new route succeeds.</p>
+<h2 id="add-a-readable-host-alias">Add a readable host alias</h2>
+<p>Back up an existing <code>~/.ssh/config</code>, then add a suitable section with your editor. If <code>Host worldnode</code> already exists, update that section deliberately rather than add competing entries:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sshconfig">Host worldnode
+    HostName server.example.com
+    User nebu
+    IdentityFile ~/.ssh/id_ed25519_worldnode
+    IdentitiesOnly yes
+</code></pre>
+<p><code>Host</code> is a local nickname; <code>HostName</code> is the actual destination. <code>IdentityFile</code> chooses the private key, and <code>IdentitiesOnly</code> limits offered identities. Adapt the domain, username and filename together.</p>
+<p>Then connect with:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh worldnode
+</code></pre>
+<p>Inspect resolved client settings without signing in:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh -G worldnode
+</code></pre>
+<p>The output includes personal destination details; avoid sharing it wholesale without review.</p>
+<h2 id="understand-passphrases-and-the-ssh-agent">Understand passphrases and the SSH agent</h2>
+<p>An SSH agent can retain an unlocked key during your session, avoiding a passphrase prompt at every connection. If your desktop already provides a reachable agent:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ssh-add ~/.ssh/id_ed25519_worldnode
+</code></pre>
+<p>Without an agent connection, the command fails. Setup depends on the desktop and shell; do not paste a Bash-specific agent startup into fish without adapting it. This guide does not require starting a new agent because the direct key command already works.</p>
+<p>An agent does not replace proper protection of the private key. Keep unlocked sessions protected and never hand the private half to someone else.</p>
+<h2 id="troubleshoot-and-undo-deliberately">Troubleshoot and undo deliberately</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Next check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Permission denied (publickey)</code></td>
+<td>Account, public key and server authorization</td>
+</tr>
+<tr>
+<td><code>Too many authentication failures</code></td>
+<td>Selected identity and <code>IdentitiesOnly</code></td>
+</tr>
+<tr>
+<td>Insecure private-file permissions</td>
+<td>Ownership and restrictive key-file permissions</td>
+</tr>
+<tr>
+<td>Host key has changed</td>
+<td>Verify destination identity through a trusted route</td>
+</tr>
+</tbody>
+</table></div>
+<p>Key files and <code>.ssh</code> directories need appropriate owners and permissions. <code>700</code> for <code>.ssh</code> and <code>600</code> for private files are common restrictive local values. The server's own checks also influence whether <code>authorized_keys</code> is accepted.</p>
+<p>If you later remove the exercise key, remove its particular public entry from <code>authorized_keys</code> after confirming another login works. Do not remove the entire file. Changing server authentication policy is outside this exercise.</p>
+<h2 id="references-and-the-next-server-step">References and the next server step</h2>
+<p>After signing in, update the website checkout deliberately. The <a href="/blog/git-pull-diverging-branches/">Git article</a> explains why local server commits sometimes require a rebase or merge.</p>
+<ul>
+<li><a href="https://www.openssh.org/manual.html">OpenSSH manuals</a>.</li>
+<li><a href="https://man.openbsd.org/ssh-keygen">ssh-keygen</a> and <a href="https://man.openbsd.org/ssh_config">ssh_config</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/openssh-client/ssh-copy-id.1.en.html">Debian's ssh-copy-id manual</a>.</li>
+</ul>
+<p>References checked on 8 October 2026. All server domains in the setup example are placeholders.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#workflows">← Everyday Workflows</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#two-keys-with-different-responsibilities">Two keys with different responsibilities</a></li><li><a href="#create-a-dedicated-key">Create a dedicated key</a></li><li><a href="#verify-the-server-before-signing-in">Verify the server before signing in</a></li><li><a href="#transfer-only-the-public-key">Transfer only the public key</a></li><li><a href="#add-a-readable-host-alias">Add a readable host alias</a></li><li><a href="#understand-passphrases-and-the-ssh-agent">Understand passphrases and the SSH agent</a></li><li><a href="#troubleshoot-and-undo-deliberately">Troubleshoot and undo deliberately</a></li><li><a href="#references-and-the-next-server-step">References and the next server step</a></li></ol></nav><a class="sidebar-tool" href="https://www.openssh.org/manual.html">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/git-pull-diverging-branches/">Git pull fails: understand diverging branches, merge and rebase <span aria-hidden="true">→</span></a><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a><a href="/blog/fish-shell-beginners/">fish for beginners: suggestions, aliases and configuration <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

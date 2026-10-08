@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo · Dennis Hilk</title>
+<meta name="description" content="Mein Source2Reel-Workflow erklärt: Quellen prüfen, Storyboard erstellen, lokale KI und Stimme nutzen und mit FFmpeg rendern. Mit Cisco-DOOM als Bezug.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/source2reel-github-local-explainer-video/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/source2reel-github-local-explainer-video/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo">
+<meta property="og:description" content="Mein Source2Reel-Workflow erklärt: Quellen prüfen, Storyboard erstellen, lokale KI und Stimme nutzen und mit FFmpeg rendern. Mit Cisco-DOOM als Bezug.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo">
+<meta name="twitter:description" content="Mein Source2Reel-Workflow erklärt: Quellen prüfen, Storyboard erstellen, lokale KI und Stimme nutzen und mit FFmpeg rendern. Mit Cisco-DOOM als Bezug.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/","url":"https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/","headline":"Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo","description":"Mein Source2Reel-Workflow erklärt: Quellen prüfen, Storyboard erstellen, lokale KI und Stimme nutzen und mit FFmpeg rendern. Mit Cisco-DOOM als Bezug.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Source2Reel & Erklärvideos","wordCount":890},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo","item":"https://www.dennishilk.com/de/blog/source2reel-github-erklaervideo-lokal/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/source2reel-github-local-explainer-video/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Source2Reel &amp; Erklärvideos</span></nav>
+<header class="article-header"><p class="eyebrow">Source2Reel &amp; Erklärvideos</p><h1>Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Lokale Produktion mit überprüfbaren Quellen</span><p>Die Produktion ist für lokale KI, Stimme und Rendering ausgelegt. GitHub-/Website-Import, Paketinstallation und Modelldownloads benötigen Netzverbindungen. Prüfe konfigurierte Provider und private Quelldateien.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Source2Reel: aus einem GitHub-Projekt ein lokales Erklärvideo"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#eine-quelle-ist-noch-keine-fertige-geschichte">Eine Quelle ist noch keine fertige Geschichte</a></li><li><a href="#die-lokale-werkzeugkette-vorbereiten">Die lokale Werkzeugkette vorbereiten</a></li><li><a href="#modell-provider-und-stimme-bewusst-auswaehlen">Modell, Provider und Stimme bewusst auswählen</a></li><li><a href="#ein-neues-projekt-bis-zum-storyboard-fuehren">Ein neues Projekt bis zum Storyboard führen</a></li><li><a href="#aussagen-und-bildmaterial-vor-dem-build-pruefen">Aussagen und Bildmaterial vor dem Build prüfen</a></li><li><a href="#mit-lokaler-stimme-rendern-und-das-ergebnis-ansehen">Mit lokaler Stimme rendern und das Ergebnis ansehen</a></li><li><a href="#artefakte-und-projektstand-nachvollziehbar-halten">Artefakte und Projektstand nachvollziehbar halten</a></li><li><a href="#quellen">Quellen</a></li></ol></details>
+<p>Ein Repository enthält oft alles für eine gute Erklärung: Code, README, Screenshots und eine dokumentierte Entwicklung. Ein verständliches Video braucht daraus jedoch eine Auswahl und einen nachvollziehbaren Ablauf. Source2Reel ist mein lokales Werkzeug für diese Produktionskette.</p>
+<p>Das <a href="https://github.com/dennishilk/source2reel">Source2Reel-Projekt</a> kombiniert Quellenimport, lokale KI-Unterstützung, ein strukturiertes Storyboard, lokale Sprachausgabe und FFmpeg-Rendering. Cisco-DOOM dient als Referenzepisode. Dieser Artikel erklärt den Workflow und seine Prüfstellen; automatisch erzeugte Texte sind weiterhin zu kontrollieren.</p>
+<h2 id="eine-quelle-ist-noch-keine-fertige-geschichte">Eine Quelle ist noch keine fertige Geschichte</h2>
+<p>Eine technische Erklärung sollte zuerst eine klare Frage beantworten: Was macht das Projekt, wie funktioniert es und welche Belege zeigen das Ergebnis? Ein langer README-Abschnitt allein ergibt noch keine gut aufgebaute Szene.</p>
+<p>Source2Reel führt daher ein Quelleninventar mit Referenzen und Hashes. Das hilft, verwendetes Material wiederzufinden und eine Fassung zuzuordnen. Ein Hash bestätigt dabei die Identität eines Inhalts, nicht dessen Wahrheit. Auch eine alte README oder ein Demo-Screenshot kann inzwischen einen anderen Stand beschreiben.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Produktionsschritt</th>
+<th>Ergebnis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quellenimport</td>
+<td>Lokale Grundlage aus Repo, Website oder Ordner</td>
+</tr>
+<tr>
+<td>Evidence-Inventar</td>
+<td>Referenzen und Inhaltskennungen</td>
+</tr>
+<tr>
+<td>Recherche / Storyboard</td>
+<td>Geplante Aussagen und Szenen</td>
+</tr>
+<tr>
+<td>Stimme / Timing</td>
+<td>Audio und daraus abgeleitete Dauer</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td>Video und begleitende Artefakte</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="die-lokale-werkzeugkette-vorbereiten">Die lokale Werkzeugkette vorbereiten</h2>
+<p>Der derzeit dokumentierte Installationsbezug ist Arch Linux auf Cthulhu. Prüfe die aktuelle <code>BUILD.md</code>, bevor du den Installer auf einem anderen Rechner ausführst. Er richtet Pakete und lokale Umgebungen ein; das ist mehr als das reine Lesen einer Datei.</p>
+<p>Hole einen neuen Checkout:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">git clone https://github.com/dennishilk/source2reel.git
+</code></pre>
+<p>Wechsle hinein:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">cd source2reel
+</code></pre>
+<p>Nach Prüfung der Voraussetzungen und des Installers folgt der dokumentierte Aufbau:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">./install.sh
+</code></pre>
+<p>Prüfe danach die Werkzeuge:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">./s2r doctor
+</code></pre>
+<p><code>doctor</code> meldet Abhängigkeiten und optionale Komponenten. Ein fehlendes Modell oder ein gestoppter API-Dienst kann als optional erscheinen; daraus folgt nicht, dass die KI-Produktion bereits startbereit ist. Eine vollständige neue Hardwareinstallation braucht eigene Funktionsprüfungen.</p>
+<h2 id="modell-provider-und-stimme-bewusst-auswaehlen">Modell, Provider und Stimme bewusst auswählen</h2>
+<p>Lokale Modell-Dateien liegen im ignorierten <code>models/</code>-Ordner; private Einstellungen in <code>config/local.toml</code>. Ein an die tatsächlichen Dateien anzupassender Ausschnitt ist:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-toml">[local_ai]
+model_path = "models/DEIN-MODELL.gguf"
+mmproj_path = "models/DEIN-PROJEKTOR.gguf"
+</code></pre>
+<p>Ein Multimodalprojektor muss zum ausgewählten Modell passen. Die Platzhalter sind keine Downloadnamen. Dokumentiere Modellrevision, Quantisierung und Hash, wenn du ein reproduzierbares Ergebnis festhalten willst.</p>
+<p>Die dokumentierte lokale Laufzeit verwendet unter anderem llama.cpp über einen lokalen API-Endpunkt. Vulkan/RADV ist der Cthulhu-Bezug; CPU ist ein möglicher Rückweg. Daraus folgt keine pauschale ROCm- oder GPU-Kompatibilität für jedes AMD-Modell.</p>
+<p>Die Stimme hat eine eigene Umgebung. Prüfe sie hörbar:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">./s2r voice-test
+</code></pre>
+<p>Der mitgelieferte Workflow nutzt eine englische Sprachumgebung. Ein deutschsprachiges Produktionsprofil braucht eine dazu passende geprüfte Stimme und Texte. Dass dieser Blogartikel zweisprachig ist, stellt nicht automatisch die Ausgabesprache des Tools um.</p>
+<h2 id="ein-neues-projekt-bis-zum-storyboard-fuehren">Ein neues Projekt bis zum Storyboard führen</h2>
+<p>Starte die interaktive Oberfläche:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">./s2r
+</code></pre>
+<p>Wähle eine neue Episode und gib eine autoritative Projektquelle ein. GitHub-URL, Website und lokaler Ordner können unterschiedliche Eingaben liefern. Beginne mit einem Thema und einer klaren Frage, statt wahllos große Materialsammlungen zusammenzugeben.</p>
+<p>Der explizite CLI-Weg für unseren Projektbezug lautet:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">./s2r create https://github.com/dennishilk/cisco9951-doom --review
+</code></pre>
+<p>Der Review-Schritt erlaubt, vor dem Build am Storyboard anzuhalten. Bei großen Quellen begrenzt Source2Reel Eingaben und legt Zwischenstände ab. Wiederverwendbare Teile sparen Arbeit, ersetzen aber keine inhaltliche Kontrolle nach einer geänderten Quelle.</p>
+<h2 id="aussagen-und-bildmaterial-vor-dem-build-pruefen">Aussagen und Bildmaterial vor dem Build prüfen</h2>
+<p>Bei Cisco-DOOM ist besonders wichtig, Entwicklungsstufen zu unterscheiden. Eine frühe Streaming-Demo und das finale native Spiel zeigen unterschiedliche Architekturen. Ein gutes Video erklärt diesen Übergang, statt einen alten Screenshot als Beleg für den endgültigen Offline-Betrieb zu verwenden.</p>
+<p>Prüfe jede relevante Szene auf drei Fragen: Passt die Aussage zur angegebenen Quelle? Zeigt das Bild den behaupteten Stand? Versteht jemand ohne Projektwissen den Zusammenhang? Eine maschinell gültige JSON-Datei allein beantwortet diese Fragen nicht.</p>
+<p>Nutze Originalbilder nur mit passenden Nutzungsrechten. Ein privater lokaler Ordner kann neben guten Aufnahmen auch Zugangsdaten oder ungeeignete Dateien enthalten. Wähle das Material vor dem Import und prüfe das spätere Bildfeld zusätzlich auf private Details.</p>
+<h2 id="mit-lokaler-stimme-rendern-und-das-ergebnis-ansehen">Mit lokaler Stimme rendern und das Ergebnis ansehen</h2>
+<p>Nach der Prüfung kannst du eine gespeicherte Episode über den interaktiven Build wählen. Der direkte Aufruf benötigt ihren tatsächlichen Slug; <code>DEIN-EPISODEN-SLUG</code> ist ein Platzhalter:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">./s2r build DEIN-EPISODEN-SLUG
+</code></pre>
+<p>Die dokumentierte Ausgabe ist 1920×1080 mit H.264-Video und AAC-Audio. Szenendauern werden aus der erzeugten Narration abgeleitet. Große Originalmedien, Schriftarten und FFmpeg-Funktionen müssen lokal vorhanden sein; eine Episode mit zusätzlichen ungetrackten Medien ist nach einem frischen Clone nicht automatisch vollständig renderbar.</p>
+<p>Sieh und höre das fertige Video vollständig durch. Prüfe Aussprache, Textumbrüche, eingebrannte Untertitel, Szenenwechsel und ob die Bilder zur gesprochenen Aussage passen. Der lokale Renderer verhindert weder eine falsche Schlussfolgerung noch eine missverständliche Formulierung.</p>
+<h2 id="artefakte-und-projektstand-nachvollziehbar-halten">Artefakte und Projektstand nachvollziehbar halten</h2>
+<p>Zu einer Produktion gehören mehr als die MP4: Storyboard, Transkript, Evidence und Provenienzmaterial helfen beim Nachprüfen. Die akzeptierte Referenzepisode ist im Projektstand mit zwölf Szenen und ungefähr 283,6 Sekunden auf Cthulhu dokumentiert. Das ist ein konkreter damaliger Abnahmestand, keine Erfolgsgarantie für jeden neuen Input.</p>
+<p>Die konsolidierte Neuinstallation und spätere Änderungen haben eigene Prüfgrenzen. Beachte <code>BUILD.md</code> und den aktuellen Projektstand, statt die Abnahme einer älteren Episode auf sämtliche neuen Installationspfade zu übertragen.</p>
+<p>Für private Modell- und Laufzeitdateien nutzt das Projekt ignorierte Verzeichnisse. Diese ignorierten Dateien brauchen bei Bedarf eigene Sicherungen; Git sichert sie nicht automatisch. Eine saubere <a href="/de/blog/git-pull-divergierende-branches/">Git-Historie</a> hilft dagegen bei der Zuordnung veröffentlichter Quellen.</p>
+<h2 id="quellen">Quellen</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/source2reel">Source2Reel auf GitHub</a>.</li>
+<li><a href="https://github.com/dennishilk/source2reel/blob/0589f204f959dd32dc13d740bd1812d7b059dd44/README.md">Geprüfte Workflow-Beschreibung</a>.</li>
+<li><a href="https://github.com/dennishilk/source2reel/blob/main/BUILD.md">BUILD.md</a>, <a href="https://github.com/dennishilk/source2reel/blob/main/docs/LOCAL_AI.md">lokale KI</a> und <a href="https://github.com/dennishilk/source2reel/blob/main/PROJECT_STATE.md">Projektstand</a>.</li>
+<li><a href="https://github.com/dennishilk/cisco9951-doom">Cisco-DOOM-Quellprojekt</a>.</li>
+</ul>
+<p>Referenzen geprüft am 8. Oktober 2026. Der Artikel erklärt die dokumentierte Produktionskette; er behauptet keinen neu durchgeführten vollständigen Render auf Cthulhu.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#project-guides">← Eigene Projekte</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#eine-quelle-ist-noch-keine-fertige-geschichte">Eine Quelle ist noch keine fertige Geschichte</a></li><li><a href="#die-lokale-werkzeugkette-vorbereiten">Die lokale Werkzeugkette vorbereiten</a></li><li><a href="#modell-provider-und-stimme-bewusst-auswaehlen">Modell, Provider und Stimme bewusst auswählen</a></li><li><a href="#ein-neues-projekt-bis-zum-storyboard-fuehren">Ein neues Projekt bis zum Storyboard führen</a></li><li><a href="#aussagen-und-bildmaterial-vor-dem-build-pruefen">Aussagen und Bildmaterial vor dem Build prüfen</a></li><li><a href="#mit-lokaler-stimme-rendern-und-das-ergebnis-ansehen">Mit lokaler Stimme rendern und das Ergebnis ansehen</a></li><li><a href="#artefakte-und-projektstand-nachvollziehbar-halten">Artefakte und Projektstand nachvollziehbar halten</a></li><li><a href="#quellen">Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/source2reel">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/linux-framebuffer-cisco-telefon-doom/">Linux-Framebuffer erklärt: DOOM auf meinem Cisco-Telefon <span aria-hidden="true">→</span></a><a href="/de/blog/eigenes-betriebssystem-boringos/">Eigenes Betriebssystem entwickeln: Bootloader und BoringKernel <span aria-hidden="true">→</span></a><a href="/de/blog/git-pull-divergierende-branches/">Git pull scheitert: abweichende Branches, Merge und Rebase <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

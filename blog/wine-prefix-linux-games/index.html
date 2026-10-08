@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wine prefixes explained: separate Windows environments on Linux · Dennis Hilk</title>
+<meta name="description" content="Wine prefixes for beginners: understand WINEPREFIX, drive_c, registry files and Lutris. Try a separate environment and learn its backup and safety limits.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/wine-prefix-linux-games/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/wine-prefix-linux-games/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/wine-prefix-linux-spiele/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/wine-prefix-linux-games/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wine prefixes explained: separate Windows environments on Linux">
+<meta property="og:description" content="Wine prefixes for beginners: understand WINEPREFIX, drive_c, registry files and Lutris. Try a separate environment and learn its backup and safety limits.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/wine-prefix-linux-games/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wine prefixes explained: separate Windows environments on Linux">
+<meta name="twitter:description" content="Wine prefixes for beginners: understand WINEPREFIX, drive_c, registry files and Lutris. Try a separate environment and learn its backup and safety limits.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/wine-prefix-linux-games/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/wine-prefix-linux-games/","url":"https://www.dennishilk.com/blog/wine-prefix-linux-games/","headline":"Wine prefixes explained: separate Windows environments on Linux","description":"Wine prefixes for beginners: understand WINEPREFIX, drive_c, registry files and Lutris. Try a separate environment and learn its backup and safety limits.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Wine & Linux Gaming","wordCount":895},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Wine prefixes explained: separate Windows environments on Linux","item":"https://www.dennishilk.com/blog/wine-prefix-linux-games/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/wine-prefix-linux-spiele/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Wine &amp; Linux Gaming</span></nav>
+<header class="article-header"><p class="eyebrow">Wine &amp; Linux Gaming</p><h1>Wine prefixes explained: separate Windows environments on Linux</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>6 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Keep configuration and game environments local</span><p>A prefix is local, but games, installers and launchers can go online. A Wine prefix separates settings; it is not a security sandbox for unknown Windows software.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Wine prefixes explained: separate Windows environments on Linux"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#what-is-a-wine-prefix">What is a Wine prefix?</a></li><li><a href="#separate-the-prefix-from-the-wine-version">Separate the prefix from the Wine version</a></li><li><a href="#choose-a-separate-test-environment">Choose a separate test environment</a></li><li><a href="#change-one-setting-and-undo-it">Change one setting and undo it</a></li><li><a href="#inspect-files-and-drive-mappings">Inspect files and drive mappings</a></li><li><a href="#do-not-blindly-change-architecture-or-filesystems">Do not blindly change architecture or filesystems</a></li><li><a href="#back-up-a-prefix-and-investigate-problems">Back up a prefix and investigate problems</a></li><li><a href="#use-lutris-and-return-to-normal-settings">Use Lutris and return to normal settings</a></li><li><a href="#references">References</a></li></ol></details>
+<p>One game needs a different setting from another. If they share a Wine environment, a change can affect both. Separate prefixes help keep registry settings, installed components and virtual Windows files organized.</p>
+<p>This article extends my <a href="/blog/linux-gaming-steam-proton-lutris/">Linux gaming guide</a>, which covers the roles of Steam, Proton and Lutris. Here we focus on a single prefix and test Wine's own configuration interface without running an unfamiliar game installer.</p>
+<h2 id="what-is-a-wine-prefix">What is a Wine prefix?</h2>
+<p>A prefix is the directory Wine uses to maintain its Windows environment. The usual default is <code>~/.wine</code>. Setting <code>WINEPREFIX</code> to another absolute directory chooses a different environment for an invocation.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>drive_c</code></td>
+<td>Virtual contents of drive C</td>
+</tr>
+<tr>
+<td><code>dosdevices</code></td>
+<td>Windows-drive mappings to Linux paths</td>
+</tr>
+<tr>
+<td>Registry files</td>
+<td>Stored Windows and Wine settings</td>
+</tr>
+<tr>
+<td>Installed components</td>
+<td>Additional runtime libraries, for example</td>
+</tr>
+</tbody>
+</table></div>
+<p>Wine is not a complete Windows operating system inside a virtual machine. It provides Windows interfaces for programs. The <a href="/blog/linux-virtual-machine-kvm-virt-manager/">VM tutorial</a> describes the different architecture of a guest operating system.</p>
+<h2 id="separate-the-prefix-from-the-wine-version">Separate the prefix from the Wine version</h2>
+<p>The prefix stores settings and installed files. The Wine version, often called a runner, is a separate choice. A directory's existence does not tell you which version last used it.</p>
+<p>Lutris can manage a prefix and runner per game. Steam/Proton maintains its own compatibility data. Avoid testing a managed environment with an arbitrary system Wine version. Switching runners can update files and settings; back up important data before experimenting.</p>
+<p>The following low-impact exercise needs installed Wine and a graphical Linux session. Check the version:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">wine --version
+</code></pre>
+<h2 id="choose-a-separate-test-environment">Choose a separate test environment</h2>
+<p>First check whether <code>~/wine-tutorial</code> already contains your work. Choose another name if needed. Using a new directory avoids your normal <code>~/.wine</code> environment.</p>
+<p>Launch the configuration interface with an explicit prefix:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">env WINEPREFIX="$HOME/wine-tutorial" winecfg
+</code></pre>
+<p><code>env</code> sets the variable only for this invocation and its child processes. This command works from fish too, without permanently changing shell settings. The path is absolute because <code>$HOME</code> expands to the full home-directory path.</p>
+<p>Wine creates its directory structure for a new environment. Depending on the package and version, prompts for additional components or downloads may appear. The configuration exercise needs no game account. Read additional installation proposals before accepting them.</p>
+<h2 id="change-one-setting-and-undo-it">Change one setting and undo it</h2>
+<p><code>winecfg</code> offers areas including applications, libraries, graphics and drives. Begin with one understandable display setting, such as a virtual desktop if your version offers it. Record the original value.</p>
+<p>Apply the change, close the window and run the same command again. Expect it to remain in the <strong>test prefix</strong>. Then restore the original value. Another prefix does not receive that change automatically.</p>
+<p>Choosing a Windows version specifies compatibility behaviour; it does not install that Windows release. A DLL override is also a specific compatibility decision rather than a universal speed improvement. Avoid installing multiple runtimes and overrides at once when investigating a problem.</p>
+<h2 id="inspect-files-and-drive-mappings">Inspect files and drive mappings</h2>
+<p>After first launch, inspect two common directories:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ls -ld ~/wine-tutorial/drive_c ~/wine-tutorial/dosdevices
+</code></pre>
+<p><code>drive_c</code> contains virtual Windows directories. <code>dosdevices</code> may also map parts of your real Linux filesystem. A visible Windows drive is therefore not necessarily isolated storage.</p>
+<p>This establishes an important boundary: a prefix is <strong>not a security sandbox</strong>. Malicious software can access files allowed by your user permissions. Use trusted programs; deliberately examining unknown software needs a different isolation arrangement.</p>
+<h2 id="do-not-blindly-change-architecture-or-filesystems">Do not blindly change architecture or filesystems</h2>
+<p>A prefix's architecture is chosen at creation. Setting <code>WINEARCH</code> later does not simply convert an existing environment between 32 and 64 bits. Available configurations depend on your Wine packages and their WoW64 implementation.</p>
+<p>The first exercise uses the package default. If a game specifically requires another architecture, create a suitable independent environment following its current installer or runner guidance. Old <code>win32</code> instructions do not apply automatically to every modern Wine package.</p>
+<p>A prefix also needs appropriate filesystem behaviour and permissions. Problems on additional drives can involve mounts, case sensitivity or links. My <a href="/blog/linux-drives-uuid-mount-permissions/">storage guide</a> explains the layer underneath the game environment.</p>
+<h2 id="back-up-a-prefix-and-investigate-problems">Back up a prefix and investigate problems</h2>
+<p>Close all programs using the environment. If needed, wait for its Wine processes to finish:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">env WINEPREFIX="$HOME/wine-tutorial" wineserver --wait
+</code></pre>
+<p>This waits; it does not close an open game for you. Then back up the whole prefix to a new, unused destination. Important saves may live outside the prefix or be synchronized by a launcher, so verify their actual locations.</p>
+<p>Record the prefix path, runner version, launch command and last change during diagnosis. A <code>fixme</code> line alone does not establish the cause of a crash. Compare behaviour before and after <strong>one</strong> change, and read surrounding output near the failure.</p>
+<h2 id="use-lutris-and-return-to-normal-settings">Use Lutris and return to normal settings</h2>
+<p>In Lutris, inspect the game's configured prefix path and runner. Record original values and preserve important data before changing them. A separate test installation should receive its own game/prefix entry so the existing setup remains understandable.</p>
+<p>Close <code>winecfg</code> when finished. A normal Wine invocation without our <code>env</code> selection returns to its regular environment. Keep the exercise directory while you need its contents. Remove it only after inspection, avoiding blanket deletion of every prefix.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://manpages.debian.org/trixie/wine/wine.1.en.html">Debian's Wine manual</a>: <code>WINEPREFIX</code> and environment settings.</li>
+<li><a href="https://manpages.debian.org/trixie/wine/winecfg.1.en.html">winecfg</a> and <a href="https://manpages.debian.org/trixie/wine/wineserver.1.en.html">wineserver</a>.</li>
+<li><a href="https://github.com/lutris/docs">Lutris documentation</a>: runners and game setup.</li>
+<li><a href="https://github.com/ValveSoftware/Proton">Proton project</a>: Steam compatibility environments.</li>
+</ul>
+<p>References checked on 8 October 2026. The test prefix is a teaching example, rather than a compatibility promise for a particular game.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#workflows">← Everyday Workflows</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#what-is-a-wine-prefix">What is a Wine prefix?</a></li><li><a href="#separate-the-prefix-from-the-wine-version">Separate the prefix from the Wine version</a></li><li><a href="#choose-a-separate-test-environment">Choose a separate test environment</a></li><li><a href="#change-one-setting-and-undo-it">Change one setting and undo it</a></li><li><a href="#inspect-files-and-drive-mappings">Inspect files and drive mappings</a></li><li><a href="#do-not-blindly-change-architecture-or-filesystems">Do not blindly change architecture or filesystems</a></li><li><a href="#back-up-a-prefix-and-investigate-problems">Back up a prefix and investigate problems</a></li><li><a href="#use-lutris-and-return-to-normal-settings">Use Lutris and return to normal settings</a></li><li><a href="#references">References</a></li></ol></nav><a class="sidebar-tool" href="https://manpages.debian.org/trixie/wine/wine.1.en.html">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/linux-gaming-steam-proton-lutris/">Understand Linux gaming: Steam, Proton, Lutris and MangoHud <span aria-hidden="true">→</span></a><a href="/blog/linux-drives-uuid-mount-permissions/">Linux drives explained: UUIDs, mountpoints and permissions <span aria-hidden="true">→</span></a><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>journalctl for beginners: find Linux errors in system logs · Dennis Hilk</title>
+<meta name="description" content="Narrow down Linux problems with journalctl: filter by boot, time, service and priority. Includes a local test message and guidance for sharing logs.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/journalctl-linux-fehler-finden/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="journalctl for beginners: find Linux errors in system logs">
+<meta property="og:description" content="Narrow down Linux problems with journalctl: filter by boot, time, service and priority. Includes a local test message and guidance for sharing logs.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="journalctl for beginners: find Linux errors in system logs">
+<meta name="twitter:description" content="Narrow down Linux problems with journalctl: filter by boot, time, service and priority. Includes a local test message and guidance for sharing logs.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/","url":"https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/","headline":"journalctl for beginners: find Linux errors in system logs","description":"Narrow down Linux problems with journalctl: filter by boot, time, service and priority. Includes a local test message and guidance for sharing logs.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Linux & Diagnostics","wordCount":821},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"journalctl for beginners: find Linux errors in system logs","item":"https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/journalctl-linux-fehler-finden/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Diagnostics</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Diagnostics</p><h1>journalctl for beginners: find Linux errors in system logs</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>5 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Read selected logs locally</span><p>These queries read local journals without uploading them. Logs can contain usernames, IP addresses and confidential messages. Inspect a selected excerpt before sharing it.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="journalctl for beginners: find Linux errors in system logs"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#what-does-the-journal-contain">What does the journal contain?</a></li><li><a href="#select-the-correct-boot">Select the correct boot</a></li><li><a href="#read-one-service-rather-than-everything">Read one service rather than everything</a></li><li><a href="#combine-time-and-priority-filters">Combine time and priority filters</a></li><li><a href="#find-a-message-you-wrote-yourself">Find a message you wrote yourself</a></li><li><a href="#follow-output-and-use-a-repeatable-diagnostic-process">Follow output and use a repeatable diagnostic process</a></li><li><a href="#share-selected-excerpts-carefully">Share selected excerpts carefully</a></li><li><a href="#references">References</a></li></ol></details>
+<p>A service fails to start, sound drops out or something stops working after boot. The system journal may already contain a useful message. <code>journalctl</code> helps you select the relevant period and service instead of searching an enormous output for red lines.</p>
+<p>This guide assumes Linux with systemd and <code>systemd-journald</code>, as in Cthulhu's NixOS setup. Other init systems may use different tools. The diagnostic queries below are read-only. Only the explicitly labelled exercise message adds a harmless journal entry of your own.</p>
+<h2 id="what-does-the-journal-contain">What does the journal contain?</h2>
+<p>The journal collects structured messages from sources including services and the kernel. Entries include time, source and priority alongside their text. System services such as NetworkManager and user services such as PipeWire belong to different contexts.</p>
+<p>Logs are observations rather than a finished diagnosis. A warning can describe expected behaviour, and the actual cause may appear before the visible failure. Start with a concrete question: what stopped working, when did it happen and which service was involved?</p>
+<p>Read a small initial excerpt:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --boot --lines=30 --no-pager
+</code></pre>
+<p><code>--boot</code> selects the current boot, <code>--lines</code> selects recent entries and <code>--no-pager</code> prints directly. Without the final option, a pager often opens; press <code>q</code> to exit it.</p>
+<h2 id="select-the-correct-boot">Select the correct boot</h2>
+<p>A problem after restarting may require the previous boot's messages. List recorded boots:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --list-boots
+</code></pre>
+<p>If the previous boot is present, query it:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --boot=-1 --lines=50 --no-pager
+</code></pre>
+<p><code>0</code> is the current boot and <code>-1</code> is the previous recorded one. Retention settings, storage type and permissions may make older boots unavailable. Their absence does not prove that no earlier problem occurred.</p>
+<p>Full system-journal access depends on your distribution and group membership. Begin without <code>sudo</code>; repeat a specific query with <code>sudo</code> if it legitimately needs additional access. This does not turn a user service into a system service.</p>
+<h2 id="read-one-service-rather-than-everything">Read one service rather than everything</h2>
+<p>For a networking problem with NetworkManager, which my NixOS file enables:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --boot --unit=NetworkManager.service --lines=60 --no-pager
+</code></pre>
+<p>The unit name must actually apply to your computer. Another network-management tool has different service messages. Inspect the associated status separately:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">systemctl status NetworkManager.service
+</code></pre>
+<p>A PipeWire user service needs a different context:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --user --boot --unit=pipewire.service --lines=40 --no-pager
+</code></pre>
+<p>This query needs available user journals. If nothing appears, check service management and journal retention. A manually launched program may write only to its original terminal; not every problem appears under the expected unit.</p>
+<h2 id="combine-time-and-priority-filters">Combine time and priority filters</h2>
+<p>A narrow period makes the output easier to follow. Read the last ten minutes of the current boot:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --boot --since="10 minutes ago" --no-pager
+</code></pre>
+<p>Select warnings and more severe messages:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --boot --priority=warning --lines=50 --no-pager
+</code></pre>
+<p>A single <code>warning</code> threshold also includes higher-severity entries such as errors. Filters combine, so an overly narrow selection can hide the informative message explaining the problem. After finding a relevant entry, read that service in the same period without the priority filter.</p>
+<p>Record the approximate start time and timezone of an incident. Absolute timestamps make repeated comparisons more useful than asking for “ten minutes ago” again an hour later. The displayed local time should match your observation.</p>
+<h2 id="find-a-message-you-wrote-yourself">Find a message you wrote yourself</h2>
+<p>This exercise <strong>writes one journal entry</strong>. It changes no service and is not a genuine failure report:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">systemd-cat --identifier=BlogTutorial echo "Local journal exercise"
+</code></pre>
+<p>Search for that identifier:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --identifier=BlogTutorial --since="5 minutes ago" --no-pager
+</code></pre>
+<p>Expect your message with a timestamp and source, subject to journal permissions. The text deliberately contains no personal data. As a second exercise, change the identifier in both commands and compare the selection.</p>
+<p>This teaches filtering without deliberately breaking a service. There is no need to delete journal files or change retention settings.</p>
+<h2 id="follow-output-and-use-a-repeatable-diagnostic-process">Follow output and use a repeatable diagnostic process</h2>
+<p>Watch a service during an operation:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">journalctl --boot --unit=NetworkManager.service --follow
+</code></pre>
+<p>Stop watching with <code>Ctrl</code> + <code>C</code>. This stops the reader, not NetworkManager. Avoid restarting networking merely for an exercise if your connection depends on it.</p>
+<p>A useful process is to describe behaviour, record the time, select a service, read the context, test one justified change and compare the same excerpt again. My <a href="/blog/fix-spdif-audio-delay-linux/">SPDIF article</a> applies this approach to an audio problem; the <a href="/blog/nixos-generations-rollback/">NixOS rollback guide</a> covers system changes.</p>
+<h2 id="share-selected-excerpts-carefully">Share selected excerpts carefully</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Keep</th>
+<th>Check before publishing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Relevant error and surrounding lines</td>
+<td>Names, hostnames and private paths</td>
+</tr>
+<tr>
+<td>Service name and software version</td>
+<td>IP addresses and network names</td>
+</tr>
+<tr>
+<td>Timestamp and the change tested</td>
+<td>Tokens, credential-bearing URLs and message content</td>
+</tr>
+</tbody>
+</table></div>
+<p>Copy a targeted excerpt and redact sensitive values. Uploading an entire journal is rarely the first necessary step. Keep the original for your own investigation: a shortened public excerpt may omit a line that becomes relevant later.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://manpages.debian.org/trixie/systemd/journalctl.1.en.html">Debian's journalctl manual</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/systemd/systemd-cat.1.en.html">systemd-cat</a>: the exercise message.</li>
+<li><a href="https://manpages.debian.org/trixie/systemd/systemd-journald.service.8.en.html">systemd-journald</a>: storage and access.</li>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/NixOS/configuration.nix">Cthulhu's checked NixOS configuration</a>: the NetworkManager and PipeWire project context.</li>
+</ul>
+<p>Sources checked on 8 October 2026. These are exercises; no invented Cthulhu incident logs are presented as real measurements.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#system-guides">← System &amp; Diagnostics</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#what-does-the-journal-contain">What does the journal contain?</a></li><li><a href="#select-the-correct-boot">Select the correct boot</a></li><li><a href="#read-one-service-rather-than-everything">Read one service rather than everything</a></li><li><a href="#combine-time-and-priority-filters">Combine time and priority filters</a></li><li><a href="#find-a-message-you-wrote-yourself">Find a message you wrote yourself</a></li><li><a href="#follow-output-and-use-a-repeatable-diagnostic-process">Follow output and use a repeatable diagnostic process</a></li><li><a href="#share-selected-excerpts-carefully">Share selected excerpts carefully</a></li><li><a href="#references">References</a></li></ol></nav><a class="sidebar-tool" href="https://manpages.debian.org/trixie/systemd/journalctl.1.en.html">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/nixos-generations-rollback/">NixOS rollback: understand generations and undo an update <span aria-hidden="true">→</span></a><a href="/blog/fix-spdif-audio-delay-linux/">SPDIF audio delay on Linux: Why the first sound disappears and what helps <span aria-hidden="true">→</span></a><a href="/blog/ssh-keys-linux-server/">SSH keys on Linux: connect from your laptop to a server <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

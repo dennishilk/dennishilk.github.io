@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux in einer VM testen: KVM und virt-manager für Einsteiger · Dennis Hilk</title>
+<meta name="description" content="Linux vor dem Umstieg in einer VM testen: KVM, QEMU, libvirt und virt-manager erklärt. Mit NixOS-Bezug, virtueller Festplatte und NAT-Netzwerk.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/linux-virtual-machine-kvm-virt-manager/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/linux-virtual-machine-kvm-virt-manager/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux in einer VM testen: KVM und virt-manager für Einsteiger">
+<meta property="og:description" content="Linux vor dem Umstieg in einer VM testen: KVM, QEMU, libvirt und virt-manager erklärt. Mit NixOS-Bezug, virtueller Festplatte und NAT-Netzwerk.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linux in einer VM testen: KVM und virt-manager für Einsteiger">
+<meta name="twitter:description" content="Linux vor dem Umstieg in einer VM testen: KVM, QEMU, libvirt und virt-manager erklärt. Mit NixOS-Bezug, virtueller Festplatte und NAT-Netzwerk.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/","url":"https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/","headline":"Linux in einer VM testen: KVM und virt-manager für Einsteiger","description":"Linux vor dem Umstieg in einer VM testen: KVM, QEMU, libvirt und virt-manager erklärt. Mit NixOS-Bezug, virtueller Festplatte und NAT-Netzwerk.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Linux & Virtuelle Maschinen","wordCount":886},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Linux in einer VM testen: KVM und virt-manager für Einsteiger","item":"https://www.dennishilk.com/de/blog/linux-virtuelle-maschine-kvm-virt-manager/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/linux-virtual-machine-kvm-virt-manager/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Virtuelle Maschinen</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Virtuelle Maschinen</p><h1>Linux in einer VM testen: KVM und virt-manager für Einsteiger</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>6 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Testsystem auf deinem eigenen Rechner</span><p>Die VM und ihre virtuelle Festplatte liegen lokal. ISO-Downloads, Updates und Anwendungen im Gast können online sein. NAT ist kein vollständiger Schutz vor Zugriffen auf dein Netzwerk.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Linux in einer VM testen: KVM und virt-manager für Einsteiger"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#kvm-qemu-libvirt-und-virt-manager-unterscheiden">KVM, QEMU, libvirt und virt-manager unterscheiden</a></li><li><a href="#die-host-voraussetzungen-pruefen">Die Host-Voraussetzungen prüfen</a></li><li><a href="#eine-iso-und-eine-getrennte-festplatte-waehlen">Eine ISO und eine getrennte Festplatte wählen</a></li><li><a href="#im-gast-installieren-und-einen-ablauf-testen">Im Gast installieren und einen Ablauf testen</a></li><li><a href="#nat-und-das-standardnetzwerk-verstehen">NAT und das Standardnetzwerk verstehen</a></li><li><a href="#snapshots-backups-und-hardwaregrenzen">Snapshots, Backups und Hardwaregrenzen</a></li><li><a href="#fehler-eingrenzen-und-den-test-beenden">Fehler eingrenzen und den Test beenden</a></li><li><a href="#quellen">Quellen</a></li></ol></details>
+<p>Du möchtest Linux kennenlernen, ohne gleich deine vorhandene Installation umzubauen. Eine virtuelle Maschine ist dafür ein guter erster Schritt: Das Gastsystem bekommt virtuelle Hardware und eine eigene Festplattendatei. Dein Host bleibt das Betriebssystem, auf dem virt-manager läuft.</p>
+<p>Auf Cthulhu aktiviert meine <a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">NixOS-Konfiguration</a> libvirt und virt-manager. Dieser Artikel erklärt die Bausteine und einen kleinen Linux-Test. Eine VM eignet sich besonders für Oberfläche, Paketverwaltung und Abläufe; die echte WLAN-, Grafik- und Akku-Hardware deines Laptops testest du damit nur eingeschränkt.</p>
+<h2 id="kvm-qemu-libvirt-und-virt-manager-unterscheiden">KVM, QEMU, libvirt und virt-manager unterscheiden</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Baustein</th>
+<th>Aufgabe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KVM</td>
+<td>Virtualisierungsunterstützung im Linux-Kernel</td>
+</tr>
+<tr>
+<td>QEMU</td>
+<td>Ausführung und bereitgestellte virtuelle Geräte</td>
+</tr>
+<tr>
+<td>libvirt</td>
+<td>Verwaltung von Maschinen, Speicher und Netzwerken</td>
+</tr>
+<tr>
+<td>virt-manager</td>
+<td>Grafische Oberfläche für diese Verwaltung</td>
+</tr>
+</tbody>
+</table></div>
+<p>Die Namen bezeichnen verschiedene Schichten desselben Aufbaus. virt-manager ist keine zusätzliche Linux-Distribution. Ebenso ist eine virtuelle Festplatte eine Datei beziehungsweise ein verwaltetes Volume, nicht automatisch eine Partition deines echten Laufwerks.</p>
+<p>Für Hardwarebeschleunigung braucht der Rechner passende CPU-Virtualisierung und deren Freigabe in der Firmware. Wenn die VM langsam läuft, prüfe die Beschleunigung, bevor du bloß mehr virtuelle CPUs vergibst. Mehr zugeteilte Ressourcen sind nicht immer die Lösung.</p>
+<h2 id="die-host-voraussetzungen-pruefen">Die Host-Voraussetzungen prüfen</h2>
+<p>Prüfe zunächst das KVM-Gerät:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ls -l /dev/kvm
+</code></pre>
+<p>Die Existenz allein bestätigt noch nicht alle Zugriffsrechte. Mit installierten libvirt-Werkzeugen liefert dieser Check weitere Hinweise:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">virt-host-validate qemu
+</code></pre>
+<p>Lies die einzelnen Ergebnisse. Eine Warnung über eine zusätzliche Funktion bedeutet nicht automatisch, dass dein einfacher Linux-Gast nicht laufen kann. Fehlende Virtualisierung oder fehlende Rechte auf den benötigten Geräten sind dagegen zentrale Punkte.</p>
+<p>Meine NixOS-Datei aktiviert:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-nix">virtualisation.libvirtd.enable = true;
+programs.virt-manager.enable = true;
+</code></pre>
+<p>Benutzer <code>nebu</code> gehört dort unter anderem zu <code>libvirtd</code> und <code>kvm</code>. Das sind Teile des bestehenden Moduls, keine vollständige Konfiguration. Nach Gruppenänderungen kann eine neue Anmeldung nötig sein. Debian oder Arch haben eigene Paket- und Dienstabläufe; übertrage NixOS-Zeilen nicht in deren Shell.</p>
+<h2 id="eine-iso-und-eine-getrennte-festplatte-waehlen">Eine ISO und eine getrennte Festplatte wählen</h2>
+<p>Lade ein passendes Linux-Abbild von der offiziellen Distributionsseite herunter, beispielsweise ein <a href="https://www.debian.org/CD/live/">Debian-Live-Abbild</a>. Architektur und Integritätsprüfung müssen zu deinem Test passen. Für den hier beschriebenen x86_64-Host ist ein entsprechendes amd64-Abbild der übliche Bezug.</p>
+<p>Öffne virt-manager und wähle eine neue Maschine über lokales Installationsmedium. Wähle die ISO als Quelle. Als <strong>Beispielzuweisung</strong>, abhängig von deinem Host und Gast, kannst du zwei virtuelle CPUs, vier GiB RAM und eine neue virtuelle Festplatte mit 30 GiB Obergrenze verwenden. Lass dem Host ausreichend freien Speicher; diese Werte sind keine garantierten Mindestanforderungen jeder Distribution.</p>
+<p>Wichtig ist die neue virtuelle Festplatte. Wähle für die Übung kein echtes <code>/dev/sd…</code>- oder <code>/dev/nvme…</code>-Gerät zum Durchreichen. Bestätige vor der Gastinstallation, dass der ausgewählte Speicher zum angelegten Testgast gehört.</p>
+<h2 id="im-gast-installieren-und-einen-ablauf-testen">Im Gast installieren und einen Ablauf testen</h2>
+<p>Starte den Gast vom ISO-Abbild. Eine Live-Umgebung erlaubt oft schon einen ersten Desktop-Test. Wenn du installierst, betrifft die Auswahl im Gast dessen virtuelle Festplatte. Lies den Installationsdialog trotzdem sorgfältig.</p>
+<p>Nach der Installation entfernst du das ISO aus der virtuellen CD-Laufwerkszuordnung oder änderst die Bootreihenfolge. Sonst erscheint möglicherweise immer wieder das Installationsmedium. Starte den Gast neu und prüfe, ob er von seiner eigenen virtuellen Festplatte bootet.</p>
+<p>Ein sinnvoller erster Test ist klein: Öffne ein Terminal, installiere ein unkritisches Programm über die Paketverwaltung des Gasts und starte es. Notiere den Ablauf im <a href="/linux-migration-companion/">Linux Migration Companion</a>. So bekommst du konkrete Antworten zu deinem Alltag statt nur einen kurzen Eindruck vom Hintergrundbild.</p>
+<h2 id="nat-und-das-standardnetzwerk-verstehen">NAT und das Standardnetzwerk verstehen</h2>
+<p>Das häufig verwendete libvirt-Standardnetzwerk arbeitet mit NAT. Der Gast erhält eine virtuelle Netzwerkverbindung und kann darüber meist nach außen kommunizieren. Er ist damit nicht automatisch wie ein zusätzlich direkt im LAN angeschlossenes Gerät erreichbar.</p>
+<p>Prüfe definierte Netzwerke der Systemverbindung:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">virsh --connect qemu:///system net-list --all
+</code></pre>
+<p>Ist <code>default</code> vorhanden, aber inaktiv, kannst du <strong>dieses vorhandene Netzwerk</strong> bewusst starten:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">virsh --connect qemu:///system net-start default
+</code></pre>
+<p>Fehlt es, ist der nächste Schritt die Netzwerkverwaltung deiner Installation, nicht das blinde Erstellen einer Bridge. Berechtigungsfehler betreffen häufig die libvirt-Verbindung oder Anmeldung. <code>qemu:///session</code> und <code>qemu:///system</code> sind unterschiedliche Verwaltungsbereiche.</p>
+<p>Cthulhus Firewall vertraut <code>virbr0</code>. Diese Projektentscheidung ist keine pauschale Empfehlung für jeden Host: Sie verändert den Zugang zwischen Gästen und Host. NAT allein garantiert außerdem keine vollständige Isolation vom LAN. Für unbekannte Software brauchst du ein bewusst geplantes Netz- und Freigabekonzept.</p>
+<h2 id="snapshots-backups-und-hardwaregrenzen">Snapshots, Backups und Hardwaregrenzen</h2>
+<p>Ein Snapshot kann beim Ausprobieren helfen, hängt aber vom Diskformat, Speicherbackend und Maschinenzustand ab. Er ist kein Ersatz für eine unabhängig gespeicherte Sicherung. Eine Snapshot-Funktion solltest du zunächst am unkritischen Testgast ausprobieren und ihre Rückkehr tatsächlich prüfen.</p>
+<p>Für eine konsistente einfache Sicherung fahre den Gast sauber herunter und sichere seine Definition sowie die zugehörigen Datenträgerdateien beziehungsweise Volumes. Eine allein kopierte aktive Diskdatei kann inkonsistente Daten enthalten. Wichtige Dateien im Gast brauchen dieselbe Sorgfalt wie Dateien auf dem Host.</p>
+<p>Ein WLAN-Chip, Energiesparen oder eine GPU wird durch virtuelle Geräte nicht realitätsgetreu beurteilt. Nach einem erfolgreichen VM-Test bleiben Live-USB und ein Test auf echter Hardware sinnvoll. Der <a href="/de/blog/von-windows-zu-linux-wechseln/">Umstiegsartikel</a> hilft bei dieser Reihenfolge.</p>
+<h2 id="fehler-eingrenzen-und-den-test-beenden">Fehler eingrenzen und den Test beenden</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Erste Prüfung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keine Verbindung zu libvirt</td>
+<td>Richtige Verbindung und Benutzerrechte</td>
+</tr>
+<tr>
+<td>Gast ist sehr langsam</td>
+<td>KVM-Unterstützung und Host-Ressourcen</td>
+</tr>
+<tr>
+<td>Kein Internet im Gast</td>
+<td>Virtuelle Netzkarte und aktives Netzwerk</td>
+</tr>
+<tr>
+<td>Installer startet erneut</td>
+<td>ISO und virtuelle Bootreihenfolge</td>
+</tr>
+<tr>
+<td>Host-Disk wird angeboten</td>
+<td>Speicherzuordnung prüfen, Installation unterbrechen</td>
+</tr>
+</tbody>
+</table></div>
+<p>Fahre den Gast zum Ende über sein normales Menü herunter. Ein geschlossenes virt-manager-Fenster ist nicht automatisch eine ausgeschaltete Maschine. Zum Entfernen des Testgasts prüfst du zuerst, welche virtuellen Datenträger ihm gehören, und sicherst seine gewünschten Dateien.</p>
+<h2 id="quellen">Quellen</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/NixOS/configuration.nix">Geprüfte Cthulhu-Konfiguration</a>.</li>
+<li><a href="https://virt-manager.org/">virt-manager-Projekt</a>.</li>
+<li><a href="https://libvirt.org/formatnetwork.html">libvirt-Netzwerkformate</a> und <a href="https://libvirt.org/manpages/virsh.html">virsh</a>.</li>
+<li><a href="https://www.debian.org/CD/live/">Debian-Live-Abbilder</a>.</li>
+</ul>
+<p>Referenzen geprüft am 8. Oktober 2026. Ressourcenwerte sind ein anpassbares Übungsbeispiel.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#workflows">← Alltag &amp; Workflows</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#kvm-qemu-libvirt-und-virt-manager-unterscheiden">KVM, QEMU, libvirt und virt-manager unterscheiden</a></li><li><a href="#die-host-voraussetzungen-pruefen">Die Host-Voraussetzungen prüfen</a></li><li><a href="#eine-iso-und-eine-getrennte-festplatte-waehlen">Eine ISO und eine getrennte Festplatte wählen</a></li><li><a href="#im-gast-installieren-und-einen-ablauf-testen">Im Gast installieren und einen Ablauf testen</a></li><li><a href="#nat-und-das-standardnetzwerk-verstehen">NAT und das Standardnetzwerk verstehen</a></li><li><a href="#snapshots-backups-und-hardwaregrenzen">Snapshots, Backups und Hardwaregrenzen</a></li><li><a href="#fehler-eingrenzen-und-den-test-beenden">Fehler eingrenzen und den Test beenden</a></li><li><a href="#quellen">Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/von-windows-zu-linux-wechseln/">Von Windows zu Linux wechseln: Was du vorher prüfen solltest <span aria-hidden="true">→</span></a><a href="/de/blog/nixos-configuration-nix-verstehen/">NixOS für Einsteiger: Meine configuration.nix verständlich erklärt <span aria-hidden="true">→</span></a><a href="/de/blog/linux-laufwerke-uuid-mount-rechte/">Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

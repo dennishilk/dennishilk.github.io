@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SSH-Schlüssel unter Linux: sicher vom Laptop zum Server · Dennis Hilk</title>
+<meta name="description" content="SSH-Schlüssel Schritt für Schritt einrichten: Ed25519, öffentlicher und privater Schlüssel, ssh-copy-id, Hostprüfung und eine übersichtliche SSH-Config.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/ssh-keys-linux-server/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/ssh-keys-linux-server/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH-Schlüssel unter Linux: sicher vom Laptop zum Server">
+<meta property="og:description" content="SSH-Schlüssel Schritt für Schritt einrichten: Ed25519, öffentlicher und privater Schlüssel, ssh-copy-id, Hostprüfung und eine übersichtliche SSH-Config.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SSH-Schlüssel unter Linux: sicher vom Laptop zum Server">
+<meta name="twitter:description" content="SSH-Schlüssel Schritt für Schritt einrichten: Ed25519, öffentlicher und privater Schlüssel, ssh-copy-id, Hostprüfung und eine übersichtliche SSH-Config.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/","url":"https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/","headline":"SSH-Schlüssel unter Linux: sicher vom Laptop zum Server","description":"SSH-Schlüssel Schritt für Schritt einrichten: Ed25519, öffentlicher und privater Schlüssel, ssh-copy-id, Hostprüfung und eine übersichtliche SSH-Config.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"SSH & Server","wordCount":880},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"SSH-Schlüssel unter Linux: sicher vom Laptop zum Server","item":"https://www.dennishilk.com/de/blog/ssh-schluessel-linux-server/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/ssh-keys-linux-server/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>SSH &amp; Server</span></nav>
+<header class="article-header"><p class="eyebrow">SSH &amp; Server</p><h1>SSH-Schlüssel unter Linux: sicher vom Laptop zum Server</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Private Schlüssel bleiben auf deinem Gerät</span><p>Der private Schlüssel bleibt auf dem Client; der öffentliche Schlüssel wird beim Server hinterlegt. SSH verschlüsselt die Verbindung, während Client und Server weiterhin Verbindungsmetadaten kennen.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="SSH-Schlüssel unter Linux: sicher vom Laptop zum Server"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#zwei-schluessel-mit-verschiedenen-aufgaben">Zwei Schlüssel mit verschiedenen Aufgaben</a></li><li><a href="#einen-eigenen-schluessel-erstellen">Einen eigenen Schlüssel erstellen</a></li><li><a href="#den-server-vor-der-ersten-anmeldung-erkennen">Den Server vor der ersten Anmeldung erkennen</a></li><li><a href="#nur-den-oeffentlichen-schluessel-uebertragen">Nur den öffentlichen Schlüssel übertragen</a></li><li><a href="#einen-uebersichtlichen-host-alias-anlegen">Einen übersichtlichen Host-Alias anlegen</a></li><li><a href="#passphrase-und-ssh-agent-verstehen">Passphrase und SSH-Agent verstehen</a></li><li><a href="#typische-fehler-und-ein-sauberer-rueckweg">Typische Fehler und ein sauberer Rückweg</a></li><li><a href="#quellen-und-der-naechste-server-schritt">Quellen und der nächste Server-Schritt</a></li></ol></details>
+<p>Eine SSH-Anmeldung mit einem eigenen Schlüssel macht regelmäßige Serverarbeit übersichtlich. Für meine Website ist worldnode der konkrete Serverbezug: Dort liegt der Checkout unter <code>/srv/www/dennishilk.github.io</code>. Ein Schlüssel und ein kurzer Host-Alias können diesen täglichen Weg vereinfachen.</p>
+<p>Hier zeige ich einen allgemeinen Linux/OpenSSH-Ablauf. Die Domain <code>server.example.com</code> und die gezeigte Client-Konfiguration sind <strong>anzupassende Beispiele</strong>. Der Artikel behauptet keine bestimmte bestehende SSH-Konfiguration meines Servers. Du brauchst ein vorhandenes Benutzerkonto und einen bereits autorisierten Anmeldeweg dorthin.</p>
+<h2 id="zwei-schluessel-mit-verschiedenen-aufgaben">Zwei Schlüssel mit verschiedenen Aufgaben</h2>
+<p><code>ssh-keygen</code> erzeugt ein Schlüsselpaar. Der private Teil bleibt auf deinem Laptop. Der öffentliche Teil, üblicherweise mit <code>.pub</code> am Dateiende, darf auf dem Server für dein Benutzerkonto hinterlegt werden.</p>
+<p>Der Server prüft bei der Anmeldung, ob der Client den passenden privaten Schlüssel besitzt. Dafür musst du den privaten Schlüssel nicht auf den Server kopieren. Eine Passphrase schützt zusätzlich die lokale Schlüsseldatei; sie ist ein anderes Geheimnis als das Kennwort des Serverkontos.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Datei</th>
+<th>Umgang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id_ed25519_worldnode</code></td>
+<td>Privat auf dem Client halten</td>
+</tr>
+<tr>
+<td><code>id_ed25519_worldnode.pub</code></td>
+<td>Öffentlich beim gewünschten Serverkonto hinterlegen</td>
+</tr>
+<tr>
+<td><code>authorized_keys</code></td>
+<td>Erlaubte öffentliche Schlüssel auf dem Server</td>
+</tr>
+<tr>
+<td><code>known_hosts</code></td>
+<td>Bekannte Identitäten von SSH-Servern auf dem Client</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="einen-eigenen-schluessel-erstellen">Einen eigenen Schlüssel erstellen</h2>
+<p>Erstelle das lokale SSH-Verzeichnis, falls es fehlt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">mkdir -p ~/.ssh
+</code></pre>
+<p>Prüfe mit dem Dateimanager oder einer Verzeichnisliste, dass der folgende Dateiname noch nicht verwendet wird. Verwende sonst einen anderen Namen; überschreibe keinen vorhandenen Schlüssel.</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_worldnode -C "laptop-worldnode"
+</code></pre>
+<p>Wähle eine Passphrase beim interaktiven Dialog. Der Kommentar ist eine lesbare Bezeichnung, keine Serverfreigabe. Er muss keine E-Mail-Adresse enthalten. Nach dem Erstellen liegen der private Schlüssel und die öffentliche <code>.pub</code>-Datei getrennt vor.</p>
+<p>Den Fingerabdruck des öffentlichen Schlüssels kannst du prüfen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh-keygen -lf ~/.ssh/id_ed25519_worldnode.pub
+</code></pre>
+<p>Dieser Fingerabdruck bezeichnet <strong>deinen Benutzerschlüssel</strong>. Er ist nicht der Fingerabdruck des SSH-Servers, der im nächsten Schritt geprüft wird.</p>
+<h2 id="den-server-vor-der-ersten-anmeldung-erkennen">Den Server vor der ersten Anmeldung erkennen</h2>
+<p>Bei der ersten Verbindung zeigt SSH häufig einen unbekannten Host-Schlüssel an. Vergleiche dessen Fingerabdruck über einen bereits vertrauenswürdigen Weg, etwa die Serverkonsole oder eine vorhandene administrativ bestätigte Dokumentation.</p>
+<p>Ein Hostname und eine passende IP allein bestätigen die Identität nicht. Auch ein später veränderter Host-Schlüssel verdient eine Erklärung: Ein neu installiertes System ist eine mögliche Ursache, aber kein Grund, jede Warnung ungeprüft wegzuklicken oder den Eintrag blind zu löschen.</p>
+<p>Die Hostprüfung schützt die Verbindung zum richtigen Ziel. Der Benutzerschlüssel beantwortet anschließend die andere Frage: Darfst du dich mit diesem Konto anmelden? Beide Prüfungen gehören zum Ablauf.</p>
+<h2 id="nur-den-oeffentlichen-schluessel-uebertragen">Nur den öffentlichen Schlüssel übertragen</h2>
+<p>Ersetze <code>server.example.com</code> durch deinen tatsächlichen Server und gegebenenfalls <code>nebu</code> durch dein Konto:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh-copy-id -i ~/.ssh/id_ed25519_worldnode.pub nebu@server.example.com
+</code></pre>
+<p>Der Befehl benötigt einen funktionierenden vorhandenen Anmeldeweg, häufig zunächst das Kontokennwort. Er hinterlegt den ausgewählten öffentlichen Schlüssel in der erlaubten Schlüsselliste des Zielkontos. Die private Datei wird dabei nicht übertragen.</p>
+<p>Teste anschließend ausdrücklich den neuen Schlüssel:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519_worldnode nebu@server.example.com
+</code></pre>
+<p>Eine lokale Passphrase-Abfrage kann dabei normal sein. Eine erneute Abfrage des Serverkennworts kann auf einen anderen Anmeldeweg hinweisen. Prüfe, ob der erwartete Benutzer und Host verbunden sind. Halte einen bestehenden funktionierenden Zugang offen, bis der neue Weg erfolgreich getestet ist.</p>
+<h2 id="einen-uebersichtlichen-host-alias-anlegen">Einen übersichtlichen Host-Alias anlegen</h2>
+<p>Sichere eine vorhandene <code>~/.ssh/config</code> und ergänze mit deinem Editor einen passenden Abschnitt. Falls dort bereits <code>Host worldnode</code> steht, ändere den vorhandenen Abschnitt bewusst statt konkurrierende Einträge hinzuzufügen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sshconfig">Host worldnode
+    HostName server.example.com
+    User nebu
+    IdentityFile ~/.ssh/id_ed25519_worldnode
+    IdentitiesOnly yes
+</code></pre>
+<p><code>Host</code> ist der lokale Kurzname; <code>HostName</code> das tatsächliche Ziel. <code>IdentityFile</code> wählt den privaten Schlüssel und <code>IdentitiesOnly</code> begrenzt die angebotenen Identitäten. Passe Domain, Benutzer und Dateinamen zusammen an.</p>
+<p>Danach genügt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh worldnode
+</code></pre>
+<p>Die aufgelösten Client-Einstellungen kannst du ohne Anmeldung ansehen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh -G worldnode
+</code></pre>
+<p>Die Ausgabe enthält auch persönliche Zielinformationen; teile sie nicht ungeprüft vollständig.</p>
+<h2 id="passphrase-und-ssh-agent-verstehen">Passphrase und SSH-Agent verstehen</h2>
+<p>Ein SSH-Agent kann einen entsperrten Schlüssel für deine Sitzung bereithalten, damit du die Passphrase nicht bei jeder Anmeldung erneut eingibst. Wenn deine Desktop-Sitzung bereits einen erreichbaren Agent bereitstellt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ssh-add ~/.ssh/id_ed25519_worldnode
+</code></pre>
+<p>Ohne Agent-Verbindung scheitert der Befehl. Die Einrichtung hängt von Desktop und Shell ab; kopiere keinen Bash-Agent-Start ungeprüft in fish. Das Tutorial benötigt keinen neu gestarteten Agent, weil der direkte Schlüsselaufruf aus dem vorherigen Abschnitt bereits funktioniert.</p>
+<p>Der Agent ersetzt keinen gesicherten privaten Schlüssel. Lass eine entsperrte Sitzung nicht ungeschützt zugänglich und gib den privaten Teil nicht an Dritte weiter.</p>
+<h2 id="typische-fehler-und-ein-sauberer-rueckweg">Typische Fehler und ein sauberer Rückweg</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Meldung</th>
+<th>Nächste Prüfung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Permission denied (publickey)</code></td>
+<td>Konto, öffentlicher Schlüssel und Serverfreigabe</td>
+</tr>
+<tr>
+<td><code>Too many authentication failures</code></td>
+<td>Gewählte Identität und <code>IdentitiesOnly</code></td>
+</tr>
+<tr>
+<td>Unsichere private Dateirechte</td>
+<td>Eigentümer und restriktive Rechte der Schlüsseldatei</td>
+</tr>
+<tr>
+<td>Host-Schlüssel hat sich geändert</td>
+<td>Zielidentität über einen vertrauenswürdigen Weg prüfen</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bei Schlüsseln und <code>.ssh</code>-Verzeichnissen müssen Eigentümer und Rechte zur Benutzerkonfiguration passen. Lokal sind <code>700</code> für <code>.ssh</code> und <code>600</code> für private Dateien übliche restriktive Werte. Auf dem Server beeinflussen auch dessen Prüfregeln, ob <code>authorized_keys</code> akzeptiert wird.</p>
+<p>Wenn du den Übungsschlüssel später entfernst, nimm gezielt dessen öffentlichen Eintrag aus <code>authorized_keys</code>, nachdem ein anderer Zugang funktioniert. Entferne nicht pauschal die ganze Datei. Eine Änderung der Server-Anmeldepolitik gehört nicht zu dieser Übung.</p>
+<h2 id="quellen-und-der-naechste-server-schritt">Quellen und der nächste Server-Schritt</h2>
+<p>Nach der Anmeldung kannst du deinen Website-Checkout bewusst aktualisieren. Der <a href="/de/blog/git-pull-divergierende-branches/">Git-Artikel</a> erklärt dafür, warum lokale Server-Commits manchmal einen Rebase oder Merge erfordern.</p>
+<ul>
+<li><a href="https://www.openssh.org/manual.html">OpenSSH-Handbücher</a>.</li>
+<li><a href="https://man.openbsd.org/ssh-keygen">ssh-keygen</a> und <a href="https://man.openbsd.org/ssh_config">ssh_config</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/openssh-client/ssh-copy-id.1.en.html">ssh-copy-id aus Debian</a>.</li>
+</ul>
+<p>Referenzen geprüft am 8. Oktober 2026. Alle Serverdomains im Einrichtungsbeispiel sind Platzhalter.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#workflows">← Alltag &amp; Workflows</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#zwei-schluessel-mit-verschiedenen-aufgaben">Zwei Schlüssel mit verschiedenen Aufgaben</a></li><li><a href="#einen-eigenen-schluessel-erstellen">Einen eigenen Schlüssel erstellen</a></li><li><a href="#den-server-vor-der-ersten-anmeldung-erkennen">Den Server vor der ersten Anmeldung erkennen</a></li><li><a href="#nur-den-oeffentlichen-schluessel-uebertragen">Nur den öffentlichen Schlüssel übertragen</a></li><li><a href="#einen-uebersichtlichen-host-alias-anlegen">Einen übersichtlichen Host-Alias anlegen</a></li><li><a href="#passphrase-und-ssh-agent-verstehen">Passphrase und SSH-Agent verstehen</a></li><li><a href="#typische-fehler-und-ein-sauberer-rueckweg">Typische Fehler und ein sauberer Rückweg</a></li><li><a href="#quellen-und-der-naechste-server-schritt">Quellen und der nächste Server-Schritt</a></li></ol></nav><a class="sidebar-tool" href="https://www.openssh.org/manual.html">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/git-pull-divergierende-branches/">Git pull scheitert: abweichende Branches, Merge und Rebase <span aria-hidden="true">→</span></a><a href="/de/blog/linux-konfiguration-sichern/">Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups <span aria-hidden="true">→</span></a><a href="/de/blog/fish-shell-einstieg/">fish für Einsteiger: Vorschläge, Aliase und Konfiguration <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

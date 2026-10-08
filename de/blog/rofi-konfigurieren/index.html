@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes · Dennis Hilk</title>
+<meta name="description" content="Rofi für Einsteiger: drun und run verstehen, mein Gruvnode-Theme lesen und eine eigene Rasi-Datei testen. Mit XMonad-Tastenkürzel und Fehlersuche.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/rofi-konfigurieren/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/configure-rofi/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/rofi-konfigurieren/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/configure-rofi/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes">
+<meta property="og:description" content="Rofi für Einsteiger: drun und run verstehen, mein Gruvnode-Theme lesen und eine eigene Rasi-Datei testen. Mit XMonad-Tastenkürzel und Fehlersuche.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/rofi-konfigurieren/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes">
+<meta name="twitter:description" content="Rofi für Einsteiger: drun und run verstehen, mein Gruvnode-Theme lesen und eine eigene Rasi-Datei testen. Mit XMonad-Tastenkürzel und Fehlersuche.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/rofi-konfigurieren/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/rofi-konfigurieren/","url":"https://www.dennishilk.com/de/blog/rofi-konfigurieren/","headline":"Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes","description":"Rofi für Einsteiger: drun und run verstehen, mein Gruvnode-Theme lesen und eine eigene Rasi-Datei testen. Mit XMonad-Tastenkürzel und Fehlersuche.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Rofi & Desktop","wordCount":781},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes","item":"https://www.dennishilk.com/de/blog/rofi-konfigurieren/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/configure-rofi/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Rofi &amp; Desktop</span></nav>
+<header class="article-header"><p class="eyebrow">Rofi &amp; Desktop</p><h1>Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Programmauswahl auf deinem Rechner</span><p>Der Launcher durchsucht lokale Programme und Desktop-Dateien. Gestartete Apps und ergänzte Skripte können Netzverbindungen nutzen. Paket- und Repository-Downloads brauchen Internet.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Rofi konfigurieren: App-Launcher, Tastenkürzel und Themes"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#drun-und-run-haben-unterschiedliche-aufgaben">drun und run haben unterschiedliche Aufgaben</a></li><li><a href="#meine-rasi-datei-lesen">Meine Rasi-Datei lesen</a></li><li><a href="#eine-eigene-kleine-testdatei-erstellen">Eine eigene kleine Testdatei erstellen</a></li><li><a href="#groesse-abstaende-und-auswahl-veraendern">Größe, Abstände und Auswahl verändern</a></li><li><a href="#rofi-mit-einem-xmonad-tastenkuerzel-oeffnen">Rofi mit einem XMonad-Tastenkürzel öffnen</a></li><li><a href="#wenn-ein-programm-oder-ein-icon-fehlt">Wenn ein Programm oder ein Icon fehlt</a></li><li><a href="#lokale-auswahl-und-gestartete-anwendungen">Lokale Auswahl und gestartete Anwendungen</a></li><li><a href="#konfiguration-und-quellen">Konfiguration und Quellen</a></li></ol></details>
+<p>Ein schneller Programmstarter spart auf einem Tastatur-Desktop viele Umwege. Du öffnest Rofi, tippst einen Teil des Namens und bestätigst mit Enter. Mein Gruvnode-Profil auf dem X1 Carbon nutzt dafür einen kompakten Launcher in dunklen Gruvbox-Farben.</p>
+<p>Hier erkläre ich die <a href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/rofi/config.rasi">veröffentlichte Rofi-Datei</a> und eine eigene kleine Testkonfiguration. Voraussetzung ist ein installiertes Rofi in einer passenden grafischen Sitzung. Mein konkreter Bezug ist XMonad unter X11; bei Wayland musst du die Unterstützung deiner installierten Rofi-Version prüfen.</p>
+<h2 id="drun-und-run-haben-unterschiedliche-aufgaben">drun und run haben unterschiedliche Aufgaben</h2>
+<p><code>drun</code> zeigt Anwendungen aus Desktop-Dateien, also typischerweise dieselben Programme, die ein Desktop-Menü kennt. Dort können ein verständlicher Anzeigename, ein Icon und der Startbefehl hinterlegt sein. <code>run</code> orientiert sich an ausführbaren Befehlen, beispielsweise aus deinem <code>PATH</code>.</p>
+<p>Für Einsteiger ist <code>drun</code> ein guter Start: Du suchst nach dem Programmnamen, statt einen vollständigen Befehl zu kennen. Dass ein Programm im <code>run</code>-Modus erreichbar ist, bedeutet noch nicht, dass eine passende Desktop-Datei für <code>drun</code> existiert. Bei Flatpak oder selbstgebauten Apps ist das ein häufiger Unterschied.</p>
+<p>Teste zunächst ohne eigenes Theme:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">rofi -show drun
+</code></pre>
+<p>Tippe einen Namen, bewege die Auswahl mit den Pfeiltasten und starte mit Enter. Escape schließt das Fenster ohne Start.</p>
+<h2 id="meine-rasi-datei-lesen">Meine Rasi-Datei lesen</h2>
+<p>Rasi ist Rofis Konfigurations- und Theme-Syntax. Der obere Teil meiner Datei beschreibt Verhalten:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-rasi">configuration {
+    modi: "drun,run";
+    show-icons: true;
+    display-drun: "Apps";
+    font: "JetBrains Mono 11";
+    drun-display-format: "{name}";
+}
+</code></pre>
+<p><code>modi</code> legt die angebotenen Modi fest; <code>-show drun</code> wählt beim Aufruf den Startmodus. <code>show-icons</code> erlaubt Icons, installiert aber kein Icon-Theme. <code>display-drun</code> setzt die Beschriftung und <code>drun-display-format</code> begrenzt die dargestellten Informationen auf den Namen.</p>
+<p>Im Theme-Teil werden Widgets wie <code>window</code>, <code>inputbar</code>, <code>listview</code> und <code>element selected</code> gestaltet. Globale Farbwerte liegen bei mir im <code>*</code>-Block. Ein Verweis wie <code>@foreground</code> benutzt einen solchen Wert an anderer Stelle. So kannst du eine Farbe ändern, ohne jeden einzelnen Texteingang zu bearbeiten.</p>
+<h2 id="eine-eigene-kleine-testdatei-erstellen">Eine eigene kleine Testdatei erstellen</h2>
+<p>Lege einen separaten Ordner an:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">mkdir -p ~/rofi-tutorial
+</code></pre>
+<p>Speichere diese vollständige Übungsdatei als <code>~/rofi-tutorial/config.rasi</code>. Sie ist bewusst ein eigenes Beispiel und kein vollständiger Ersatz für mein Theme:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-rasi">configuration {
+    modi: "drun,run";
+    show-icons: false;
+    font: "monospace 12";
+}
+* {
+    background-color: #1d2021;
+    text-color: #ebdbb2;
+}
+window {
+    width: 40%;
+    padding: 16px;
+}
+listview {
+    lines: 6;
+}
+element selected {
+    background-color: #504945;
+    text-color: #b8bb26;
+}
+</code></pre>
+<p>Starte ausschließlich diese Datei:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">rofi -config ~/rofi-tutorial/config.rasi -show drun
+</code></pre>
+<p>Erwartet werden ein dunkles Fenster, sechs sichtbare Listenzeilen und eine anders gefärbte Auswahl. Die reguläre <code>~/.config/rofi/config.rasi</code> bleibt erhalten. Escape beendet die Übung; ein Aufruf ohne <code>-config</code> verwendet wieder die normale Konfiguration.</p>
+<h2 id="groesse-abstaende-und-auswahl-veraendern">Größe, Abstände und Auswahl verändern</h2>
+<p>Mein Original verwendet <code>width: 38%</code>, zwölf Pixel Fensterabstand und acht Listenzeilen. Das sind Gestaltungsentscheidungen für meinen Bildschirm. Auf einem kleinen Display kann eine prozentuale Breite sinnvoll sein, während eine lange App-Bezeichnung zusätzlichen Platz benötigt.</p>
+<p>Ändere in der Testdatei jeweils einen Wert: zuerst <code>lines</code>, danach <code>width</code>. Starte Rofi nach jeder Änderung erneut. Du erkennst dadurch, welche Einstellung verantwortlich ist. Das vermeidet die typische Situation, in der zugleich Schrift, Fenster und Farben geändert werden und der eigentliche Fehler verborgen bleibt.</p>
+<p>Rasi benötigt Semikolons nach Eigenschaften und passende Klammern. Ein Farbwert wie <code>#b8bb26</code> enthält keine Anführungszeichen. Strings wie <code>"drun,run"</code> dagegen schon. Wenn Rofi einen Fehler meldet, beginnt die Prüfung an der genannten Zeile und an der Eigenschaft unmittelbar davor.</p>
+<h2 id="rofi-mit-einem-xmonad-tastenkuerzel-oeffnen">Rofi mit einem XMonad-Tastenkürzel öffnen</h2>
+<p>Auf meinem X1 startet <code>Super</code> + <code>D</code> den Launcher. Der Window Manager führt dabei im Kern <code>rofi -show drun</code> aus. Das globale Tastenkürzel gehört also in die XMonad-Konfiguration, während Farben und Fenstergröße in Rasi bleiben.</p>
+<p>Ein Ausschnitt für eine bestehende, mit <code>EZConfig</code> eingerichtete Tastenkürzelliste sieht so aus:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-haskell">("M-d", spawn "rofi -show drun")
+</code></pre>
+<p>Das ist kein vollständiges <code>xmonad.hs</code>. Lies den <a href="/de/blog/xmonad-hs-verstehen/">XMonad-Einstieg</a>, bevor du den Eintrag an der richtigen Stelle ergänzt. Prüfe außerdem, ob <code>M-d</code> bereits belegt ist. Ein funktionierender Terminalaufruf von Rofi sollte dem Einbau eines Tastenkürzels vorausgehen.</p>
+<h2 id="wenn-ein-programm-oder-ein-icon-fehlt">Wenn ein Programm oder ein Icon fehlt</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Beobachtung</th>
+<th>Nächster sinnvoller Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App fehlt in <code>drun</code></td>
+<td>Desktop-Datei und App-Installation prüfen</td>
+</tr>
+<tr>
+<td>Befehl fehlt in <code>run</code></td>
+<td><code>PATH</code> und ausführbare Datei prüfen</td>
+</tr>
+<tr>
+<td>Icons fehlen</td>
+<td>Erst mit <code>show-icons: false</code> testen, dann Icon-Theme prüfen</td>
+</tr>
+<tr>
+<td>Schrift passt nicht</td>
+<td>Tatsächlich installierten Familiennamen verwenden</td>
+</tr>
+<tr>
+<td>Hotkey funktioniert nicht</td>
+<td>Befehl im Terminal testen, danach XMonad-Belegung prüfen</td>
+</tr>
+</tbody>
+</table></div>
+<p>Rofi installiert die ausgewählte Anwendung nicht. Es startet, was auf deinem Rechner eingerichtet ist. Ebenso macht ein schönes Theme einen fehlerhaften Startbefehl nicht korrekt. Trenne deshalb Darstellung, App-Eintrag und Window-Manager-Tastenkürzel.</p>
+<h2 id="lokale-auswahl-und-gestartete-anwendungen">Lokale Auswahl und gestartete Anwendungen</h2>
+<p>Die gezeigte Auswahl braucht keinen Cloud-Account. Ein anschließend gestarteter Browser oder Spielelauncher kann selbstverständlich online gehen. Rofi kann außerdem eigene Modi und Skripte ausführen; deren Verhalten hängt vom jeweiligen Code ab. Übernimm Skripte erst, nachdem du ihre Eingaben, Dateizugriffe und Befehle verstanden hast.</p>
+<h2 id="konfiguration-und-quellen">Konfiguration und Quellen</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/gruvnode/blob/b67787e9689467b08ecdd576b4c031e96534fb60/thinkpad-x1-carbon/configs/rofi/config.rasi">Mein geprüftes X1-Rofi-Profil</a>.</li>
+<li><a href="https://davatorium.github.io/rofi/current/rofi.1/">Rofi-Handbuch</a>: Modi und Aufrufoptionen.</li>
+<li><a href="https://davatorium.github.io/rofi/current/rofi-theme.5/">Rofi-Theme-Referenz</a>: Widgets und Rasi-Eigenschaften.</li>
+<li><a href="https://github.com/dennishilk/gruvnode">Gruvnode auf GitHub</a>: der komplette Laptop-Aufbau.</li>
+</ul>
+<p>Quellenstand: 8. Oktober 2026. Das Tutorial erklärt den X11-Aufbau; Wayland-Unterstützung und Standardthemes können sich zwischen Rofi-Versionen unterscheiden.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Desktop &amp; Terminal</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#drun-und-run-haben-unterschiedliche-aufgaben">drun und run haben unterschiedliche Aufgaben</a></li><li><a href="#meine-rasi-datei-lesen">Meine Rasi-Datei lesen</a></li><li><a href="#eine-eigene-kleine-testdatei-erstellen">Eine eigene kleine Testdatei erstellen</a></li><li><a href="#groesse-abstaende-und-auswahl-veraendern">Größe, Abstände und Auswahl verändern</a></li><li><a href="#rofi-mit-einem-xmonad-tastenkuerzel-oeffnen">Rofi mit einem XMonad-Tastenkürzel öffnen</a></li><li><a href="#wenn-ein-programm-oder-ein-icon-fehlt">Wenn ein Programm oder ein Icon fehlt</a></li><li><a href="#lokale-auswahl-und-gestartete-anwendungen">Lokale Auswahl und gestartete Anwendungen</a></li><li><a href="#konfiguration-und-quellen">Konfiguration und Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/gruvnode/blob/main/thinkpad-x1-carbon/configs/rofi/config.rasi">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/gruvnode-x1-carbon-xmonad/">Gruvnode: Mein einfacher XMonad-Desktop vom T480 zum X1 Carbon <span aria-hidden="true">→</span></a><a href="/de/blog/xmonad-hs-verstehen/">XMonad verstehen: Meine xmonad.hs Schritt für Schritt <span aria-hidden="true">→</span></a><a href="/de/blog/kitty-konfigurieren/">Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

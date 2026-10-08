@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte · Dennis Hilk</title>
+<meta name="description" content="Linux-Laufwerke einbinden und verstehen: UUID, Mountpoint, ext4-Rechte, fstab und NixOS. Mit einem lesenden Test und meinen Games-/Homelab-Mounts.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte">
+<meta property="og:description" content="Linux-Laufwerke einbinden und verstehen: UUID, Mountpoint, ext4-Rechte, fstab und NixOS. Mit einem lesenden Test und meinen Games-/Homelab-Mounts.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte">
+<meta name="twitter:description" content="Linux-Laufwerke einbinden und verstehen: UUID, Mountpoint, ext4-Rechte, fstab und NixOS. Mit einem lesenden Test und meinen Games-/Homelab-Mounts.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/","url":"https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/","headline":"Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte","description":"Linux-Laufwerke einbinden und verstehen: UUID, Mountpoint, ext4-Rechte, fstab und NixOS. Mit einem lesenden Test und meinen Games-/Homelab-Mounts.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"Linux & Laufwerke","wordCount":804},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte","item":"https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/linux-drives-uuid-mount-permissions/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Laufwerke</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Laufwerke</p><h1>Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Laufwerke und Rechte lokal prüfen</span><p>Die gezeigten Prüfungen lesen lokale Geräteinformationen. Dateisystemlabels und Pfade können persönliche Angaben enthalten. Ein lokaler Mount benötigt keinen Upload; Programme auf dem Laufwerk können eigene Verbindungen nutzen.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Laufwerke unter Linux: UUID, Mountpoints und Zugriffsrechte"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#geraet-dateisystem-und-mountpoint-trennen">Gerät, Dateisystem und Mountpoint trennen</a></li><li><a href="#zuerst-die-laufwerke-identifizieren">Zuerst die Laufwerke identifizieren</a></li><li><a href="#einen-ext4-test-zunaechst-nur-lesend-einbinden">Einen ext4-Test zunächst nur lesend einbinden</a></li><li><a href="#ergebnis-pruefen-und-sauber-aushaengen">Ergebnis prüfen und sauber aushängen</a></li><li><a href="#meine-games-und-homelab-eintraege-verstehen">Meine Games- und Homelab-Einträge verstehen</a></li><li><a href="#fstab-und-nixos-passend-verwenden">fstab und NixOS passend verwenden</a></li><li><a href="#ext4-zugriffsrechte-sind-keine-mount-option-fuer-den-benutzer">ext4-Zugriffsrechte sind keine Mount-Option für den Benutzer</a></li><li><a href="#quellen">Quellen</a></li></ol></details>
+<p>Ein zusätzliches Laufwerk erscheint im Dateimanager, aber ein Programm findet seinen Ordner nicht. Oder ein ext4-Laufwerk ist eingebunden, doch Schreibrechte fehlen. Unter Linux hilft es, drei Dinge getrennt zu betrachten: das Gerät, das Dateisystem darauf und den Ort, an dem es in deinen Verzeichnisbaum eingebunden ist.</p>
+<p>Meine <a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Cthulhu-Konfiguration</a> bindet drei ext4-Dateisysteme für Games und Homelab ein. Wir lesen diese Einträge und beginnen mit einer bewusst lesenden Übung an einem eigenen, sauber ausgehängten ext4-Testlaufwerk. Der Artikel enthält keine Formatier- oder Partitionierbefehle.</p>
+<h2 id="geraet-dateisystem-und-mountpoint-trennen">Gerät, Dateisystem und Mountpoint trennen</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Übersichtstabelle"><table>
+<thead>
+<tr>
+<th>Begriff</th>
+<th>Beispiel und Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gerät</td>
+<td>Eine Partition wie <code>/dev/sdb1</code></td>
+</tr>
+<tr>
+<td>UUID</td>
+<td>Kennung eines bestimmten Dateisystems</td>
+</tr>
+<tr>
+<td>Label</td>
+<td>Lesbarer Name wie <code>Games.Vol1</code></td>
+</tr>
+<tr>
+<td>Mountpoint</td>
+<td>Verzeichnis wie <code>/mnt/Games.Vol1</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Ein Mount macht den Inhalt des Dateisystems unter dem Mountpoint sichtbar. Bereits vorhandene Dateien in diesem Verzeichnis werden dabei überdeckt, nicht automatisch gelöscht. Nutze für eine Übung deshalb einen neuen, leeren Ort.</p>
+<p>Gerätenamen können sich beim Boot oder nach dem Anstecken ändern. UUIDs und eindeutige Labels sind für dauerhafte Einträge geeigneter. Auch sie verdienen Prüfung: Ein kopiertes Dateisystem kann seine Kennung mitbringen, und Labels können doppelt vorkommen.</p>
+<h2 id="zuerst-die-laufwerke-identifizieren">Zuerst die Laufwerke identifizieren</h2>
+<p>Zeige eine gezielte Übersicht:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">lsblk -o NAME,SIZE,FSTYPE,LABEL,UUID,MOUNTPOINTS
+</code></pre>
+<p>Vergleiche Größe, Dateisystem und aktuelle Mountpoints mit dem Gerät, das du tatsächlich verwenden möchtest. Die Beispielkennung <code>DEINE-EXT4-UUID</code> in diesem Artikel musst du selbst durch den ermittelten Wert ersetzen. Sie ist keine echte Kennung aus meinem Rechner.</p>
+<p>Ein im Dateimanager automatisch unter <code>/run/media/...</code> oder <code>/media/...</code> eingebundenes Laufwerk ist bereits gemountet. Wähle für die Übung ein eigenes Testgerät und hänge es vorher sauber über die normale Oberfläche aus. Arbeite nicht an einem gerade benutzten Root- oder Systemlaufwerk.</p>
+<h2 id="einen-ext4-test-zunaechst-nur-lesend-einbinden">Einen ext4-Test zunächst nur lesend einbinden</h2>
+<p>Lege einen eigenen Mountpoint an:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">sudo mkdir -p /mnt/mount-tutorial
+</code></pre>
+<p>Prüfe, dass das Verzeichnis für die Übung leer ist:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">ls -la /mnt/mount-tutorial
+</code></pre>
+<p>Prüfe zudem, ob dort bereits ein Dateisystem sitzt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">findmnt --mountpoint /mnt/mount-tutorial
+</code></pre>
+<p>Ohne passenden Mount kann <code>findmnt</code> mit leerer Ausgabe und einem von null verschiedenen Status enden. Ist dort schon etwas eingebunden, verwende den Ort nicht für diese Übung.</p>
+<p>Für ein <strong>sauber ausgehängtes eigenes ext4-Dateisystem</strong>:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">sudo mount -t ext4 -o ro,noload /dev/disk/by-uuid/DEINE-EXT4-UUID /mnt/mount-tutorial
+</code></pre>
+<p><code>ro</code> fordert Lesen an. <code>noload</code> verhindert bei ext4 ein Journal-Replay, das bei einem bloßen Read-only-Mount sonst trotzdem Schreibzugriffe verursachen kann. Auf einem unsauber ausgehängten Dateisystem kann das eine inkonsistente Sicht liefern; dieser Fall gehört in einen gesonderten Wiederherstellungsablauf. Die Option ist kein allgemeines Rezept für andere Dateisysteme.</p>
+<h2 id="ergebnis-pruefen-und-sauber-aushaengen">Ergebnis prüfen und sauber aushängen</h2>
+<p>Prüfe Quelle, Dateisystem und Optionen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">findmnt --mountpoint /mnt/mount-tutorial -o SOURCE,FSTYPE,OPTIONS
+</code></pre>
+<p>Erwartet werden das ausgewählte ext4-Dateisystem und eine lesende Einbindung. Öffne beziehungsweise liste bekannte Dateien, ohne sie zu bearbeiten. Ein Schreibfehler in diesem Test ist aufgrund von <code>ro</code> erwartbar und belegt noch kein Rechteproblem.</p>
+<p>Verlasse den Mountpoint in deinen Terminals und schließe Programme, die ihn benutzen. Hänge ihn anschließend aus:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">sudo umount /mnt/mount-tutorial
+</code></pre>
+<p>Bei „busy“ suche zuerst nach offenen Dateien oder Arbeitsverzeichnissen. Ein erzwungenes oder verzögertes Aushängen gehört nicht zu dieser Einsteigerübung.</p>
+<h2 id="meine-games-und-homelab-eintraege-verstehen">Meine Games- und Homelab-Einträge verstehen</h2>
+<p>Ein realer Ausschnitt lautet:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-nix">fileSystems."/mnt/Games.Vol1" = {
+  device = "/dev/disk/by-label/Games.Vol1";
+  fsType = "ext4";
+  options = [ "noatime" "nofail" "x-systemd.device-timeout=1s" ];
+};
+</code></pre>
+<p>Entsprechende Einträge bestehen für <code>Games.Vol2</code> und <code>Homelab</code>. Der Kommentar darüber spricht noch vom späteren Aktivieren; die gezeigten Definitionen selbst sind jedoch aktiv. Beim Lesen einer Konfiguration zählt die wirksame Syntax.</p>
+<p><code>noatime</code> vermeidet normale Zugriffszeit-Aktualisierungen. <code>nofail</code> erlaubt, den Boot trotz fehlendem optionalen Laufwerk fortzusetzen. Der kurze Geräte-Timeout begrenzt das Warten. Das macht ein fehlendes Laufwerk nicht nutzbar; ein Programm kann anschließend immer noch am nicht vorhandenen Datenpfad scheitern.</p>
+<h2 id="fstab-und-nixos-passend-verwenden">fstab und NixOS passend verwenden</h2>
+<p>Auf vielen Distributionen beschreibt <code>/etc/fstab</code> dauerhafte Mounts. Eine <strong>anzupassende Vorlage</strong> für ein optionales ext4-Datenlaufwerk wäre:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fstab">UUID=DEINE-EXT4-UUID /mnt/Data ext4 defaults,noatime,nofail,x-systemd.device-timeout=5s 0 2
+</code></pre>
+<p>Sichere die bestehende Datei vor dem Bearbeiten, verwende den tatsächlichen Mountpoint und ersetze die Kennung. <code>nofail</code> passt zu einem optionalen Datenlaufwerk, nicht pauschal zu jedem benötigten Systemdateisystem.</p>
+<p>Eine strukturelle Prüfung ist:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">sudo findmnt --verify
+</code></pre>
+<p>Das ersetzt keinen Funktions- oder Boot-Test. Unter NixOS verwaltest du diese Einträge normalerweise über <code>fileSystems</code> in der Konfiguration. Bearbeite nicht zusätzlich eine generierte fstab als konkurrierende Quelle.</p>
+<h2 id="ext4-zugriffsrechte-sind-keine-mount-option-fuer-den-benutzer">ext4-Zugriffsrechte sind keine Mount-Option für den Benutzer</h2>
+<p>Bei ext4 liegen Eigentümer und Rechte im Dateisystem. Es reicht nicht, wie bei manchen anderen Dateisystemen eine <code>uid=</code>-Option dazuzuschreiben. Prüfe deine Identität und die Rechte eines betroffenen Verzeichnisses:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">id
+</code></pre>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">stat -c '%U %G %a' /mnt/Games.Vol1
+</code></pre>
+<p>Der zweite Pfad ist nur passend, wenn du tatsächlich diesen Mount verwendest. Vergleiche gezielt das gewünschte Unterverzeichnis. Statt rekursiv das ganze Laufwerk auf einen anderen Benutzer umzuschreiben, kläre, welche Ordner dir gehören sollen und wer sonst darauf zugreift. Ein universelles <code>chmod 777</code> ist keine Erklärung des Problems.</p>
+<h2 id="quellen">Quellen</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/NixOS/configuration.nix">Geprüfte Cthulhu-Mounts</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/mount/mount.8.en.html">mount-Handbuch</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/util-linux/lsblk.8.en.html">lsblk</a> und <a href="https://manpages.debian.org/trixie/util-linux/findmnt.8.en.html">findmnt</a>.</li>
+<li><a href="https://docs.kernel.org/admin-guide/ext4.html">Linux-ext4-Dokumentation</a>: Read-only und Journalverhalten.</li>
+</ul>
+<p>Quellenstand: 8. Oktober 2026. Die Testbefehle sind für ein eigenes ext4-Übungsgerät, nicht als universeller Datenträger-Reparaturablauf gedacht.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#system-guides">← System &amp; Diagnose</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#geraet-dateisystem-und-mountpoint-trennen">Gerät, Dateisystem und Mountpoint trennen</a></li><li><a href="#zuerst-die-laufwerke-identifizieren">Zuerst die Laufwerke identifizieren</a></li><li><a href="#einen-ext4-test-zunaechst-nur-lesend-einbinden">Einen ext4-Test zunächst nur lesend einbinden</a></li><li><a href="#ergebnis-pruefen-und-sauber-aushaengen">Ergebnis prüfen und sauber aushängen</a></li><li><a href="#meine-games-und-homelab-eintraege-verstehen">Meine Games- und Homelab-Einträge verstehen</a></li><li><a href="#fstab-und-nixos-passend-verwenden">fstab und NixOS passend verwenden</a></li><li><a href="#ext4-zugriffsrechte-sind-keine-mount-option-fuer-den-benutzer">ext4-Zugriffsrechte sind keine Mount-Option für den Benutzer</a></li><li><a href="#quellen">Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/linux-konfiguration-sichern/">Linux-Konfiguration sichern: Dotfiles, Paketlisten und echte Backups <span aria-hidden="true">→</span></a><a href="/de/blog/nixos-configuration-nix-verstehen/">NixOS für Einsteiger: Meine configuration.nix verständlich erklärt <span aria-hidden="true">→</span></a><a href="/de/blog/wine-prefix-linux-spiele/">Wine-Prefix verstehen: getrennte Windows-Umgebungen unter Linux <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

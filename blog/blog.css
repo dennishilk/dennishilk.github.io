@@ -126,3 +126,12 @@ tr:last-child td { border-bottom:0; }
 .article-figure>a { display:block; border:1px solid var(--line); border-radius:10px; }
 .article-figure img { display:block; width:100%; height:auto; border-radius:9px; }
 .article-figure figcaption { color:var(--muted); font-size:14px; line-height:1.7; margin-top:12px; }
+
+/* A static, accessible topic library as the collection grows. */
+.blog-count { margin:22px 0 0; color:var(--accent); font-size:14px; }
+.guides-section,.blog-sections { scroll-margin-top:110px; }
+.guides-section+.guides-section { border-top:1px solid var(--line); }
+.section-return { margin:24px 0 0; font-size:13px; }
+.section-return a { text-decoration:none; color:var(--muted); }
+.section-return a:hover { color:var(--accent); }
+@media(max-width:650px) { .guides-section,.blog-sections { scroll-margin-top:160px; } }

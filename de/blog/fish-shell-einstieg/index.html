@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fish für Einsteiger: Vorschläge, Aliase und Konfiguration · Dennis Hilk</title>
+<meta name="description" content="Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/de/blog/fish-shell-einstieg/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/fish-shell-beginners/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/fish-shell-einstieg/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/fish-shell-beginners/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fish für Einsteiger: Vorschläge, Aliase und Konfiguration">
+<meta property="og:description" content="Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.">
+<meta property="og:url" content="https://www.dennishilk.com/de/blog/fish-shell-einstieg/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="fish für Einsteiger: Vorschläge, Aliase und Konfiguration">
+<meta name="twitter:description" content="Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/","url":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/","headline":"fish für Einsteiger: Vorschläge, Aliase und Konfiguration","description":"Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"fish & Shell","wordCount":843},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"fish für Einsteiger: Vorschläge, Aliase und Konfiguration","item":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+<script defer src="/blog/navigation.js?v=20261008"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Zum Inhalt</a><header class="site-header"><div class="header-inner"><a class="brand" href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Hauptnavigation"><a href="/de/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/de/tools/image-converter/">Bildkonverter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Projekt und Anleitung auf GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Projekt und Anleitung auf GitHub">NVIDIA-Treiber für Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Projekt und Anleitung auf GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Projekt und Anleitung auf GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computermuseum</a><a href="/about/">Über mich</a></nav><a class="language-link" href="/blog/fish-shell-beginners/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="/de/">Start</a><span aria-hidden="true">/</span><a href="/de/blog/">Blog</a><span aria-hidden="true">/</span><span>fish &amp; Shell</span></nav>
+<header class="article-header"><p class="eyebrow">fish &amp; Shell</p><h1>fish für Einsteiger: Vorschläge, Aliase und Konfiguration</h1><div class="article-meta"><span>Von <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8. Oktober 2026</time><span>5 Minuten Lesezeit</span></div><div class="article-privacy"><span class="privacy-badge">Deine Shell-Einstellungen bleiben lokal</span><p>Die gezeigten Einstellungen und die Befehlschronik liegen lokal. Ausgeführte Programme können online sein. Schreibe keine Zugangsdaten direkt in Befehle oder öffentlich geteilte Konfigurationsdateien.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="fish für Einsteiger: Vorschläge, Aliase und Konfiguration"><details class="mobile-toc"><summary>In diesem Artikel</summary><ol><li><a href="#was-fish-gegenueber-dem-terminal-veraendert">Was fish gegenüber dem Terminal verändert</a></li><li><a href="#erst-ausprobieren-dann-zur-login-shell-machen">Erst ausprobieren, dann zur Login-Shell machen</a></li><li><a href="#vorschlaege-und-tab-vervollstaendigung-nutzen">Vorschläge und Tab-Vervollständigung nutzen</a></li><li><a href="#alias-und-abkuerzung-auseinanderhalten">Alias und Abkürzung auseinanderhalten</a></li><li><a href="#die-eigene-config-fish-klein-halten">Die eigene config.fish klein halten</a></li><li><a href="#variablen-und-vorhandene-skripte-verstehen">Variablen und vorhandene Skripte verstehen</a></li><li><a href="#aufraeumen-und-typische-fehler-finden">Aufräumen und typische Fehler finden</a></li><li><a href="#chronik-datenschutz-und-quellen">Chronik, Datenschutz und Quellen</a></li></ol></details>
+<p>fish macht den Einstieg in die Kommandozeile angenehm: Die Shell bietet Vorschläge aus früheren Befehlen und vervollständigt viele Optionen. Auf Cthulhu ist fish in meiner NixOS-Datei aktiviert und als Shell für <code>nebu</code> eingetragen. Auch mein Fastfetch-Screenshot zeigt diese Kombination.</p>
+<p>Im Repository liegt dafür die <a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">NixOS-Systemkonfiguration</a>, aber keine eigene veröffentlichte <code>config.fish</code>. Die Beispiele dieses Artikels sind deshalb neu erstellte Übungen. Du kannst sie nachvollziehen, ohne eine angebliche persönliche Shell-Datei übernehmen zu müssen.</p>
+<h2 id="was-fish-gegenueber-dem-terminal-veraendert">Was fish gegenüber dem Terminal verändert</h2>
+<p>Kitty oder ein anderes Terminal stellt das Fenster bereit. fish interpretiert darin Befehle, erweitert Variablen und startet Programme. Ein Terminal-Theme ist entsprechend eine andere Einstellung als eine fish-Funktion oder ein Prompt.</p>
+<p>fish hat eine eigene Syntax und ist nicht vollständig mit Bash oder einer POSIX-Shell austauschbar. Ein vorhandenes Skript mit <code>#!/bin/bash</code> wird weiterhin durch Bash ausgeführt. Kopierst du einzelne Bash-Zeilen direkt in fish, können andere Regeln gelten. Insbesondere mehrzeilige Kontrollstrukturen und Variablenzuweisungen verdienen einen zweiten Blick.</p>
+<p>Prüfe, ob fish installiert ist:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">fish --version
+</code></pre>
+<h2 id="erst-ausprobieren-dann-zur-login-shell-machen">Erst ausprobieren, dann zur Login-Shell machen</h2>
+<p>Zum Test reicht eine zusätzliche Shell:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">fish
+</code></pre>
+<p>Mit <code>exit</code> kehrst du zur vorherigen Shell zurück. Du musst für die Übungen keine Login-Shell ändern. Eine einzelne Testsession ist leichter einzuordnen als zugleich Terminal, Prompt und Anmeldekonfiguration umzubauen.</p>
+<p>Meine NixOS-Datei enthält folgenden Bezug:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-nix">programs.fish.enable = true;
+users.users.nebu.shell = pkgs.fish;
+</code></pre>
+<p>Das ist ein Ausschnitt innerhalb des NixOS-Moduls, keine vollständige Datei. Auf anderen Distributionen erfolgt die dauerhafte Shell-Auswahl über deren Benutzerverwaltung. Unter NixOS solltest du eine deklarativ verwaltete Shell über die Konfiguration ändern; der <a href="/de/blog/nixos-configuration-nix-verstehen/">NixOS-Einstieg</a> erklärt den Aufbau.</p>
+<h2 id="vorschlaege-und-tab-vervollstaendigung-nutzen">Vorschläge und Tab-Vervollständigung nutzen</h2>
+<p>Führe in der fish-Testsession einen harmlosen Befehl aus:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">ls -lah
+</code></pre>
+<p>Tippe danach erneut den Anfang. Ein blasser Vorschlag kann aus der Chronik erscheinen; mit der rechten Pfeiltaste übernimmst du ihn, Enter führt ihn aus. Der Vorschlag allein startet noch kein Programm. Mit Tab kannst du verfügbare Dateien, Programme und unterstützte Optionen vervollständigen.</p>
+<p>Dass ein vorgeschlagener Befehl früher funktioniert hat, macht ihn nicht automatisch heute passend. Ein anderer Arbeitsordner oder veränderter Dateiname kann die Wirkung ändern. Lies die vervollständigte Zeile vor Enter vollständig, besonders bei Schreib- oder Löschbefehlen.</p>
+<h2 id="alias-und-abkuerzung-auseinanderhalten">Alias und Abkürzung auseinanderhalten</h2>
+<p>Ein Alias ist in fish eine bequem angelegte Funktion. Verwende für die Übung einen neuen Namen, der keine Standardfunktion ersetzt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">alias lltutorial 'ls -lah'
+</code></pre>
+<p>Probiere ihn aus:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">lltutorial
+</code></pre>
+<p>Die Funktion nimmt zusätzliche Argumente entgegen. Du kannst ihre Definition ansehen:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">functions lltutorial
+</code></pre>
+<p>Eine Abkürzung arbeitet anders: Sie erweitert den Text beim Tippen. Richte eine Übungsabkürzung ein:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">abbr --add gsttutorial 'git status --short'
+</code></pre>
+<p>Tippe <code>gsttutorial</code> und ein Leerzeichen. In der Eingabezeile sollte <code>git status --short</code> stehen. Damit bleibt sichtbar, welcher Befehl später ausgeführt wird. Außerhalb eines Git-Verzeichnisses meldet dieser Befehl erwartbar, dass dort kein Repository liegt.</p>
+<h2 id="die-eigene-config-fish-klein-halten">Die eigene config.fish klein halten</h2>
+<p>fish liest üblicherweise <code>~/.config/fish/config.fish</code>; ein anderes <code>XDG_CONFIG_HOME</code> verändert den Pfad. Erstelle beziehungsweise bearbeite diese Datei erst, nachdem du eine vorhandene Version gesichert hast. Für den Beginn reicht dieser eigene Ausschnitt:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">if status is-interactive
+    abbr --add gsttutorial 'git status --short'
+end
+</code></pre>
+<p>Der Test <code>status is-interactive</code> begrenzt die Einstellung auf interaktive Sessions. So landet zusätzliche Terminalausgabe nicht ungefragt in einer automatisch gestarteten Shell. Funktionen lassen sich mit <code>funcsave</code> in eigenen Dateien dauerhaft ablegen; prüfe vorher den Namen, weil dabei eine vorhandene Funktionsdatei ersetzt werden kann.</p>
+<p>Für unseren Alias wäre das:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">funcsave lltutorial
+</code></pre>
+<p>Dieser Schritt ist optional und schreibt eine lokale Funktionsdatei. Eine neu geöffnete fish-Sitzung kann die Funktion anschließend automatisch laden. Halte eigene kleine Funktionen getrennt, damit du später ihre Herkunft leichter erkennst.</p>
+<h2 id="variablen-und-vorhandene-skripte-verstehen">Variablen und vorhandene Skripte verstehen</h2>
+<p>Eine Variable setzt du in fish mit <code>set</code>, etwa in einer Übungsfunktion oder Session:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">set -l tutorial_message 'Hallo aus fish'
+</code></pre>
+<p>Gib den Wert aus:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">echo $tutorial_message
+</code></pre>
+<p><code>-l</code> bedeutet lokal zum aktuellen Gültigkeitsbereich; es erzeugt keine dauerhafte universelle Einstellung. Für Umgebungsvariablen an gestartete Programme wird zusätzlich Export benötigt. Übernimm <code>export NAME=...</code> aus einem Bash-Tutorial nicht als allgemeines Modell für jede fish-Konfiguration; die dokumentierte fish-Schreibweise und der gewünschte Gültigkeitsbereich sind entscheidend.</p>
+<p>Ein unverändertes Bash-Skript startest du bei Bedarf ausdrücklich mit Bash. Den Interpreter eines fremden Skripts auf fish umzuschreiben ersetzt keine Portierung. Die Shebang-Zeile dokumentiert eine echte Abhängigkeit.</p>
+<h2 id="aufraeumen-und-typische-fehler-finden">Aufräumen und typische Fehler finden</h2>
+<p>Entferne die Abkürzung aus der laufenden Sitzung:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">abbr --erase gsttutorial
+</code></pre>
+<p>Entferne die Funktion aus dem Speicher:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">functions --erase lltutorial
+</code></pre>
+<p>Falls du <code>funcsave</code> benutzt hast, entferne zusätzlich die dafür erstellte Datei <code>lltutorial.fish</code> im fish-Funktionsverzeichnis und den Übungseintrag aus <code>config.fish</code>. Sonst kann eine spätere Sitzung die Einstellung wieder laden. Sichere beim Bearbeiten deine übrigen Funktionen.</p>
+<p>Bei einer fehlerhaften Konfigurationsdatei hilft eine reine Syntaxprüfung:</p>
+<pre tabindex="0" aria-label="Codebeispiel"><code class="language-sh">fish --no-execute ~/.config/fish/config.fish
+</code></pre>
+<p>Sie führt die Datei nicht aus. Eine erfolgreiche Prüfung belegt Syntax, nicht die Verfügbarkeit aller Programme oder die richtige Wirkung jeder Funktion.</p>
+<h2 id="chronik-datenschutz-und-quellen">Chronik, Datenschutz und Quellen</h2>
+<p>Die Chronik kann persönliche Pfade und Befehle enthalten. Nutze für Kennwörter die interaktive Eingabe des jeweiligen Programms statt Klartext in der Befehlszeile. Prüfe auch Konfigurationsdateien vor dem Veröffentlichen auf Tokens und interne Hostnamen.</p>
+<ul>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/NixOS/configuration.nix">Meine geprüfte NixOS-Datei</a>: fish-Aktivierung und Benutzershell.</li>
+<li><a href="https://fishshell.com/docs/current/tutorial.html">Offizielles fish-Tutorial</a>.</li>
+<li><a href="https://fishshell.com/docs/current/cmds/abbr.html">Abkürzungen in fish</a>.</li>
+<li><a href="https://fishshell.com/docs/current/cmds/funcsave.html">Funktionen speichern</a> und <a href="https://fishshell.com/docs/current/cmds/set.html">set</a>.</li>
+</ul>
+<p>Referenzen geprüft am 8. Oktober 2026. Die Übungsnamen sind absichtlich von deinen normalen Kurzbefehlen getrennt.</p>
+
+<nav class="article-end-nav" aria-label="Artikelnavigation"><a href="/de/blog/#tutorials">← Desktop &amp; Terminal</a><a href="#page-top">Nach oben ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Inhaltsverzeichnis"><h2>In diesem Artikel</h2><ol><li><a href="#was-fish-gegenueber-dem-terminal-veraendert">Was fish gegenüber dem Terminal verändert</a></li><li><a href="#erst-ausprobieren-dann-zur-login-shell-machen">Erst ausprobieren, dann zur Login-Shell machen</a></li><li><a href="#vorschlaege-und-tab-vervollstaendigung-nutzen">Vorschläge und Tab-Vervollständigung nutzen</a></li><li><a href="#alias-und-abkuerzung-auseinanderhalten">Alias und Abkürzung auseinanderhalten</a></li><li><a href="#die-eigene-config-fish-klein-halten">Die eigene config.fish klein halten</a></li><li><a href="#variablen-und-vorhandene-skripte-verstehen">Variablen und vorhandene Skripte verstehen</a></li><li><a href="#aufraeumen-und-typische-fehler-finden">Aufräumen und typische Fehler finden</a></li><li><a href="#chronik-datenschutz-und-quellen">Chronik, Datenschutz und Quellen</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Quellen und Projekt <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Passende nächste Schritte</p><a href="/de/blog/kitty-konfigurieren/">Kitty konfigurieren: Schrift, Farben, Transparenz und Bilder <span aria-hidden="true">→</span></a><a href="/de/blog/nixos-configuration-nix-verstehen/">NixOS für Einsteiger: Meine configuration.nix verständlich erklärt <span aria-hidden="true">→</span></a><a href="/de/blog/git-pull-divergierende-branches/">Git pull scheitert: abweichende Branches, Merge und Rebase <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/de/">Dennis Hilk</a><p>Praktische Werkzeuge, Linux und ungewöhnliche Computer.</p></div><nav aria-label="Weitere Links"><a href="/de/">Start</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Datenschutz</a><a href="https://buymeacoffee.com/dennishilk">Ostfriesentee</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

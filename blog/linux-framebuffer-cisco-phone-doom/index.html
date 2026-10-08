@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux framebuffers explained: DOOM on my Cisco phone · Dennis Hilk</title>
+<meta name="description" content="How DOOM runs locally on the Cisco CP-9951: framebuffers, pixel formats, stride and real keys explained, with a small calculation and project links.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-framebuffer-cisco-telefon-doom/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux framebuffers explained: DOOM on my Cisco phone">
+<meta property="og:description" content="How DOOM runs locally on the Cisco CP-9951: framebuffers, pixel formats, stride and real keys explained, with a small calculation and project links.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linux framebuffers explained: DOOM on my Cisco phone">
+<meta name="twitter:description" content="How DOOM runs locally on the Cisco CP-9951: framebuffers, pixel formats, stride and real keys explained, with a small calculation and project links.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/","url":"https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/","headline":"Linux framebuffers explained: DOOM on my Cisco phone","description":"How DOOM runs locally on the Cisco CP-9951: framebuffers, pixel formats, stride and real keys explained, with a small calculation and project links.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Embedded Linux & DOOM","wordCount":922},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Linux framebuffers explained: DOOM on my Cisco phone","item":"https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/linux-framebuffer-cisco-telefon-doom/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Embedded Linux &amp; DOOM</span></nav>
+<header class="article-header"><p class="eyebrow">Embedded Linux &amp; DOOM</p><h1>Linux framebuffers explained: DOOM on my Cisco phone</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>6 minute read</span></div><div class="article-privacy"><span class="privacy-badge">The documented game runs locally</span><p>The final v.666 game is documented running locally and offline on the phone. Installation and project downloads need their own transfer route. These small exercises upload no device data.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Linux framebuffers explained: DOOM on my Cisco phone"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#a-framebuffer-is-a-display-interface">A framebuffer is a display interface</a></li><li><a href="#why-the-final-build-really-runs-on-the-phone">Why the final build really runs on the phone</a></li><li><a href="#understand-resolution-pixel-format-and-stride">Understand resolution, pixel format and stride</a></li><li><a href="#try-a-calculation-without-accessing-a-device">Try a calculation without accessing a device</a></li><li><a href="#inspect-your-linux-display-without-writing-to-it">Inspect your Linux display without writing to it</a></li><li><a href="#physical-keys-need-compatible-event-decoding">Physical keys need compatible event decoding</a></li><li><a href="#audio-and-persistent-startup-are-separate-tasks">Audio and persistent startup are separate tasks</a></li><li><a href="#project-and-references">Project and references</a></li></ol></details>
+<p>A Cisco CP-9951 looks like an office phone, but an ARM Linux system works inside it. My DOOM project uses its local display and physical keys. The final v.666 build runs on the phone itself and is documented working after a cable-free cold boot.</p>
+<p>The full story is in <a href="/museum/home-computing-lab/field-notes/field-note-7/">Field Note 7 in the Computer Museum</a>. This article explains the technical core for beginners: what a framebuffer is, how a pixel's address is calculated and why input, audio and startup need separate work too.</p>
+<h2 id="a-framebuffer-is-a-display-interface">A framebuffer is a display interface</h2>
+<p>Imagine a memory region whose values appear as pixels on a screen. Linux's fbdev interface lets a program query information about such a surface and access its image data.</p>
+<p>A device such as <code>/dev/fb1</code> is not a PNG or a ready-made windowing interface. The program needs the geometry, memory layout and pixel format. “32 bits” alone does not establish where the red and blue components belong.</p>
+<p>Modern Linux desktops often use DRM/KMS and a compositor. An exposed <code>/dev/fb0</code> may be a compatibility layer. This older embedded Cisco platform is therefore not a universal recipe for every current graphics card.</p>
+<h2 id="why-the-final-build-really-runs-on-the-phone">Why the final build really runs on the phone</h2>
+<p>The project distinguishes several development stages. Initially, the game ran on Cthulhu and the phone received a stream. A remote input bridge followed. These intermediate versions had different data flows from the final native port.</p>
+<p>In the final architecture, the phone's ARM CPU runs the game process. Output goes to <code>/dev/fb1</code>, and local input comes through <code>/dev/input/keypad0</code>. The documentation identifies MontaVista Linux with a 2.6.18 kernel on ARMv6. This particular target shaped toolchain and runtime requirements.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Final project implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Game computation</td>
+<td>ARM process on the CP-9951</td>
+</tr>
+<tr>
+<td>Video output</td>
+<td>Local <code>/dev/fb1</code> framebuffer</td>
+</tr>
+<tr>
+<td>Controls</td>
+<td>Local Raven keypad events</td>
+</tr>
+<tr>
+<td>Startup</td>
+<td>Applications → Doom through a local endpoint</td>
+</tr>
+</tbody>
+</table></div>
+<p>A photo of the display alone could not rule out streaming. The documented runtime paths and offline cold boot establish the more useful distinction.</p>
+<h2 id="understand-resolution-pixel-format-and-stride">Understand resolution, pixel format and stride</h2>
+<p>A renderer needs visible width and height, bits per pixel and the distance between image rows. That distance is often called <code>stride</code> or <code>pitch</code>; fbdev's fixed-information structure calls it <code>line_length</code>.</p>
+<p>Rows can contain trailing padding. Therefore, <code>width × bytes per pixel</code> is not always the distance to the next row. For packed pixels, the byte offset generally combines row stride and horizontal position; virtual offsets and the actual format also need consideration.</p>
+<p>The interface provides queries including <code>FBIOGET_FSCREENINFO</code> and <code>FBIOGET_VSCREENINFO</code> for fixed and variable display information. A port should validate its assumptions against the actual responses.</p>
+<h2 id="try-a-calculation-without-accessing-a-device">Try a calculation without accessing a device</h2>
+<p>The following numbers are <strong>invented exercise values</strong>, not Cisco measurements: eight pixels per row, four bytes per pixel and a 40-byte stride. The example writes nothing to a display device.</p>
+<p>Save it as <code>framebuffer-offset.py</code> in an exercise directory:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-python">width = 8
+height = 6
+bytes_per_pixel = 4
+stride = 40
+x, y = 3, 2
+
+assert 0 &lt;= x &lt; width and 0 &lt;= y &lt; height
+assert stride &gt;= width * bytes_per_pixel
+offset = y * stride + x * bytes_per_pixel
+print(offset)
+</code></pre>
+<p>Run it:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">python3 framebuffer-offset.py
+</code></pre>
+<p>The result is <code>92</code>. Without padding, the address for this position would differ. Change only <code>x</code> or <code>y</code> and compare. This explains addressing in a simple packed layout; it does not implement colour conversion, device queries or safe memory mapping.</p>
+<h2 id="inspect-your-linux-display-without-writing-to-it">Inspect your Linux display without writing to it</h2>
+<p>On your own Linux machine, first check for registered fbdev devices:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">cat /proc/fb
+</code></pre>
+<p>If <code>fb0</code> and its sysfs files exist, inspect additional information:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">cat /sys/class/graphics/fb0/virtual_size
+</code></pre>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">cat /sys/class/graphics/fb0/bits_per_pixel
+</code></pre>
+<p>Missing files are expected on some systems. These values alone are not enough to implement a correct renderer. Do not pipe <code>dd</code>, <code>cat</code> or an unfamiliar test program into <code>/dev/fb…</code> for this exercise: that changes the active display before you understand its layout.</p>
+<h2 id="physical-keys-need-compatible-event-decoding">Physical keys need compatible event decoding</h2>
+<p>The Cisco project documents local 16-byte events for its 32-bit environment. They contain timestamp fields, type, key code and value. Measured values distinguish pressing and releasing; synchronization events are present too.</p>
+<p>That structure size does not automatically apply to an arbitrary 64-bit desktop. A port must match the target ABI and read complete events. The <a href="https://github.com/dennishilk/cisco9951-doom/blob/main/docs/keypad-reverse-engineering.md">measured Raven key map</a> documents the phone-specific case.</p>
+<p>Navigation and OK control movement and menus in the final game; <code>*</code> fires and <code>#</code> uses or opens doors. The red handset exits cleanly. Returning to the Cisco interface is part of the practical result, rather than merely another key mapping.</p>
+<h2 id="audio-and-persistent-startup-are-separate-tasks">Audio and persistent startup are separate tasks</h2>
+<p>Drawing pixels does not produce sound. The final port uses a phone-local service/relay path to Cisco's media functionality. The documentation also explains the loopback handling needed for sound after a cable-free boot.</p>
+<p>The persistent installation lives under <code>/mnt/flash2/doom-v666</code>. Its Applications entry uses <code>http://127.0.0.1:8095/launch</code>. A local HTTP endpoint does not mean an external web server computes the game. Distinguish the runtime from its launch mechanism.</p>
+<p>Installation, rollback and package verification belong to the <a href="https://github.com/dennishilk/cisco9951-doom/blob/main/docs/installation.md">project instructions</a>. Device and firmware version matter; this framebuffer guide is not a general installation procedure for other phones.</p>
+<h2 id="project-and-references">Project and references</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/cisco9951-doom">Cisco DOOM on GitHub</a> and the <a href="https://github.com/dennishilk/cisco9951-doom/releases/tag/v.666">v.666 release</a>.</li>
+<li><a href="https://github.com/dennishilk/cisco9951-doom/blob/f9c49115e1409d2c99de2c88f5c5c81db06cb1b8/README.md">Checked project description</a>.</li>
+<li><a href="https://github.com/dennishilk/cisco9951-doom/blob/main/docs/project-history.md">Project history</a> and <a href="https://github.com/dennishilk/cisco9951-doom/blob/main/docs/keypad-reverse-engineering.md">key measurements</a>.</li>
+<li><a href="https://docs.kernel.org/fb/api.html">Linux framebuffer API</a>.</li>
+</ul>
+<p>Sources checked on 8 October 2026. If the path from display and input to a whole operating system interests you, continue with my <a href="/blog/build-your-own-os-boringos/">BoringOS introduction</a>.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#project-guides">← My Projects</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#a-framebuffer-is-a-display-interface">A framebuffer is a display interface</a></li><li><a href="#why-the-final-build-really-runs-on-the-phone">Why the final build really runs on the phone</a></li><li><a href="#understand-resolution-pixel-format-and-stride">Understand resolution, pixel format and stride</a></li><li><a href="#try-a-calculation-without-accessing-a-device">Try a calculation without accessing a device</a></li><li><a href="#inspect-your-linux-display-without-writing-to-it">Inspect your Linux display without writing to it</a></li><li><a href="#physical-keys-need-compatible-event-decoding">Physical keys need compatible event decoding</a></li><li><a href="#audio-and-persistent-startup-are-separate-tasks">Audio and persistent startup are separate tasks</a></li><li><a href="#project-and-references">Project and references</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cisco9951-doom">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/build-your-own-os-boringos/">Build your own operating system: bootloaders and BoringKernel <span aria-hidden="true">→</span></a><a href="/blog/source2reel-github-local-explainer-video/">Source2Reel: turn a GitHub project into a local explainer video <span aria-hidden="true">→</span></a><a href="/blog/journalctl-linux-troubleshooting/">journalctl for beginners: find Linux errors in system logs <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>

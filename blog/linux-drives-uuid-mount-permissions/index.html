@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux drives explained: UUIDs, mountpoints and permissions · Dennis Hilk</title>
+<meta name="description" content="Understand Linux mounts: UUIDs, mountpoints, ext4 permissions, fstab and NixOS. Includes a read-only exercise and my Games/Homelab configuration.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-laufwerke-uuid-mount-rechte/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux drives explained: UUIDs, mountpoints and permissions">
+<meta property="og:description" content="Understand Linux mounts: UUIDs, mountpoints, ext4 permissions, fstab and NixOS. Includes a read-only exercise and my Games/Homelab configuration.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/">
+<meta property="og:image" content="https://www.dennishilk.com/avatar.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linux drives explained: UUIDs, mountpoints and permissions">
+<meta name="twitter:description" content="Understand Linux mounts: UUIDs, mountpoints, ext4 permissions, fstab and NixOS. Includes a read-only exercise and my Games/Homelab configuration.">
+<meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/#article","mainEntityOfPage":"https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/","url":"https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/","headline":"Linux drives explained: UUIDs, mountpoints and permissions","description":"Understand Linux mounts: UUIDs, mountpoints, ext4 permissions, fstab and NixOS. Includes a read-only exercise and my Games/Homelab configuration.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"articleSection":"Linux & Storage","wordCount":830},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Linux drives explained: UUIDs, mountpoints and permissions","item":"https://www.dennishilk.com/blog/linux-drives-uuid-mount-permissions/"}]}]}</script>
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+<script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+</head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/linux-laufwerke-uuid-mount-rechte/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Linux &amp; Storage</span></nav>
+<header class="article-header"><p class="eyebrow">Linux &amp; Storage</p><h1>Linux drives explained: UUIDs, mountpoints and permissions</h1><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-08">8 October 2026</time><span>5 minute read</span></div><div class="article-privacy"><span class="privacy-badge">Inspect drives and permissions locally</span><p>These checks read local device information. Labels and paths can contain personal details. A local mount needs no upload; applications using the drive can make their own connections.</p></div></header>
+<div class="article-layout"><article class="article-copy" aria-label="Linux drives explained: UUIDs, mountpoints and permissions"><details class="mobile-toc"><summary>In this article</summary><ol><li><a href="#separate-devices-filesystems-and-mountpoints">Separate devices, filesystems and mountpoints</a></li><li><a href="#identify-the-drives-first">Identify the drives first</a></li><li><a href="#begin-with-a-read-only-ext4-mount">Begin with a read-only ext4 mount</a></li><li><a href="#verify-the-result-and-unmount-cleanly">Verify the result and unmount cleanly</a></li><li><a href="#understand-my-games-and-homelab-entries">Understand my Games and Homelab entries</a></li><li><a href="#use-fstab-or-nixos-appropriately">Use fstab or NixOS appropriately</a></li><li><a href="#ext4-permissions-are-stored-in-the-filesystem">ext4 permissions are stored in the filesystem</a></li><li><a href="#references">References</a></li></ol></details>
+<p>A second drive appears in the file manager, yet an application cannot find its folder. Or an ext4 drive is mounted but you cannot write to it. Linux storage becomes clearer when you separate the device, the filesystem on it and the place where its contents join the directory tree.</p>
+<p>My <a href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Cthulhu configuration</a> mounts three ext4 filesystems for Games and Homelab. We will read those entries and begin with a read-only exercise using your own cleanly unmounted ext4 test drive. This guide contains no formatting or partitioning commands.</p>
+<h2 id="separate-devices-filesystems-and-mountpoints">Separate devices, filesystems and mountpoints</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Overview table"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Example and meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Device</td>
+<td>A partition such as <code>/dev/sdb1</code></td>
+</tr>
+<tr>
+<td>UUID</td>
+<td>Identifier of a particular filesystem</td>
+</tr>
+<tr>
+<td>Label</td>
+<td>Readable name such as <code>Games.Vol1</code></td>
+</tr>
+<tr>
+<td>Mountpoint</td>
+<td>Directory such as <code>/mnt/Games.Vol1</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Mounting makes the filesystem's content visible at the mountpoint. Files already in that directory are covered, rather than automatically deleted. Use a new, empty location for an exercise.</p>
+<p>Device names can change between boots or after connecting drives. UUIDs and unique labels are more suitable for persistent entries. Check those too: a cloned filesystem can retain an identifier, and labels can be duplicated.</p>
+<h2 id="identify-the-drives-first">Identify the drives first</h2>
+<p>Show a selected overview:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">lsblk -o NAME,SIZE,FSTYPE,LABEL,UUID,MOUNTPOINTS
+</code></pre>
+<p>Compare size, filesystem and current mountpoints against the actual drive you intend to use. Replace <code>YOUR-EXT4-UUID</code> in this guide with your verified identifier. It is a placeholder, not an identifier taken from my machine.</p>
+<p>A drive automatically mounted under <code>/run/media/...</code> or <code>/media/...</code> is already mounted. Use your own test device and unmount it cleanly through the normal interface first. Do not experiment on an active root or system drive.</p>
+<h2 id="begin-with-a-read-only-ext4-mount">Begin with a read-only ext4 mount</h2>
+<p>Create a dedicated mountpoint:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo mkdir -p /mnt/mount-tutorial
+</code></pre>
+<p>Check that the exercise directory is empty:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">ls -la /mnt/mount-tutorial
+</code></pre>
+<p>Check for an existing mount there:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">findmnt --mountpoint /mnt/mount-tutorial
+</code></pre>
+<p>When no exact mount exists, <code>findmnt</code> can produce no output and a nonzero exit status. If something is already mounted there, do not use it for this exercise.</p>
+<p>For your own <strong>cleanly unmounted ext4 filesystem</strong>:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo mount -t ext4 -o ro,noload /dev/disk/by-uuid/YOUR-EXT4-UUID /mnt/mount-tutorial
+</code></pre>
+<p><code>ro</code> requests read-only access. For ext4, <code>noload</code> prevents journal replay, which can otherwise cause writes even during a read-only mount. On an unclean filesystem this can expose an inconsistent state; that situation needs a separate recovery procedure. The option is not a universal recipe for other filesystems.</p>
+<h2 id="verify-the-result-and-unmount-cleanly">Verify the result and unmount cleanly</h2>
+<p>Inspect source, filesystem and options:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">findmnt --mountpoint /mnt/mount-tutorial -o SOURCE,FSTYPE,OPTIONS
+</code></pre>
+<p>Expect the selected ext4 filesystem and read-only mounting. Open or list known files without editing them. A write failure here is expected because of <code>ro</code>; it does not itself establish a permission problem.</p>
+<p>Leave the mountpoint in your terminals and close programs using it. Then unmount:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo umount /mnt/mount-tutorial
+</code></pre>
+<p>If it is busy, investigate open files and working directories first. Forced or lazy unmounting is outside this beginner exercise.</p>
+<h2 id="understand-my-games-and-homelab-entries">Understand my Games and Homelab entries</h2>
+<p>One real excerpt is:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-nix">fileSystems."/mnt/Games.Vol1" = {
+  device = "/dev/disk/by-label/Games.Vol1";
+  fsType = "ext4";
+  options = [ "noatime" "nofail" "x-systemd.device-timeout=1s" ];
+};
+</code></pre>
+<p>Similar entries exist for <code>Games.Vol2</code> and <code>Homelab</code>. An older comment still describes activating them later, but the actual definitions are active. Effective syntax is what matters when reading configuration.</p>
+<p><code>noatime</code> avoids normal access-time updates. <code>nofail</code> allows boot to continue when an optional drive is missing. The short device timeout limits waiting. It does not make an absent drive usable: an application can still fail when its data path is missing.</p>
+<h2 id="use-fstab-or-nixos-appropriately">Use fstab or NixOS appropriately</h2>
+<p>Many distributions describe persistent mounts in <code>/etc/fstab</code>. An <strong>adaptable template</strong> for an optional ext4 data drive is:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-fstab">UUID=YOUR-EXT4-UUID /mnt/Data ext4 defaults,noatime,nofail,x-systemd.device-timeout=5s 0 2
+</code></pre>
+<p>Back up the existing file, use the actual mountpoint and replace the identifier. <code>nofail</code> suits an optional data drive; it is not automatically appropriate for every required system filesystem.</p>
+<p>Check the structure:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">sudo findmnt --verify
+</code></pre>
+<p>This does not replace functional or boot testing. NixOS normally manages these entries through <code>fileSystems</code> in its configuration. Do not additionally edit a generated fstab as a competing source of truth.</p>
+<h2 id="ext4-permissions-are-stored-in-the-filesystem">ext4 permissions are stored in the filesystem</h2>
+<p>ext4 records ownership and permissions on the filesystem. Adding a <code>uid=</code> mount option, as used with some other filesystems, does not explain or fix ext4 ownership. Inspect your identity and the affected directory:</p>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">id
+</code></pre>
+<pre tabindex="0" aria-label="Code example"><code class="language-sh">stat -c '%U %G %a' /mnt/Games.Vol1
+</code></pre>
+<p>The second path is appropriate only if you actually use that mount. Inspect the particular subdirectory you need. Rather than recursively assigning the whole drive to another user, determine which folders should belong to you and who else uses them. A blanket <code>chmod 777</code> does not explain the problem.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://github.com/dennishilk/cthulhu/blob/819cf21c453e421bf27177735adbfdb64230108e/NixOS/configuration.nix">Checked Cthulhu mounts</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/mount/mount.8.en.html">mount manual</a>.</li>
+<li><a href="https://manpages.debian.org/trixie/util-linux/lsblk.8.en.html">lsblk</a> and <a href="https://manpages.debian.org/trixie/util-linux/findmnt.8.en.html">findmnt</a>.</li>
+<li><a href="https://docs.kernel.org/admin-guide/ext4.html">Linux ext4 documentation</a>: read-only mounts and journal behaviour.</li>
+</ul>
+<p>Sources checked on 8 October 2026. These commands target your own ext4 exercise device, rather than provide a universal storage-repair procedure.</p>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#system-guides">← System &amp; Diagnostics</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this article</h2><ol><li><a href="#separate-devices-filesystems-and-mountpoints">Separate devices, filesystems and mountpoints</a></li><li><a href="#identify-the-drives-first">Identify the drives first</a></li><li><a href="#begin-with-a-read-only-ext4-mount">Begin with a read-only ext4 mount</a></li><li><a href="#verify-the-result-and-unmount-cleanly">Verify the result and unmount cleanly</a></li><li><a href="#understand-my-games-and-homelab-entries">Understand my Games and Homelab entries</a></li><li><a href="#use-fstab-or-nixos-appropriately">Use fstab or NixOS appropriately</a></li><li><a href="#ext4-permissions-are-stored-in-the-filesystem">ext4 permissions are stored in the filesystem</a></li><li><a href="#references">References</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/blob/main/NixOS/configuration.nix">Sources and project <span aria-hidden="true">↗</span></a></aside></div>
+<aside class="related-guide"><p class="eyebrow">Related next steps</p><a href="/blog/backup-linux-configuration/">Back up Linux configuration: Dotfiles, package lists and data backups <span aria-hidden="true">→</span></a><a href="/blog/nixos-configuration-nix-explained/">NixOS for beginners: My configuration.nix explained <span aria-hidden="true">→</span></a><a href="/blog/wine-prefix-linux-games/">Wine prefixes explained: separate Windows environments on Linux <span aria-hidden="true">→</span></a></aside>
+</main>
+<footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body>
+</html>
