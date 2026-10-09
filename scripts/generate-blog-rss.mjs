@@ -21,12 +21,12 @@ function xml(value) {
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
 function loadJsonLd(html, file) {
-  const match = html.match(/<script\\s+type=["']application\\/ld\\+json["']>([\\s\\S]*?)<\\/script>/);
+  const match = html.match(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/);
   if (!match) throw new Error("Missing JSON-LD in " + file);
   return JSON.parse(match[1]);
 }
 function isoDate(date, file) {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date) || Number.isNaN(Date.parse(date + "T00:00:00Z")))
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date + "T00:00:00Z")))
     throw new Error("Invalid article date in " + file + ": " + date);
   return date;
 }
@@ -43,7 +43,7 @@ function build(settings) {
   const articles = itemList.itemListElement.map(entry => {
     if (typeof entry.url !== "string" || !entry.url.startsWith(prefix))
       throw new Error("Unexpected blog URL: " + entry.url);
-    const slug = entry.url.slice(prefix.length).replace(/\\/$/, "");
+    const slug = entry.url.slice(prefix.length).replace(/\/$/, "");
     if (!/^[a-z0-9-]+$/.test(slug)) throw new Error("Unexpected article slug: " + slug);
     const path = resolve(root, settings.directory, slug, "index.html");
     const data = loadJsonLd(readFileSync(path, "utf8"), path);
@@ -83,7 +83,7 @@ function build(settings) {
     lines.push('    </item>');
   }
   lines.push('  </channel>', '</rss>', '');
-  return { content: lines.join("\\n"), count: articles.length };
+  return { content: lines.join("\n"), count: articles.length };
 }
 for (const settings of feedSettings) {
   const target = resolve(root, settings.directory, "feed.xml");
