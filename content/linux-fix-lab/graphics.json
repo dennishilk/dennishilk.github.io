@@ -1,0 +1,2051 @@
+[
+  {
+    "id": "amdgpu-ring-timeout",
+    "slug": {
+      "en": "amdgpu-ring-timeout",
+      "de": "amdgpu-ring-zeitueberschreitung"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "AMDGPU ring timeout and GPU recovery",
+      "de": "AMDGPU-Ring bleibt stehen und wird zurückgesetzt"
+    },
+    "summary": {
+      "en": "A stalled AMD command queue can freeze an application or the desktop; compare the first timeout, recovery result and software versions.",
+      "de": "Eine stehende AMD-Befehlswarteschlange kann Anwendung oder Desktop einfrieren; erste Fehlermeldung, Wiederherstellung und Versionen vergleichen."
+    },
+    "environment": {
+      "en": "AMD GPUs using the amdgpu kernel driver; OpenGL, Vulkan or compute workloads. A black screen without a retained log needs separate investigation.",
+      "de": "AMD-GPUs mit dem Kernel-Treiber amdgpu bei OpenGL, Vulkan oder Compute. Ein Schwarzbild ohne erhaltenes Protokoll muss gesondert untersucht werden."
+    },
+    "symptoms": {
+      "en": [
+        "A game stops drawing while sound or SSH may continue.",
+        "The kernel reports a ring timeout followed by recovery attempts."
+      ],
+      "de": [
+        "Ein Spiel zeichnet keine neuen Bilder, während Ton oder SSH weiterlaufen können.",
+        "Der Kernel meldet eine Ring-Zeitüberschreitung und versucht die GPU wiederherzustellen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An application, Mesa or kernel regression may submit work that stops completing.",
+        "de": "Ein Fehler in Anwendung, Mesa oder Kernel kann dazu führen, dass Aufträge nicht mehr abgeschlossen werden."
+      },
+      {
+        "en": "Firmware, unstable clocks, power delivery or PCIe errors can produce similar symptoms; the timeout does not distinguish them.",
+        "de": "Firmware, instabile Taktraten, Stromversorgung oder PCIe-Fehler können ähnlich aussehen; die Zeitüberschreitung unterscheidet sie nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-amdgpu-events",
+        "command": "journalctl -b -k --no-pager --grep='amdgpu|AER|PCIe Bus Error'",
+        "explanation": {
+          "en": "Read this boot’s kernel events; journal access may require an administrator. Use -b -1 after a reboot if that boot was retained.",
+          "de": "Kernel-Ereignisse dieses Starts lesen; der Journalzugriff kann Administratorrechte erfordern. Nach einem Neustart -b -1 verwenden, falls dieser Start gespeichert wurde."
+        },
+        "interpretation": {
+          "en": "The first ring error and any preceding PCIe event matter more than the final reset. A successful reset does not prove the underlying fault is fixed.",
+          "de": "Der erste Ring-Fehler und vorhergehende PCIe-Ereignisse sind aussagekräftiger als der letzte Reset. Ein erfolgreicher Reset belegt keine behobene Ursache."
+        }
+      },
+      {
+        "id": "identify-loaded-stack",
+        "command": "lspci -nnk",
+        "explanation": {
+          "en": "List PCI devices and their active drivers without changing binding; locate the AMD display controller.",
+          "de": "PCI-Geräte und aktive Treiber ohne Änderung der Bindung anzeigen; den AMD-Grafikcontroller suchen."
+        },
+        "interpretation": {
+          "en": "Kernel driver in use should identify amdgpu for a supported device. Record the PCI address for the report; installed modules alone do not establish binding.",
+          "de": "Kernel driver in use sollte bei einem unterstützten Gerät amdgpu nennen. PCI-Adresse für den Bericht festhalten; installierte Module belegen noch keine aktive Bindung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-supported-kernel",
+        "title": {
+          "en": "Compare a retained kernel",
+          "de": "Mit einem vorhandenen Kernel vergleichen"
+        },
+        "body": {
+          "en": "If the fault began after an update, boot an already installed earlier supported kernel and repeat only the shortest reliable trigger. Keep the workload and Mesa version constant to isolate the kernel change.",
+          "de": "Trat der Fehler nach einem Update auf, einen bereits installierten älteren unterstützten Kernel starten und nur den kürzesten verlässlichen Auslöser prüfen. Arbeitslast und Mesa-Version dabei gleich lassen."
+        },
+        "precautions": {
+          "en": "Save work before testing; keep both boot entries and avoid repeated hard locks. A single stable run is weak evidence.",
+          "de": "Vor dem Test Arbeit speichern, beide Starteinträge behalten und wiederholte harte Abstürze vermeiden. Ein stabiler Lauf ist ein schwacher Hinweis."
+        },
+        "rollback": {
+          "en": "Choose the original kernel entry at the next boot; remove a temporary default change if one was made.",
+          "de": "Beim nächsten Start den ursprünglichen Kernel wählen und einen eventuell vorübergehend geänderten Standard zurücksetzen."
+        }
+      },
+      {
+        "id": "remove-gpu-tuning",
+        "title": {
+          "en": "Return GPU tuning to defaults",
+          "de": "GPU-Tuning auf Standard zurückstellen"
+        },
+        "body": {
+          "en": "If overclocking, undervolting or custom driver parameters were added, restore the recorded defaults one change at a time. If a minimal reproducer still fails, report complete pre-reset logs and versions upstream.",
+          "de": "Wurden Übertaktung, Undervolting oder eigene Treiberparameter gesetzt, die dokumentierten Standardwerte einzeln wiederherstellen. Scheitert ein Minimalbeispiel weiter, vollständige Meldungen vor dem Reset und Versionen melden."
+        },
+        "precautions": {
+          "en": "Do not extend scheduler timeouts merely to hide the error or disable recovery on a daily workstation. Never alter voltage without a documented device-specific procedure.",
+          "de": "Zeitlimits nicht lediglich zum Verbergen des Fehlers verlängern und Wiederherstellung nicht auf dem Arbeitsrechner abschalten. Spannung nur nach dokumentierter gerätespezifischer Anleitung ändern."
+        },
+        "rollback": {
+          "en": "Reapply only a previously recorded setting that is necessary and demonstrably stable; retain a boot entry without experimental parameters.",
+          "de": "Nur eine zuvor dokumentierte notwendige und nachweislich stabile Einstellung wieder setzen; einen Starteintrag ohne experimentelle Parameter behalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "AMDGPU module parameters: scheduler timeout and recovery",
+        "url": "https://docs.kernel.org/gpu/amdgpu/module-parameters.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "AMDGPU scheduler timeout implementation",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "amdgpu-ring-sequence-timeout",
+        "all": [
+          "amdgpu",
+          "ring ",
+          "timeout, signaled seq="
+        ],
+        "sample": "amdgpu 0000:03:00.0: ring gfx_0.0.0 timeout, signaled seq=42, emitted seq=43",
+        "negative": [
+          "amdgpu 0000:03:00.0: ring gfx_0.0.0 uses VM inv eng 0",
+          "nvme nvme0: I/O 42 timeout"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An AMD queue did not complete its expected fence sequence.",
+          "de": "Eine AMD-Warteschlange hat ihre erwartete Fence-Sequenz nicht abgeschlossen."
+        },
+        "significance": {
+          "en": "Investigate the first failure and recovery outcome; neither the queue name nor this line identifies the root cause.",
+          "de": "Ersten Fehler und Ergebnis der Wiederherstellung untersuchen; weder Warteschlangenname noch diese Zeile nennen die Ursache."
+        }
+      },
+      {
+        "id": "amdgpu-recovery-failed",
+        "all": [
+          "amdgpu",
+          "GPU Recovery Failed:"
+        ],
+        "sample": "amdgpu 0000:03:00.0: GPU Recovery Failed: -110",
+        "negative": [
+          "amdgpu 0000:03:00.0: GPU reset succeeded!",
+          "amdgpu 0000:03:00.0: GPU recovery enabled"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The driver could not complete GPU recovery.",
+          "de": "Der Treiber konnte die GPU-Wiederherstellung nicht abschließen."
+        },
+        "significance": {
+          "en": "Save evidence from another console if available; restarting affected applications may be insufficient and a controlled reboot may be needed.",
+          "de": "Wenn möglich Belege über eine andere Konsole sichern; ein Anwendungsneustart kann unzureichend sein und ein kontrollierter Neustart nötig werden."
+        }
+      }
+    ]
+  },
+  {
+    "id": "amdgpu-missing-firmware",
+    "slug": {
+      "en": "amdgpu-missing-firmware",
+      "de": "amdgpu-firmware-fehlt"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "AMDGPU cannot load a required firmware file",
+      "de": "AMDGPU kann eine benötigte Firmware-Datei nicht laden"
+    },
+    "summary": {
+      "en": "A missing AMD firmware blob can prevent acceleration or early display setup; check the exact requested filename and the initramfs contents.",
+      "de": "Eine fehlende AMD-Firmware kann Beschleunigung oder frühe Bildausgabe verhindern; angeforderten Dateinamen und Inhalt der Initramfs prüfen."
+    },
+    "environment": {
+      "en": "Linux systems loading amdgpu, particularly after adding a newer GPU or updating the kernel independently of firmware packages.",
+      "de": "Linux-Systeme mit amdgpu, besonders nach Einbau einer neueren GPU oder einem Kernel-Update unabhängig von den Firmware-Paketen."
+    },
+    "symptoms": {
+      "en": [
+        "Low-resolution fallback console or no accelerated desktop after boot.",
+        "Kernel requests an amdgpu firmware filename and reports error -2."
+      ],
+      "de": [
+        "Nach dem Start erscheint nur eine Konsole mit geringer Auflösung oder kein beschleunigter Desktop.",
+        "Der Kernel fordert einen amdgpu-Firmware-Dateinamen an und meldet Fehler -2."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The requested blob may be absent from the firmware package or early boot image.",
+        "de": "Die angeforderte Datei kann im Firmware-Paket oder im frühen Startabbild fehlen."
+      },
+      {
+        "en": "A kernel needing newer firmware may have been installed without a matching distribution firmware update; -2 means lookup failed, not that the GPU is broken.",
+        "de": "Ein Kernel mit neuerem Firmware-Bedarf kann ohne passendes Firmware-Update der Distribution installiert worden sein; -2 bedeutet eine gescheiterte Dateisuche, keine defekte GPU."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-firmware-request",
+        "command": "journalctl -b -k --no-pager --grep='amdgpu.*firmware|Direct firmware load'",
+        "explanation": {
+          "en": "Read the actual requested path; kernel journal access can require administrator rights.",
+          "de": "Den tatsächlich angeforderten Pfad lesen; der Kernel-Journalzugriff kann Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "A path beginning amdgpu/ with error -2 points to an unavailable file at request time. An unrelated Wi-Fi blob is not evidence for this issue.",
+          "de": "Ein Pfad mit amdgpu/ und Fehler -2 weist auf eine zum Anforderungszeitpunkt nicht verfügbare Datei hin. Eine WLAN-Firmware ist kein Beleg dafür."
+        }
+      },
+      {
+        "id": "locate-amdgpu-blobs",
+        "command": "find -L /lib/firmware/amdgpu -maxdepth 1 -type f -name '*.bin*'",
+        "explanation": {
+          "en": "Inventory firmware files in this directory, following local directory and blob symlinks; the command only reads names. A distribution may use another firmware path or include blobs only in the initramfs.",
+          "de": "Listet Firmwaredateien in diesem Verzeichnis und folgt lokalen Verzeichnis- und Datei-Symlinks; der Befehl liest nur Namen. Eine Distribution kann einen anderen Firmwarepfad verwenden oder Dateien nur im initramfs bereitstellen."
+        },
+        "interpretation": {
+          "en": "Compare the exact filename from the log with the package inventory. A missing line here is not proof that the kernel lacks the blob: also inspect the configured search paths and initramfs contents. A dangling symlink or wrong package version is evidence to investigate.",
+          "de": "Vergleiche den exakten Dateinamen aus dem Log mit dem Paketbestand. Eine fehlende Zeile beweist noch nicht, dass dem Kernel die Datei fehlt: Prüfe auch die Suchpfade und den Inhalt des initramfs. Ein defekter Symlink oder eine falsche Paketversion ist ein Hinweis für die weitere Prüfung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "install-matching-firmware",
+        "title": {
+          "en": "Install the distribution firmware package",
+          "de": "Passendes Firmware-Paket installieren"
+        },
+        "body": {
+          "en": "If the requested file is absent, install or update the distribution’s official AMD/linux-firmware package for this supported kernel. Verify the exact filename after installation before scheduling a reboot.",
+          "de": "Fehlt die angeforderte Datei, das offizielle AMD- beziehungsweise linux-firmware-Paket der Distribution für diesen unterstützten Kernel installieren oder aktualisieren. Danach den exakten Dateinamen vor dem Neustart prüfen."
+        },
+        "precautions": {
+          "en": "Use the distribution package mechanism; do not replace arbitrary blobs from downloads or assume every similarly named GPU shares firmware.",
+          "de": "Paketverwaltung der Distribution nutzen; keine beliebigen heruntergeladenen Dateien einsetzen und nicht gleiche Firmware für ähnlich benannte GPUs annehmen."
+        },
+        "rollback": {
+          "en": "Keep the previous supported kernel and firmware package version available; boot that pair if the updated combination cannot initialize.",
+          "de": "Vorherigen unterstützten Kernel und Firmware-Paketstand bereithalten; dieses Paar starten, falls die aktualisierte Kombination nicht initialisiert."
+        }
+      },
+      {
+        "id": "refresh-early-firmware",
+        "title": {
+          "en": "Refresh the correct early boot image",
+          "de": "Richtiges frühes Startabbild erneuern"
+        },
+        "body": {
+          "en": "If the blob exists on disk but early amdgpu initialization still fails, rebuild the affected kernel’s initramfs using the distribution tool with its firmware inclusion rules. Verify the resulting image and its boot entry.",
+          "de": "Liegt die Datei auf der Platte, scheitert aber die frühe amdgpu-Initialisierung, die Initramfs des betroffenen Kernels mit dem Distributionstool und dessen Firmware-Regeln erneuern. Erzeugtes Abbild und Starteintrag prüfen."
+        },
+        "precautions": {
+          "en": "Check that the intended /boot or EFI partition is mounted and has free space. Rebuilding an image for another kernel will not fix the selected entry.",
+          "de": "Prüfen, dass die vorgesehene /boot- oder EFI-Partition eingehängt ist und Platz hat. Ein Abbild für einen anderen Kernel repariert den ausgewählten Eintrag nicht."
+        },
+        "rollback": {
+          "en": "Boot the retained earlier image or generation; restore the previous firmware package and regenerate only if a regression is confirmed.",
+          "de": "Vorheriges Abbild oder Generation starten; altes Firmware-Paket wiederherstellen und nur bei bestätigter Regression neu erzeugen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel firmware search paths",
+        "url": "https://docs.kernel.org/driver-api/firmware/fw_search_path.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "AMDGPU firmware loading implementation",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "BLFS: firmware symlinks and early AMDGPU availability",
+        "url": "https://www.linuxfromscratch.org/blfs/view/stable/postlfs/firmware.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "amdgpu-direct-firmware-missing",
+        "all": [
+          "amdgpu/",
+          "Direct firmware load for",
+          "failed with error"
+        ],
+        "sample": "amdgpu 0000:03:00.0: Direct firmware load for amdgpu/example_smc.bin failed with error -2",
+        "negative": [
+          "iwlwifi 0000:02:00.0: Direct firmware load for iwlwifi-example.ucode failed with error -2",
+          "amdgpu 0000:03:00.0: Direct firmware load for amdgpu/example_smc.bin succeeded"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The firmware loader reports failure for an AMDGPU firmware request; the errno still needs interpretation.",
+          "de": "Der Firmware-Lader meldet einen Fehler beim Anfordern von AMDGPU-Firmware; die Fehlernummer muss noch ausgewertet werden."
+        },
+        "significance": {
+          "en": "Error -2 means the file was unavailable at request time. Other codes can mean permission or format problems; check the complete code and subsequent initialization, since optional requests may have working fallbacks.",
+          "de": "Fehler -2 bedeutet, dass die Datei zum Anforderungszeitpunkt nicht verfügbar war. Andere Codes können auf Zugriffs- oder Formatprobleme hinweisen; vollständigen Code und anschließende Initialisierung prüfen, da optionale Anforderungen funktionierende Alternativen haben können."
+        }
+      }
+    ]
+  },
+  {
+    "id": "amdgpu-vm-page-fault",
+    "slug": {
+      "en": "amdgpu-vm-page-fault",
+      "de": "amdgpu-vm-seitenfehler"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "AMDGPU reports a GPU virtual-memory page fault",
+      "de": "AMDGPU meldet einen GPU-Speicherzugriffsfehler"
+    },
+    "summary": {
+      "en": "A GPU page fault identifies an invalid GPU address access; preserve the process and fault details before blaming physical RAM or video memory.",
+      "de": "Ein GPU-Seitenfehler kennzeichnet einen ungültigen GPU-Adresszugriff; Prozess und Fehlerdetails sichern, bevor RAM oder Grafikspeicher verdächtigt werden."
+    },
+    "environment": {
+      "en": "AMDGPU workloads where kernel logs name gfxhub or mmhub page faults, often alongside a process, VMID or PASID.",
+      "de": "AMDGPU-Arbeitslasten, deren Kernel-Protokoll gfxhub- oder mmhub-Seitenfehler meldet, häufig mit Prozess, VMID oder PASID."
+    },
+    "symptoms": {
+      "en": [
+        "One application crashes or reports device lost.",
+        "A GPU address fault may appear before a scheduler timeout."
+      ],
+      "de": [
+        "Eine Anwendung stürzt ab oder meldet device lost.",
+        "Ein GPU-Adressfehler kann vor einer Scheduler-Zeitüberschreitung erscheinen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An application or userspace driver may reference an invalid GPU mapping.",
+        "de": "Anwendung oder Userspace-Treiber können eine ungültige GPU-Speicherzuordnung ansprechen."
+      },
+      {
+        "en": "Kernel mapping bugs or hardware instability remain possible; a GPU page fault is not a CPU RAM test result.",
+        "de": "Fehler bei Kernel-Zuordnungen oder Hardware-Instabilität bleiben möglich; ein GPU-Seitenfehler ist kein Ergebnis eines CPU-RAM-Tests."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-gpu-fault-context",
+        "command": "journalctl -b -k --no-pager --grep='amdgpu|gfxhub|mmhub'",
+        "explanation": {
+          "en": "Read the complete fault context with administrator journal access if required. Avoid collecting only the last device-lost line.",
+          "de": "Vollständigen Fehlerzusammenhang mit gegebenenfalls nötigem Administratorzugriff lesen. Nicht nur die letzte device-lost-Zeile erfassen."
+        },
+        "interpretation": {
+          "en": "Record fault address, read/write status and named process. Nearby process attribution narrows the triggering workload but does not prove that process is defective.",
+          "de": "Fehleradresse, Lese-/Schreibstatus und genannten Prozess festhalten. Die Prozesszuordnung grenzt die auslösende Arbeitslast ein, beweist aber keinen Anwendungsfehler."
+        }
+      },
+      {
+        "id": "list-vulkan-devices",
+        "command": "vulkaninfo --summary",
+        "explanation": {
+          "en": "Query the installed Vulkan runtime as the desktop user; requires the distribution’s vulkaninfo utility.",
+          "de": "Installierte Vulkan-Laufzeit als Desktop-Benutzer abfragen; dafür wird das Distributionstool vulkaninfo benötigt."
+        },
+        "interpretation": {
+          "en": "Record the selected device and driver version. If only a CPU renderer is listed, first investigate driver discovery rather than interpret this as the same hardware fault.",
+          "de": "Ausgewähltes Gerät und Treiberversion festhalten. Wird nur ein CPU-Renderer aufgeführt, zuerst Treibererkennung prüfen und dies nicht als denselben Hardware-Fehler deuten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "reduce-triggering-workload",
+        "title": {
+          "en": "Isolate the triggering application path",
+          "de": "Auslösenden Anwendungspfad eingrenzen"
+        },
+        "body": {
+          "en": "If only one application triggers faults, compare its supported stable release without optional overlays, mods or experimental rendering settings. Change one setting and keep the same scene or input.",
+          "de": "Löst nur eine Anwendung die Fehler aus, deren unterstützte stabile Version ohne optionale Overlays, Mods oder experimentelle Grafikeinstellungen vergleichen. Jeweils eine Einstellung bei gleicher Szene oder Eingabe ändern."
+        },
+        "precautions": {
+          "en": "Back up application settings and saves. Reducing texture use may change the trigger but does not establish faulty VRAM.",
+          "de": "Einstellungen und Spielstände sichern. Weniger Texturverbrauch kann den Auslöser ändern, belegt jedoch keinen defekten Grafikspeicher."
+        },
+        "rollback": {
+          "en": "Restore the backed-up application profile after comparison; keep only changes with a reproducible benefit.",
+          "de": "Nach dem Vergleich das gesicherte Anwendungsprofil wiederherstellen; nur Änderungen mit reproduzierbarem Nutzen behalten."
+        }
+      },
+      {
+        "id": "compare-radv-release",
+        "title": {
+          "en": "Compare a supported graphics stack",
+          "de": "Unterstützten Grafik-Stack vergleichen"
+        },
+        "body": {
+          "en": "If the failure appeared with a Mesa or kernel update, compare a retained supported stack or distribution snapshot and include the original fault fields in an upstream report. A matching reproducer is more useful than a list of random flags.",
+          "de": "Trat der Fehler mit einem Mesa- oder Kernel-Update auf, einen vorhandenen unterstützten Stack oder Distributions-Snapshot vergleichen und die ursprünglichen Fehlerfelder melden. Ein passendes Minimalbeispiel hilft mehr als zufällige Schalter."
+        },
+        "precautions": {
+          "en": "Keep kernel, firmware and 32/64-bit userspace packages coherent. Do not mix libraries copied from unrelated releases.",
+          "de": "Kernel, Firmware und 32-/64-Bit-Userspace-Pakete konsistent halten. Keine Bibliotheken aus fremden Veröffentlichungen zusammenkopieren."
+        },
+        "rollback": {
+          "en": "Return to the previous generation or package snapshot if the comparison introduces new failures.",
+          "de": "Bei neuen Fehlern zur vorherigen Generation oder zum Paket-Snapshot zurückkehren."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "AMDGPU GPU debugging: page faults",
+        "url": "https://docs.kernel.org/gpu/amdgpu/debugging.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "RADV driver documentation",
+        "url": "https://docs.mesa3d.org/drivers/radv.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "amdgpu-gpu-page-fault",
+        "all": [
+          "amdgpu",
+          "page fault (src_id:"
+        ],
+        "sample": "amdgpu 0000:03:00.0: [gfxhub0] no-retry page fault (src_id:0 ring:24 vmid:3 pasid:32777)",
+        "negative": [
+          "kernel: app[900]: segfault at 0 ip 00000001",
+          "amdgpu 0000:03:00.0: gfxhub initialized"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An AMD GPU hub reports an address translation or access fault.",
+          "de": "Ein AMD-GPU-Hub meldet einen Adressübersetzungs- oder Zugriffsfehler."
+        },
+        "significance": {
+          "en": "This is GPU virtual-memory evidence; preserve adjacent status fields rather than conclude that physical memory is defective.",
+          "de": "Dies betrifft den virtuellen GPU-Speicher; benachbarte Statusfelder sichern, statt daraus defekten physischen Speicher abzuleiten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nvidia-gpu-fallen-off-bus",
+    "slug": {
+      "en": "nvidia-gpu-fallen-off-bus",
+      "de": "nvidia-gpu-vom-bus-verschwunden"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "NVIDIA Xid 79: GPU has fallen off the bus",
+      "de": "NVIDIA Xid 79: GPU ist über PCIe nicht mehr erreichbar"
+    },
+    "summary": {
+      "en": "NVIDIA Xid 79 indicates lost GPU accessibility over PCIe; preserve link and power evidence before repeated resets or a driver-only conclusion.",
+      "de": "NVIDIA Xid 79 zeigt verlorene GPU-Erreichbarkeit über PCIe; Link- und Stromversorgungsdaten vor weiteren Resets oder einer Treiberdiagnose sichern."
+    },
+    "environment": {
+      "en": "NVIDIA GPUs driven by the NVIDIA kernel module; desktop, compute and passthrough systems can all lose PCIe accessibility.",
+      "de": "NVIDIA-GPUs mit NVIDIA-Kernelmodul; Desktop-, Compute- und Passthrough-Systeme können die PCIe-Erreichbarkeit verlieren."
+    },
+    "symptoms": {
+      "en": [
+        "Display output or GPU work stops and nvidia-smi cannot use the device.",
+        "NVRM logs Xid 79 or explicitly reports that the GPU has fallen off the bus."
+      ],
+      "de": [
+        "Bildausgabe oder GPU-Arbeit endet und nvidia-smi kann das Gerät nicht nutzen.",
+        "NVRM meldet Xid 79 oder ausdrücklich GPU has fallen off the bus."
+      ]
+    },
+    "causes": [
+      {
+        "en": "PCIe link instability, device power loss or platform firmware interactions are possible.",
+        "de": "Instabiler PCIe-Link, Stromverlust des Geräts oder Wechselwirkungen mit Plattform-Firmware sind möglich."
+      },
+      {
+        "en": "Driver and virtualization defects are also possible; Xid 79 identifies lost access rather than a unique failed component.",
+        "de": "Auch Treiber- und Virtualisierungsfehler sind möglich; Xid 79 bezeichnet verlorenen Zugriff statt eines eindeutig defekten Bauteils."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-xid-and-aer",
+        "command": "journalctl -b -k --no-pager --grep='NVRM|AER|PCIe Bus Error'",
+        "explanation": {
+          "en": "Read kernel events, with administrator access if needed; inspect the boot containing the failure.",
+          "de": "Kernel-Ereignisse mit gegebenenfalls nötigem Administratorzugriff lesen; den Start mit dem Ausfall untersuchen."
+        },
+        "interpretation": {
+          "en": "Preceding uncorrected AER errors strengthen a PCIe-path investigation. Their absence does not prove a healthy link because logs may be incomplete.",
+          "de": "Vorherige unkorrigierte AER-Fehler stützen die Untersuchung des PCIe-Pfads. Ihr Fehlen beweist wegen möglicherweise unvollständiger Protokolle keinen gesunden Link."
+        }
+      },
+      {
+        "id": "inspect-pcie-device",
+        "command": "lspci -nnk -vv -s 01:00.0",
+        "explanation": {
+          "en": "Replace 01:00.0 with the GPU address found in lspci. This reads PCI configuration; some detail needs administrator rights.",
+          "de": "01:00.0 durch die in lspci gefundene GPU-Adresse ersetzen. PCI-Konfiguration wird gelesen; manche Details benötigen Administratorrechte."
+        },
+        "interpretation": {
+          "en": "Compare link capability and current status. A device missing after the incident is stronger evidence than a slow negotiated link alone.",
+          "de": "Link-Fähigkeiten und aktuellen Status vergleichen. Ein nach dem Ausfall fehlendes Gerät ist aussagekräftiger als ein allein langsam ausgehandelter Link."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "check-physical-pcie-path",
+        "title": {
+          "en": "Inspect the powered-down PCIe path",
+          "de": "PCIe-Pfad im ausgeschalteten Zustand prüfen"
+        },
+        "body": {
+          "en": "If logs suggest lost PCIe access, power down normally and inspect GPU seating, risers and manufacturer-specified power connectors. A supported direct-slot comparison can isolate an intermediary path.",
+          "de": "Deuten Meldungen auf verlorenen PCIe-Zugriff, normal ausschalten und GPU-Sitz, Riser sowie vom Hersteller vorgegebene Stromstecker prüfen. Ein unterstützter Test direkt im Steckplatz kann einen Zwischenpfad eingrenzen."
+        },
+        "precautions": {
+          "en": "Disconnect mains power and follow hardware instructions; never reseat a live GPU or mix modular PSU cables from different supplies.",
+          "de": "Netzstrom trennen und Hardware-Anleitung beachten; eine aktive GPU nie neu stecken und keine modularen Netzteilkabel verschiedener Netzteile mischen."
+        },
+        "rollback": {
+          "en": "Return to the documented original layout only after inspecting it; retain the safer stable path if a riser is implicated.",
+          "de": "Zur dokumentierten ursprünglichen Anordnung erst nach Prüfung zurückkehren; bei verdächtigem Riser den sichereren stabilen Pfad behalten."
+        }
+      },
+      {
+        "id": "capture-vendor-evidence",
+        "title": {
+          "en": "Collect evidence before another full test",
+          "de": "Vor einem weiteren Volltest Belege sammeln"
+        },
+        "body": {
+          "en": "If physical checks do not explain the loss, record BIOS version, driver version, topology and the first Xid/AER messages for NVIDIA or the system vendor. Compare one supported driver or firmware change during maintenance.",
+          "de": "Erklären mechanische Prüfungen den Verlust nicht, BIOS-Version, Treiberversion, Topologie und erste Xid-/AER-Meldungen für NVIDIA oder Systemhersteller festhalten. Jeweils eine unterstützte Treiber- oder Firmware-Änderung im Wartungsfenster vergleichen."
+        },
+        "precautions": {
+          "en": "Do not use an in-session GPU reset on the display GPU or an active compute workload. Firmware flashing requires the vendor’s recovery procedure.",
+          "de": "Keinen GPU-Reset im laufenden Betrieb auf der Anzeige-GPU oder bei aktiver Compute-Arbeit ausführen. Firmware-Updates erfordern die Wiederherstellungsanleitung des Herstellers."
+        },
+        "rollback": {
+          "en": "Keep the previous driver package and supported boot entry; restore them if the comparison worsens behavior.",
+          "de": "Vorheriges Treiberpaket und unterstützten Starteintrag behalten; bei Verschlechterung wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NVIDIA Xid catalog: Xid 79",
+        "url": "https://docs.nvidia.com/deploy/xid-errors/analyzing-xid-catalog.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NVIDIA: working with Xid errors",
+        "url": "https://docs.nvidia.com/deploy/xid-errors/working-with-xid-errors.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nvidia-xid79-bus-loss",
+        "all": [
+          "NVRM: Xid",
+          "): 79,"
+        ],
+        "sample": "NVRM: Xid (PCI:0000:01:00): 79, GPU has fallen off the bus.",
+        "negative": [
+          "NVRM: Xid (PCI:0000:01:00): 31, pid=979, GPU memory page fault",
+          "NVRM: loading NVIDIA UNIX kernel module"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Xid 79 reports that the NVIDIA driver can no longer access its GPU.",
+          "de": "Xid 79 meldet, dass der NVIDIA-Treiber nicht mehr auf seine GPU zugreifen kann."
+        },
+        "significance": {
+          "en": "Investigate PCIe, power and platform evidence; a restart may recover access but cannot identify the cause.",
+          "de": "PCIe-, Stromversorgungs- und Plattform-Belege untersuchen; ein Neustart kann Zugriff wiederherstellen, nennt aber keine Ursache."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nvidia-driver-library-mismatch",
+    "slug": {
+      "en": "nvidia-driver-library-mismatch",
+      "de": "nvidia-treiber-bibliotheksversionen"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "NVIDIA driver and userspace library versions disagree",
+      "de": "NVIDIA-Treiber und Userspace-Bibliotheken passen nicht zusammen"
+    },
+    "summary": {
+      "en": "NVML or NVRM version mismatch often follows a driver update without reboot; compare the loaded module with installed userspace before reinstalling.",
+      "de": "Ein NVML- oder NVRM-Versionskonflikt folgt oft einem Treiberupdate ohne Neustart; geladenes Modul und installierten Userspace zuerst vergleichen."
+    },
+    "environment": {
+      "en": "Distribution-packaged NVIDIA drivers, especially after upgrades, mixed installer methods or container images carrying driver libraries.",
+      "de": "NVIDIA-Treiber aus Distributionspaketen, besonders nach Updates, gemischten Installationsmethoden oder Container-Abbildern mit Treiberbibliotheken."
+    },
+    "symptoms": {
+      "en": [
+        "nvidia-smi reports Driver/library version mismatch.",
+        "Applications cannot initialize NVIDIA even though the kernel module is loaded."
+      ],
+      "de": [
+        "nvidia-smi meldet Driver/library version mismatch.",
+        "Anwendungen können NVIDIA trotz geladenem Kernelmodul nicht initialisieren."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The loaded module may be older than newly installed libraries until reboot.",
+        "de": "Das geladene Modul kann bis zum Neustart älter als die frisch installierten Bibliotheken sein."
+      },
+      {
+        "en": "A stale initramfs, alternate library search path or mixed package branches may keep the mismatch after reboot.",
+        "de": "Eine alte Initramfs, abweichende Bibliothekssuche oder gemischte Paketzweige können den Konflikt nach dem Neustart erhalten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-loaded-nvidia-version",
+        "command": "cat /proc/driver/nvidia/version",
+        "explanation": {
+          "en": "Read the version of the NVIDIA module actually loaded; this needs no administrative write.",
+          "de": "Version des tatsächlich geladenen NVIDIA-Moduls lesen; administrative Änderungen sind nicht nötig."
+        },
+        "interpretation": {
+          "en": "Compare this version with the client version in the kernel log. modinfo alone describes a module on disk and may differ from this loaded module.",
+          "de": "Mit der Client-Version im Kernel-Protokoll vergleichen. modinfo beschreibt nur ein Modul auf der Platte und kann vom geladenen Modul abweichen."
+        }
+      },
+      {
+        "id": "read-nvidia-api-mismatch",
+        "command": "journalctl -b -k --no-pager --grep='NVRM:.*mismatch|NVRM:.*version'",
+        "explanation": {
+          "en": "Read the mismatch and adjacent version lines; journal access may require an administrator.",
+          "de": "Konflikt und benachbarte Versionszeilen lesen; der Journalzugriff kann Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "Different client and module versions support this diagnosis. If the error is instead No devices were found, inspect driver binding separately.",
+          "de": "Unterschiedliche Client- und Modulversionen stützen diese Diagnose. Lautet der Fehler stattdessen No devices were found, Treiberbindung gesondert prüfen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "reboot-completed-update",
+        "title": {
+          "en": "Reboot after the completed driver update",
+          "de": "Nach abgeschlossenem Treiberupdate neu starten"
+        },
+        "body": {
+          "en": "If packages finished updating and the loaded module is older, save work and perform a controlled reboot into the matching kernel. This reloads the packaged module without unloading a live display driver.",
+          "de": "Sind die Pakete vollständig aktualisiert und das geladene Modul älter, Arbeit speichern und kontrolliert in den passenden Kernel neu starten. So wird das Paketmodul ohne Entladen des aktiven Anzeigetreibers geladen."
+        },
+        "precautions": {
+          "en": "Confirm that package installation and any DKMS build completed before rebooting; preserve a working boot entry.",
+          "de": "Vor dem Neustart abgeschlossene Paketinstallation und gegebenenfalls DKMS-Build prüfen; funktionierenden Starteintrag behalten."
+        },
+        "rollback": {
+          "en": "Use the earlier kernel with its corresponding packaged driver if the new entry fails.",
+          "de": "Bei einem fehlerhaften neuen Eintrag den älteren Kernel mit seinem passenden Pakettreiber verwenden."
+        }
+      },
+      {
+        "id": "align-driver-package-family",
+        "title": {
+          "en": "Align the package family and early module",
+          "de": "Paketfamilie und frühes Modul abgleichen"
+        },
+        "body": {
+          "en": "If reboot does not remove the mismatch, use the distribution package inventory to align the chosen driver branch and remove unintended competing installer remnants through their supported uninstall path. Rebuild the affected initramfs if it embeds the old module.",
+          "de": "Bleibt der Konflikt nach Neustart, über die Paketübersicht den gewählten Treiberzweig abgleichen und unbeabsichtigte Reste anderer Installer über deren vorgesehenen Deinstallationsweg entfernen. Enthält die Initramfs das alte Modul, dieses Abbild erneuern."
+        },
+        "precautions": {
+          "en": "Do not delete library symlinks manually or purge all NVIDIA packages blindly; container runtime injection also needs a host-compatible setup.",
+          "de": "Bibliothekslinks nicht manuell löschen und nicht blind alle NVIDIA-Pakete entfernen; auch die Container-Laufzeit braucht eine zum Host passende Einbindung."
+        },
+        "rollback": {
+          "en": "Restore the recorded package snapshot and previous initramfs or boot generation if reconciliation fails.",
+          "de": "Bei gescheiterter Angleichung dokumentierten Paket-Snapshot und vorherige Initramfs oder Boot-Generation wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ubuntu NVIDIA troubleshooting: version mismatch",
+        "url": "https://ubuntu.com/server/docs/how-to/graphics/install-nvidia-drivers/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NVIDIA installed components",
+        "url": "https://download.nvidia.com/XFree86/Linux-x86_64/570.124.04/README/installedcomponents.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nvidia-api-version-mismatch",
+        "all": [
+          "NVRM: API mismatch:",
+          "client has the version"
+        ],
+        "sample": "NVRM: API mismatch: the client has the version 570.172.08, but",
+        "negative": [
+          "NVRM: NVIDIA UNIX kernel module version 570.172.08",
+          "kernel: app reports an API mismatch in its plugin"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The client library and loaded NVIDIA module use different versions.",
+          "de": "Client-Bibliothek und geladenes NVIDIA-Modul nutzen unterschiedliche Versionen."
+        },
+        "significance": {
+          "en": "Read the following module-version line and align packages; this is not by itself evidence of a failed GPU.",
+          "de": "Folgende Modulversionszeile lesen und Pakete abgleichen; allein ist dies kein Beleg einer defekten GPU."
+        }
+      },
+      {
+        "id": "nvidia-nvml-version-mismatch",
+        "all": [
+          "Failed to initialize NVML:",
+          "Driver/library version mismatch"
+        ],
+        "sample": "Failed to initialize NVML: Driver/library version mismatch",
+        "negative": [
+          "Failed to initialize NVML: Insufficient Permissions",
+          "NVIDIA-SMI: driver version matches installed libraries"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "NVML initialization found incompatible driver and library versions.",
+          "de": "NVML hat beim Initialisieren unpassende Treiber- und Bibliotheksversionen festgestellt."
+        },
+        "significance": {
+          "en": "Compare the loaded module, package branch and container runtime rather than force a module unload.",
+          "de": "Geladenes Modul, Paketzweig und Container-Laufzeit vergleichen, statt das Modul zwangsweise zu entladen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nvidia-module-signature-rejected",
+    "slug": {
+      "en": "nvidia-module-signature-rejected",
+      "de": "nvidia-modulsignatur-abgelehnt"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "NVIDIA module is rejected by signature enforcement",
+      "de": "NVIDIA-Modul wird wegen seiner Signatur abgelehnt"
+    },
+    "summary": {
+      "en": "A signed-module policy can block NVIDIA after a kernel or DKMS update; check trust and build status before changing Secure Boot settings.",
+      "de": "Eine Signaturpflicht kann NVIDIA nach Kernel- oder DKMS-Updates blockieren; Vertrauen und Build-Status vor Änderungen an Secure Boot prüfen."
+    },
+    "environment": {
+      "en": "NVIDIA on systems enforcing kernel module signatures, often with UEFI Secure Boot and distribution shim/MOK enrollment.",
+      "de": "NVIDIA auf Systemen mit verpflichtenden Kernelmodulsignaturen, häufig mit UEFI Secure Boot und shim-/MOK-Registrierung der Distribution."
+    },
+    "symptoms": {
+      "en": [
+        "Fallback graphics is active after installing a driver.",
+        "Loading nvidia reports Key was rejected by service or a signing-related denial."
+      ],
+      "de": [
+        "Nach der Treiberinstallation ist Ersatzgrafik aktiv.",
+        "Beim Laden von nvidia erscheint Key was rejected by service oder eine Signaturablehnung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A DKMS-built module may be unsigned or signed by a key not enrolled in the kernel’s trust path.",
+        "de": "Ein DKMS-Modul kann unsigniert sein oder einen Schlüssel nutzen, der im Vertrauenspfad des Kernels fehlt."
+      },
+      {
+        "en": "An enrollment step may be incomplete; a permissive verification warning is different from an enforced rejection.",
+        "de": "Ein Registrierungsschritt kann unvollständig sein; eine erlaubende Signaturwarnung unterscheidet sich von einer tatsächlichen Ablehnung."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-secure-boot-state",
+        "command": "mokutil --sb-state",
+        "explanation": {
+          "en": "Read UEFI Secure Boot state on a shim/MOK system; mokutil must be installed. This does not change key enrollment.",
+          "de": "UEFI-Secure-Boot-Status auf einem shim-/MOK-System lesen; mokutil muss installiert sein. Die Schlüsselregistrierung bleibt unverändert."
+        },
+        "interpretation": {
+          "en": "Enabled Secure Boot supports checking module trust but does not prove why NVIDIA failed; other kernels can enforce signatures independently.",
+          "de": "Aktives Secure Boot spricht für eine Prüfung des Modulvertrauens, erklärt den Ausfall aber nicht allein; andere Kernel können Signaturen unabhängig erzwingen."
+        }
+      },
+      {
+        "id": "read-nvidia-module-signer",
+        "command": "modinfo -F signer nvidia",
+        "explanation": {
+          "en": "Read the signer of the installed module for the running kernel; it may need the correct module package installed.",
+          "de": "Unterzeichner des installierten Moduls für den laufenden Kernel lesen; das passende Modulpaket muss vorhanden sein."
+        },
+        "interpretation": {
+          "en": "An empty signer suggests no recorded signature. A nonempty signer does not establish that its key is trusted or that this exact module loaded.",
+          "de": "Ein leeres Feld deutet auf keine gespeicherte Signatur hin. Ein Name beweist weder Schlüsselvertrauen noch das Laden genau dieses Moduls."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "use-distribution-signed-module",
+        "title": {
+          "en": "Use a distribution-supported signed module",
+          "de": "Signiertes Distributionsmodul verwenden"
+        },
+        "body": {
+          "en": "If the driver package lacks a trusted module for the selected kernel, install the distribution’s supported signed module package or its documented DKMS signing setup. Confirm successful build and enrollment before reboot.",
+          "de": "Fehlt ein vertrauenswürdiges Treibermodul für den gewählten Kernel, das unterstützte signierte Modulpaket oder die dokumentierte DKMS-Signierung der Distribution einrichten. Erfolgreichen Build und Registrierung vor Neustart bestätigen."
+        },
+        "precautions": {
+          "en": "Choose the branch that supports the actual GPU and kernel. Do not use an unsigned downloaded installer as a substitute for the existing package system.",
+          "de": "Einen zur tatsächlichen GPU und zum Kernel passenden Zweig wählen. Einen unsignierten Download-Installer nicht als Ersatz für das bestehende Paketsystem einsetzen."
+        },
+        "rollback": {
+          "en": "Boot the previous supported kernel and matching signed module if the new package cannot load.",
+          "de": "Bei Ladefehlern den vorherigen unterstützten Kernel mit passendem signiertem Modul starten."
+        }
+      },
+      {
+        "id": "complete-mok-enrollment",
+        "title": {
+          "en": "Complete the documented key enrollment",
+          "de": "Dokumentierte Schlüsselregistrierung abschließen"
+        },
+        "body": {
+          "en": "If DKMS uses a locally generated signing key, follow the distribution’s MOK enrollment process and approve that known key in the firmware enrollment screen. Then verify module loading after a normal reboot.",
+          "de": "Nutzt DKMS einen lokal erzeugten Signaturschlüssel, die MOK-Registrierung der Distribution durchführen und diesen bekannten Schlüssel im Registrierungsschirm bestätigen. Danach Modulladen nach normalem Neustart prüfen."
+        },
+        "precautions": {
+          "en": "Keep recovery media and any disk-encryption recovery secret available before changing boot trust. Never enroll an unidentified key.",
+          "de": "Vor Änderungen am Boot-Vertrauen Rettungsmedium und gegebenenfalls Verschlüsselungs-Wiederherstellungsgeheimnis bereithalten. Keine unbekannten Schlüssel registrieren."
+        },
+        "rollback": {
+          "en": "Return to the previously trusted signed boot path; remove only the newly enrolled key via the documented process if it was added incorrectly.",
+          "de": "Zum zuvor vertrauenswürdigen signierten Boot-Pfad zurückkehren; bei Fehlregistrierung nur den neu aufgenommenen Schlüssel dokumentiert entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel module signing: enforcement and trust",
+        "url": "https://docs.kernel.org/admin-guide/module-signing.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Ubuntu: NVIDIA prebuilt and DKMS modules",
+        "url": "https://ubuntu.com/server/docs/how-to/graphics/install-nvidia-drivers/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nvidia-key-rejected",
+        "all": [
+          "modprobe:",
+          "nvidia",
+          "Key was rejected by service"
+        ],
+        "sample": "modprobe: ERROR: could not insert 'nvidia': Key was rejected by service",
+        "negative": [
+          "modprobe: ERROR: could not insert 'nvidia': No such device",
+          "nvidia: module verification failed: signature and/or required key missing - tainting kernel"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An attempted NVIDIA module load was rejected by the kernel’s key policy.",
+          "de": "Ein Versuch, das NVIDIA-Modul zu laden, wurde durch die Schlüsselrichtlinie des Kernels abgelehnt."
+        },
+        "significance": {
+          "en": "Inspect trusted signing and enrollment. A tainting warning that still permits loading is intentionally excluded.",
+          "de": "Vertrauenswürdige Signierung und Registrierung prüfen. Eine Warnung mit Tainting, die das Laden zulässt, wird bewusst ausgeschlossen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nvidia-nouveau-driver-conflict",
+    "slug": {
+      "en": "nvidia-nouveau-driver-conflict",
+      "de": "nvidia-nouveau-treiberkonflikt"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "Nouveau owns the GPU intended for NVIDIA",
+      "de": "Nouveau belegt die für NVIDIA vorgesehene GPU"
+    },
+    "summary": {
+      "en": "Only one kernel driver can own a GPU; confirm actual PCI binding before changing Nouveau blocklists or rebuilding an early boot image.",
+      "de": "Eine GPU kann nur einem Kerneltreiber gehören; aktive PCI-Bindung prüfen, bevor Nouveau-Sperrlisten oder das frühe Startabbild geändert werden."
+    },
+    "environment": {
+      "en": "Systems switching a supported NVIDIA GPU from Nouveau to the NVIDIA driver; Nouveau being installed is not itself an error.",
+      "de": "Systeme, die eine unterstützte NVIDIA-GPU von Nouveau auf den NVIDIA-Treiber umstellen; ein installiertes Nouveau ist für sich kein Fehler."
+    },
+    "symptoms": {
+      "en": [
+        "nvidia-smi cannot find a usable device while the desktop uses Nouveau.",
+        "NVIDIA initialization fails after an incomplete driver switch."
+      ],
+      "de": [
+        "nvidia-smi findet kein nutzbares Gerät, während der Desktop Nouveau verwendet.",
+        "NVIDIA-Initialisierung scheitert nach einem unvollständigen Treiberwechsel."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Nouveau may bind the GPU from the initramfs before NVIDIA loads.",
+        "de": "Nouveau kann die GPU bereits aus der Initramfs binden, bevor NVIDIA lädt."
+      },
+      {
+        "en": "A deliberate Nouveau/NVK setup may be working correctly; switching is justified only if NVIDIA is the chosen supported driver.",
+        "de": "Eine bewusst gewählte Nouveau-/NVK-Konfiguration kann korrekt funktionieren; eine Umstellung ist nur beim gewählten unterstützten NVIDIA-Treiber begründet."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-active-gpu-binding",
+        "command": "lspci -nnk",
+        "explanation": {
+          "en": "Find the target GPU and read Kernel driver in use; no driver is unloaded.",
+          "de": "Ziel-GPU suchen und Kernel driver in use lesen; kein Treiber wird entladen."
+        },
+        "interpretation": {
+          "en": "nouveau here establishes actual ownership. Kernel modules listing both names merely lists possible modules, not simultaneous ownership.",
+          "de": "nouveau an dieser Stelle belegt aktive Belegung. Beide Namen unter Kernel modules zeigen nur mögliche Module, keine gleichzeitige Belegung."
+        }
+      },
+      {
+        "id": "inspect-modprobe-policy",
+        "command": "modprobe --showconfig | rg 'nouveau|nvidia'",
+        "explanation": {
+          "en": "Display merged module-loader policy; requires ripgrep. It reads configuration and does not load modules.",
+          "de": "Zusammengeführte Modul-Laderichtlinien anzeigen; benötigt ripgrep. Konfiguration wird gelesen, keine Module werden geladen."
+        },
+        "interpretation": {
+          "en": "A blacklist absent here cannot affect normal automatic loading; a present blacklist may still be missing from the selected initramfs or overridden by explicit loading.",
+          "de": "Eine hier fehlende Sperrregel beeinflusst automatisches Laden nicht; eine vorhandene Regel kann in der gewählten Initramfs fehlen oder durch ausdrückliches Laden umgangen werden."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "choose-one-supported-driver",
+        "title": {
+          "en": "Choose one supported driver path",
+          "de": "Einen unterstützten Treiberpfad wählen"
+        },
+        "body": {
+          "en": "If Nouveau is intentional and works, keep it and stop treating nvidia-smi as its health check. If NVIDIA is required, install the GPU-compatible distribution NVIDIA package before preventing Nouveau’s early binding.",
+          "de": "Ist Nouveau beabsichtigt und funktioniert, behalten und nvidia-smi nicht als dessen Funktionstest verwenden. Wird NVIDIA gebraucht, zuerst das GPU-kompatible NVIDIA-Paket der Distribution installieren, bevor frühes Nouveau-Binden verhindert wird."
+        },
+        "precautions": {
+          "en": "Do not unload Nouveau from an active display session or remove the only working graphics path before the replacement is ready.",
+          "de": "Nouveau nicht aus einer aktiven Grafiksitzung entladen und den einzigen funktionierenden Grafikpfad nicht vor einem fertigen Ersatz entfernen."
+        },
+        "rollback": {
+          "en": "Use the previous package configuration and boot entry if the chosen replacement cannot drive the display.",
+          "de": "Vorherige Paketkonfiguration und Starteintrag verwenden, falls der gewählte Ersatz keine Bildausgabe liefert."
+        }
+      },
+      {
+        "id": "propagate-blocklist-to-initramfs",
+        "title": {
+          "en": "Propagate the driver choice to early boot",
+          "de": "Treiberwahl ins frühe Startabbild übernehmen"
+        },
+        "body": {
+          "en": "When the replacement is ready, apply the distribution’s Nouveau blocklist and rebuild the specific initramfs that loads the GPU. Reboot and recheck PCI binding; the runtime config alone may not reach early boot.",
+          "de": "Ist der Ersatz bereit, die Nouveau-Sperrregel der Distribution anwenden und genau die GPU ladende Initramfs erneuern. Nach Neustart PCI-Bindung erneut prüfen; Laufzeitkonfiguration allein erreicht den frühen Start eventuell nicht."
+        },
+        "precautions": {
+          "en": "Record new configuration files and retain a rescue console or older image. Merely using nouveau.modeset=0 does not guarantee NVIDIA ownership.",
+          "de": "Neue Konfigurationsdateien dokumentieren und Rettungskonsole oder älteres Abbild behalten. nouveau.modeset=0 allein garantiert keine NVIDIA-Belegung."
+        },
+        "rollback": {
+          "en": "Remove only the added local blocklist, restore the previous driver package selection and rebuild the same initramfs before reboot.",
+          "de": "Nur die hinzugefügte lokale Sperrregel entfernen, vorherige Treiberpaketwahl wiederherstellen und dieselbe Initramfs vor Neustart erneuern."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NVIDIA common problems: interaction with Nouveau",
+        "url": "https://download.nvidia.com/XFree86/Linux-x86_64/570.124.04/README/commonproblems.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Ubuntu NVIDIA troubleshooting: no devices found",
+        "url": "https://ubuntu.com/server/docs/how-to/graphics/install-nvidia-drivers/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "nvidia-suspend-memory-preservation",
+    "slug": {
+      "en": "nvidia-suspend-memory-preservation",
+      "de": "nvidia-suspend-speichererhalt"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "NVIDIA suspend fails with video-memory preservation",
+      "de": "NVIDIA-Suspend scheitert beim Erhalt des Grafikspeichers"
+    },
+    "summary": {
+      "en": "NVIDIA video-memory preservation needs matching suspend integration and sufficient backing space; inspect parameters and units as one setup.",
+      "de": "NVIDIA-Grafikspeichererhalt braucht passende Suspend-Einbindung und ausreichend Speicherplatz; Modulparameter und Units gemeinsam prüfen."
+    },
+    "environment": {
+      "en": "NVIDIA systems using NVreg_PreserveVideoMemoryAllocations and the driver’s documented system power-management interfaces.",
+      "de": "NVIDIA-Systeme mit NVreg_PreserveVideoMemoryAllocations und den dokumentierten Schnittstellen für System-Energieverwaltung des Treibers."
+    },
+    "symptoms": {
+      "en": [
+        "Sleep is aborted or returns immediately.",
+        "After resume, textures are corrupt or GPU applications fail; this symptom alone does not identify the interface mismatch."
+      ],
+      "de": [
+        "Der Schlafmodus wird abgebrochen oder sofort verlassen.",
+        "Nach dem Aufwachen sind Texturen fehlerhaft oder GPU-Anwendungen scheitern; allein ist dies kein Beleg für einen Schnittstellenkonflikt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Full preservation may be enabled without the required suspend interface integration.",
+        "de": "Vollständiger Speichererhalt kann ohne die benötigte Einbindung der Suspend-Schnittstelle aktiv sein."
+      },
+      {
+        "en": "The configured backing filesystem may not support the required temporary files or lack capacity; other resume bugs remain possible.",
+        "de": "Das vorgesehene Dateisystem kann benötigte temporäre Dateien nicht unterstützen oder zu wenig Platz bieten; andere Resume-Fehler bleiben möglich."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-nvidia-power-parameters",
+        "command": "cat /proc/driver/nvidia/params",
+        "explanation": {
+          "en": "Read active NVIDIA module parameters; note PreserveVideoMemoryAllocations and TemporaryFilePath.",
+          "de": "Aktive NVIDIA-Modulparameter lesen; PreserveVideoMemoryAllocations und TemporaryFilePath beachten."
+        },
+        "interpretation": {
+          "en": "A preservation value of 1 requires the matching documented integration for this driver version. The temporary path must be evaluated on this machine.",
+          "de": "Ein Erhaltungswert von 1 erfordert die passende dokumentierte Einbindung dieser Treiberversion. Den temporären Pfad auf diesem Rechner bewerten."
+        }
+      },
+      {
+        "id": "inspect-nvidia-sleep-units",
+        "command": "systemctl status nvidia-suspend.service nvidia-resume.service nvidia-hibernate.service --no-pager",
+        "explanation": {
+          "en": "Inspect distribution-provided sleep units without starting or enabling them; names may differ by packaging.",
+          "de": "Schlaf-Units der Distribution prüfen, ohne sie zu starten oder zu aktivieren; Paketierung kann andere Namen verwenden."
+        },
+        "interpretation": {
+          "en": "Missing or failed units warrant checking the package’s integration. Inactive oneshot units after execution can be normal; read their journal and dependencies.",
+          "de": "Fehlende oder gescheiterte Units begründen die Prüfung der Paketeinbindung. Inaktive Oneshot-Units nach Ausführung können normal sein; Journal und Abhängigkeiten lesen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "align-power-management-interface",
+        "title": {
+          "en": "Align parameters with packaged sleep integration",
+          "de": "Parameter und paketierte Schlaf-Einbindung abgleichen"
+        },
+        "body": {
+          "en": "If the driver explicitly reports preservation without its required procfs interface, use the distribution’s documented suspend integration for that installed driver. Ensure suspend, resume and hibernate hooks are configured together before a controlled test.",
+          "de": "Meldet der Treiber ausdrücklich Erhaltungsmodus ohne nötige procfs-Schnittstelle, die dokumentierte Suspend-Einbindung der Distribution für den installierten Treiber nutzen. Suspend-, Resume- und Hibernate-Hooks gemeinsam vor einem kontrollierten Test einrichten."
+        },
+        "precautions": {
+          "en": "The cited NVIDIA README describes one release, not universal defaults. Save work and test suspend before hibernation; do not write commands directly to the procfs interface.",
+          "de": "Das zitierte NVIDIA-Handbuch beschreibt eine Version, keine universellen Standards. Arbeit speichern und Suspend vor Hibernate testen; keine Befehle direkt in die procfs-Schnittstelle schreiben."
+        },
+        "rollback": {
+          "en": "Restore the recorded package default parameters and unit configuration, then reboot if changed module parameters must be reloaded.",
+          "de": "Dokumentierte Standardparameter und Unit-Konfiguration des Pakets wiederherstellen; bei neu zu ladenden Modulparametern danach neu starten."
+        }
+      },
+      {
+        "id": "provide-preservation-backing-space",
+        "title": {
+          "en": "Provide suitable preservation backing space",
+          "de": "Geeigneten Speicherplatz für Erhaltung bereitstellen"
+        },
+        "body": {
+          "en": "If full preservation is needed and space is insufficient, choose a supported backing filesystem with room for the combined GPU memory plus the README’s margin, and configure its path through distribution settings.",
+          "de": "Wird vollständiger Erhalt benötigt und fehlt Platz, ein unterstütztes Dateisystem mit Raum für den gemeinsamen GPU-Speicher plus Handbuch-Reserve wählen und den Pfad über Distributions-Einstellungen setzen."
+        },
+        "precautions": {
+          "en": "A small tmpfs can consume RAM and prevent saving. Keep encrypted data handling and early mount availability consistent with the system’s existing setup.",
+          "de": "Eine kleine tmpfs kann RAM verbrauchen und Speichern verhindern. Umgang mit verschlüsselten Daten und frühe Mount-Verfügbarkeit zur vorhandenen Konfiguration passend halten."
+        },
+        "rollback": {
+          "en": "Restore the previous temporary path and preservation setting if the new backing store fails; remove only files created by the test after use.",
+          "de": "Bei Fehlern des neuen Speichers vorherigen temporären Pfad und Erhaltungsmodus zurückstellen; nur vom Test erzeugte Dateien nach Gebrauch entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NVIDIA power management: preservation and systemd",
+        "url": "https://download.nvidia.com/XFree86/Linux-x86_64/570.124.04/README/powermanagement.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel system sleep states",
+        "url": "https://docs.kernel.org/admin-guide/pm/sleep-states.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nvidia-preserve-interface-missing",
+        "all": [
+          "NVRM: GPU",
+          "PreserveVideoMemoryAllocations module parameter is set.",
+          "without driver procfs suspend interface"
+        ],
+        "sample": "NVRM: GPU 0000:01:00.0: PreserveVideoMemoryAllocations module parameter is set. System Power Management attempted without driver procfs suspend interface.",
+        "negative": [
+          "NVRM: GPU 0000:01:00.0: power management initialized",
+          "PreserveVideoMemoryAllocations: 1"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The driver reports full preservation configured without the required power-management interface.",
+          "de": "Der Treiber meldet vollständigen Speichererhalt ohne die benötigte Energieverwaltungs-Schnittstelle."
+        },
+        "significance": {
+          "en": "Reconcile the driver’s integration instead of assuming the platform cannot suspend.",
+          "de": "Treiber-Einbindung abgleichen, statt daraus fehlende Suspend-Fähigkeit der Plattform abzuleiten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "mesa-software-rendering",
+    "slug": {
+      "en": "mesa-software-rendering",
+      "de": "mesa-software-rendering"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "Mesa falls back to CPU rendering",
+      "de": "Mesa verwendet CPU-Rendering statt der GPU"
+    },
+    "summary": {
+      "en": "A desktop may remain usable through llvmpipe while GPU acceleration is missing; distinguish intended headless rendering from a failed driver path.",
+      "de": "Ein Desktop kann mit llvmpipe trotz fehlender GPU-Beschleunigung laufen; geplantes Rendering ohne GPU von einem fehlerhaften Treiberpfad unterscheiden."
+    },
+    "environment": {
+      "en": "Mesa OpenGL applications in a local desktop, container, remote session or virtual machine; software rendering is valid in some environments.",
+      "de": "Mesa-OpenGL-Anwendungen im lokalen Desktop, Container, Fernzugriff oder einer VM; Software-Rendering ist in manchen Umgebungen vorgesehen."
+    },
+    "symptoms": {
+      "en": [
+        "Animations consume substantial CPU and games are unexpectedly slow.",
+        "The OpenGL renderer is llvmpipe or softpipe although a hardware GPU was expected."
+      ],
+      "de": [
+        "Animationen belasten die CPU stark und Spiele sind unerwartet langsam.",
+        "Der OpenGL-Renderer heißt llvmpipe oder softpipe, obwohl eine Hardware-GPU erwartet wird."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An explicit software-rendering environment override may be active.",
+        "de": "Ein Umgebungsparameter kann Software-Rendering ausdrücklich erzwingen."
+      },
+      {
+        "en": "Missing DRI libraries, missing render-device access, incompatible application runtimes or a deliberately virtual display can select software rendering.",
+        "de": "Fehlende DRI-Bibliotheken, fehlender Render-Gerätezugriff, unpassende Anwendungs-Laufzeiten oder eine bewusst virtuelle Anzeige können Software-Rendering wählen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-opengl-renderer",
+        "command": "glxinfo -B",
+        "explanation": {
+          "en": "Run as the user in the affected graphical session; glxinfo requires X11 or Xwayland and the distribution’s diagnostic package.",
+          "de": "Als Benutzer in der betroffenen Grafiksitzung ausführen; glxinfo benötigt X11 oder Xwayland und das Diagnosepaket der Distribution."
+        },
+        "interpretation": {
+          "en": "llvmpipe/softpipe identifies CPU rendering. Under native Wayland this describes the Xwayland OpenGL path, not every native application.",
+          "de": "llvmpipe/softpipe kennzeichnet CPU-Rendering. Unter nativem Wayland beschreibt dies den Xwayland-OpenGL-Pfad, nicht jede native Anwendung."
+        }
+      },
+      {
+        "id": "read-graphics-overrides",
+        "command": "printenv LIBGL_ALWAYS_SOFTWARE GALLIUM_DRIVER MESA_LOADER_DRIVER_OVERRIDE LIBGL_DRIVERS_PATH",
+        "explanation": {
+          "en": "Read selected graphics overrides from this shell; a launcher or container may set a different environment.",
+          "de": "Ausgewählte Grafikparameter dieser Shell lesen; Starter oder Container können eine andere Umgebung setzen."
+        },
+        "interpretation": {
+          "en": "LIBGL_ALWAYS_SOFTWARE=true intentionally requests software. An unset value does not establish correct libraries or device permissions.",
+          "de": "LIBGL_ALWAYS_SOFTWARE=true fordert Software ausdrücklich an. Ein fehlender Wert belegt keine passenden Bibliotheken oder Geräteberechtigungen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-unintended-software-override",
+        "title": {
+          "en": "Remove an unintended per-app override",
+          "de": "Unbeabsichtigten Anwendungsparameter entfernen"
+        },
+        "body": {
+          "en": "If an affected launcher explicitly forces software rendering, remove that parameter from a copy of its profile and restart only that application. Compare the reported renderer before applying the change globally.",
+          "de": "Erzwingt ein betroffener Starter Software-Rendering, den Parameter aus einer Kopie seines Profils entfernen und nur diese Anwendung neu starten. Den gemeldeten Renderer vor einer globalen Änderung vergleichen."
+        },
+        "precautions": {
+          "en": "Keep deliberate headless or test profiles unchanged. Do not force a hardware driver name that does not match the actual GPU.",
+          "de": "Bewusste Profile ohne GPU und Testprofile behalten. Keinen Hardware-Treibernamen erzwingen, der nicht zur tatsächlichen GPU passt."
+        },
+        "rollback": {
+          "en": "Restore the original launcher profile if the application stops working.",
+          "de": "Falls die Anwendung nicht mehr funktioniert, das ursprüngliche Starterprofil wiederherstellen."
+        }
+      },
+      {
+        "id": "repair-packaged-rendering-path",
+        "title": {
+          "en": "Repair the packaged rendering path",
+          "de": "Paketierten Rendering-Pfad reparieren"
+        },
+        "body": {
+          "en": "If no override explains a failed DRI load, reinstall the matching distribution Mesa/DRI package for the application architecture and check that the session can use its render node. For containers, configure the runtime’s documented GPU access.",
+          "de": "Erklärt kein Parameter den DRI-Ladefehler, das passende Mesa-/DRI-Paket der Distribution für die Anwendungsarchitektur erneut installieren und Render-Gerätezugriff der Sitzung prüfen. Bei Containern den dokumentierten GPU-Zugriff der Laufzeit einrichten."
+        },
+        "precautions": {
+          "en": "Do not copy host libraries into a bundled runtime or make all /dev/dri nodes world-writable; permissions should follow session or runtime policy.",
+          "de": "Host-Bibliotheken nicht in gebündelte Laufzeiten kopieren und nicht alle /dev/dri-Geräte weltweit beschreibbar machen; Berechtigungen folgen Sitzungs- oder Laufzeitrichtlinien."
+        },
+        "rollback": {
+          "en": "Restore the package snapshot or application runtime profile if the repair changes working applications.",
+          "de": "Bei Auswirkungen auf funktionierende Anwendungen den Paket-Snapshot oder das Laufzeitprofil wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Mesa LLVMpipe software renderer",
+        "url": "https://docs.mesa3d.org/drivers/llvmpipe.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Mesa environment variables: software and loader overrides",
+        "url": "https://docs.mesa3d.org/envvars.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "mesa-dri-driver-load-failed",
+        "all": [
+          "libGL error:",
+          "failed to load driver:"
+        ],
+        "sample": "libGL error: failed to load driver: iris",
+        "negative": [
+          "OpenGL renderer string: llvmpipe (LLVM, 256 bits)",
+          "libGL: Using DRI3 for screen 0"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Mesa’s OpenGL loader could not load the named DRI driver.",
+          "de": "Mesas OpenGL-Lader konnte den genannten DRI-Treiber nicht laden."
+        },
+        "significance": {
+          "en": "Inspect preceding path and library errors; software rendering itself is not automatically a fault and is not matched.",
+          "de": "Vorhergehende Pfad- und Bibliotheksfehler prüfen; Software-Rendering allein ist nicht automatisch ein Fehler und wird nicht erkannt."
+        }
+      }
+    ]
+  },
+  {
+    "id": "vulkan-driver-discovery",
+    "slug": {
+      "en": "vulkan-driver-discovery",
+      "de": "vulkan-treibererkennung"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "Vulkan loader finds no usable driver",
+      "de": "Vulkan-Lader findet keinen nutzbaren Treiber"
+    },
+    "summary": {
+      "en": "Vulkan initialization can fail before any GPU workload starts when ICD manifests, driver libraries or architecture-specific packages are missing.",
+      "de": "Vulkan kann vor der ersten GPU-Arbeit scheitern, wenn ICD-Beschreibungen, Treiberbibliotheken oder Pakete für die richtige Architektur fehlen."
+    },
+    "environment": {
+      "en": "Vulkan applications using the Khronos loader, including 32-bit applications and sandboxed or containerized runtimes.",
+      "de": "Vulkan-Anwendungen mit Khronos-Lader, einschließlich 32-Bit-Anwendungen sowie isolierter oder containerisierter Laufzeiten."
+    },
+    "symptoms": {
+      "en": [
+        "vulkaninfo cannot create an instance or enumerate a physical device.",
+        "A game reports an incompatible Vulkan driver although OpenGL works."
+      ],
+      "de": [
+        "vulkaninfo kann keine Instanz erzeugen oder kein physisches Gerät auflisten.",
+        "Ein Spiel meldet einen unpassenden Vulkan-Treiber, obwohl OpenGL funktioniert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A missing or invalid ICD manifest may prevent locating the driver library.",
+        "de": "Eine fehlende oder ungültige ICD-Beschreibung kann die Treiberbibliothekssuche verhindern."
+      },
+      {
+        "en": "An override, missing shared-library dependency, unsupported Vulkan version or wrong 32/64-bit architecture may exclude all usable drivers.",
+        "de": "Ein Parameter, eine fehlende Bibliotheksabhängigkeit, eine nicht unterstützte Vulkan-Version oder falsche 32-/64-Bit-Architektur kann alle nutzbaren Treiber ausschließen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "query-vulkan-discovery",
+        "command": "vulkaninfo --summary",
+        "explanation": {
+          "en": "Run in the same user/runtime environment as the failing application. The native utility does not automatically test a 32-bit runtime.",
+          "de": "In derselben Benutzer-/Laufzeitumgebung wie die betroffene Anwendung ausführen. Das native Tool prüft nicht automatisch eine 32-Bit-Laufzeit."
+        },
+        "interpretation": {
+          "en": "If this succeeds, compare application architecture and sandbox access. If instance creation fails, focus on discovery before blaming shader execution.",
+          "de": "Bei Erfolg Anwendungsarchitektur und Sandbox-Zugriff vergleichen. Scheitert die Instanzerzeugung, zuerst Erkennung statt Shader-Ausführung untersuchen."
+        }
+      },
+      {
+        "id": "trace-vulkan-loader",
+        "command": "env VK_LOADER_DEBUG=error,warn,driver vulkaninfo --summary",
+        "explanation": {
+          "en": "Temporarily enable Khronos loader messages for this read-only query; it creates no persistent environment setting.",
+          "de": "Khronos-Lader-Meldungen vorübergehend für diese lesende Abfrage aktivieren; es entsteht keine dauerhafte Umgebungseinstellung."
+        },
+        "interpretation": {
+          "en": "Look for the searched JSON paths and rejected libraries. A warning about one optional ICD can coexist with a working driver; Found no drivers means no usable instance driver remained.",
+          "de": "Gesuchte JSON-Pfade und abgelehnte Bibliotheken beachten. Eine Warnung über eine optionale ICD kann neben einem funktionierenden Treiber stehen; Found no drivers bedeutet keinen verbliebenen nutzbaren Instanztreiber."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "clear-stale-icd-override",
+        "title": {
+          "en": "Clear a stale per-application driver override",
+          "de": "Veralteten Anwendungs-ICD-Parameter entfernen"
+        },
+        "body": {
+          "en": "If the launcher uses VK_DRIVER_FILES or VK_ICD_FILENAMES pointing to a removed driver, remove that setting from a saved copy and retry normal discovery. Use a specific override only when intentionally testing an installed compatible driver.",
+          "de": "Verweist der Starter per VK_DRIVER_FILES oder VK_ICD_FILENAMES auf einen entfernten Treiber, die Einstellung aus einer gesicherten Kopie entfernen und normale Erkennung prüfen. Einen gezielten Parameter nur zum bewussten Test eines installierten kompatiblen Treibers nutzen."
+        },
+        "precautions": {
+          "en": "Do not edit vendor ICD JSON files to point at arbitrary libraries. Elevated applications may intentionally ignore unsafe environment overrides.",
+          "de": "Hersteller-ICD-JSON nicht auf beliebige Bibliotheken umbiegen. Programme mit erhöhten Rechten können unsichere Umgebungsparameter bewusst ignorieren."
+        },
+        "rollback": {
+          "en": "Restore the original launcher setting if a documented custom runtime depends on it.",
+          "de": "Ursprüngliche Startereinstellung wiederherstellen, falls eine dokumentierte eigene Laufzeit darauf angewiesen ist."
+        }
+      },
+      {
+        "id": "install-matching-vulkan-runtime",
+        "title": {
+          "en": "Install the matching Vulkan runtime components",
+          "de": "Passende Vulkan-Laufzeitkomponenten installieren"
+        },
+        "body": {
+          "en": "If logs show absent manifests or wrong architecture, install the distribution’s Vulkan loader and GPU-specific ICD package for the actual application architecture. For a sandbox, use its supported graphics runtime extension rather than host file copies.",
+          "de": "Zeigen Meldungen fehlende Beschreibungen oder falsche Architektur, Vulkan-Lader und GPU-spezifisches ICD-Paket der Distribution für die tatsächliche Anwendungsarchitektur installieren. In einer Sandbox deren unterstützte Grafikerweiterung statt kopierter Host-Dateien nutzen."
+        },
+        "precautions": {
+          "en": "Keep 32- and 64-bit driver packages on compatible versions and verify hardware support; OpenGL support does not imply Vulkan support.",
+          "de": "32- und 64-Bit-Treiberpakete auf kompatiblen Versionen halten und Hardware-Unterstützung prüfen; OpenGL-Unterstützung bedeutet keine Vulkan-Unterstützung."
+        },
+        "rollback": {
+          "en": "Restore the earlier package snapshot or sandbox runtime version if the package change introduces a regression.",
+          "de": "Bei einer Regression vorherigen Paket-Snapshot oder Sandbox-Laufzeitstand wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Khronos Vulkan loader driver interface",
+        "url": "https://vulkan.lunarg.com/doc/view/latest/linux/LoaderDriverInterface.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Khronos loader debugging",
+        "url": "https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderDebugging.md",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "vulkan-loader-no-drivers",
+        "all": [
+          "vkCreateInstance: Found no drivers!"
+        ],
+        "sample": "ERROR | DRIVER: vkCreateInstance: Found no drivers!",
+        "negative": [
+          "INFO | DRIVER: Found ICD manifest file /usr/share/vulkan/icd.d/radeon_icd.json",
+          "ERROR: application shader compilation failed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The Vulkan loader could not find a driver usable for instance creation.",
+          "de": "Der Vulkan-Lader fand keinen für die Instanzerzeugung nutzbaren Treiber."
+        },
+        "significance": {
+          "en": "Inspect prior ICD and dependency errors; this is earlier than a game’s shader or GPU execution failure.",
+          "de": "Vorherige ICD- und Abhängigkeitsfehler prüfen; dies liegt vor einem Shader- oder GPU-Ausführungsfehler des Spiels."
+        }
+      }
+    ]
+  },
+  {
+    "id": "hybrid-gpu-selection",
+    "slug": {
+      "en": "hybrid-gpu-selection",
+      "de": "hybrid-gpu-auswahl"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "Application runs on the unintended GPU",
+      "de": "Anwendung läuft auf der falschen GPU"
+    },
+    "summary": {
+      "en": "Hybrid graphics separates display ownership from rendering; compare device selection per API before forcing the entire desktop onto another GPU.",
+      "de": "Hybridgrafik trennt Bildausgabe und Rendering; Geräteauswahl je API vergleichen, bevor der gesamte Desktop auf eine andere GPU gezwungen wird."
+    },
+    "environment": {
+      "en": "Multi-GPU systems using Mesa PRIME or NVIDIA render offload; offload support depends on the installed driver and session.",
+      "de": "Mehr-GPU-Systeme mit Mesa PRIME oder NVIDIA Render Offload; Offload-Unterstützung hängt von Treiber und Sitzung ab."
+    },
+    "symptoms": {
+      "en": [
+        "An application uses the integrated GPU despite an available discrete GPU.",
+        "A monitor attached to one GPU works while a rendering application chooses another."
+      ],
+      "de": [
+        "Eine Anwendung nutzt trotz verfügbarer separater GPU die integrierte Grafik.",
+        "Ein Monitor an einer GPU funktioniert, während eine Rendering-Anwendung eine andere wählt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Default enumeration order or an application’s selection policy may prefer the integrated GPU.",
+        "de": "Standard-Reihenfolge oder Auswahlregel der Anwendung kann integrierte Grafik bevorzugen."
+      },
+      {
+        "en": "OpenGL and Vulkan may use different offload controls; display connector ownership does not establish the rendering GPU.",
+        "de": "OpenGL und Vulkan können unterschiedliche Offload-Schalter nutzen; die Belegung des Bildschirmanschlusses belegt keine Rendering-GPU."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-all-gpu-bindings",
+        "command": "lspci -nnk",
+        "explanation": {
+          "en": "List all display controllers and active drivers; no administrative changes are made.",
+          "de": "Alle Grafikcontroller und aktiven Treiber auflisten; keine administrativen Änderungen werden vorgenommen."
+        },
+        "interpretation": {
+          "en": "Both GPUs need a suitable active driver for useful offload. An unbound GPU cannot be selected merely by setting an environment variable.",
+          "de": "Beide GPUs brauchen einen passenden aktiven Treiber für nutzbares Offload. Eine ungebundene GPU wird durch eine Umgebungsvariable allein nicht nutzbar."
+        }
+      },
+      {
+        "id": "inspect-vulkan-device-order",
+        "command": "vulkaninfo --summary",
+        "explanation": {
+          "en": "Read Vulkan device names in the application’s runtime; requires vulkaninfo.",
+          "de": "Vulkan-Gerätenamen in der Anwendungs-Laufzeit lesen; benötigt vulkaninfo."
+        },
+        "interpretation": {
+          "en": "Multiple devices make per-app selection possible, but enumeration order alone does not prove which device the application actually chose.",
+          "de": "Mehrere Geräte ermöglichen Anwendungs-Auswahl; die Reihenfolge allein beweist jedoch keine tatsächliche Auswahl der Anwendung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "select-mesa-gpu-per-app",
+        "title": {
+          "en": "Select a Mesa GPU for one application",
+          "de": "Mesa-GPU für eine Anwendung wählen"
+        },
+        "body": {
+          "en": "If both Mesa-supported GPUs are listed, test the application with the documented DRI_PRIME selector in its launcher. Confirm the application’s own renderer; Vulkan can require the selector form that hides other devices.",
+          "de": "Sind beide Mesa-unterstützten GPUs aufgeführt, den dokumentierten DRI_PRIME-Selektor im Starter der Anwendung testen. Eigenen Renderer der Anwendung prüfen; Vulkan kann die Selektorform benötigen, die andere Geräte ausblendet."
+        },
+        "precautions": {
+          "en": "Apply the setting per application, not globally. A selected GPU still needs runtime and device access; avoid changing PCI binding.",
+          "de": "Die Einstellung je Anwendung statt global setzen. Auch eine gewählte GPU benötigt Laufzeit- und Gerätezugriff; PCI-Bindung nicht ändern."
+        },
+        "rollback": {
+          "en": "Remove the added DRI_PRIME setting from the launcher to restore normal device selection.",
+          "de": "Hinzugefügten DRI_PRIME-Parameter aus dem Starter entfernen, um die normale Gerätewahl wiederherzustellen."
+        }
+      },
+      {
+        "id": "use-nvidia-render-offload",
+        "title": {
+          "en": "Use NVIDIA’s supported render offload",
+          "de": "Unterstütztes NVIDIA Render Offload nutzen"
+        },
+        "body": {
+          "en": "If NVIDIA is the intended rendering GPU, use its documented PRIME offload variables for the specific API: OpenGL GLX also needs NVIDIA vendor selection, while Vulkan uses the NVIDIA offload layer. Check the installed release’s guidance.",
+          "de": "Soll NVIDIA rendern, dessen dokumentierte PRIME-Offload-Variablen für die jeweilige API nutzen: OpenGL GLX braucht auch die NVIDIA-Anbieterwahl, Vulkan nutzt die NVIDIA-Offload-Schicht. Anleitung der installierten Version prüfen."
+        },
+        "precautions": {
+          "en": "Do not assume Xorg examples fully configure a Wayland session. Forcing the whole desktop to a discrete GPU can affect battery life and external displays.",
+          "de": "Xorg-Beispiele nicht als vollständige Wayland-Konfiguration ansehen. Den gesamten Desktop auf die separate GPU zu zwingen kann Akkulaufzeit und externe Monitore beeinflussen."
+        },
+        "rollback": {
+          "en": "Remove only the added offload variables and return to the original application profile.",
+          "de": "Nur hinzugefügte Offload-Variablen entfernen und zum ursprünglichen Anwendungsprofil zurückkehren."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Mesa DRI_PRIME device selection",
+        "url": "https://docs.mesa3d.org/envvars.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NVIDIA PRIME Render Offload",
+        "url": "https://download.nvidia.com/XFree86/Linux-x86_64/570.124.04/README/primerenderoffload.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "drm-invalid-edid",
+    "slug": {
+      "en": "drm-invalid-edid",
+      "de": "drm-ungueltige-edid"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "Monitor modes disappear because EDID is invalid",
+      "de": "Monitormodi fehlen wegen ungültiger EDID"
+    },
+    "summary": {
+      "en": "Bad or missing monitor identification can remove expected modes; separate cable, dock and KVM effects from an incorrect display configuration.",
+      "de": "Fehlerhafte oder fehlende Monitorkennung kann erwartete Modi entfernen; Kabel-, Dock- und KVM-Einflüsse von falscher Anzeigeeinstellung trennen."
+    },
+    "environment": {
+      "en": "DRM/KMS display connectors; EDID comes from the monitor or an intermediary and may change when the connection path changes.",
+      "de": "DRM-/KMS-Bildschirmanschlüsse; EDID stammt vom Monitor oder einem Zwischengerät und kann sich mit dem Anschlussweg ändern."
+    },
+    "symptoms": {
+      "en": [
+        "The expected resolution or refresh rate is absent.",
+        "Kernel messages report corrupt EDID, a checksum error or all-zero blocks."
+      ],
+      "de": [
+        "Erwartete Auflösung oder Bildwiederholrate fehlt.",
+        "Kernel-Meldungen nennen beschädigte EDID, Prüfsummenfehler oder vollständig leere Blöcke."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A cable, adapter, dock or KVM can interfere with reading monitor identification.",
+        "de": "Kabel, Adapter, Dock oder KVM können das Lesen der Monitorkennung stören."
+      },
+      {
+        "en": "The monitor may advertise malformed data; an existing EDID override may also target the wrong connector or display.",
+        "de": "Der Monitor kann fehlerhafte Daten liefern; ein vorhandener EDID-Ersatz kann außerdem zum falschen Anschluss oder Display gehören."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-edid-errors",
+        "command": "journalctl -b -k --no-pager --grep='EDID|edid'",
+        "explanation": {
+          "en": "Read kernel EDID messages; administrator journal access may be necessary. Some additional details require a separately planned DRM debug boot.",
+          "de": "Kernel-EDID-Meldungen lesen; Administratorzugriff kann nötig sein. Zusätzliche Details benötigen teilweise einen separat geplanten DRM-Debug-Start."
+        },
+        "interpretation": {
+          "en": "A checksum or corrupt-header report indicates invalid identification. No message does not establish valid data, and not every extension error discards the base EDID.",
+          "de": "Prüfsummen- oder Headerfehler zeigen ungültige Kennung. Keine Meldung beweist keine gültigen Daten; nicht jeder Erweiterungsfehler verwirft den EDID-Grundblock."
+        }
+      },
+      {
+        "id": "decode-connector-edid",
+        "command": "edid-decode /sys/class/drm/card0-DP-1/edid",
+        "explanation": {
+          "en": "Replace card0-DP-1 with the affected connector from /sys/class/drm. edid-decode is a read-only utility that may need installation.",
+          "de": "card0-DP-1 durch den betroffenen Anschluss aus /sys/class/drm ersetzen. edid-decode liest nur und muss gegebenenfalls installiert werden."
+        },
+        "interpretation": {
+          "en": "Check validation output and advertised modes. An empty file on a disconnected connector is expected; compare the direct monitor path with the intermediary path.",
+          "de": "Validierung und angekündigte Modi prüfen. Eine leere Datei bei getrenntem Anschluss ist normal; direkten Monitorweg mit dem Weg über Zwischengeräte vergleichen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-direct-monitor-path",
+        "title": {
+          "en": "Compare a direct monitor connection",
+          "de": "Direkten Monitoranschluss vergleichen"
+        },
+        "body": {
+          "en": "If the issue appears through a dock or KVM, connect the same monitor directly with a known suitable cable and compare its EDID and offered modes. Change only one part of the path at a time.",
+          "de": "Tritt der Fehler über Dock oder KVM auf, denselben Monitor mit geeignetem bekanntem Kabel direkt anschließen und EDID sowie angebotene Modi vergleichen. Jeweils nur einen Teil des Wegs ändern."
+        },
+        "precautions": {
+          "en": "Save the display layout first and use the desktop’s automatic confirmation timeout. Never apply timings beyond the monitor’s stated capabilities.",
+          "de": "Anzeigeanordnung vorher sichern und automatische Rücksetzfrist des Desktops nutzen. Keine Timings jenseits angegebener Monitorfähigkeiten anwenden."
+        },
+        "rollback": {
+          "en": "Reconnect the original path and restore the saved display layout if the comparison does not help.",
+          "de": "Ursprünglichen Anschlussweg wiederherstellen und gesicherte Anzeigeanordnung laden, falls der Vergleich nicht hilft."
+        }
+      },
+      {
+        "id": "use-validated-edid-override",
+        "title": {
+          "en": "Use a validated EDID override only when justified",
+          "de": "EDID-Ersatz nur geprüft und begründet verwenden"
+        },
+        "body": {
+          "en": "If repeated direct reads establish defective EDID but a manufacturer-confirmed valid block exists, follow the kernel/distribution EDID firmware procedure for that connector. Validate the block and retain a boot entry without the override.",
+          "de": "Belegen wiederholte direkte Abfragen defekte EDID und existiert ein vom Hersteller bestätigter gültiger Block, das EDID-Firmware-Verfahren von Kernel und Distribution für diesen Anschluss nutzen. Block prüfen und Starteintrag ohne Ersatz behalten."
+        },
+        "precautions": {
+          "en": "Do not download an arbitrary EDID for a similarly named monitor. Early loading may require including the file in the correct initramfs.",
+          "de": "Keine beliebige EDID für einen ähnlich benannten Monitor herunterladen. Frühes Laden kann die Datei in der richtigen Initramfs erfordern."
+        },
+        "rollback": {
+          "en": "Remove the connector-specific override and regenerate the affected image if needed; boot the retained unmodified entry to recover display output.",
+          "de": "Anschlussspezifischen Ersatz entfernen und bei Bedarf betroffenes Abbild erneuern; zum Wiederherstellen der Bildausgabe unveränderten Eintrag starten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel EDID recovery guide",
+        "url": "https://docs.kernel.org/admin-guide/edid.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "DRM EDID block validation implementation",
+        "url": "https://code.googlesource.com/linux/torvalds/linux/+/e2e13630f93d942d02f3b3f98660228a3545c60e/drivers/gpu/drm/drm_edid.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "drm-edid-checksum-invalid",
+        "all": [
+          "EDID",
+          "checksum is invalid"
+        ],
+        "sample": "EDID block 0 (tag 0x00) checksum is invalid, remainder is 13",
+        "negative": [
+          "EDID block 0 checksum is valid",
+          "amdgpu 0000:03:00.0: firmware checksum is invalid"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "The monitor identification block fails checksum validation.",
+          "de": "Der Monitorkennungsblock besteht die Prüfsummenprüfung nicht."
+        },
+        "significance": {
+          "en": "Compare the physical connection path and block contents; this is not proof of a damaged GPU.",
+          "de": "Anschlussweg und Blockinhalt vergleichen; dies beweist keine beschädigte GPU."
+        }
+      },
+      {
+        "id": "drm-edid-corrupt-header",
+        "all": [
+          "EDID has corrupt header"
+        ],
+        "sample": "EDID has corrupt header",
+        "negative": [
+          "EDID corrupt header fixed",
+          "EDID block 0 read successfully"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "The EDID header is malformed.",
+          "de": "Der EDID-Header ist fehlerhaft."
+        },
+        "significance": {
+          "en": "Inspect monitor and intermediary data before forcing a resolution; a repaired-header message alone is intentionally excluded.",
+          "de": "Monitor- und Zwischengerätdaten prüfen, bevor eine Auflösung erzwungen wird; ein reparierter Header allein wird bewusst ausgeschlossen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "displayport-link-training",
+    "slug": {
+      "en": "displayport-link-training",
+      "de": "displayport-linktraining"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "DisplayPort link training fails after a modeset",
+      "de": "DisplayPort-Linktraining scheitert beim Moduswechsel"
+    },
+    "summary": {
+      "en": "A DisplayPort monitor can be detected yet fail link training; compare bandwidth demand and the physical path before changing GPU recovery knobs.",
+      "de": "Ein DisplayPort-Monitor kann erkannt werden und beim Linktraining scheitern; Bandbreitenbedarf und Anschlussweg vor GPU-Reset-Parametern prüfen."
+    },
+    "environment": {
+      "en": "DisplayPort outputs, especially high refresh rates, docks, MST hubs or adapters. Recovery behavior depends on the driver and kernel version.",
+      "de": "DisplayPort-Ausgänge, besonders mit hohen Bildraten, Docks, MST-Hubs oder Adaptern. Wiederherstellung hängt von Treiber und Kernelversion ab."
+    },
+    "symptoms": {
+      "en": [
+        "Monitor shows no signal after changing resolution or refresh rate.",
+        "An output repeatedly reconnects although the connector remains detected."
+      ],
+      "de": [
+        "Nach Änderung von Auflösung oder Bildrate meldet der Monitor kein Signal.",
+        "Ein Ausgang verbindet sich wiederholt neu, obwohl der Anschluss erkannt bleibt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Insufficient link margin, cable quality or intermediary bandwidth limits can prevent training.",
+        "de": "Zu geringe Link-Reserve, Kabelqualität oder Bandbreitengrenzen von Zwischengeräten können das Training verhindern."
+      },
+      {
+        "en": "Driver, monitor firmware or dock firmware may fail to recover a link; EDID detection alone does not test link stability.",
+        "de": "Treiber, Monitor- oder Dock-Firmware können einen Link nicht wiederherstellen; EDID-Erkennung allein prüft keine Link-Stabilität."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-link-events",
+        "command": "journalctl -b -k --no-pager --grep='link training|Link Training|DP-'",
+        "explanation": {
+          "en": "Read DisplayPort events in the affected boot; access may require an administrator and some drivers log detail only with debug enabled.",
+          "de": "DisplayPort-Ereignisse im betroffenen Start lesen; Administratorzugriff kann nötig sein und manche Treiber protokollieren Details nur im Debug-Modus."
+        },
+        "interpretation": {
+          "en": "Training failure near the modeset supports a link-path investigation. A scheduler ring timeout belongs to a different failure mechanism.",
+          "de": "Trainingfehler nahe dem Moduswechsel stützen eine Untersuchung des Anschlusswegs. Eine Ring-Zeitüberschreitung betrifft einen anderen Fehlervorgang."
+        }
+      },
+      {
+        "id": "inspect-connector-modes",
+        "command": "cat /sys/class/drm/card0-DP-1/status /sys/class/drm/card0-DP-1/modes",
+        "explanation": {
+          "en": "Replace card0-DP-1 with the affected DRM connector. Both sysfs files are read-only; modes lists available sizes, not every refresh timing.",
+          "de": "card0-DP-1 durch den betroffenen DRM-Anschluss ersetzen. Beide sysfs-Dateien werden nur gelesen; modes nennt Größen, nicht jedes Bildraten-Timing."
+        },
+        "interpretation": {
+          "en": "connected means a sink is detected, not that its current link carries a valid image. Compare with the desktop’s exact selected timing.",
+          "de": "connected bedeutet erkannter Empfänger, nicht gültige aktuelle Bildübertragung. Mit dem exakten im Desktop gewählten Timing vergleichen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "reduce-display-bandwidth",
+        "title": {
+          "en": "Test a lower-bandwidth display mode",
+          "de": "Modus mit geringerem Bandbreitenbedarf testen"
+        },
+        "body": {
+          "en": "If failure occurs only at a high-bandwidth mode, select a supported lower refresh rate or resolution in display settings and compare. If stable, inspect cable/dock capabilities and any HDR or multi-monitor bandwidth demands separately.",
+          "de": "Scheitert nur ein Modus mit hohem Bandbreitenbedarf, eine unterstützte geringere Bildrate oder Auflösung in den Anzeigeeinstellungen wählen und vergleichen. Bei Stabilität Kabel-/Dock-Fähigkeiten sowie HDR- oder Mehrmonitorbedarf separat prüfen."
+        },
+        "precautions": {
+          "en": "Use a timed display-settings confirmation and keep a second console available. Lower bandwidth is a diagnostic comparison, not proof that the monitor is defective.",
+          "de": "Anzeigeänderung mit Rücksetzfrist bestätigen und zweite Konsole bereithalten. Weniger Bandbreite ist ein Diagnosevergleich, kein Beweis eines defekten Monitors."
+        },
+        "rollback": {
+          "en": "Reject the confirmation or restore the original supported mode if the test loses output.",
+          "de": "Bei verlorener Ausgabe Bestätigung ablehnen oder ursprünglichen unterstützten Modus wiederherstellen."
+        }
+      },
+      {
+        "id": "isolate-displayport-intermediaries",
+        "title": {
+          "en": "Isolate the DisplayPort connection path",
+          "de": "DisplayPort-Anschlussweg eingrenzen"
+        },
+        "body": {
+          "en": "If the lower-bandwidth comparison implicates the path, bypass the dock, MST hub or adapter and use a suitable direct cable. Apply vendor-provided monitor or dock firmware only if its release notes match the problem.",
+          "de": "Deutet der Vergleich auf den Anschlussweg, Dock, MST-Hub oder Adapter umgehen und geeignetes direktes Kabel verwenden. Hersteller-Firmware für Monitor oder Dock nur anwenden, wenn Versionshinweise zum Problem passen."
+        },
+        "precautions": {
+          "en": "Record the initial layout and firmware versions. Do not use debugfs fault injection or write link registers as an end-user workaround.",
+          "de": "Ursprüngliche Anordnung und Firmwarestände festhalten. Keine debugfs-Fehlerinjektion oder direkten Link-Registerzugriffe als Benutzer-Workaround nutzen."
+        },
+        "rollback": {
+          "en": "Reconnect the documented original layout; use the vendor’s supported firmware recovery path if an update fails.",
+          "de": "Dokumentierte ursprüngliche Anordnung wiederherstellen; bei Updatefehlern den unterstützten Firmware-Rettungsweg des Herstellers nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Intel DisplayPort link recovery",
+        "url": "https://docs.kernel.org/gpu/intel-display/dp-link-training.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "DRM kernel mode setting: connector link status",
+        "url": "https://docs.kernel.org/gpu/drm-kms.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "i915 DisplayPort link training: result messages",
+        "url": "https://code.googlesource.com/linux/torvalds/linux/+/e2e13630f93d942d02f3b3f98660228a3545c60e/drivers/gpu/drm/i915/display/intel_dp_link_training.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "drm-displayport-training-failed",
+        "all": [
+          "drm",
+          "Link Training failed at link rate ="
+        ],
+        "sample": "i915 0000:00:02.0: [drm] [CONNECTOR:95:DP-1][DPRX] Link Training failed at link rate = 270000, lane count = 4",
+        "negative": [
+          "i915 0000:00:02.0: [drm] [CONNECTOR:95:DP-1][DPRX] Link Training passed at link rate = 270000, lane count = 4",
+          "networkd[510]: Link training failed for ethernet adapter"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The DRM display driver reports an unsuccessful DisplayPort training attempt.",
+          "de": "Der DRM-Anzeigetreiber meldet einen gescheiterten DisplayPort-Trainingversuch."
+        },
+        "significance": {
+          "en": "Inspect timing and physical path; logs differ by driver, so this narrow literal signature cannot cover every DisplayPort failure.",
+          "de": "Timing und Anschlussweg prüfen; Meldungen unterscheiden sich je Treiber, daher deckt dieses enge wörtliche Muster nicht jeden DisplayPort-Fehler ab."
+        }
+      }
+    ]
+  },
+  {
+    "id": "intel-gpu-hang",
+    "slug": {
+      "en": "intel-gpu-hang",
+      "de": "intel-gpu-haenger"
+    },
+    "category": "graphics",
+    "title": {
+      "en": "Intel i915 reports a GPU hang",
+      "de": "Intel i915 meldet einen GPU-Hänger"
+    },
+    "summary": {
+      "en": "An i915 GPU hang may affect one engine or the whole desktop; preserve its error state and compare workload, kernel and userspace independently.",
+      "de": "Ein i915-GPU-Hänger kann eine Engine oder den ganzen Desktop treffen; Fehlerzustand sichern und Arbeitslast, Kernel sowie Userspace getrennt vergleichen."
+    },
+    "environment": {
+      "en": "Intel GPUs bound to i915. Newer GPUs or configurations using xe have different capture interfaces and should not use i915-specific paths blindly.",
+      "de": "Intel-GPUs mit i915-Bindung. Neuere GPUs oder xe-Konfigurationen haben andere Erfassungsschnittstellen; i915-Pfade dort nicht ungeprüft verwenden."
+    },
+    "symptoms": {
+      "en": [
+        "An application freezes and the display may recover after a reset.",
+        "Kernel logs identify i915 GPU HANG with an error code."
+      ],
+      "de": [
+        "Eine Anwendung friert ein und die Anzeige kann nach einem Reset zurückkehren.",
+        "Der Kernel meldet i915 GPU HANG mit Fehlercode."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Kernel scheduling or a userspace driver submission bug may stop an engine.",
+        "de": "Kernel-Scheduling oder ein Userspace-Treiberfehler bei der Auftragseinreichung kann eine Engine blockieren."
+      },
+      {
+        "en": "Power-management or firmware interactions and hardware instability remain possible; the error code needs the surrounding capture.",
+        "de": "Energieverwaltung, Firmware-Wechselwirkungen und Hardware-Instabilität bleiben möglich; der Fehlercode benötigt den umgebenden Mitschnitt."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-intel-hang-context",
+        "command": "journalctl -b -k --no-pager --grep='i915|GPU HANG|xe '",
+        "explanation": {
+          "en": "Read Intel GPU kernel events; journal access may require an administrator.",
+          "de": "Intel-GPU-Kernelereignisse lesen; Journalzugriff kann Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "Confirm whether i915 or xe is the active driver and identify the first failing engine. A later reset line is an attempted recovery, not an independent cause.",
+          "de": "Aktiven Treiber i915 oder xe bestätigen und zuerst betroffene Engine bestimmen. Eine spätere Reset-Zeile ist ein Wiederherstellungsversuch, keine eigenständige Ursache."
+        }
+      },
+      {
+        "id": "read-i915-error-state",
+        "command": "cat /sys/class/drm/card0/error",
+        "explanation": {
+          "en": "Replace card0 with the i915 card resolved through lspci/sysfs. Read only if this interface exists; access may require administrator rights.",
+          "de": "card0 durch die über lspci/sysfs ermittelte i915-Karte ersetzen. Nur bei vorhandener Schnittstelle lesen; Zugriff kann Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "A retained error state is valuable for a driver report. No error state collected does not exclude a hang; capture may be disabled or already cleared.",
+          "de": "Ein gespeicherter Fehlerzustand hilft beim Treiberbericht. No error state collected schließt einen Hänger nicht aus; Erfassung kann deaktiviert oder bereits gelöscht sein."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "preserve-intel-error-capture",
+        "title": {
+          "en": "Preserve the first error capture",
+          "de": "Ersten Fehlerzustand sichern"
+        },
+        "body": {
+          "en": "If the system remains accessible, save the first i915 error state and complete kernel messages before rebooting or retriggering. Attach the GPU PCI ID, kernel and Mesa versions to a minimal upstream report.",
+          "de": "Bleibt das System erreichbar, ersten i915-Fehlerzustand und vollständige Kernel-Meldungen vor Neustart oder erneutem Auslösen sichern. GPU-PCI-ID, Kernel- und Mesa-Versionen einem minimalen Upstream-Bericht hinzufügen."
+        },
+        "precautions": {
+          "en": "Review captures for process names or paths before publication. Do not clear the error state or manually reset the live display GPU to collect evidence.",
+          "de": "Mitschnitte vor Veröffentlichung auf Prozessnamen oder Pfade prüfen. Fehlerzustand nicht löschen und aktive Anzeige-GPU nicht manuell zum Erfassen zurücksetzen."
+        },
+        "rollback": {
+          "en": "Reading capture data changes no GPU configuration; return to a normal supported boot after collecting the report.",
+          "de": "Das Lesen ändert keine GPU-Konfiguration; nach der Erfassung zu einem normalen unterstützten Start zurückkehren."
+        }
+      },
+      {
+        "id": "compare-intel-supported-stack",
+        "title": {
+          "en": "Compare a retained supported stack",
+          "de": "Vorhandenen unterstützten Stack vergleichen"
+        },
+        "body": {
+          "en": "If the first hang follows an update, compare an installed supported earlier kernel or Mesa snapshot with the same minimal workload. Remove only optional application overlays first when the issue is limited to that application.",
+          "de": "Folgt der erste Hänger einem Update, installierten unterstützten älteren Kernel oder Mesa-Snapshot bei gleicher Minimal-Arbeitslast vergleichen. Bei nur einer betroffenen Anwendung zuerst deren optionale Overlays entfernen."
+        },
+        "precautions": {
+          "en": "Change one layer at a time and retain a working boot entry. Avoid globally disabling power features based only on an unrelated GPU report.",
+          "de": "Jeweils eine Schicht ändern und funktionierenden Starteintrag behalten. Energieoptionen nicht aufgrund eines Berichts zu einer anderen GPU global abschalten."
+        },
+        "rollback": {
+          "en": "Select the original kernel or restore the package snapshot and application profile if the comparison does not improve reproducibility.",
+          "de": "Bei fehlender Verbesserung den ursprünglichen Kernel wählen oder Paket-Snapshot und Anwendungsprofil wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Intel i915 driver architecture and error handling",
+        "url": "https://docs.kernel.org/gpu/i915.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "i915 GPU error capture implementation",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git/+/0a85ed6e7fce8075bb3090f8eac05ca1000f5969/drivers/gpu/drm/i915/i915_gpu_error.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "intel-i915-gpu-hang",
+        "all": [
+          "i915",
+          "GPU HANG: ecode"
+        ],
+        "sample": "i915 0000:00:02.0: [drm] GPU HANG: ecode 9:1:85dffffb, in render-app [2400]",
+        "negative": [
+          "i915 0000:00:02.0: [drm] Initialized i915",
+          "watchdog: BUG: soft lockup - CPU#2 stuck for 26s!"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The i915 driver recorded a GPU engine hang and encoded its captured state.",
+          "de": "Der i915-Treiber hat einen GPU-Engine-Hänger erfasst und dessen Zustand codiert."
+        },
+        "significance": {
+          "en": "Preserve the error capture before another incident; this signature deliberately does not classify CPU watchdog events or xe failures.",
+          "de": "Fehlerzustand vor einem weiteren Vorfall sichern; das Muster ordnet CPU-Watchdog-Ereignisse und xe-Fehler bewusst nicht zu."
+        }
+      }
+    ]
+  }
+]

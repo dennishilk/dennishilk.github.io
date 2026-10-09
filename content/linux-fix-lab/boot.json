@@ -1,0 +1,1782 @@
+[
+  {
+    "id": "boot-fstab-emergency",
+    "slug": {
+      "en": "boot-fstab-emergency",
+      "de": "boot-fstab-notfallmodus"
+    },
+    "category": "boot",
+    "title": {
+      "en": "A required fstab mount sends boot into emergency mode",
+      "de": "Benötigter fstab-Mount führt in den Notfallmodus"
+    },
+    "summary": {
+      "en": "A missing non-root mount can block systemd’s local filesystem target; identify the exact fstab dependency before making optional mounts nonfatal.",
+      "de": "Ein fehlender Nicht-Root-Mount kann systemds Dateisystemziel blockieren; genaue fstab-Abhängigkeit vor einer optionalen Einbindung ohne Startpflicht prüfen."
+    },
+    "environment": {
+      "en": "systemd systems using /etc/fstab. This entry concerns a non-root mount; unavailable root storage needs early-boot diagnosis.",
+      "de": "systemd-Systeme mit /etc/fstab. Dieser Eintrag betrifft einen Nicht-Root-Mount; fehlender Root-Speicher braucht frühe Boot-Diagnose."
+    },
+    "symptoms": {
+      "en": [
+        "Boot reaches an emergency shell after waiting for a filesystem.",
+        "A mount or local-fs.target dependency fails after a disk was removed or renamed."
+      ],
+      "de": [
+        "Nach Warten auf ein Dateisystem endet der Start in einer Notfall-Shell.",
+        "Mount- oder local-fs.target-Abhängigkeit scheitert nach entferntem oder umbenanntem Datenträger."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An fstab UUID, path, type or mount option may no longer match the intended device.",
+        "de": "fstab-UUID, Pfad, Typ oder Mount-Option können nicht mehr zum vorgesehenen Gerät passen."
+      },
+      {
+        "en": "A mount treated as required may be optional in reality; a failed filesystem check or device error can also block it and must not be hidden.",
+        "de": "Eine als notwendig behandelte Einbindung kann tatsächlich optional sein; gescheiterte Dateisystemprüfung oder Gerätefehler können ebenfalls blockieren und dürfen nicht versteckt werden."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "validate-fstab-without-mounting",
+        "command": "findmnt --verify --verbose",
+        "explanation": {
+          "en": "Read and validate /etc/fstab without mounting entries. Run from the affected installation, not blindly against a live image’s fstab.",
+          "de": "/etc/fstab ohne Einhängen prüfen. Aus betroffener Installation statt ungeprüft gegen fstab eines Live-Abbilds ausführen."
+        },
+        "interpretation": {
+          "en": "A missing source or invalid option narrows configuration problems. A clean syntax check does not prove the physical device or filesystem is healthy.",
+          "de": "Fehlende Quelle oder ungültige Option grenzt Konfigurationsfehler ein. Saubere Syntax beweist keinen gesunden Datenträger und kein gesundes Dateisystem."
+        }
+      },
+      {
+        "id": "read-failed-mount-units",
+        "command": "systemctl --failed --type=mount --no-pager",
+        "explanation": {
+          "en": "List failed mount units in the current systemd instance without retrying them.",
+          "de": "Gescheiterte Mount-Units der aktuellen systemd-Instanz ohne Wiederholungsversuch auflisten."
+        },
+        "interpretation": {
+          "en": "Inspect the unit matching the fstab mount point, then its journal. An empty list in an initramfs or after reboot may not describe the failed host boot.",
+          "de": "Zur fstab-Einbindung passende Unit und danach deren Journal prüfen. Leere Liste in Initramfs oder nach Neustart muss den gescheiterten Host-Start nicht beschreiben."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-nonroot-mount-definition",
+        "title": {
+          "en": "Correct the identified mount definition",
+          "de": "Ermittelte Mount-Definition korrigieren"
+        },
+        "body": {
+          "en": "If device identity or an option is wrong, back up fstab and update only the affected line to the verified filesystem identity and supported options. Re-run findmnt validation before the next normal boot.",
+          "de": "Ist Gerätekennung oder Option falsch, fstab sichern und nur betroffene Zeile mit verifizierter Dateisystemkennung und unterstützten Optionen korrigieren. Vor nächstem normalen Start findmnt-Prüfung erneut ausführen."
+        },
+        "precautions": {
+          "en": "Do not edit the root, encryption or recovery entries by guesswork. If the disk has I/O errors, investigate those before forcing a mount.",
+          "de": "Root-, Verschlüsselungs- oder Rettungseinträge nicht auf Verdacht ändern. Bei E/A-Fehlern des Datenträgers diese vor erzwungenem Mount untersuchen."
+        },
+        "rollback": {
+          "en": "Restore the backed-up fstab from the emergency or rescue environment if normal boot regresses.",
+          "de": "Bei schlechterem normalem Start gesicherte fstab aus Notfall- oder Rettungsumgebung wiederherstellen."
+        }
+      },
+      {
+        "id": "make-truly-optional-mount-nonfatal",
+        "title": {
+          "en": "Make a truly optional mount nonfatal",
+          "de": "Tatsächlich optionalen Mount ohne Startpflicht einrichten"
+        },
+        "body": {
+          "en": "If the disk is intentionally removable and no essential service depends on it, add the documented nofail policy and an appropriate device timeout for that entry. Configure dependent workloads not to write into an empty mountpoint.",
+          "de": "Ist der Datenträger bewusst entfernbar und hängt kein notwendiger Dienst davon ab, dokumentierte nofail-Richtlinie und passendes Gerätezeitlimit für diesen Eintrag setzen. Abhängige Arbeitslasten dürfen nicht in leeren Mountpunkt schreiben."
+        },
+        "precautions": {
+          "en": "Do not use nofail to conceal failure of /, /usr or required application data. The system may boot while the optional data remains unavailable.",
+          "de": "nofail nicht zum Verbergen von Fehlern bei /, /usr oder notwendigen Anwendungsdaten nutzen. Das System kann ohne verfügbare optionale Daten starten."
+        },
+        "rollback": {
+          "en": "Restore the prior mount options and dependency policy if the volume must become required again.",
+          "de": "Vorherige Mount-Optionen und Abhängigkeitsrichtlinie wiederherstellen, falls Volume wieder notwendig sein soll."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd fstab generator",
+        "url": "https://manpages.debian.org/trixie/systemd/systemd-fstab-generator.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd mount: nofail and device timeout",
+        "url": "https://manpages.debian.org/trixie/systemd/systemd.mount.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-local-fs-dependency-failed",
+        "all": [
+          "systemd[1]:",
+          "Dependency failed for",
+          "Local File Systems"
+        ],
+        "sample": "systemd[1]: Dependency failed for local-fs.target - Local File Systems.",
+        "negative": [
+          "systemd[1]: Reached target local-fs.target - Local File Systems.",
+          "systemd[1]: Dependency failed for Network Time Synchronization."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The local filesystem target could not satisfy a required dependency.",
+          "de": "Das lokale Dateisystemziel konnte eine nötige Abhängigkeit nicht erfüllen."
+        },
+        "significance": {
+          "en": "Find the preceding mount/device/fsck failure; this aggregate message does not justify disabling every mount check.",
+          "de": "Vorherigen Mount-/Geräte-/fsck-Fehler finden; diese Gesamtmeldung rechtfertigt keine Abschaltung aller Mount-Prüfungen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-root-uuid-missing",
+    "slug": {
+      "en": "boot-root-uuid-missing",
+      "de": "boot-root-uuid-fehlt"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Initramfs cannot find the configured root UUID",
+      "de": "Initramfs findet konfigurierte Root-UUID nicht"
+    },
+    "summary": {
+      "en": "An early shell with a missing root UUID can mean wrong identity, an unopened container or missing storage support; compare each layer in order.",
+      "de": "Eine frühe Shell mit fehlender Root-UUID kann falsche Kennung, ungeöffneten Container oder fehlende Speichertreiber bedeuten; Schichten der Reihe nach prüfen."
+    },
+    "environment": {
+      "en": "Linux early userspace using initramfs-tools, dracut or systemd initrd with root=UUID=... or another persistent root-device selector.",
+      "de": "Früher Linux-Userspace mit initramfs-tools, dracut oder systemd-Initrd sowie root=UUID=... oder anderer dauerhafter Root-Gerätekennung."
+    },
+    "symptoms": {
+      "en": [
+        "Boot waits for the root filesystem then opens an initramfs/emergency shell.",
+        "The configured UUID is absent from the early device view."
+      ],
+      "de": [
+        "Der Start wartet auf Root-Dateisystem und öffnet dann Initramfs-/Notfall-Shell.",
+        "Die konfigurierte UUID fehlt in der frühen Geräteansicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A reformatted, cloned or moved filesystem may have a different identity.",
+        "de": "Ein neu formatiertes, geklontes oder verschobenes Dateisystem kann andere Kennung haben."
+      },
+      {
+        "en": "The physical controller, encryption layer or LVM activation may be unavailable in this image; a correct UUID can still be invisible.",
+        "de": "Physischer Controller, Verschlüsselungsschicht oder LVM-Aktivierung können im Abbild fehlen; eine korrekte UUID kann dennoch unsichtbar sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-early-root-selector",
+        "command": "cat /proc/cmdline",
+        "explanation": {
+          "en": "Read the boot arguments from the failed early environment or recovered boot. This does not edit the bootloader.",
+          "de": "Boot-Argumente aus gescheiterter früher Umgebung oder wiederhergestelltem Start lesen. Dies ändert den Bootloader nicht."
+        },
+        "interpretation": {
+          "en": "Record root= and relevant rd.luks/rd.lvm selectors. A LUKS container UUID differs from the filesystem UUID inside its opened mapping.",
+          "de": "root= und relevante rd.luks-/rd.lvm-Selektoren festhalten. LUKS-Container-UUID unterscheidet sich von Dateisystem-UUID innerhalb geöffneter Zuordnung."
+        }
+      },
+      {
+        "id": "read-visible-filesystem-identities",
+        "command": "lsblk -f",
+        "explanation": {
+          "en": "Read available block-device layers and filesystem identities. A tiny initramfs may lack lsblk; use a distribution rescue environment then.",
+          "de": "Vorhandene Blockgeräteschichten und Dateisystemkennungen lesen. Kleine Initramfs kann lsblk nicht enthalten; dann Distributions-Rettungsumgebung nutzen."
+        },
+        "interpretation": {
+          "en": "Match the intended root filesystem to its parent chain, not the first Linux-looking partition. Missing lower layers point to detection/unlock/activation before UUID correction.",
+          "de": "Gewolltes Root-Dateisystem seiner Elternkette statt erster linuxartig aussehender Partition zuordnen. Fehlende untere Schichten sprechen für Erkennung/Entsperren/Aktivierung vor UUID-Korrektur."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-verified-root-selector",
+        "title": {
+          "en": "Correct a verified root-device selector",
+          "de": "Verifizierten Root-Geräteselektor korrigieren"
+        },
+        "body": {
+          "en": "If the intended root is visible with a different verified UUID, test the corrected root= value for one boot using the boot menu editor. Once confirmed, update the distribution’s source configuration and regenerate its entries.",
+          "de": "Ist vorgesehenes Root mit anderer verifizierter UUID sichtbar, korrigierten root=-Wert über Boot-Menü-Editor für einen Start testen. Nach Bestätigung Quellkonfiguration der Distribution aktualisieren und Einträge erneuern."
+        },
+        "precautions": {
+          "en": "Do not change the disk UUID merely to match a stale argument. Confirm filesystem contents and any subvolume rootflags before choosing it.",
+          "de": "Platten-UUID nicht lediglich zum Anpassen an altes Argument ändern. Dateisysteminhalt und gegebenenfalls Subvolume-rootflags vor Auswahl bestätigen."
+        },
+        "rollback": {
+          "en": "Cancel the temporary edit or boot the unmodified older entry; restore the saved source configuration if the persistent change fails.",
+          "de": "Temporäre Änderung verwerfen oder unveränderten älteren Eintrag starten; bei fehlerhafter Daueränderung gesicherte Quellkonfiguration zurückstellen."
+        }
+      },
+      {
+        "id": "restore-missing-root-layer",
+        "title": {
+          "en": "Restore the missing early-boot layer",
+          "de": "Fehlende frühe Boot-Schicht wiederherstellen"
+        },
+        "body": {
+          "en": "If the root UUID is correct but its parent device is absent, include the supported storage driver or required encryption/LVM module in the selected kernel’s initramfs using distribution tooling. Rebuild after correcting relevant discovery selectors.",
+          "de": "Ist Root-UUID korrekt, fehlt aber Elterngerät, unterstützten Speichertreiber oder benötigtes Verschlüsselungs-/LVM-Modul über Distributionstools in Initramfs des gewählten Kernels aufnehmen. Nach Korrektur zugehöriger Erkennungsselektoren neu erzeugen."
+        },
+        "precautions": {
+          "en": "Keep the old kernel/image pair and check the real boot partition mount and free space. Reformatting is not a discovery repair.",
+          "de": "Altes Kernel-/Abbildpaar behalten sowie echte Boot-Partition und freien Platz prüfen. Neuformatieren repariert keine Erkennung."
+        },
+        "rollback": {
+          "en": "Choose the retained image or rescue medium and restore the previous early-boot configuration if the rebuilt image cannot discover root.",
+          "de": "Bei fehlender Root-Erkennung vorhandenes Abbild oder Rettungsmedium wählen und vorherige frühe Boot-Konfiguration zurückstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "initramfs-tools root-device and boot-script handling",
+        "url": "https://manpages.debian.org/trixie/initramfs-tools-core/initramfs-tools.7.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "dracut root-device selectors and troubleshooting",
+        "url": "https://www.kernel.org/pub/linux/utils/boot/dracut/dracut.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "initramfs-root-uuid-alert",
+        "all": [
+          "ALERT! UUID=",
+          "does not exist."
+        ],
+        "sample": "ALERT! UUID=11111111-2222-3333-4444-555555555555 does not exist. Dropping to a shell!",
+        "negative": [
+          "UUID=11111111-2222-3333-4444-555555555555 mounted successfully",
+          "application: cache path does not exist."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Early userspace could not find the configured UUID.",
+          "de": "Früher Userspace konnte konfigurierte UUID nicht finden."
+        },
+        "significance": {
+          "en": "Verify identity and underlying storage layers; missing in this environment does not mean the filesystem was deleted.",
+          "de": "Kennung und darunterliegende Speicherschichten prüfen; Fehlen in dieser Umgebung bedeutet kein gelöschtes Dateisystem."
+        }
+      },
+      {
+        "id": "dracut-root-byuuid-missing",
+        "all": [
+          "dracut",
+          "Warning: /dev/disk/by-uuid/",
+          "does not exist"
+        ],
+        "sample": "dracut-initqueue[400]: Warning: /dev/disk/by-uuid/11111111-2222-3333-4444-555555555555 does not exist",
+        "negative": [
+          "dracut: Warning: optional network configuration missing",
+          "dracut: /dev/disk/by-uuid/11111111-2222-3333-4444-555555555555 found"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "dracut timed out without the requested persistent filesystem device.",
+          "de": "dracut wartete vergeblich auf angefordertes dauerhaft bezeichnetes Dateisystemgerät."
+        },
+        "significance": {
+          "en": "Check the command line and parent layers before rebuilding an image or editing filesystem identifiers.",
+          "de": "Befehlszeile und Elternschichten vor Abbild-Neubau oder Änderung von Dateisystemkennungen prüfen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-luks-unlock",
+    "slug": {
+      "en": "boot-luks-unlock",
+      "de": "boot-luks-entsperren"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Encrypted root cannot be unlocked during boot",
+      "de": "Verschlüsseltes Root lässt sich beim Start nicht entsperren"
+    },
+    "summary": {
+      "en": "A LUKS boot prompt can fail from layout, missing key material or wrong device selection; keep existing keyslots intact while inspecting metadata.",
+      "de": "Ein LUKS-Boot-Prompt kann an Tastaturlayout, fehlendem Schlüssel oder falscher Gerätewahl scheitern; vorhandene Keyslots bei Metadatenprüfung erhalten."
+    },
+    "environment": {
+      "en": "LUKS-encrypted Linux root using cryptsetup/systemd-cryptsetup, possibly with a keyfile, TPM or hardware token in the early boot path.",
+      "de": "LUKS-verschlüsseltes Linux-Root mit cryptsetup/systemd-cryptsetup, eventuell Schlüsseldatei, TPM oder Hardware-Token im frühen Startpfad."
+    },
+    "symptoms": {
+      "en": [
+        "A known passphrase is rejected only at early boot.",
+        "The initrd reports an unavailable keyfile or cannot create the expected encrypted mapping."
+      ],
+      "de": [
+        "Eine bekannte Passphrase wird nur beim frühen Start abgelehnt.",
+        "Die Initrd meldet fehlende Schlüsseldatei oder erzeugt erwartete verschlüsselte Zuordnung nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The early keyboard layout, selected container or cached credential may differ from the normal session.",
+        "de": "Frühes Tastaturlayout, gewählter Container oder zwischengespeicherter Schlüssel können von normaler Sitzung abweichen."
+      },
+      {
+        "en": "A missing token/keyfile, changed TPM measurement or absent cryptsetup integration can prevent automatic unlock; none of these proves lost encrypted data.",
+        "de": "Fehlender Token/Schlüsseldatei, geänderte TPM-Messung oder fehlende cryptsetup-Einbindung können das automatische Entsperren verhindern; dies beweist keinen Verlust verschlüsselter Daten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-luks-header-metadata",
+        "command": "cryptsetup luksDump /dev/nvme0n1p3",
+        "explanation": {
+          "en": "Replace /dev/nvme0n1p3 with the verified encrypted container. This reads header metadata and normally requires administrator device access; never add a volume-key dump option.",
+          "de": "/dev/nvme0n1p3 durch verifizierten verschlüsselten Container ersetzen. Dies liest Header-Metadaten und braucht normalerweise Administrator-Gerätezugriff; keine Volume-Key-Ausgabeoption ergänzen."
+        },
+        "interpretation": {
+          "en": "Check LUKS UUID, version, keyslots and token metadata. A valid header does not test the supplied secret, and an inner filesystem UUID is a different identity.",
+          "de": "LUKS-UUID, Version, Keyslots und Tokenmetadaten prüfen. Gültiger Header prüft kein eingegebenes Geheimnis; innere Dateisystem-UUID ist andere Kennung."
+        }
+      },
+      {
+        "id": "read-boot-unlock-configuration",
+        "command": "cat /etc/crypttab",
+        "explanation": {
+          "en": "Read the affected installation’s crypttab from a recovered or rescue environment; this file can contain paths to sensitive key material, not the key contents itself.",
+          "de": "crypttab der betroffenen Installation aus wiederhergestellter oder Rettungsumgebung lesen; Datei kann Pfade zu sensiblen Schlüsseln enthalten, nicht deren Inhalte selbst."
+        },
+        "interpretation": {
+          "en": "Compare container UUID, mapping name, key source and initrd options with the failing prompt. The live environment’s crypttab is not authoritative for the installed system.",
+          "de": "Container-UUID, Zuordnungsname, Schlüsselquelle und Initrd-Optionen mit gescheitertem Prompt vergleichen. crypttab des Live-Systems gilt nicht für installiertes System."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "use-known-interactive-recovery-secret",
+        "title": {
+          "en": "Use a known interactive recovery secret",
+          "de": "Bekanntes interaktives Wiederherstellungsgeheimnis nutzen"
+        },
+        "body": {
+          "en": "If automatic unlock fails, use an already enrolled passphrase or recovery key through the distribution’s normal fallback prompt after checking keyboard layout and target container. If it works in rescue but not early boot, correct the early keymap/configuration.",
+          "de": "Scheitert automatisches Entsperren, bereits registrierte Passphrase oder Wiederherstellungsschlüssel über normalen Ersatz-Prompt der Distribution nach Layout- und Containerprüfung nutzen. Klappt es in Rettungsumgebung, aber nicht beim Start, frühe Tastenbelegung/Konfiguration korrigieren."
+        },
+        "precautions": {
+          "en": "Never type the secret into logs or chat, and do not remove keyslots, erase TPM enrollment or run luksFormat to solve an unlock failure.",
+          "de": "Geheimnis nie in Protokoll oder Chat eingeben und keine Keyslots entfernen, TPM-Registrierung löschen oder luksFormat zur Lösung nutzen."
+        },
+        "rollback": {
+          "en": "Restore the previous keymap or unlock source configuration; existing enrolled credentials remain the recovery path.",
+          "de": "Vorherige Tastenbelegung oder Schlüsselquellen-Konfiguration wiederherstellen; bestehende registrierte Schlüssel bleiben Rettungsweg."
+        }
+      },
+      {
+        "id": "restore-key-source-and-initrd-integration",
+        "title": {
+          "en": "Restore the required key source and initrd integration",
+          "de": "Benötigte Schlüsselquelle und Initrd-Einbindung wiederherstellen"
+        },
+        "body": {
+          "en": "If the error identifies a missing keyfile/device or token path, restore that source through the documented encrypted-boot setup and regenerate the specific initramfs after verifying its inclusion rules. For TPM changes, recover interactively before planning documented re-enrollment.",
+          "de": "Nennt Fehler fehlende Schlüsseldatei/-gerät oder Tokenpfad, Quelle gemäß dokumentierter Verschlüsselungs-Boot-Einrichtung zurückbringen und betroffene Initramfs nach Prüfung der Aufnahmeregeln erneuern. Bei TPM-Änderungen vor dokumentierter Neuregistrierung interaktiv wiederherstellen."
+        },
+        "precautions": {
+          "en": "Keep a header backup and a verified independent unlock method available before modifying enrollment. Never make a keyfile broadly readable to bypass a boot problem.",
+          "de": "Vor Registrierungsänderungen Header-Sicherung und verifizierten unabhängigen Entsperrweg bereithalten. Schlüsseldatei nie breit lesbar machen, um Boot-Fehler zu umgehen."
+        },
+        "rollback": {
+          "en": "Boot the retained initramfs and restore its crypttab/key-source configuration if the new automatic path fails.",
+          "de": "Bei fehlerhaftem neuem automatischem Pfad vorhandene Initramfs starten und zugehörige crypttab-/Schlüsselquellen-Konfiguration zurückstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "cryptsetup LUKS header inspection",
+        "url": "https://manpages.debian.org/trixie/cryptsetup-bin/cryptsetup-luksDump.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd encrypted-device generator",
+        "url": "https://manpages.debian.org/trixie/systemd-cryptsetup/systemd-cryptsetup-generator.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "crypttab boot integration",
+        "url": "https://manpages.debian.org/trixie/cryptsetup/crypttab.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-cryptsetup-passphrase-failed",
+        "all": [
+          "systemd-cryptsetup[",
+          "Failed to activate with specified passphrase"
+        ],
+        "sample": "systemd-cryptsetup[400]: Failed to activate with specified passphrase.",
+        "negative": [
+          "systemd-cryptsetup[400]: Set cipher aes, mode xts-plain64",
+          "application: password verification failed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The encrypted-device activation attempt using the supplied credential failed.",
+          "de": "Aktivierungsversuch des verschlüsselten Geräts mit geliefertem Schlüssel ist gescheitert."
+        },
+        "significance": {
+          "en": "Inspect the surrounding error and device identity; this message alone does not prove an incorrect password or header damage.",
+          "de": "Umgebenden Fehler und Gerätekennung prüfen; Meldung allein beweist weder falsches Passwort noch Header-Schaden."
+        }
+      },
+      {
+        "id": "systemd-cryptsetup-keyfile-missing",
+        "all": [
+          "systemd-cryptsetup[",
+          "Failed to activate with key file",
+          "No such file or directory"
+        ],
+        "sample": "systemd-cryptsetup[400]: Failed to activate with key file '/run/keys/root.key': No such file or directory",
+        "negative": [
+          "systemd-cryptsetup[400]: Key file /run/keys/root.key loaded",
+          "service[400]: configuration file missing"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The configured keyfile activation path is unavailable.",
+          "de": "Konfigurierter Aktivierungsweg über Schlüsseldatei ist nicht verfügbar."
+        },
+        "significance": {
+          "en": "Verify early-boot file inclusion and source device availability; do not publish the keyfile or recreate the encrypted volume.",
+          "de": "Frühe Dateiaufnahme und Quellgeräteverfügbarkeit prüfen; Schlüsseldatei nicht veröffentlichen und verschlüsseltes Volume nicht neu erzeugen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-uefi-mode-mismatch",
+    "slug": {
+      "en": "boot-uefi-mode-mismatch",
+      "de": "boot-uefi-moduskonflikt"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Installed bootloader and firmware boot mode disagree",
+      "de": "Installierter Bootloader und Firmware-Startmodus passen nicht"
+    },
+    "summary": {
+      "en": "A recovery image booted in legacy mode cannot inspect normal UEFI variables; confirm the installed boot path before reinstalling a bootloader.",
+      "de": "Ein im Legacy-Modus gestartetes Rettungsabbild sieht normale UEFI-Variablen nicht; installierten Startpfad vor Bootloader-Neuinstallation prüfen."
+    },
+    "environment": {
+      "en": "x86 systems with UEFI and possible CSM/legacy support, especially after firmware reset or booting installation/recovery media.",
+      "de": "x86-Systeme mit UEFI und möglichem CSM-/Legacy-Modus, besonders nach Firmware-Reset oder Start von Installations-/Rettungsmedien."
+    },
+    "symptoms": {
+      "en": [
+        "Firmware reports no suitable boot device after a settings reset.",
+        "efibootmgr reports EFI variables unavailable in a recovery session."
+      ],
+      "de": [
+        "Nach Einstellungsreset meldet die Firmware kein geeignetes Startgerät.",
+        "efibootmgr meldet in Rettungssitzung nicht verfügbare EFI-Variablen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Firmware may select CSM while the installation uses an EFI loader, or the reverse.",
+        "de": "Firmware kann CSM wählen, während Installation EFI-Lader nutzt, oder umgekehrt."
+      },
+      {
+        "en": "The recovery medium may be booted in a different mode; EFI variable access can also be unavailable due to kernel/platform configuration.",
+        "de": "Rettungsmedium kann in anderem Modus gestartet sein; EFI-Variablenzugriff kann außerdem durch Kernel-/Plattformkonfiguration fehlen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-session-efi-presence",
+        "command": "ls /sys/firmware/efi",
+        "explanation": {
+          "en": "Read whether this boot exposes EFI firmware information; this describes the current session, including a live environment.",
+          "de": "Prüfen, ob dieser Start EFI-Firmwareinformationen bereitstellt; dies beschreibt aktuelle Sitzung einschließlich Live-Umgebung."
+        },
+        "interpretation": {
+          "en": "An existing EFI directory supports a UEFI boot. Its absence on a normal distribution kernel often means legacy boot, but does not identify the installed loader by itself.",
+          "de": "Vorhandenes EFI-Verzeichnis spricht für UEFI-Start. Fehlen bei normalem Distributionskernel bedeutet häufig Legacy-Start, identifiziert installierten Lader aber nicht allein."
+        }
+      },
+      {
+        "id": "read-firmware-boot-entries",
+        "command": "efibootmgr -v",
+        "explanation": {
+          "en": "Read firmware boot entries and current/order metadata, with administrator access if required. Do not add deletion, creation or order options.",
+          "de": "Firmware-Einträge und aktuellen/Reihenfolge-Status bei Bedarf mit Administratorzugriff lesen. Keine Lösch-, Erzeugungs- oder Reihenfolgeoptionen ergänzen."
+        },
+        "interpretation": {
+          "en": "Compare loader partition and EFI path with the installation. Unavailable EFI variables in a legacy live boot do not prove the installed ESP is missing.",
+          "de": "Lader-Partition und EFI-Pfad mit Installation vergleichen. Fehlende EFI-Variablen in Legacy-Live-Start beweisen keine fehlende installierte ESP."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-installed-firmware-mode",
+        "title": {
+          "en": "Restore the mode used by the installation",
+          "de": "Von Installation verwendeten Firmware-Modus wiederherstellen"
+        },
+        "body": {
+          "en": "If the installation’s verified EFI loader exists but firmware switched to legacy mode, restore the recorded UEFI boot setting and choose its existing Linux entry. Conversely, preserve a deliberate legacy installation’s original mode unless planning a supported conversion.",
+          "de": "Existiert verifizierter EFI-Lader, wurde Firmware aber auf Legacy gestellt, dokumentierten UEFI-Modus zurückstellen und vorhandenen Linux-Eintrag wählen. Bewusste Legacy-Installation im ursprünglichen Modus behalten, sofern keine unterstützte Umstellung geplant ist."
+        },
+        "precautions": {
+          "en": "Record firmware settings and retain disk-encryption recovery information before changes. Do not switch storage-controller modes together with the boot mode.",
+          "de": "Firmware-Einstellungen dokumentieren und Verschlüsselungs-Wiederherstellungsdaten vor Änderung behalten. Speichercontrollermodus nicht gleichzeitig mit Boot-Modus wechseln."
+        },
+        "rollback": {
+          "en": "Restore the recorded previous firmware mode and select the known working boot entry if the change fails.",
+          "de": "Bei Fehler dokumentierten vorherigen Firmware-Modus zurückstellen und bekannten funktionierenden Starteintrag wählen."
+        }
+      },
+      {
+        "id": "boot-rescue-in-matching-mode",
+        "title": {
+          "en": "Boot recovery media in the matching mode",
+          "de": "Rettungsmedium im passenden Modus starten"
+        },
+        "body": {
+          "en": "If recovery must repair a UEFI entry, boot the rescue media using its UEFI-labelled firmware entry and recheck EFI visibility. Then follow the distribution’s installed-root and ESP mounting procedure before any bootloader repair.",
+          "de": "Muss Rettungsumgebung UEFI-Eintrag reparieren, Medium über UEFI-bezeichneten Firmware-Eintrag starten und EFI-Sichtbarkeit erneut prüfen. Danach Distributionsverfahren für installiertes Root und ESP vor Bootloader-Reparatur befolgen."
+        },
+        "precautions": {
+          "en": "A live-session bootctl or efibootmgr result is about that session. Do not install a different bootloader merely because its command happens to be available.",
+          "de": "bootctl-/efibootmgr-Ergebnis der Live-Sitzung betrifft diese Sitzung. Nicht bloß wegen verfügbarer Befehle einen anderen Bootloader installieren."
+        },
+        "rollback": {
+          "en": "Exit recovery and boot the original installed entry; leave the rescue medium available until the installed path has been checked.",
+          "de": "Rettungsumgebung verlassen und ursprünglichen installierten Eintrag starten; Medium bis Prüfung des installierten Pfads bereithalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "efibootmgr: firmware entry inspection",
+        "url": "https://manpages.debian.org/trixie/efibootmgr/efibootmgr.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "System76 bootloader repair: UEFI and legacy paths",
+        "url": "https://system76.com/support/bootloader/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "grub-rescue-prefix",
+    "slug": {
+      "en": "grub-rescue-prefix",
+      "de": "grub-rescue-prefix-pfad"
+    },
+    "category": "boot",
+    "title": {
+      "en": "GRUB rescue cannot locate its normal module",
+      "de": "GRUB-Rescue findet sein Normal-Modul nicht"
+    },
+    "summary": {
+      "en": "GRUB rescue often means its prefix no longer points to readable modules; inspect GRUB’s own devices before attempting a persistent reinstall.",
+      "de": "GRUB-Rescue bedeutet oft einen ungültigen Prefix zu lesbaren Modulen; GRUB-eigene Geräteansicht vor einer dauerhaften Neuinstallation prüfen."
+    },
+    "environment": {
+      "en": "GNU GRUB rescue prompt before the Linux kernel starts, after partition moves, deleted boot files or inconsistent GRUB components.",
+      "de": "GNU-GRUB-Rescue-Prompt vor Linux-Kernelstart, nach Partitionsverschiebung, gelöschten Boot-Dateien oder inkonsistenten GRUB-Komponenten."
+    },
+    "symptoms": {
+      "en": [
+        "Boot opens grub rescue> instead of the normal menu.",
+        "An error names a missing normal.mod path."
+      ],
+      "de": [
+        "Der Start öffnet grub rescue> statt normalem Menü.",
+        "Eine Meldung nennt fehlenden normal.mod-Pfad."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The embedded prefix may point to the wrong partition or directory.",
+        "de": "Eingebetteter Prefix kann auf falsche Partition oder Verzeichnis zeigen."
+      },
+      {
+        "en": "The correct filesystem may be unreadable or required GRUB modules may be absent; a rescue prompt does not by itself mean Linux data is lost.",
+        "de": "Richtiges Dateisystem kann unlesbar sein oder benötigte GRUB-Module fehlen; Rescue-Prompt allein bedeutet keinen Verlust der Linux-Daten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-grub-rescue-variables",
+        "command": "set",
+        "explanation": {
+          "en": "Run this read-only form at the GRUB rescue prompt, not in a Linux shell. With no assignment it lists GRUB variables.",
+          "de": "Diese lesende Form am GRUB-Rescue-Prompt statt Linux-Shell ausführen. Ohne Zuweisung listet sie GRUB-Variablen."
+        },
+        "interpretation": {
+          "en": "Record root and prefix exactly. GRUB device names such as (hd0,gpt2) are not interchangeable with Linux /dev names.",
+          "de": "root und prefix exakt festhalten. GRUB-Gerätenamen wie (hd0,gpt2) sind nicht mit Linux-/dev-Namen austauschbar."
+        }
+      },
+      {
+        "id": "list-grub-visible-devices",
+        "command": "ls",
+        "explanation": {
+          "en": "Run at the GRUB rescue prompt with no target; it lists devices visible to GRUB and does not mount or repair them.",
+          "de": "Am GRUB-Rescue-Prompt ohne Ziel ausführen; sichtbare Geräte werden ohne Mount oder Reparatur aufgelistet."
+        },
+        "interpretation": {
+          "en": "Compare available partitions with root/prefix. Targeted ls on a verified partition can check directory contents; a readable partition is not automatically the intended /boot.",
+          "de": "Vorhandene Partitionen mit root/prefix vergleichen. Gezieltes ls auf verifizierter Partition kann Verzeichnisse prüfen; lesbare Partition ist nicht automatisch vorgesehenes /boot."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-prefix-for-one-boot",
+        "title": {
+          "en": "Restore a verified prefix for one boot",
+          "de": "Verifizierten Prefix für einen Start wiederherstellen"
+        },
+        "body": {
+          "en": "If inspection finds the correct GRUB module directory, use the GNU rescue procedure to set root/prefix to that verified location, load normal and return to its menu. These session changes allow recovery without first rewriting disk boot structures.",
+          "de": "Findet Prüfung richtiges GRUB-Modulverzeichnis, GNU-Rescue-Verfahren nutzen: root/prefix auf verifizierten Ort setzen, normal laden und Menü erreichen. Sitzungsänderungen ermöglichen Wiederherstellung ohne vorheriges Umschreiben von Boot-Strukturen."
+        },
+        "precautions": {
+          "en": "Do not copy example disk numbers. Secure Boot builds can restrict module loading; use the distribution’s signed recovery path when required.",
+          "de": "Beispiel-Plattennummern nicht kopieren. Secure-Boot-Builds können Modulladen einschränken; bei Bedarf signierten Rettungsweg der Distribution nutzen."
+        },
+        "rollback": {
+          "en": "Reboot discards rescue-session variables. Keep the original values recorded and a matching rescue medium ready.",
+          "de": "Neustart verwirft Rescue-Sitzungsvariablen. Ursprüngliche Werte dokumentiert und passendes Rettungsmedium bereit halten."
+        }
+      },
+      {
+        "id": "repair-installed-grub-consistently",
+        "title": {
+          "en": "Repair the installed GRUB components consistently",
+          "de": "Installierte GRUB-Komponenten konsistent reparieren"
+        },
+        "body": {
+          "en": "After reaching Linux or a correctly mounted rescue environment, reinstall the distribution’s existing GRUB variant and regenerate its configuration for the verified firmware mode and boot target. Verify that the intended /boot and ESP are actually mounted.",
+          "de": "Nach Erreichen von Linux oder korrekt eingehängter Rettungsumgebung bestehende GRUB-Variante der Distribution neu installieren und Konfiguration für verifizierten Firmware-Modus sowie Boot-Ziel erneuern. Tatsächlich eingehängtes /boot und ESP prüfen."
+        },
+        "precautions": {
+          "en": "Do not run grub-install against a guessed whole disk or replace a signed shim chain with an unsigned loader. Keep a working alternate entry.",
+          "de": "grub-install nicht gegen geratene ganze Platte ausführen und signierte shim-Kette nicht durch unsignierten Lader ersetzen. Funktionierenden alternativen Eintrag behalten."
+        },
+        "rollback": {
+          "en": "Restore the saved boot files/configuration using the distribution rescue procedure or select the preserved alternate entry if the repaired path fails.",
+          "de": "Bei fehlerhaft repariertem Pfad gesicherte Boot-Dateien/Konfiguration per Distributions-Rettungsverfahren wiederherstellen oder erhaltenen Alternativ-Eintrag wählen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "GNU GRUB: GRUB only offers a rescue shell",
+        "url": "https://www.gnu.org/software/grub/manual/grub/html_node/GRUB-only-offers-a-rescue-shell.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "System76: repairing GRUB boot components",
+        "url": "https://system76.com/support/bootloader/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "LFS: GRUB partition-relative paths and recoverable boot configuration",
+        "url": "https://www.linuxfromscratch.org/lfs/view/stable/chapter10/grub.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "grub-normal-module-missing",
+        "all": [
+          "error: file",
+          "/normal.mod",
+          "not found."
+        ],
+        "sample": "error: file '/boot/grub/x86_64-efi/normal.mod' not found.",
+        "negative": [
+          "error: file '/home/user/report.txt' not found.",
+          "GRUB normal.mod loaded successfully"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "GRUB could not read its normal-mode module at the referenced prefix.",
+          "de": "GRUB konnte sein Normal-Modul am referenzierten Prefix nicht lesen."
+        },
+        "significance": {
+          "en": "Inspect GRUB root/prefix and filesystem visibility; this narrow pattern does not classify every generic unknown-filesystem error.",
+          "de": "GRUB-root/prefix und Dateisystemsichtbarkeit prüfen; enges Muster ordnet nicht jeden allgemeinen unknown-filesystem-Fehler zu."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-boot-entry-missing",
+    "slug": {
+      "en": "systemd-boot-entry-missing",
+      "de": "systemd-boot-eintrag-fehlt"
+    },
+    "category": "boot",
+    "title": {
+      "en": "systemd-boot does not list the installed Linux entry",
+      "de": "systemd-boot listet installierten Linux-Eintrag nicht"
+    },
+    "summary": {
+      "en": "systemd-boot reads entries from the ESP or XBOOTLDR; missing menu items require checking the actual boot partition, entry files and image paths.",
+      "de": "systemd-boot liest Einträge von ESP oder XBOOTLDR; bei fehlenden Menüpunkten echte Boot-Partition, Eintragsdateien und Abbildpfade prüfen."
+    },
+    "environment": {
+      "en": "UEFI systems intentionally using systemd-boot with Boot Loader Specification Type #1 entries or Type #2 unified kernel images.",
+      "de": "UEFI-Systeme mit bewusst verwendetem systemd-boot und Boot-Loader-Specification-Typ-1-Einträgen oder Typ-2-Unified-Kernel-Images."
+    },
+    "symptoms": {
+      "en": [
+        "The menu contains firmware or another OS but no expected Linux entry.",
+        "A kernel update appears installed on root yet absent from bootctl list."
+      ],
+      "de": [
+        "Das Menü enthält Firmware oder anderes Betriebssystem, aber keinen erwarteten Linux-Eintrag.",
+        "Ein Kernel-Update scheint auf Root installiert, fehlt aber in bootctl list."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Entry files or kernel/UKI images may have been written while the actual boot partition was unmounted.",
+        "de": "Einträge oder Kernel-/UKI-Abbilder können bei nicht eingehängter tatsächlicher Boot-Partition geschrieben worden sein."
+      },
+      {
+        "en": "The loader may use a different ESP, an incompatible entry layout or an absent XBOOTLDR image; installing the loader alone does not create every kernel entry.",
+        "de": "Lader kann andere ESP, unpassendes Eintragsformat oder fehlendes XBOOTLDR-Abbild nutzen; Laderinstallation allein erzeugt nicht jeden Kerneleintrag."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-systemd-boot-status",
+        "command": "bootctl status --no-pager",
+        "explanation": {
+          "en": "Read current loader and ESP/XBOOTLDR information. Administrator access may be needed to read boot files; this command does not install a loader.",
+          "de": "Aktuellen Lader und ESP-/XBOOTLDR-Informationen lesen. Für Boot-Dateien kann Administratorzugriff nötig sein; Befehl installiert keinen Lader."
+        },
+        "interpretation": {
+          "en": "Compare the actually booted loader/partition with the mount used by kernel updates. In a live session, current loader refers to the live boot.",
+          "de": "Tatsächlich gestarteten Lader/Partition mit Mount der Kernel-Updates vergleichen. In einer Live-Sitzung meint aktueller Lader deren Start."
+        }
+      },
+      {
+        "id": "list-bls-entries",
+        "command": "bootctl list --no-pager",
+        "explanation": {
+          "en": "Read discovered Boot Loader Specification entries and referenced image paths without changing the default.",
+          "de": "Erkannte Boot-Loader-Specification-Einträge und referenzierte Abbildpfade ohne Standardänderung lesen."
+        },
+        "interpretation": {
+          "en": "An absent entry differs from a listed entry with a missing image. Check whether its files reside on the ESP/XBOOTLDR used by the booted loader.",
+          "de": "Fehlender Eintrag unterscheidet sich von gelistetem Eintrag mit fehlendem Abbild. Dateien auf vom gestarteten Lader verwendeter ESP/XBOOTLDR prüfen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "regenerate-entry-on-actual-boot-partition",
+        "title": {
+          "en": "Regenerate entries on the actual boot partition",
+          "de": "Einträge auf tatsächlicher Boot-Partition erneuern"
+        },
+        "body": {
+          "en": "If the update wrote outside the mounted ESP/XBOOTLDR, mount the verified installation boot partition through the distribution’s normal procedure and rerun its supported kernel-entry generation. Confirm both entry and referenced images exist.",
+          "de": "Schrieb Update außerhalb eingehängter ESP/XBOOTLDR, verifizierte Boot-Partition der Installation über normales Distributionsverfahren einhängen und unterstützte Kerneleintragserzeugung erneut ausführen. Eintrag und referenzierte Abbilder bestätigen."
+        },
+        "precautions": {
+          "en": "Keep an older working kernel entry and avoid copying opaque filenames from another machine. Image paths in a Type #1 entry are relative to the boot partition.",
+          "de": "Älteren funktionierenden Kerneleintrag behalten und keine undurchsichtigen Dateinamen anderer Rechner kopieren. Abbildpfade im Typ-1-Eintrag beziehen sich auf Boot-Partition."
+        },
+        "rollback": {
+          "en": "Restore the saved original entry files and select the older verified entry if regeneration fails.",
+          "de": "Bei fehlgeschlagener Erneuerung gesicherte ursprüngliche Einträge zurückstellen und älteren verifizierten Eintrag wählen."
+        }
+      },
+      {
+        "id": "repair-documented-entry-layout",
+        "title": {
+          "en": "Repair the documented entry layout",
+          "de": "Dokumentiertes Eintragsformat reparieren"
+        },
+        "body": {
+          "en": "If files are on the correct partition but the entry is malformed, correct its documented Type #1 fields or regenerate the distribution’s UKI Type #2 image. Check that the intended signed image matches the selected entry.",
+          "de": "Liegen Dateien auf richtiger Partition, ist Eintrag aber fehlerhaft, dokumentierte Typ-1-Felder korrigieren oder UKI-Typ-2-Abbild der Distribution erneuern. Passendes vorgesehenes signiertes Abbild zum gewählten Eintrag prüfen."
+        },
+        "precautions": {
+          "en": "Do not replace systemd-boot with GRUB merely to create a missing entry. Follow the installed distribution’s generator so future kernel updates remain consistent.",
+          "de": "systemd-boot nicht bloß wegen fehlendem Eintrag durch GRUB ersetzen. Generator der installierten Distribution nutzen, damit künftige Kernel-Updates konsistent bleiben."
+        },
+        "rollback": {
+          "en": "Restore the prior entry or UKI backup and boot that verified version; remove only a newly created broken entry.",
+          "de": "Vorherigen Eintrag oder UKI-Sicherung zurückstellen und verifizierte Version starten; nur neu erzeugten fehlerhaften Eintrag entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd-boot entry discovery",
+        "url": "https://manpages.debian.org/trixie/systemd-boot/systemd-boot.7.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "UAPI Boot Loader Specification",
+        "url": "https://uapi-group.org/specifications/specs/boot_loader_specification/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "bootctl inspection commands",
+        "url": "https://manpages.debian.org/trixie/systemd-boot-tools/bootctl.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "boot-secure-boot-rejected",
+    "slug": {
+      "en": "boot-secure-boot-rejected",
+      "de": "boot-secure-boot-abgelehnt"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Secure Boot rejects a bootloader or kernel image",
+      "de": "Secure Boot lehnt Bootloader oder Kernel-Abbild ab"
+    },
+    "summary": {
+      "en": "A boot-chain signature rejection occurs before normal driver loading; verify the signed loader, kernel and trust path without erasing firmware keys.",
+      "de": "Eine Signaturablehnung der Boot-Kette passiert vor normalem Treiberladen; signierten Lader, Kernel und Vertrauenspfad ohne Firmware-Schlüssellöschen prüfen."
+    },
+    "environment": {
+      "en": "UEFI Secure Boot using distribution shim/GRUB or a signed systemd-boot/UKI chain. This differs from a kernel module signature denial after boot.",
+      "de": "UEFI Secure Boot mit Distributions-shim/GRUB oder signierter systemd-boot-/UKI-Kette. Dies unterscheidet sich von Modul-Signaturablehnung nach dem Start."
+    },
+    "symptoms": {
+      "en": [
+        "Firmware or shim displays a signature/security violation before Linux starts.",
+        "GRUB rejects a selected kernel with bad shim signature."
+      ],
+      "de": [
+        "Firmware oder shim zeigt vor Linuxstart eine Signatur-/Sicherheitsverletzung.",
+        "GRUB lehnt gewählten Kernel mit bad shim signature ab."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An unsigned or untrusted image may have replaced a signed boot component.",
+        "de": "Ein unsigniertes oder nicht vertrauenswürdiges Abbild kann signierte Boot-Komponente ersetzt haben."
+      },
+      {
+        "en": "A revoked older loader or inconsistent vendor/custom key chain can fail even when a file has a signature; signed does not automatically mean trusted.",
+        "de": "Ein widerrufener älterer Lader oder inkonsistente Hersteller-/eigene Schlüsselkette kann trotz Signatur scheitern; signiert bedeutet nicht automatisch vertrauenswürdig."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-secure-boot-state",
+        "command": "mokutil --sb-state",
+        "explanation": {
+          "en": "Read Secure Boot state from a working installed or rescue session using shim/MOK tooling; this does not alter keys.",
+          "de": "Secure-Boot-Status aus funktionierender Installation oder Rettungssitzung mit shim-/MOK-Tool lesen; keine Schlüsseländerung."
+        },
+        "interpretation": {
+          "en": "Enabled confirms enforcement context for this session. The rejected image and which stage rejected it still need to be identified from the boot screen.",
+          "de": "Aktiv bestätigt Erzwingungskontext dieser Sitzung. Abgelehntes Abbild und ablehnende Stufe müssen weiterhin aus Boot-Bildschirm bestimmt werden."
+        }
+      },
+      {
+        "id": "inspect-boot-image-signatures",
+        "command": "sbverify --list /boot/efi/EFI/Linux/example.efi",
+        "explanation": {
+          "en": "Replace the path with the actual rejected EFI/UKI image; sbverify from sbsigntool lists signatures without modifying it.",
+          "de": "Pfad durch tatsächlich abgelehntes EFI-/UKI-Abbild ersetzen; sbverify aus sbsigntool listet Signaturen ohne Änderung."
+        },
+        "interpretation": {
+          "en": "A signature can be present yet not trusted or can be revoked. Absence supports checking whether an unsigned artifact replaced the intended package image.",
+          "de": "Eine Signatur kann vorhanden, aber nicht vertrauenswürdig oder widerrufen sein. Fehlen begründet Prüfung, ob unsigniertes Artefakt vorgesehenes Paketabbild ersetzte."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-distribution-signed-chain",
+        "title": {
+          "en": "Restore the supported signed boot chain",
+          "de": "Unterstützte signierte Boot-Kette wiederherstellen"
+        },
+        "body": {
+          "en": "If a local unsigned artifact replaced a supported distribution component, recover through trusted distribution media and reinstall its matching signed loader/kernel packages into the verified ESP. Preserve the existing trusted alternate entry.",
+          "de": "Ersetzte lokales unsigniertes Artefakt unterstützte Distributionskomponente, über vertrauenswürdiges Distributionsmedium wiederherstellen und passende signierte Lader-/Kernelpakete in verifizierte ESP neu installieren. Bestehenden vertrauenswürdigen Alternativ-Eintrag behalten."
+        },
+        "precautions": {
+          "en": "Do not erase firmware PK/KEK/db keys or blindly downgrade revoked loaders. Keep disk-encryption recovery information available when changing measured boot files.",
+          "de": "Firmware-PK-/KEK-/db-Schlüssel nicht löschen und widerrufene Lader nicht blind herabstufen. Verschlüsselungs-Wiederherstellungsdaten bei gemessenen Boot-Dateiänderungen bereithalten."
+        },
+        "rollback": {
+          "en": "Boot the preserved currently trusted entry or supported recovery media; a revoked old image may be unusable as rollback.",
+          "de": "Erhaltenen aktuell vertrauenswürdigen Eintrag oder unterstütztes Rettungsmedium starten; widerrufenes altes Abbild kann als Rollback unbrauchbar sein."
+        }
+      },
+      {
+        "id": "align-intentional-custom-signing",
+        "title": {
+          "en": "Align an intentional custom signing chain",
+          "de": "Bewusst eigene Signaturkette abgleichen"
+        },
+        "body": {
+          "en": "If a custom kernel/UKI is intentional, sign it with the known key trusted by the relevant loader or firmware stage using that setup’s documented workflow. Verify the whole chain rather than enrolling unrelated module keys.",
+          "de": "Ist eigener Kernel/UKI beabsichtigt, mit bekanntem Schlüssel der zuständigen Lader-/Firmware-Stufe nach dokumentiertem Verfahren signieren. Gesamte Kette prüfen, statt unpassende Modulschlüssel zu registrieren."
+        },
+        "precautions": {
+          "en": "Know which trust database each stage uses and keep a trusted recovery image. Signature presence alone is not an end-to-end verification.",
+          "de": "Vertrauensdatenbank jeder Stufe kennen und vertrauenswürdiges Rettungsabbild behalten. Vorhandene Signatur allein ist keine Ende-zu-Ende-Prüfung."
+        },
+        "rollback": {
+          "en": "Select the preserved distribution-signed entry and restore the prior custom-image configuration if the new chain cannot boot.",
+          "de": "Bei nicht startfähiger neuer Kette erhaltenen signierten Distributionseintrag wählen und vorherige eigene Abbildkonfiguration zurückstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ubuntu UEFI Secure Boot trust chain",
+        "url": "https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "bootctl signed EFI file handling",
+        "url": "https://manpages.debian.org/trixie/systemd-boot-tools/bootctl.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "GNU GRUB shim verifier: origin of the bad-shim-signature message",
+        "url": "https://lists.gnu.org/archive/html/grub-devel/2018-10/msg00209.html",
+        "kind": "official",
+        "evidence": "mailing-list-report"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "grub-shim-signature-rejected",
+        "all": [
+          "error: bad shim signature."
+        ],
+        "sample": "error: bad shim signature.",
+        "negative": [
+          "nvidia: module verification failed: signature and/or required key missing - tainting kernel",
+          "shim: boot image signature accepted"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "GRUB’s shim verification path rejected the selected image.",
+          "de": "GRUBs shim-Prüfpfad hat gewähltes Abbild abgelehnt."
+        },
+        "significance": {
+          "en": "Check the boot image trust chain rather than rebuilding an unrelated kernel module; this line does not distinguish unsigned from revoked or malformed images.",
+          "de": "Boot-Abbild-Vertrauenskette statt unbeteiligtes Kernelmodul prüfen; Zeile unterscheidet unsignierte, widerrufene und fehlerhafte Abbilder nicht."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-root-filesystem-check",
+    "slug": {
+      "en": "boot-root-filesystem-check",
+      "de": "boot-root-dateisystempruefung"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Root filesystem check prevents normal boot",
+      "de": "Root-Dateisystemprüfung verhindert normalen Start"
+    },
+    "summary": {
+      "en": "A boot-time fsck failure can require offline filesystem-specific repair; identify the checked device and exit status before bypassing checks.",
+      "de": "Ein fsck-Fehler beim Start kann Offline-Reparatur je Dateisystem erfordern; geprüftes Gerät und Exit-Status vor Umgehung der Prüfung bestimmen."
+    },
+    "environment": {
+      "en": "Distributions checking a writable root filesystem at boot through systemd-fsck or initramfs helpers. Filesystem-specific tools and policies differ.",
+      "de": "Distributionen mit Startprüfung eines beschreibbaren Root-Dateisystems über systemd-fsck oder Initramfs-Helfer. Tools und Richtlinien unterscheiden sich je Dateisystem."
+    },
+    "symptoms": {
+      "en": [
+        "Boot stops in maintenance after a filesystem checker reports uncorrected errors.",
+        "Root remains unavailable or read-only while normal services cannot start."
+      ],
+      "de": [
+        "Der Start stoppt zur Wartung, nachdem Prüftool unkorrigierte Fehler meldet.",
+        "Root bleibt nicht verfügbar oder nur lesbar, während normale Dienste nicht starten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Metadata inconsistency after interrupted writes may require repair beyond automatic policy.",
+        "de": "Metadaten-Inkonsistenz nach unterbrochenem Schreiben kann Reparatur außerhalb automatischer Richtlinie brauchen."
+      },
+      {
+        "en": "Wrong device/type, missing checker or physical I/O errors can also fail the check; repair must target the actual root layer, not its encrypted container.",
+        "de": "Falsches Gerät/Typ, fehlendes Prüftool oder physische E/A-Fehler können Prüfung ebenfalls scheitern lassen; Reparatur muss echte Root-Schicht statt Verschlüsselungscontainer treffen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-boot-fsck-result",
+        "command": "journalctl -b --no-pager --grep='systemd-fsck|UNEXPECTED INCONSISTENCY|fsck failed'",
+        "explanation": {
+          "en": "Read the checker’s device, messages and exit status from the affected boot; journal access may need an administrator.",
+          "de": "Prüftool-Gerät, Meldungen und Exit-Status betroffenen Starts lesen; Administrator-Journalzugriff kann nötig sein."
+        },
+        "interpretation": {
+          "en": "Status bits distinguish corrected errors, reboot-needed and uncorrected errors. A missing-checker failure needs package recovery, not immediate filesystem rewriting.",
+          "de": "Statusbits unterscheiden korrigierte Fehler, nötigen Neustart und unkorrigierte Fehler. Fehlendes Prüftool braucht Paketwiederherstellung statt sofortigem Dateisystem-Umschreiben."
+        }
+      },
+      {
+        "id": "identify-root-mount-layer",
+        "command": "findmnt -no SOURCE,FSTYPE,OPTIONS /",
+        "explanation": {
+          "en": "Read the root mount’s source, type and options. In rescue, this describes rescue root unless the installed root has been separately identified.",
+          "de": "Quelle, Typ und Optionen des Root-Mounts lesen. In Rettungsumgebung beschreibt dies deren Root, sofern installiertes Root nicht separat ermittelt wurde."
+        },
+        "interpretation": {
+          "en": "Resolve device-mapper or subvolume layers before repair. An installed root already mounted writable must not be checked with an offline repair tool.",
+          "de": "Vor Reparatur Device-Mapper- oder Subvolume-Schichten auflösen. Bereits beschreibbar eingehängtes installiertes Root darf nicht mit Offline-Reparaturtool geprüft werden."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "perform-filesystem-specific-offline-recovery",
+        "title": {
+          "en": "Use filesystem-specific offline recovery",
+          "de": "Dateisystemspezifische Offline-Wiederherstellung nutzen"
+        },
+        "body": {
+          "en": "If uncorrected filesystem errors are confirmed, save recoverable data or an image first and use supported rescue media with the target filesystem unmounted. Follow that filesystem’s documented check/repair procedure for the identified root volume.",
+          "de": "Sind unkorrigierte Dateisystemfehler bestätigt, zuerst wiederherstellbare Daten oder Abbild sichern und unterstütztes Rettungsmedium mit ausgehängtem Ziel nutzen. Dokumentiertes Prüf-/Reparaturverfahren dieses Dateisystems für ermitteltes Root-Volume befolgen."
+        },
+        "precautions": {
+          "en": "Do not run a generic fsck -y against an encrypted container or use another filesystem’s repair tool. Address underlying I/O failure before repeated metadata rewrites.",
+          "de": "Kein pauschales fsck -y gegen Verschlüsselungscontainer und kein Reparaturtool anderen Dateisystems verwenden. Grundlegenden E/A-Ausfall vor wiederholtem Metadaten-Umschreiben behandeln."
+        },
+        "rollback": {
+          "en": "Filesystem repair may alter data irreversibly; recover from the pre-repair image/backup if needed rather than promise an undo command.",
+          "de": "Dateisystemreparatur kann Daten unwiderruflich ändern; bei Bedarf aus vorherigem Abbild/Sicherung wiederherstellen statt Rückgängig-Befehl versprechen."
+        }
+      },
+      {
+        "id": "repair-checker-or-mount-policy",
+        "title": {
+          "en": "Repair a missing checker or incorrect mount policy",
+          "de": "Fehlendes Prüftool oder falsche Mount-Richtlinie reparieren"
+        },
+        "body": {
+          "en": "If the failure is a missing filesystem utility or incorrect fstab type/options, restore the appropriate distribution utility and correct the verified root definition. Rebuild early images only if their check path depends on it.",
+          "de": "Liegt Fehler an fehlendem Dateisystemtool oder falschem fstab-Typ/Optionen, passendes Distributionstool zurückbringen und verifizierte Root-Definition korrigieren. Frühe Abbilder nur erneuern, wenn deren Prüfpfad davon abhängt."
+        },
+        "precautions": {
+          "en": "Do not set fsck.mode=skip or remove pass numbers to conceal genuine uncorrected errors. Preserve the original definition before editing.",
+          "de": "fsck.mode=skip oder entfernte Prüfnummern nicht zum Verbergen echter unkorrigierter Fehler nutzen. Ursprüngliche Definition vor Änderung sichern."
+        },
+        "rollback": {
+          "en": "Restore the saved fstab/initramfs configuration and use the prior supported image if boot regresses.",
+          "de": "Bei schlechterem Start gesicherte fstab-/Initramfs-Konfiguration zurückstellen und vorheriges unterstütztes Abbild nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd boot filesystem checker behavior",
+        "url": "https://manpages.debian.org/trixie/systemd/systemd-fsck.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux fsck status and filesystem-specific dispatch",
+        "url": "https://manpages.debian.org/trixie/util-linux/fsck.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-fsck-uncorrected",
+        "all": [
+          "systemd-fsck[",
+          "UNEXPECTED INCONSISTENCY; RUN fsck MANUALLY."
+        ],
+        "sample": "systemd-fsck[250]: /dev/mapper/root: UNEXPECTED INCONSISTENCY; RUN fsck MANUALLY.",
+        "negative": [
+          "systemd-fsck[250]: /dev/mapper/root: clean, 1000/10000 files",
+          "application: unexpected cache inconsistency"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The boot checker could not complete automatic recovery for the named filesystem.",
+          "de": "Das Boot-Prüftool konnte automatische Wiederherstellung des genannten Dateisystems nicht abschließen."
+        },
+        "significance": {
+          "en": "Identify its type and mount state before filesystem-specific offline recovery; this does not justify bypassing checks.",
+          "de": "Typ und Mount-Zustand vor dateisystemspezifischer Offline-Wiederherstellung bestimmen; dies rechtfertigt keine Prüfungsumgehung."
+        }
+      },
+      {
+        "id": "systemd-fsck-exit-four",
+        "all": [
+          "systemd-fsck[",
+          "fsck failed with exit status 4."
+        ],
+        "sample": "systemd-fsck[250]: fsck failed with exit status 4.",
+        "negative": [
+          "systemd-fsck[250]: fsck failed with exit status 8.",
+          "systemd-fsck[250]: filesystem check completed successfully"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The fsck result includes uncorrected filesystem errors.",
+          "de": "Das fsck-Ergebnis enthält unkorrigierte Dateisystemfehler."
+        },
+        "significance": {
+          "en": "Read the preceding checker detail and physical I/O context; exit status 8 is an operational error and intentionally excluded from this specific interpretation.",
+          "de": "Vorherige Prüftooldetails und physische E/A-Daten lesen; Exit-Status 8 ist Bedien-/Betriebsfehler und wird aus dieser speziellen Deutung ausgeschlossen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-resume-device-delay",
+    "slug": {
+      "en": "boot-resume-device-delay",
+      "de": "boot-resume-geraet-verzoegerung"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Boot waits for an obsolete hibernation resume device",
+      "de": "Start wartet auf veraltetes Hibernate-Resume-Gerät"
+    },
+    "summary": {
+      "en": "A stale resume UUID can delay an otherwise valid cold boot after swap changes; identify resume configuration separately from root storage.",
+      "de": "Eine alte Resume-UUID kann korrekten Kaltstart nach Swap-Änderung verzögern; Resume-Konfiguration getrennt von Root-Speicher bestimmen."
+    },
+    "environment": {
+      "en": "Linux hibernation resume using initramfs-tools, dracut or systemd-hibernate-resume. Cold-boot repairs must not discard an intended suspended session.",
+      "de": "Linux-Hibernate-Resume mit initramfs-tools, dracut oder systemd-hibernate-resume. Kaltstart-Korrektur darf keine beabsichtigte ruhende Sitzung verwerfen."
+    },
+    "symptoms": {
+      "en": [
+        "Boot pauses while waiting for suspend/resume device, then may continue.",
+        "The old swap UUID remains in initramfs or kernel arguments after swap was recreated."
+      ],
+      "de": [
+        "Der Start wartet auf suspend/resume device und kann später fortsetzen.",
+        "Alte Swap-UUID bleibt nach Swap-Neuerzeugung in Initramfs oder Kernel-Argumenten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The configured resume device may have been removed or received a new UUID.",
+        "de": "Konfiguriertes Resume-Gerät kann entfernt worden sein oder neue UUID haben."
+      },
+      {
+        "en": "An inaccessible encrypted swap mapping or stale swapfile offset can also make resume unavailable; root= and resume= serve different purposes.",
+        "de": "Nicht erreichbare verschlüsselte Swap-Zuordnung oder alter Swapfile-Offset kann Resume ebenfalls verhindern; root= und resume= haben verschiedene Aufgaben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-resume-boot-arguments",
+        "command": "cat /proc/cmdline",
+        "explanation": {
+          "en": "Read resume=, resume_offset= and noresume in the current boot without changing them.",
+          "de": "resume=, resume_offset= und noresume aktuellen Starts unverändert lesen."
+        },
+        "interpretation": {
+          "en": "Compare a resume selector separately from root=. A correct root does not make an obsolete resume target valid.",
+          "de": "Resume-Selektor getrennt von root= vergleichen. Korrektes Root macht veraltetes Resume-Ziel nicht gültig."
+        }
+      },
+      {
+        "id": "list-active-swap-locations",
+        "command": "swapon --show --output=NAME,TYPE,SIZE,USED",
+        "explanation": {
+          "en": "Read currently active swap only; this does not enable, disable or recreate swap.",
+          "de": "Nur aktuell aktive Swap-Bereiche lesen; Swap wird weder aktiviert, abgeschaltet noch neu erzeugt."
+        },
+        "interpretation": {
+          "en": "Compare available swap locations with the configured resume target and its verified UUID. An inactive resume device might still exist, so absence here is not sufficient diagnosis.",
+          "de": "Swap-Orte mit Resume-Ziel und verifizierter UUID vergleichen. Ein inaktives Resume-Gerät kann existieren; Fehlen hier genügt nicht als Diagnose."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-obsolete-resume-on-coldboot",
+        "title": {
+          "en": "Remove an obsolete resume path for cold boots",
+          "de": "Veralteten Resume-Pfad für Kaltstarts entfernen"
+        },
+        "body": {
+          "en": "If hibernation is deliberately unused and this is a confirmed cold boot, remove the obsolete resume selector through the distribution’s supported configuration and regenerate its initramfs/entries. A one-boot noresume comparison can confirm the delay source.",
+          "de": "Wird Hibernate bewusst nicht genutzt und ist Kaltstart bestätigt, veralteten Resume-Selektor über unterstützte Distributionseinstellung entfernen und Initramfs/Einträge erneuern. Einmaliger noresume-Vergleich kann Verzögerungsquelle bestätigen."
+        },
+        "precautions": {
+          "en": "Do not skip resume while intending to recover a hibernated session; its saved work can be lost, and writing to its filesystems before a later resume is unsafe.",
+          "de": "Resume nicht überspringen, wenn ruhende Sitzung wiederhergestellt werden soll; gespeicherte Arbeit kann verloren gehen und Schreiben vor späterem Resume ist unsicher."
+        },
+        "rollback": {
+          "en": "Restore the recorded resume configuration before using hibernation again; discard a temporary menu edit by rebooting normally.",
+          "de": "Vor erneutem Hibernate dokumentierte Resume-Konfiguration wiederherstellen; temporäre Menüänderung durch normalen Neustart verwerfen."
+        }
+      },
+      {
+        "id": "update-verified-resume-target",
+        "title": {
+          "en": "Update the verified hibernation target",
+          "de": "Verifiziertes Hibernate-Ziel aktualisieren"
+        },
+        "body": {
+          "en": "If hibernation is needed, configure the actual supported swap target and, for a swapfile, its filesystem-specific supported offset. Ensure encrypted swap is available early and regenerate the selected kernel’s resume integration.",
+          "de": "Wird Hibernate benötigt, tatsächliches unterstütztes Swap-Ziel und bei Swapfile dessen dateisystemspezifisch unterstützten Offset setzen. Verschlüsselten Swap früh verfügbar machen und Resume-Einbindung gewählten Kernels erneuern."
+        },
+        "precautions": {
+          "en": "Do not guess offsets, recreate swap containing a needed image or resume after mounting its filesystems for modification. Test only after a clean shutdown.",
+          "de": "Offsets nicht raten, Swap mit benötigtem Abbild nicht neu erzeugen und nach Dateisystemänderungen nicht resümieren. Nur nach sauberem Herunterfahren testen."
+        },
+        "rollback": {
+          "en": "Restore previous verified target/configuration if the new setup fails; return to cold boots until resume is validated.",
+          "de": "Bei Fehlern vorheriges verifiziertes Ziel/Konfiguration zurückstellen; bis geprüftem Resume Kaltstarts nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd hibernation resume generator",
+        "url": "https://manpages.debian.org/trixie/systemd/systemd-hibernate-resume-generator.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel swap suspend and resume consistency",
+        "url": "https://docs.kernel.org/power/swsusp.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "initramfs-tools resume configuration",
+        "url": "https://manpages.debian.org/trixie/initramfs-tools-core/initramfs-tools.7.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "initramfs-stale-resume-wait",
+        "all": [
+          "Gave up waiting for suspend/resume device"
+        ],
+        "sample": "Begin: Running /scripts/local-premount ... Gave up waiting for suspend/resume device",
+        "negative": [
+          "Gave up waiting for root file system device",
+          "PM: hibernation: resume from hibernation"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "Early boot could not locate its configured hibernation resume device.",
+          "de": "Früher Start konnte konfiguriertes Hibernate-Resume-Gerät nicht finden."
+        },
+        "significance": {
+          "en": "Check obsolete swap UUID or early encrypted mapping separately from root-device discovery.",
+          "de": "Alte Swap-UUID oder frühe verschlüsselte Zuordnung getrennt von Root-Geräteerkennung prüfen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-lvm-root-missing",
+    "slug": {
+      "en": "boot-lvm-root-missing",
+      "de": "boot-lvm-root-fehlt"
+    },
+    "category": "boot",
+    "title": {
+      "en": "LVM root logical volume is absent in the initramfs",
+      "de": "LVM-Root-Volume fehlt in der Initramfs"
+    },
+    "summary": {
+      "en": "LVM root requires visible physical volumes and early activation support; inspect metadata and initramfs contents before changing volume layout.",
+      "de": "LVM-Root braucht sichtbare physische Volumes und frühe Aktivierung; Metadaten und Initramfs-Inhalt vor Änderung der Volume-Struktur prüfen."
+    },
+    "environment": {
+      "en": "Linux root on an LVM logical volume, possibly inside LUKS or over RAID, using a distribution initramfs.",
+      "de": "Linux-Root auf LVM-Logical-Volume, eventuell in LUKS oder über RAID, mit Distributions-Initramfs."
+    },
+    "symptoms": {
+      "en": [
+        "The expected /dev/mapper/VG-LV root device never appears during early boot.",
+        "An older image may boot while a newly generated host-only image cannot find root."
+      ],
+      "de": [
+        "Erwartetes /dev/mapper/VG-LV-Root-Gerät erscheint beim frühen Start nicht.",
+        "Älteres Abbild kann starten, während neue Host-Only-Initramfs Root nicht findet."
+      ]
+    },
+    "causes": [
+      {
+        "en": "LVM userspace or its activation rules may be absent from the initramfs.",
+        "de": "LVM-Userspace oder Aktivierungsregeln können in Initramfs fehlen."
+      },
+      {
+        "en": "A restrictive rd.lvm.lv selector, devices filter or still-locked lower layer may hide required physical volumes; missing PV data needs separate storage recovery.",
+        "de": "Einschränkender rd.lvm.lv-Selektor, Gerätefilter oder noch gesperrte untere Schicht können nötige physische Volumes verstecken; fehlende PV-Daten brauchen separate Speicherwiederherstellung."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-lvm-root-metadata",
+        "command": "lvs --readonly -o vg_name,lv_name,devices",
+        "explanation": {
+          "en": "Read volume metadata without changing it; administrator access to physical volumes is usually needed. In rescue, unlock known lower layers through the supported process first.",
+          "de": "Volume-Metadaten ohne Änderung lesen; Administratorzugriff auf physische Volumes ist normalerweise nötig. In Rettungsumgebung bekannte untere Schichten zuvor unterstützt entsperren."
+        },
+        "interpretation": {
+          "en": "Confirm the intended VG/LV and its physical devices. --readonly avoids activation changes and is not a test that the logical volume is currently mounted or active.",
+          "de": "Vorgesehenes VG/LV und physische Geräte bestätigen. --readonly vermeidet Aktivierungsänderungen und prüft keinen aktuell aktiven oder eingehängten Zustand."
+        }
+      },
+      {
+        "id": "inspect-initramfs-lvm-support",
+        "command": "lsinitrd /boot/initramfs-KERNEL.img",
+        "explanation": {
+          "en": "Replace KERNEL and the path with the selected dracut image; lsinitrd reads image contents, not the live root. For other generators use their documented listing utility.",
+          "de": "KERNEL und Pfad durch gewähltes dracut-Abbild ersetzen; lsinitrd liest Abbildinhalt statt laufendem Root. Bei anderen Generatoren dokumentiertes Auflistungstool nutzen."
+        },
+        "interpretation": {
+          "en": "Look for LVM tools, configuration and required lower-layer modules. Their presence is necessary for the setup but does not prove activation selectors or device visibility are correct.",
+          "de": "LVM-Tools, Konfiguration und nötige untere Module suchen. Vorhandensein ist für Einrichtung nötig, beweist aber keine passenden Aktivierungsselektoren oder sichtbaren Geräte."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-lvm-initramfs-support",
+        "title": {
+          "en": "Restore early LVM support",
+          "de": "Frühe LVM-Unterstützung wiederherstellen"
+        },
+        "body": {
+          "en": "If the metadata is intact in rescue but the selected image lacks LVM support, rebuild that kernel’s initramfs with the distribution’s LVM module/hooks and required lower storage layers. Retain a general-purpose or older working image.",
+          "de": "Sind Metadaten in Rettungsumgebung intakt, fehlt im gewählten Abbild aber LVM, Initramfs dieses Kernels mit LVM-Modul/Hooks der Distribution und unteren Speicherschichten erneuern. Allgemeines oder älteres funktionierendes Abbild behalten."
+        },
+        "precautions": {
+          "en": "Do not create a new PV/VG/LV over existing storage to make the expected name appear. Verify mounted /boot/ESP and image free space first.",
+          "de": "Kein neues PV/VG/LV über vorhandenen Speicher erzeugen, um erwarteten Namen sichtbar zu machen. Zuerst eingehängtes /boot/ESP und Abbildplatz prüfen."
+        },
+        "rollback": {
+          "en": "Boot the retained image and restore the prior LVM hook configuration if the rebuild still fails.",
+          "de": "Bei weiterem Fehler vorhandenes Abbild starten und vorherige LVM-Hook-Konfiguration zurückstellen."
+        }
+      },
+      {
+        "id": "correct-verified-lvm-discovery-selector",
+        "title": {
+          "en": "Correct the verified LVM discovery selector",
+          "de": "Verifizierten LVM-Erkennungsselektor korrigieren"
+        },
+        "body": {
+          "en": "If the command line restricts activation to an old VG/LV name, update only that verified selector through the distribution’s boot configuration and regenerate its entries. Check encryption and devices-file rules when the lower PV is not visible.",
+          "de": "Beschränkt Befehlszeile Aktivierung auf alten VG/LV-Namen, nur diesen verifizierten Selektor über Boot-Konfiguration der Distribution ändern und Einträge erneuern. Bei unsichtbarem unteren PV Verschlüsselung und LVM-Gerätefilter beziehungsweise die Devices-Datei prüfen."
+        },
+        "precautions": {
+          "en": "Keep the original metadata unchanged. A filter correction cannot recover a physically missing PV and should not bypass the intended storage visibility policy broadly.",
+          "de": "Ursprüngliche Metadaten unverändert behalten. Filterkorrektur stellt physisch fehlendes PV nicht wieder her und soll Sichtbarkeitsrichtlinie nicht breit umgehen."
+        },
+        "rollback": {
+          "en": "Restore saved boot/selective-discovery configuration and choose the previous image if the change selects the wrong root volume.",
+          "de": "Bei falscher Root-Auswahl gesicherte Boot-/Erkennungs-Konfiguration zurückstellen und vorheriges Abbild wählen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "dracut LVM activation selectors and early modules",
+        "url": "https://www.kernel.org/pub/linux/utils/boot/dracut/dracut.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "LVM lvs read-only metadata reporting",
+        "url": "https://manpages.debian.org/trixie/lvm2/lvs.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "dracut-lvm-root-missing",
+        "all": [
+          "dracut",
+          "Warning: /dev/mapper/",
+          "does not exist"
+        ],
+        "sample": "dracut-initqueue[400]: Warning: /dev/mapper/vg0-root does not exist",
+        "negative": [
+          "dracut-initqueue[400]: /dev/mapper/vg0-root found",
+          "dracut-initqueue[400]: Warning: /dev/disk/by-uuid/1111 does not exist"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An expected device-mapper root path is absent in the initramfs.",
+          "de": "Ein erwarteter Device-Mapper-Root-Pfad fehlt in Initramfs."
+        },
+        "significance": {
+          "en": "Check whether this mapping belongs to LVM or encryption before choosing activation steps; the path alone does not prove lost LVM metadata.",
+          "de": "Vor Aktivierung prüfen, ob Zuordnung zu LVM oder Verschlüsselung gehört; Pfad allein beweist keine verlorenen LVM-Metadaten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-init-not-found",
+    "slug": {
+      "en": "boot-init-not-found",
+      "de": "boot-init-nicht-gefunden"
+    },
+    "category": "boot",
+    "title": {
+      "en": "Kernel cannot execute a working init process",
+      "de": "Kernel kann keinen funktionierenden Init-Prozess starten"
+    },
+    "summary": {
+      "en": "No working init found means the kernel could not start userspace; inspect root selection, the init binary and its interpreter from rescue media.",
+      "de": "No working init found heißt, dass Kernel den Userspace nicht starten konnte; Root-Auswahl, Init-Binärdatei und Interpreter aus Rettungsmedium prüfen."
+    },
+    "environment": {
+      "en": "Linux at the kernel-to-userspace handoff, particularly custom images, interrupted package upgrades or incorrect init=/root= arguments.",
+      "de": "Linux bei Übergabe vom Kernel an Userspace, besonders eigene Abbilder, unterbrochene Paket-Upgrades oder falsche init=-/root=-Argumente."
+    },
+    "symptoms": {
+      "en": [
+        "Boot ends with Kernel panic - not syncing: No working init found.",
+        "The expected init exists on disk but its interpreter or required libraries may be missing."
+      ],
+      "de": [
+        "Der Start endet mit Kernel panic - not syncing: No working init found.",
+        "Erwartetes Init kann auf Platte existieren, aber Interpreter oder benötigte Bibliotheken fehlen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A wrong root or init= argument may select a filesystem without the intended init.",
+        "de": "Falsches Root- oder init=-Argument kann Dateisystem ohne vorgesehenes Init wählen."
+      },
+      {
+        "en": "Missing dynamic loader/libraries, wrong architecture or a malformed custom /init script can prevent execution; file existence alone is insufficient.",
+        "de": "Fehlender dynamischer Lader/Bibliotheken, falsche Architektur oder fehlerhaftes eigenes /init-Skript können Ausführung verhindern; vorhandene Datei allein genügt nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-rescued-init-file",
+        "command": "file /mnt/sysroot/sbin/init",
+        "explanation": {
+          "en": "Use a correctly identified installed root at /mnt/sysroot; replace the path if its init location differs. This reads file type and symlink metadata.",
+          "de": "Korrekt ermitteltes installiertes Root unter /mnt/sysroot verwenden; Pfad bei anderem Init-Ort ersetzen. Dies liest Dateityp und Link-Metadaten."
+        },
+        "interpretation": {
+          "en": "Check architecture, symlink target and whether a script is intentional. A file command from live root without this path would describe the recovery system instead.",
+          "de": "Architektur, Linkziel und beabsichtigtes Skript prüfen. file gegen Live-Root ohne diesen Pfad beschreibt stattdessen Rettungssystem."
+        }
+      },
+      {
+        "id": "read-init-elf-interpreter",
+        "command": "readelf -l /mnt/sysroot/usr/lib/systemd/systemd",
+        "explanation": {
+          "en": "Replace with the actual init ELF inside the mounted installation; readelf reads program headers without executing the damaged binary.",
+          "de": "Durch tatsächliches Init-ELF eingehängter Installation ersetzen; readelf liest Programmheader ohne Ausführung beschädigter Binärdatei."
+        },
+        "interpretation": {
+          "en": "Check the requested interpreter path inside the installed root. A present init with a missing interpreter can fail as if the executable itself were absent.",
+          "de": "Angeforderten Interpreterpfad innerhalb installiertem Root prüfen. Vorhandenes Init mit fehlendem Interpreter kann wie fehlende ausführbare Datei scheitern."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-unintended-init-override",
+        "title": {
+          "en": "Remove an unintended init override",
+          "de": "Unbeabsichtigten Init-Parameter entfernen"
+        },
+        "body": {
+          "en": "If the failed boot has an unintended init= or wrong root= value, use the boot menu’s temporary editor to restore the verified normal entry for one boot. Persist only the confirmed correction through the distribution’s source configuration.",
+          "de": "Enthält gescheiterter Start unbeabsichtigtes init= oder falsches root=, per temporärem Boot-Menü-Editor verifizierten normalen Eintrag für einen Start wiederherstellen. Nur bestätigte Korrektur über Quellkonfiguration der Distribution dauerhaft setzen."
+        },
+        "precautions": {
+          "en": "Do not use init=/bin/sh as a routine repair; it bypasses normal startup and may leave filesystems unsafe for edits. Verify the target root first.",
+          "de": "init=/bin/sh nicht als Routinereparatur nutzen; es umgeht normalen Start und kann unsichere Dateisystemzustände für Änderung hinterlassen. Zuerst Ziel-Root prüfen."
+        },
+        "rollback": {
+          "en": "Discard the temporary menu edit or restore the saved boot configuration and choose an older working entry.",
+          "de": "Temporäre Menüänderung verwerfen oder gesicherte Boot-Konfiguration zurückstellen und älteren funktionierenden Eintrag wählen."
+        }
+      },
+      {
+        "id": "restore-init-and-runtime-packages",
+        "title": {
+          "en": "Restore init and its matching runtime packages",
+          "de": "Init und passende Laufzeitpakete wiederherstellen"
+        },
+        "body": {
+          "en": "If the intended root is correct but init or its loader/libraries are missing, restore the distribution’s exact init and core runtime packages from a supported rescue/chroot procedure. For a custom initramfs, rebuild its /init and interpreter inclusion coherently.",
+          "de": "Ist gewolltes Root korrekt, fehlen aber Init oder Lader/Bibliotheken, passende Init- und grundlegende Laufzeitpakete der Distribution über unterstütztes Rettungs-/chroot-Verfahren zurückbringen. Bei eigener Initramfs /init und Interpreter konsistent neu aufnehmen."
+        },
+        "precautions": {
+          "en": "Do not execute unknown recovered binaries or use ldd on an untrusted image; readelf is safer for inspecting headers. Keep package versions coherent.",
+          "de": "Unbekannte wiederhergestellte Binärdateien nicht ausführen und ldd nicht gegen untrusted Abbild nutzen; readelf prüft Header sicherer. Paketstände konsistent halten."
+        },
+        "rollback": {
+          "en": "Restore the saved package/image snapshot or previously working custom initramfs if reconstruction fails.",
+          "de": "Bei gescheiterter Rekonstruktion gesicherten Paket-/Abbild-Snapshot oder vorherige eigene funktionierende Initramfs zurückstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel: reasons for No working init found",
+        "url": "https://docs.kernel.org/admin-guide/init.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel initramfs userspace handoff",
+        "url": "https://docs.kernel.org/filesystems/ramfs-rootfs-initramfs.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-no-working-init",
+        "all": [
+          "Kernel panic - not syncing: No working init found."
+        ],
+        "sample": "Kernel panic - not syncing: No working init found. Try passing init= option to kernel.",
+        "negative": [
+          "Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)",
+          "systemd[1]: Initialization complete."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The kernel could not start a usable first userspace process.",
+          "de": "Der Kernel konnte keinen nutzbaren ersten Userspace-Prozess starten."
+        },
+        "significance": {
+          "en": "Verify root and the init interpreter/dependencies before reinstalling the bootloader; the bootloader already handed control to Linux.",
+          "de": "Root sowie Init-Interpreter/Abhängigkeiten vor Bootloader-Neuinstallation prüfen; Lader hat Kontrolle bereits an Linux übergeben."
+        }
+      }
+    ]
+  },
+  {
+    "id": "boot-esp-full",
+    "slug": {
+      "en": "boot-esp-full",
+      "de": "boot-esp-voll"
+    },
+    "category": "boot",
+    "title": {
+      "en": "EFI boot partition is full during a kernel update",
+      "de": "EFI-Boot-Partition ist beim Kernel-Update voll"
+    },
+    "summary": {
+      "en": "A full ESP or XBOOTLDR can leave a kernel update without a complete boot image; identify unused entries through the distribution’s cleanup tools.",
+      "de": "Volle ESP oder XBOOTLDR kann Kernel-Update ohne vollständiges Startabbild hinterlassen; ungenutzte Einträge mit Bereinigungstools der Distribution ermitteln."
+    },
+    "environment": {
+      "en": "UEFI systems storing boot images, initramfs files or UKIs on a limited ESP/XBOOTLDR partition; root filesystem free space is separate.",
+      "de": "UEFI-Systeme mit Boot-Abbildern, Initramfs oder UKIs auf begrenzter ESP-/XBOOTLDR-Partition; freier Root-Speicher ist davon getrennt."
+    },
+    "symptoms": {
+      "en": [
+        "Kernel packaging or image copy fails with No space left on device under an EFI path.",
+        "The older entry still boots but the new kernel entry is incomplete or absent."
+      ],
+      "de": [
+        "Kernel-Paketierung oder Abbildkopie scheitert mit No space left on device in EFI-Pfad.",
+        "Älterer Eintrag startet, neuer Kerneleintrag ist aber unvollständig oder fehlt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Old kernel/UKI images or failed intermediate copies may consume the boot partition.",
+        "de": "Alte Kernel-/UKI-Abbilder oder gescheiterte Zwischenkopien können Boot-Partition füllen."
+      },
+      {
+        "en": "A wrong mount can make files accumulate on root instead; a partition-level capacity problem is not solved by deleting arbitrary EFI executables.",
+        "de": "Falscher Mount kann Dateien auf Root ansammeln; Partitions-Platzproblem wird nicht durch Löschen beliebiger EFI-Programme gelöst."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-boot-partition-capacity",
+        "command": "df -h /boot /boot/efi",
+        "explanation": {
+          "en": "Replace/add /efi if that is the verified ESP mount. This reads filesystem capacity and does not delete files.",
+          "de": "/efi ersetzen/ergänzen, falls dort verifizierte ESP eingehängt ist. Dies liest Dateisystemkapazität und löscht nichts."
+        },
+        "interpretation": {
+          "en": "Check which filesystem each path belongs to. The same root device for both paths can mean the expected separate partition is not mounted.",
+          "de": "Dateisystem jedes Pfads prüfen. Gleiches Root-Gerät für beide Pfade kann nicht eingehängte erwartete separate Partition bedeuten."
+        }
+      },
+      {
+        "id": "inspect-boot-entry-inventory",
+        "command": "bootctl list --no-pager",
+        "explanation": {
+          "en": "Read BLS entries when this installation uses a compatible loader; for GRUB use the distribution’s kernel package inventory instead.",
+          "de": "BLS-Einträge bei kompatiblem Lader dieser Installation lesen; bei GRUB stattdessen Kernel-Paketübersicht der Distribution nutzen."
+        },
+        "interpretation": {
+          "en": "Map current and fallback entries to their images before cleanup. A filename alone is insufficient to identify an unused bootloader or another operating system.",
+          "de": "Aktuelle und Rückfall-Einträge vor Bereinigung Abbildern zuordnen. Dateiname allein identifiziert keinen ungenutzten Lader und kein anderes Betriebssystem."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-only-unneeded-packaged-entries",
+        "title": {
+          "en": "Remove only confirmed unneeded packaged entries",
+          "de": "Nur bestätigte unnötige Paket-Einträge entfernen"
+        },
+        "body": {
+          "en": "If obsolete kernel entries are confirmed, remove them with the distribution’s supported kernel package or generation cleanup while retaining the running kernel and at least one known working fallback. Recheck free space on the actual mounted partition.",
+          "de": "Sind veraltete Kerneleinträge bestätigt, über unterstützte Kernelpaket- oder Generationsbereinigung der Distribution entfernen; laufenden Kernel und mindestens einen bekannten funktionierenden Rückfall behalten. Freien Platz tatsächlicher Partition erneut prüfen."
+        },
+        "precautions": {
+          "en": "Back up boot configuration and necessary images first. Do not delete EFI/BOOT, another OS loader or an image merely because it is large.",
+          "de": "Boot-Konfiguration und nötige Abbilder zuerst sichern. EFI/BOOT, fremden OS-Lader oder bloß große Abbilder nicht löschen."
+        },
+        "rollback": {
+          "en": "Restore the backed-up image/entry through the package or generation mechanism if cleanup removed a needed fallback.",
+          "de": "Falls Bereinigung nötigen Rückfall entfernte, gesichertes Abbild/Eintrag über Paket- oder Generationsmechanismus wiederherstellen."
+        }
+      },
+      {
+        "id": "complete-failed-kernel-image-update",
+        "title": {
+          "en": "Complete the interrupted kernel image update",
+          "de": "Unterbrochenes Kernel-Abbild-Update abschließen"
+        },
+        "body": {
+          "en": "After enough space is available and the correct partition is mounted, rerun the distribution’s failed image/kernel-install transaction for the selected kernel. Check that its full image, entry and any required signature are present before rebooting.",
+          "de": "Nach genügend freiem Platz und korrektem Partitions-Mount gescheiterte Abbild-/kernel-install-Transaktion der Distribution für gewählten Kernel erneut ausführen. Vollständiges Abbild, Eintrag und nötige Signatur vor Neustart prüfen."
+        },
+        "precautions": {
+          "en": "An earlier error can leave a partial image. Do not select the new entry solely because its title appears; verify referenced files and keep the fallback.",
+          "de": "Ein früherer Fehler kann Teilabbild hinterlassen. Neuen Eintrag nicht allein wegen sichtbarem Titel wählen; referenzierte Dateien prüfen und Rückfall behalten."
+        },
+        "rollback": {
+          "en": "Boot the preserved working entry and restore its files if the repeated transaction still cannot create a complete new image.",
+          "de": "Falls Wiederholung kein vollständiges neues Abbild erzeugt, erhaltenen funktionierenden Eintrag starten und dessen Dateien wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "kernel-install image placement and removal",
+        "url": "https://manpages.debian.org/trixie/systemd/kernel-install.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Boot Loader Specification resource locations",
+        "url": "https://uapi-group.org/specifications/specs/boot_loader_specification/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "efi-linux-image-copy-no-space",
+        "all": [
+          "error writing",
+          "/EFI/Linux/",
+          "No space left on device"
+        ],
+        "sample": "cp: error writing '/boot/efi/EFI/Linux/linux-example.efi': No space left on device",
+        "negative": [
+          "cp: error writing '/home/user/archive.tar': No space left on device",
+          "kernel-install: /EFI/Linux/linux-example.efi copied successfully"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Writing a Linux EFI boot image exhausted filesystem space.",
+          "de": "Beim Schreiben eines Linux-EFI-Boot-Abbilds war Dateisystemplatz erschöpft."
+        },
+        "significance": {
+          "en": "Confirm the target partition and complete the failed transaction after supported cleanup; the existing fallback can still be usable.",
+          "de": "Zielpartition bestätigen und gescheiterte Transaktion nach unterstützter Bereinigung abschließen; vorhandener Rückfall kann weiter nutzbar sein."
+        }
+      }
+    ]
+  }
+]

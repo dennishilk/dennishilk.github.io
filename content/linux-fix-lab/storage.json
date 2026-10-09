@@ -1,0 +1,2170 @@
+[
+  {
+    "id": "storage-sata-crc-errors",
+    "slug": {
+      "en": "storage-sata-crc-errors",
+      "de": "sata-crc-uebertragungsfehler"
+    },
+    "category": "storage",
+    "title": {
+      "en": "SATA CRC errors and repeated link resets",
+      "de": "SATA-CRC-Fehler und wiederholte Link-Resets"
+    },
+    "summary": {
+      "en": "Separate SATA transport corruption from failing media when games or file copies stall alongside BadCRC or ICRC reports in the kernel log.",
+      "de": "SATA-Übertragungsfehler von defekten Sektoren unterscheiden, wenn Spiele oder Kopiervorgänge stocken und das Kernel-Log BadCRC oder ICRC meldet."
+    },
+    "environment": {
+      "en": "SATA HDD or SSD connected through AHCI/libata; USB bridges may hide ATA error details.",
+      "de": "SATA-HDD oder -SSD an AHCI/libata; USB-Bridges können ATA-Fehlerdetails verdecken."
+    },
+    "symptoms": {
+      "en": [
+        "I/O pauses coincide with repeated ATA recovery.",
+        "A drive disappears briefly or the negotiated SATA speed falls."
+      ],
+      "de": [
+        "I/O-Pausen fallen mit wiederholter ATA-Fehlerbehandlung zusammen.",
+        "Ein Laufwerk verschwindet kurz oder die ausgehandelte SATA-Geschwindigkeit sinkt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "BadCRC or ICRC supports a transport fault involving cable, connectors, power, controller or drive electronics; it does not identify one component.",
+        "de": "BadCRC oder ICRC spricht für ein Übertragungsproblem an Kabel, Steckern, Stromversorgung, Controller oder Laufwerkselektronik; ein einzelnes Bauteil ist damit nicht bestimmt."
+      },
+      {
+        "en": "A firmware or power-management issue remains possible if physical checks do not change the reproducible pattern.",
+        "de": "Ein Firmware- oder Energiesparproblem bleibt möglich, wenn mechanische Prüfungen das reproduzierbare Muster nicht verändern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-ata-journal",
+        "command": "journalctl -k -b --no-pager -n 300",
+        "explanation": {
+          "en": "Read current-boot kernel events; journal access may require administrator privileges. Compare the ata port and timestamps with the pause.",
+          "de": "Kernel-Ereignisse dieses Starts lesen; gegebenenfalls sind Administratorrechte für das Journal nötig. ATA-Port und Zeitpunkte mit der Pause vergleichen."
+        },
+        "interpretation": {
+          "en": "BadCRC/ICRC is transfer corruption; hard resetting link alone can also follow hotplug or other faults. Preserve the preceding exception line.",
+          "de": "BadCRC/ICRC bezeichnet Übertragungsfehler; hard resetting link allein kann auch auf Hotplug oder andere Störungen folgen. Die vorhergehende Exception-Zeile sichern."
+        }
+      },
+      {
+        "id": "read-drive-smart",
+        "command": "sudo smartctl -x /dev/sdX",
+        "explanation": {
+          "en": "Replace /dev/sdX with the whole drive identified by model and serial number. This reads SMART and error logs; it does not start a self-test.",
+          "de": "/dev/sdX durch das anhand von Modell und Seriennummer identifizierte ganze Laufwerk ersetzen. SMART und Fehlerprotokolle werden gelesen; kein Selbsttest startet."
+        },
+        "interpretation": {
+          "en": "A rising SATA CRC count across incidents supports the link hypothesis. A historical nonzero count is not proof of a current fault; SMART passing does not rule it out.",
+          "de": "Ein über mehrere Vorfälle steigender SATA-CRC-Zähler stützt die Link-Hypothese. Ein alter Wert über null beweist keinen aktuellen Fehler; SMART-PASS schließt ihn nicht aus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "replace-data-path",
+        "title": {
+          "en": "Check one SATA data connection",
+          "de": "Eine SATA-Datenverbindung prüfen"
+        },
+        "body": {
+          "en": "If repeated CRC reports identify this drive, shut the machine down fully, replace its data cable with a known-good cable, and repeat the same bounded workload. Change the motherboard port only in a separate comparison.",
+          "de": "Wenn wiederholte CRC-Meldungen dieses Laufwerk betreffen, den Rechner vollständig ausschalten, das Datenkabel durch ein bekannt gutes ersetzen und dieselbe begrenzte Last vergleichen. Den Mainboard-Port erst in einem getrennten Versuch wechseln."
+        },
+        "precautions": {
+          "en": "Back up important data first. Verify drive identity because ata numbers and /dev/sdX names can change after moving ports.",
+          "de": "Wichtige Daten vorher sichern. Laufwerk eindeutig zuordnen, da ATA-Nummern und /dev/sdX nach einem Portwechsel anders heißen können."
+        },
+        "rollback": {
+          "en": "Power off again and restore the recorded cable and port arrangement if the change makes detection worse.",
+          "de": "Bei schlechterer Erkennung wieder ausschalten und die dokumentierte Kabel- und Portanordnung wiederherstellen."
+        }
+      },
+      {
+        "id": "check-power-and-controller",
+        "title": {
+          "en": "Inspect power and controller evidence",
+          "de": "Stromversorgung und Controller-Befunde prüfen"
+        },
+        "body": {
+          "en": "If a fresh cable does not stop new errors, inspect power connectors and any adapter while powered off, then compare the same drive on another known-good controller if available. Use model-specific vendor firmware guidance only after identifying the drive.",
+          "de": "Wenn ein neues Kabel weitere Fehler nicht verhindert, im ausgeschalteten Zustand Stromstecker und Adapter prüfen. Falls verfügbar, das gleiche Laufwerk an einem bekannt guten anderen Controller vergleichen. Firmware-Hinweise des Herstellers erst nach eindeutiger Modellbestimmung anwenden."
+        },
+        "precautions": {
+          "en": "Do not hotplug internal power or disable NCQ globally as an unexplained first step. Firmware updates require a verified backup and reliable power.",
+          "de": "Interne Stromstecker nicht unter Spannung umstecken und NCQ nicht ohne Befund global abschalten. Firmware-Updates benötigen ein geprüftes Backup und zuverlässige Stromversorgung."
+        },
+        "rollback": {
+          "en": "Restore the original connection after the comparison. Firmware downgrade support depends on the vendor; keep recovery media and backups.",
+          "de": "Nach dem Vergleich die ursprüngliche Verbindung herstellen. Ob ein Firmware-Downgrade möglich ist, hängt vom Hersteller ab; Rettungsmedium und Backup bereithalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: libata ATA errors and recovery",
+        "url": "https://docs.kernel.org/driver-api/libata.html#ata-errors-and-exceptions",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "smartmontools: smartctl manual source",
+        "url": "https://github.com/smartmontools/smartmontools/blob/master/smartmontools/smartctl.8.in",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "sata-serror-badcrc",
+        "all": [
+          "ata",
+          "SError:",
+          "BadCRC"
+        ],
+        "sample": "ata2: SError: { UnrecovData 10B8B BadCRC Handshk }",
+        "negative": [
+          "ata2: SATA link up 6.0 Gbps",
+          "ata2: SError: { PHYRdyChg }"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A libata SError report contains a data CRC flag. The example is synthetic.",
+          "de": "Ein libata-SError-Bericht enthält das Daten-CRC-Flag. Das Beispiel ist synthetisch."
+        },
+        "significance": {
+          "en": "Investigate the SATA transport and correlate the port with the actual drive; this does not diagnose filesystem corruption.",
+          "de": "Den SATA-Übertragungsweg untersuchen und den Port dem richtigen Laufwerk zuordnen; daraus folgt keine Dateisystemdiagnose."
+        }
+      },
+      {
+        "id": "sata-device-icrc",
+        "all": [
+          "ata",
+          "error:",
+          "ICRC"
+        ],
+        "sample": "ata2.00: error: { ICRC ABRT }",
+        "negative": [
+          "ata2.00: error: { UNC }",
+          "ata2.00: configured for UDMA/133"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The ATA device reports an interface CRC error.",
+          "de": "Das ATA-Gerät meldet einen Interface-CRC-Fehler."
+        },
+        "significance": {
+          "en": "A cable or link investigation is justified; an aborted command without ICRC would be less specific.",
+          "de": "Eine Kabel- und Link-Prüfung ist begründet; ein abgebrochener Befehl ohne ICRC wäre weniger aussagekräftig."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-uncorrectable-sectors",
+    "slug": {
+      "en": "storage-uncorrectable-sectors",
+      "de": "nicht-korrigierbare-sektoren"
+    },
+    "category": "storage",
+    "title": {
+      "en": "ATA uncorrectable sectors and read errors",
+      "de": "Nicht korrigierbare ATA-Sektoren und Lesefehler"
+    },
+    "summary": {
+      "en": "Treat repeatable UNC media errors as a data-preservation problem, using drive health and sector evidence before filesystem repair or stress tests.",
+      "de": "Wiederkehrende UNC-Medienfehler zuerst als Problem der Datensicherung behandeln; Laufwerkszustand und Sektoren vor Reparaturen oder Lasttests prüfen."
+    },
+    "environment": {
+      "en": "ATA disks and SSDs reporting libata errors; SMART support varies with bridges and vendors.",
+      "de": "ATA-Festplatten und -SSDs mit libata-Meldungen; SMART-Unterstützung hängt von Bridge und Hersteller ab."
+    },
+    "symptoms": {
+      "en": [
+        "The same file or region repeatedly returns a read error.",
+        "ATA logs include UNC rather than only a link reset."
+      ],
+      "de": [
+        "Dieselbe Datei oder Region liefert wiederholt einen Lesefehler.",
+        "ATA-Meldungen enthalten UNC statt ausschließlich eines Link-Resets."
+      ]
+    },
+    "causes": [
+      {
+        "en": "UNC means the device could not recover data after its internal retries; media deterioration or drive firmware may be involved.",
+        "de": "UNC bedeutet, dass das Gerät Daten nach seinen internen Wiederholungen nicht wiederherstellen konnte; Medienverschleiß oder Laufwerksfirmware können beteiligt sein."
+      },
+      {
+        "en": "Filesystem errors can be downstream effects of unreadable sectors, while independent memory or transport faults still need separate evidence.",
+        "de": "Dateisystemfehler können eine Folge unlesbarer Sektoren sein; unabhängige Speicher- oder Übertragungsfehler benötigen zusätzliche Befunde."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "locate-media-errors",
+        "command": "journalctl -k -b --no-pager -n 300",
+        "explanation": {
+          "en": "Read the kernel log with journal privileges if needed, retaining command, LBA and drive context.",
+          "de": "Kernel-Log bei Bedarf mit Journalrechten lesen; Befehl, LBA und Laufwerkskontext erhalten."
+        },
+        "interpretation": {
+          "en": "Repeated UNC at the same LBA is more specific than application EIO. ICRC points to transport corruption and needs a different investigation.",
+          "de": "Wiederholtes UNC an derselben LBA ist konkreter als EIO in einer Anwendung. ICRC verweist auf Übertragungsfehler und erfordert eine andere Untersuchung."
+        }
+      },
+      {
+        "id": "read-media-health",
+        "command": "sudo smartctl -x /dev/sdX",
+        "explanation": {
+          "en": "Replace /dev/sdX with the whole affected disk; read attributes and existing test/error logs only.",
+          "de": "/dev/sdX durch das betroffene ganze Laufwerk ersetzen; nur Attribute und vorhandene Test- und Fehlerprotokolle lesen."
+        },
+        "interpretation": {
+          "en": "Pending, offline-uncorrectable or growing reallocated counts strengthen the media-fault concern. Vendor attributes and an overall PASS result are not a complete integrity test.",
+          "de": "Pending-, Offline-Uncorrectable- oder steigende Reallocated-Zähler verstärken den Verdacht auf Medienfehler. Herstellerattribute und ein allgemeines PASS sind kein vollständiger Integritätstest."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "preserve-readable-data",
+        "title": {
+          "en": "Preserve data before repair",
+          "de": "Daten vor einer Reparatur sichern"
+        },
+        "body": {
+          "en": "If important data is not backed up and UNC recurs, stop avoidable writes. Recover the most valuable readable files or make an error-tolerant rescue image to a different healthy device; seek specialist recovery when the drive becomes mechanically unstable.",
+          "de": "Wenn wichtige Daten ungesichert sind und UNC wiederkehrt, vermeidbare Schreibzugriffe beenden. Die wertvollsten lesbaren Dateien sichern oder ein fehlertolerantes Rettungsabbild auf ein anderes gesundes Laufwerk erstellen; bei mechanischer Instabilität professionelle Datenrettung erwägen."
+        },
+        "precautions": {
+          "en": "Do not run destructive bad-block tests or repeatedly scan a failing disk before securing data. A rescue destination must never be the source.",
+          "de": "Vor der Sicherung keine zerstörenden Bad-Block-Tests oder wiederholten Vollscans eines ausfallenden Laufwerks durchführen. Rettungsziel und Quelle dürfen nie identisch sein."
+        },
+        "rollback": {
+          "en": "Keep the original powered down after imaging. Recovery work can be repeated on a copy without overwriting the source.",
+          "de": "Das Original nach dem Abbild ausgeschaltet lassen. Rettungsversuche auf einer Kopie wiederholen, ohne die Quelle zu überschreiben."
+        }
+      },
+      {
+        "id": "replace-failing-media",
+        "title": {
+          "en": "Replace media when evidence persists",
+          "de": "Bei anhaltendem Befund Laufwerk ersetzen"
+        },
+        "body": {
+          "en": "If unreadable LBAs or health counters continue growing on a verified data path, replace the drive and restore from a checked backup or rescued image. Run filesystem verification on the replacement copy before returning it to service.",
+          "de": "Wenn unlesbare LBAs oder Zustandszähler trotz geprüftem Übertragungsweg zunehmen, das Laufwerk ersetzen und aus geprüftem Backup oder Rettungsabbild wiederherstellen. Vor der erneuten Nutzung das Dateisystem der Ersatzkopie prüfen."
+        },
+        "precautions": {
+          "en": "A filesystem repair cannot make damaged media reliable. Confirm restored files independently where checksums or original copies exist.",
+          "de": "Eine Dateisystemreparatur macht beschädigte Medien nicht zuverlässig. Wiederhergestellte Dateien möglichst anhand von Prüfsummen oder Originalkopien kontrollieren."
+        },
+        "rollback": {
+          "en": "Retain the original and backup until restoration is verified; do not erase the only remaining copy.",
+          "de": "Original und Backup bis zur geprüften Wiederherstellung aufbewahren; die letzte verbleibende Kopie nicht löschen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: libata ATA errors and recovery",
+        "url": "https://docs.kernel.org/driver-api/libata.html#ata-errors-and-exceptions",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "smartmontools: smartctl manual source",
+        "url": "https://github.com/smartmontools/smartmontools/blob/master/smartmontools/smartctl.8.in",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ata-unc-media",
+        "all": [
+          "ata",
+          "error:",
+          "UNC"
+        ],
+        "sample": "ata3.00: error: { UNC }",
+        "negative": [
+          "ata3.00: error: { ICRC ABRT }",
+          "ata3.00: configured for UDMA/133"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "ATA reports uncorrectable data from the device.",
+          "de": "ATA meldet nicht korrigierbare Daten vom Gerät."
+        },
+        "significance": {
+          "en": "Preserve data and inspect the failing read/LBA; the line does not establish which files were damaged.",
+          "de": "Daten sichern und den fehlgeschlagenen Lesezugriff beziehungsweise die LBA prüfen; die Zeile benennt keine beschädigte Datei."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-nvme-controller-reset",
+    "slug": {
+      "en": "storage-nvme-controller-reset",
+      "de": "nvme-controller-resets"
+    },
+    "category": "storage",
+    "title": {
+      "en": "NVMe I/O timeouts and controller resets",
+      "de": "NVMe-I/O-Zeitüberschreitungen und Controller-Resets"
+    },
+    "summary": {
+      "en": "Trace NVMe resets to controller health, PCIe evidence and kernel history instead of interpreting an I/O timeout as proof of one defective SSD.",
+      "de": "NVMe-Resets anhand von Controller-Zustand, PCIe-Befunden und Kernel-Verlauf untersuchen; eine I/O-Zeitüberschreitung beweist keinen einzelnen SSD-Defekt."
+    },
+    "environment": {
+      "en": "PCIe NVMe storage using the Linux nvme driver; NVMe over Fabrics requires additional transport checks.",
+      "de": "PCIe-NVMe-Speicher mit Linux-nvme-Treiber; NVMe over Fabrics benötigt zusätzliche Transportprüfungen."
+    },
+    "symptoms": {
+      "en": [
+        "File access stops while nvme logs reset or abort messages.",
+        "An NVMe namespace disappears until reboot."
+      ],
+      "de": [
+        "Dateizugriffe stehen, während nvme Reset- oder Abbruchmeldungen protokolliert.",
+        "Ein NVMe-Namespace verschwindet bis zum Neustart."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A stuck controller, firmware defect, thermal condition, PCIe fault or driver regression can prevent completion.",
+        "de": "Ein blockierter Controller, Firmwarefehler, Temperaturproblem, PCIe-Fehler oder eine Treiberregression kann die Fertigstellung verhindern."
+      },
+      {
+        "en": "A reset following idle or resume may need a separate power-management comparison; heavy-load resets alone do not identify APST.",
+        "de": "Bei Resets nach Leerlauf oder Resume kann ein getrennter Energiesparvergleich nötig sein; Last-Resets allein identifizieren APST nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-nvme-context",
+        "command": "journalctl -k -b --no-pager -n 400",
+        "explanation": {
+          "en": "Read kernel events with journal privileges if necessary; retain NVMe, PCIe/AER and filesystem lines around the incident.",
+          "de": "Kernel-Ereignisse bei Bedarf mit Journalrechten lesen; NVMe-, PCIe/AER- und Dateisystemzeilen rund um den Vorfall erhalten."
+        },
+        "interpretation": {
+          "en": "A reset is recovery after a command problem. Controller not-ready or all-ones status is a stronger availability fault; absence of AER does not exclude PCIe issues.",
+          "de": "Ein Reset ist Fehlerbehandlung nach einem Befehlsproblem. Controller-not-ready oder ein Status aus ausschließlich Einsen ist ein deutlicherer Verfügbarkeitsfehler; fehlendes AER schließt PCIe-Probleme nicht aus."
+        }
+      },
+      {
+        "id": "read-nvme-health",
+        "command": "sudo smartctl -x /dev/nvme0",
+        "explanation": {
+          "en": "Replace /dev/nvme0 with the controller corresponding to the affected namespace. Read health and error records; no test is started.",
+          "de": "/dev/nvme0 durch den Controller des betroffenen Namespace ersetzen. Zustand und Fehleraufzeichnungen lesen; kein Test startet."
+        },
+        "interpretation": {
+          "en": "Media errors, critical-warning bits or high recorded temperature provide specific leads. An error-log count can include unsupported admin commands and is not automatically media damage.",
+          "de": "Medienfehler, Critical-Warning-Bits oder hohe aufgezeichnete Temperatur liefern konkrete Hinweise. Ein Error-Log-Zähler kann auch nicht unterstützte Admin-Befehle zählen und bedeutet nicht automatisch Medienschaden."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-supported-software",
+        "title": {
+          "en": "Compare a supported kernel and SSD firmware",
+          "de": "Unterstützten Kernel und SSD-Firmware vergleichen"
+        },
+        "body": {
+          "en": "When the first failure follows a kernel update, boot an installed known-good kernel with the same workload and no other tuning. If resets occur across kernels, check the exact SSD model against vendor firmware advisories before considering an update.",
+          "de": "Wenn der erste Ausfall auf ein Kernel-Update folgt, einen installierten zuvor funktionierenden Kernel mit derselben Last und ohne weitere Tuning-Änderungen starten. Treten Resets unter mehreren Kerneln auf, das genaue SSD-Modell mit Firmware-Hinweisen des Herstellers vergleichen."
+        },
+        "precautions": {
+          "en": "Secure data first and keep a bootable alternative. Do not reset a mounted root controller manually as a diagnostic.",
+          "de": "Zuerst Daten sichern und eine startfähige Alternative behalten. Einen eingebundenen Root-Controller nicht manuell zu Diagnosezwecken zurücksetzen."
+        },
+        "rollback": {
+          "en": "Select the previous boot entry if the comparison fails. Firmware updates may not be reversible, so backup-based recovery remains necessary.",
+          "de": "Bei fehlgeschlagenem Vergleich den vorherigen Boot-Eintrag wählen. Firmware-Updates sind eventuell nicht reversibel; Wiederherstellung aus Backup bleibt erforderlich."
+        }
+      },
+      {
+        "id": "inspect-pcie-and-thermal-path",
+        "title": {
+          "en": "Check the physical NVMe path",
+          "de": "Physischen NVMe-Pfad prüfen"
+        },
+        "body": {
+          "en": "If failures coincide with AER reports or heat, power down and check SSD seating, heatsink contact and adapter placement. Compare one supported slot or adapter at a time and measure whether the same errors recur.",
+          "de": "Wenn Ausfälle mit AER-Meldungen oder Hitze zusammenfallen, ausschalten und SSD-Sitz, Kühlerkontakt und Adapteranordnung prüfen. Jeweils nur einen unterstützten Slot oder Adapter vergleichen und beobachten, ob dieselben Fehler wiederkehren."
+        },
+        "precautions": {
+          "en": "Avoid benchmarks on storage already returning uncorrectable errors. Slot changes can affect boot order and PCIe lane sharing.",
+          "de": "Keine Benchmarks auf Speicher durchführen, der bereits nicht korrigierbare Fehler liefert. Slotwechsel können Boot-Reihenfolge und PCIe-Lane-Aufteilung beeinflussen."
+        },
+        "rollback": {
+          "en": "Restore the recorded hardware arrangement and firmware boot order while powered off if detection worsens.",
+          "de": "Bei schlechterer Erkennung im ausgeschalteten Zustand die dokumentierte Hardwareanordnung und Firmware-Boot-Reihenfolge wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: NVMe feature and quirk policy",
+        "url": "https://docs.kernel.org/nvme/feature-and-quirk-policy.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux NVMe PCI driver source",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/nvme/host/pci.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "smartmontools: smartctl manual source",
+        "url": "https://github.com/smartmontools/smartmontools/blob/master/smartmontools/smartctl.8.in",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nvme-timeout-reset",
+        "all": [
+          "nvme",
+          "I/O",
+          "timeout,",
+          "reset controller"
+        ],
+        "sample": "nvme nvme0: I/O 42 QID 2 timeout, reset controller",
+        "negative": [
+          "nvme nvme0: 8/0/0 default/read/poll queues",
+          "nvme nvme0: Shutdown timeout set to 8 seconds"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An NVMe command timed out and recovery escalated to resetting the controller.",
+          "de": "Ein NVMe-Befehl lief in eine Zeitüberschreitung; die Fehlerbehandlung eskalierte zum Controller-Reset."
+        },
+        "significance": {
+          "en": "Correlate health and PCIe events; this does not by itself prove a media fault.",
+          "de": "Zustands- und PCIe-Ereignisse vergleichen; dies allein beweist keinen Medienfehler."
+        }
+      },
+      {
+        "id": "nvme-reset-not-ready",
+        "all": [
+          "nvme",
+          "Device not ready; aborting reset"
+        ],
+        "sample": "nvme nvme0: Device not ready; aborting reset, CSTS=0x1",
+        "negative": [
+          "nvme nvme0: resetting controller",
+          "nvme nvme0: pci function 0000:04:00.0"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The controller did not reach the required ready state during reset.",
+          "de": "Der Controller erreichte während des Resets nicht den erforderlichen Bereitschaftszustand."
+        },
+        "significance": {
+          "en": "Stop unnecessary writes and preserve data; firmware, power and PCIe availability need checking.",
+          "de": "Unnötige Schreibzugriffe beenden und Daten sichern; Firmware, Stromversorgung und PCIe-Verfügbarkeit prüfen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-nvme-idle-resume",
+    "slug": {
+      "en": "storage-nvme-idle-resume",
+      "de": "nvme-ausfall-nach-leerlauf"
+    },
+    "category": "storage",
+    "title": {
+      "en": "NVMe fails after idle or resume",
+      "de": "NVMe fällt nach Leerlauf oder Resume aus"
+    },
+    "summary": {
+      "en": "Use a controlled NVMe power-state comparison when failures follow idle or resume; separate APST from PCIe ASPM and system suspend behavior.",
+      "de": "Bei Ausfällen nach Leerlauf oder Resume NVMe-Energiesparzustände kontrolliert vergleichen und APST von PCIe-ASPM und System-Suspend unterscheiden."
+    },
+    "environment": {
+      "en": "Local NVMe SSDs with APST support; kernel parameter effects depend on the controller and its quirks.",
+      "de": "Lokale NVMe-SSDs mit APST-Unterstützung; Kernelparameter wirken abhängig vom Controller und seinen Quirks."
+    },
+    "symptoms": {
+      "en": [
+        "Storage works under activity but disappears after a quiet period.",
+        "The first I/O after wake-up triggers a reset."
+      ],
+      "de": [
+        "Speicher funktioniert bei Aktivität, verschwindet aber nach einer Ruhephase.",
+        "Der erste I/O-Zugriff nach dem Aufwachen löst einen Reset aus."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A controller may mishandle an autonomous power-state transition; timing evidence and a controlled comparison are needed.",
+        "de": "Ein Controller kann einen autonomen Energiesparübergang fehlerhaft behandeln; Zeitbezug und kontrollierter Vergleich sind nötig."
+      },
+      {
+        "en": "Suspend/resume ordering, PCIe ASPM or firmware can produce similar symptoms without APST being responsible.",
+        "de": "Suspend/Resume-Reihenfolge, PCIe-ASPM oder Firmware können ähnliche Symptome erzeugen, ohne dass APST verantwortlich ist."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-power-limit",
+        "command": "cat /sys/module/nvme_core/parameters/default_ps_max_latency_us",
+        "explanation": {
+          "en": "Read the APST latency policy used for newly enumerated devices; no administrator rights normally needed.",
+          "de": "APST-Latenzrichtlinie für neu erkannte Geräte lesen; normalerweise sind keine Administratorrechte nötig."
+        },
+        "interpretation": {
+          "en": "Zero disables APST selection by this policy. A nonzero value permits suitable states but does not prove the affected drive actually entered one.",
+          "de": "Null deaktiviert die APST-Auswahl über diese Richtlinie. Ein Wert über null erlaubt passende Zustände, beweist aber keinen tatsächlich erfolgten Übergang des Laufwerks."
+        }
+      },
+      {
+        "id": "compare-wake-journal",
+        "command": "journalctl -k -b --no-pager -n 400",
+        "explanation": {
+          "en": "Read kernel events near the last idle or suspend cycle; journal privileges may be required.",
+          "de": "Kernel-Ereignisse nahe dem letzten Leerlauf- oder Suspend-Zyklus lesen; gegebenenfalls sind Journalrechte nötig."
+        },
+        "interpretation": {
+          "en": "APST setup errors concern feature programming, while resume I/O timeouts show availability loss. Neither identifies the exact power-management layer alone.",
+          "de": "APST-Setupfehler betreffen die Programmierung des Features; I/O-Zeitüberschreitungen nach Resume zeigen einen Verfügbarkeitsverlust. Keiner der Befunde benennt allein die genaue Energiesparschicht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "single-boot-apst-comparison",
+        "title": {
+          "en": "Compare one boot with APST disabled",
+          "de": "Einen Start ohne APST vergleichen"
+        },
+        "body": {
+          "en": "Only if failures reliably follow idle or wake, append nvme_core.default_ps_max_latency_us=0 to one boot entry using the bootloader editor. Repeat the same idle or wake interval, preserving the original entry.",
+          "de": "Nur wenn Ausfälle zuverlässig auf Leerlauf oder Aufwachen folgen, im Bootloader-Editor für einen einzigen Start nvme_core.default_ps_max_latency_us=0 ergänzen. Dieselbe Leerlauf- oder Aufwachphase wiederholen und den ursprünglichen Eintrag erhalten."
+        },
+        "precautions": {
+          "en": "Disabling APST can increase SSD power and temperature. Do not simultaneously disable ASPM or change the kernel; otherwise the result cannot distinguish causes.",
+          "de": "Ohne APST können SSD-Verbrauch und Temperatur steigen. Nicht gleichzeitig ASPM abschalten oder den Kernel wechseln; sonst lassen sich Ursachen nicht unterscheiden."
+        },
+        "rollback": {
+          "en": "Boot the unchanged entry to restore the original policy. Persist a workaround only after repeatable evidence and a model-specific review.",
+          "de": "Mit dem unveränderten Eintrag die ursprüngliche Richtlinie wiederherstellen. Eine Umgehung erst nach reproduzierbarem Befund und modellspezifischer Prüfung dauerhaft setzen."
+        }
+      },
+      {
+        "id": "check-firmware-and-resume-regression",
+        "title": {
+          "en": "Check firmware and resume regressions",
+          "de": "Firmware und Resume-Regression prüfen"
+        },
+        "body": {
+          "en": "If the single-boot APST change has no effect, remove it and compare a previously working supported kernel. Check SSD and system firmware advisories for the exact models, keeping suspend and idle cases as separate tests.",
+          "de": "Wenn der APST-Einmaltest nichts ändert, den Parameter entfernen und einen zuvor funktionierenden unterstützten Kernel vergleichen. SSD- und System-Firmwarehinweise für die genauen Modelle prüfen; Suspend und Leerlauf als getrennte Fälle behandeln."
+        },
+        "precautions": {
+          "en": "Keep backups and a bootable kernel. A successful short comparison is evidence, not a guarantee of long-term stability.",
+          "de": "Backups und einen startfähigen Kernel behalten. Ein kurzer erfolgreicher Vergleich ist ein Befund, keine Garantie für dauerhafte Stabilität."
+        },
+        "rollback": {
+          "en": "Restore the previous kernel selection and remove only the experimental parameter or configuration change.",
+          "de": "Die vorige Kernelauswahl wiederherstellen und ausschließlich den experimentellen Parameter beziehungsweise die Konfigurationsänderung entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: NVMe feature and quirk policy",
+        "url": "https://docs.kernel.org/nvme/feature-and-quirk-policy.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux NVMe core and APST parameter source",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/nvme/host/core.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nvme-apst-setup-error",
+        "all": [
+          "nvme",
+          "failed to set APST feature"
+        ],
+        "sample": "nvme nvme0: failed to set APST feature (-19)",
+        "negative": [
+          "nvme nvme0: Shutdown timeout set to 8 seconds",
+          "nvme nvme0: 4/0/0 default/read/poll queues"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Programming autonomous power-state transitions failed.",
+          "de": "Die Programmierung autonomer Energiesparübergänge scheiterte."
+        },
+        "significance": {
+          "en": "Inspect earlier controller errors; APST setup may fail because the controller is already unavailable, so this is not proof APST caused a crash.",
+          "de": "Frühere Controller-Fehler prüfen; APST-Setup kann wegen eines bereits unerreichbaren Controllers scheitern. Das beweist nicht, dass APST einen Absturz verursacht hat."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-ext4-emergency-readonly",
+    "slug": {
+      "en": "storage-ext4-emergency-readonly",
+      "de": "ext4-notfall-schreibschutz"
+    },
+    "category": "storage",
+    "title": {
+      "en": "ext4 enters emergency read-only protection",
+      "de": "ext4 aktiviert Notfall-Schreibschutz"
+    },
+    "summary": {
+      "en": "Recognize ext4 protective write refusal after journal or metadata errors, including emergency_ro behavior that may coexist with visible rw mount flags.",
+      "de": "Schreibverweigerung durch ext4 nach Journal- oder Metadatenfehlern erkennen, auch wenn der Notfallzustand neben sichtbaren rw-Mount-Flags besteht."
+    },
+    "environment": {
+      "en": "ext4 filesystems using errors=remount-ro or forced journal error handling; behavior varies with kernel version.",
+      "de": "ext4-Dateisysteme mit errors=remount-ro oder erzwungener Journal-Fehlerbehandlung; Verhalten hängt vom Kernel ab."
+    },
+    "symptoms": {
+      "en": [
+        "Applications suddenly receive Read-only file system when saving.",
+        "ext4 reports filesystem errors or a read-only transition."
+      ],
+      "de": [
+        "Anwendungen erhalten beim Speichern plötzlich Read-only file system.",
+        "ext4 meldet Dateisystemfehler oder einen Übergang zum Schreibschutz."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Metadata inconsistency or failed journal I/O can trigger protection; earlier block-device errors may reveal the underlying cause.",
+        "de": "Inkonsistente Metadaten oder fehlgeschlagenes Journal-I/O können Schutz auslösen; vorherige Blockgerätefehler können die zugrunde liegende Ursache zeigen."
+      },
+      {
+        "en": "An intentionally read-only mount is a separate configuration case unless ext4 error handling is also recorded.",
+        "de": "Ein absichtlich nur lesbar eingebundenes Dateisystem ist ein anderer Konfigurationsfall, solange keine ext4-Fehlerbehandlung protokolliert ist."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-ext4-errors",
+        "command": "journalctl -k -b --no-pager -n 400",
+        "explanation": {
+          "en": "Read the current-boot kernel log with journal privileges if required. Locate the first ext4 and block I/O failure.",
+          "de": "Kernel-Log dieses Starts bei Bedarf mit Journalrechten lesen. Den ersten ext4- und Block-I/O-Fehler suchen."
+        },
+        "interpretation": {
+          "en": "The first metadata or journal error is more useful than later EROFS messages. Repeated SATA/NVMe faults require storage-path repair before filesystem repair.",
+          "de": "Der erste Metadaten- oder Journalfehler ist hilfreicher als spätere EROFS-Meldungen. Wiederholte SATA/NVMe-Fehler erfordern zuerst eine Reparatur des Speicherpfads."
+        }
+      },
+      {
+        "id": "inspect-ext4-mount",
+        "command": "findmnt -T /affected/path -o TARGET,SOURCE,FSTYPE,OPTIONS",
+        "explanation": {
+          "en": "Replace /affected/path with an existing path on the affected filesystem. This reads mount information without changing it.",
+          "de": "/affected/path durch einen vorhandenen Pfad auf dem betroffenen Dateisystem ersetzen. Mount-Informationen lesen, ohne sie zu verändern."
+        },
+        "interpretation": {
+          "en": "Confirm ext4 and the source device. Some kernels maintain internal emergency read-only protection while rw remains visible; journal evidence must accompany the flags.",
+          "de": "ext4 und Quellgerät bestätigen. Manche Kernel behalten intern Notfall-Schreibschutz bei, obwohl rw sichtbar bleibt; deshalb das Journal zusätzlich zu den Flags auswerten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "stop-writes-and-check-device",
+        "title": {
+          "en": "Stop writes and investigate the backing device",
+          "de": "Schreibzugriffe beenden und Quellgerät prüfen"
+        },
+        "body": {
+          "en": "If ext4 activated protection, stop affected applications and preserve readable data to another device. Resolve recurring drive, power or transport failures before any metadata-changing repair.",
+          "de": "Wenn ext4 den Schutz aktiviert hat, betroffene Anwendungen beenden und lesbare Daten auf ein anderes Gerät sichern. Wiederkehrende Laufwerks-, Strom- oder Übertragungsfehler vor jeder Metadatenreparatur beheben."
+        },
+        "precautions": {
+          "en": "Do not use errors=continue or repeated remount-rw attempts to bypass a protective failure. A normal ro mount may replay a journal; recovery copies need deliberate handling.",
+          "de": "Den Schutz nicht durch errors=continue oder wiederholtes remount-rw umgehen. Ein normales ro-Mount kann das Journal wiedergeben; Rettungskopien benötigen eine bewusste Vorgehensweise."
+        },
+        "rollback": {
+          "en": "Restore services only after device stability and filesystem consistency have been established. Recover damaged files from a known-good backup.",
+          "de": "Dienste erst nach geklärter Gerätestabilität und Dateisystemkonsistenz wieder starten. Beschädigte Dateien aus einem verlässlichen Backup wiederherstellen."
+        }
+      },
+      {
+        "id": "offline-ext4-check",
+        "title": {
+          "en": "Plan an offline ext4 check",
+          "de": "Offline-Prüfung von ext4 planen"
+        },
+        "body": {
+          "en": "Once data is secured and the storage path is stable, use recovery media to unmount the affected filesystem and review an e2fsck no-modify assessment before approving repairs. Root filesystems need a separate boot environment.",
+          "de": "Wenn Daten gesichert und der Speicherpfad stabil sind, mit einem Rettungsmedium das betroffene Dateisystem aushängen und vor Reparaturen eine e2fsck-Prüfung ohne Änderungen auswerten. Root-Dateisysteme brauchen eine getrennte Startumgebung."
+        },
+        "precautions": {
+          "en": "Never repair a mounted filesystem. Verify the device or mapper path, and work on an image first when data is irreplaceable.",
+          "de": "Ein eingebundenes Dateisystem niemals reparieren. Geräte- oder Mapper-Pfad bestätigen; bei unersetzlichen Daten zuerst auf einem Abbild arbeiten."
+        },
+        "rollback": {
+          "en": "Filesystem repair is not reliably reversible; retain the image or backup and restore from it if recovery produces unacceptable results.",
+          "de": "Dateisystemreparaturen sind nicht zuverlässig rückgängig zu machen; Abbild oder Backup behalten und daraus wiederherstellen, wenn das Ergebnis unbrauchbar ist."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: ext4 error handling mount options",
+        "url": "https://docs.kernel.org/admin-guide/ext4.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux ext4 emergency read-only handling source",
+        "url": "https://github.com/torvalds/linux/blob/master/fs/ext4/super.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "util-linux: findmnt(8)",
+        "url": "https://man7.org/linux/man-pages/man8/findmnt.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ext4-metadata-error",
+        "all": [
+          "EXT4-fs error (device"
+        ],
+        "sample": "EXT4-fs error (device sda2): ext4_lookup:1850: inode #41: comm app: deleted inode referenced: 52",
+        "negative": [
+          "EXT4-fs (sda2): mounted filesystem with ordered data mode",
+          "EXT4-fs (sda2): recovery complete"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "ext4 has reported a filesystem error with device context.",
+          "de": "ext4 hat einen Dateisystemfehler mit Gerätekontext gemeldet."
+        },
+        "significance": {
+          "en": "Investigate the first error and preserve data; one line cannot distinguish software, memory and storage causes.",
+          "de": "Den ersten Fehler untersuchen und Daten sichern; eine Zeile unterscheidet Software-, RAM- und Speicherursachen nicht."
+        }
+      },
+      {
+        "id": "ext4-protective-ro",
+        "all": [
+          "EXT4-fs",
+          "Remounting filesystem read-only"
+        ],
+        "sample": "EXT4-fs (sda2): Remounting filesystem read-only",
+        "negative": [
+          "EXT4-fs (sda2): mounted filesystem with ordered data mode",
+          "mount: /mnt/data: mounted read-only by user request"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "ext4 entered protective read-only error handling.",
+          "de": "ext4 ist in schützende Fehlerbehandlung mit Schreibschutz gewechselt."
+        },
+        "significance": {
+          "en": "Later write failures are expected consequences. Visible mount flags can lag the internal emergency state on relevant kernels.",
+          "de": "Spätere Schreibfehler sind eine erwartbare Folge. Sichtbare Mount-Flags können bei entsprechenden Kerneln vom internen Notfallzustand abweichen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-xfs-forced-shutdown",
+    "slug": {
+      "en": "storage-xfs-forced-shutdown",
+      "de": "xfs-erzwungenes-abschalten"
+    },
+    "category": "storage",
+    "title": {
+      "en": "XFS shuts down after metadata or log I/O errors",
+      "de": "XFS schaltet nach Metadaten- oder Log-I/O-Fehlern ab"
+    },
+    "summary": {
+      "en": "Distinguish an XFS protective shutdown from a normal unmount, preserve the log, and choose recovery based on device stability and offline evidence.",
+      "de": "Schützendes XFS-Abschalten vom normalen Aushängen unterscheiden, das Log erhalten und Rettung nach Gerätestabilität und Offline-Befunden planen."
+    },
+    "environment": {
+      "en": "XFS data or root filesystems, including those on LVM or multi-device storage stacks.",
+      "de": "XFS-Daten- oder Root-Dateisysteme, auch auf LVM oder mehrschichtigen Speicheranordnungen."
+    },
+    "symptoms": {
+      "en": [
+        "I/O returns errors while XFS says Shutting down filesystem.",
+        "The mount remains listed but ordinary operations stop working."
+      ],
+      "de": [
+        "I/O liefert Fehler, während XFS Shutting down filesystem meldet.",
+        "Das Mount bleibt gelistet, normale Zugriffe funktionieren aber nicht mehr."
+      ]
+    },
+    "causes": [
+      {
+        "en": "XFS can shut down to prevent further changes after log I/O failure, metadata corruption or device removal.",
+        "de": "XFS kann nach Log-I/O-Fehlern, Metadatenkorruption oder Geräteentfernung abschalten, um weitere Änderungen zu verhindern."
+      },
+      {
+        "en": "A userspace-forced shutdown is possible and must be distinguished from an unsolicited error by preceding messages.",
+        "de": "Auch ein von Userspace angefordertes Abschalten ist möglich; vorherige Meldungen müssen es von einem unerwarteten Fehler unterscheiden."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-xfs-shutdown",
+        "command": "journalctl -k -b --no-pager -n 400",
+        "explanation": {
+          "en": "Read XFS and backing-device events; journal permissions may be required. Keep messages preceding shutdown.",
+          "de": "XFS- und Quellgeräte-Ereignisse lesen; gegebenenfalls sind Journalrechte nötig. Meldungen vor dem Abschalten erhalten."
+        },
+        "interpretation": {
+          "en": "Log I/O Error or metadata corruption explains protective shutdown, while User initiated shutdown received indicates a requested action.",
+          "de": "Log I/O Error oder Metadatenkorruption erklärt schützendes Abschalten; User initiated shutdown received bezeichnet eine angeforderte Aktion."
+        }
+      },
+      {
+        "id": "map-xfs-device",
+        "command": "findmnt -T /affected/path -o TARGET,SOURCE,FSTYPE,OPTIONS",
+        "explanation": {
+          "en": "Replace /affected/path with an existing path on this XFS mount. Read the exact device or mapper source.",
+          "de": "/affected/path durch einen vorhandenen Pfad dieses XFS-Mounts ersetzen. Das genaue Geräte- oder Mapper-Ziel lesen."
+        },
+        "interpretation": {
+          "en": "A shutdown does not necessarily change the displayed rw flag. Checking the wrong underlying LVM member instead of the mapped filesystem can mislead recovery.",
+          "de": "Das Abschalten ändert das sichtbare rw-Flag nicht zwangsläufig. Eine Prüfung des falschen LVM-Mitglieds statt des gemappten Dateisystems kann die Rettung fehlleiten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "stabilize-xfs-backing-storage",
+        "title": {
+          "en": "Stabilize storage before replaying the XFS log",
+          "de": "Speicher vor XFS-Log-Wiedergabe stabilisieren"
+        },
+        "body": {
+          "en": "If logs show hardware I/O loss, stop workload and correct the failing path or rescue to a healthy device first. On stable storage, a normal mount and clean unmount can replay a dirty log before offline verification.",
+          "de": "Wenn Protokolle Hardware-I/O-Ausfälle zeigen, Last beenden und zuerst den gestörten Pfad beheben oder auf ein gesundes Gerät retten. Bei stabilem Speicher kann normales Einbinden und sauberes Aushängen ein Dirty Log vor der Offline-Prüfung wiedergeben."
+        },
+        "precautions": {
+          "en": "Log replay changes metadata. Secure an image or backup first and do not repeatedly mount storage that continues returning errors.",
+          "de": "Log-Wiedergabe ändert Metadaten. Zuerst Abbild oder Backup sichern und weiterhin fehlerhaften Speicher nicht wiederholt einbinden."
+        },
+        "rollback": {
+          "en": "Retain the untouched image; if replay or mounting fails, stop and use the saved copy for a recovery plan.",
+          "de": "Das unveränderte Abbild behalten. Wenn Wiedergabe oder Einbinden scheitert, abbrechen und mit der gesicherten Kopie weiterplanen."
+        }
+      },
+      {
+        "id": "offline-xfs-repair-review",
+        "title": {
+          "en": "Review offline XFS repair needs",
+          "de": "Offline-Reparaturbedarf für XFS prüfen"
+        },
+        "body": {
+          "en": "If corruption persists after the backing device is stable, unmount XFS in recovery mode and review xfs_repair -n on the exact filesystem device. Plan actual repair only after reading its findings and preserving data.",
+          "de": "Wenn Korruption bei stabilem Quellgerät fortbesteht, XFS in einer Rettungsumgebung aushängen und xfs_repair -n auf dem genauen Dateisystemgerät auswerten. Eine tatsächliche Reparatur erst nach Befundprüfung und Datensicherung planen."
+        },
+        "precautions": {
+          "en": "A dirty log can block the assessment. xfs_repair -L discards the log and can lose files; it is a last-resort recovery decision, not a routine fix.",
+          "de": "Ein Dirty Log kann die Prüfung blockieren. xfs_repair -L verwirft das Log und kann Dateien verlieren; dies ist eine letzte Rettungsmaßnahme, keine Standardlösung."
+        },
+        "rollback": {
+          "en": "Repair cannot be reliably undone. Restore the preserved image or backup if necessary, and keep the failing source unchanged.",
+          "de": "Eine Reparatur lässt sich nicht zuverlässig rückgängig machen. Bei Bedarf gesichertes Abbild oder Backup wiederherstellen und die fehlerhafte Quelle unverändert lassen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: XFS administration",
+        "url": "https://docs.kernel.org/admin-guide/xfs.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: xfs_repair(8), dirty logs and no-modify mode",
+        "url": "https://manpages.debian.org/trixie/xfsprogs/xfs_repair.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux XFS forced-shutdown source",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/master/fs/xfs/xfs_fsops.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "xfs-log-io-shutdown",
+        "all": [
+          "XFS (",
+          "Log I/O Error",
+          "Shutting down filesystem"
+        ],
+        "sample": "XFS (dm-0): Log I/O Error (0x2) detected at xlog_ioend_work. Shutting down filesystem.",
+        "negative": [
+          "XFS (dm-0): Ending clean mount",
+          "XFS (dm-0): User initiated shutdown received."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "XFS shuts down after an error in its log I/O path.",
+          "de": "XFS schaltet nach einem Fehler im Log-I/O-Pfad ab."
+        },
+        "significance": {
+          "en": "The earlier device error matters; do not discard the log just to make mounting proceed.",
+          "de": "Der vorherige Gerätefehler ist entscheidend; das Log nicht allein für ein erfolgreiches Mount verwerfen."
+        }
+      },
+      {
+        "id": "xfs-ondisk-corruption",
+        "all": [
+          "XFS (",
+          "Corruption of on-disk metadata",
+          "Shutting down filesystem"
+        ],
+        "sample": "XFS (sdb1): Corruption of on-disk metadata (0x8) detected at xfs_buf_verifier_error. Shutting down filesystem.",
+        "negative": [
+          "XFS (sdb1): Mounting V5 Filesystem",
+          "XFS (sdb1): Unmounting Filesystem"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "XFS detected on-disk metadata corruption and entered shutdown.",
+          "de": "XFS erkannte Korruption der Metadaten auf dem Datenträger und schaltete ab."
+        },
+        "significance": {
+          "en": "Preserve data and investigate storage or memory evidence before offline recovery.",
+          "de": "Daten sichern und Speicher- beziehungsweise RAM-Befunde vor einer Offline-Rettung untersuchen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-btrfs-metadata-space",
+    "slug": {
+      "en": "storage-btrfs-metadata-space",
+      "de": "btrfs-metadaten-speicherplatz"
+    },
+    "category": "storage",
+    "title": {
+      "en": "Btrfs ENOSPC despite apparent free space",
+      "de": "Btrfs-ENOSPC trotz scheinbar freiem Platz"
+    },
+    "summary": {
+      "en": "Check Btrfs data and metadata allocation separately when snapshots or writes fail with ENOSPC although a simple free-space report looks sufficient.",
+      "de": "Btrfs-Daten- und Metadatenbelegung getrennt prüfen, wenn Snapshots oder Schreiben mit ENOSPC scheitern, obwohl die einfache Platzanzeige ausreicht."
+    },
+    "environment": {
+      "en": "Btrfs single-device or multi-device filesystems with copy-on-write allocation and snapshots.",
+      "de": "Btrfs auf einem oder mehreren Geräten mit Copy-on-Write-Belegung und Snapshots."
+    },
+    "symptoms": {
+      "en": [
+        "Snapshot creation or metadata changes fail with No space left on device.",
+        "df free space does not explain the allocation failure."
+      ],
+      "de": [
+        "Snapshot-Erstellung oder Metadatenänderungen scheitern mit No space left on device.",
+        "Der laut df freie Platz erklärt den Belegungsfehler nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Metadata chunks, per-device unallocated space or a profile constraint may prevent new allocations despite spare space inside data chunks.",
+        "de": "Metadaten-Chunks, nicht belegter Platz pro Gerät oder ein Profilzwang können neue Belegung verhindern, obwohl Daten-Chunks intern noch Platz haben."
+      },
+      {
+        "en": "Snapshots retain referenced extents; deleting a visible file may not release its underlying storage immediately.",
+        "de": "Snapshots halten referenzierte Extents; das Löschen einer sichtbaren Datei gibt deren Speicher nicht unbedingt sofort frei."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-btrfs-usage",
+        "command": "sudo btrfs filesystem usage -T /mountpoint",
+        "explanation": {
+          "en": "Replace /mountpoint with this Btrfs mount. Read allocation and per-device usage; administrator access may be needed.",
+          "de": "/mountpoint durch dieses Btrfs-Mount ersetzen. Belegung und Nutzung pro Gerät lesen; Administratorrechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "Compare Metadata used/total and Device unallocated, including the active profile. Aggregate free estimates are not a promise that the next metadata allocation can succeed.",
+          "de": "Metadata used/total und Device unallocated einschließlich des aktiven Profils vergleichen. Die Gesamtschätzung freien Platzes garantiert keine erfolgreiche nächste Metadatenbelegung."
+        }
+      },
+      {
+        "id": "list-retained-subvolumes",
+        "command": "sudo btrfs subvolume list /mountpoint",
+        "explanation": {
+          "en": "Read subvolume and snapshot paths for the chosen mount; this does not delete them.",
+          "de": "Subvolume- und Snapshot-Pfade des gewählten Mounts lesen; nichts wird gelöscht."
+        },
+        "interpretation": {
+          "en": "Many snapshots identify retained history to review, not automatic deletion candidates. Snapshots can share extents, so their sizes cannot simply be added.",
+          "de": "Viele Snapshots zeigen zu prüfende Historie, keine automatischen Löschkandidaten. Snapshots teilen Extents; ihre Größen lassen sich nicht einfach addieren."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "review-retained-snapshots",
+        "title": {
+          "en": "Review retained data and snapshots",
+          "de": "Aufbewahrte Daten und Snapshots prüfen"
+        },
+        "body": {
+          "en": "If unused snapshots retain old data, review retention with the backup or snapshot tool and remove only snapshots confirmed unnecessary after verifying independent backups. Allow delayed cleanup to finish before reassessing usage.",
+          "de": "Wenn ungenutzte Snapshots alte Daten halten, die Aufbewahrung im Backup- oder Snapshot-Werkzeug prüfen und nach Kontrolle unabhängiger Backups nur eindeutig entbehrliche Snapshots entfernen. Verzögerte Bereinigung abwarten und Belegung erneut prüfen."
+        },
+        "precautions": {
+          "en": "A snapshot on the same filesystem is not an independent backup. Deletion loses that recovery point and may still require metadata space.",
+          "de": "Ein Snapshot auf demselben Dateisystem ist kein unabhängiges Backup. Löschen verliert diesen Wiederherstellungspunkt und kann trotzdem Metadatenplatz benötigen."
+        },
+        "rollback": {
+          "en": "Deleted snapshots cannot be undeleted reliably; restore required history from the independent backup.",
+          "de": "Gelöschte Snapshots lassen sich nicht zuverlässig zurückholen; benötigte Historie aus dem unabhängigen Backup wiederherstellen."
+        }
+      },
+      {
+        "id": "target-empty-chunks",
+        "title": {
+          "en": "Consider a narrowly filtered balance",
+          "de": "Eng gefilterten Balance-Lauf erwägen"
+        },
+        "body": {
+          "en": "If usage shows empty allocated chunks but inadequate unallocated space, consider an empty-chunk balance with usage=0 filters for data and metadata after reviewing the upstream procedure. It reclaims empty block groups without relocating live extents.",
+          "de": "Wenn die Belegung leere zugewiesene Chunks, aber zu wenig nicht belegten Platz zeigt, nach Prüfung des Upstream-Verfahrens einen Balance-Lauf mit usage=0-Filtern für Daten und Metadaten erwägen. Er gewinnt leere Blockgruppen zurück, ohne belegte Extents umzulagern."
+        },
+        "precautions": {
+          "en": "Do not launch an unfiltered balance on an almost-full filesystem; relocation needs workspace. Profile changes and adding devices need a separate recovery plan.",
+          "de": "Auf einem fast vollen Dateisystem keinen ungefilterten Balance-Lauf starten; Umlagerung benötigt Arbeitsraum. Profiländerungen und zusätzliche Geräte benötigen einen eigenen Rettungsplan."
+        },
+        "rollback": {
+          "en": "A balance reorganizes allocation and is not an undo operation. Keep backups; cancel a longer relocation if unexpected failures occur and reassess device health.",
+          "de": "Balance ordnet Belegung um und besitzt keine Rückgängig-Funktion. Backups behalten; längere Umlagerung bei unerwarteten Fehlern abbrechen und Gerätezustand erneut prüfen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Btrfs: filesystem usage and df",
+        "url": "https://btrfs.readthedocs.io/en/latest/btrfs-filesystem.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Btrfs: balance filters and ENOSPC",
+        "url": "https://btrfs.readthedocs.io/en/latest/btrfs-balance.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Btrfs: scrub scope and repair limitations",
+        "url": "https://btrfs.readthedocs.io/en/latest/Scrub.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "btrfs-enospc-abort",
+        "all": [
+          "BTRFS",
+          "errno=-28",
+          "No space left"
+        ],
+        "sample": "BTRFS: error (device sda2) in btrfs_commit_transaction: errno=-28 No space left",
+        "negative": [
+          "BTRFS info (device sda2): using free-space-tree",
+          "app: No space left on device"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A Btrfs operation returned ENOSPC with filesystem context.",
+          "de": "Eine Btrfs-Operation lieferte ENOSPC mit Dateisystemkontext."
+        },
+        "significance": {
+          "en": "Inspect metadata and per-device allocation; a generic application ENOSPC cannot establish this specific mechanism.",
+          "de": "Metadaten und Belegung pro Gerät prüfen; generisches ENOSPC einer Anwendung weist diesen speziellen Mechanismus nicht nach."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-btrfs-checksum-errors",
+    "slug": {
+      "en": "storage-btrfs-checksum-errors",
+      "de": "btrfs-pruefsummenfehler"
+    },
+    "category": "storage",
+    "title": {
+      "en": "Btrfs checksum failures and unreadable extents",
+      "de": "Btrfs-Prüfsummenfehler und unlesbare Extents"
+    },
+    "summary": {
+      "en": "Interpret Btrfs checksum reports with scrub results and redundancy, then preserve damaged data without assuming scrub can repair a single copy.",
+      "de": "Btrfs-Prüfsummenmeldungen mit Scrub-Ergebnis und Redundanz auswerten und beschädigte Daten sichern; Scrub repariert keine fehlende gültige Kopie."
+    },
+    "environment": {
+      "en": "Btrfs filesystems with checksummed data or metadata; NOCOW/NODATASUM files may have different coverage.",
+      "de": "Btrfs mit Prüfsummen für Daten oder Metadaten; NOCOW/NODATASUM-Dateien können anders abgedeckt sein."
+    },
+    "symptoms": {
+      "en": [
+        "A file returns EIO and the kernel reports csum failed.",
+        "Existing scrub status lists uncorrectable errors."
+      ],
+      "de": [
+        "Eine Datei liefert EIO und der Kernel meldet csum failed.",
+        "Ein vorhandener Scrub-Status enthält nicht korrigierbare Fehler."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Stored data differs from its checksum; media, transport, memory or software faults are possible and need independent evidence.",
+        "de": "Gespeicherte Daten weichen von ihrer Prüfsumme ab; Medien-, Übertragungs-, RAM- oder Softwarefehler sind möglich und benötigen eigene Befunde."
+      },
+      {
+        "en": "Redundancy can enable repair only when a valid alternative copy exists; a single device does not imply every metadata profile is single.",
+        "de": "Redundanz ermöglicht Reparatur nur bei vorhandener gültiger Ersatzkopie; ein einzelnes Gerät bedeutet nicht automatisch für alle Metadaten ein Single-Profil."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-scrub-results",
+        "command": "sudo btrfs scrub status /mountpoint",
+        "explanation": {
+          "en": "Replace /mountpoint with the affected Btrfs mount. Read existing scrub results without starting a scan.",
+          "de": "/mountpoint durch das betroffene Btrfs-Mount ersetzen. Vorhandene Scrub-Ergebnisse lesen, ohne einen Scan zu starten."
+        },
+        "interpretation": {
+          "en": "Corrected errors mean a valid copy was used; uncorrectable errors require recovery from another source. No previous scrub result is not evidence of integrity.",
+          "de": "Corrected errors bedeutet Nutzung einer gültigen Kopie; uncorrectable errors erfordert Rettung aus anderer Quelle. Ein fehlender vorheriger Scrub ist kein Integritätsnachweis."
+        }
+      },
+      {
+        "id": "read-btrfs-device-counters",
+        "command": "sudo btrfs device stats /mountpoint",
+        "explanation": {
+          "en": "Read persistent Btrfs device counters. The command has no -z option and does not reset them.",
+          "de": "Dauerhafte Btrfs-Gerätezähler lesen. Der Befehl enthält kein -z und setzt sie nicht zurück."
+        },
+        "interpretation": {
+          "en": "Corruption errors support checksum concerns; read/write/flush errors indicate additional device I/O trouble. Compare changes over time because old counts persist.",
+          "de": "Corruption errors stützt Prüfsummenprobleme; read/write/flush errors zeigen zusätzliche Geräte-I/O-Störungen. Änderungen über Zeit vergleichen, da alte Zähler bestehen bleiben."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "preserve-bad-extents",
+        "title": {
+          "en": "Preserve data and trace the failing path",
+          "de": "Daten sichern und fehlerhaften Pfad verfolgen"
+        },
+        "body": {
+          "en": "When uncorrectable errors appear, preserve readable files and map any named damaged files to independent backups. Check device errors and memory stability before allowing new writes or automated cleanup.",
+          "de": "Bei nicht korrigierbaren Fehlern lesbare Dateien sichern und genannte beschädigte Dateien unabhängigen Backups zuordnen. Gerätefehler und RAM-Stabilität prüfen, bevor neue Schreibzugriffe oder automatische Bereinigung erlaubt werden."
+        },
+        "precautions": {
+          "en": "Do not silence errors by deleting checksum metadata or running btrfs check --repair. A checksum proves a mismatch, not the original correct byte value.",
+          "de": "Fehler nicht durch Löschen von Prüfsummenmetadaten oder btrfs check --repair unterdrücken. Eine Prüfsumme beweist die Abweichung, nicht den ursprünglichen korrekten Bytewert."
+        },
+        "rollback": {
+          "en": "Restore affected files from verified independent copies after the underlying fault is resolved; keep the original recovery image.",
+          "de": "Betroffene Dateien nach Behebung der Ursache aus geprüften unabhängigen Kopien wiederherstellen; das ursprüngliche Rettungsabbild behalten."
+        }
+      },
+      {
+        "id": "scrub-with-valid-redundancy",
+        "title": {
+          "en": "Plan scrub according to available redundancy",
+          "de": "Scrub nach vorhandener Redundanz planen"
+        },
+        "body": {
+          "en": "If storage is stable and backups exist, schedule a scrub to establish the scope. A normal scrub can repair from valid replicas; use read-only scrub mode for an assessment when modifications are not desired.",
+          "de": "Wenn Speicher stabil und Backups vorhanden sind, einen Scrub zur Umfangsbestimmung planen. Normaler Scrub kann aus gültigen Replikaten reparieren; für eine Prüfung ohne gewünschte Änderungen den Nur-Lese-Modus nutzen."
+        },
+        "precautions": {
+          "en": "Scrub creates sustained I/O and is not a structural filesystem checker. For an actively failing drive, rescue data before a full scan.",
+          "de": "Scrub erzeugt dauerhafte I/O-Last und ist keine strukturelle Dateisystemprüfung. Bei einem aktiv ausfallenden Laufwerk Daten vor einem Vollscan retten."
+        },
+        "rollback": {
+          "en": "Scrub repair has no general undo; retain backups. Cancel the scan if device errors grow and continue on a rescued copy.",
+          "de": "Scrub-Reparatur hat keine allgemeine Rückgängig-Funktion; Backups behalten. Bei zunehmenden Gerätefehlern den Scan abbrechen und auf einer geretteten Kopie weiterarbeiten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Btrfs: scrub scope and repair limitations",
+        "url": "https://btrfs.readthedocs.io/en/latest/Scrub.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Btrfs: checksumming",
+        "url": "https://btrfs.readthedocs.io/en/latest/Checksumming.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Btrfs: filesystem usage and df",
+        "url": "https://btrfs.readthedocs.io/en/latest/btrfs-filesystem.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "btrfs-data-csum",
+        "all": [
+          "BTRFS warning",
+          "csum failed"
+        ],
+        "sample": "BTRFS warning (device sdb2): csum failed root 5 ino 812 off 0 csum 0x12345678 expected csum 0x87654321 mirror 1",
+        "negative": [
+          "BTRFS info (device sdb2): using crc32c checksum algorithm",
+          "BTRFS info (device sdb2): scrub finished after 12 seconds"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A checksummed Btrfs data extent failed verification.",
+          "de": "Ein Btrfs-Datenextent mit Prüfsumme bestand die Prüfung nicht."
+        },
+        "significance": {
+          "en": "Map inode and offset where possible; replica availability determines whether automatic repair is possible.",
+          "de": "Inode und Offset möglichst zuordnen; vorhandene Replikate bestimmen, ob automatische Reparatur möglich ist."
+        }
+      },
+      {
+        "id": "btrfs-metadata-checksum",
+        "all": [
+          "BTRFS",
+          "checksum verify failed"
+        ],
+        "sample": "BTRFS error (device sdb2): checksum verify failed on logical 1048576 mirror 1 wanted 0x1234 found 0x5678 level 1",
+        "negative": [
+          "BTRFS info (device sdb2): using xxhash checksum algorithm",
+          "BTRFS info (device sdb2): checking UUID tree"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Btrfs could not verify a metadata block checksum.",
+          "de": "Btrfs konnte die Prüfsumme eines Metadatenblocks nicht bestätigen."
+        },
+        "significance": {
+          "en": "Metadata damage can affect many files; preserve an image and examine device and memory evidence.",
+          "de": "Metadatenschäden können viele Dateien betreffen; ein Abbild sichern und Geräte- sowie RAM-Befunde prüfen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-ext4-inode-exhaustion",
+    "slug": {
+      "en": "storage-ext4-inode-exhaustion",
+      "de": "ext4-inodes-aufgebraucht"
+    },
+    "category": "storage",
+    "title": {
+      "en": "ext4 runs out of inodes before blocks",
+      "de": "ext4 gehen Inodes vor Datenblöcken aus"
+    },
+    "summary": {
+      "en": "Identify ext4 inode exhaustion when creating tiny files fails while block space remains, and fix the file population rather than masking ENOSPC.",
+      "de": "ext4-Inode-Mangel erkennen, wenn kleine neue Dateien trotz freier Datenblöcke scheitern, und die Dateimenge statt nur das ENOSPC-Symptom korrigieren."
+    },
+    "environment": {
+      "en": "ext4 filesystems with a finite inode table and workloads producing many small files.",
+      "de": "ext4 mit endlicher Inode-Tabelle und Lasten, die viele kleine Dateien erzeugen."
+    },
+    "symptoms": {
+      "en": [
+        "Creating a new file fails but extending an existing file may work.",
+        "df reports free blocks but df -i reports nearly no free inodes."
+      ],
+      "de": [
+        "Eine neue Datei lässt sich nicht anlegen; eine bestehende kann sich eventuell noch vergrößern.",
+        "df zeigt freie Blöcke, df -i aber fast keine freien Inodes."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Caches, mail queues or generated-file trees may consume the filesystem inode population.",
+        "de": "Caches, Mail-Warteschlangen oder Verzeichnisse mit erzeugten Dateien können den Inode-Bestand verbrauchen."
+      },
+      {
+        "en": "Quota limits or metadata damage can resemble exhaustion; confirm both filesystem identity and counters.",
+        "de": "Quota-Grenzen oder Metadatenschäden können ähnlich wirken; Dateisystemtyp und Zähler bestätigen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "compare-inode-counts",
+        "command": "df -i /affected/path",
+        "explanation": {
+          "en": "Replace /affected/path with an existing path on the affected filesystem. Read inode availability without changing files.",
+          "de": "/affected/path durch einen vorhandenen Pfad auf dem betroffenen Dateisystem ersetzen. Inode-Verfügbarkeit lesen, ohne Dateien zu verändern."
+        },
+        "interpretation": {
+          "en": "IUse% near 100% with few IFree supports inode exhaustion. This alone does not show which directory generated the files.",
+          "de": "IUse% nahe 100 Prozent mit wenigen IFree stützt Inode-Mangel. Dies allein zeigt nicht das verursachende Verzeichnis."
+        }
+      },
+      {
+        "id": "count-directory-inodes",
+        "command": "du --inodes -x --max-depth=1 /suspected/directory",
+        "explanation": {
+          "en": "Replace the path with the suspected cache or queue. GNU du counts entries within this filesystem; unreadable directories may require read privileges.",
+          "de": "Pfad durch den verdächtigen Cache oder die Warteschlange ersetzen. GNU du zählt Einträge auf diesem Dateisystem; unlesbare Verzeichnisse können Leserechte erfordern."
+        },
+        "interpretation": {
+          "en": "The largest inode counts localize file populations. Permission errors or hidden mounts make the total incomplete; shared hard links are not counted like distinct new inodes.",
+          "de": "Hohe Inode-Zahlen lokalisieren große Dateimengen. Rechtefehler oder verdeckte Mounts machen die Summe unvollständig; Hardlinks zählen nicht wie jeweils neue Inodes."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "clean-owner-managed-files",
+        "title": {
+          "en": "Use the owning application to prune files",
+          "de": "Dateien mit dem zuständigen Programm ausdünnen"
+        },
+        "body": {
+          "en": "If a cache or queue accounts for the inode population, pause its producer and use that application’s retention or cleanup controls to remove confirmed disposable items. Recheck IFree before restarting production.",
+          "de": "Wenn ein Cache oder eine Warteschlange die Inodes verbraucht, den Erzeuger pausieren und dessen Aufbewahrungs- oder Bereinigungsfunktion für nachweislich entbehrliche Elemente verwenden. IFree vor dem Neustart erneut prüfen."
+        },
+        "precautions": {
+          "en": "Do not recursively delete system directories or active queue items. Move-to-trash on the same filesystem may retain the inode population.",
+          "de": "Systemverzeichnisse oder aktive Warteschlangenelemente nicht rekursiv löschen. Verschieben in den Papierkorb auf demselben Dateisystem kann die Inodes belegt lassen."
+        },
+        "rollback": {
+          "en": "Restore required files from backup and return the application’s previous retention settings if needed.",
+          "de": "Benötigte Dateien aus Backup wiederherstellen und bei Bedarf vorige Aufbewahrungseinstellungen des Programms setzen."
+        }
+      },
+      {
+        "id": "redesign-inode-heavy-storage",
+        "title": {
+          "en": "Move the workload to suitable storage",
+          "de": "Last auf geeigneten Speicher verlagern"
+        },
+        "body": {
+          "en": "If the workload genuinely requires more files than this ext4 layout provides, migrate it with a verified copy to a filesystem provisioned for that file count. Use an application path setting or a deliberate dedicated mount.",
+          "de": "Wenn die Last mehr Dateien benötigt als diese ext4-Aufteilung bereitstellt, sie mit einer geprüften Kopie auf ein für diese Dateimenge eingerichtetes Dateisystem migrieren. Einen Anwendungspfad oder ein bewusst geplantes eigenes Mount nutzen."
+        },
+        "precautions": {
+          "en": "Changing inode density normally requires recreating ext4 and is destructive; do not format the current filesystem as a quick fix.",
+          "de": "Eine Änderung der Inode-Dichte erfordert normalerweise neues Anlegen von ext4 und zerstört Daten; das aktuelle Dateisystem nicht als schnelle Lösung formatieren."
+        },
+        "rollback": {
+          "en": "Keep the original workload copy and path configuration until the migration is verified, then restore the path if the replacement is unsuitable.",
+          "de": "Ursprüngliche Datenkopie und Pfadkonfiguration bis zur geprüften Migration behalten und den Pfad zurücksetzen, falls der Ersatz ungeeignet ist."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian: GNU df(1), blocks and inodes",
+        "url": "https://manpages.debian.org/trixie/coreutils/df.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: GNU du(1), inode counts and filesystem boundaries",
+        "url": "https://manpages.debian.org/trixie/coreutils/du.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel: ext4 error handling mount options",
+        "url": "https://docs.kernel.org/admin-guide/ext4.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "storage-deleted-open-files",
+    "slug": {
+      "en": "storage-deleted-open-files",
+      "de": "geloeschte-offene-dateien"
+    },
+    "category": "storage",
+    "title": {
+      "en": "Deleted files still occupy disk space",
+      "de": "Gelöschte offene Dateien belegen weiterhin Platz"
+    },
+    "summary": {
+      "en": "Explain df and du disagreement by locating deleted files still held open by processes, then release their handles without corrupting application state.",
+      "de": "Abweichungen zwischen df und du durch gelöschte, von Prozessen offen gehaltene Dateien erklären und Handles ohne beschädigten Anwendungszustand schließen."
+    },
+    "environment": {
+      "en": "Local filesystems where a service or application keeps an unlinked file open; snapshot retention is a separate mechanism.",
+      "de": "Lokale Dateisysteme, auf denen Dienst oder Anwendung eine entfernte Datei offen hält; Snapshot-Aufbewahrung ist ein anderer Mechanismus."
+    },
+    "symptoms": {
+      "en": [
+        "Deleting a large log does not restore expected free space.",
+        "lsof shows a large file with link count zero still open."
+      ],
+      "de": [
+        "Das Löschen eines großen Logs gibt den erwarteten Platz nicht frei.",
+        "lsof zeigt eine große, weiterhin offene Datei mit Link-Zähler null."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Unlinking a file removes its name, but open file descriptors keep its inode and blocks alive until closed.",
+        "de": "Entfernen des Dateinamens lässt bei offenen Dateideskriptoren Inode und Blöcke bis zum Schließen bestehen."
+      },
+      {
+        "en": "Hidden mounted directories, snapshots or allocation accounting can also explain df/du differences if no large deleted handle exists.",
+        "de": "Verdeckte Mount-Verzeichnisse, Snapshots oder Belegungsabrechnung können df/du-Abweichungen ebenfalls erklären, wenn kein großer gelöschter Handle existiert."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "find-unlinked-handles",
+        "command": "sudo lsof +L1",
+        "explanation": {
+          "en": "Read open files with link count below one system-wide; administrator rights allow inspecting other users’ processes.",
+          "de": "Offene Dateien mit Link-Zähler kleiner eins systemweit lesen; Administratorrechte ermöglichen Einblick in fremde Prozesse."
+        },
+        "interpretation": {
+          "en": "Large regular files marked deleted identify potential retained blocks and the owning PID. Sparse size and multiple descriptors can exaggerate simple summed totals.",
+          "de": "Große reguläre Dateien mit deleted zeigen mögliche gehaltene Blöcke und die besitzende PID. Sparse-Dateigröße und mehrere Deskriptoren können eine einfache Summierung übertreiben."
+        }
+      },
+      {
+        "id": "compare-filesystem-space",
+        "command": "df -h /affected/path",
+        "explanation": {
+          "en": "Replace /affected/path with an existing path on the filesystem holding the deleted file.",
+          "de": "/affected/path durch einen vorhandenen Pfad auf dem Dateisystem der gelöschten Datei ersetzen."
+        },
+        "interpretation": {
+          "en": "Recheck this same filesystem after a handle closes. A df/du gap is a clue, not proof; metadata and reserved space also consume blocks.",
+          "de": "Dasselbe Dateisystem nach dem Schließen des Handles erneut prüfen. Eine df/du-Lücke ist ein Hinweis, kein Beweis; Metadaten und reservierter Platz verbrauchen ebenfalls Blöcke."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "ask-process-to-reopen",
+        "title": {
+          "en": "Ask the owning service to reopen its log",
+          "de": "Zuständigen Dienst sein Log neu öffnen lassen"
+        },
+        "body": {
+          "en": "If the deleted file is a service log and the service documents a log-reopen signal or reload action, use that documented action during an appropriate window. Verify the PID no longer holds the deleted file.",
+          "de": "Wenn die gelöschte Datei ein Dienst-Log ist und der Dienst ein Log-Reopen-Signal oder Reload-Verfahren dokumentiert, dieses im geeigneten Zeitfenster anwenden. Prüfen, dass die PID die gelöschte Datei nicht mehr offen hält."
+        },
+        "precautions": {
+          "en": "A generic HUP is not safe for every process; it may terminate an application. Preserve any log content needed for investigation before releasing the handle.",
+          "de": "Ein pauschales HUP ist nicht für jeden Prozess sicher und kann eine Anwendung beenden. Benötigte Log-Inhalte vor dem Schließen für die Untersuchung sichern."
+        },
+        "rollback": {
+          "en": "Restore the service’s prior logging configuration if reopening fails; restart it through its normal supervisor when necessary.",
+          "de": "Bei fehlgeschlagenem Neuöffnen die bisherige Log-Konfiguration wiederherstellen und den Dienst bei Bedarf über seine normale Verwaltung neu starten."
+        }
+      },
+      {
+        "id": "restart-owning-application",
+        "title": {
+          "en": "Close the owning application cleanly",
+          "de": "Besitzende Anwendung sauber schließen"
+        },
+        "body": {
+          "en": "If the process has no supported reopen function, save its work and close or restart only that application or service. Closing the last descriptor releases the unlinked file’s space.",
+          "de": "Wenn der Prozess kein unterstütztes Neuöffnen bietet, Arbeit speichern und ausschließlich diese Anwendung beziehungsweise diesen Dienst schließen oder neu starten. Der letzte geschlossene Deskriptor gibt den Platz der entfernten Datei frei."
+        },
+        "precautions": {
+          "en": "Plan downtime for stateful services. Do not truncate arbitrary /proc/PID/fd handles; they may be database files or active application data.",
+          "de": "Bei zustandsbehafteten Diensten Unterbrechung planen. Keine beliebigen /proc/PID/fd-Handles kürzen; dahinter können Datenbanken oder aktive Nutzdaten liegen."
+        },
+        "rollback": {
+          "en": "Reopen the application and validate saved state; recover required removed content from the preserved copy or backup.",
+          "de": "Anwendung wieder öffnen und gespeicherten Zustand prüfen; benötigte entfernte Inhalte aus gesicherter Kopie oder Backup retten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "lsof upstream: quick start",
+        "url": "https://github.com/lsof-org/lsof/blob/master/00QUICKSTART",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: GNU df(1), blocks and inodes",
+        "url": "https://manpages.debian.org/trixie/coreutils/df.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: GNU du(1), inode counts and filesystem boundaries",
+        "url": "https://manpages.debian.org/trixie/coreutils/du.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "storage-fstab-uuid-mismatch",
+    "slug": {
+      "en": "storage-fstab-uuid-mismatch",
+      "de": "fstab-uuid-passt-nicht"
+    },
+    "category": "storage",
+    "title": {
+      "en": "A filesystem UUID in fstab no longer matches",
+      "de": "Dateisystem-UUID in fstab stimmt nicht mehr"
+    },
+    "summary": {
+      "en": "Resolve a missing data mount after cloning or reformatting by comparing fstab identifiers with actual filesystem UUIDs and verifying device identity.",
+      "de": "Fehlendes Daten-Mount nach Klonen oder Formatieren durch Vergleich der fstab-Kennung mit realen Dateisystem-UUIDs und eindeutiger Gerätezuordnung beheben."
+    },
+    "environment": {
+      "en": "Systems using /etc/fstab and UUID-based local mounts, including systemd-generated mount units.",
+      "de": "Systeme mit /etc/fstab und lokalen UUID-Mounts, einschließlich systemd-generierter Mount-Units."
+    },
+    "symptoms": {
+      "en": [
+        "Boot waits for a device UUID that is not currently present.",
+        "A data mount disappears after replacing or recreating a filesystem."
+      ],
+      "de": [
+        "Der Start wartet auf eine derzeit nicht vorhandene Geräte-UUID.",
+        "Ein Daten-Mount fehlt nach Ersetzen oder neuem Anlegen eines Dateisystems."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Reformatting creates a new filesystem UUID, while fstab may still refer to the old one.",
+        "de": "Neues Anlegen erzeugt eine neue Dateisystem-UUID, während fstab noch die alte verwendet."
+      },
+      {
+        "en": "A disconnected or undetected drive can make a correct UUID unavailable; identical cloned UUIDs can be ambiguous.",
+        "de": "Ein getrenntes oder unerkanntes Laufwerk macht eine korrekte UUID unerreichbar; identische geklonte UUIDs können mehrdeutig sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-actual-identifiers",
+        "command": "lsblk -o NAME,PATH,MODEL,SERIAL,FSTYPE,UUID,MOUNTPOINTS",
+        "explanation": {
+          "en": "Read available device identities and filesystem UUIDs; some fields may require elevated read access on your distribution.",
+          "de": "Vorhandene Gerätekennungen und Dateisystem-UUIDs lesen; einige Felder können auf der Distribution erhöhte Leserechte benötigen."
+        },
+        "interpretation": {
+          "en": "Match model, serial, partition and filesystem rather than replacing UUIDs based on /dev/sdX alone. A missing device needs detection checks first.",
+          "de": "Modell, Seriennummer, Partition und Dateisystem abgleichen, statt UUIDs allein anhand von /dev/sdX zu ersetzen. Bei fehlendem Gerät zuerst die Erkennung prüfen."
+        }
+      },
+      {
+        "id": "verify-fstab-references",
+        "command": "findmnt --verify --verbose",
+        "explanation": {
+          "en": "Read and verify /etc/fstab without mounting it; administrator read access may be needed for some source probes.",
+          "de": "/etc/fstab lesen und prüfen, ohne sie einzubinden; für manche Quellprüfungen können erhöhte Leserechte nötig sein."
+        },
+        "interpretation": {
+          "en": "An unresolved UUID supports a stale reference or missing device. Successful verification checks syntax and availability, not whether the mount contains the intended data.",
+          "de": "Eine nicht auflösbare UUID stützt eine veraltete Referenz oder ein fehlendes Gerät. Erfolgreiche Prüfung bestätigt Syntax und Verfügbarkeit, nicht die richtigen Daten im Mount."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-verified-fstab-source",
+        "title": {
+          "en": "Correct the verified fstab source",
+          "de": "Geprüfte fstab-Quelle korrigieren"
+        },
+        "body": {
+          "en": "If the intended filesystem is positively identified and has a different UUID, back up fstab and update only that mount’s source field. Verify the file again and test the single non-root mount during a local maintenance window.",
+          "de": "Wenn das gewünschte Dateisystem eindeutig identifiziert ist und eine andere UUID besitzt, fstab sichern und nur dessen Quellfeld ändern. Datei erneut prüfen und das einzelne Nicht-Root-Mount in einem lokalen Wartungsfenster testen."
+        },
+        "precautions": {
+          "en": "Do not replace every UUID or alter root/boot entries by analogy. Ensure the mountpoint is not being used for new writes while the intended disk is absent.",
+          "de": "Nicht jede UUID ersetzen oder Root-/Boot-Einträge nach Analogie ändern. Sicherstellen, dass ohne das gewünschte Laufwerk keine neuen Daten in dessen Mountpoint geschrieben werden."
+        },
+        "rollback": {
+          "en": "Restore the saved fstab if the mount is wrong. Keep local recovery access before rebooting a machine with boot-critical changes.",
+          "de": "Bei falschem Mount die gesicherte fstab wiederherstellen. Vor Neustart nach bootrelevanten Änderungen lokalen Rettungszugang behalten."
+        }
+      },
+      {
+        "id": "separate-optional-device-policy",
+        "title": {
+          "en": "Set optional-drive policy deliberately",
+          "de": "Richtlinie für optionale Laufwerke bewusst setzen"
+        },
+        "body": {
+          "en": "If the UUID is correct but the drive is deliberately removable, configure only that mount as optional using documented nofail or automount behavior. Fix undetected permanently required storage rather than hiding its absence.",
+          "de": "Wenn die UUID stimmt, das Laufwerk aber bewusst entfernbar ist, nur dieses Mount mit dokumentiertem nofail- oder Automount-Verhalten optional machen. Unerkannten dauerhaft benötigten Speicher reparieren, statt sein Fehlen zu verstecken."
+        },
+        "precautions": {
+          "en": "An optional mount can let boot continue while applications write into the bare mountpoint. Gate services on the actual mount where their data requires it.",
+          "de": "Ein optionales Mount kann den Start fortsetzen, während Anwendungen in den leeren Mountpoint schreiben. Datenabhängige Dienste an das tatsächliche Mount binden."
+        },
+        "rollback": {
+          "en": "Restore the original mount options and dependent-service configuration from the recorded backup if behavior is unsuitable.",
+          "de": "Bei ungeeignetem Verhalten ursprüngliche Mount-Optionen und abhängige Dienstkonfiguration aus der dokumentierten Sicherung wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "util-linux: fstab(5), UUID and LABEL identifiers",
+        "url": "https://man7.org/linux/man-pages/man5/fstab.5.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux: findmnt(8)",
+        "url": "https://man7.org/linux/man-pages/man8/findmnt.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux: lsblk(8)",
+        "url": "https://man7.org/linux/man-pages/man8/lsblk.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "uuid-device-wait",
+        "all": [
+          "systemd",
+          "Timed out waiting for device",
+          "/dev/disk/by-uuid/"
+        ],
+        "sample": "systemd[1]: Timed out waiting for device /dev/disk/by-uuid/11111111-2222-3333-4444-555555555555.",
+        "negative": [
+          "systemd[1]: Found device /dev/disk/by-uuid/11111111-2222-3333-4444-555555555555.",
+          "systemd[1]: Timed out waiting for device /dev/ttyS0."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A UUID-backed device dependency did not become available within its wait period.",
+          "de": "Eine Geräteabhängigkeit per UUID wurde innerhalb der Wartezeit nicht verfügbar."
+        },
+        "significance": {
+          "en": "Check both fstab identity and device detection; the timeout is not proof the UUID itself is incorrect.",
+          "de": "fstab-Kennung und Geräteerkennung prüfen; die Zeitüberschreitung beweist keine falsche UUID."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-ntfs-dirty-volume",
+    "slug": {
+      "en": "storage-ntfs-dirty-volume",
+      "de": "ntfs-unsauberes-volume"
+    },
+    "category": "storage",
+    "title": {
+      "en": "NTFS3 refuses a dirty Windows volume",
+      "de": "NTFS3 verweigert ein unsauberes Windows-Volume"
+    },
+    "summary": {
+      "en": "Respect NTFS dirty-volume protection and Windows hibernation state, using a clean shutdown and native filesystem checks before permitting Linux writes.",
+      "de": "NTFS-Schutz für unsaubere Volumes und Windows-Ruhezustand beachten; vor Linux-Schreibzugriffen sauber herunterfahren und native Dateisystemprüfung nutzen."
+    },
+    "environment": {
+      "en": "Shared Windows NTFS partitions accessed with the kernel NTFS3 driver; ntfs-3g has different messages and options.",
+      "de": "Gemeinsame Windows-NTFS-Partitionen mit Kernel-Treiber NTFS3; ntfs-3g hat andere Meldungen und Optionen."
+    },
+    "symptoms": {
+      "en": [
+        "A formerly accessible NTFS partition refuses a read-write mount.",
+        "The kernel explicitly reports a dirty volume."
+      ],
+      "de": [
+        "Eine zuvor zugängliche NTFS-Partition verweigert das Einbinden zum Schreiben.",
+        "Der Kernel meldet ausdrücklich ein unsauberes Volume."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An unclean shutdown, outstanding filesystem errors or an interrupted write can leave the volume dirty.",
+        "de": "Unsauberes Herunterfahren, offene Dateisystemfehler oder unterbrochenes Schreiben können das Volume als unsauber markieren."
+      },
+      {
+        "en": "Windows hibernation or Fast Startup is a separate shared-volume consistency risk and may coexist with the dirty state.",
+        "de": "Windows-Ruhezustand oder Schnellstart ist ein eigenes Konsistenzrisiko gemeinsam genutzter Volumes und kann neben dem Dirty-Status bestehen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-ntfs-kernel-report",
+        "command": "journalctl -k -b --no-pager -n 250",
+        "explanation": {
+          "en": "Read the failed mount’s kernel context; journal privileges may be required. Distinguish ntfs3 from other drivers.",
+          "de": "Kernel-Kontext des fehlgeschlagenen Mounts lesen; Journalrechte können nötig sein. ntfs3 von anderen Treibern unterscheiden."
+        },
+        "interpretation": {
+          "en": "Volume is dirty is a deliberate refusal, not a reason to add force. Other messages may identify journal replay or unsupported options.",
+          "de": "Volume is dirty ist eine bewusste Verweigerung, kein Anlass für force. Andere Meldungen können Journal-Wiedergabe oder nicht unterstützte Optionen benennen."
+        }
+      },
+      {
+        "id": "identify-shared-volume",
+        "command": "lsblk -o NAME,PATH,FSTYPE,LABEL,UUID,MOUNTPOINTS",
+        "explanation": {
+          "en": "Read the NTFS partition identity and whether it is already mounted. Do not infer the Windows drive letter from Linux partition ordering.",
+          "de": "NTFS-Partitionskennung und vorhandenes Mount lesen. Windows-Laufwerksbuchstaben nicht aus der Linux-Partitionsreihenfolge ableiten."
+        },
+        "interpretation": {
+          "en": "Confirm the exact shared filesystem before opening it in Windows or planning recovery. An absent mount does not prove data loss.",
+          "de": "Das genaue gemeinsame Dateisystem vor Zugriff unter Windows oder Rettungsplanung bestätigen. Ein fehlendes Mount beweist keinen Datenverlust."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "clean-shutdown-and-native-check",
+        "title": {
+          "en": "Use a clean Windows shutdown and native check",
+          "de": "Sauberes Windows-Herunterfahren und native Prüfung nutzen"
+        },
+        "body": {
+          "en": "If the volume belongs to a usable Windows installation, boot Windows, save work, and perform its native filesystem check on the verified volume when required. Complete a full shutdown; disable Fast Startup for regularly shared writable volumes if it leaves Windows state active.",
+          "de": "Wenn das Volume zu einer nutzbaren Windows-Installation gehört, Windows starten, Arbeit speichern und bei Bedarf die native Dateisystemprüfung auf dem bestätigten Volume ausführen. Vollständig herunterfahren; bei regelmäßig gemeinsam beschriebenen Volumes Schnellstart abschalten, wenn Windows dadurch aktiven Zustand zurücklässt."
+        },
+        "precautions": {
+          "en": "Native repair changes metadata; secure irreplaceable data first. Do not write from Linux into a hibernated Windows volume.",
+          "de": "Native Reparatur ändert Metadaten; unersetzliche Daten zuerst sichern. Ein Windows-Volume im Ruhezustand nicht aus Linux beschreiben."
+        },
+        "rollback": {
+          "en": "Restore desired power settings only after deciding whether the volume will remain shared. Restore damaged files from backup if repair alters them.",
+          "de": "Gewünschte Energieeinstellungen erst nach Entscheidung über weitere gemeinsame Nutzung wiederherstellen. Durch Reparatur veränderte beschädigte Dateien aus Backup retten."
+        }
+      },
+      {
+        "id": "recover-without-force",
+        "title": {
+          "en": "Preserve access without bypassing protection",
+          "de": "Zugriff erhalten, ohne den Schutz zu umgehen"
+        },
+        "body": {
+          "en": "If Windows is unavailable or the partition remains dirty, preserve a recovery image and consider a deliberate read-only recovery using tools that support the actual NTFS state. Investigate underlying drive errors before further mount attempts.",
+          "de": "Wenn Windows fehlt oder die Partition unsauber bleibt, ein Rettungsabbild sichern und gezielte Nur-Lese-Rettung mit für den tatsächlichen NTFS-Zustand geeigneten Werkzeugen erwägen. Vor weiteren Mount-Versuchen Laufwerksfehler prüfen."
+        },
+        "precautions": {
+          "en": "The NTFS3 force option is explicitly not recommended. Clearing a dirty flag alone does not repair the filesystem or resolve hibernation consistency.",
+          "de": "Die NTFS3-Option force wird ausdrücklich nicht empfohlen. Allein das Löschen des Dirty-Flags repariert weder das Dateisystem noch Ruhezustands-Konsistenzprobleme."
+        },
+        "rollback": {
+          "en": "Keep the source untouched and retry recovery on a copy; return to ordinary writable mounts only after consistency is established.",
+          "de": "Quelle unverändert behalten und Rettung auf einer Kopie wiederholen; gewöhnlichen Schreibzugriff erst nach geklärter Konsistenz zulassen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: NTFS3 mount options",
+        "url": "https://docs.kernel.org/filesystems/ntfs3.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux NTFS3 dirty-volume protection source",
+        "url": "https://github.com/torvalds/linux/blob/master/fs/ntfs3/super.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "util-linux: lsblk(8)",
+        "url": "https://man7.org/linux/man-pages/man8/lsblk.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ntfs3-dirty-refusal",
+        "all": [
+          "ntfs3",
+          "Volume is dirty",
+          "force",
+          "flag is not set"
+        ],
+        "sample": "ntfs3: sda3: Volume is dirty and \"force\" flag is not set!",
+        "negative": [
+          "ntfs3: sda3: mounted filesystem",
+          "mount: /mnt/windows: unknown filesystem type ntfs3"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "NTFS3 refuses a writable transition with the dirty flag set.",
+          "de": "NTFS3 verweigert den Schreibübergang bei gesetztem Dirty-Flag."
+        },
+        "significance": {
+          "en": "Use native consistency recovery; do not treat force as a routine workaround.",
+          "de": "Native Konsistenzrettung nutzen; force nicht als gewöhnliche Umgehung behandeln."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-usb-uas-resets",
+    "slug": {
+      "en": "storage-usb-uas-resets",
+      "de": "usb-uas-resets"
+    },
+    "category": "storage",
+    "title": {
+      "en": "USB storage resets while using UAS",
+      "de": "USB-Speicher setzt sich unter UAS zurück"
+    },
+    "summary": {
+      "en": "Investigate USB mass-storage aborts by separating cable and power faults from bridge-specific UAS behavior, with a narrowly scoped fallback comparison.",
+      "de": "USB-Massenspeicher-Abbrüche untersuchen, Kabel- und Stromfehler von Bridge-spezifischem UAS-Verhalten trennen und einen eng begrenzten Vergleich nutzen."
+    },
+    "environment": {
+      "en": "USB SATA/NVMe bridges bound to the uas driver; devices using usb-storage already need different checks.",
+      "de": "USB-SATA/NVMe-Bridges mit uas-Treiber; Geräte bereits mit usb-storage benötigen andere Prüfungen."
+    },
+    "symptoms": {
+      "en": [
+        "An external drive stalls, resets or disappears during copies.",
+        "The log names uas_eh_abort_handler or a failed UAS reset."
+      ],
+      "de": [
+        "Ein externes Laufwerk stockt, setzt sich zurück oder verschwindet beim Kopieren.",
+        "Das Log nennt uas_eh_abort_handler oder einen fehlgeschlagenen UAS-Reset."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Cable signal quality, bus power, hub problems or controller faults can break USB I/O.",
+        "de": "Kabel-Signalqualität, USB-Stromversorgung, Hub-Probleme oder Controllerfehler können USB-I/O unterbrechen."
+      },
+      {
+        "en": "A bridge firmware defect can affect UAS command handling; a USB transport fallback is evidence only when compared under the same conditions.",
+        "de": "Ein Bridge-Firmwarefehler kann UAS-Befehlsverarbeitung betreffen; ein USB-Transportvergleich ist nur unter gleichen Bedingungen aussagekräftig."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-usb-topology",
+        "command": "lsusb -t",
+        "explanation": {
+          "en": "Read the USB tree, negotiated speed and driver binding without changing the bus.",
+          "de": "USB-Baum, ausgehandelte Geschwindigkeit und Treiberbindung lesen, ohne den Bus zu verändern."
+        },
+        "interpretation": {
+          "en": "Driver=uas confirms this entry applies. Shared hubs and speed changes provide leads but do not identify a defective cable alone.",
+          "de": "Driver=uas bestätigt den Anwendungsfall. Gemeinsame Hubs und Geschwindigkeitswechsel liefern Hinweise, identifizieren aber allein kein defektes Kabel."
+        }
+      },
+      {
+        "id": "read-uas-failure",
+        "command": "journalctl -k -b --no-pager -n 350",
+        "explanation": {
+          "en": "Read USB, UAS, SCSI and filesystem events in order; journal privileges may be required.",
+          "de": "USB-, UAS-, SCSI- und Dateisystemereignisse in Reihenfolge lesen; Journalrechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "An abort is error recovery after a stalled command; failed reset escalates the concern. USB disconnects can also be intentional, so compare the workload timing.",
+          "de": "Ein Abort ist Fehlerbehandlung nach einem blockierten Befehl; fehlgeschlagener Reset verschärft den Befund. USB-Trennungen können absichtlich sein; daher mit der Last zeitlich vergleichen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-direct-powered-usb-path",
+        "title": {
+          "en": "Compare a direct USB connection",
+          "de": "Direkte USB-Verbindung vergleichen"
+        },
+        "body": {
+          "en": "If failures occur through a hub or questionable cable, stop access, unmount safely and compare a known-good short cable on a direct port. For power-dependent devices use the specified power supply or a suitable powered hub.",
+          "de": "Wenn Fehler über einen Hub oder fragliches Kabel auftreten, Zugriffe beenden, sicher aushängen und ein bekannt gutes kurzes Kabel an einem direkten Port vergleichen. Bei stromabhängigen Geräten vorgesehene Versorgung oder geeigneten aktiven Hub nutzen."
+        },
+        "precautions": {
+          "en": "Do not unplug during writes. Secure data before repeated tests because resets can leave a filesystem inconsistent.",
+          "de": "Nicht während Schreibzugriffen abziehen. Daten vor wiederholten Versuchen sichern, da Resets ein inkonsistentes Dateisystem hinterlassen können."
+        },
+        "rollback": {
+          "en": "Safely unmount and restore the recorded connection if the alternative path is worse.",
+          "de": "Sicher aushängen und die dokumentierte Verbindung wiederherstellen, wenn der Alternativpfad schlechter ist."
+        }
+      },
+      {
+        "id": "single-device-uas-fallback",
+        "title": {
+          "en": "Compare a device-specific UAS fallback",
+          "de": "Gerätespezifischen UAS-Ersatz vergleichen"
+        },
+        "body": {
+          "en": "If the physical USB path is stable but UAS aborts persist, identify the bridge VID:PID with lsusb and test usb-storage.quirks=VID:PID:u for one boot. This binds that matching bridge to the older bulk-only storage transport.",
+          "de": "Wenn der physische USB-Pfad stabil ist, UAS-Abbrüche aber bleiben, die Bridge-VID:PID mit lsusb bestimmen und für einen Start usb-storage.quirks=VID:PID:u testen. Die passende Bridge nutzt damit den älteren Bulk-Only-Speichertransport."
+        },
+        "precautions": {
+          "en": "Replace VID:PID with four-digit hexadecimal IDs; do not copy another enclosure’s IDs. Throughput and command queueing can worsen, and root-on-USB systems need a recovery boot.",
+          "de": "VID:PID durch vierstellige Hex-IDs ersetzen; keine Kennung eines anderen Gehäuses kopieren. Durchsatz und Befehlswarteschlange können schlechter werden; Root auf USB benötigt einen Rettungsstart."
+        },
+        "rollback": {
+          "en": "Boot without the quirk and verify Driver=uas returns. Keep any permanent quirk limited to hardware confirmed affected.",
+          "de": "Ohne Quirk starten und die Rückkehr zu Driver=uas prüfen. Dauerhaften Quirk auf nachweislich betroffene Hardware begrenzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux USB Attached SCSI recovery source",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/usb/storage/uas.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Linux kernel: usb-storage.quirks parameter",
+        "url": "https://docs.kernel.org/admin-guide/kernel-parameters.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux: lsblk(8)",
+        "url": "https://man7.org/linux/man-pages/man8/lsblk.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "uas-command-abort",
+        "all": [
+          "uas_eh_abort_handler",
+          "uas-tag"
+        ],
+        "sample": "sd 6:0:0:0: [sdc] tag#4 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD OUT",
+        "negative": [
+          "usb 2-1: new SuperSpeed USB device",
+          "sd 6:0:0:0: [sdc] Attached SCSI disk"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "UAS error handling is aborting an outstanding tagged command.",
+          "de": "Die UAS-Fehlerbehandlung bricht einen ausstehenden markierten Befehl ab."
+        },
+        "significance": {
+          "en": "Check the preceding USB/storage failure; this is not proof that UAS rather than the cable caused it.",
+          "de": "Vorherigen USB/Speicherfehler prüfen; dies beweist nicht UAS statt Kabel als Ursache."
+        }
+      },
+      {
+        "id": "uas-reset-failed",
+        "all": [
+          "uas_eh_device_reset_handler",
+          "FAILED"
+        ],
+        "sample": "sd 6:0:0:0: uas_eh_device_reset_handler FAILED",
+        "negative": [
+          "sd 6:0:0:0: uas_eh_device_reset_handler SUCCESS",
+          "usb 2-1: reset SuperSpeed USB device number 2 using xhci_hcd"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A UAS device reset recovery step failed.",
+          "de": "Ein UAS-Gerätereset zur Wiederherstellung scheiterte."
+        },
+        "significance": {
+          "en": "Repeated recovery failure warrants data preservation and physical path checks before transport tuning.",
+          "de": "Wiederholtes Scheitern der Fehlerbehandlung erfordert Datensicherung und physische Pfadprüfung vor Transport-Tuning."
+        }
+      }
+    ]
+  },
+  {
+    "id": "storage-trim-not-supported",
+    "slug": {
+      "en": "storage-trim-not-supported",
+      "de": "trim-nicht-unterstuetzt"
+    },
+    "category": "storage",
+    "title": {
+      "en": "TRIM fails on a filesystem or storage layer",
+      "de": "TRIM scheitert an Dateisystem oder Speicherschicht"
+    },
+    "summary": {
+      "en": "Check discard capability through the complete storage stack when fstrim reports unsupported operation, without confusing reported bytes with freed data.",
+      "de": "Discard-Fähigkeit im gesamten Speicheraufbau prüfen, wenn fstrim fehlende Unterstützung meldet; gemeldete Bytes sind keine frisch freigegebenen Nutzdaten."
+    },
+    "environment": {
+      "en": "SSDs behind local block devices, LVM, encryption or USB bridges; discard support must reach every relevant layer.",
+      "de": "SSDs hinter lokalen Blockgeräten, LVM, Verschlüsselung oder USB-Bridges; Discard muss alle relevanten Schichten erreichen."
+    },
+    "symptoms": {
+      "en": [
+        "A periodic fstrim service reports discard unsupported.",
+        "The physical SSD supports discard but its mapped device does not advertise it."
+      ],
+      "de": [
+        "Ein regelmäßiger fstrim-Dienst meldet fehlende Discard-Unterstützung.",
+        "Die physische SSD unterstützt Discard, das gemappte Gerät meldet es jedoch nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A bridge, mapping or encryption policy may block discard even when the drive itself supports it.",
+        "de": "Bridge, Mapping oder Verschlüsselungsrichtlinie können Discard blockieren, obwohl das Laufwerk es unterstützt."
+      },
+      {
+        "en": "The filesystem or specific mounted target may not support FITRIM; this is not automatically an SSD fault.",
+        "de": "Dateisystem oder konkretes Mount-Ziel können FITRIM nicht unterstützen; dies bedeutet nicht automatisch einen SSD-Defekt."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-discard-stack",
+        "command": "lsblk -D -o NAME,TYPE,DISC-GRAN,DISC-MAX,DISC-ZERO,MOUNTPOINTS",
+        "explanation": {
+          "en": "Read discard advertisement for every visible block layer; no discard command is issued.",
+          "de": "Discard-Angaben aller sichtbaren Blockschichten lesen; kein Discard-Befehl wird gesendet."
+        },
+        "interpretation": {
+          "en": "A zero DISC-MAX at the effective filesystem device means discard is not advertised there. DISC-ZERO is not a secure-erasure guarantee.",
+          "de": "DISC-MAX null am wirksamen Dateisystemgerät bedeutet dort keine gemeldete Discard-Unterstützung. DISC-ZERO garantiert kein sicheres Löschen."
+        }
+      },
+      {
+        "id": "read-trim-service-result",
+        "command": "systemctl status fstrim.service --no-pager",
+        "explanation": {
+          "en": "Read the last systemd service result; this does not start trimming. On non-systemd systems inspect the scheduled task’s log instead.",
+          "de": "Letztes systemd-Dienstergebnis lesen; dies startet kein TRIM. Ohne systemd stattdessen das Log der geplanten Aufgabe prüfen."
+        },
+        "interpretation": {
+          "en": "An unsupported target can fail independently of other mounts. The reported trimmed byte count is a range offered to the device, not newly deleted file bytes.",
+          "de": "Ein nicht unterstütztes Ziel kann unabhängig von anderen Mounts scheitern. Gemeldete TRIM-Bytes sind dem Gerät angebotene Bereiche, nicht gerade neu gelöschte Dateibytes."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "enable-supported-discard-path",
+        "title": {
+          "en": "Review the layer that blocks discard",
+          "de": "Discard-blockierende Schicht prüfen"
+        },
+        "body": {
+          "en": "If lsblk identifies a mapping layer that blocks an otherwise supported path, review that layer’s documented discard policy and enable passthrough only when appropriate for this storage design. Verify advertisement after the change before scheduling trim.",
+          "de": "Wenn lsblk eine Mapping-Schicht zeigt, die einen ansonsten unterstützten Pfad blockiert, deren dokumentierte Discard-Richtlinie prüfen und Durchleitung nur passend zum Speicherdesign erlauben. Nach der Änderung gemeldete Unterstützung vor geplantem TRIM prüfen."
+        },
+        "precautions": {
+          "en": "Encrypted-volume discard can reveal allocation patterns. Unsupported USB firmware cannot be fixed by forcing discard; keep backups before mapping changes.",
+          "de": "Discard verschlüsselter Volumes kann Belegungsmuster offenlegen. Fehlende USB-Firmware-Unterstützung lässt sich nicht durch Erzwingen beheben; vor Mapping-Änderungen Backups behalten."
+        },
+        "rollback": {
+          "en": "Restore the previous mapping or encryption option and reopen it using the normal maintenance procedure if support or behavior worsens.",
+          "de": "Vorige Mapping- oder Verschlüsselungsoption wiederherstellen und mit dem normalen Wartungsverfahren erneut öffnen, wenn Unterstützung oder Verhalten schlechter wird."
+        }
+      },
+      {
+        "id": "exclude-unsupported-target",
+        "title": {
+          "en": "Adjust periodic trim to supported targets",
+          "de": "Regelmäßiges TRIM auf unterstützte Ziele begrenzen"
+        },
+        "body": {
+          "en": "If one filesystem or bridge genuinely lacks FITRIM support, omit that target using the scheduler’s documented selection while keeping eligible SSD mounts in the periodic job. Review an alternative bridge only if discard is a real requirement.",
+          "de": "Wenn ein Dateisystem oder eine Bridge tatsächlich kein FITRIM unterstützt, dieses Ziel nach dokumentierter Auswahl des Schedulers ausnehmen und geeignete SSD-Mounts im regelmäßigen Lauf belassen. Eine andere Bridge nur prüfen, wenn Discard benötigt wird."
+        },
+        "precautions": {
+          "en": "Do not disable trimming for all SSDs because one mount is unsupported. Avoid claiming that periodic trim recovers filesystem free space or securely erases files.",
+          "de": "TRIM nicht für alle SSDs abschalten, weil ein Mount nicht unterstützt wird. Regelmäßiges TRIM stellt keinen Dateisystemplatz wieder her und löscht Dateien nicht sicher."
+        },
+        "rollback": {
+          "en": "Restore the prior scheduler target selection from its saved configuration if a supported filesystem was accidentally omitted.",
+          "de": "Vorige Zielauswahl aus der gesicherten Scheduler-Konfiguration wiederherstellen, falls ein unterstütztes Dateisystem versehentlich ausgenommen wurde."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "util-linux: fstrim(8)",
+        "url": "https://man7.org/linux/man-pages/man8/fstrim.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux: lsblk(8)",
+        "url": "https://man7.org/linux/man-pages/man8/lsblk.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "fstrim-discard-unsupported",
+        "all": [
+          "fstrim:",
+          "discard operation is not supported"
+        ],
+        "sample": "fstrim: /mnt/usb: the discard operation is not supported",
+        "negative": [
+          "fstrim: /home: 12 GiB trimmed",
+          "fstrim: /mnt/usb: failed to open: No such file or directory"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "fstrim reports that its selected path does not support discard.",
+          "de": "fstrim meldet, dass der ausgewählte Pfad Discard nicht unterstützt."
+        },
+        "significance": {
+          "en": "Check filesystem and block-layer capability rather than treating this as a data-integrity failure.",
+          "de": "Dateisystem- und Blockschicht-Fähigkeit prüfen, statt dies als Integritätsfehler zu behandeln."
+        }
+      }
+    ]
+  }
+]

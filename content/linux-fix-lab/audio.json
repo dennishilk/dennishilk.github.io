@@ -1,0 +1,1825 @@
+[
+  {
+    "id": "audio-alsa-card-missing",
+    "slug": {
+      "en": "audio-alsa-card-missing",
+      "de": "alsa-soundkarte-fehlt"
+    },
+    "category": "audio",
+    "title": {
+      "en": "ALSA cannot see the expected sound card",
+      "de": "ALSA erkennt die erwartete Soundkarte nicht"
+    },
+    "summary": {
+      "en": "Locate a missing sound card below PipeWire by checking ALSA enumeration and kernel probing, before changing desktop routes or user audio settings.",
+      "de": "Eine fehlende Soundkarte unterhalb von PipeWire über ALSA-Erkennung und Kernel-Probing eingrenzen, bevor Desktop-Routen oder Audioeinstellungen geändert werden."
+    },
+    "environment": {
+      "en": "PCI HD-Audio, USB audio or firmware-driven sound hardware using ALSA kernel drivers.",
+      "de": "PCI-HD-Audio, USB-Audio oder firmwareabhängige Soundhardware mit ALSA-Kerneltreibern."
+    },
+    "symptoms": {
+      "en": [
+        "The expected hardware is absent from /proc/asound/cards.",
+        "The desktop offers only a dummy output or unrelated HDMI card."
+      ],
+      "de": [
+        "Die erwartete Hardware fehlt in /proc/asound/cards.",
+        "Der Desktop bietet nur Dummy-Ausgabe oder eine andere HDMI-Karte."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Missing driver binding, failed codec probing or required firmware can prevent ALSA card registration.",
+        "de": "Fehlende Treiberbindung, gescheitertes Codec-Probing oder benötigte Firmware können die ALSA-Kartenregistrierung verhindern."
+      },
+      {
+        "en": "Firmware setup can disable onboard audio, and a disconnected USB device is a separate enumeration failure.",
+        "de": "Firmware-Einstellungen können Onboard-Audio abschalten; ein getrenntes USB-Gerät ist ein eigener Erkennungsfehler."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-alsa-card-list",
+        "command": "cat /proc/asound/cards",
+        "explanation": {
+          "en": "Read registered ALSA cards as your normal user; this does not initialize a playback stream.",
+          "de": "Registrierte ALSA-Karten als normaler Benutzer lesen; es wird kein Wiedergabestream gestartet."
+        },
+        "interpretation": {
+          "en": "No expected card places the issue below PipeWire routing. A present card without playback PCMs still needs codec and profile checks.",
+          "de": "Fehlt die erwartete Karte, liegt das Problem unterhalb der PipeWire-Routen. Eine vorhandene Karte ohne Wiedergabe-PCMs benötigt weiterhin Codec- und Profilprüfung."
+        }
+      },
+      {
+        "id": "read-audio-probe-journal",
+        "command": "journalctl -k -b --no-pager -n 350",
+        "explanation": {
+          "en": "Read kernel probe messages with journal access if necessary. Compare snd_hda, SOF and USB events with the expected device.",
+          "de": "Kernel-Probe-Meldungen bei Bedarf mit Journalrechten lesen. snd_hda-, SOF- und USB-Ereignisse mit dem erwarteten Gerät vergleichen."
+        },
+        "interpretation": {
+          "en": "Missing firmware or codec probe errors justify driver-layer work. A polling fallback warning alone may be harmless if the card and playback work.",
+          "de": "Fehlende Firmware oder Codec-Probe-Fehler begründen Arbeit an der Treiberschicht. Eine Polling-Fallback-Warnung allein kann harmlos sein, wenn Karte und Wiedergabe funktionieren."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-hardware-and-firmware-detection",
+        "title": {
+          "en": "Restore device detection and required firmware",
+          "de": "Geräteerkennung und benötigte Firmware herstellen"
+        },
+        "body": {
+          "en": "If the device is disabled or absent from the bus, check firmware audio settings and the physical USB connection first. If the kernel names a missing sound firmware file, install the distribution’s matching firmware package and rebuild its boot image only if that platform requires it.",
+          "de": "Wenn das Gerät deaktiviert ist oder am Bus fehlt, zuerst Firmware-Audioeinstellungen und physische USB-Verbindung prüfen. Nennt der Kernel eine fehlende Sound-Firmwaredatei, das passende Distributionspaket installieren und nur bei erforderlicher Plattform das Boot-Abbild erneuern."
+        },
+        "precautions": {
+          "en": "Use the hardware model and exact filename; avoid switching Intel DSP drivers or copying arbitrary firmware as a blanket fix.",
+          "de": "Hardwaremodell und exakten Dateinamen verwenden; Intel-DSP-Treiber nicht pauschal wechseln oder beliebige Firmware kopieren."
+        },
+        "rollback": {
+          "en": "Restore recorded firmware settings or boot the previous kernel/image if detection worsens. Keep the package change limited to the required firmware.",
+          "de": "Bei schlechterer Erkennung dokumentierte Firmware-Einstellungen wiederherstellen oder vorigen Kernel samt Abbild starten. Paketänderung auf benötigte Firmware begrenzen."
+        }
+      },
+      {
+        "id": "compare-audio-probe-regression",
+        "title": {
+          "en": "Compare a kernel probe regression",
+          "de": "Kernel-Probe-Regression vergleichen"
+        },
+        "body": {
+          "en": "If the card disappeared after a kernel update, boot a previously working installed kernel and compare ALSA registration. For confirmed HDA codec-probing errors, collect codec and PCI IDs before considering a documented device-specific quirk.",
+          "de": "Wenn die Karte nach einem Kernel-Update fehlt, einen zuvor funktionierenden installierten Kernel starten und ALSA-Registrierung vergleichen. Bei bestätigten HDA-Codec-Probe-Fehlern Codec- und PCI-IDs sammeln, bevor ein dokumentierter gerätespezifischer Quirk erwogen wird."
+        },
+        "precautions": {
+          "en": "Do not guess probe_mask or model settings across multiple sound controllers; they can hide working codecs.",
+          "de": "probe_mask oder model nicht für mehrere Soundcontroller raten; dadurch können funktionierende Codecs verschwinden."
+        },
+        "rollback": {
+          "en": "Boot the original entry and remove only the experimental sound-driver option if the comparison is unsuccessful.",
+          "de": "Bei erfolglosem Vergleich den ursprünglichen Eintrag starten und nur die experimentelle Soundtreiberoption entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: HD-Audio codec probing and driver notes",
+        "url": "https://docs.kernel.org/sound/hd-audio/notes.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: ALSA aplay/arecord(1), device enumeration",
+        "url": "https://manpages.debian.org/trixie/alsa-utils/aplay.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "hda-response-polling",
+        "all": [
+          "hda",
+          "azx_get_response timeout",
+          "switching to polling mode"
+        ],
+        "sample": "snd_hda_intel 0000:00:1f.3: azx_get_response timeout, switching to polling mode: last cmd=0x001f0000",
+        "negative": [
+          "snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0",
+          "hda_codec: ALC892: BIOS auto-probing."
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "The HDA driver did not receive the expected interrupt response and falls back to polling.",
+          "de": "Der HDA-Treiber bekam die erwartete Interrupt-Antwort nicht und wechselt zu Polling."
+        },
+        "significance": {
+          "en": "This can be relatively harmless; confirm missing cards or actual playback failure before applying a quirk.",
+          "de": "Dies kann relativ harmlos sein; vor einem Quirk fehlende Karte oder tatsächlichen Wiedergabefehler bestätigen."
+        }
+      },
+      {
+        "id": "hda-response-single-command",
+        "all": [
+          "hda",
+          "azx_get_response timeout",
+          "switching to single_cmd mode"
+        ],
+        "sample": "snd_hda_intel 0000:00:1f.3: azx_get_response timeout, switching to single_cmd mode: last cmd=0x001f0000",
+        "negative": [
+          "snd_hda_intel 0000:00:1f.3: azx_get_response timeout, switching to polling mode",
+          "hda_codec: ALC892: BIOS auto-probing."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "HDA command communication has escalated to single-command fallback.",
+          "de": "HDA-Befehlskommunikation ist zum Single-Command-Fallback eskaliert."
+        },
+        "significance": {
+          "en": "Review codec-probing evidence and exact controller identity; do not assign this to PipeWire mute settings.",
+          "de": "Codec-Probe-Befunde und genaue Controllerkennung prüfen; dies gehört nicht zu PipeWire-Stummschaltung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-pipewire-user-service",
+    "slug": {
+      "en": "audio-pipewire-user-service",
+      "de": "pipewire-benutzerdienst-startet-nicht"
+    },
+    "category": "audio",
+    "title": {
+      "en": "PipeWire or its user session manager does not start",
+      "de": "PipeWire oder Benutzer-Session-Manager startet nicht"
+    },
+    "summary": {
+      "en": "Separate a stopped user audio service from missing hardware, and inspect configuration or package errors before restarting the session repeatedly.",
+      "de": "Gestoppten Benutzer-Audiodienst von fehlender Hardware trennen und Konfigurations- oder Paketfehler vor wiederholten Session-Neustarts auswerten."
+    },
+    "environment": {
+      "en": "Desktop sessions using PipeWire with WirePlumber and optionally pipewire-pulse; systemd user commands run without sudo.",
+      "de": "Desktop-Sitzungen mit PipeWire, WirePlumber und optional pipewire-pulse; systemd-Benutzerbefehle ohne sudo ausführen."
+    },
+    "symptoms": {
+      "en": [
+        "wpctl cannot connect to PipeWire.",
+        "PipeWire or WirePlumber user units are failed or missing."
+      ],
+      "de": [
+        "wpctl kann sich nicht mit PipeWire verbinden.",
+        "PipeWire- oder WirePlumber-Benutzer-Units sind fehlgeschlagen oder fehlen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A malformed local configuration or unavailable mandatory module can stop the daemon.",
+        "de": "Fehlerhafte lokale Konfiguration oder ein fehlendes Pflichtmodul kann den Daemon stoppen."
+      },
+      {
+        "en": "Missing user units, mismatched package components or a broken login session can prevent socket and service startup.",
+        "de": "Fehlende Benutzer-Units, nicht zusammenpassende Paketteile oder defekte Login-Sitzung können Socket- und Dienststart verhindern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-user-audio-units",
+        "command": "systemctl --user status pipewire.service pipewire.socket wireplumber.service pipewire-pulse.service --no-pager",
+        "explanation": {
+          "en": "Read audio user-unit state from the affected desktop account, without sudo. Some units are optional on a given distribution.",
+          "de": "Audio-Benutzer-Unit-Zustand im betroffenen Desktop-Konto ohne sudo lesen. Manche Units sind auf der jeweiligen Distribution optional."
+        },
+        "interpretation": {
+          "en": "A failed unit needs its first error; Unit not found can mean an absent package or a distribution-specific name. Running services alone do not prove routes exist.",
+          "de": "Eine fehlgeschlagene Unit benötigt ihren ersten Fehler; Unit not found kann fehlendes Paket oder distributionsspezifischen Namen bedeuten. Laufende Dienste beweisen keine vorhandenen Routen."
+        }
+      },
+      {
+        "id": "read-user-audio-journal",
+        "command": "journalctl --user -b -u pipewire.service -u wireplumber.service -u pipewire-pulse.service --no-pager -n 200",
+        "explanation": {
+          "en": "Read this account’s startup errors and configuration context; no service is restarted.",
+          "de": "Startfehler und Konfigurationskontext dieses Kontos lesen; kein Dienst wird neu gestartet."
+        },
+        "interpretation": {
+          "en": "A named missing module points to packaging or configuration; D-Bus/runtime failures point to session setup. Preserve the first failure before reset-failed hides its prominence.",
+          "de": "Ein genanntes fehlendes Modul verweist auf Paketierung oder Konfiguration; D-Bus-/Runtime-Fehler auf die Sitzungseinrichtung. Den ersten Fehler sichern, bevor reset-failed ihn weniger sichtbar macht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "isolate-user-audio-overrides",
+        "title": {
+          "en": "Isolate a confirmed broken local override",
+          "de": "Bestätigt fehlerhafte lokale Anpassung isolieren"
+        },
+        "body": {
+          "en": "If the first error names a user override, preserve that file and temporarily move only the implicated override outside its active configuration directory. Restart the affected user audio unit after saving active work and compare startup.",
+          "de": "Wenn der erste Fehler eine Benutzeranpassung nennt, diese Datei sichern und nur die betroffene Anpassung vorübergehend aus dem aktiven Konfigurationsverzeichnis verschieben. Nach Speichern aktiver Arbeit den betroffenen Benutzer-Audiodienst neu starten und den Start vergleichen."
+        },
+        "precautions": {
+          "en": "Restarting audio interrupts calls and recordings. Do not remove the entire user configuration or replace distribution defaults with an old full config file.",
+          "de": "Audio-Neustart unterbricht Gespräche und Aufnahmen. Nicht die gesamte Benutzerkonfiguration entfernen oder Distributionsvorgaben durch eine alte vollständige Konfigurationsdatei ersetzen."
+        },
+        "rollback": {
+          "en": "Restore the preserved file and restart the same user unit if the override was not responsible; fix its syntax before enabling it again.",
+          "de": "Gesicherte Datei zurücklegen und dieselbe Benutzer-Unit neu starten, wenn die Anpassung nicht verantwortlich war; Syntax vor erneutem Aktivieren korrigieren."
+        }
+      },
+      {
+        "id": "restore-consistent-audio-packages",
+        "title": {
+          "en": "Restore a consistent distribution audio stack",
+          "de": "Konsistenten Distributions-Audiostack herstellen"
+        },
+        "body": {
+          "en": "If a required module or service unit is absent, install or repair the distribution’s PipeWire/WirePlumber components as a matching set. Ensure only the intended session manager is enabled, then log out and back into the affected desktop session.",
+          "de": "Wenn ein benötigtes Modul oder eine Service-Unit fehlt, zusammenpassende PipeWire-/WirePlumber-Komponenten der Distribution installieren oder reparieren. Nur den vorgesehenen Session-Manager aktivieren und danach die betroffene Desktop-Sitzung ab- und anmelden."
+        },
+        "precautions": {
+          "en": "Follow that distribution’s service defaults rather than starting a root PipeWire server or running two session managers over the same graph.",
+          "de": "Dienstvorgaben der Distribution befolgen, statt einen Root-PipeWire-Server oder zwei Session-Manager für denselben Graphen zu starten."
+        },
+        "rollback": {
+          "en": "Use the package manager’s recorded transaction or prior system generation to restore the previous stack if the repair regresses other audio functions.",
+          "de": "Bei Regression anderer Audiofunktionen mit dokumentierter Pakettransaktion oder vorheriger Systemgeneration den bisherigen Stack wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "PipeWire: pipewire(1)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire_1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire: pipewire.conf(5)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire_conf_5.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: getting started and user services",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/getting_started.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pipewire-mandatory-module-missing",
+        "all": [
+          "pipewire",
+          "could not load mandatory module",
+          "libpipewire-module-",
+          "No such file or directory"
+        ],
+        "sample": "pipewire[2140]: could not load mandatory module \"libpipewire-module-rt\": No such file or directory",
+        "negative": [
+          "pipewire[2140]: loaded module libpipewire-module-rt",
+          "app[2140]: could not open document: No such file or directory"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A mandatory PipeWire module could not be loaded from the configured installation.",
+          "de": "Ein Pflichtmodul von PipeWire konnte aus der konfigurierten Installation nicht geladen werden."
+        },
+        "significance": {
+          "en": "Inspect the named override and package contents; this is a startup/configuration lead, not a defective sound-card diagnosis.",
+          "de": "Genannte Anpassung und Paketinhalt prüfen; dies ist ein Start-/Konfigurationshinweis, keine Soundkarten-Defektdiagnose."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-default-output-muted",
+    "slug": {
+      "en": "audio-default-output-muted",
+      "de": "standardausgabe-stumm-oder-falsch"
+    },
+    "category": "audio",
+    "title": {
+      "en": "Sound goes to the wrong or muted output",
+      "de": "Ton landet am falschen oder stummen Ausgang"
+    },
+    "summary": {
+      "en": "Use PipeWire default-device and volume evidence to distinguish a muted sink or retained application route from a missing sound device or driver failure.",
+      "de": "PipeWire-Standardgerät und Lautstärke prüfen, um stummen Ausgang oder gespeicherte Anwendungsroute von fehlender Soundhardware und Treiberfehler zu unterscheiden."
+    },
+    "environment": {
+      "en": "PipeWire desktops managed by WirePlumber, with multiple speakers, HDMI outputs or USB headsets.",
+      "de": "PipeWire-Desktops mit WirePlumber und mehreren Lautsprechern, HDMI-Ausgängen oder USB-Headsets."
+    },
+    "symptoms": {
+      "en": [
+        "Applications appear to play but the expected speakers stay silent.",
+        "Audio reaches an unused monitor or a previously connected headset."
+      ],
+      "de": [
+        "Anwendungen spielen scheinbar ab, die gewünschten Lautsprecher bleiben aber stumm.",
+        "Audio landet an einem ungenutzten Monitor oder einem früher verbundenen Headset."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The default sink may be muted or a different device may have been selected and remembered.",
+        "de": "Der Standardausgang kann stumm sein oder ein anderes Gerät wurde gewählt und gespeichert."
+      },
+      {
+        "en": "An application can retain its own target or volume independently of the current default sink.",
+        "de": "Eine Anwendung kann eigenes Ziel oder Lautstärke unabhängig vom aktuellen Standardausgang behalten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-output-graph",
+        "command": "wpctl status",
+        "explanation": {
+          "en": "Read sinks, streams and the default marker as the logged-in desktop user; no route is changed.",
+          "de": "Als angemeldeter Desktop-Benutzer Ausgänge, Streams und Standardmarkierung lesen; keine Route wird geändert."
+        },
+        "interpretation": {
+          "en": "A visible expected sink confirms graph exposure. A different default or application target is a routing lead; a missing sink needs device/profile investigation.",
+          "de": "Ein sichtbarer gewünschter Ausgang bestätigt dessen Graph-Erkennung. Anderer Standard oder Anwendungsziel ist ein Routing-Hinweis; fehlender Ausgang erfordert Geräte-/Profilprüfung."
+        }
+      },
+      {
+        "id": "read-default-output-volume",
+        "command": "wpctl get-volume @DEFAULT_AUDIO_SINK@",
+        "explanation": {
+          "en": "Read the current default output’s volume and mute state without changing it.",
+          "de": "Lautstärke und Stummschaltung des aktuellen Standardausgangs lesen, ohne sie zu ändern."
+        },
+        "interpretation": {
+          "en": "[MUTED] explains silence at that sink; a normal level does not rule out application mute, hardware mixer mute or an incorrect route.",
+          "de": "[MUTED] erklärt Stille an diesem Ausgang; normale Lautstärke schließt Anwendungs-, Hardware-Mixer-Stummschaltung oder falsche Route nicht aus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "select-and-unmute-verified-output",
+        "title": {
+          "en": "Select and unmute the verified output",
+          "de": "Bestätigten Ausgang wählen und Stummschaltung aufheben"
+        },
+        "body": {
+          "en": "If wpctl shows the intended output and the wrong default, select that sink in the desktop audio panel or with wpctl set-default using its current ID. If muted, unmute that sink and start at a modest volume.",
+          "de": "Wenn wpctl den gewünschten Ausgang, aber falschen Standard zeigt, ihn im Desktop-Audiopanel oder mit wpctl set-default und seiner aktuellen ID wählen. Falls stumm, Stummschaltung dieses Ausgangs aufheben und mit niedriger Lautstärke beginnen."
+        },
+        "precautions": {
+          "en": "IDs change across restarts. Avoid raising every output to 100%, especially headphones or an amplifier with its own volume control.",
+          "de": "IDs ändern sich bei Neustarts. Nicht alle Ausgänge auf 100 Prozent stellen, besonders bei Kopfhörern oder Verstärkern mit eigener Lautstärkeregelung."
+        },
+        "rollback": {
+          "en": "Record the original sink and volume first; select them again if the new choice is unsuitable.",
+          "de": "Vorher ursprünglichen Ausgang und Lautstärke notieren; bei ungeeigneter Auswahl zurückwählen."
+        }
+      },
+      {
+        "id": "correct-application-route",
+        "title": {
+          "en": "Correct the application’s retained route",
+          "de": "Gespeicherte Anwendungsroute korrigieren"
+        },
+        "body": {
+          "en": "If only one running application remains silent after the default is correct, inspect its playback stream in the desktop mixer, route that stream to the verified sink and review its own mute/volume controls. Restart only the application if its backend does not retarget live.",
+          "de": "Wenn nach korrekter Standardwahl nur eine laufende Anwendung stumm bleibt, deren Wiedergabestream im Desktop-Mixer prüfen, auf den bestätigten Ausgang routen und eigene Stumm-/Lautstärkeregelung kontrollieren. Nur die Anwendung neu starten, falls ihr Backend laufend nicht umleitet."
+        },
+        "precautions": {
+          "en": "Save work before restarting the app. Per-stream routing differs from changing the system default and may be remembered by policy.",
+          "de": "Arbeit vor Anwendungsneustart speichern. Stream-Routing unterscheidet sich von System-Standardwahl und kann von der Richtlinie gespeichert werden."
+        },
+        "rollback": {
+          "en": "Restore that stream’s previous target and application volume if needed; no global audio reset is required.",
+          "de": "Bei Bedarf voriges Stream-Ziel und Anwendungslautstärke wiederherstellen; ein globaler Audio-Reset ist nicht erforderlich."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "WirePlumber: wpctl(1)",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/man/wpctl.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire: pipewire-props(7)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire-props_7.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "audio-alsa-device-busy",
+    "slug": {
+      "en": "audio-alsa-device-busy",
+      "de": "alsa-geraet-belegt"
+    },
+    "category": "audio",
+    "title": {
+      "en": "Another process holds the ALSA device",
+      "de": "Ein anderer Prozess hält das ALSA-Gerät belegt"
+    },
+    "summary": {
+      "en": "Identify exclusive ALSA access that blocks PipeWire or a direct client, then release the verified owner or route the application through the sound server.",
+      "de": "Exklusiven ALSA-Zugriff bestimmen, der PipeWire oder direkten Client blockiert; danach bestätigten Besitzer freigeben oder Anwendung über den Soundserver routen."
+    },
+    "environment": {
+      "en": "ALSA hardware PCMs used by PipeWire, jackd, PulseAudio or direct hw: clients; some devices allow only one opener.",
+      "de": "ALSA-Hardware-PCMs mit PipeWire, jackd, PulseAudio oder direkten hw:-Clients; manche Geräte erlauben nur einen gleichzeitigen Zugriff."
+    },
+    "symptoms": {
+      "en": [
+        "PipeWire reports ALSA open failed: Device or resource busy.",
+        "Direct playback works only after another audio application closes."
+      ],
+      "de": [
+        "PipeWire meldet ALSA open failed: Device or resource busy.",
+        "Direkte Wiedergabe funktioniert erst nach Schließen einer anderen Audioanwendung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A direct ALSA application or second audio daemon can hold the same hardware PCM exclusively.",
+        "de": "Eine direkte ALSA-Anwendung oder ein zweiter Audio-Daemon kann denselben Hardware-PCM exklusiv halten."
+      },
+      {
+        "en": "A PipeWire service holding its own expected hardware is normal; a direct-client busy error does not automatically mean PipeWire malfunction.",
+        "de": "Dass PipeWire seine vorgesehene Hardware hält, ist normal; ein Busy-Fehler eines direkten Clients bedeutet nicht automatisch eine PipeWire-Störung."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-device-owners",
+        "command": "sudo fuser -v /dev/snd/*",
+        "explanation": {
+          "en": "Read processes using sound nodes. -v only reports owners; no kill option is included.",
+          "de": "Prozesse mit Sound-Nodes lesen. -v zeigt nur Besitzer; keine Kill-Option ist enthalten."
+        },
+        "interpretation": {
+          "en": "Identify the process, user and PCM device. PipeWire owning a playback PCM can be expected; a second direct owner or audio daemon deserves investigation.",
+          "de": "Prozess, Benutzer und PCM-Gerät zuordnen. PipeWire als PCM-Besitzer kann erwartbar sein; einen zweiten direkten Besitzer oder Audio-Daemon untersuchen."
+        }
+      },
+      {
+        "id": "read-alsa-busy-journal",
+        "command": "journalctl --user -b -u pipewire.service -u wireplumber.service --no-pager -n 150",
+        "explanation": {
+          "en": "Read the affected user audio journal without restarting anything.",
+          "de": "Betroffenes Benutzer-Audiojournal lesen, ohne etwas neu zu starten."
+        },
+        "interpretation": {
+          "en": "An ALSA open busy report plus ownership evidence supports contention. A generic application busy message needs its backend and target verified first.",
+          "de": "ALSA-open-Busy plus Besitzerbefund stützt Zugriffskonkurrenz. Bei generischer Busy-Meldung zuerst Backend und Ziel der Anwendung bestätigen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "close-confirmed-exclusive-owner",
+        "title": {
+          "en": "Close the confirmed exclusive owner",
+          "de": "Bestätigten exklusiven Besitzer schließen"
+        },
+        "body": {
+          "en": "If a known application unexpectedly owns the hardware, save its work and close it normally. If a second sound daemon is configured unintentionally, stop only that verified daemon using the distribution’s supported user-service workflow.",
+          "de": "Wenn eine bekannte Anwendung die Hardware unerwartet besitzt, Arbeit speichern und sie normal schließen. Wenn ein zweiter Sound-Daemon unbeabsichtigt eingerichtet ist, nur diesen bestätigten Daemon nach unterstütztem Benutzer-Dienstverfahren der Distribution stoppen."
+        },
+        "precautions": {
+          "en": "Do not kill every /dev/snd user; that interrupts calls and recordings. Separate intended professional jackd sessions from accidental duplicate servers.",
+          "de": "Nicht alle /dev/snd-Benutzer beenden; dadurch werden Gespräche und Aufnahmen unterbrochen. Gewollte professionelle jackd-Sitzungen von versehentlichen Doppelservern unterscheiden."
+        },
+        "rollback": {
+          "en": "Restart the closed application or restore the previous service choice if that owner was needed, keeping only one intended hardware owner.",
+          "de": "Geschlossene Anwendung wieder starten oder vorherige Dienstwahl herstellen, falls der Besitzer benötigt wurde; nur einen vorgesehenen Hardwarebesitzer behalten."
+        }
+      },
+      {
+        "id": "use-server-backed-client",
+        "title": {
+          "en": "Use a server-backed application output",
+          "de": "Anwendungsausgabe über Soundserver nutzen"
+        },
+        "body": {
+          "en": "If a direct hw: client conflicts with the desktop server, select its PipeWire or PulseAudio backend, or the distribution’s ALSA-to-PipeWire default where supported. Reserve direct hardware access for a deliberate exclusive session.",
+          "de": "Wenn ein direkter hw:-Client mit dem Desktop-Server kollidiert, sein PipeWire- oder PulseAudio-Backend beziehungsweise unterstützte ALSA-zu-PipeWire-Vorgabe der Distribution wählen. Direkten Hardwarezugriff nur für bewusst exklusive Sitzung nutzen."
+        },
+        "precautions": {
+          "en": "Backend package names vary. Do not replace all ALSA device definitions or remove desktop audio packages solely because one direct client is busy.",
+          "de": "Backend-Paketnamen variieren. Nicht alle ALSA-Gerätedefinitionen ersetzen oder Desktop-Audiopakete entfernen, weil ein direkter Client Busy meldet."
+        },
+        "rollback": {
+          "en": "Restore the application’s recorded backend and device selection if compatibility regresses; close the desktop server deliberately before exclusive hardware use.",
+          "de": "Bei Kompatibilitätsregression aufgezeichnetes Backend und Gerät der Anwendung zurücksetzen; Desktop-Server vor exklusivem Hardwarezugriff bewusst schließen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "PipeWire ALSA implementation: upstream source snapshot",
+        "url": "https://chromium.googlesource.com/external/gitlab.freedesktop.org/pipewire/pipewire/+/547e364b247636a4ea091afe07773ec035b7ecfc/spa/plugins/alsa/alsa-pcm.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Debian: ALSA aplay/arecord(1), device enumeration",
+        "url": "https://manpages.debian.org/trixie/alsa-utils/aplay.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pipewire-alsa-open-busy",
+        "all": [
+          "pipewire",
+          "alsa",
+          "open failed",
+          "Device or resource busy"
+        ],
+        "sample": "pipewire[2140]: [alsa-pcm.c:1250 spa_alsa_open()] hw:0,0: playback open failed: Device or resource busy",
+        "negative": [
+          "pipewire[2140]: ALSA device open hw:0,0 playback",
+          "app[3400]: document open failed: Device or resource busy"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "PipeWire could not open an ALSA PCM because it is busy.",
+          "de": "PipeWire konnte einen ALSA-PCM nicht öffnen, weil er belegt ist."
+        },
+        "significance": {
+          "en": "Check the actual owner; hardware exclusivity differs from missing-card or mute problems.",
+          "de": "Tatsächlichen Besitzer prüfen; Hardware-Exklusivität unterscheidet sich von fehlender Karte oder Stummschaltung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-pipewire-xruns",
+    "slug": {
+      "en": "audio-pipewire-xruns",
+      "de": "pipewire-xruns-aussetzer"
+    },
+    "category": "audio",
+    "title": {
+      "en": "PipeWire crackles or drops audio under load",
+      "de": "PipeWire knistert oder hat Aussetzer unter Last"
+    },
+    "summary": {
+      "en": "Correlate audio glitches with PipeWire deadline counters and device timing, then compare buffer or workload changes one at a time with recoverable settings.",
+      "de": "Audiofehler mit PipeWire-Deadline-Zählern und Gerätetiming vergleichen; Puffer oder Last einzeln und mit wiederherstellbaren Einstellungen verändern."
+    },
+    "environment": {
+      "en": "PipeWire graphs with ALSA hardware, desktop streams or production clients; low latency reduces scheduling margin.",
+      "de": "PipeWire-Graphen mit ALSA-Hardware, Desktop-Streams oder Produktionsclients; geringe Latenz verringert den Zeitspielraum."
+    },
+    "symptoms": {
+      "en": [
+        "Crackles appear during CPU load or when a low-latency client starts.",
+        "pw-top ERR increases on a node during audible dropouts."
+      ],
+      "de": [
+        "Knistern tritt bei CPU-Last oder beim Start eines Clients mit geringer Latenz auf.",
+        "pw-top ERR steigt während hörbarer Aussetzer an einem Node."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A processing or scheduling deadline may be missed because of load, too little buffering or a stalled client.",
+        "de": "Eine Verarbeitungs- oder Scheduling-Deadline kann durch Last, zu wenig Puffer oder blockierten Client verpasst werden."
+      },
+      {
+        "en": "ALSA timing or timestamp defects can resemble overload; increasing buffering will not repair every driver fault.",
+        "de": "ALSA-Timing- oder Zeitstempelfehler können wie Überlast wirken; größere Puffer reparieren nicht jeden Treiberfehler."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-graph-deadlines",
+        "command": "pw-top -b -n 5",
+        "explanation": {
+          "en": "Read five graph snapshots as the desktop user while the affected audio is already playing; this does not change graph settings.",
+          "de": "Während betroffener laufender Wiedergabe als Desktop-Benutzer fünf Graph-Snapshots lesen; Graph-Einstellungen werden nicht verändert."
+        },
+        "interpretation": {
+          "en": "Compare ERR changes with WAIT/BUSY relative to quantum. Historical ERR alone is weak evidence; the graph driver can count faults propagated from another node.",
+          "de": "ERR-Änderungen und WAIT/BUSY im Verhältnis zum Quantum vergleichen. Alter ERR-Wert allein ist schwach; der Graph-Treiber kann Fehler anderer Nodes mitzählen."
+        }
+      },
+      {
+        "id": "read-alsa-timing-journal",
+        "command": "journalctl --user -b -u pipewire.service --no-pager -n 200",
+        "explanation": {
+          "en": "Read timing and recovery messages. Some xrun details are only emitted at trace level, so absence from the ordinary journal is not decisive.",
+          "de": "Timing- und Fehlerbehandlungsmeldungen lesen. Manche xrun-Details erscheinen nur im Trace-Level; Fehlen im normalen Journal ist daher nicht entscheidend."
+        },
+        "interpretation": {
+          "en": "Repeated xrun or impossible/wrong timestamp reports provide distinct leads. A device disconnect is a separate transport issue.",
+          "de": "Wiederholte xrun- oder unmögliche/falsche Zeitstempelmeldungen liefern unterschiedliche Hinweise. Gerätetrennung ist ein eigenes Transportproblem."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-application-buffer",
+        "title": {
+          "en": "Increase the affected client’s buffer cautiously",
+          "de": "Puffer des betroffenen Clients vorsichtig erhöhen"
+        },
+        "body": {
+          "en": "If ERR rises only with a client requesting very small buffers, increase that application’s buffer or latency setting one step and compare the same workload. Prefer its own setting over a global graph override.",
+          "de": "Wenn ERR nur mit einem Client mit sehr kleinen Puffern steigt, dessen Puffer- oder Latenzeinstellung eine Stufe erhöhen und dieselbe Last vergleichen. Eigene Einstellung des Clients einer globalen Graph-Vorgabe vorziehen."
+        },
+        "precautions": {
+          "en": "Greater buffering increases delay, which matters for monitoring and live performance. Record the original rate and buffer before changing them.",
+          "de": "Größere Puffer erhöhen Verzögerung, relevant bei Monitoring und Live-Einsatz. Ursprüngliche Rate und Puffergröße vorher notieren."
+        },
+        "rollback": {
+          "en": "Restore the application’s original buffer if errors do not improve or added latency is unacceptable.",
+          "de": "Ursprünglichen Anwendungspuffer wiederherstellen, wenn Fehler nicht abnehmen oder zusätzliche Latenz unakzeptabel ist."
+        }
+      },
+      {
+        "id": "remove-load-or-timing-override",
+        "title": {
+          "en": "Compare load and device-specific timing overrides",
+          "de": "Last und gerätespezifische Timing-Anpassung vergleichen"
+        },
+        "body": {
+          "en": "If deadline misses correlate with an expensive effect or background workload, disable that one workload temporarily. If the journal instead shows repeatable wrong hardware timestamps, review a narrowly matched ALSA timestamp override with the documented PipeWire properties.",
+          "de": "Wenn Deadline-Verletzungen mit aufwendigem Effekt oder Hintergrundlast zusammenfallen, nur diese Last vorübergehend abschalten. Zeigt das Journal stattdessen reproduzierbar falsche Hardware-Zeitstempel, einen eng auf das Gerät passenden ALSA-Zeitstempel-Override anhand dokumentierter PipeWire-Eigenschaften prüfen."
+        },
+        "precautions": {
+          "en": "Do not disable security services or apply all low-latency tweaks together. Timing overrides need exact device matching and can degrade other hardware.",
+          "de": "Keine Sicherheitsdienste abschalten oder alle Low-Latency-Tricks gleichzeitig setzen. Timing-Anpassungen brauchen genaue Gerätezuordnung und können andere Hardware verschlechtern."
+        },
+        "rollback": {
+          "en": "Re-enable the effect/workload, or remove the single experimental configuration fragment and restart user audio after saving recordings.",
+          "de": "Effekt beziehungsweise Last wieder einschalten oder das einzelne experimentelle Konfigurationsfragment entfernen und Benutzer-Audio nach Speichern von Aufnahmen neu starten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "PipeWire: pw-top(1), graph deadlines and ERR counters",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pw-top_1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire: pipewire-props(7)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire-props_7.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire ALSA implementation: upstream source snapshot",
+        "url": "https://chromium.googlesource.com/external/gitlab.freedesktop.org/pipewire/pipewire/+/547e364b247636a4ea091afe07773ec035b7ecfc/spa/plugins/alsa/alsa-pcm.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pipewire-alsa-xrun",
+        "all": [
+          "pipewire",
+          "alsa",
+          "xrun of",
+          "usec"
+        ],
+        "sample": "pipewire[2140]: [alsa-pcm.c:2862 alsa_recover()] 0x1234: xrun of 3200 usec 154",
+        "negative": [
+          "pipewire[2140]: ALSA device open hw:0,0 playback",
+          "pipewire[2140]: graph quantum 1024 rate 48000"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "An ALSA-backed stream reported an underrun or overrun timing gap.",
+          "de": "Ein ALSA-Stream meldete eine zeitliche Unter- oder Überversorgung."
+        },
+        "significance": {
+          "en": "Correlate with audible glitches and pw-top; a trace-level line alone does not identify the slow client.",
+          "de": "Mit hörbaren Fehlern und pw-top vergleichen; eine Trace-Zeile allein identifiziert keinen langsamen Client."
+        }
+      },
+      {
+        "id": "pipewire-wrong-hardware-timestamps",
+        "all": [
+          "pipewire",
+          "wrong htimestamps from driver",
+          "disabling"
+        ],
+        "sample": "pipewire[2140]: spa.alsa: hw:0,0p: wrong htimestamps from driver, disabling",
+        "negative": [
+          "pipewire[2140]: spa.alsa: hw:0,0p: opened",
+          "pipewire[2140]: metadata clock.force-rate 0"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "PipeWire detected unusable driver timestamps and disabled that timing path.",
+          "de": "PipeWire erkannte unbrauchbare Treiber-Zeitstempel und deaktivierte diesen Timing-Pfad."
+        },
+        "significance": {
+          "en": "This supports a device-timing investigation; it is different from proving CPU overload.",
+          "de": "Dies stützt eine Gerätetiming-Untersuchung und beweist keine CPU-Überlast."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-bluetooth-headset-profile",
+    "slug": {
+      "en": "audio-bluetooth-headset-profile",
+      "de": "bluetooth-headset-profil"
+    },
+    "category": "audio",
+    "title": {
+      "en": "Bluetooth audio loses quality or its microphone",
+      "de": "Bluetooth-Audio verliert Qualität oder Mikrofon"
+    },
+    "summary": {
+      "en": "Distinguish Bluetooth playback and call profiles, check available roles and the active user session, and choose a profile suited to the intended task.",
+      "de": "Bluetooth-Wiedergabe- und Telefonieprofile unterscheiden, verfügbare Rollen sowie aktive Benutzersitzung prüfen und ein zur Aufgabe passendes Profil wählen."
+    },
+    "environment": {
+      "en": "BlueZ devices managed by PipeWire and WirePlumber; A2DP, HFP/HSP and newer duplex/LE profiles depend on hardware and codecs.",
+      "de": "BlueZ-Geräte mit PipeWire und WirePlumber; A2DP, HFP/HSP sowie neuere Duplex-/LE-Profile hängen von Hardware und Codecs ab."
+    },
+    "symptoms": {
+      "en": [
+        "Opening the headset microphone changes playback quality.",
+        "A paired headset connects but has no audio node or usable call profile."
+      ],
+      "de": [
+        "Öffnen des Headset-Mikrofons verändert die Wiedergabequalität.",
+        "Gekoppeltes Headset verbindet sich, hat aber keinen Audio-Node oder nutzbares Telefonieprofil."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Conventional A2DP playback does not provide the same bidirectional microphone path as HFP/HSP.",
+        "de": "Konventionelle A2DP-Wiedergabe bietet nicht denselben bidirektionalen Mikrofonpfad wie HFP/HSP."
+      },
+      {
+        "en": "Disabled monitor roles, unsupported codec/backend combinations or inactive-session ownership can prevent a profile from becoming usable.",
+        "de": "Deaktivierte Monitor-Rollen, nicht unterstützte Codec-/Backend-Kombinationen oder Besitz durch inaktive Sitzung können ein Profil unbrauchbar machen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-bluetooth-graph",
+        "command": "wpctl status",
+        "explanation": {
+          "en": "Read Bluetooth device, sink, source and stream visibility as the desktop user.",
+          "de": "Bluetooth-Gerät, Ausgang, Eingang und Stream-Sichtbarkeit als Desktop-Benutzer lesen."
+        },
+        "interpretation": {
+          "en": "A playback sink without a headset source may be expected in an A2DP profile. No Bluetooth nodes at all also requires monitor and active-session checks.",
+          "de": "Wiedergabeausgang ohne Headset-Eingang kann im A2DP-Profil erwartbar sein. Ganz fehlende Bluetooth-Nodes erfordern außerdem Monitor- und aktive Sitzungsprüfung."
+        }
+      },
+      {
+        "id": "read-headset-properties",
+        "command": "bluetoothctl info AA:BB:CC:DD:EE:FF",
+        "explanation": {
+          "en": "Replace the MAC with your paired headset’s address. Read connection state and advertised UUIDs; this does not pair or connect it.",
+          "de": "MAC durch die Adresse des gekoppelten Headsets ersetzen. Verbindungszustand und gemeldete UUIDs lesen; nichts wird gekoppelt oder verbunden."
+        },
+        "interpretation": {
+          "en": "Connected and ServicesResolved provide discovery evidence, not proof of an active PipeWire route. Audio-related UUIDs help distinguish unsupported roles from routing.",
+          "de": "Connected und ServicesResolved zeigen Erkennung, beweisen aber keine aktive PipeWire-Route. Audio-UUIDs helfen, nicht unterstützte Rollen von Routing zu unterscheiden."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "choose-task-profile",
+        "title": {
+          "en": "Choose a playback or call profile deliberately",
+          "de": "Wiedergabe- oder Telefonieprofil bewusst wählen"
+        },
+        "body": {
+          "en": "If sound becomes narrowband only when the headset microphone opens, select an available high-quality playback profile for listening and a supported hands-free profile for calls. A separate microphone can retain playback quality when the headset lacks a suitable duplex profile.",
+          "de": "Wenn Klang nur beim Öffnen des Headset-Mikrofons schmalbandig wird, für Musik ein verfügbares hochwertiges Wiedergabeprofil und für Gespräche ein unterstütztes Hands-Free-Profil wählen. Ein getrenntes Mikrofon kann Wiedergabequalität erhalten, wenn dem Headset ein geeignetes Duplexprofil fehlt."
+        },
+        "precautions": {
+          "en": "Profile capabilities differ by headset and installed codecs. Do not promise simultaneous high-quality stereo and microphone on every device.",
+          "de": "Profilfähigkeiten unterscheiden sich nach Headset und installierten Codecs. Nicht bei jedem Gerät gleichzeitiges hochwertiges Stereo und Mikrofon versprechen."
+        },
+        "rollback": {
+          "en": "Record and restore the previous profile and input device if the chosen combination breaks calls.",
+          "de": "Vorheriges Profil und Eingabegerät notieren und zurücksetzen, falls die gewählte Kombination Gespräche stört."
+        }
+      },
+      {
+        "id": "restore-supported-bluetooth-monitor",
+        "title": {
+          "en": "Restore supported Bluetooth monitor roles",
+          "de": "Unterstützte Bluetooth-Monitorrollen herstellen"
+        },
+        "body": {
+          "en": "If no usable audio profile exists although BlueZ discovers audio services, review local WirePlumber Bluetooth overrides and the distribution’s SPA Bluetooth support. Restore default supported roles or backend, then reconnect from the active graphical session after ending calls.",
+          "de": "Wenn trotz erkannter BlueZ-Audiodienste kein nutzbares Audioprofil vorhanden ist, lokale WirePlumber-Bluetooth-Anpassungen und SPA-Bluetooth-Unterstützung der Distribution prüfen. Unterstützte Standardrollen beziehungsweise Backend herstellen und nach Gesprächsende aus aktiver grafischer Sitzung neu verbinden."
+        },
+        "precautions": {
+          "en": "Do not erase pairing or disable seat monitoring as the first step. Forcing every codec or profile can reduce compatibility.",
+          "de": "Kopplung nicht als ersten Schritt löschen oder Seat-Monitoring abschalten. Erzwingen aller Codecs oder Profile kann Kompatibilität verschlechtern."
+        },
+        "rollback": {
+          "en": "Restore the saved fragment and prior profile selection if needed; reconnect without changing the device’s pairing identity.",
+          "de": "Gesichertes Fragment und vorige Profilwahl bei Bedarf wiederherstellen; ohne Änderung der Kopplungskennung neu verbinden."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "WirePlumber: Bluetooth profiles and logind integration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/bluetooth.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: BlueZ bluetoothctl(1)",
+        "url": "https://manpages.debian.org/trixie/bluez/bluetoothctl.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: wpctl(1)",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/man/wpctl.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "bluez-profile-unavailable",
+        "all": [
+          "org.bluez.Error.Failed",
+          "br-connection-profile-unavailable"
+        ],
+        "sample": "bluetoothctl: Failed to connect: org.bluez.Error.Failed br-connection-profile-unavailable",
+        "negative": [
+          "bluetoothctl: Connection successful",
+          "bluetoothctl: Failed to connect: org.bluez.Error.NotReady"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "BlueZ cannot establish a usable BR/EDR profile for the connection attempt.",
+          "de": "BlueZ kann für den Verbindungsversuch kein nutzbares BR/EDR-Profil herstellen."
+        },
+        "significance": {
+          "en": "Check available audio services and local profile support; this alone does not prove the headset microphone is defective.",
+          "de": "Verfügbare Audiodienste und lokale Profilunterstützung prüfen; dies allein beweist keinen Mikrofondefekt."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-hdmi-eld-missing",
+    "slug": {
+      "en": "audio-hdmi-eld-missing",
+      "de": "hdmi-eld-fehlt"
+    },
+    "category": "audio",
+    "title": {
+      "en": "HDMI or DisplayPort audio has no usable sink",
+      "de": "HDMI- oder DisplayPort-Audio hat keinen nutzbaren Ausgang"
+    },
+    "summary": {
+      "en": "Check monitor audio capabilities and HDMI ELD presence before forcing an output profile, especially after docking, cable changes or display sleep.",
+      "de": "Monitor-Audiofähigkeiten und HDMI-ELD prüfen, bevor ein Ausgangsprofil erzwungen wird, besonders nach Docking, Kabelwechsel oder Display-Ruhezustand."
+    },
+    "environment": {
+      "en": "GPU HDMI/DisplayPort audio exposed through ALSA HD-Audio; displays and adapters must advertise audio support.",
+      "de": "GPU-HDMI/DisplayPort-Audio über ALSA-HD-Audio; Displays und Adapter müssen Audiounterstützung melden."
+    },
+    "symptoms": {
+      "en": [
+        "The display works but HDMI audio is unavailable or silent.",
+        "Audio disappears after a display reconnect or wake-up."
+      ],
+      "de": [
+        "Das Display funktioniert, HDMI-Audio ist aber nicht verfügbar oder stumm.",
+        "Audio verschwindet nach erneutem Verbinden oder Aufwachen des Displays."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The display or adapter may not provide valid ELD audio capability data, or the monitor may have no audio support.",
+        "de": "Display oder Adapter liefert möglicherweise keine gültigen ELD-Audiofähigkeiten, oder der Monitor unterstützt kein Audio."
+      },
+      {
+        "en": "A valid HDMI endpoint can still be deselected, muted or assigned to another connector by session policy.",
+        "de": "Ein gültiger HDMI-Endpunkt kann weiterhin abgewählt, stumm oder durch Sitzungsrichtlinie einem anderen Anschluss zugeordnet sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-hdmi-pcm-list",
+        "command": "aplay -l",
+        "explanation": {
+          "en": "Read ALSA playback devices without playing audio; identify the GPU card and HDMI PCM names.",
+          "de": "ALSA-Wiedergabegeräte ohne Audioausgabe lesen; GPU-Karte und HDMI-PCM-Namen bestimmen."
+        },
+        "interpretation": {
+          "en": "An HDMI PCM proves driver registration, not a connected receiver. Absence of the GPU card belongs to driver detection.",
+          "de": "Ein HDMI-PCM beweist Treiberregistrierung, keinen verbundenen Empfänger. Fehlt die GPU-Karte, betrifft das die Treibererkennung."
+        }
+      },
+      {
+        "id": "read-connector-eld",
+        "command": "cat /proc/asound/card0/eld#0.0",
+        "explanation": {
+          "en": "Replace card0 and eld#0.0 with the ELD file for the relevant GPU connector shown under /proc/asound; ordinary read access is usually sufficient.",
+          "de": "card0 und eld#0.0 durch die ELD-Datei des betroffenen GPU-Anschlusses unter /proc/asound ersetzen; normale Leserechte reichen meist aus."
+        },
+        "interpretation": {
+          "en": "monitor_present, eld_valid, monitor_name and SAD entries describe receiver detection and audio formats. Zero validity or no SAD needs a cable/receiver check before profile forcing.",
+          "de": "monitor_present, eld_valid, monitor_name und SAD-Einträge beschreiben Empfängererkennung und Audioformate. Fehlende Gültigkeit oder SAD erfordert Kabel-/Empfängerprüfung vor erzwungenem Profil."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-receiver-detection",
+        "title": {
+          "en": "Restore audio-capable receiver detection",
+          "de": "Erkennung eines Audioempfängers herstellen"
+        },
+        "body": {
+          "en": "If ELD is absent or invalid, confirm the display supports audio, select its proper input and compare a direct known-good HDMI/DP cable without the suspect adapter or dock. Reconnect only after saving work affected by display changes.",
+          "de": "Wenn ELD fehlt oder ungültig ist, Audiounterstützung des Displays bestätigen, richtigen Eingang wählen und ein direktes bekannt gutes HDMI/DP-Kabel ohne verdächtigen Adapter oder Dock vergleichen. Erst nach Speichern betroffener Arbeit neu verbinden."
+        },
+        "precautions": {
+          "en": "Some DVI adapters carry no audio. Monitor sleep and hotplug can alter connector numbering, so re-identify the ELD path.",
+          "de": "Manche DVI-Adapter übertragen kein Audio. Monitor-Ruhezustand und Hotplug können Anschlussnummerierung ändern; ELD-Pfad neu zuordnen."
+        },
+        "rollback": {
+          "en": "Restore the prior cable/input arrangement if display behavior worsens; keep the working non-HDMI output available.",
+          "de": "Bei schlechterem Displayverhalten vorige Kabel-/Eingangsanordnung herstellen und funktionierenden Nicht-HDMI-Ausgang verfügbar halten."
+        }
+      },
+      {
+        "id": "select-valid-hdmi-route",
+        "title": {
+          "en": "Select the valid HDMI route and profile",
+          "de": "Gültige HDMI-Route und Profil wählen"
+        },
+        "body": {
+          "en": "If ELD is valid with supported audio formats, select the matching HDMI profile and connector in the desktop audio panel, unmute at low volume, and check the monitor’s own volume. Use current device and route IDs if applying wpctl controls.",
+          "de": "Wenn ELD gültig ist und Audioformate enthält, passendes HDMI-Profil und Anschluss im Desktop-Audiopanel wählen, bei geringer Lautstärke entstummen und Monitorlautstärke prüfen. Bei wpctl-Steuerung aktuelle Geräte- und Routen-IDs verwenden."
+        },
+        "precautions": {
+          "en": "Do not select a different HDMI port merely because it is numbered first. Invalid ELD is not repaired by forcing unsupported formats.",
+          "de": "Nicht einen anderen HDMI-Port wählen, nur weil er zuerst nummeriert ist. Ungültiges ELD wird nicht durch erzwungene Formate repariert."
+        },
+        "rollback": {
+          "en": "Restore the recorded card profile, route and default sink if the selected endpoint is unsuitable.",
+          "de": "Dokumentiertes Kartenprofil, Route und Standardausgang zurücksetzen, falls der Endpunkt ungeeignet ist."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux HDMI ELD validation and proc-interface source",
+        "url": "https://github.com/torvalds/linux/blob/master/sound/hda/codecs/hdmi/eld.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Linux kernel: HD-Audio codec probing and driver notes",
+        "url": "https://docs.kernel.org/sound/hd-audio/notes.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: ALSA aplay/arecord(1), device enumeration",
+        "url": "https://manpages.debian.org/trixie/alsa-utils/aplay.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: wpctl(1)",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/man/wpctl.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "hdmi-invalid-eld",
+        "all": [
+          "HDMI:",
+          "invalid ELD data byte"
+        ],
+        "sample": "snd_hda_codec_hdmi hdaudioC1D0: HDMI: invalid ELD data byte 0",
+        "negative": [
+          "snd_hda_codec_hdmi hdaudioC1D0: HDMI: detected monitor",
+          "snd_hda_intel: bound display controller"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "The HDMI audio driver rejected invalid receiver capability data.",
+          "de": "Der HDMI-Audiotreiber verwarf ungültige Empfänger-Fähigkeitsdaten."
+        },
+        "significance": {
+          "en": "Inspect the actual ELD and cable/receiver chain before treating this as a PipeWire routing error.",
+          "de": "Tatsächliches ELD sowie Kabel-/Empfängerpfad prüfen, bevor dies als PipeWire-Routingfehler behandelt wird."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-spdif-profile",
+    "slug": {
+      "en": "audio-spdif-profile",
+      "de": "spdif-digitalprofil-stumm"
+    },
+    "category": "audio",
+    "title": {
+      "en": "S/PDIF stays silent or passthrough fails",
+      "de": "S/PDIF bleibt stumm oder Passthrough scheitert"
+    },
+    "summary": {
+      "en": "Separate ordinary stereo PCM on S/PDIF from compressed passthrough, and check the digital profile, mixer switch and receiver capabilities before enabling codecs.",
+      "de": "Stereo-PCM über S/PDIF von komprimiertem Passthrough trennen; Digitalprofil, Mixer-Schalter und Empfängerfähigkeiten vor Codec-Freigabe prüfen."
+    },
+    "environment": {
+      "en": "Optical or coaxial IEC958 outputs managed by ALSA and PipeWire/WirePlumber, connected to a compatible DAC or receiver.",
+      "de": "Optische oder koaxiale IEC958-Ausgänge mit ALSA und PipeWire/WirePlumber an kompatiblem DAC oder Receiver."
+    },
+    "symptoms": {
+      "en": [
+        "Analog playback works but the digital receiver stays silent.",
+        "Stereo PCM works while compressed movie audio does not."
+      ],
+      "de": [
+        "Analoge Wiedergabe funktioniert, der digitale Empfänger bleibt stumm.",
+        "Stereo-PCM funktioniert, komprimierter Filmton dagegen nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The card may use an analog profile, or its IEC958 playback switch can remain off.",
+        "de": "Die Karte kann ein Analogprofil nutzen oder ihr IEC958-Wiedergabeschalter bleibt ausgeschaltet."
+      },
+      {
+        "en": "Passthrough requires receiver-supported codecs and an appropriate application path; arbitrary multichannel PCM does not fit conventional S/PDIF.",
+        "de": "Passthrough benötigt vom Empfänger unterstützte Codecs und geeigneten Anwendungspfad; beliebiges Mehrkanal-PCM passt nicht in herkömmliches S/PDIF."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-digital-profiles",
+        "command": "wpctl status",
+        "explanation": {
+          "en": "Read the card and exposed sinks, then identify whether the expected digital endpoint exists.",
+          "de": "Karte und vorhandene Ausgänge lesen; feststellen, ob der gewünschte digitale Endpunkt existiert."
+        },
+        "interpretation": {
+          "en": "A digital sink’s absence can reflect the current profile rather than missing hardware. Sink presence does not confirm receiver lock.",
+          "de": "Ein fehlender digitaler Ausgang kann am aktuellen Profil statt fehlender Hardware liegen. Vorhandener Ausgang bestätigt keine Synchronisation des Empfängers."
+        }
+      },
+      {
+        "id": "read-iec958-controls",
+        "command": "amixer -c 0 scontents",
+        "explanation": {
+          "en": "Replace card 0 with the ALSA card index from /proc/asound/cards. Read controls, including IEC958 where this hardware exposes it.",
+          "de": "Karte 0 durch ALSA-Kartenindex aus /proc/asound/cards ersetzen. Steuerelemente einschließlich IEC958 lesen, soweit die Hardware dies anbietet."
+        },
+        "interpretation": {
+          "en": "An IEC958 Playback Switch off can explain silence. Not every card uses that control name; do not change a similarly named capture switch.",
+          "de": "IEC958 Playback Switch off kann Stille erklären. Nicht jede Karte nutzt diesen Namen; einen ähnlich benannten Aufnahmeschalter nicht verwechseln."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "enable-verified-digital-pcm-path",
+        "title": {
+          "en": "Restore the verified stereo digital path",
+          "de": "Bestätigten Stereo-Digitalpfad herstellen"
+        },
+        "body": {
+          "en": "If the card is on analog output or its verified IEC958 playback switch is off, select the supported digital stereo profile and enable that playback switch in the mixer. Select the receiver’s matching input and first compare ordinary stereo PCM.",
+          "de": "Wenn die Karte analog ausgibt oder der bestätigte IEC958-Wiedergabeschalter aus ist, unterstütztes digitales Stereoprofil wählen und diesen Wiedergabeschalter im Mixer aktivieren. Passenden Empfängereingang wählen und zuerst gewöhnliches Stereo-PCM vergleichen."
+        },
+        "precautions": {
+          "en": "Record prior controls and keep receiver volume low. An optical light alone does not prove valid audio frames or a compatible sample rate.",
+          "de": "Vorige Steuereinstellungen notieren und Empfängerlautstärke gering halten. Optisches Licht allein beweist keine gültigen Audioframes oder passende Abtastrate."
+        },
+        "rollback": {
+          "en": "Restore the prior profile and IEC958 switch state if digital routing affects other outputs.",
+          "de": "Bei Nebenwirkungen auf andere Ausgänge voriges Profil und IEC958-Schalterzustand zurücksetzen."
+        }
+      },
+      {
+        "id": "allow-only-supported-passthrough",
+        "title": {
+          "en": "Enable only receiver-supported passthrough",
+          "de": "Nur empfängerfähiges Passthrough freigeben"
+        },
+        "body": {
+          "en": "If stereo PCM works and the receiver explicitly supports the movie codec, enable only those supported passthrough codecs in the audio/device settings and the player. If it does not support them, let the player decode to stereo PCM.",
+          "de": "Wenn Stereo-PCM funktioniert und der Receiver den Filmcodec ausdrücklich unterstützt, ausschließlich diese Passthrough-Codecs in Audio-/Geräteeinstellungen und Player freigeben. Fehlt Unterstützung, den Player zu Stereo-PCM dekodieren lassen."
+        },
+        "precautions": {
+          "en": "Do not enable every IEC958 codec from an example list. Receiver and transport limits differ, and encoded data sent as PCM can produce loud noise.",
+          "de": "Nicht jeden IEC958-Codec aus einer Beispielliste aktivieren. Empfänger- und Transportgrenzen unterscheiden sich; als PCM gesendete kodierte Daten können laut rauschen."
+        },
+        "rollback": {
+          "en": "Disable the experimental passthrough codec and restore PCM decoding and the recorded receiver/input settings.",
+          "de": "Experimentellen Passthrough-Codec deaktivieren und PCM-Dekodierung sowie aufgezeichnete Empfänger-/Eingangseinstellungen wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire: pipewire-props(7)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire-props_7.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: ALSA amixer(1), mixer controls",
+        "url": "https://manpages.debian.org/trixie/alsa-utils/amixer.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "audio-usb-rate-clock",
+    "slug": {
+      "en": "audio-usb-rate-clock",
+      "de": "usb-audio-abtastrate-clock"
+    },
+    "category": "audio",
+    "title": {
+      "en": "USB audio cannot set a sample rate or clock",
+      "de": "USB-Audio kann Abtastrate oder Clock nicht setzen"
+    },
+    "summary": {
+      "en": "Interpret USB-audio clock and sample-rate failures using advertised formats, interface controls and transport evidence rather than forcing a global rate.",
+      "de": "USB-Audio-Clock- und Abtastratenfehler anhand gemeldeter Formate, Interface-Steuerung und Transportbefunden auswerten, statt globale Rate zu erzwingen."
+    },
+    "environment": {
+      "en": "USB Audio Class interfaces using snd-usb-audio, including devices with external word clock or digital sync inputs.",
+      "de": "USB-Audio-Class-Interfaces mit snd-usb-audio, auch Geräte mit externer Wordclock oder digitalen Sync-Eingängen."
+    },
+    "symptoms": {
+      "en": [
+        "An interface works at one rate but fails when an application requests another.",
+        "The kernel reports cannot set freq or an invalid clock source."
+      ],
+      "de": [
+        "Ein Interface funktioniert mit einer Rate, scheitert aber bei anderer Anwendungsanforderung.",
+        "Der Kernel meldet cannot set freq oder ungültige Clock-Quelle."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The selected rate or channel layout may not match the interface’s advertised alternate setting.",
+        "de": "Gewählte Rate oder Kanalaufteilung passt möglicherweise nicht zum gemeldeten Alternate Setting des Interfaces."
+      },
+      {
+        "en": "An external clock may be missing or unlocked; device firmware or USB control-transfer faults can produce similar errors.",
+        "de": "Eine externe Clock kann fehlen oder nicht synchron sein; Gerätefirmware oder USB-Control-Transferfehler können ähnlich wirken."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-usb-audio-formats",
+        "command": "cat /proc/asound/card0/stream0",
+        "explanation": {
+          "en": "Replace card0/stream0 with the stream file for the USB interface. Read ALSA’s advertised formats and rates; no PCM is opened.",
+          "de": "card0/stream0 durch die Stream-Datei des USB-Interfaces ersetzen. Von ALSA gemeldete Formate und Raten lesen; kein PCM wird geöffnet."
+        },
+        "interpretation": {
+          "en": "Use the relevant playback or capture interface’s rates and channel counts. Advertised formats do not prove external clock lock or firmware correctness.",
+          "de": "Raten und Kanalzahlen des relevanten Wiedergabe- oder Aufnahmeinterfaces verwenden. Gemeldete Formate beweisen weder externe Clock-Synchronisation noch korrekte Firmware."
+        }
+      },
+      {
+        "id": "read-usb-clock-errors",
+        "command": "journalctl -k -b --no-pager -n 250",
+        "explanation": {
+          "en": "Read USB-audio and controller events near the rate change; journal access may require privileges.",
+          "de": "USB-Audio- und Controller-Ereignisse nahe dem Ratenwechsel lesen; Journalzugriff kann Rechte benötigen."
+        },
+        "interpretation": {
+          "en": "Invalid clock and set-frequency failure are distinct from xruns under load. USB disconnect/reset events suggest a transport check before audio tuning.",
+          "de": "Ungültige Clock und Set-Frequency-Fehler unterscheiden sich von Last-Xruns. USB-Trennung/Reset spricht für Transportprüfung vor Audio-Tuning."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "match-supported-rate-and-clock",
+        "title": {
+          "en": "Match the supported rate and clock source",
+          "de": "Unterstützte Rate und Clock-Quelle abgleichen"
+        },
+        "body": {
+          "en": "If the requested rate is unsupported or external sync is absent, close active audio clients, select a documented supported rate and a valid internal or locked external clock in the interface controls. Restart the affected stream and compare.",
+          "de": "Wenn gewünschte Rate nicht unterstützt wird oder externe Synchronisation fehlt, aktive Audioclients schließen, dokumentierte unterstützte Rate und gültige interne beziehungsweise synchronisierte externe Clock am Interface wählen. Betroffenen Stream neu starten und vergleichen."
+        },
+        "precautions": {
+          "en": "Changing clock affects all channels and can disrupt connected digital equipment. Record the original rate and sync source.",
+          "de": "Clock-Wechsel betrifft alle Kanäle und kann angeschlossene Digitalgeräte stören. Ursprüngliche Rate und Sync-Quelle dokumentieren."
+        },
+        "rollback": {
+          "en": "Restore the previous rate and clock source if the interface or connected equipment loses synchronization.",
+          "de": "Vorige Rate und Clock-Quelle herstellen, falls Interface oder angeschlossene Geräte Synchronisation verlieren."
+        }
+      },
+      {
+        "id": "compare-usb-path-or-firmware",
+        "title": {
+          "en": "Compare USB transport or documented firmware fixes",
+          "de": "USB-Transport oder dokumentierte Firmwarekorrektur vergleichen"
+        },
+        "body": {
+          "en": "If a valid supported clock/rate still fails and logs contain USB resets, compare a known-good direct cable/port after ending streams. If the fault is rate-specific without transport loss, review vendor firmware and kernel quirks for the exact interface model.",
+          "de": "Wenn gültige unterstützte Clock/Rate weiterhin scheitert und das Log USB-Resets zeigt, nach Beenden der Streams bekannt gutes direktes Kabel/Port vergleichen. Bei ratenspezifischem Fehler ohne Transportverlust Herstellerfirmware und Kernel-Quirks für das genaue Interface-Modell prüfen."
+        },
+        "precautions": {
+          "en": "Do not globally force 192 kHz or disable clock validation. Firmware updates need stable power and vendor recovery instructions.",
+          "de": "Nicht global 192 kHz erzwingen oder Clock-Prüfung abschalten. Firmware-Updates brauchen stabile Stromversorgung und Hersteller-Rettungshinweise."
+        },
+        "rollback": {
+          "en": "Restore the recorded port/cable or remove the single experimental configuration fragment. Firmware recovery depends on the vendor.",
+          "de": "Dokumentierten Port/Kabel herstellen oder einzelnes experimentelles Konfigurationsfragment entfernen. Firmware-Rettung hängt vom Hersteller ab."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux USB audio sample-rate and clock-source source",
+        "url": "https://github.com/torvalds/linux/blob/master/sound/usb/clock.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire: pipewire-props(7)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire-props_7.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "usb-audio-set-rate",
+        "all": [
+          "usb",
+          "cannot set freq"
+        ],
+        "sample": "usb 1-2: 1:1: cannot set freq 48000 (v2/v3): err -22",
+        "negative": [
+          "usb 1-2: 1:1 Set sample rate 48000, clock 1",
+          "usb 1-2: new high-speed USB device"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The USB audio driver could not program the requested sample rate.",
+          "de": "Der USB-Audiotreiber konnte die angeforderte Abtastrate nicht programmieren."
+        },
+        "significance": {
+          "en": "Compare advertised rates, selected clock and control-transfer context; this is not enough to identify one firmware bug.",
+          "de": "Gemeldete Raten, gewählte Clock und Control-Transfer-Kontext vergleichen; dies identifiziert keinen einzelnen Firmwarefehler."
+        }
+      },
+      {
+        "id": "usb-audio-invalid-clock",
+        "all": [
+          "usb",
+          "clock source",
+          "is not valid, cannot use"
+        ],
+        "sample": "usb 1-2: clock source 41 is not valid, cannot use",
+        "negative": [
+          "usb 1-2: found and selected valid clock source 41",
+          "usb 1-2: new high-speed USB device"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The USB audio clock source failed the driver’s validity check.",
+          "de": "Die USB-Audio-Clock-Quelle bestand die Gültigkeitsprüfung des Treibers nicht."
+        },
+        "significance": {
+          "en": "Check missing external synchronization and model-specific behavior before disabling any validation.",
+          "de": "Fehlende externe Synchronisation und Modellverhalten prüfen, bevor irgendeine Validierung abgeschaltet wird."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-wireplumber-config-migration",
+    "slug": {
+      "en": "audio-wireplumber-config-migration",
+      "de": "wireplumber-konfiguration-migrieren"
+    },
+    "category": "audio",
+    "title": {
+      "en": "WirePlumber 0.5 rejects an old 0.4 configuration",
+      "de": "WirePlumber 0.5 lehnt alte 0.4-Konfiguration ab"
+    },
+    "summary": {
+      "en": "Migrate old WirePlumber Lua configuration to scoped SPA-JSON fragments after an upgrade, preserving device rules and avoiding outdated full-file overrides.",
+      "de": "Alte WirePlumber-Lua-Konfiguration nach Upgrade in begrenzte SPA-JSON-Fragmente migrieren, Geräteregeln erhalten und alte vollständige Overrides vermeiden."
+    },
+    "environment": {
+      "en": "WirePlumber 0.5 and later using configuration fragments; Lua scripting support is distinct from obsolete Lua configuration files.",
+      "de": "WirePlumber ab 0.5 mit Konfigurationsfragmenten; Lua-Scripting-Unterstützung unterscheidet sich von veralteten Lua-Konfigurationsdateien."
+    },
+    "symptoms": {
+      "en": [
+        "An upgrade leaves WirePlumber failed with an old-config message.",
+        "Rules in main.lua.d or bluetooth.lua.d no longer affect devices."
+      ],
+      "de": [
+        "Nach Upgrade scheitert WirePlumber mit Meldung zu alter Konfiguration.",
+        "Regeln in main.lua.d oder bluetooth.lua.d beeinflussen Geräte nicht mehr."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A copied 0.4 wireplumber.conf can still reference config/lua components that 0.5 no longer accepts.",
+        "de": "Eine kopierte 0.4-wireplumber.conf kann noch config/lua-Komponenten referenzieren, die 0.5 nicht mehr akzeptiert."
+      },
+      {
+        "en": "Lua configuration directories need explicit migration; merely renaming .lua to .conf does not translate syntax or semantics.",
+        "de": "Lua-Konfigurationsverzeichnisse benötigen ausdrückliche Migration; bloßes Umbenennen von .lua in .conf übersetzt weder Syntax noch Bedeutung."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-wireplumber-version",
+        "command": "wireplumber --version",
+        "explanation": {
+          "en": "Read the installed daemon version without starting another instance.",
+          "de": "Installierte Daemon-Version lesen, ohne zweite Instanz zu starten."
+        },
+        "interpretation": {
+          "en": "A 0.5-or-later version justifies the migration guide; retain the installed version because available options evolve.",
+          "de": "Eine Version ab 0.5 begründet den Migrationsleitfaden; installierte Version festhalten, da verfügbare Optionen weiterentwickelt werden."
+        }
+      },
+      {
+        "id": "read-migration-failure",
+        "command": "journalctl --user -b -u wireplumber.service --no-pager -n 150",
+        "explanation": {
+          "en": "Read WirePlumber’s first configuration error and the exact named path.",
+          "de": "Ersten WirePlumber-Konfigurationsfehler und genau genannten Pfad lesen."
+        },
+        "interpretation": {
+          "en": "An old 0.4 config refusal identifies the override to isolate. A different parse failure needs review of the actual fragment rather than deleting all policy.",
+          "de": "Eine Ablehnung alter 0.4-Konfiguration benennt die zu isolierende Anpassung. Anderer Parse-Fehler benötigt Prüfung des wirklichen Fragments statt Löschen aller Richtlinien."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "isolate-old-full-configuration",
+        "title": {
+          "en": "Isolate the obsolete full configuration",
+          "de": "Veraltete vollständige Konfiguration isolieren"
+        },
+        "body": {
+          "en": "If the daemon identifies an old local wireplumber.conf, save it outside the active search path and let the distribution’s current default load. Restart only WirePlumber after ending recordings, then verify devices return before restoring custom behavior.",
+          "de": "Wenn der Daemon alte lokale wireplumber.conf nennt, sie außerhalb des aktiven Suchpfads sichern und aktuelle Distributionsvorgabe laden lassen. Nach Beenden von Aufnahmen nur WirePlumber neu starten und vor eigener Anpassung die Geräterückkehr prüfen."
+        },
+        "precautions": {
+          "en": "Do not alter /usr/share defaults or discard the old file; it documents custom routing, profiles and Bluetooth behavior to port.",
+          "de": "/usr/share-Vorgaben nicht ändern und alte Datei nicht verwerfen; sie dokumentiert zu übertragende Routen, Profile und Bluetooth-Verhalten."
+        },
+        "rollback": {
+          "en": "Restore the saved override if testing an older compatible environment, or return to shipped defaults if the migrated version fails.",
+          "de": "Gesicherten Override bei Prüfung einer älteren kompatiblen Umgebung wiederherstellen oder bei fehlerhafter Migration auf Distributionsvorgaben zurückkehren."
+        }
+      },
+      {
+        "id": "port-one-rule-at-a-time",
+        "title": {
+          "en": "Port one device rule at a time",
+          "de": "Jeweils eine Geräteregel übertragen"
+        },
+        "body": {
+          "en": "Translate needed rules into .conf fragments under ~/.config/wireplumber/wireplumber.conf.d using the migration guide’s matches/actions/update-props structure. Match the actual device.name or node.name and validate one rule before adding another.",
+          "de": "Benötigte Regeln in .conf-Fragmente unter ~/.config/wireplumber/wireplumber.conf.d übertragen, mit matches/actions/update-props-Struktur des Migrationsleitfadens. Tatsächlichen device.name oder node.name abgleichen und jeweils eine Regel vor der nächsten prüfen."
+        },
+        "precautions": {
+          "en": "Rules and settings are different mechanisms; option names may differ between versions. Do not convert every Lua script by file extension alone.",
+          "de": "Regeln und Settings sind unterschiedliche Mechanismen; Optionsnamen können zwischen Versionen variieren. Lua-Skripte nicht nur über Dateiendung konvertieren."
+        },
+        "rollback": {
+          "en": "Remove the newly introduced fragment and restart WirePlumber if a rule hides devices or changes routes unexpectedly; keep the preserved original for reference.",
+          "de": "Neu eingeführtes Fragment entfernen und WirePlumber neu starten, wenn eine Regel Geräte versteckt oder Routen unerwartet ändert; gesichertes Original als Referenz behalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "WirePlumber: migrating configuration from 0.4",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/migration.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: ALSA configuration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: configuration option types",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/configuration_option_types.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "wireplumber-old-config",
+        "all": [
+          "wireplumber",
+          "Failed to load configuration:",
+          "old WirePlumber 0.4 config",
+          "not supported anymore"
+        ],
+        "sample": "wireplumber[2190]: Failed to load configuration: The configuration file at /home/user/.config/wireplumber/wireplumber.conf is likely an old WirePlumber 0.4 config and is not supported anymore.",
+        "negative": [
+          "wireplumber[2190]: loaded configuration fragment 51-alsa.conf",
+          "wireplumber[2190]: device profile changed to output:analog-stereo"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "WirePlumber explicitly rejected the obsolete 0.4 configuration format.",
+          "de": "WirePlumber lehnte ausdrücklich das veraltete 0.4-Konfigurationsformat ab."
+        },
+        "significance": {
+          "en": "Preserve and migrate the named override; this is not evidence of faulty ALSA hardware.",
+          "de": "Genannten Override sichern und migrieren; dies ist kein Befund defekter ALSA-Hardware."
+        }
+      }
+    ]
+  },
+  {
+    "id": "audio-microphone-capture-route",
+    "slug": {
+      "en": "audio-microphone-capture-route",
+      "de": "mikrofon-aufnahmeroute"
+    },
+    "category": "audio",
+    "title": {
+      "en": "The microphone is visible but records silence",
+      "de": "Mikrofon ist sichtbar, nimmt aber Stille auf"
+    },
+    "summary": {
+      "en": "Trace microphone silence across PipeWire source selection, capture switches and application permissions, without mistaking a monitor source for a real mic.",
+      "de": "Mikrofon-Stille über PipeWire-Eingang, Aufnahmeschalter und Anwendungsrechte verfolgen, ohne einen Monitor-Eingang mit echtem Mikrofon zu verwechseln."
+    },
+    "environment": {
+      "en": "PipeWire/WirePlumber desktops with analog, USB or built-in microphones; sandboxed applications can add their own permission layer.",
+      "de": "PipeWire/WirePlumber-Desktops mit analogen, USB- oder eingebauten Mikrofonen; Sandbox-Anwendungen können eigene Rechteebene hinzufügen."
+    },
+    "symptoms": {
+      "en": [
+        "The expected input exists but its level meter stays at zero.",
+        "An application captures speaker output or the wrong microphone."
+      ],
+      "de": [
+        "Der erwartete Eingang existiert, sein Pegel bleibt aber null.",
+        "Eine Anwendung nimmt Lautsprecherausgabe oder falsches Mikrofon auf."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A muted source, wrong default or retained application target can route the wrong input.",
+        "de": "Stummer Eingang, falscher Standard oder gespeichertes Anwendungsziel kann falschen Eingang routen."
+      },
+      {
+        "en": "Hardware privacy switches, ALSA capture switches, the selected input port or app permissions can block capture independently.",
+        "de": "Hardware-Privatschalter, ALSA-Aufnahmeschalter, gewählter Eingangsport oder Anwendungsrechte können Aufnahme unabhängig blockieren."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-capture-graph",
+        "command": "wpctl status",
+        "explanation": {
+          "en": "Read sources, default marker and running recording streams as the affected desktop user.",
+          "de": "Eingänge, Standardmarkierung und laufende Aufnahmestreams als betroffener Desktop-Benutzer lesen."
+        },
+        "interpretation": {
+          "en": "A source with monitor semantics captures output rather than the physical microphone. A visible real source without a stream may indicate application selection or permission issues.",
+          "de": "Ein Eingang mit Monitor-Bedeutung nimmt Ausgabe statt physischem Mikrofon auf. Ein sichtbarer realer Eingang ohne Stream kann auf Anwendungswahl oder Rechteproblem hindeuten."
+        }
+      },
+      {
+        "id": "read-capture-volume",
+        "command": "wpctl get-volume @DEFAULT_AUDIO_SOURCE@",
+        "explanation": {
+          "en": "Read the default input’s current volume and mute state; no recording is created.",
+          "de": "Lautstärke und Stummschaltung des Standardeingangs lesen; keine Aufnahme wird erzeugt."
+        },
+        "interpretation": {
+          "en": "[MUTED] explains source silence, but an unmuted value does not verify the hardware capture switch, input port or app permission.",
+          "de": "[MUTED] erklärt Stille des Eingangs; ein nicht stummer Wert bestätigt aber weder Hardware-Aufnahmeschalter noch Port oder Anwendungsrecht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "select-physical-microphone",
+        "title": {
+          "en": "Select and unmute the physical microphone",
+          "de": "Physisches Mikrofon wählen und entstummen"
+        },
+        "body": {
+          "en": "If the wrong source or mute state is confirmed, select the actual microphone in the desktop audio input panel and the application, then unmute only that input. Check the physical privacy switch and the appropriate ALSA capture control if the meter remains silent.",
+          "de": "Wenn falscher Eingang oder Stummschaltung bestätigt ist, echtes Mikrofon im Desktop-Eingabepanel und der Anwendung wählen und ausschließlich diesen Eingang entstummen. Bei weiterhin stummem Pegel Hardware-Privatschalter und passenden ALSA-Aufnahmeregler prüfen."
+        },
+        "precautions": {
+          "en": "Avoid excessive boost, which can introduce noise or feedback. Explain that restoring capture also restores microphone access to authorized applications.",
+          "de": "Übermäßigen Boost vermeiden, der Rauschen oder Rückkopplung erzeugen kann. Wiederhergestellte Aufnahme ermöglicht auch autorisierten Anwendungen Mikrofonzugriff."
+        },
+        "rollback": {
+          "en": "Restore previous input, gain, mute and privacy-switch settings after the comparison or when capture is no longer wanted.",
+          "de": "Nach Vergleich oder Ende gewünschter Aufnahme vorigen Eingang, Pegel, Stumm- und Privatschalterzustand herstellen."
+        }
+      },
+      {
+        "id": "review-application-capture-permission",
+        "title": {
+          "en": "Review the affected application’s capture access",
+          "de": "Aufnahmezugriff der betroffenen Anwendung prüfen"
+        },
+        "body": {
+          "en": "If the desktop meter responds but only one application records silence, review its selected microphone, per-app recording mute and its browser or sandbox microphone permission. Grant access only to the intended application and retest its capture stream.",
+          "de": "Wenn der Desktop-Pegel reagiert, aber nur eine Anwendung Stille aufnimmt, gewähltes Mikrofon, Anwendungs-Aufnahmestummschaltung und Browser-/Sandbox-Mikrofonrecht prüfen. Nur vorgesehener Anwendung Zugriff geben und ihren Aufnahmestream prüfen."
+        },
+        "precautions": {
+          "en": "Do not globally relax sandbox permissions or device-node access because one app cannot record. Save calls or recordings before restarting an app.",
+          "de": "Nicht global Sandbox-Rechte oder Gerätezugriff lockern, weil eine Anwendung nicht aufnehmen kann. Gespräche oder Aufnahmen vor Neustart sichern."
+        },
+        "rollback": {
+          "en": "Revoke the temporary microphone permission and restore the prior app input if it was unnecessary or did not solve the issue.",
+          "de": "Vorübergehendes Mikrofonrecht widerrufen und vorigen Anwendungseingang herstellen, wenn es unnötig war oder nichts löste."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "WirePlumber: wpctl(1)",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/man/wpctl.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian: ALSA amixer(1), mixer controls",
+        "url": "https://manpages.debian.org/trixie/alsa-utils/amixer.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire: pipewire-props(7)",
+        "url": "https://pipewire.pages.freedesktop.org/pipewire/page_man_pipewire-props_7.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "audio-session-device-access",
+    "slug": {
+      "en": "audio-session-device-access",
+      "de": "audio-sitzung-geraetezugriff"
+    },
+    "category": "audio",
+    "title": {
+      "en": "Audio device access fails in the current session",
+      "de": "Audiogerätezugriff scheitert in aktueller Sitzung"
+    },
+    "summary": {
+      "en": "Diagnose ALSA permission refusal and Bluetooth session ownership using login state and device ACL evidence, then repair access without broad device permissions.",
+      "de": "ALSA-Zugriffsverweigerung und Bluetooth-Sitzungsbesitz über Login-Zustand und Geräte-ACL eingrenzen; Zugriff ohne pauschal offene Geräterecht herstellen."
+    },
+    "environment": {
+      "en": "Desktop audio under systemd-logind or an equivalent seat manager; headless sessions require an intentional access model.",
+      "de": "Desktop-Audio unter systemd-logind oder vergleichbarer Seat-Verwaltung; Headless-Sitzungen brauchen bewusstes Zugriffsmodell."
+    },
+    "symptoms": {
+      "en": [
+        "PipeWire cannot open an ALSA PCM due to permission denied.",
+        "Audio works in the active GUI but fails in SSH or another seat/session."
+      ],
+      "de": [
+        "PipeWire kann ALSA-PCM wegen Permission denied nicht öffnen.",
+        "Audio funktioniert in aktiver GUI, scheitert aber über SSH oder andere Seat-/Sitzung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The process may not belong to an active local session with the required device access.",
+        "de": "Der Prozess gehört möglicherweise nicht zu aktiver lokaler Sitzung mit nötigem Gerätezugriff."
+      },
+      {
+        "en": "Broken login/PAM integration, stale ACLs or a second user owning Bluetooth audio can require a session-layer correction.",
+        "de": "Defekte Login-/PAM-Integration, alte ACLs oder Bluetooth-Besitz eines zweiten Benutzers können Sitzungsreparatur benötigen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-session-properties",
+        "command": "loginctl show-session SESSION_ID -p Active -p Remote -p Seat -p Type -p Name",
+        "explanation": {
+          "en": "Replace SESSION_ID with the affected session listed by loginctl. Read session properties; this does not activate or terminate it.",
+          "de": "SESSION_ID durch betroffene Sitzung aus loginctl ersetzen. Eigenschaften lesen; Sitzung wird weder aktiviert noch beendet."
+        },
+        "interpretation": {
+          "en": "An inactive or remote session can explain missing seat-granted device access. Headless audio must be configured deliberately rather than pretending to be a desktop seat.",
+          "de": "Inaktive oder entfernte Sitzung kann fehlenden Seat-basierten Gerätezugriff erklären. Headless-Audio bewusst konfigurieren, statt Desktop-Seat vorzutäuschen."
+        }
+      },
+      {
+        "id": "read-sound-device-acl",
+        "command": "getfacl /dev/snd/pcmC0D0p",
+        "explanation": {
+          "en": "Replace the node with the affected playback PCM from ALSA enumeration. Read its ownership and ACL without altering permissions.",
+          "de": "Node durch betroffenen Wiedergabe-PCM aus ALSA-Erkennung ersetzen. Eigentümer und ACL lesen, ohne Rechte zu verändern."
+        },
+        "interpretation": {
+          "en": "Check whether the actual desktop user has effective rw permission, including the ACL mask. Missing access plus an inactive session supports seat-policy investigation.",
+          "de": "Wirksames rw-Recht des tatsächlichen Desktop-Benutzers einschließlich ACL-Maske prüfen. Fehlender Zugriff plus inaktive Sitzung stützt Untersuchung der Seat-Richtlinie."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-normal-login-session",
+        "title": {
+          "en": "Restore the intended local login session",
+          "de": "Vorgesehene lokale Login-Sitzung herstellen"
+        },
+        "body": {
+          "en": "If audio was launched from sudo, SSH or an inactive session, run the client from the active graphical account and its user audio server. If a custom login path bypasses normal session registration, repair the distribution’s PAM/logind integration and log in again.",
+          "de": "Wenn Audio aus sudo, SSH oder inaktiver Sitzung gestartet wurde, Client im aktiven grafischen Konto mit dessen Benutzer-Audioserver ausführen. Wenn eigener Login-Pfad normale Sitzungsregistrierung umgeht, PAM-/logind-Integration der Distribution reparieren und neu anmelden."
+        },
+        "precautions": {
+          "en": "Do not chmod /dev/snd to world-writable or run desktop audio as root. Logging out interrupts all work in that session.",
+          "de": "/dev/snd nicht weltweit beschreibbar machen oder Desktop-Audio als Root ausführen. Abmelden unterbricht alle Arbeit der Sitzung."
+        },
+        "rollback": {
+          "en": "Restore the recorded login configuration if the change breaks session creation; use the known working login path for recovery.",
+          "de": "Dokumentierte Login-Konfiguration wiederherstellen, falls Änderung Sitzungsaufbau stört; bekannten funktionierenden Login-Pfad zur Rettung nutzen."
+        }
+      },
+      {
+        "id": "configure-dedicated-headless-audio",
+        "title": {
+          "en": "Design dedicated headless audio access",
+          "de": "Dedizierten Headless-Audiozugriff planen"
+        },
+        "body": {
+          "en": "If unattended audio is intentional, use a dedicated account and the distribution’s documented service/device access model. For Bluetooth, review WirePlumber’s seat-monitoring feature only for that dedicated instance so display-manager ownership is not mistaken for a codec failure.",
+          "de": "Wenn unbeaufsichtigtes Audio gewollt ist, eigenes Konto und dokumentiertes Dienst-/Gerätezugriffsmodell der Distribution nutzen. Für Bluetooth WirePlumbers Seat-Monitoring nur für diese eigene Instanz prüfen, damit Display-Manager-Besitz nicht als Codecfehler gilt."
+        },
+        "precautions": {
+          "en": "Disabling seat monitoring changes who can own Bluetooth devices and may cause contention. Keep desktop instances using their normal session policy.",
+          "de": "Seat-Monitoring abschalten verändert Bluetooth-Gerätebesitz und kann Konkurrenz erzeugen. Desktop-Instanzen bei normaler Sitzungsrichtlinie belassen."
+        },
+        "rollback": {
+          "en": "Remove the dedicated override and restore previous service permissions and startup policy if ownership conflicts occur.",
+          "de": "Dedizierten Override entfernen und bisherige Dienstrechte sowie Start-Richtlinie wiederherstellen, falls Besitzkonflikte entstehen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian: systemd loginctl(1), session properties",
+        "url": "https://manpages.debian.org/trixie/systemd/loginctl.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "WirePlumber: Bluetooth profiles and logind integration",
+        "url": "https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/bluetooth.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "PipeWire ALSA implementation: upstream source snapshot",
+        "url": "https://chromium.googlesource.com/external/gitlab.freedesktop.org/pipewire/pipewire/+/547e364b247636a4ea091afe07773ec035b7ecfc/spa/plugins/alsa/alsa-pcm.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pipewire-alsa-permission",
+        "all": [
+          "pipewire",
+          "alsa",
+          "open failed",
+          "Permission denied"
+        ],
+        "sample": "pipewire[2140]: [alsa-pcm.c:1250 spa_alsa_open()] hw:0,0: playback open failed: Permission denied",
+        "negative": [
+          "pipewire[2140]: ALSA device open hw:0,0 playback",
+          "app[3400]: file open failed: Permission denied"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "PipeWire was denied permission to open the ALSA hardware PCM.",
+          "de": "PipeWire bekam keine Berechtigung zum Öffnen des ALSA-Hardware-PCM."
+        },
+        "significance": {
+          "en": "Inspect session and device ACLs; application-file permissions and microphone mute are unrelated to this signature.",
+          "de": "Sitzung und Geräte-ACL prüfen; Anwendungsdateirechte und Mikrofon-Stummschaltung gehören nicht zu dieser Signatur."
+        }
+      }
+    ]
+  }
+]

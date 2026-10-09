@@ -1,0 +1,3293 @@
+[
+  {
+    "id": "amd-black-screen",
+    "title": {
+      "en": "AMD GPU black screen",
+      "de": "AMD-GPU: schwarzer Bildschirm"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Can you still reach a terminal or SSH after the screen goes black?",
+          "de": "Erreichst du nach dem Schwarzbild noch ein Terminal oder SSH?"
+        },
+        "why": {
+          "en": "Keeping a working CPU/session path separates display loss from a whole-machine freeze. Missing logs do not rule out a hardware or driver failure.",
+          "de": "Ein erreichbares System hilft, einen Anzeigeausfall vom vollständigen Stillstand zu unterscheiden. Fehlende Logs schließen Hardware- oder Treiberfehler nicht aus."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Read messages from the affected boot. After a reboot use -b -1 if persistent journals exist. Compare timestamps, not only severity.",
+              "de": "Lies die Meldungen des betroffenen Starts. Nach einem Neustart kann bei persistentem Journal -b -1 helfen. Vergleiche Zeitstempel, nicht nur Fehlerstufen."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Yes, the machine responds",
+              "de": "Ja, das System reagiert"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No, it needs a reboot",
+              "de": "Nein, ein Neustart ist nötig"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Which GPU evidence appears near the failure?",
+          "de": "Welche GPU-Meldung steht nahe am Ausfall?"
+        },
+        "why": {
+          "en": "Ring timeouts, VM faults and a lost PCIe device are different evidence. An ordinary monitor disconnect is different again.",
+          "de": "Ring-Timeouts, VM-Fehler und ein verlorenes PCIe-Gerät liefern unterschiedliche Hinweise. Ein normaler Monitorverlust ist wieder etwas anderes."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Compare the first GPU message with the black-screen time; recovery logs alone do not identify the original fault.",
+              "de": "Vergleiche die erste GPU-Meldung mit dem Schwarzbild-Zeitpunkt; Wiederherstellung allein belegt nicht den Beginn."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "amdgpu ring timeout",
+              "de": "amdgpu-Ring-Timeout"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "VM page fault",
+              "de": "VM-Seitenfehler"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "amdgpu-ring-timeout"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "amdgpu-vm-page-fault"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "kernel-hard-lockup",
+          "drm-invalid-edid"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Read messages from the affected boot. After a reboot use -b -1 if persistent journals exist. Compare timestamps, not only severity.",
+              "de": "Lies die Meldungen des betroffenen Starts. Nach einem Neustart kann bei persistentem Journal -b -1 helfen. Vergleiche Zeitstempel, nicht nur Fehlerstufen."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "drm-invalid-edid",
+          "amdgpu-ring-timeout"
+        ]
+      }
+    }
+  },
+  {
+    "id": "display-failure",
+    "title": {
+      "en": "Display does not work",
+      "de": "Anzeige funktioniert nicht"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Does a text console work while the graphical session fails?",
+          "de": "Funktioniert eine Textkonsole, während die grafische Sitzung scheitert?"
+        },
+        "why": {
+          "en": "A working console suggests boot completed. It helps distinguish compositor or Xorg startup from missing firmware output.",
+          "de": "Eine funktionierende Textkonsole spricht für einen abgeschlossenen Start. Das trennt Sitzungsprobleme von fehlender Ausgabe beim Booten."
+        },
+        "diagnostics": [
+          {
+            "command": "loginctl session-status",
+            "interpretation": {
+              "en": "Read the active session type and state; an absent graphical session is different from a session using the wrong output.",
+              "de": "Prüfe Typ und Zustand der Sitzung. Eine fehlende grafische Sitzung ist etwas anderes als eine Sitzung auf dem falschen Ausgang."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Console works",
+              "de": "Konsole funktioniert"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No output on any console",
+              "de": "Nirgends eine Ausgabe"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the failure a server startup error or an output negotiation problem?",
+          "de": "Scheitert der Grafikserver beim Start oder die Aushandlung des Ausgangs?"
+        },
+        "why": {
+          "en": "No screens found concerns Xorg initialization; EDID or DisplayPort messages concern the connected display path.",
+          "de": "No screens found betrifft den Xorg-Start. EDID- oder DisplayPort-Meldungen betreffen die Verbindung zum Bildschirm."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b --no-pager",
+            "interpretation": {
+              "en": "Read the display-manager and kernel display messages separately; the session can fail while a connector is healthy.",
+              "de": "Lies Displaymanager- und Kernel-Anzeigemeldungen getrennt; eine Sitzung kann trotz intaktem Anschluss scheitern."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Xorg reports no screens found",
+              "de": "Xorg meldet no screens found"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "EDID or link-training errors",
+              "de": "EDID- oder Link-Training-Fehler"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "xorg-no-screens-found"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "displayport-link-training"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "boot-uefi-mode-mismatch",
+          "drm-invalid-edid"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "loginctl session-status",
+            "interpretation": {
+              "en": "Read the active session type and state; an absent graphical session is different from a session using the wrong output.",
+              "de": "Prüfe Typ und Zustand der Sitzung. Eine fehlende grafische Sitzung ist etwas anderes als eine Sitzung auf dem falschen Ausgang."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "drm-invalid-edid",
+          "xorg-no-screens-found"
+        ]
+      }
+    }
+  },
+  {
+    "id": "no-audio",
+    "title": {
+      "en": "No sound",
+      "de": "Kein Ton"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Does ALSA list a playback sound card?",
+          "de": "Listet ALSA eine Wiedergabe-Soundkarte auf?"
+        },
+        "why": {
+          "en": "ALSA is below PipeWire. If the card is missing there, changing desktop volume will not create a kernel device.",
+          "de": "ALSA liegt unter PipeWire. Fehlt dort die Karte, erzeugt die Desktop-Lautstärke kein Kernel-Gerät."
+        },
+        "diagnostics": [
+          {
+            "command": "aplay -l",
+            "interpretation": {
+              "en": "A hardware card list means the kernel exposes playback devices. Command not found means alsa-utils is missing, not necessarily a missing sound card.",
+              "de": "Eine Kartenliste zeigt Wiedergabegeräte des Kernels. Ein fehlender Befehl bedeutet zunächst fehlende alsa-utils, nicht zwingend fehlende Hardware."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "At least one playback card",
+              "de": "Mindestens eine Wiedergabekarte"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No cards are listed",
+              "de": "Keine Karte aufgelistet"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Does wpctl show a running graph with the intended output?",
+          "de": "Zeigt wpctl einen laufenden Graphen mit dem gewünschten Ausgang?"
+        },
+        "why": {
+          "en": "A graph exists only with a working server/session. A listed sink may still be muted or not be selected for this application.",
+          "de": "Ein Graph setzt einen funktionierenden Server voraus. Ein vorhandener Sink kann stumm oder für die Anwendung falsch gewählt sein."
+        },
+        "diagnostics": [
+          {
+            "command": "wpctl status",
+            "interpretation": {
+              "en": "Look for the intended Audio sink and default marker. A connection error means graph inspection is not yet possible.",
+              "de": "Suche den gewünschten Audio-Sink und die Default-Markierung. Ein Verbindungsfehler verhindert zunächst die Graph-Prüfung."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Graph exists, output is wrong or muted",
+              "de": "Graph vorhanden, Ausgang falsch oder stumm"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Cannot connect to PipeWire",
+              "de": "Verbindung zu PipeWire scheitert"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-default-output-muted"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-pipewire-user-service"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-alsa-card-missing",
+          "audio-session-device-access"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "aplay -l",
+            "interpretation": {
+              "en": "A hardware card list means the kernel exposes playback devices. Command not found means alsa-utils is missing, not necessarily a missing sound card.",
+              "de": "Eine Kartenliste zeigt Wiedergabegeräte des Kernels. Ein fehlender Befehl bedeutet zunächst fehlende alsa-utils, nicht zwingend fehlende Hardware."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-session-device-access",
+          "audio-default-output-muted"
+        ]
+      }
+    }
+  },
+  {
+    "id": "pipewire-devices",
+    "title": {
+      "en": "PipeWire device problems",
+      "de": "PipeWire-Geräteprobleme"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is PipeWire running in your own user session?",
+          "de": "Läuft PipeWire in deiner eigenen Benutzersitzung?"
+        },
+        "why": {
+          "en": "PipeWire and WirePlumber normally belong to the user session. Running client tools as root can inspect a different or absent session.",
+          "de": "PipeWire und WirePlumber gehören normalerweise zur Benutzersitzung. Als root können Werkzeuge eine andere oder fehlende Sitzung sehen."
+        },
+        "diagnostics": [
+          {
+            "command": "systemctl --user status pipewire wireplumber --no-pager",
+            "interpretation": {
+              "en": "Compare active states. Missing units can reflect a distribution-specific setup; read the distribution guide before enabling replacements.",
+              "de": "Vergleiche die Zustände. Fehlende Units können zur Distribution gehören; prüfe ihre Anleitung vor dem Aktivieren von Ersatzdiensten."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Services run",
+              "de": "Dienste laufen"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "A service is failed or absent",
+              "de": "Ein Dienst fehlt oder scheitert"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Do logs indicate timing underruns or a configuration parse failure?",
+          "de": "Zeigen Logs Zeitprobleme oder einen Konfigurationsfehler?"
+        },
+        "why": {
+          "en": "XRUNs concern scheduling/buffering. A rejected WirePlumber configuration needs a format review rather than a larger buffer.",
+          "de": "XRUNs betreffen Zeitplanung und Puffer. Eine abgelehnte WirePlumber-Konfiguration braucht eine Formatprüfung statt größerer Puffer."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl --user -b -u pipewire -u wireplumber --no-pager",
+            "interpretation": {
+              "en": "Check the first parse/startup failure or repeated XRUN timing near the audible fault.",
+              "de": "Prüfe den ersten Parser-/Startfehler oder wiederholte XRUN-Zeitpunkte nahe am hörbaren Problem."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "XRUNs under load",
+              "de": "XRUNs unter Last"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "WirePlumber rejects configuration",
+              "de": "WirePlumber lehnt Konfiguration ab"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-pipewire-xruns"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-wireplumber-config-migration"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-pipewire-user-service",
+          "audio-alsa-device-busy"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "systemctl --user status pipewire wireplumber --no-pager",
+            "interpretation": {
+              "en": "Compare active states. Missing units can reflect a distribution-specific setup; read the distribution guide before enabling replacements.",
+              "de": "Vergleiche die Zustände. Fehlende Units können zur Distribution gehören; prüfe ihre Anleitung vor dem Aktivieren von Ersatzdiensten."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "audio-alsa-device-busy",
+          "audio-pipewire-xruns"
+        ]
+      }
+    }
+  },
+  {
+    "id": "sata-errors",
+    "title": {
+      "en": "SATA link errors",
+      "de": "SATA-Verbindungsfehler"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Do the messages include BadCRC or interface errors?",
+          "de": "Enthalten die Meldungen BadCRC oder Schnittstellenfehler?"
+        },
+        "why": {
+          "en": "CRC errors identify corrupted link traffic. They are not the same evidence as an unreadable sector on the medium.",
+          "de": "CRC-Fehler betreffen beschädigte Übertragung. Sie liefern andere Hinweise als ein unlesbarer Sektor auf dem Laufwerk."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Find the same ata port and time window. A link reset is a recovery action; check the preceding exception and SError fields.",
+              "de": "Suche denselben ata-Port und Zeitraum. Ein Link-Reset ist ein Wiederherstellungsversuch; beachte die vorherige Exception und SError-Felder."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "BadCRC/interface error present",
+              "de": "BadCRC/Schnittstellenfehler vorhanden"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No CRC signature",
+              "de": "Keine CRC-Signatur"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the issue repeatable on this port without unreadable sectors?",
+          "de": "Wiederholt sich der Fehler auf diesem Port ohne unlesbare Sektoren?"
+        },
+        "why": {
+          "en": "Changing one physical connection at a time and comparing error deltas gives stronger evidence than a one-time SMART total.",
+          "de": "Einzeln geänderte Verbindungen und Fehlerzuwächse liefern stärkere Hinweise als ein einzelner SMART-Gesamtwert."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Compare the preceding exception, SError and UNC flags for the same ata device.",
+              "de": "Vergleiche vorherige Exception, SError und UNC-Flags desselben ata-Geräts."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Link errors repeat",
+              "de": "Verbindungsfehler wiederholen sich"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "UNC or uncorrectable read is present",
+              "de": "UNC oder unlesbarer Sektor vorhanden"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-sata-crc-errors"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-uncorrectable-sectors"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-uncorrectable-sectors",
+          "storage-sata-crc-errors"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Find the same ata port and time window. A link reset is a recovery action; check the preceding exception and SError fields.",
+              "de": "Suche denselben ata-Port und Zeitraum. Ein Link-Reset ist ein Wiederherstellungsversuch; beachte die vorherige Exception und SError-Felder."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-sata-crc-errors"
+        ]
+      }
+    }
+  },
+  {
+    "id": "nvme-timeouts",
+    "title": {
+      "en": "NVMe timeouts",
+      "de": "NVMe-Timeouts"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is the first failure associated with idle or resume?",
+          "de": "Tritt der erste Fehler nach Leerlauf oder Aufwachen auf?"
+        },
+        "why": {
+          "en": "The timing can make power-state transitions worth testing. It cannot establish that APST caused the failure.",
+          "de": "Der Zeitpunkt kann einen Test von Energiesparzuständen begründen. Er beweist nicht, dass APST die Ursache ist."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Read messages before the reset. Record whether the controller returns and whether I/O errors continue.",
+              "de": "Lies Meldungen vor dem Reset. Halte fest, ob der Controller zurückkehrt und ob E/A-Fehler weiter auftreten."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Yes, idle/resume correlation",
+              "de": "Ja, Zusammenhang mit Leerlauf/Aufwachen"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No, fails during active I/O",
+              "de": "Nein, bei laufender E/A"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Does the controller recover after reset?",
+          "de": "Erholt sich der Controller nach dem Reset?"
+        },
+        "why": {
+          "en": "A recovered controller with repeatable idle timing supports a controlled reversible comparison. A disappearing controller needs broader device/link evidence.",
+          "de": "Ein wiederkehrender Controller mit reproduzierbarem Leerlaufbezug erlaubt einen kontrollierten Vergleich. Ein verschwundener Controller braucht weitere Geräte- und Linkdaten."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Follow the same nvme controller through timeout, reset and any successful recovery.",
+              "de": "Verfolge denselben NVMe-Controller durch Timeout, Reset und eine mögliche Wiederherstellung."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Returns; idle timing is repeatable",
+              "de": "Kehrt zurück; Leerlaufbezug wiederholbar"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Remains unavailable or I/O keeps failing",
+              "de": "Bleibt weg oder E/A scheitert weiter"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-nvme-idle-resume"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-nvme-controller-reset"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-nvme-controller-reset"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Read messages before the reset. Record whether the controller returns and whether I/O errors continue.",
+              "de": "Lies Meldungen vor dem Reset. Halte fest, ob der Controller zurückkehrt und ob E/A-Fehler weiter auftreten."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "storage-nvme-controller-reset",
+          "storage-nvme-idle-resume"
+        ]
+      }
+    }
+  },
+  {
+    "id": "failed-service",
+    "title": {
+      "en": "Failed systemd service",
+      "de": "Fehlgeschlagener systemd-Dienst"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Did systemd fail to launch the executable, or did the program exit after starting?",
+          "de": "Scheiterte der Programmstart oder beendete sich das gestartete Programm?"
+        },
+        "why": {
+          "en": "EXEC/CHDIR failures happen before application code. An application exit status requires its own log and configuration.",
+          "de": "EXEC/CHDIR-Fehler entstehen vor dem Anwendungscode. Ein Exit-Status der Anwendung braucht deren Log und Konfiguration."
+        },
+        "diagnostics": [
+          {
+            "command": "systemctl status UNIT --no-pager",
+            "interpretation": {
+              "en": "Replace UNIT with the exact service name. Read Result, status code and recent messages; failed alone is not a diagnosis.",
+              "de": "Ersetze UNIT durch den genauen Dienstnamen. Lies Result, Statuscode und Meldungen; failed allein ist keine Diagnose."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Launch fails: EXEC/CHDIR/USER",
+              "de": "Start scheitert: EXEC/CHDIR/USER"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Program started, then failed",
+              "de": "Programm gestartet, danach gescheitert"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Which launch-stage status is recorded?",
+          "de": "Welcher Startphasen-Status steht im Log?"
+        },
+        "why": {
+          "en": "203/EXEC concerns executable access or format; 200/CHDIR concerns WorkingDirectory. Correct the evidenced field, not the whole unit.",
+          "de": "203/EXEC betrifft Zugriff oder Format des Programms, 200/CHDIR das WorkingDirectory. Korrigiere das belegte Feld statt die gesamte Unit."
+        },
+        "diagnostics": [
+          {
+            "command": "systemctl show UNIT -p Result -p ExecMainCode -p ExecMainStatus",
+            "interpretation": {
+              "en": "Replace UNIT with your service. Interpret the systemd setup status together with its journal rather than as an application exit code.",
+              "de": "Ersetze UNIT durch deinen Dienst. Deute systemd-Setup-Status gemeinsam mit dem Journal statt als Exit-Code der Anwendung."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "203/EXEC",
+              "de": "203/EXEC"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "200/CHDIR",
+              "de": "200/CHDIR"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "systemd-exec-launch-failure"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "systemd-working-directory-missing"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "systemd-notify-startup-timeout",
+          "systemd-restart-rate-limit"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "systemctl status UNIT --no-pager",
+            "interpretation": {
+              "en": "Replace UNIT with the exact service name. Read Result, status code and recent messages; failed alone is not a diagnosis.",
+              "de": "Ersetze UNIT durch den genauen Dienstnamen. Lies Result, Statuscode und Meldungen; failed allein ist keine Diagnose."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "systemd-restart-rate-limit",
+          "systemd-exec-launch-failure"
+        ]
+      }
+    }
+  },
+  {
+    "id": "boot-failure",
+    "title": {
+      "en": "Linux boot failure",
+      "de": "Linux startet nicht"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Can you reach an emergency shell after the kernel starts?",
+          "de": "Erreichst du nach dem Kernelstart eine Notfall-Shell?"
+        },
+        "why": {
+          "en": "An emergency shell means firmware and kernel loading already progressed. A missing boot entry fails earlier in the chain.",
+          "de": "Eine Notfall-Shell bedeutet, dass Firmware und Kernelladen bereits weitergekommen sind. Ein fehlender Booteintrag scheitert früher."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b --no-pager",
+            "interpretation": {
+              "en": "In a reachable rescue shell read the first failed mount/root dependency. No journal there means a live environment may be needed.",
+              "de": "Lies in einer erreichbaren Rettungs-Shell die zuerst gescheiterte Mount-/Root-Abhängigkeit. Ohne Journal kann ein Live-System nötig sein."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Emergency shell is available",
+              "de": "Notfall-Shell erreichbar"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Firmware cannot find a boot entry",
+              "de": "Firmware findet keinen Booteintrag"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the failed device the root filesystem or an additional fstab mount?",
+          "de": "Ist das fehlende Gerät das Root-Dateisystem oder ein zusätzlicher fstab-Mount?"
+        },
+        "why": {
+          "en": "A nonessential extra mount can block boot independently of a valid root volume. Root identification and encrypted unlock require different recovery paths.",
+          "de": "Ein zusätzlicher Mount kann trotz gültigem Root-Laufwerk blockieren. Root-Identifikation und Verschlüsselung brauchen andere Rettungswege."
+        },
+        "diagnostics": [
+          {
+            "command": "lsblk -f",
+            "interpretation": {
+              "en": "Compare actual UUIDs and filesystem types with the device named in the failed mount/root dependency.",
+              "de": "Vergleiche vorhandene UUIDs und Dateisysteme mit dem Gerät der gescheiterten Mount-/Root-Abhängigkeit."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Additional fstab mount",
+              "de": "Zusätzlicher fstab-Mount"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Root UUID is missing",
+              "de": "Root-UUID fehlt"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "boot-fstab-emergency"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "boot-root-uuid-missing"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "systemd-boot-entry-missing",
+          "boot-luks-unlock"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b --no-pager",
+            "interpretation": {
+              "en": "In a reachable rescue shell read the first failed mount/root dependency. No journal there means a live environment may be needed.",
+              "de": "Lies in einer erreichbaren Rettungs-Shell die zuerst gescheiterte Mount-/Root-Abhängigkeit. Ohne Journal kann ein Live-System nötig sein."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "boot-luks-unlock",
+          "boot-fstab-emergency"
+        ]
+      }
+    }
+  },
+  {
+    "id": "dns-resolution",
+    "title": {
+      "en": "DNS resolution problems",
+      "de": "DNS-Auflösung scheitert"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Does the interface have an address and a route?",
+          "de": "Hat die Schnittstelle eine Adresse und eine Route?"
+        },
+        "why": {
+          "en": "DNS configuration does not repair a missing lease or route. Verify basic connectivity before changing resolvers.",
+          "de": "DNS-Einstellungen reparieren keine fehlende Lease oder Route. Prüfe die Verbindung vor dem Ändern von Resolvern."
+        },
+        "diagnostics": [
+          {
+            "command": "ip route show",
+            "interpretation": {
+              "en": "A default route provides a candidate path; its existence alone does not prove reachability. Compare its interface with the active connection.",
+              "de": "Eine Default-Route liefert einen möglichen Weg, beweist aber keine Erreichbarkeit. Vergleiche ihre Schnittstelle mit der aktiven Verbindung."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Address and route exist",
+              "de": "Adresse und Route vorhanden"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Missing lease or route",
+              "de": "Lease oder Route fehlt"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the failure restricted to names behind a VPN?",
+          "de": "Scheitern nur Namen hinter einem VPN?"
+        },
+        "why": {
+          "en": "Split DNS routes queries by domain. A general stub failure affects ordinary lookups more broadly.",
+          "de": "Split-DNS verteilt Abfragen nach Domain. Ein allgemeiner Stub-Fehler betrifft normale Abfragen breiter."
+        },
+        "diagnostics": [
+          {
+            "command": "resolvectl status",
+            "interpretation": {
+              "en": "For systemd-resolved systems compare per-link DNS servers and routing domains, particularly the VPN link.",
+              "de": "Bei systemd-resolved die DNS-Server und Routing-Domains je Link vergleichen, besonders am VPN-Link."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Only VPN/internal names fail",
+              "de": "Nur VPN-/interne Namen scheitern"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Ordinary names also fail",
+              "de": "Auch gewöhnliche Namen scheitern"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-vpn-split-dns"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-dns-stub-resolution"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-dhcp-no-lease",
+          "network-overlapping-routes"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "ip route show",
+            "interpretation": {
+              "en": "A default route provides a candidate path; its existence alone does not prove reachability. Compare its interface with the active connection.",
+              "de": "Eine Default-Route liefert einen möglichen Weg, beweist aber keine Erreichbarkeit. Vergleiche ihre Schnittstelle mit der aktiven Verbindung."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-overlapping-routes",
+          "network-vpn-split-dns"
+        ]
+      }
+    }
+  },
+  {
+    "id": "wifi-connectivity",
+    "title": {
+      "en": "Wi-Fi connectivity",
+      "de": "WLAN-Verbindung"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is the radio blocked by rfkill?",
+          "de": "Ist das Funkgerät durch rfkill blockiert?"
+        },
+        "why": {
+          "en": "A hardware block cannot be repaired with a password change. An unblocked radio still needs a functioning driver and authentication.",
+          "de": "Eine Hardware-Sperre lässt sich nicht mit einem anderen Passwort beheben. Ein entsperrtes Funkgerät braucht weiter Treiber und Anmeldung."
+        },
+        "diagnostics": [
+          {
+            "command": "rfkill list",
+            "interpretation": {
+              "en": "Distinguish hard blocked from soft blocked. Missing rfkill tools do not mean the radio is enabled.",
+              "de": "Unterscheide Hard- und Soft-Block. Ein fehlendes rfkill-Werkzeug bedeutet nicht, dass Funk aktiviert ist."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "No block",
+              "de": "Keine Sperre"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Hard or soft block",
+              "de": "Hard- oder Soft-Block"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Can the driver expose a Wi-Fi interface and scan networks?",
+          "de": "Stellt der Treiber ein WLAN-Interface bereit und findet Netze?"
+        },
+        "why": {
+          "en": "A missing interface with a firmware error precedes authentication. Visible networks with handshake failures suggest a later stage.",
+          "de": "Ein fehlendes Interface mit Firmwarefehler liegt vor der Anmeldung. Sichtbare Netze mit Handshakefehlern betreffen eine spätere Phase."
+        },
+        "diagnostics": [
+          {
+            "command": "nmcli device status",
+            "interpretation": {
+              "en": "On NetworkManager systems distinguish missing Wi-Fi hardware, disconnected and unmanaged interfaces.",
+              "de": "Bei NetworkManager fehlende WLAN-Hardware, disconnected und unmanaged unterscheiden."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Networks visible, authentication fails",
+              "de": "Netze sichtbar, Anmeldung scheitert"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Interface/firmware is missing",
+              "de": "Interface oder Firmware fehlt"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-wifi-authentication"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-wifi-firmware-missing"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-wifi-rfkill",
+          "network-dhcp-no-lease"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "rfkill list",
+            "interpretation": {
+              "en": "Distinguish hard blocked from soft blocked. Missing rfkill tools do not mean the radio is enabled.",
+              "de": "Unterscheide Hard- und Soft-Block. Ein fehlendes rfkill-Werkzeug bedeutet nicht, dass Funk aktiviert ist."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "network-dhcp-no-lease",
+          "network-wifi-authentication"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ssh-connection",
+    "title": {
+      "en": "SSH connection failures",
+      "de": "SSH-Verbindungsfehler"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Does SSH reach key exchange before the failure?",
+          "de": "Erreicht SSH den Schlüsselaustausch vor dem Fehler?"
+        },
+        "why": {
+          "en": "Host-key and authentication messages mean a peer was reached. A refusal or timeout concerns listener or network reachability first.",
+          "de": "Hostkey- und Anmeldemeldungen bedeuten, dass ein Gegenüber erreicht wurde. Ablehnung oder Timeout betreffen zuerst Listener oder Netz."
+        },
+        "diagnostics": [
+          {
+            "command": "ssh -G HOST",
+            "interpretation": {
+              "en": "Replace HOST with your server alias. This prints effective client configuration without connecting; check hostname, port and identities before a verbose connection test.",
+              "de": "Ersetze HOST durch deinen Serveralias. Der Befehl zeigt die Clientkonfiguration ohne Verbindung; prüfe Hostname, Port und Identitäten vor einem ausführlichen Verbindungstest."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Key exchange/authentication is reached",
+              "de": "Schlüsselaustausch/Anmeldung erreicht"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Connection refused or timeout",
+              "de": "Verbindung abgelehnt oder Timeout"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the failure a changed host identity or rejected user identity?",
+          "de": "Ist die Hostidentität geändert oder die Benutzeridentität abgelehnt?"
+        },
+        "why": {
+          "en": "A changed host key is a security decision requiring independent verification. User-key permissions are a different issue.",
+          "de": "Ein geänderter Hostkey braucht unabhängige Sicherheitsprüfung. Dateirechte des Benutzerschlüssels sind ein anderes Problem."
+        },
+        "diagnostics": [
+          {
+            "command": "ssh -G HOST",
+            "interpretation": {
+              "en": "Replace HOST with your alias. Check identityfile and identitiesonly, and independently verify any changed host key before proceeding.",
+              "de": "Ersetze HOST durch deinen Alias. Prüfe identityfile und identitiesonly; einen geänderten Hostkey vor dem Fortfahren unabhängig verifizieren."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Host identification has changed",
+              "de": "Hostidentifikation geändert"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Too many authentication failures",
+              "de": "Zu viele Anmeldeversuche"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "ssh-host-key-changed"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "ssh-too-many-identities"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "sshd-invalid-configuration",
+          "network-overlapping-routes"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "ssh -G HOST",
+            "interpretation": {
+              "en": "Replace HOST with your server alias. This prints effective client configuration without connecting; check hostname, port and identities before a verbose connection test.",
+              "de": "Ersetze HOST durch deinen Serveralias. Der Befehl zeigt die Clientkonfiguration ohne Verbindung; prüfe Hostname, Port und Identitäten vor einem ausführlichen Verbindungstest."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "ssh-authorized-key-permissions",
+          "ssh-host-key-changed"
+        ]
+      }
+    }
+  },
+  {
+    "id": "file-permissions",
+    "title": {
+      "en": "Permission problems",
+      "de": "Berechtigungsprobleme"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is the failure ordinary file access, or execution of an existing program?",
+          "de": "Scheitert gewöhnlicher Dateizugriff oder das Starten eines vorhandenen Programms?"
+        },
+        "why": {
+          "en": "Execute failures can involve noexec mounts or interpreters. File access depends on every parent directory, ACLs and security policy.",
+          "de": "Startfehler können noexec-Mounts oder Interpreter betreffen. Dateizugriff hängt von Elternverzeichnissen, ACLs und Sicherheitsrichtlinien ab."
+        },
+        "diagnostics": [
+          {
+            "command": "namei -l PATH",
+            "interpretation": {
+              "en": "Replace PATH with the affected absolute path. Every parent directory needs search permission; the final mode alone is insufficient.",
+              "de": "Ersetze PATH durch den betroffenen absoluten Pfad. Jedes Elternverzeichnis braucht Suchrecht; der letzte Dateimodus reicht nicht."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "File read/write access fails",
+              "de": "Lesen/Schreiben scheitert"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Program execution fails",
+              "de": "Programmstart scheitert"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Do an ACL mask or an explicit security denial explain the access?",
+          "de": "Erklären eine ACL-Maske oder eine explizite Sicherheitsmeldung den Zugriff?"
+        },
+        "why": {
+          "en": "An ACL mask limits named-user/group grants. AppArmor or SELinux can reject operations even when Unix modes allow them.",
+          "de": "Die ACL-Maske begrenzt Rechte benannter Benutzer/Gruppen. AppArmor oder SELinux können trotz passendem Unix-Modus ablehnen."
+        },
+        "diagnostics": [
+          {
+            "command": "getfacl PATH",
+            "interpretation": {
+              "en": "Replace PATH with the affected file/directory; compare named grants with effective permissions and mask.",
+              "de": "Ersetze PATH durch die Datei oder das Verzeichnis; benannte Rechte mit effektiven Rechten und Maske vergleichen."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "ACL effective permissions are limited",
+              "de": "Effektive ACL-Rechte begrenzt"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "AppArmor DENIED entry exists",
+              "de": "AppArmor-DENIED-Meldung vorhanden"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "acl-mask-restricts-access"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "apparmor-profile-denial"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "executable-on-noexec-mount",
+          "selinux-avc-denial"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "namei -l PATH",
+            "interpretation": {
+              "en": "Replace PATH with the affected absolute path. Every parent directory needs search permission; the final mode alone is insufficient.",
+              "de": "Ersetze PATH durch den betroffenen absoluten Pfad. Jedes Elternverzeichnis braucht Suchrecht; der letzte Dateimodus reicht nicht."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "selinux-avc-denial",
+          "acl-mask-restricts-access"
+        ]
+      }
+    }
+  },
+  {
+    "id": "nixos-rebuild",
+    "title": {
+      "en": "NixOS rebuild failures",
+      "de": "NixOS-Rebuild scheitert"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Does the error occur during evaluation or after a derivation starts building?",
+          "de": "Entsteht der Fehler bei der Auswertung oder nachdem ein Build beginnt?"
+        },
+        "why": {
+          "en": "Option and module errors precede building. Fetch hashes and substitutions fail later, so changing unrelated runtime services will not address them.",
+          "de": "Options- und Modulfehler liegen vor dem Build. Hashes und Substitute scheitern später; Laufzeitdienste helfen dort nicht."
+        },
+        "diagnostics": [
+          {
+            "command": "nixos-version",
+            "interpretation": {
+              "en": "Record the installed version, then read the first relevant error from your existing failed rebuild output. It can use a different nixpkgs revision; this command does not rebuild or activate anything.",
+              "de": "Halte die installierte Version fest und lies dann den ersten relevanten Fehler aus der bereits gescheiterten Rebuild-Ausgabe. Sie kann eine andere nixpkgs-Revision nutzen; dieser Befehl baut und aktiviert nichts."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Evaluation fails",
+              "de": "Auswertung scheitert"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Build/fetch fails later",
+              "de": "Build/Download scheitert später"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the evaluation error an unknown option or incompatible definitions?",
+          "de": "Ist die Option unbekannt oder widersprechen sich Definitionen?"
+        },
+        "why": {
+          "en": "An unknown option can be a spelling/import/version mismatch. Conflicting definitions require locating both declarations before selecting one.",
+          "de": "Eine unbekannte Option kann Schreibweise, Import oder Versionsstand betreffen. Bei Konflikten müssen beide Deklarationen gefunden werden."
+        },
+        "diagnostics": [
+          {
+            "command": "nixos-version",
+            "interpretation": {
+              "en": "Record the installed version; it may differ from the nixpkgs revision selected by a flake or channel. Read the failed rebuild trace separately.",
+              "de": "Halte die installierte Version fest; sie kann von der durch Flake oder Channel gewählten nixpkgs-Revision abweichen. Den gescheiterten Rebuild-Trace getrennt lesen."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "The option does not exist",
+              "de": "Die Option existiert nicht"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Conflicting definition values",
+              "de": "Widersprüchliche Definitionen"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "nixos-unknown-option"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "nixos-option-definition-conflict"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "nix-fixed-output-hash-mismatch",
+          "nix-substitute-signature-rejected"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "nixos-version",
+            "interpretation": {
+              "en": "Record the installed version, then read the first relevant error from your existing failed rebuild output. It can use a different nixpkgs revision; this command does not rebuild or activate anything.",
+              "de": "Halte die installierte Version fest und lies dann den ersten relevanten Fehler aus der bereits gescheiterten Rebuild-Ausgabe. Sie kann eine andere nixpkgs-Revision nutzen; dieser Befehl baut und aktiviert nichts."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "nix-substitute-signature-rejected",
+          "nixos-unknown-option"
+        ]
+      }
+    }
+  },
+  {
+    "id": "desktop-session",
+    "title": {
+      "en": "Desktop session problems",
+      "de": "Desktop-Sitzungsprobleme"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Does the graphical session open but individual applications fail?",
+          "de": "Öffnet sich die grafische Sitzung, aber einzelne Anwendungen scheitern?"
+        },
+        "why": {
+          "en": "A working session narrows the issue to app environment, portals or plugins. Session startup itself has a broader logind/display-manager path.",
+          "de": "Eine laufende Sitzung grenzt auf Anwendungsumgebung, Portale oder Plugins ein. Sitzungsstart betrifft einen breiteren logind-/Displaymanager-Weg."
+        },
+        "diagnostics": [
+          {
+            "command": "loginctl session-status",
+            "interpretation": {
+              "en": "Read session user/type/state. Running the command in a remote session may describe that remote session rather than the desktop.",
+              "de": "Lies Benutzer, Typ und Zustand. In einer Remote-Sitzung kann der Befehl diese statt des Desktops beschreiben."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Session runs; specific apps fail",
+              "de": "Sitzung läuft; einzelne Apps scheitern"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Session cannot start",
+              "de": "Sitzung startet nicht"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the failing application missing a display connection or a portal backend?",
+          "de": "Fehlt der Anwendung die Displayverbindung oder ein Portal-Backend?"
+        },
+        "why": {
+          "en": "DISPLAY/WAYLAND_DISPLAY identify session endpoints. File-dialog and screen-sharing failures can instead concern xdg-desktop-portal.",
+          "de": "DISPLAY/WAYLAND_DISPLAY benennen Sitzungsendpunkte. Datei-Dialoge und Bildschirmfreigabe können stattdessen xdg-desktop-portal betreffen."
+        },
+        "diagnostics": [
+          {
+            "command": "printenv DISPLAY WAYLAND_DISPLAY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS",
+            "interpretation": {
+              "en": "Inspect these in the failing process session, not with sudo; different values in SSH may be expected.",
+              "de": "In der Sitzung des scheiternden Prozesses prüfen, ohne sudo; andere Werte unter SSH können normal sein."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Cannot open display",
+              "de": "Display lässt sich nicht öffnen"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Portal/file chooser/screen share fails",
+              "de": "Portal/Dateidialog/Freigabe scheitert"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "x11-display-unavailable"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "desktop-portal-backend-missing"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "xdg-runtime-directory-invalid",
+          "user-session-dbus-unavailable"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "loginctl session-status",
+            "interpretation": {
+              "en": "Read session user/type/state. Running the command in a remote session may describe that remote session rather than the desktop.",
+              "de": "Lies Benutzer, Typ und Zustand. In einer Remote-Sitzung kann der Befehl diese statt des Desktops beschreiben."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "user-session-dbus-unavailable",
+          "x11-display-unavailable"
+        ]
+      }
+    }
+  },
+  {
+    "id": "unexpected-freeze",
+    "title": {
+      "en": "Unexpected freezes",
+      "de": "Unerwartete Stillstände"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is the system still reachable during the stall?",
+          "de": "Ist das System während des Stillstands noch erreichbar?"
+        },
+        "why": {
+          "en": "Continued SSH/console access supports measuring a blocked workload. Total silence may lose the very evidence needed to classify the failure.",
+          "de": "Weiter erreichbare SSH-/Konsolensitzungen erlauben Lastmessung. Vollständige Stille kann die nötigen Diagnosehinweise verlieren lassen."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Compare the start of the stall with storage, watchdog and GPU messages. Several messages can be independent faults.",
+              "de": "Vergleiche den Beginn mit Speicher-, Watchdog- und GPU-Meldungen. Mehrere Meldungen können unabhängige Fehler sein."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Yes, console or SSH responds",
+              "de": "Ja, Konsole oder SSH reagiert"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No, the whole machine stops",
+              "de": "Nein, das ganze System steht"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the evidence a blocked task or measured memory pressure?",
+          "de": "Zeigt die Evidenz einen blockierten Task oder gemessenen Speicherdruck?"
+        },
+        "why": {
+          "en": "Hung-task messages describe a wait, not its origin. Memory PSI describes time spent stalled on memory reclaim.",
+          "de": "Hung-Task-Meldungen beschreiben Warten, nicht dessen Ursprung. Memory-PSI misst Wartezeit durch Speicherknappheit."
+        },
+        "diagnostics": [
+          {
+            "command": "cat /proc/pressure/memory",
+            "interpretation": {
+              "en": "Rising some/full totals over comparable intervals indicate memory-stall time, not the program responsible.",
+              "de": "Steigende some-/full-Zähler in vergleichbaren Intervallen zeigen Speicherwartezeit, nicht das verursachende Programm."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Task blocked for a long time",
+              "de": "Task lange blockiert"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Memory PSI rises during stalls",
+              "de": "Memory-PSI steigt während der Pause"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "kernel-hung-task"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "memory-pressure-reclaim-stalls"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "kernel-hard-lockup",
+          "amdgpu-ring-timeout"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Compare the start of the stall with storage, watchdog and GPU messages. Several messages can be independent faults.",
+              "de": "Vergleiche den Beginn mit Speicher-, Watchdog- und GPU-Meldungen. Mehrere Meldungen können unabhängige Fehler sein."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "amdgpu-ring-timeout",
+          "kernel-hung-task"
+        ]
+      }
+    }
+  },
+  {
+    "id": "memory-pressure",
+    "title": {
+      "en": "Memory and OOM problems",
+      "de": "Speicherdruck und OOM"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is there an explicit OOM-kill record?",
+          "de": "Gibt es eine explizite OOM-Kill-Meldung?"
+        },
+        "why": {
+          "en": "A killed process establishes an OOM event in some scope; a slow system without that message still needs reclaim/swap measurements.",
+          "de": "Ein getöteter Prozess belegt ein OOM-Ereignis in einem Geltungsbereich. Ein langsames System ohne diese Meldung braucht weiter Reclaim-/Swap-Messung."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Look for the victim and OOM constraint/cgroup fields, not just the amount of free host RAM.",
+              "de": "Suche Opfer und OOM-Constraint-/Cgroup-Felder statt nur freien RAM des Hosts."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "OOM record is present",
+              "de": "OOM-Meldung vorhanden"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "No OOM record",
+              "de": "Keine OOM-Meldung"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Does the OOM record name a memory cgroup limit?",
+          "de": "Nennt der OOM-Bericht ein Memory-Cgroup-Limit?"
+        },
+        "why": {
+          "en": "A service/container can hit its own limit while the host still has memory. Global reclaim stalls require broader workload comparison.",
+          "de": "Ein Dienst/Container kann sein Limit trotz freiem Host-RAM erreichen. Globaler Reclaim braucht einen breiteren Lastvergleich."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Read the OOM constraint and cgroup path before interpreting a victim process as the root cause.",
+              "de": "Lies OOM-Constraint und Cgroup-Pfad, bevor du den Opferprozess als Ursache deutest."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "Memory cgroup constraint",
+              "de": "Memory-Cgroup-Grenze"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "Reclaim pressure without scoped limit",
+              "de": "Reclaim-Druck ohne Bereichslimit"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "cgroup-memory-oom-kill"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "memory-pressure-reclaim-stalls"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "swap-thrashing-latency",
+          "memory-pressure-reclaim-stalls"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "journalctl -b -k --no-pager",
+            "interpretation": {
+              "en": "Look for the victim and OOM constraint/cgroup fields, not just the amount of free host RAM.",
+              "de": "Suche Opfer und OOM-Constraint-/Cgroup-Felder statt nur freien RAM des Hosts."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "memory-pressure-reclaim-stalls",
+          "cgroup-memory-oom-kill"
+        ]
+      }
+    }
+  },
+  {
+    "id": "package-updates",
+    "title": {
+      "en": "Package update problems",
+      "de": "Paketupdates scheitern"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Is the package manager waiting for a lock?",
+          "de": "Wartet die Paketverwaltung auf eine Sperre?"
+        },
+        "why": {
+          "en": "A live transaction needs time or investigation, not deletion of its lock. Trust and dependency failures happen at different stages.",
+          "de": "Eine laufende Transaktion braucht Zeit oder Prüfung statt gelöschter Sperren. Vertrauens- und Abhängigkeitsfehler betreffen andere Phasen."
+        },
+        "diagnostics": [
+          {
+            "command": "ps -eo pid,comm,args",
+            "interpretation": {
+              "en": "Check for active apt/dpkg/pacman/dnf processes and their parent task. Do not assume a lock is stale based on its file existing.",
+              "de": "Prüfe aktive apt-/dpkg-/pacman-/dnf-Prozesse und ihre Elternaufgabe. Eine vorhandene Datei beweist keine verwaiste Sperre."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "No lock; another error",
+              "de": "Keine Sperre; anderer Fehler"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "Lock held by a transaction",
+              "de": "Sperre einer Transaktion"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Is the failure about repository trust or dependency resolution?",
+          "de": "Betrifft der Fehler Repository-Vertrauen oder Abhängigkeiten?"
+        },
+        "why": {
+          "en": "A signature failure should be resolved by verifying repository keys/origin. A dependency conflict needs a coherent supported package set.",
+          "de": "Ein Signaturfehler braucht verifizierte Schlüssel/Herkunft. Ein Abhängigkeitskonflikt braucht einen konsistenten unterstützten Paketsatz."
+        },
+        "diagnostics": [
+          {
+            "command": "cat /etc/os-release",
+            "interpretation": {
+              "en": "Identify the distribution before choosing APT, pacman or DNF recovery instructions.",
+              "de": "Ermittle die Distribution, bevor du APT-, pacman- oder DNF-Rettungsschritte auswählst."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "APT repository signature fails",
+              "de": "APT-Repository-Signatur scheitert"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "APT dependencies cannot be resolved",
+              "de": "APT-Abhängigkeiten nicht auflösbar"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "apt-repository-signature-failure"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "apt-unmet-dependencies"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "apt-dpkg-lock-busy",
+          "pacman-database-locked"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "ps -eo pid,comm,args",
+            "interpretation": {
+              "en": "Check for active apt/dpkg/pacman/dnf processes and their parent task. Do not assume a lock is stale based on its file existing.",
+              "de": "Prüfe aktive apt-/dpkg-/pacman-/dnf-Prozesse und ihre Elternaufgabe. Eine vorhandene Datei beweist keine verwaiste Sperre."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "pacman-database-locked",
+          "apt-repository-signature-failure"
+        ]
+      }
+    }
+  },
+  {
+    "id": "virtual-machine",
+    "title": {
+      "en": "Virtual machine problems",
+      "de": "Probleme mit virtuellen Maschinen"
+    },
+    "start": "start",
+    "nodes": {
+      "start": {
+        "question": {
+          "en": "Can the VM use KVM acceleration?",
+          "de": "Kann die VM KVM-Beschleunigung nutzen?"
+        },
+        "why": {
+          "en": "A missing or inaccessible /dev/kvm can cause launch failure or software emulation. An accelerated VM can still suffer scheduling contention.",
+          "de": "Fehlendes oder gesperrtes /dev/kvm kann Startfehler oder Software-Emulation auslösen. Auch eine beschleunigte VM kann unter Scheduling-Konkurrenz leiden."
+        },
+        "diagnostics": [
+          {
+            "command": "ls -l /dev/kvm",
+            "interpretation": {
+              "en": "An existing node is only one requirement. Check access for the account launching QEMU and the actual accelerator selected in the VM configuration.",
+              "de": "Ein vorhandener Node ist nur eine Voraussetzung. Prüfe Zugriff des QEMU-Startkontos und den tatsächlich gewählten Beschleuniger."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "KVM works, VM is slow",
+              "de": "KVM läuft, VM ist langsam"
+            },
+            "next": "evidence"
+          },
+          {
+            "label": {
+              "en": "KVM unavailable or inaccessible",
+              "de": "KVM fehlt oder ist unzugänglich"
+            },
+            "next": "other-path"
+          },
+          {
+            "label": {
+              "en": "I do not have enough evidence yet",
+              "de": "Ich habe noch nicht genug Hinweise"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "evidence": {
+        "question": {
+          "en": "Does the guest show CPU contention or memory locality problems?",
+          "de": "Zeigt der Gast CPU-Konkurrenz oder Probleme mit Speicherlokalität?"
+        },
+        "why": {
+          "en": "Too many vCPUs can increase contention. NUMA placement affects a different resource path and needs host topology evidence.",
+          "de": "Zu viele vCPUs können Konkurrenz erhöhen. NUMA-Platzierung betrifft einen anderen Ressourcenweg und braucht Host-Topologiedaten."
+        },
+        "diagnostics": [
+          {
+            "command": "lscpu",
+            "interpretation": {
+              "en": "Compare host CPUs/NUMA topology with the VM configuration; this output alone does not measure guest scheduling contention.",
+              "de": "Vergleiche Host-CPUs und NUMA-Topologie mit der VM-Konfiguration; die Ausgabe misst allein keine Scheduling-Konkurrenz im Gast."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "vCPU scheduling contention",
+              "de": "vCPU-Scheduling-Konkurrenz"
+            },
+            "next": "path-a"
+          },
+          {
+            "label": {
+              "en": "NUMA placement needs investigation",
+              "de": "NUMA-Platzierung prüfen"
+            },
+            "next": "path-b"
+          },
+          {
+            "label": {
+              "en": "Neither / evidence is unclear",
+              "de": "Keines davon / Hinweise unklar"
+            },
+            "next": "collect"
+          }
+        ]
+      },
+      "path-a": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "virtual-machine-vcpu-contention"
+        ]
+      },
+      "path-b": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "numa-memory-locality"
+        ]
+      },
+      "other-path": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "qemu-kvm-acceleration-unavailable",
+          "virtual-machine-vcpu-contention"
+        ]
+      },
+      "collect": {
+        "question": {
+          "en": "Can you collect the relevant output without changing configuration?",
+          "de": "Kannst du die relevante Ausgabe ohne Konfigurationsänderung erfassen?"
+        },
+        "why": {
+          "en": "Keep the time of the failure and the first relevant message. A later recovery message can hide the initiating fault. Share only reviewed, redacted excerpts when requesting outside help.",
+          "de": "Halte Fehlerzeitpunkt und erste relevante Meldung fest. Eine spätere Wiederherstellungsmeldung kann den Beginn verdecken. Gib bei externer Hilfe nur geprüfte, geschwärzte Auszüge weiter."
+        },
+        "diagnostics": [
+          {
+            "command": "ls -l /dev/kvm",
+            "interpretation": {
+              "en": "An existing node is only one requirement. Check access for the account launching QEMU and the actual accelerator selected in the VM configuration.",
+              "de": "Ein vorhandener Node ist nur eine Voraussetzung. Prüfe Zugriff des QEMU-Startkontos und den tatsächlich gewählten Beschleuniger."
+            }
+          }
+        ],
+        "choices": [
+          {
+            "label": {
+              "en": "I have the output; reassess the first question",
+              "de": "Ich habe die Ausgabe; erste Frage neu prüfen"
+            },
+            "next": "start"
+          },
+          {
+            "label": {
+              "en": "I need a recovery/reference path first",
+              "de": "Ich brauche zuerst einen Rettungs-/Referenzweg"
+            },
+            "next": "reference"
+          }
+        ]
+      },
+      "reference": {
+        "heading": {
+          "en": "Follow the evidence in the matching guide",
+          "de": "Folge den Hinweisen in der passenden Anleitung"
+        },
+        "body": {
+          "en": "Your answers support checking this failure path first; they do not establish its cause. Read the commands, expected results and recovery notes before changing configuration. If the described evidence does not match, return to the question and collect the relevant logs.",
+          "de": "Deine Antworten sprechen dafür, diesen Fehlerweg zuerst zu prüfen; sie belegen seine Ursache nicht. Lies Befehle, erwartete Ergebnisse und Wiederherstellung vor Konfigurationsänderungen. Passt die beschriebene Evidenz nicht, kehre zur Frage zurück und sammle die passenden Logs."
+        },
+        "problemIds": [
+          "virtual-machine-vcpu-contention"
+        ]
+      }
+    }
+  }
+]

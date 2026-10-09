@@ -1,0 +1,1803 @@
+[
+  {
+    "id": "ssh-authorized-key-permissions",
+    "slug": {
+      "en": "ssh-authorized-key-permissions",
+      "de": "ssh-schluessel-dateirechte"
+    },
+    "category": "security",
+    "title": {
+      "en": "SSH ignores an authorized public key",
+      "de": "SSH ignoriert einen freigegebenen Schlüssel"
+    },
+    "summary": {
+      "en": "A valid public key can be ignored when its file or parent directories are writable by other users. Inspect the server-side path first.",
+      "de": "Ein gültiger SSH-Schlüssel kann an fremdbeschreibbaren Dateien oder Verzeichnissen scheitern. Prüfe zuerst den Pfad auf dem Server."
+    },
+    "environment": {
+      "en": "OpenSSH server; run path checks as the affected account on the server. Configuration tests need root to inspect host keys.",
+      "de": "OpenSSH-Server; Pfade als betroffenes Konto auf dem Server prüfen. Für Konfigurationstests mit Hostschlüsseln sind Root-Rechte nötig."
+    },
+    "symptoms": {
+      "en": [
+        "The same public key works for another account.",
+        "Server logs mention ownership or modes of authorized_keys."
+      ],
+      "de": [
+        "Derselbe öffentliche Schlüssel funktioniert für ein anderes Konto.",
+        "Das Serverprotokoll nennt Besitzer oder Rechte von authorized_keys."
+      ]
+    },
+    "causes": [
+      {
+        "en": "StrictModes may reject an authorized_keys path writable by another account.",
+        "de": "StrictModes kann einen durch andere Konten beschreibbaren authorized_keys-Pfad ablehnen."
+      },
+      {
+        "en": "AuthorizedKeysFile or a Match block may point to a different file.",
+        "de": "AuthorizedKeysFile oder ein Match-Block kann eine andere Datei festlegen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-key-path",
+        "command": "namei -l \"$HOME/.ssh/authorized_keys\"",
+        "explanation": {
+          "en": "Run on the server as the account receiving the login; shows each path component without exposing key material.",
+          "de": "Auf dem Server als Zielkonto ausführen; zeigt jeden Pfadbestandteil, ohne Schlüsselmaterial auszugeben."
+        },
+        "interpretation": {
+          "en": "Check the owner and group/other write bits on the home directory, .ssh and key file; a missing component means this is not the configured path.",
+          "de": "Besitzer sowie Schreibrechte für Gruppe und andere an Home, .ssh und Schlüsseldatei prüfen; ein fehlender Bestandteil spricht für einen anderen konfigurierten Pfad."
+        }
+      },
+      {
+        "id": "inspect-effective-key-location",
+        "command": "/usr/sbin/sshd -T -C user=ACCOUNT,host=CLIENT_NAME,addr=192.0.2.10",
+        "explanation": {
+          "en": "On the server, replace ACCOUNT, CLIENT_NAME and the documentation IP with the actual login and client; root may be required. Test mode does not start a listener.",
+          "de": "Auf dem Server ACCOUNT, CLIENT_NAME und die Beispiel-IP durch Konto und Client ersetzen; eventuell sind Root-Rechte nötig. Der Testmodus öffnet keinen Listener."
+        },
+        "interpretation": {
+          "en": "Read authorizedkeysfile, strictmodes and pubkeyauthentication. Match-specific output separates a path problem from disabled key authentication.",
+          "de": "authorizedkeysfile, strictmodes und pubkeyauthentication lesen. Die Match-Auswertung trennt einen Pfadfehler von deaktivierter Schlüsselauthentifizierung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restrict-authorized-key-path",
+        "title": {
+          "en": "Correct the confirmed ownership and write bits",
+          "de": "Bestätigte Besitzer- und Schreibrechte korrigieren"
+        },
+        "body": {
+          "en": "If the inspected path is correct, record its current owner, modes and ACLs. Set .ssh to owner-only access and authorized_keys to owner read/write, commonly 0700 and 0600; remove inappropriate group/other write access from the parent. Change only these paths.",
+          "de": "Wenn der geprüfte Pfad stimmt, Besitzer, Modi und ACLs dokumentieren. .ssh auf Zugriff nur für den Besitzer und authorized_keys auf dessen Lesen/Schreiben setzen, üblicherweise 0700 und 0600; ungewollte fremde Schreibrechte am Elternverzeichnis entfernen. Nur diese Pfade ändern."
+        },
+        "precautions": {
+          "en": "Preserve deliberate shared-directory ACLs; do not recursively chmod the home directory or disable StrictModes.",
+          "de": "Gewollte ACLs gemeinsamer Verzeichnisse berücksichtigen; weder das gesamte Home rekursiv ändern noch StrictModes abschalten."
+        },
+        "rollback": {
+          "en": "Use the recorded metadata to undo only unintended changes. Keep the key path protected; remove the new key if its authorization must be withdrawn.",
+          "de": "Mit den notierten Metadaten nur ungewollte Änderungen zurücknehmen. Den Schlüsselpfad geschützt halten; einen neuen Schlüssel entfernen, wenn seine Freigabe widerrufen werden soll."
+        }
+      },
+      {
+        "id": "use-effective-key-file",
+        "title": {
+          "en": "Install the public key at the effective location",
+          "de": "Öffentlichen Schlüssel am wirksamen Ort hinterlegen"
+        },
+        "body": {
+          "en": "If sshd -T selects another file, back it up and add the intended public key there through an existing authorized session. Retain its existing keys and options. A centrally managed key source should be changed through its management system.",
+          "de": "Wenn sshd -T eine andere Datei auswählt, diese sichern und den gewünschten öffentlichen Schlüssel über eine bestehende berechtigte Sitzung ergänzen. Vorhandene Schlüssel und Optionen erhalten. Zentral verwaltete Schlüsselquellen über ihre Verwaltung ändern."
+        },
+        "precautions": {
+          "en": "Never copy the private key to the server. Keep the existing session until a separate login has been checked.",
+          "de": "Den privaten Schlüssel niemals auf den Server kopieren. Die bestehende Sitzung bis zur Prüfung einer zweiten Anmeldung offenlassen."
+        },
+        "rollback": {
+          "en": "Remove only the added public-key line or restore the saved file, keeping other accounts’ keys intact.",
+          "de": "Nur die ergänzte Schlüsselzeile entfernen oder die gesicherte Datei wiederherstellen; Schlüssel anderer Konten erhalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenSSH sshd: test modes and authorized_keys permissions",
+        "url": "https://man.openbsd.org/sshd.8",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH sshd_config: StrictModes, AuthorizedKeysFile and Include",
+        "url": "https://man.openbsd.org/sshd_config.5",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH public-key file checks (upstream source)",
+        "url": "https://github.com/openssh/openssh-portable/blob/master/auth2-pubkeyfile.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ssh-key-path-unsafe",
+        "all": [
+          "sshd",
+          "Authentication refused:",
+          "bad ownership or modes"
+        ],
+        "sample": "sshd[411]: Authentication refused: bad ownership or modes for directory /home/example",
+        "negative": [
+          "sshd[411]: Accepted publickey for example from 192.0.2.10",
+          "sshd[411]: Authentication refused: invalid user example"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "sshd rejected the key path after a permissions check.",
+          "de": "sshd hat den Schlüsselpfad nach einer Rechteprüfung abgelehnt."
+        },
+        "significance": {
+          "en": "Inspect the named file or directory; the line does not prove the key itself is invalid.",
+          "de": "Die genannte Datei oder das Verzeichnis prüfen; die Zeile beweist keinen ungültigen Schlüssel."
+        }
+      }
+    ]
+  },
+  {
+    "id": "ssh-host-key-changed",
+    "slug": {
+      "en": "ssh-host-key-changed",
+      "de": "ssh-hostschluessel-geaendert"
+    },
+    "category": "security",
+    "title": {
+      "en": "SSH reports a changed server host key",
+      "de": "SSH meldet einen geänderten Hostschlüssel"
+    },
+    "summary": {
+      "en": "A host-key warning can follow a rebuild or a wrong destination. Verify the new fingerprint independently before editing known_hosts.",
+      "de": "Ein Hostschlüsselalarm kann nach einer Neuinstallation oder bei einem falschen Ziel erscheinen. Den neuen Fingerabdruck unabhängig prüfen."
+    },
+    "environment": {
+      "en": "OpenSSH client; inspect local known_hosts and a trusted console on the intended server.",
+      "de": "OpenSSH-Client; lokale known_hosts-Datei und eine vertrauenswürdige Konsole des vorgesehenen Servers prüfen."
+    },
+    "symptoms": {
+      "en": [
+        "SSH stops before account authentication.",
+        "A known_hosts line is identified as conflicting."
+      ],
+      "de": [
+        "SSH bricht vor der Kontoanmeldung ab.",
+        "Eine widersprüchliche Zeile in known_hosts wird genannt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The server may have legitimately regenerated its host key.",
+        "de": "Der Server kann seinen Hostschlüssel berechtigt neu erzeugt haben."
+      },
+      {
+        "en": "DNS, a reused IP address or interception may lead to another host.",
+        "de": "DNS, eine wiederverwendete IP-Adresse oder ein abgefangener Zugriff kann zu einem anderen Host führen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "find-stored-host-key",
+        "command": "ssh-keygen -F HOSTNAME",
+        "explanation": {
+          "en": "Replace HOSTNAME with the exact SSH destination; use [HOSTNAME]:PORT for a nondefault port. Searches hashed entries too.",
+          "de": "HOSTNAME durch das genaue SSH-Ziel ersetzen; bei einem anderen Port [HOSTNAME]:PORT verwenden. Findet auch gehashte Einträge."
+        },
+        "interpretation": {
+          "en": "The reported lines show which stored identity conflicts; no result may mean HostKeyAlias or another known_hosts file is in use.",
+          "de": "Die gefundenen Zeilen zeigen die gespeicherte Identität; kein Treffer kann auf HostKeyAlias oder eine andere known_hosts-Datei hinweisen."
+        }
+      },
+      {
+        "id": "read-trusted-server-fingerprint",
+        "command": "ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub",
+        "explanation": {
+          "en": "Run at the intended server through an independently trusted console. Use the actual public host-key path and algorithm.",
+          "de": "Über eine unabhängig vertrauenswürdige Konsole des vorgesehenen Servers ausführen. Den tatsächlichen öffentlichen Hostschlüssel und Algorithmus verwenden."
+        },
+        "interpretation": {
+          "en": "Compare the SHA256 fingerprint with the changed key reported by SSH. A network ssh-keyscan result alone cannot establish trust.",
+          "de": "Den SHA256-Fingerabdruck mit dem von SSH gemeldeten neuen Schlüssel vergleichen. Ein ssh-keyscan-Ergebnis aus dem Netzwerk allein begründet kein Vertrauen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "replace-verified-host-key",
+        "title": {
+          "en": "Replace only an independently verified entry",
+          "de": "Nur einen unabhängig bestätigten Eintrag ersetzen"
+        },
+        "body": {
+          "en": "After confirming a legitimate key change and destination, back up known_hosts and remove the exact host entry with ssh-keygen -R HOSTNAME, including its port when applicable. Reconnect and compare the offered fingerprint with the trusted console before accepting.",
+          "de": "Nach Bestätigung eines berechtigten Schlüsselwechsels und des Ziels known_hosts sichern und den genauen Hosteintrag mit ssh-keygen -R HOSTNAME entfernen, gegebenenfalls mit Port. Beim erneuten Verbinden den angebotenen Fingerabdruck vor der Annahme mit der vertrauenswürdigen Konsole vergleichen."
+        },
+        "precautions": {
+          "en": "Do not clear the entire file or set StrictHostKeyChecking=no. A rebuild is an explanation only after verification.",
+          "de": "Nicht die ganze Datei leeren oder StrictHostKeyChecking=no setzen. Eine Neuinstallation ist erst nach Prüfung eine Erklärung."
+        },
+        "rollback": {
+          "en": "Restore the backup to restore the previous trust decision; expect the warning to return if the server still presents the new key.",
+          "de": "Die Sicherung stellt die bisherige Vertrauensentscheidung wieder her; bei weiter angebotenem neuem Schlüssel erscheint die Warnung erneut."
+        }
+      },
+      {
+        "id": "correct-ssh-destination",
+        "title": {
+          "en": "Correct a wrong destination or alias",
+          "de": "Falsches Ziel oder Alias korrigieren"
+        },
+        "body": {
+          "en": "If the independently checked fingerprint differs, stop the connection. Inspect the destination, port, HostName and HostKeyAlias in the host-specific SSH configuration; correct a stale DNS record or alias through its owner before reconnecting.",
+          "de": "Wenn der unabhängig geprüfte Fingerabdruck abweicht, Verbindung beenden. Ziel, Port, HostName und HostKeyAlias in der hostspezifischen SSH-Konfiguration prüfen; einen veralteten DNS-Eintrag oder Alias durch den zuständigen Betreiber korrigieren lassen."
+        },
+        "precautions": {
+          "en": "Keep the existing trusted key until the intended server identity is established.",
+          "de": "Den bisher vertrauten Schlüssel erhalten, bis die Identität des vorgesehenen Servers geklärt ist."
+        },
+        "rollback": {
+          "en": "Restore the saved host-specific configuration or DNS record if the correction targeted the wrong host.",
+          "de": "Die gesicherte hostspezifische Konfiguration oder den DNS-Eintrag wiederherstellen, falls das falsche Ziel korrigiert wurde."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenSSH ssh-keygen: fingerprints and known_hosts operations",
+        "url": "https://man.openbsd.org/ssh-keygen.1",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH ssh_config: identity selection and host verification",
+        "url": "https://man.openbsd.org/ssh_config.5",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ssh-remote-host-key-changed",
+        "all": [
+          "REMOTE HOST IDENTIFICATION HAS CHANGED"
+        ],
+        "sample": "@@@@@@@@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! @@@@@@@@",
+        "negative": [
+          "Warning: Permanently added example.invalid to the list of known hosts.",
+          "Host example.invalid is known and matches the ED25519 host key."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The SSH client found a different host identity than the stored one.",
+          "de": "Der SSH-Client hat eine andere als die gespeicherte Hostidentität gefunden."
+        },
+        "significance": {
+          "en": "Treat this as an identity check, not an invitation to bypass verification.",
+          "de": "Das ist eine Identitätsprüfung und keine Aufforderung, die Prüfung zu umgehen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "ssh-too-many-identities",
+    "slug": {
+      "en": "ssh-too-many-identities",
+      "de": "ssh-zu-viele-identitaeten"
+    },
+    "category": "security",
+    "title": {
+      "en": "SSH exhausts authentication attempts before the right key",
+      "de": "SSH verbraucht Anmeldeversuche vor dem richtigen Schlüssel"
+    },
+    "summary": {
+      "en": "An agent with many keys can use up the server’s authentication limit. Check identity selection before increasing server-wide limits.",
+      "de": "Viele Schlüssel im Agent können das Anmeldelimit des Servers verbrauchen. Die Identitätsauswahl prüfen, bevor globale Limits erhöht werden."
+    },
+    "environment": {
+      "en": "OpenSSH client with ssh-agent or a key provider; connection-free configuration inspection.",
+      "de": "OpenSSH-Client mit ssh-agent oder Schlüsselanbieter; Konfiguration ohne Verbindungsaufbau prüfen."
+    },
+    "symptoms": {
+      "en": [
+        "SSH disconnects with too many authentication failures.",
+        "The intended key is listed after several other identities."
+      ],
+      "de": [
+        "SSH trennt die Verbindung wegen zu vieler Authentifizierungsfehler.",
+        "Der vorgesehene Schlüssel steht hinter mehreren anderen Identitäten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The agent may offer unrelated keys before the authorized one.",
+        "de": "Der Agent kann vor dem freigegebenen Schlüssel andere Schlüssel anbieten."
+      },
+      {
+        "en": "Repeated password or keyboard-interactive failures may consume the same limit.",
+        "de": "Wiederholte Passwort- oder interaktive Fehlversuche können dasselbe Limit verbrauchen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "list-agent-identities",
+        "command": "ssh-add -l",
+        "explanation": {
+          "en": "Lists fingerprints from the current agent; it does not print private keys or change the agent.",
+          "de": "Listet Fingerabdrücke des aktuellen Agenten; private Schlüssel werden weder ausgegeben noch Agent-Inhalte verändert."
+        },
+        "interpretation": {
+          "en": "A long list supports an identity-order issue. An agent connection error or an empty agent suggests a different authentication path.",
+          "de": "Eine lange Liste stützt ein Problem mit der Reihenfolge. Ein Agent-Verbindungsfehler oder ein leerer Agent spricht für einen anderen Anmeldepfad."
+        }
+      },
+      {
+        "id": "inspect-client-identity-policy",
+        "command": "ssh -G HOSTNAME",
+        "explanation": {
+          "en": "Replace HOSTNAME with the failing SSH alias. -G expands configuration without connecting.",
+          "de": "HOSTNAME durch den betroffenen SSH-Alias ersetzen. -G wertet die Konfiguration ohne Verbindung aus."
+        },
+        "interpretation": {
+          "en": "Inspect identityfile, identitiesonly, identityagent and preferredauthentications; several IdentityFile entries remain eligible even with IdentitiesOnly.",
+          "de": "identityfile, identitiesonly, identityagent und preferredauthentications prüfen; mehrere IdentityFile-Einträge bleiben auch mit IdentitiesOnly zulässig."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "select-single-identity",
+        "title": {
+          "en": "Select the intended identity for this host",
+          "de": "Vorgesehene Identität für diesen Host auswählen"
+        },
+        "body": {
+          "en": "If unrelated agent keys are the issue, use a host-specific IdentityFile and IdentitiesOnly yes. Test the same selection with ssh -o IdentitiesOnly=yes -i /path/to/key HOSTNAME. The command attempts a login; do not place it in unattended diagnostics.",
+          "de": "Wenn fremde Agent-Schlüssel das Problem sind, hostspezifisch IdentityFile und IdentitiesOnly yes setzen. Mit ssh -o IdentitiesOnly=yes -i /pfad/zum/schluessel HOSTNAME dieselbe Auswahl testen. Der Befehl versucht eine Anmeldung und gehört nicht in unbeaufsichtigte Diagnosen."
+        },
+        "precautions": {
+          "en": "Use the existing private-key path; never paste key contents. Avoid changing defaults for every host.",
+          "de": "Den vorhandenen Pfad zum privaten Schlüssel verwenden; niemals dessen Inhalt einfügen. Keine Vorgabe für alle Hosts ändern."
+        },
+        "rollback": {
+          "en": "Remove the new host-specific options or restore the saved SSH configuration; a one-time command needs no file rollback.",
+          "de": "Die neuen hostspezifischen Optionen entfernen oder die gesicherte SSH-Konfiguration wiederherstellen; ein einmaliger Aufruf benötigt keine Dateiwiederherstellung."
+        }
+      },
+      {
+        "id": "correct-account-auth-method",
+        "title": {
+          "en": "Correct the account or authentication method",
+          "de": "Konto oder Anmeldeverfahren korrigieren"
+        },
+        "body": {
+          "en": "If the agent is not responsible, verify the username and the required authentication sequence with the server administrator. Use the authorized key/account pair or complete the required second factor rather than retrying passwords against an exhausted limit.",
+          "de": "Wenn der Agent nicht verantwortlich ist, Benutzername und erforderliche Anmeldereihenfolge mit der Serververwaltung prüfen. Das freigegebene Schlüssel-Konto-Paar verwenden oder den nötigen zweiten Faktor abschließen, statt weitere Passwörter gegen das verbrauchte Limit zu probieren."
+        },
+        "precautions": {
+          "en": "Do not increase MaxAuthTries globally to accommodate an unbounded agent list.",
+          "de": "MaxAuthTries nicht global erhöhen, um eine beliebig lange Agent-Liste zu ermöglichen."
+        },
+        "rollback": {
+          "en": "Restore the previous username or authentication-method setting if a host-specific change was incorrect.",
+          "de": "Den vorherigen Benutzernamen oder die Einstellung zum Anmeldeverfahren wiederherstellen, falls die hostspezifische Änderung falsch war."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenSSH ssh-add: list identities",
+        "url": "https://man.openbsd.org/ssh-add.1",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH ssh_config: identity selection and host verification",
+        "url": "https://man.openbsd.org/ssh_config.5",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH auth.c: authentication attempt limit",
+        "url": "https://github.com/openssh/openssh-portable/blob/master/auth.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ssh-authentication-attempt-limit",
+        "all": [
+          "sshd",
+          "maximum authentication attempts exceeded"
+        ],
+        "sample": "sshd[921]: maximum authentication attempts exceeded for example from 192.0.2.10 port 50121 ssh2",
+        "negative": [
+          "sshd[921]: Accepted publickey for example",
+          "sshd[921]: Failed password for example from 192.0.2.10 port 50121 ssh2"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "sshd reached the authentication-attempt limit for this connection.",
+          "de": "sshd hat für diese Verbindung das Limit der Anmeldeversuche erreicht."
+        },
+        "significance": {
+          "en": "A key-selection problem is one possibility; the server line does not identify which method consumed the attempts.",
+          "de": "Eine falsche Schlüsselauswahl ist möglich; die Serverzeile nennt nicht das Verfahren, das die Versuche verbraucht hat."
+        }
+      }
+    ]
+  },
+  {
+    "id": "sshd-invalid-configuration",
+    "slug": {
+      "en": "sshd-invalid-configuration",
+      "de": "sshd-konfiguration-ungueltig"
+    },
+    "category": "security",
+    "title": {
+      "en": "sshd rejects a configuration change",
+      "de": "sshd lehnt eine Konfigurationsänderung ab"
+    },
+    "summary": {
+      "en": "An unknown option or invalid Match placement can block an SSH reload. Validate configuration and retain a working recovery session.",
+      "de": "Eine unbekannte Option oder falsche Match-Platzierung kann SSH blockieren. Die Konfiguration prüfen und eine Rettungssitzung offenhalten."
+    },
+    "environment": {
+      "en": "OpenSSH server; configuration parsing needs root for normal host-key checks. Service names vary between ssh and sshd.",
+      "de": "OpenSSH-Server; normale Hostschlüsselprüfungen benötigen Root-Rechte. Der Dienst heißt je nach Distribution ssh oder sshd."
+    },
+    "symptoms": {
+      "en": [
+        "A syntax test names a file and line.",
+        "A reload fails after adding a configuration fragment."
+      ],
+      "de": [
+        "Ein Syntax-Test nennt Datei und Zeile.",
+        "Nach Ergänzung einer Konfigurationsdatei schlägt das Neuladen fehl."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The running OpenSSH release may not support a copied option.",
+        "de": "Die laufende OpenSSH-Version unterstützt möglicherweise eine übernommene Option nicht."
+      },
+      {
+        "en": "An included fragment may inherit a Match context or contain an invalid value.",
+        "de": "Eine eingebundene Datei kann einen Match-Kontext erben oder einen ungültigen Wert enthalten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "validate-sshd-syntax",
+        "command": "/usr/sbin/sshd -t",
+        "explanation": {
+          "en": "Run with root privileges on the server. Parses the default configuration and checks host keys without listening or reloading.",
+          "de": "Mit Root-Rechten auf dem Server ausführen. Prüft Standardkonfiguration und Hostschlüssel, ohne Listener zu starten oder neu zu laden."
+        },
+        "interpretation": {
+          "en": "Silence with exit status zero means this syntax/key test passed; named errors must be resolved before reload. It does not test reachability.",
+          "de": "Keine Ausgabe bei Status null bedeutet einen bestandenen Syntax-/Schlüsseltest; genannte Fehler vor dem Neuladen beheben. Erreichbarkeit wird nicht geprüft."
+        }
+      },
+      {
+        "id": "inspect-sshd-config-context",
+        "command": "rg -n \"^[[:space:]]*(Include|Match|Port|ListenAddress|PubkeyAuthentication|PasswordAuthentication)\" /etc/ssh/sshd_config /etc/ssh/sshd_config.d",
+        "explanation": {
+          "en": "Reads the standard configuration and fragments; missing fragment directories are possible. Use the error’s actual filename for custom layouts.",
+          "de": "Liest Standardkonfiguration und Ergänzungen; das Fragmentverzeichnis kann fehlen. Bei anderen Pfaden den tatsächlichen Fehlerdateinamen verwenden."
+        },
+        "interpretation": {
+          "en": "Follow Include and Match ordering. A later option may still be in a conditional block, and not all options are allowed there.",
+          "de": "Reihenfolge von Include und Match verfolgen. Eine spätere Option kann weiterhin in einem bedingten Block stehen, in dem nicht jede Option erlaubt ist."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "repair-rejected-directive",
+        "title": {
+          "en": "Repair the exact rejected directive",
+          "de": "Die konkret abgelehnte Direktive korrigieren"
+        },
+        "body": {
+          "en": "If the test names a misspelled or unsupported directive, back up that file and correct or remove only the offending line using the installed release’s manual. Re-run sshd -t before using the distribution’s reload action.",
+          "de": "Wenn der Test eine falsch geschriebene oder nicht unterstützte Direktive nennt, die Datei sichern und nur diese Zeile anhand des Handbuchs der installierten Version korrigieren oder entfernen. Vor dem distributionsüblichen Neuladen sshd -t erneut ausführen."
+        },
+        "precautions": {
+          "en": "Keep a working privileged session and console access. Restarting a failed daemon remotely can remove the remaining access path.",
+          "de": "Eine funktionierende privilegierte Sitzung und Konsolenzugang behalten. Ein Neustart eines fehlerhaften Daemons kann den letzten Fernzugang verlieren."
+        },
+        "rollback": {
+          "en": "Restore the saved fragment, validate again and reload only once the restored configuration passes.",
+          "de": "Die gesicherte Datei wiederherstellen, erneut prüfen und nur bei erfolgreicher Prüfung neu laden."
+        }
+      },
+      {
+        "id": "move-global-options-outside-match",
+        "title": {
+          "en": "Put global options in a global context",
+          "de": "Globale Optionen in den globalen Kontext verschieben"
+        },
+        "body": {
+          "en": "If an option is rejected inside Match, move that global setting before the first Match block in the appropriate file. Preserve conditional authentication rules and verify representative connections with sshd -T -C before reload.",
+          "de": "Wenn eine Option innerhalb von Match abgelehnt wird, sie in der passenden Datei vor den ersten Match-Block verschieben. Bedingte Anmelderegeln erhalten und typische Verbindungen vor dem Neuladen mit sshd -T -C prüfen."
+        },
+        "precautions": {
+          "en": "Do not assume a blank line ends Match. Inspect included files and the documented allowed Match keywords.",
+          "de": "Eine Leerzeile beendet Match nicht. Eingebundene Dateien und die dokumentierten zulässigen Match-Schlüsselwörter prüfen."
+        },
+        "rollback": {
+          "en": "Restore the original file ordering from the backup and verify that intended per-account restrictions remain active.",
+          "de": "Die ursprüngliche Reihenfolge aus der Sicherung herstellen und prüfen, dass die vorgesehenen Kontobeschränkungen weiter gelten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenSSH sshd: test modes and authorized_keys permissions",
+        "url": "https://man.openbsd.org/sshd.8",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH sshd_config: StrictModes, AuthorizedKeysFile and Include",
+        "url": "https://man.openbsd.org/sshd_config.5",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH server configuration parser",
+        "url": "https://github.com/openssh/openssh-portable/blob/master/servconf.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "sshd-unknown-directive",
+        "all": [
+          "sshd_config",
+          "Bad configuration option:"
+        ],
+        "sample": "/etc/ssh/sshd_config: line 21: Bad configuration option: PasswordAuthenticaton",
+        "negative": [
+          "/etc/ssh/sshd_config: line 21: setting PasswordAuthentication no",
+          "/home/example/.ssh/config: line 21: Bad configuration option: Typo"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The server configuration contains a rejected keyword.",
+          "de": "Die Serverkonfiguration enthält ein abgelehntes Schlüsselwort."
+        },
+        "significance": {
+          "en": "Correct the named line for the installed release before reloading SSH.",
+          "de": "Die genannte Zeile passend zur installierten Version korrigieren, bevor SSH neu geladen wird."
+        }
+      },
+      {
+        "id": "sshd-global-directive-in-match",
+        "all": [
+          "Directive",
+          "not allowed within a Match block"
+        ],
+        "sample": "/etc/ssh/sshd_config line 30: Directive 'Port' is not allowed within a Match block",
+        "negative": [
+          "/etc/ssh/sshd_config line 30: Match User example",
+          "sshd[44]: Server listening on 0.0.0.0 port 22."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "sshd rejected a directive in a conditional configuration block.",
+          "de": "sshd hat eine Direktive in einem bedingten Konfigurationsblock abgelehnt."
+        },
+        "significance": {
+          "en": "Check Match scope and Include ordering instead of weakening authentication settings.",
+          "de": "Match-Geltungsbereich und Include-Reihenfolge prüfen, statt Anmelderegeln aufzuweichen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "ssh-algorithm-mismatch",
+    "slug": {
+      "en": "ssh-algorithm-mismatch",
+      "de": "ssh-algorithmen-passen-nicht"
+    },
+    "category": "security",
+    "title": {
+      "en": "SSH peers cannot agree on algorithms",
+      "de": "SSH-Gegenstellen finden keinen gemeinsamen Algorithmus"
+    },
+    "summary": {
+      "en": "Older appliances may offer algorithms disabled by a current client. Distinguish host-key and key-exchange negotiation before acting.",
+      "de": "Ältere Geräte bieten teils deaktivierte Algorithmen an. Hostschlüssel- und Schlüsselaushandlung unterscheiden, bevor Einstellungen geändert werden."
+    },
+    "environment": {
+      "en": "OpenSSH client connecting to an appliance or older server; query modes require no network connection.",
+      "de": "OpenSSH-Client an einem Gerät oder älteren Server; die Abfragemodi benötigen keine Netzwerkverbindung."
+    },
+    "symptoms": {
+      "en": [
+        "Connection stops before account authentication.",
+        "The error lists the peer’s host-key or key-exchange offer."
+      ],
+      "de": [
+        "Die Verbindung endet vor der Kontoanmeldung.",
+        "Der Fehler nennt die angebotenen Hostschlüssel- oder Schlüsselaustauschverfahren."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The peer may support only obsolete algorithms.",
+        "de": "Die Gegenstelle unterstützt möglicherweise nur veraltete Algorithmen."
+      },
+      {
+        "en": "A host-specific client policy may exclude otherwise shared algorithms.",
+        "de": "Eine hostspezifische Client-Regel kann sonst gemeinsame Algorithmen ausschließen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-selected-algorithm-policy",
+        "command": "ssh -G HOSTNAME",
+        "explanation": {
+          "en": "Replace HOSTNAME with the appliance alias; prints effective hostkeyalgorithms and kexalgorithms without connecting.",
+          "de": "HOSTNAME durch den Gerätealias ersetzen; zeigt wirksame hostkeyalgorithms und kexalgorithms ohne Verbindung."
+        },
+        "interpretation": {
+          "en": "Compare the relevant list with the exact error offer. HostKeyAlgorithms and KexAlgorithms control different negotiation steps.",
+          "de": "Die passende Liste mit dem genauen Fehlerangebot vergleichen. HostKeyAlgorithms und KexAlgorithms steuern verschiedene Aushandlungsschritte."
+        }
+      },
+      {
+        "id": "list-client-host-key-capabilities",
+        "command": "ssh -Q HostKeyAlgorithms",
+        "explanation": {
+          "en": "Shows algorithms compiled into the client, not necessarily those enabled by default.",
+          "de": "Zeigt im Client vorhandene Algorithmen, die nicht zwingend standardmäßig aktiviert sind."
+        },
+        "interpretation": {
+          "en": "If the peer’s only host-key algorithm is absent, a configuration exception cannot add it. For key exchange, query ssh -Q kex separately.",
+          "de": "Fehlt der einzige Hostschlüsselalgorithmus der Gegenstelle, kann eine Ausnahme ihn nicht hinzufügen. Für Schlüsselaustausch getrennt ssh -Q kex abfragen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "modernize-ssh-peer",
+        "title": {
+          "en": "Update the peer’s SSH implementation",
+          "de": "SSH-Implementierung der Gegenstelle aktualisieren"
+        },
+        "body": {
+          "en": "If the peer offers only legacy algorithms, use its supported firmware or SSH upgrade path to enable modern host keys and key exchange. Verify new host-key fingerprints through the console before replacing client trust entries.",
+          "de": "Wenn die Gegenstelle nur alte Algorithmen anbietet, deren unterstützten Firmware- oder SSH-Upgradepfad nutzen, um moderne Hostschlüssel und Schlüsselaustauschverfahren bereitzustellen. Neue Hostschlüssel vor Änderungen am Client-Vertrauen über die Konsole bestätigen."
+        },
+        "precautions": {
+          "en": "Save appliance configuration and confirm a vendor-supported recovery path before changing firmware.",
+          "de": "Gerätekonfiguration sichern und vor einem Firmwarewechsel einen vom Hersteller unterstützten Rettungsweg prüfen."
+        },
+        "rollback": {
+          "en": "Use the vendor’s documented firmware rollback and restore the saved SSH configuration if supported.",
+          "de": "Falls unterstützt, den dokumentierten Firmware-Rollback des Herstellers nutzen und die gesicherte SSH-Konfiguration wiederherstellen."
+        }
+      },
+      {
+        "id": "scope-temporary-legacy-exception",
+        "title": {
+          "en": "Scope a temporary exception to one verified host",
+          "de": "Vorübergehende Ausnahme auf einen geprüften Host begrenzen"
+        },
+        "body": {
+          "en": "If modernization is temporarily impossible and policy permits the risk, add only the exact offered algorithm to the relevant option in a Host block for that verified appliance. A leading + appends rather than replaces modern defaults. Remove the exception after the upgrade.",
+          "de": "Wenn eine Aktualisierung vorübergehend unmöglich ist und die Sicherheitsvorgaben das Risiko erlauben, nur den konkret angebotenen Algorithmus bei der passenden Option in einem Host-Block für das geprüfte Gerät ergänzen. Ein führendes + ergänzt die modernen Vorgaben. Nach dem Upgrade die Ausnahme entfernen."
+        },
+        "precautions": {
+          "en": "Weak algorithms reduce protection. Do not apply a wildcard Host * exception or change unrelated cipher and signature settings.",
+          "de": "Schwache Algorithmen verringern den Schutz. Keine Ausnahme für Host * anlegen oder unbeteiligte Verschlüsselungs- und Signaturvorgaben ändern."
+        },
+        "rollback": {
+          "en": "Delete the single host exception or restore the saved SSH client configuration.",
+          "de": "Die einzelne Hostausnahme entfernen oder die gesicherte SSH-Clientkonfiguration wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "OpenSSH: legacy algorithm options",
+        "url": "https://www.openssh.org/legacy.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH ssh_config: identity selection and host verification",
+        "url": "https://man.openbsd.org/ssh_config.5",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "ssh-no-shared-host-key",
+        "all": [
+          "Unable to negotiate with",
+          "no matching host key type found"
+        ],
+        "sample": "Unable to negotiate with 192.0.2.40 port 22: no matching host key type found. Their offer: ssh-rsa",
+        "negative": [
+          "Unable to negotiate with 192.0.2.40 port 22: no matching cipher found.",
+          "debug1: Server host key: ssh-ed25519 SHA256:example"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The peers do not share an enabled host-key algorithm.",
+          "de": "Die Gegenstellen teilen keinen aktivierten Hostschlüsselalgorithmus."
+        },
+        "significance": {
+          "en": "This fails before user-key authorization; adding authorized_keys cannot repair this negotiation.",
+          "de": "Der Fehler liegt vor der Benutzerschlüsselfreigabe; authorized_keys behebt diese Aushandlung nicht."
+        }
+      },
+      {
+        "id": "ssh-no-shared-key-exchange",
+        "all": [
+          "Unable to negotiate with",
+          "no matching key exchange method found"
+        ],
+        "sample": "Unable to negotiate with 192.0.2.40 port 22: no matching key exchange method found. Their offer: diffie-hellman-group1-sha1",
+        "negative": [
+          "Unable to negotiate with 192.0.2.40 port 22: no matching host key type found.",
+          "debug1: kex: algorithm: curve25519-sha256"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "No mutually enabled key-exchange method was negotiated.",
+          "de": "Kein beidseitig aktiviertes Schlüsselaustauschverfahren wurde ausgehandelt."
+        },
+        "significance": {
+          "en": "Inspect KexAlgorithms and the peer firmware; this is distinct from host-key and password errors.",
+          "de": "KexAlgorithms und Gerätefirmware prüfen; das unterscheidet sich von Hostschlüssel- und Passwortfehlern."
+        }
+      }
+    ]
+  },
+  {
+    "id": "sudo-policy-denied",
+    "slug": {
+      "en": "sudo-policy-denied",
+      "de": "sudo-regel-lehnt-ab"
+    },
+    "category": "security",
+    "title": {
+      "en": "sudo rejects an account or command",
+      "de": "sudo lehnt ein Konto oder einen Befehl ab"
+    },
+    "summary": {
+      "en": "Correct authentication does not grant a command absent from sudo policy. Compare current group membership and the exact allowed command.",
+      "de": "Eine korrekte Anmeldung erlaubt keinen Befehl außerhalb der sudo-Regeln. Aktuelle Gruppen und die genaue Befehlsfreigabe vergleichen."
+    },
+    "environment": {
+      "en": "sudo with sudoers policy; listing rules may request authentication but does not execute the proposed privileged command.",
+      "de": "sudo mit sudoers-Regeln; die Regelabfrage kann eine Anmeldung verlangen, führt den vorgeschlagenen privilegierten Befehl aber nicht aus."
+    },
+    "symptoms": {
+      "en": [
+        "sudo reports that the user or command is not authorized.",
+        "A newly added admin group has no effect in an existing session."
+      ],
+      "de": [
+        "sudo meldet ein nicht berechtigtes Konto oder einen nicht erlaubten Befehl.",
+        "Eine neue Admin-Gruppe wirkt in einer bestehenden Sitzung noch nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The current process may not have the account’s new supplementary groups.",
+        "de": "Der laufende Prozess besitzt möglicherweise die neuen Zusatzgruppen des Kontos noch nicht."
+      },
+      {
+        "en": "The rule may constrain command paths, arguments, target users or hosts.",
+        "de": "Die Regel kann Befehlspfade, Argumente, Zielbenutzer oder Hosts begrenzen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-session-groups",
+        "command": "id",
+        "explanation": {
+          "en": "Prints identity and groups of the current shell without querying or changing sudo policy.",
+          "de": "Zeigt Identität und Gruppen der aktuellen Shell, ohne sudo-Regeln zu ändern."
+        },
+        "interpretation": {
+          "en": "Compare with the intended authorized group; group membership in an account database does not update already running shells.",
+          "de": "Mit der vorgesehenen berechtigten Gruppe vergleichen; geänderte Kontogruppen aktualisieren bereits laufende Shells nicht."
+        }
+      },
+      {
+        "id": "list-sudo-policy",
+        "command": "sudo -l",
+        "explanation": {
+          "en": "Lists permitted commands for the current account. It may ask for authentication and write normal audit records; it does not run a listed command.",
+          "de": "Listet erlaubte Befehle des aktuellen Kontos. Kann Anmeldung verlangen und normale Audit-Einträge schreiben; führt keinen gelisteten Befehl aus."
+        },
+        "interpretation": {
+          "en": "Read RunAs targets, full paths and argument restrictions. An authentication failure here does not prove a missing sudoers rule.",
+          "de": "RunAs-Ziele, vollständige Pfade und Argumentbeschränkungen lesen. Ein Anmeldefehler hier beweist keine fehlende sudoers-Regel."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "refresh-authorized-group-session",
+        "title": {
+          "en": "Refresh a legitimately changed group session",
+          "de": "Sitzung nach berechtigter Gruppenänderung erneuern"
+        },
+        "body": {
+          "en": "If an administrator already added the account to the intended policy group, save work and log out fully, then log in again. Check id and sudo -l in the new session before retrying the exact permitted operation.",
+          "de": "Wenn die Verwaltung das Konto bereits der vorgesehenen Regelgruppe hinzugefügt hat, Arbeit speichern, vollständig abmelden und neu anmelden. In der neuen Sitzung id und sudo -l prüfen, bevor der konkret erlaubte Vorgang erneut versucht wird."
+        },
+        "precautions": {
+          "en": "Distribution group names differ. Joining an administrative group is a privilege grant, not a generic permission repair.",
+          "de": "Gruppennamen unterscheiden sich nach Distribution. Der Beitritt zu einer Admin-Gruppe vergibt Rechte und ist keine allgemeine Rechtekorrektur."
+        },
+        "rollback": {
+          "en": "To revoke the grant, the administrator removes that membership and ends affected sessions; logging back in alone does not revoke it.",
+          "de": "Zum Widerruf entfernt die Verwaltung die Mitgliedschaft und beendet betroffene Sitzungen; eine neue Anmeldung allein widerruft sie nicht."
+        }
+      },
+      {
+        "id": "repair-specific-sudoers-rule",
+        "title": {
+          "en": "Have an administrator repair the narrow rule",
+          "de": "Eine eng begrenzte Regel administrativ korrigieren"
+        },
+        "body": {
+          "en": "If a required operation is absent, an existing administrator should edit the appropriate sudoers fragment with visudo and specify the required target user, full command path and safe arguments. Validate the complete policy and retain recovery access.",
+          "de": "Wenn ein benötigter Vorgang fehlt, sollte eine bereits berechtigte Verwaltung die passende sudoers-Datei mit visudo bearbeiten und Zielkonto, vollen Befehlspfad und sichere Argumente festlegen. Die gesamte Regelkonfiguration prüfen und Rettungszugang behalten."
+        },
+        "precautions": {
+          "en": "Do not grant ALL or NOPASSWD: ALL as a shortcut. User-writable executables and broad argument wildcards can defeat restrictions.",
+          "de": "Nicht pauschal ALL oder NOPASSWD: ALL vergeben. Beschreibbare Programme und weite Argument-Platzhalter können Beschränkungen aushebeln."
+        },
+        "rollback": {
+          "en": "Remove the added rule through visudo or restore the saved fragment, then validate the complete policy again.",
+          "de": "Die ergänzte Regel mit visudo entfernen oder die gesicherte Datei wiederherstellen; anschließend die gesamte Regelkonfiguration erneut prüfen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Sudo manual: list mode, authentication and diagnostics",
+        "url": "https://manpages.debian.org/trixie/sudo/sudo.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Sudoers manual: command matching and policy diagnostics",
+        "url": "https://manpages.debian.org/trixie/sudo/sudoers.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "sudo-user-not-in-policy",
+        "all": [
+          "sudo",
+          "user NOT in sudoers"
+        ],
+        "sample": "sudo: example : user NOT in sudoers ; TTY=pts/2 ; PWD=/home/example ; USER=root ; COMMAND=/usr/bin/id",
+        "negative": [
+          "sudo: example : TTY=pts/2 ; PWD=/home/example ; USER=root ; COMMAND=/usr/bin/id",
+          "sudo: example : 1 incorrect password attempt"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The sudoers policy recorded an account-level denial.",
+          "de": "Die sudoers-Regel hat eine Ablehnung für das Konto protokolliert."
+        },
+        "significance": {
+          "en": "Check policy and group membership; changing the user password does not supply a missing authorization.",
+          "de": "Regel und Gruppenmitgliedschaft prüfen; ein neues Passwort liefert keine fehlende Freigabe."
+        }
+      },
+      {
+        "id": "sudo-command-not-in-policy",
+        "all": [
+          "sudo",
+          "command not allowed"
+        ],
+        "sample": "sudo: example : command not allowed ; TTY=pts/2 ; USER=root ; COMMAND=/usr/bin/systemctl restart example.service",
+        "negative": [
+          "sudo: example : user NOT authorized on host",
+          "sudo: example : TTY=pts/2 ; USER=root ; COMMAND=/usr/bin/id"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "sudoers denied this particular command.",
+          "de": "sudoers hat diesen konkreten Befehl abgelehnt."
+        },
+        "significance": {
+          "en": "Inspect command path, arguments and RunAs target rather than widening all account privileges.",
+          "de": "Befehlspfad, Argumente und RunAs-Ziel prüfen, statt sämtliche Kontorechte auszuweiten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "sudo-terminal-required",
+    "slug": {
+      "en": "sudo-terminal-required",
+      "de": "sudo-terminal-fehlt"
+    },
+    "category": "security",
+    "title": {
+      "en": "sudo has no channel for password input",
+      "de": "sudo hat keinen Kanal für die Passworteingabe"
+    },
+    "summary": {
+      "en": "A remote script or GUI launcher can lack a terminal for sudo authentication. Select an appropriate prompt without embedding passwords.",
+      "de": "Ein Remote-Skript oder GUI-Starter kann ohne Terminal keine sudo-Anmeldung anbieten. Einen passenden Dialog wählen, ohne Passwörter einzubauen."
+    },
+    "environment": {
+      "en": "sudo launched from a terminal, SSH command or desktop launcher; passwordless automation needs an explicitly reviewed policy.",
+      "de": "sudo aus Terminal, SSH-Befehl oder Desktop-Starter; passwortlose Automatisierung braucht ausdrücklich geprüfte Regeln."
+    },
+    "symptoms": {
+      "en": [
+        "sudo reports that a terminal is required.",
+        "The command works interactively but fails from a launcher."
+      ],
+      "de": [
+        "sudo meldet ein erforderliches Terminal.",
+        "Der Befehl funktioniert interaktiv, aber nicht über einen Starter."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The process may have no controlling terminal while policy requires a password.",
+        "de": "Der Prozess besitzt möglicherweise kein steuerndes Terminal, obwohl die Regel ein Passwort verlangt."
+      },
+      {
+        "en": "An askpass helper may be absent or incorrectly configured.",
+        "de": "Ein askpass-Helfer fehlt möglicherweise oder ist falsch konfiguriert."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-current-terminal",
+        "command": "tty",
+        "explanation": {
+          "en": "Run from the same launch context as the failure; prints its controlling-terminal path or reports not a tty.",
+          "de": "Im selben Startkontext wie der Fehler ausführen; zeigt den steuernden Terminalpfad oder meldet not a tty."
+        },
+        "interpretation": {
+          "en": "A terminal in a different interactive shell does not establish that the failing background process has one.",
+          "de": "Ein Terminal in einer anderen interaktiven Shell beweist nicht, dass der fehlerhafte Hintergrundprozess eines besitzt."
+        }
+      },
+      {
+        "id": "inspect-askpass-config",
+        "command": "rg -n \"^[[:space:]]*Path[[:space:]]+askpass\" /etc/sudo.conf",
+        "explanation": {
+          "en": "Reads the configured sudo askpass path; no match is normal when only terminal prompting is intended.",
+          "de": "Liest den sudo-askpass-Pfad; kein Treffer ist normal, wenn nur Terminalabfragen vorgesehen sind."
+        },
+        "interpretation": {
+          "en": "A configured executable is necessary but not sufficient: its graphical session and environment must also be available.",
+          "de": "Ein konfiguriertes Programm reicht nicht allein: Die grafische Sitzung und deren Umgebung müssen ebenfalls erreichbar sein."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "use-interactive-password-prompt",
+        "title": {
+          "en": "Run the authorized operation in a real terminal",
+          "de": "Den berechtigten Vorgang in einem echten Terminal ausführen"
+        },
+        "body": {
+          "en": "For a one-time operation, open a terminal in the intended account’s session. Over SSH, request a pseudo-terminal with ssh -t HOSTNAME and run the authorized command there. Enter the password only at the normal sudo prompt.",
+          "de": "Für einen einmaligen Vorgang ein Terminal in der Sitzung des vorgesehenen Kontos öffnen. Über SSH mit ssh -t HOSTNAME ein Pseudoterminal anfordern und dort den berechtigten Befehl ausführen. Das Passwort nur an der normalen sudo-Abfrage eingeben."
+        },
+        "precautions": {
+          "en": "Do not pipe a password through echo or put it in scripts, process arguments or shell history.",
+          "de": "Kein Passwort per echo weiterreichen oder in Skripte, Prozessargumente oder die Shell-Historie schreiben."
+        },
+        "rollback": {
+          "en": "Close the temporary terminal or SSH session; this changes no persistent sudo policy.",
+          "de": "Das vorübergehende Terminal oder die SSH-Sitzung schließen; sudo-Regeln werden dabei nicht dauerhaft verändert."
+        }
+      },
+      {
+        "id": "configure-reviewed-askpass-helper",
+        "title": {
+          "en": "Use a trusted askpass helper for a GUI action",
+          "de": "Vertrauenswürdigen askpass-Helfer für GUI-Aktionen nutzen"
+        },
+        "body": {
+          "en": "If the action must start from a GUI, install the distribution’s trusted helper and configure its exact path through sudo.conf or a launcher-local SUDO_ASKPASS, then use sudo -A for that action. Keep the normal authentication requirement.",
+          "de": "Wenn der Vorgang aus der GUI starten muss, den vertrauenswürdigen Helfer der Distribution installieren und seinen genauen Pfad über sudo.conf oder ein starterbezogenes SUDO_ASKPASS setzen; für diesen Vorgang sudo -A nutzen. Die normale Anmeldepflicht erhalten."
+        },
+        "precautions": {
+          "en": "The helper handles a secret; its executable and parent directory must not be writable by untrusted users.",
+          "de": "Der Helfer verarbeitet ein Geheimnis; Programm und Elternverzeichnis dürfen für nicht vertrauenswürdige Konten nicht beschreibbar sein."
+        },
+        "rollback": {
+          "en": "Restore the saved launcher or sudo.conf entry and remove the local SUDO_ASKPASS assignment.",
+          "de": "Den gesicherten Starter oder sudo.conf-Eintrag wiederherstellen und die lokale SUDO_ASKPASS-Zuweisung entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Sudo manual: list mode, authentication and diagnostics",
+        "url": "https://manpages.debian.org/trixie/sudo/sudo.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Sudo upstream troubleshooting: terminal allocation",
+        "url": "https://github.com/sudo-project/sudo/blob/main/docs/TROUBLESHOOTING.md",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "sudo-no-password-terminal",
+        "all": [
+          "sudo:",
+          "a terminal is required to read the password"
+        ],
+        "sample": "sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper",
+        "negative": [
+          "sudo: a password is required",
+          "sudo: 1 incorrect password attempt"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "sudo cannot obtain the password through its configured input channels.",
+          "de": "sudo kann über die konfigurierten Eingabekanäle kein Passwort erhalten."
+        },
+        "significance": {
+          "en": "Fix the launch context or trusted helper; this does not establish whether the command is authorized.",
+          "de": "Startkontext oder vertrauenswürdigen Helfer korrigieren; daraus folgt noch keine Befehlsfreigabe."
+        }
+      }
+    ]
+  },
+  {
+    "id": "acl-mask-restricts-access",
+    "slug": {
+      "en": "acl-mask-restricts-access",
+      "de": "acl-maske-begrenzt-zugriff"
+    },
+    "category": "security",
+    "title": {
+      "en": "An ACL mask restricts access despite an explicit grant",
+      "de": "Eine ACL-Maske begrenzt eine ausdrückliche Freigabe"
+    },
+    "summary": {
+      "en": "A named ACL entry can show write permission while its mask removes effective write access. Inspect effective rights and parent traversal.",
+      "de": "Ein benannter ACL-Eintrag kann Schreiben erlauben, während die Maske es effektiv sperrt. Effektive Rechte und übergeordnete Pfade prüfen."
+    },
+    "environment": {
+      "en": "Linux filesystem with POSIX ACL support; getfacl and namei must be installed. Replace the example file path.",
+      "de": "Linux-Dateisystem mit POSIX-ACLs; getfacl und namei müssen vorhanden sein. Den Beispieldateipfad ersetzen."
+    },
+    "symptoms": {
+      "en": [
+        "A shared file denies access to a specifically granted user.",
+        "getfacl shows an effective permission narrower than the entry."
+      ],
+      "de": [
+        "Eine gemeinsam genutzte Datei verweigert einem freigegebenen Konto den Zugriff.",
+        "getfacl zeigt engere effektive Rechte als der Eintrag."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The ACL mask may cap named-user and group-class permissions.",
+        "de": "Die ACL-Maske kann Rechte benannter Benutzer und der Gruppenklasse begrenzen."
+      },
+      {
+        "en": "A parent directory may lack search permission even when the file ACL is correct.",
+        "de": "Einem Elternverzeichnis kann das Suchrecht fehlen, obwohl die Datei-ACL stimmt."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-effective-file-acl",
+        "command": "getfacl -p /path/to/shared-file",
+        "explanation": {
+          "en": "Replace the absolute path; reads named entries, mask and effective-right comments.",
+          "de": "Den absoluten Pfad ersetzen; liest benannte Einträge, Maske und Kommentare zu effektiven Rechten."
+        },
+        "interpretation": {
+          "en": "An entry like user:example:rw- with effective:r-- identifies the mask as a limiter. The owning user is not limited by this mask.",
+          "de": "Ein Eintrag wie user:example:rw- mit effective:r-- zeigt die begrenzende Maske. Der Dateibesitzer wird von dieser Maske nicht begrenzt."
+        }
+      },
+      {
+        "id": "inspect-parent-traversal",
+        "command": "namei -l /path/to/shared-file",
+        "explanation": {
+          "en": "Shows mode and owner of each parent directory without modifying access.",
+          "de": "Zeigt Modus und Besitzer jedes Elternverzeichnisses, ohne den Zugriff zu ändern."
+        },
+        "interpretation": {
+          "en": "The affected account needs directory search permission along the whole path; if extended ACLs are present, inspect those parents with getfacl too.",
+          "de": "Das betroffene Konto benötigt Suchrechte entlang des gesamten Pfads; bei erweiterten ACLs auch die Eltern mit getfacl prüfen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "adjust-reviewed-acl-mask",
+        "title": {
+          "en": "Adjust the mask after reviewing every affected entry",
+          "de": "Maske nach Prüfung aller betroffenen Einträge anpassen"
+        },
+        "body": {
+          "en": "If the mask is the confirmed restriction, save getfacl -p output and set a mask sufficient for the intended access on that one file with setfacl. Review all named-user and group entries because widening the mask can activate their previously hidden permissions.",
+          "de": "Wenn die Maske nachweislich begrenzt, getfacl -p-Ausgabe sichern und mit setfacl an dieser einen Datei eine für den gewollten Zugriff ausreichende Maske setzen. Alle benannten Benutzer- und Gruppeneinträge prüfen: Eine großzügigere Maske kann zuvor verdeckte Rechte aktivieren."
+        },
+        "precautions": {
+          "en": "Do not use chmod 777 or recursive ACL removal. Preserve shared-directory defaults separately from access ACLs.",
+          "de": "Weder chmod 777 noch rekursives ACL-Entfernen verwenden. Standard-ACLs gemeinsamer Verzeichnisse getrennt von Zugriffs-ACLs erhalten."
+        },
+        "rollback": {
+          "en": "Restore the saved ACL with setfacl --restore=/path/to/acl-backup using the authorized file owner or administrator.",
+          "de": "Die gesicherte ACL mit setfacl --restore=/pfad/zur/acl-sicherung als berechtigter Besitzer oder administrativ wiederherstellen."
+        }
+      },
+      {
+        "id": "grant-minimal-parent-search",
+        "title": {
+          "en": "Grant only required search access on the blocking parent",
+          "de": "Nur benötigtes Suchrecht am blockierenden Elternpfad vergeben"
+        },
+        "body": {
+          "en": "If the file ACL is correct but a parent blocks traversal, the owner can add a narrowly targeted search ACL for the intended account on that parent. Add directory read access only if listing filenames is also required. Record existing ACLs first.",
+          "de": "Wenn die Datei-ACL stimmt, aber ein Elternverzeichnis den Pfad blockiert, kann dessen Besitzer eine gezielte Such-ACL für das vorgesehene Konto ergänzen. Leserecht am Verzeichnis nur ergänzen, wenn auch Dateinamen aufgelistet werden sollen. Bestehende ACLs vorher sichern."
+        },
+        "precautions": {
+          "en": "Check the parent’s mask too; granting search access can expose reachable files further down the path.",
+          "de": "Auch die Maske des Elternverzeichnisses prüfen; Suchrechte können weitere erreichbare Dateien im Pfad zugänglich machen."
+        },
+        "rollback": {
+          "en": "Restore the saved parent ACL or remove only the newly added named-user entry.",
+          "de": "Die gesicherte Eltern-ACL wiederherstellen oder nur den neu ergänzten benannten Benutzereintrag entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "ACL getfacl: effective rights and mask",
+        "url": "https://man7.org/linux/man-pages/man1/getfacl.1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ACL setfacl: mask calculation and restoring ACLs",
+        "url": "https://man7.org/linux/man-pages/man1/setfacl.1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "executable-on-noexec-mount",
+    "slug": {
+      "en": "executable-on-noexec-mount",
+      "de": "programm-auf-noexec-mount"
+    },
+    "category": "security",
+    "title": {
+      "en": "An executable is stored on a noexec mount",
+      "de": "Ein Programm liegt auf einem noexec-Mount"
+    },
+    "summary": {
+      "en": "Executable permission bits do not override a noexec mount. Inspect the mount governing the actual path before changing file permissions.",
+      "de": "Ausführungsbits überschreiben keinen noexec-Mount. Den Mount des tatsächlichen Pfads prüfen, bevor Dateirechte verändert werden."
+    },
+    "environment": {
+      "en": "Linux with util-linux findmnt; applies to direct execution on ordinary filesystems and bind mounts.",
+      "de": "Linux mit util-linux findmnt; betrifft direktes Ausführen auf normalen Dateisystemen und Bind-Mounts."
+    },
+    "symptoms": {
+      "en": [
+        "Direct execution fails although the executable bit is present.",
+        "A copy on an approved executable filesystem behaves differently."
+      ],
+      "de": [
+        "Direktes Ausführen scheitert trotz gesetztem Ausführungsbit.",
+        "Eine Kopie auf einem freigegebenen ausführbaren Dateisystem verhält sich anders."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The most specific mount may carry noexec independently of the parent mount.",
+        "de": "Der speziellste Mount kann unabhängig vom Eltern-Mount noexec tragen."
+      },
+      {
+        "en": "Missing execute bits, path traversal restrictions or MAC policy may produce similar symptoms.",
+        "de": "Fehlende Ausführungsbits, Pfadrechte oder MAC-Regeln können ähnliche Symptome erzeugen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-path-mount-options",
+        "command": "findmnt -T /path/to/program -o TARGET,SOURCE,FSTYPE,OPTIONS",
+        "explanation": {
+          "en": "Replace the program path; selects the filesystem governing that path, including a more specific bind mount.",
+          "de": "Programmpfad ersetzen; wählt dessen zuständiges Dateisystem einschließlich eines spezielleren Bind-Mounts."
+        },
+        "interpretation": {
+          "en": "A noexec option supports this hypothesis; its absence means file rights, loader/interpreter and security policy need separate checks.",
+          "de": "Die Option noexec stützt die Vermutung; fehlt sie, Dateirechte, Loader/Interpreter und Sicherheitsregeln getrennt prüfen."
+        }
+      },
+      {
+        "id": "inspect-executable-metadata",
+        "command": "stat -c \"%A %a %U:%G %n\" /path/to/program",
+        "explanation": {
+          "en": "Reads modes and ownership of the exact file without executing it.",
+          "de": "Liest Modus und Besitzer der konkreten Datei, ohne sie auszuführen."
+        },
+        "interpretation": {
+          "en": "Execute bits are necessary for direct execution but do not establish that mount options or security policies permit it.",
+          "de": "Ausführungsbits sind für direktes Ausführen nötig, beweisen aber keine Freigabe durch Mount-Optionen oder Sicherheitsregeln."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "relocate-approved-executable",
+        "title": {
+          "en": "Place the program on an approved executable filesystem",
+          "de": "Programm auf einem freigegebenen ausführbaren Dateisystem ablegen"
+        },
+        "body": {
+          "en": "If noexec is intentional, install or copy the verified program through its supported deployment route to an approved executable location and update only its launcher path. Preserve application data and inspect symlinks so the new path does not still resolve to the old mount.",
+          "de": "Wenn noexec gewollt ist, das geprüfte Programm über seinen unterstützten Installationsweg an einem freigegebenen ausführbaren Ort installieren oder kopieren und nur den Starterpfad anpassen. Anwendungsdaten erhalten und Symlinks prüfen, damit der neue Pfad nicht wieder zum alten Mount führt."
+        },
+        "precautions": {
+          "en": "Do not bypass an intentional security boundary by invoking an interpreter merely to avoid the restriction.",
+          "de": "Eine gewollte Sicherheitsgrenze nicht durch einen Interpreter-Aufruf umgehen, der nur die Beschränkung vermeiden soll."
+        },
+        "rollback": {
+          "en": "Restore the original launcher path and remove the added deployment through its supported uninstall route.",
+          "de": "Den ursprünglichen Starterpfad wiederherstellen und die ergänzte Installation über ihren unterstützten Deinstallationsweg entfernen."
+        }
+      },
+      {
+        "id": "correct-unintended-mount-policy",
+        "title": {
+          "en": "Correct an unintended mount policy with its owner",
+          "de": "Eine ungewollte Mount-Regel mit dem Verantwortlichen korrigieren"
+        },
+        "body": {
+          "en": "If the mount owner confirms noexec was accidental, save the full existing mount configuration and change only that mount’s exec policy through the distribution’s normal configuration. Preserve nodev, nosuid and unrelated options, then verify findmnt at the actual program path.",
+          "de": "Wenn der Mount-Verantwortliche noexec als versehentlich bestätigt, die gesamte bestehende Mount-Konfiguration sichern und nur dessen exec-Regel über die normale Distributionskonfiguration ändern. nodev, nosuid und andere Optionen erhalten; anschließend findmnt am tatsächlichen Programmpfad prüfen."
+        },
+        "precautions": {
+          "en": "Avoid broad remounts of /tmp or shared untrusted storage. Some filesystems and mount namespaces require a different administrative path.",
+          "de": "Keine pauschalen Remounts von /tmp oder gemeinsam genutzten unsicheren Datenträgern. Manche Dateisysteme und Mount-Namensräume brauchen einen anderen Verwaltungsweg."
+        },
+        "rollback": {
+          "en": "Restore the saved mount configuration and its noexec setting through the same mount-management route.",
+          "de": "Die gesicherte Mount-Konfiguration und ihre noexec-Einstellung über denselben Verwaltungsweg wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "util-linux findmnt: target path and mount options",
+        "url": "https://man7.org/linux/man-pages/man8/findmnt.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux mount: exec and noexec options",
+        "url": "https://man7.org/linux/man-pages/man8/mount.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "apparmor-profile-denial",
+    "slug": {
+      "en": "apparmor-profile-denial",
+      "de": "apparmor-profil-verweigert"
+    },
+    "category": "security",
+    "title": {
+      "en": "AppArmor blocks an application operation",
+      "de": "AppArmor blockiert einen Anwendungsvorgang"
+    },
+    "summary": {
+      "en": "An AppArmor denial names the profile and operation that were blocked. Check the intended path before adding a narrowly reviewed rule.",
+      "de": "Eine AppArmor-Ablehnung nennt Profil und blockierten Vorgang. Den vorgesehenen Pfad prüfen, bevor eine gezielte Regel ergänzt wird."
+    },
+    "environment": {
+      "en": "AppArmor-enabled Linux; full profile status and kernel audit logs can require administrator read access.",
+      "de": "Linux mit AppArmor; vollständiger Profilstatus und Kernel-Audit-Protokolle können administrative Leserechte erfordern."
+    },
+    "symptoms": {
+      "en": [
+        "One application cannot access a path available to the account.",
+        "Kernel audit records include apparmor=\"DENIED\"."
+      ],
+      "de": [
+        "Eine Anwendung kann einen für das Konto erreichbaren Pfad nicht nutzen.",
+        "Kernel-Audit-Einträge enthalten apparmor=\"DENIED\"."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The application may have moved to a path outside its profile’s allowed locations.",
+        "de": "Die Anwendung kann einen Pfad außerhalb der erlaubten Profilorte verwenden."
+      },
+      {
+        "en": "An updated program may require an operation absent from its installed profile.",
+        "de": "Ein aktualisiertes Programm kann einen im installierten Profil fehlenden Vorgang benötigen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-apparmor-audit",
+        "command": "journalctl -k -b --no-pager --grep='apparmor=\"DENIED\"'",
+        "explanation": {
+          "en": "Reads this boot’s kernel denials; use an account allowed to read the kernel journal.",
+          "de": "Liest Kernel-Ablehnungen des aktuellen Starts; ein Konto mit Leserecht für das Kerneljournal verwenden."
+        },
+        "interpretation": {
+          "en": "Correlate profile, operation, name and denied_mask with the failing action. No visible denial does not rule out explicit deny rules or incomplete logs.",
+          "de": "profile, operation, name und denied_mask mit dem fehlerhaften Vorgang vergleichen. Kein sichtbarer Eintrag schließt explizite deny-Regeln oder unvollständige Protokolle nicht aus."
+        }
+      },
+      {
+        "id": "inspect-apparmor-profile-status",
+        "command": "aa-status",
+        "explanation": {
+          "en": "Lists loaded profiles and their modes; administrator read privileges may be necessary.",
+          "de": "Listet geladene Profile und ihre Modi; administrative Leserechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "An enforcing profile can block access. Complain mode generally logs permitted violations; inspect the exact profile instead of assuming all profiles behave alike.",
+          "de": "Ein erzwingendes Profil kann Zugriff sperren. Complain protokolliert normalerweise erlaubte Verstöße; das konkrete Profil prüfen, statt alle Profile gleich zu behandeln."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "use-profile-approved-path",
+        "title": {
+          "en": "Use a path already allowed by the profile",
+          "de": "Einen bereits im Profil erlaubten Pfad verwenden"
+        },
+        "body": {
+          "en": "If the application was pointed at an unintended custom path, restore its documented data or configuration location. Move data only through a supported migration with a backup, and recheck the operation against the named profile.",
+          "de": "Wenn die Anwendung auf einen ungewollten Sonderpfad zeigt, ihren dokumentierten Daten- oder Konfigurationsort wieder nutzen. Daten nur über eine unterstützte Migration mit Sicherung verschieben und den Vorgang gegen das genannte Profil erneut prüfen."
+        },
+        "precautions": {
+          "en": "Preserve application ownership and ordinary permissions; AppArmor does not replace those checks.",
+          "de": "Anwendungsbesitzer und normale Dateirechte erhalten; AppArmor ersetzt diese Prüfungen nicht."
+        },
+        "rollback": {
+          "en": "Restore the application’s saved path setting and data backup if the migration must be undone.",
+          "de": "Die gesicherte Pfadeinstellung und Datensicherung der Anwendung wiederherstellen, wenn die Migration zurückgenommen werden muss."
+        }
+      },
+      {
+        "id": "review-minimal-local-apparmor-rule",
+        "title": {
+          "en": "Add a reviewed minimal local profile rule",
+          "de": "Eine geprüfte minimale lokale Profilregel ergänzen"
+        },
+        "body": {
+          "en": "If the blocked action is legitimate, review the exact event with aa-logprof and add only its necessary path and access in a supported local include. Back up the include first, reload the single affected profile and check that it remains enforcing.",
+          "de": "Wenn der blockierte Vorgang berechtigt ist, den konkreten Eintrag mit aa-logprof prüfen und nur den benötigten Pfad und Zugriff in einer unterstützten lokalen Ergänzung freigeben. Diese vorher sichern, das einzelne Profil neu laden und seinen erzwingenden Modus prüfen."
+        },
+        "precautions": {
+          "en": "Do not approve every suggestion or disable AppArmor globally. Network denials need network rules, not a broad file wildcard.",
+          "de": "Nicht jede vorgeschlagene Regel annehmen oder AppArmor global abschalten. Netzwerkablehnungen benötigen Netzwerkregeln statt weiter Datei-Platzhalter."
+        },
+        "rollback": {
+          "en": "Restore the saved local include and reload the same profile; remove only the rule added for this investigation.",
+          "de": "Die gesicherte lokale Ergänzung wiederherstellen und dasselbe Profil neu laden; nur die für diese Untersuchung ergänzte Regel entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ubuntu Server: AppArmor audit interpretation and local customization",
+        "url": "https://ubuntu.com/server/docs/how-to/security/apparmor/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "AppArmor aa-logprof manual: review profile updates",
+        "url": "https://manpages.ubuntu.com/manpages/noble/man8/aa-logprof.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "apparmor-file-open-denied",
+        "all": [
+          "apparmor=\"DENIED\"",
+          "operation=\"open\"",
+          "profile=",
+          "denied_mask="
+        ],
+        "sample": "audit: type=1400 apparmor=\"DENIED\" operation=\"open\" profile=\"/usr/bin/example\" name=\"/srv/example/data\" denied_mask=\"r\"",
+        "negative": [
+          "audit: type=1400 apparmor=\"ALLOWED\" operation=\"open\" profile=\"/usr/bin/example\"",
+          "audit: type=1400 apparmor=\"DENIED\" operation=\"sendmsg\" profile=\"/usr/bin/example\""
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An AppArmor profile blocked a file-open operation.",
+          "de": "Ein AppArmor-Profil hat das Öffnen einer Datei blockiert."
+        },
+        "significance": {
+          "en": "The profile and named path narrow the investigation; Unix permissions can still be a separate restriction.",
+          "de": "Profil und Pfad grenzen die Untersuchung ein; Unix-Rechte können zusätzlich begrenzen."
+        }
+      },
+      {
+        "id": "apparmor-network-send-denied",
+        "all": [
+          "apparmor=\"DENIED\"",
+          "operation=\"sendmsg\"",
+          "profile=",
+          "family="
+        ],
+        "sample": "audit: type=1400 apparmor=\"DENIED\" operation=\"sendmsg\" profile=\"/usr/bin/example\" family=\"inet\" sock_type=\"stream\" denied_mask=\"send\"",
+        "negative": [
+          "audit: type=1400 apparmor=\"ALLOWED\" operation=\"sendmsg\" profile=\"/usr/bin/example\" family=\"inet\"",
+          "audit: type=1400 apparmor=\"DENIED\" operation=\"open\" profile=\"/usr/bin/example\""
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "AppArmor blocked a socket-send operation.",
+          "de": "AppArmor hat einen Socket-Sendevorgang blockiert."
+        },
+        "significance": {
+          "en": "Inspect the profile’s network rules and intended destination before treating this as a connectivity outage.",
+          "de": "Netzwerkregeln und vorgesehenes Ziel prüfen, bevor dies als Verbindungsstörung eingeordnet wird."
+        }
+      }
+    ]
+  },
+  {
+    "id": "selinux-avc-denial",
+    "slug": {
+      "en": "selinux-avc-denial",
+      "de": "selinux-avc-ablehnung"
+    },
+    "category": "security",
+    "title": {
+      "en": "SELinux denies a service operation",
+      "de": "SELinux verweigert einen Dienstvorgang"
+    },
+    "summary": {
+      "en": "An enforcing AVC denial identifies process and target contexts. Compare them with intended policy before considering any local allow rule.",
+      "de": "Eine erzwingende AVC-Ablehnung nennt Prozess- und Zielkontext. Diese vor einer lokalen Freigabe mit der vorgesehenen Regel vergleichen."
+    },
+    "environment": {
+      "en": "SELinux-enabled Linux with audit utilities; audit-log reading usually requires root. Package names depend on distribution.",
+      "de": "Linux mit SELinux und Audit-Werkzeugen; Audit-Protokolle brauchen meist Root-Leserechte. Paketnamen unterscheiden sich."
+    },
+    "symptoms": {
+      "en": [
+        "A confined service fails despite ordinary filesystem permissions.",
+        "Audit logs show denied operations with source and target contexts."
+      ],
+      "de": [
+        "Ein eingeschränkter Dienst scheitert trotz passender normaler Dateirechte.",
+        "Audit-Protokolle zeigen abgelehnte Vorgänge mit Quell- und Zielkontext."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A wrong file label, port label or documented boolean may not match the service configuration.",
+        "de": "Datei- oder Portlabel oder ein dokumentierter Boolean passt möglicherweise nicht zur Dienstkonfiguration."
+      },
+      {
+        "en": "The application or policy package may contain a regression requiring a supported update.",
+        "de": "Anwendung oder Regelpaket kann einen Fehler enthalten, der eine unterstützte Aktualisierung benötigt."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-recent-avc-records",
+        "command": "ausearch -m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR -ts recent -i",
+        "explanation": {
+          "en": "Read-only audit search; run with the privileges needed for audit logs. Recent selects a short window, so use a suitable time range if the failure occurred earlier.",
+          "de": "Schreibgeschützte Audit-Suche; mit den nötigen Protokoll-Leserechten ausführen. recent wählt ein kurzes Zeitfenster; bei älterem Fehler einen passenden Zeitraum nutzen."
+        },
+        "interpretation": {
+          "en": "Compare denied permission, comm, scontext, tcontext and tclass. permissive=1 records a would-be denial that was not enforced.",
+          "de": "Abgelehntes Recht, comm, scontext, tcontext und tclass vergleichen. permissive=1 protokolliert eine mögliche, nicht erzwungene Ablehnung."
+        }
+      },
+      {
+        "id": "read-selinux-enforcement",
+        "command": "getenforce",
+        "explanation": {
+          "en": "Reads the current SELinux enforcement mode without changing it.",
+          "de": "Liest den aktuellen SELinux-Modus, ohne ihn zu ändern."
+        },
+        "interpretation": {
+          "en": "Enforcing supports an active policy restriction; Permissive logs violations without enforcing them, and Disabled needs another explanation for the immediate block.",
+          "de": "Enforcing stützt eine aktive Regelbeschränkung; Permissive protokolliert ohne Erzwingen, bei Disabled ist eine andere Erklärung für die unmittelbare Sperre nötig."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "align-service-with-documented-policy",
+        "title": {
+          "en": "Align service paths, ports or booleans with documented policy",
+          "de": "Dienstpfade, Ports oder Booleans an dokumentierte Regeln anpassen"
+        },
+        "body": {
+          "en": "If the denial identifies an intentional nondefault service configuration, inspect the service’s documented SELinux labels and booleans. Correct a wrong label first; otherwise change only the matching port mapping or narrow boolean after recording its previous value.",
+          "de": "Wenn die Ablehnung eine gewollte abweichende Dienstkonfiguration betrifft, deren dokumentierte SELinux-Labels und Booleans prüfen. Zuerst falsche Labels korrigieren; sonst nur die passende Portzuordnung oder einen engen Boolean nach Notieren seines bisherigen Werts ändern."
+        },
+        "precautions": {
+          "en": "Do not set SELinux permissive globally or generate an audit2allow module as the first response. A denial can be an intended protection.",
+          "de": "SELinux nicht global permissiv setzen oder als erste Reaktion ein audit2allow-Modul erzeugen. Die Ablehnung kann gewollter Schutz sein."
+        },
+        "rollback": {
+          "en": "Restore the previous boolean or port mapping and service setting using the saved values; verify enforcement remains enabled.",
+          "de": "Boolean oder Portzuordnung und Diensteinstellung anhand der gesicherten Werte wiederherstellen; den weiter aktiven erzwingenden Modus prüfen."
+        }
+      },
+      {
+        "id": "update-reviewed-policy-or-application",
+        "title": {
+          "en": "Use a supported policy or application correction",
+          "de": "Unterstützte Regel- oder Anwendungskorrektur verwenden"
+        },
+        "body": {
+          "en": "If labels and documented settings are correct, check the distribution’s policy and application updates for the same denied operation. Apply a relevant supported fix with a package/configuration backup, or report a minimal reproducible event with sensitive paths redacted.",
+          "de": "Wenn Labels und dokumentierte Einstellungen stimmen, Distributionsaktualisierungen von Regel und Anwendung auf denselben abgelehnten Vorgang prüfen. Eine passende unterstützte Korrektur mit Paket-/Konfigurationssicherung einsetzen oder den minimal reproduzierbaren Eintrag mit bereinigten vertraulichen Pfaden melden."
+        },
+        "precautions": {
+          "en": "A broad local allow module can conceal a compromised or misconfigured service. Preserve the original AVC evidence.",
+          "de": "Ein weites lokales Freigabemodul kann einen kompromittierten oder falsch konfigurierten Dienst verdecken. Den ursprünglichen AVC-Beleg erhalten."
+        },
+        "rollback": {
+          "en": "Restore the known-good snapshot or supported matching package versions and saved configuration; isolated policy downgrades need distribution guidance.",
+          "de": "Den funktionierenden Snapshot oder unterstützte zusammenpassende Paketstände und die gesicherte Konfiguration wiederherstellen; einzelne Regeldowngrades benötigen Distributionshinweise."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Red Hat: troubleshooting SELinux denials and file labeling",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_selinux/troubleshooting-problems-related-to-selinux_using-selinux",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel: security-module interfaces and contexts",
+        "url": "https://cdn.kernel.org/doc/html/latest/userspace-api/lsm.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "selinux-enforced-avc",
+        "all": [
+          "avc:",
+          "denied",
+          "scontext=",
+          "tcontext=",
+          "tclass=",
+          "permissive=0"
+        ],
+        "sample": "audit: type=1400 avc: denied { read } for pid=410 comm=\"example\" scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:user_home_t:s0 tclass=file permissive=0",
+        "negative": [
+          "audit: type=1400 avc: denied { read } scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:user_home_t:s0 tclass=file permissive=1",
+          "audit: type=1400 apparmor=\"DENIED\" operation=\"open\" profile=\"example\""
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "SELinux recorded an enforced denial for the listed subject and target.",
+          "de": "SELinux hat eine erzwungene Ablehnung für die genannten Quell- und Zielkontexte protokolliert."
+        },
+        "significance": {
+          "en": "The contexts and object class guide diagnosis; the event alone does not justify permitting the action.",
+          "de": "Kontexte und Objektklasse führen die Diagnose; der Eintrag allein rechtfertigt keine Freigabe des Vorgangs."
+        }
+      }
+    ]
+  },
+  {
+    "id": "selinux-file-label-mismatch",
+    "slug": {
+      "en": "selinux-file-label-mismatch",
+      "de": "selinux-dateilabel-falsch"
+    },
+    "category": "security",
+    "title": {
+      "en": "A file’s SELinux label differs from its path policy",
+      "de": "Das SELinux-Dateilabel weicht von der Pfadregel ab"
+    },
+    "summary": {
+      "en": "Moved files can retain an old SELinux label. Compare the expected path context and preview relabeling before altering security policy.",
+      "de": "Verschobene Dateien können alte SELinux-Labels behalten. Erwarteten Pfadkontext vergleichen und das Neulabeln vor Regeländerungen prüfen."
+    },
+    "environment": {
+      "en": "SELinux-enabled filesystem with matchpathcon and restorecon; changing labels requires the authorized owner or administrator.",
+      "de": "SELinux-Dateisystem mit matchpathcon und restorecon; Labeländerungen brauchen einen berechtigten Besitzer oder administrative Rechte."
+    },
+    "symptoms": {
+      "en": [
+        "A service cannot read a file moved from a home directory.",
+        "matchpathcon reports a different expected context."
+      ],
+      "de": [
+        "Ein Dienst kann eine aus dem Home verschobene Datei nicht lesen.",
+        "matchpathcon meldet einen anderen erwarteten Kontext."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Moving a file within a filesystem may preserve its previous security label.",
+        "de": "Ein Verschieben innerhalb eines Dateisystems kann das bisherige Sicherheitslabel erhalten."
+      },
+      {
+        "en": "A legitimate custom content directory may lack a persistent file-context mapping.",
+        "de": "Einem gewollten Sonderverzeichnis kann eine dauerhafte Dateikontextzuordnung fehlen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "compare-file-context",
+        "command": "matchpathcon -V /path/to/file",
+        "explanation": {
+          "en": "Replace the exact file path; compares its on-disk label with the policy’s default path mapping.",
+          "de": "Den konkreten Dateipfad ersetzen; vergleicht das gespeicherte Label mit der Standard-Pfadzuordnung der Regeln."
+        },
+        "interpretation": {
+          "en": "A has context … should be … result establishes a mismatch, but the default mapping may itself need review for a deliberate custom path.",
+          "de": "has context … should be … zeigt eine Abweichung; bei einem gewollten Sonderpfad muss auch die Standardzuordnung geprüft werden."
+        }
+      },
+      {
+        "id": "preview-targeted-relabel",
+        "command": "restorecon -n -v /path/to/file",
+        "explanation": {
+          "en": "-n is no-change mode. Preview one exact path before considering a recursive operation; read privileges may affect results.",
+          "de": "-n ändert nichts. Zuerst einen konkreten Pfad prüfen, bevor Rekursion erwogen wird; Leserechte können das Ergebnis begrenzen."
+        },
+        "interpretation": {
+          "en": "The proposed context shows what restorecon would apply. No proposed change does not prove that the service is permitted to access the file.",
+          "de": "Der vorgeschlagene Kontext zeigt die mögliche restorecon-Änderung. Keine vorgeschlagene Änderung beweist keine Dienstfreigabe für die Datei."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-default-label-on-confirmed-file",
+        "title": {
+          "en": "Restore the correct default label on confirmed files",
+          "de": "Das richtige Standardlabel an bestätigten Dateien herstellen"
+        },
+        "body": {
+          "en": "If the expected mapping is correct, record existing labels and use restorecon -v on the exact affected files with authorized privileges. Use recursion only after reviewing the directory tree and any deliberate custom mappings.",
+          "de": "Wenn die erwartete Zuordnung stimmt, bisherige Labels notieren und restorecon -v mit berechtigten Rechten an den konkret betroffenen Dateien nutzen. Rekursion erst nach Prüfung des Verzeichnisbaums und gewollter Sonderzuordnungen verwenden."
+        },
+        "precautions": {
+          "en": "Avoid chcon as a permanent mapping fix; future relabeling can overwrite a temporary label.",
+          "de": "chcon nicht als dauerhafte Zuordnungskorrektur verwenden; späteres Neulabeln kann ein vorübergehendes Label überschreiben."
+        },
+        "rollback": {
+          "en": "Restore intentional prior mappings first, then relabel through that policy. Use recorded labels only when the previous access decision was authorized.",
+          "de": "Zuerst gewollte vorherige Zuordnungen herstellen und darüber neu labeln. Notierte Labels nur verwenden, wenn die frühere Zugriffsentscheidung berechtigt war."
+        }
+      },
+      {
+        "id": "define-persistent-custom-path-context",
+        "title": {
+          "en": "Define a persistent mapping for an intentional custom directory",
+          "de": "Dauerhafte Zuordnung für ein gewolltes Sonderverzeichnis festlegen"
+        },
+        "body": {
+          "en": "If a custom service directory is intended, an administrator can add the documented type or equivalent reference-path mapping with semanage fcontext, then preview and apply restorecon to that limited tree. A mapping change alone does not relabel existing files.",
+          "de": "Wenn ein eigenes Dienstverzeichnis gewollt ist, kann die Verwaltung den dokumentierten Typ oder eine entsprechende Referenzpfadzuordnung mit semanage fcontext ergänzen und restorecon für diesen begrenzten Baum prüfen und anwenden. Die Zuordnung allein ändert bestehende Dateilabels nicht."
+        },
+        "precautions": {
+          "en": "Do not label the entire home or /srv tree as service content. Read-only and writable service content may require different types.",
+          "de": "Nicht das gesamte Home oder /srv als Dienstinhalt labeln. Lesbarer und beschreibbarer Dienstinhalt kann unterschiedliche Typen benötigen."
+        },
+        "rollback": {
+          "en": "Remove only the added local fcontext rule, restore any replaced rule, then run restorecon on the same reviewed paths to apply the previous mapping.",
+          "de": "Nur die ergänzte lokale fcontext-Regel entfernen, eine ersetzte Regel herstellen und restorecon an denselben geprüften Pfaden für die vorherige Zuordnung nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "SELinux matchpathcon: verify default file contexts",
+        "url": "https://man7.org/linux/man-pages/man8/matchpathcon.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "SELinux restorecon: no-change and relabel modes",
+        "url": "https://man7.org/linux/man-pages/man8/restorecon.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Red Hat: troubleshooting SELinux denials and file labeling",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_selinux/troubleshooting-problems-related-to-selinux_using-selinux",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "selinux-path-context-mismatch",
+        "all": [
+          " has context ",
+          "object_r:",
+          " should be "
+        ],
+        "sample": "/var/www/html/example.html has context unconfined_u:object_r:user_home_t:s0, should be system_u:object_r:httpd_sys_content_t:s0",
+        "negative": [
+          "/var/www/html/example.html verified.",
+          "restorecon reset /var/www/html/example.html context system_u:object_r:user_home_t:s0->system_u:object_r:httpd_sys_content_t:s0"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "A SELinux path-context check reported a label mismatch.",
+          "de": "Eine SELinux-Pfadkontextprüfung hat ein abweichendes Label gemeldet."
+        },
+        "significance": {
+          "en": "Verify the expected mapping before relabeling; this check alone does not record an application denial.",
+          "de": "Vor dem Neulabeln die erwartete Zuordnung prüfen; diese Prüfung allein protokolliert keine Anwendungsablehnung."
+        }
+      }
+    ]
+  }
+]

@@ -4,10 +4,14 @@ import vm from "node:vm";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://www.dennishilk.com";
+// Fail closed: the unlisted live test is excluded until a separately approved launch.
+const labPublicationFile = join(root, "content/linux-fix-lab/publication.json");
+const labPublication = existsSync(labPublicationFile) ? JSON.parse(readFileSync(labPublicationFile, "utf8")) : {};
+const labSitemapActive = labPublication.phase === "public-launch" && labPublication.allowIndexing === true && labPublication.activateSitemap === true;
 const sitemapNames = [
   "sitemap.xml", "sitemap-de.xml", "sitemap-internet-observers.xml",
   "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml",
-  "sitemap-blog.xml",
+  "sitemap-blog.xml", ...(labSitemapActive ? ["sitemap-linux-fix-lab.xml"] : []),
 ];
 
 const i18nFiles = [
@@ -390,6 +394,7 @@ function imagesFor(file) {
 
 function sitemapOwner(path) {
   const basePath = path.startsWith("de/") ? path.slice("de/".length) : path;
+  if (basePath.startsWith("linux-fix-lab/")) return "sitemap-linux-fix-lab.xml";
   if (basePath.startsWith("blog/")) return "sitemap-blog.xml";
   if (ciscoRoutes.has(path)) return "sitemap-cisco-doom.xml";
   if (imageRoutes.has(path)) return "sitemap-images.xml";
@@ -455,6 +460,14 @@ function synchronizeSitemaps() {
       .map(([entry]) => [entry.match(/<loc>([^<]+)<\/loc>/)?.[1], entry.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1]])
       .filter(([url, date]) => url && date);
   }));
+  // The static Lab build records real output changes; unchanged builds retain their date.
+  const labManifest = join(root, "content/linux-fix-lab/generated-manifest.json");
+  if (existsSync(labManifest)) {
+    const manifest = JSON.parse(readFileSync(labManifest, "utf8"));
+    for (const [path, page] of Object.entries(manifest.pages || {})) {
+      if (/^\/(?:de\/)?linux-fix-lab\//.test(path) && /^\d{4}-\d{2}-\d{2}$/.test(page.lastmod)) lastmods.set(`${origin}${path}`, page.lastmod);
+    }
+  }
   const groups = new Map(sitemapNames.map(name => [name, []]));
 
   for (const file of files) groups.get(sitemapOwner(rel(file))).push(file);
@@ -480,6 +493,11 @@ function synchronizeSitemaps() {
     '',
   ].join('\n');
   writeFileSync(join(root, 'sitemap-index.xml'), index);
+  if (labSitemapActive && existsSync(join(root, "robots.txt"))) {
+    const robotsFile = join(root, "robots.txt"), source = readFileSync(robotsFile, "utf8");
+    const advertisement = `Sitemap: ${origin}/sitemap-linux-fix-lab.xml`;
+    if (!source.split(/\r?\n/).includes(advertisement)) writeFileSync(robotsFile, source.replace(/\s*$/, "") + "\n" + advertisement + "\n");
+  }
 }
 
 if (!process.argv.includes("--sitemaps-only")) synchronizeMetadata();

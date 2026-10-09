@@ -1,0 +1,2223 @@
+[
+  {
+    "id": "network-unmanaged-interface",
+    "slug": {
+      "en": "network-unmanaged-interface",
+      "de": "netzwerkschnittstelle-nicht-verwaltet"
+    },
+    "category": "network",
+    "title": {
+      "en": "NetworkManager leaves an interface unmanaged",
+      "de": "NetworkManager verwaltet eine Schnittstelle nicht"
+    },
+    "summary": {
+      "en": "Identify who owns the interface when NetworkManager marks it unmanaged, then adjust the specific ownership rule without disrupting other networks.",
+      "de": "Zuständigkeit klären, wenn NetworkManager eine Schnittstelle nicht verwaltet; anschließend gezielt die Regel korrigieren und andere Netze erhalten."
+    },
+    "environment": {
+      "en": "Systems using NetworkManager; externally managed bridges, containers and server interfaces can be intentionally excluded.",
+      "de": "Systeme mit NetworkManager; extern verwaltete Bridges, Container und Server-Schnittstellen können absichtlich ausgenommen sein."
+    },
+    "symptoms": {
+      "en": [
+        "The desktop offers no connection for an interface shown as unmanaged.",
+        "A NIC exists in the kernel but NetworkManager will not activate its profile."
+      ],
+      "de": [
+        "Der Desktop bietet keine Verbindung für eine als unmanaged gemeldete Schnittstelle.",
+        "Eine Netzwerkkarte existiert im Kernel, NetworkManager aktiviert ihr Profil jedoch nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An unmanaged-devices rule, a device-specific managed setting, udev policy or a distribution backend can exclude this interface.",
+        "de": "Eine unmanaged-devices-Regel, gerätespezifische managed-Einstellung, udev-Richtlinie oder ein Distributions-Backend kann diese Schnittstelle ausschließen."
+      },
+      {
+        "en": "Another network manager may intentionally configure it; an active service alone does not prove that both managers touch this NIC.",
+        "de": "Ein anderer Netzwerkdienst kann sie absichtlich konfigurieren; ein aktiver Dienst allein beweist noch keine doppelte Verwaltung dieser Karte."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-networkmanager-device-state",
+        "command": "nmcli -f GENERAL device show IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the interface from nmcli device status, for example enp3s0. Read state, reason and the attached connection without displaying secrets.",
+          "de": "IFACE durch die Schnittstelle aus nmcli device status ersetzen, etwa enp3s0. Zustand, Grund und zugeordnetes Profil ohne Geheimnisse lesen."
+        },
+        "interpretation": {
+          "en": "Unmanaged differs from unavailable or disconnected. A managed device lacking carrier needs link diagnosis rather than a management override.",
+          "de": "Unmanaged unterscheidet sich von unavailable und disconnected. Bei einer verwalteten Schnittstelle ohne Carrier ist die Verbindung zu prüfen statt die Verwaltung zu überschreiben."
+        }
+      },
+      {
+        "id": "read-effective-management-policy",
+        "command": "NetworkManager --print-config",
+        "explanation": {
+          "en": "Print the merged NetworkManager daemon configuration without starting a second daemon. Administrator privileges may be needed to read protected configuration files.",
+          "de": "Zusammengeführte NetworkManager-Daemon-Konfiguration ausgeben, ohne einen zweiten Daemon zu starten. Geschützte Konfigurationsdateien benötigen gegebenenfalls Administratorrechte."
+        },
+        "interpretation": {
+          "en": "Locate rules matching this interface or its MAC address and note their source files. A strict unmanaged-devices exclusion can override an attempted runtime managed=yes change.",
+          "de": "Regeln für diese Schnittstelle oder MAC-Adresse und ihre Quelldateien suchen. Eine strikte unmanaged-devices-Ausnahme kann einen Laufzeitwechsel zu managed=yes übersteuern."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-specific-unmanaged-rule",
+        "title": {
+          "en": "Correct the matching ownership rule",
+          "de": "Passende Zuständigkeitsregel korrigieren"
+        },
+        "body": {
+          "en": "If the effective configuration excludes a NIC that NetworkManager should own, save the responsible file and change only that device match using the distribution’s supported configuration location. Reload configuration and activate the intended profile during a maintenance window.",
+          "de": "Wenn die wirksame Konfiguration eine für NetworkManager vorgesehene Karte ausschließt, die zuständige Datei sichern und nur deren Gerätezuordnung am vorgesehenen Distributionsort ändern. Konfiguration neu laden und das gewünschte Profil im Wartungsfenster aktivieren."
+        },
+        "precautions": {
+          "en": "Keep intentional bridge, container and server exclusions. Use a local console or a NetworkManager checkpoint before changes to the interface carrying your remote session.",
+          "de": "Absichtliche Ausnahmen für Bridges, Container und Server erhalten. Vor Änderungen an der Schnittstelle der Fernsitzung eine lokale Konsole oder einen NetworkManager-Checkpoint nutzen."
+        },
+        "rollback": {
+          "en": "Restore the saved configuration, reload it and reactivate the previously working connection from the local console if ownership or routing worsens.",
+          "de": "Bei schlechterer Verwaltung oder Route die gesicherte Konfiguration wiederherstellen, neu laden und die zuvor funktionierende Verbindung lokal aktivieren."
+        }
+      },
+      {
+        "id": "choose-interface-owner",
+        "title": {
+          "en": "Choose the intended manager for this NIC",
+          "de": "Vorgesehenen Dienst für diese Karte wählen"
+        },
+        "body": {
+          "en": "If networkd, ifupdown or another manager has a matching configuration, decide which manager should own this interface. Remove the overlap only for this NIC; migrate its addresses, routes and DNS to the chosen manager before retiring the old definition.",
+          "de": "Wenn networkd, ifupdown oder ein anderer Dienst eine passende Definition besitzt, den zuständigen Dienst für diese Schnittstelle festlegen. Überschneidung nur für diese Karte beseitigen; Adressen, Routen und DNS vor Stilllegung der alten Definition übertragen."
+        },
+        "precautions": {
+          "en": "Do not disable all network services merely because more than one is installed. Record VLAN, bridge membership and remote-access settings before migration.",
+          "de": "Nicht alle Netzwerkdienste abschalten, nur weil mehrere installiert sind. Vor der Übertragung VLAN, Bridge-Zugehörigkeit und Fernzugang dokumentieren."
+        },
+        "rollback": {
+          "en": "Restore the old interface definition and remove the competing replacement, then recover the original owner and connection locally.",
+          "de": "Alte Schnittstellendefinition wiederherstellen und konkurrierenden Ersatz entfernen; danach ursprünglichen Dienst und Verbindung lokal wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: unmanaged devices, DNS and connectivity configuration",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/NetworkManager.conf.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "network-wifi-rfkill",
+    "slug": {
+      "en": "network-wifi-rfkill",
+      "de": "wlan-durch-rfkill-gesperrt"
+    },
+    "category": "network",
+    "title": {
+      "en": "Wi-Fi blocked by rfkill or airplane mode",
+      "de": "WLAN durch rfkill oder Flugmodus gesperrt"
+    },
+    "summary": {
+      "en": "Separate software airplane-mode blocks from physical radio blocks before editing Wi-Fi profiles or replacing a driver that cannot enable the radio.",
+      "de": "Software-Flugmodus von physischer Funksperre unterscheiden, bevor WLAN-Profile geändert oder Treiber für eine gesperrte Funkkarte ersetzt werden."
+    },
+    "environment": {
+      "en": "Wi-Fi devices exposed through the kernel rfkill interface; laptops may provide a hardware switch, firmware setting or platform hotkey.",
+      "de": "WLAN-Geräte mit Kernel-rfkill-Schnittstelle; Notebooks können einen Schalter, eine Firmware-Einstellung oder eine Plattformtaste besitzen."
+    },
+    "symptoms": {
+      "en": [
+        "Wi-Fi is disabled and scanning is unavailable.",
+        "A radio appears in rfkill even though no wireless connection activates."
+      ],
+      "de": [
+        "WLAN ist ausgeschaltet und eine Suche nicht verfügbar.",
+        "Ein Funkgerät erscheint in rfkill, aber keine WLAN-Verbindung wird aktiviert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A soft block can come from airplane mode or software radio policy.",
+        "de": "Eine Soft-Sperre kann aus Flugmodus oder Software-Funkrichtlinien stammen."
+      },
+      {
+        "en": "A hard block can be reported by hardware or platform firmware and cannot be cleared solely by software unblocking.",
+        "de": "Eine Hard-Sperre kann von Hardware oder Plattform-Firmware gemeldet werden und lässt sich nicht allein per Software aufheben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-radio-blocks",
+        "command": "rfkill list",
+        "explanation": {
+          "en": "List radio types and their soft/hard block states without changing them; match the Wireless LAN device rather than Bluetooth.",
+          "de": "Funktypen und Soft-/Hard-Sperren unverändert auflisten; das Wireless-LAN-Gerät statt Bluetooth zuordnen."
+        },
+        "interpretation": {
+          "en": "Soft blocked: yes permits a software unblock attempt. Hard blocked: yes requires the physical/platform path even if the soft block is cleared.",
+          "de": "Soft blocked: yes erlaubt einen Software-Entsperrversuch. Hard blocked: yes erfordert den physischen oder Plattformpfad, auch nach aufgehobener Soft-Sperre."
+        }
+      },
+      {
+        "id": "read-networkmanager-radio-policy",
+        "command": "nmcli radio wifi",
+        "explanation": {
+          "en": "Read NetworkManager’s Wi-Fi software radio policy; do not append on or off to this diagnostic command.",
+          "de": "Software-Funkrichtlinie von NetworkManager lesen; diesem Diagnosebefehl kein on oder off anhängen."
+        },
+        "interpretation": {
+          "en": "Disabled confirms NetworkManager’s radio policy is off, but enabled does not override a hard block. No rfkill WLAN entry can instead indicate absent driver/device enumeration.",
+          "de": "Disabled bestätigt die ausgeschaltete NetworkManager-Funkrichtlinie; enabled übersteuert jedoch keine Hard-Sperre. Ein fehlender WLAN-rfkill-Eintrag kann auf fehlende Geräte- oder Treibererkennung hindeuten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "clear-software-radio-block",
+        "title": {
+          "en": "Clear the confirmed software block",
+          "de": "Bestätigte Soft-Sperre aufheben"
+        },
+        "body": {
+          "en": "If the WLAN device is only soft-blocked, turn airplane mode off and enable Wi-Fi in the desktop or with nmcli radio wifi on. Re-read rfkill and try the existing connection only after the soft block clears.",
+          "de": "Wenn das WLAN-Gerät ausschließlich soft-gesperrt ist, den Flugmodus ausschalten und WLAN im Desktop oder mit nmcli radio wifi on aktivieren. rfkill erneut lesen und die bestehende Verbindung nach aufgehobener Soft-Sperre versuchen."
+        },
+        "precautions": {
+          "en": "This enables Wi-Fi transmissions and may reconnect saved profiles automatically. Check the intended network and do not unblock every radio indiscriminately.",
+          "de": "Dadurch werden WLAN-Funkverkehr und möglicherweise automatische Verbindungen zu gespeicherten Profilen aktiviert. Gewünschtes Netz prüfen und nicht wahllos alle Funkgeräte entsperren."
+        },
+        "rollback": {
+          "en": "Return Wi-Fi to its previous disabled state if the radio must remain off; retain the saved profile for a later controlled connection.",
+          "de": "WLAN in den vorherigen ausgeschalteten Zustand versetzen, wenn Funk deaktiviert bleiben soll; gespeichertes Profil für einen späteren kontrollierten Versuch erhalten."
+        }
+      },
+      {
+        "id": "resolve-physical-platform-block",
+        "title": {
+          "en": "Resolve the physical or firmware block",
+          "de": "Physische oder Firmware-Sperre beheben"
+        },
+        "body": {
+          "en": "If hard blocked remains yes, inspect the laptop’s radio switch, documented hotkey and firmware radio setting. If the state appeared after dual boot, perform a complete shutdown before retesting and follow the machine vendor’s platform guidance.",
+          "de": "Wenn hard blocked weiter yes meldet, Funkschalter, dokumentierte Tastenkombination und Firmware-Funkeinstellung des Notebooks prüfen. Nach Auftreten im Dual-Boot-Betrieb vollständig herunterfahren und anschließend anhand der Plattformhinweise des Herstellers vergleichen."
+        },
+        "precautions": {
+          "en": "Save work before shutdown and record firmware changes. A driver reinstall cannot by itself bypass a genuine hardware block.",
+          "de": "Vor dem Herunterfahren Arbeit sichern und Firmware-Änderungen dokumentieren. Eine Treiber-Neuinstallation kann eine echte Hard-Sperre nicht allein umgehen."
+        },
+        "rollback": {
+          "en": "Restore the previous firmware setting or switch position if necessary; use Ethernet or another approved connection while platform diagnosis continues.",
+          "de": "Bei Bedarf vorige Firmware-Einstellung oder Schalterstellung wiederherstellen; während der Plattformdiagnose Ethernet oder eine andere freigegebene Verbindung nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: rfkill hard and soft blocks",
+        "url": "https://docs.kernel.org/driver-api/rfkill.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "util-linux: rfkill(8)",
+        "url": "https://man7.org/linux/man-pages/man8/rfkill.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "network-wifi-authentication",
+    "slug": {
+      "en": "network-wifi-authentication",
+      "de": "wlan-authentifizierung-scheitert"
+    },
+    "category": "network",
+    "title": {
+      "en": "Wi-Fi authentication loops or fails",
+      "de": "WLAN-Authentifizierung wiederholt sich oder scheitert"
+    },
+    "summary": {
+      "en": "Use handshake and EAP evidence to separate a personal Wi-Fi credential mismatch from enterprise authentication or driver errors before changing security.",
+      "de": "Handshake- und EAP-Befunde nutzen, um falsche Zugangsdaten im privaten WLAN von Unternehmens-Authentifizierung und Treiberfehlern zu unterscheiden."
+    },
+    "environment": {
+      "en": "NetworkManager Wi-Fi profiles using wpa_supplicant; iwd backends report different events, and enterprise settings depend on the network administrator.",
+      "de": "NetworkManager-WLAN-Profile mit wpa_supplicant; iwd meldet andere Ereignisse, Unternehmensprofile hängen von den Vorgaben der Netzwerkverwaltung ab."
+    },
+    "symptoms": {
+      "en": [
+        "A visible SSID repeatedly asks for a password or disconnects during authentication.",
+        "The supplicant reports a four-way handshake or EAP failure before DHCP begins."
+      ],
+      "de": [
+        "Eine sichtbare SSID fragt wiederholt nach dem Passwort oder trennt bei der Authentifizierung.",
+        "Der Supplicant meldet vor Beginn von DHCP einen Vier-Wege-Handshake- oder EAP-Fehler."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A personal-network handshake can fail with mismatched credentials, incompatible security mode or lower-level key installation/radio trouble; the password hint is not conclusive.",
+        "de": "Ein Handshake im privaten Netz kann an Zugangsdaten, Sicherheitsmodus oder tieferen Schlüsselinstallations- und Funkproblemen scheitern; der Passworthinweis ist kein Beweis."
+      },
+      {
+        "en": "An EAP failure can involve identity, method, account policy, certificate validation or the authentication server; earlier EAP/TLS details are needed.",
+        "de": "Ein EAP-Fehler kann Identität, Methode, Kontorichtlinie, Zertifikatsprüfung oder Authentifizierungsserver betreffen; vorherige EAP/TLS-Details sind nötig."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-authentication-sequence",
+        "command": "journalctl -b -u NetworkManager -u wpa_supplicant --no-pager -n 250",
+        "explanation": {
+          "en": "Read current-boot authentication events; journal access may require privileges. Retain preceding TLS, key-installation and association events and redact SSIDs or identities before sharing.",
+          "de": "Authentifizierungsereignisse dieses Starts lesen; Journalzugriff kann Rechte benötigen. Vorherige TLS-, Schlüsselinstallations- und Zuordnungsereignisse erhalten; vor Weitergabe SSIDs und Identitäten anonymisieren."
+        },
+        "interpretation": {
+          "en": "EAP failure belongs to enterprise authentication. A four-way handshake password hint also follows some driver failures; ip-config errors after completed authentication belong to address acquisition.",
+          "de": "EAP-Fehler gehören zur Unternehmens-Authentifizierung. Ein Passwortverdacht beim Vier-Wege-Handshake kann auch auf Treiberfehler folgen; ip-config-Fehler nach erfolgreicher Anmeldung gehören zum Adresserwerb."
+        }
+      },
+      {
+        "id": "read-auth-profile-mode",
+        "command": "nmcli -f 802-11-wireless.ssid,802-11-wireless-security.key-mgmt,802-11-wireless-security.pmf,802-1x.eap connection show \"PROFILE\"",
+        "explanation": {
+          "en": "Replace PROFILE with the exact saved connection name. Inspect SSID and security methods without --show-secrets; this does not expose the stored password.",
+          "de": "PROFILE durch den genauen gespeicherten Verbindungsnamen ersetzen. SSID und Sicherheitsmethoden ohne --show-secrets prüfen; das gespeicherte Passwort wird nicht ausgegeben."
+        },
+        "interpretation": {
+          "en": "Compare the profile with the actual AP policy: WPA-PSK, SAE and WPA-EAP are different methods. A missing 802-1x method is expected for a personal network.",
+          "de": "Profil mit der tatsächlichen AP-Richtlinie vergleichen: WPA-PSK, SAE und WPA-EAP sind unterschiedliche Methoden. Eine fehlende 802-1x-Methode ist bei einem privaten Netz erwartbar."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-personal-network-credentials",
+        "title": {
+          "en": "Correct the personal-network profile",
+          "de": "Profil des privaten WLAN korrigieren"
+        },
+        "body": {
+          "en": "If a personal network’s verified credentials or security mode differ from the saved profile, edit that specific profile in the desktop connection editor and re-enter the credential through its secure prompt. Compare one connection attempt while keeping driver errors in view.",
+          "de": "Wenn geprüfte Zugangsdaten oder Sicherheitsmodus eines privaten WLAN vom gespeicherten Profil abweichen, genau dieses Profil im Verbindungseditor ändern und Zugangsdaten im sicheren Dialog neu eingeben. Einen Versuch vergleichen und Treiberfehler weiter beachten."
+        },
+        "precautions": {
+          "en": "Keep the previous profile settings and use a local console when editing the only link. Do not place a password in command history or weaken the AP to open/WEP to suppress the symptom.",
+          "de": "Vorige Profileinstellungen behalten und bei Änderung des einzigen Zugangs lokal arbeiten. Passwort nicht in der Befehlschronik hinterlassen und den AP nicht zur Symptombeseitigung auf offen/WEP schwächen."
+        },
+        "rollback": {
+          "en": "Restore the saved SSID and security mode if the edit targets the wrong network; recover through Ethernet or the prior working profile.",
+          "de": "Bei falschem Zielnetz gesicherte SSID und Sicherheitsmethode wiederherstellen; per Ethernet oder zuvor funktionierendem Profil zurückkehren."
+        }
+      },
+      {
+        "id": "repair-enterprise-eap-validation",
+        "title": {
+          "en": "Repair the documented EAP configuration",
+          "de": "Dokumentierte EAP-Konfiguration reparieren"
+        },
+        "body": {
+          "en": "If EAP or TLS details identify the enterprise path, compare method, inner authentication, CA certificate and server-name constraint with the administrator’s current profile. Correct an expired client certificate or incorrect system time only when those checks support it.",
+          "de": "Wenn EAP- oder TLS-Details auf das Unternehmensprofil verweisen, Methode, innere Anmeldung, CA-Zertifikat und Servernamenvorgabe mit dem aktuellen Verwaltungsprofil vergleichen. Abgelaufenes Client-Zertifikat oder falsche Systemzeit nur bei entsprechendem Befund korrigieren."
+        },
+        "precautions": {
+          "en": "Keep server certificate validation enabled and obtain credentials/certificates through the approved channel. Repeated blind retries can trigger account lockout.",
+          "de": "Serverzertifikatsprüfung aktiviert lassen und Zugangsdaten/Zertifikate über den vorgesehenen Weg beziehen. Wiederholte blinde Versuche können das Konto sperren."
+        },
+        "rollback": {
+          "en": "Restore the saved enterprise profile and certificate references if the new configuration fails; use a known working access path to contact the network administrator.",
+          "de": "Bei scheiternder neuer Konfiguration gesichertes Unternehmensprofil und Zertifikatsverweise wiederherstellen; Netzwerkverwaltung über einen funktionierenden Zugang erreichen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NetworkManager: Wi-Fi authentication properties",
+        "url": "https://networkmanager.dev/docs/api/latest/settings-802-11-wireless-security.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "wpa_supplicant: documented control-interface events",
+        "url": "https://w1.fi/wpa_supplicant/devel/ctrl_iface_page.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Android source: wpa_supplicant handshake failure handling",
+        "url": "https://android.googlesource.com/platform/external/wpa_supplicant_8/+/refs/heads/main/wpa_supplicant/events.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "wpa-fourway-handshake-failed",
+        "all": [
+          "WPA: 4-Way Handshake failed",
+          "pre-shared key may be incorrect"
+        ],
+        "sample": "wpa_supplicant[810]: wlan0: WPA: 4-Way Handshake failed - pre-shared key may be incorrect",
+        "negative": [
+          "wpa_supplicant[810]: wlan0: WPA: Key negotiation completed with 02:00:00:00:00:01",
+          "wpa_supplicant[810]: wlan0: CTRL-EVENT-DISCONNECTED reason=3 locally_generated=1"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The supplicant could not complete the personal-network key handshake. The fixture is synthetic.",
+          "de": "Der Supplicant konnte den Schlüssel-Handshake des privaten WLAN nicht abschließen. Der Testfall ist synthetisch."
+        },
+        "significance": {
+          "en": "Verify the profile and credential, but also inspect preceding key-installation or radio failures before concluding that the password is wrong.",
+          "de": "Profil und Zugangsdaten prüfen; vor einer Passwortdiagnose aber auch vorherige Schlüsselinstallations- und Funkfehler ansehen."
+        }
+      },
+      {
+        "id": "wpa-eap-authentication-failed",
+        "all": [
+          "CTRL-EVENT-EAP-FAILURE"
+        ],
+        "sample": "wpa_supplicant[810]: wlan0: CTRL-EVENT-EAP-FAILURE EAP authentication failed",
+        "negative": [
+          "wpa_supplicant[810]: wlan0: CTRL-EVENT-EAP-SUCCESS EAP authentication completed successfully",
+          "wpa_supplicant[810]: wlan0: CTRL-EVENT-CONNECTED"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The documented control event reports failed EAP authentication.",
+          "de": "Das dokumentierte Steuerereignis meldet fehlgeschlagene EAP-Authentifizierung."
+        },
+        "significance": {
+          "en": "Read the preceding method and certificate events; this signal does not distinguish an account denial from a TLS validation problem.",
+          "de": "Vorherige Methoden- und Zertifikatsereignisse lesen; das Signal unterscheidet Kontosperre und TLS-Prüfproblem nicht allein."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-wifi-firmware-missing",
+    "slug": {
+      "en": "network-wifi-firmware-missing",
+      "de": "wlan-firmware-fehlt"
+    },
+    "category": "network",
+    "title": {
+      "en": "Wi-Fi driver cannot load compatible firmware",
+      "de": "WLAN-Treiber lädt keine passende Firmware"
+    },
+    "summary": {
+      "en": "Distinguish an optional firmware version fallback from a final initialization failure, then match the adapter, kernel and distribution firmware package.",
+      "de": "Optionalen Firmware-Versionsrückfall vom endgültigen Startfehler unterscheiden und Adapter, Kernel und Firmware-Paket der Distribution abgleichen."
+    },
+    "environment": {
+      "en": "Kernel-managed Wi-Fi adapters loading firmware; the log signatures here target Intel iwlwifi, while package names vary by distribution.",
+      "de": "WLAN-Adapter mit vom Kernel geladener Firmware; die Log-Signaturen betreffen Intel iwlwifi, Paketnamen unterscheiden sich je nach Distribution."
+    },
+    "symptoms": {
+      "en": [
+        "The PCI Wi-Fi adapter is present but no usable wireless interface appears.",
+        "Firmware requests end with no suitable firmware found rather than a successful fallback."
+      ],
+      "de": [
+        "Der PCI-WLAN-Adapter ist vorhanden, aber keine nutzbare Funkschnittstelle erscheint.",
+        "Firmware-Anfragen enden mit no suitable firmware found statt erfolgreichem Rückfall."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The installed kernel may request a supported firmware API not present in the distribution’s firmware package or early-boot image.",
+        "de": "Der installierte Kernel kann eine unterstützte Firmware-API anfordern, die im Firmware-Paket oder frühen Startabbild fehlt."
+      },
+      {
+        "en": "Driver/hardware mismatch or initialization trouble remains possible; one missing highest firmware revision can be harmless when a lower supported revision loads.",
+        "de": "Unpassender Treiber oder Startprobleme bleiben möglich; eine fehlende höchste Firmware-Version kann harmlos sein, wenn eine niedrigere unterstützte Version lädt."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "identify-wifi-driver",
+        "command": "lspci -nnk",
+        "explanation": {
+          "en": "Read PCI device IDs and bound kernel drivers. Locate the network controller and record its full vendor/device ID; this query does not load modules.",
+          "de": "PCI-Gerätekennungen und gebundene Kernel-Treiber lesen. Netzwerkcontroller suchen und vollständige Hersteller-/Geräte-ID dokumentieren; diese Abfrage lädt keine Module."
+        },
+        "interpretation": {
+          "en": "A PCI device with no driver differs from iwlwifi bound but unable to load firmware. USB Wi-Fi needs lsusb identity instead; a model marketing name alone is insufficient.",
+          "de": "Ein PCI-Gerät ohne Treiber unterscheidet sich von gebundenem iwlwifi ohne Firmware. USB-WLAN benötigt stattdessen lsusb-Kennung; ein Marketing-Modellname genügt nicht."
+        }
+      },
+      {
+        "id": "read-firmware-request-sequence",
+        "command": "journalctl -k -b --no-pager -n 350",
+        "explanation": {
+          "en": "Read current-boot kernel firmware requests and the subsequent driver result; journal privileges may be needed.",
+          "de": "Firmware-Anfragen des aktuellen Starts und nachfolgendes Treiberergebnis lesen; Journalrechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "Error -2 means a requested file was missing. A later loaded firmware line can make that request harmless; final no suitable firmware found confirms the driver exhausted its supported choices.",
+          "de": "Fehler -2 bedeutet eine fehlende angeforderte Datei. Eine spätere loaded-firmware-Zeile kann den Versuch entkräften; endgültiges no suitable firmware found bestätigt ausgeschöpfte unterstützte Versionen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "install-matching-distro-firmware",
+        "title": {
+          "en": "Install the matching distribution firmware",
+          "de": "Passende Distributions-Firmware installieren"
+        },
+        "body": {
+          "en": "If the driver exhausts supported firmware revisions, use the adapter ID and requested filenames to identify the distribution’s official firmware package and enabled repository. Install its matching update through the package manager, then reboot to compare driver initialization.",
+          "de": "Wenn der Treiber alle unterstützten Firmware-Versionen ausschöpft, anhand von Adapter-ID und Dateinamen das offizielle Firmware-Paket und aktivierte Repository bestimmen. Passende Aktualisierung über die Paketverwaltung installieren und nach Neustart den Treiberstart vergleichen."
+        },
+        "precautions": {
+          "en": "Use Ethernet or offline distribution packages when Wi-Fi is unavailable. Do not copy an arbitrary firmware file for another adapter or assume the newest API supports an older card.",
+          "de": "Bei fehlendem WLAN Ethernet oder Offline-Pakete der Distribution nutzen. Keine beliebige Firmware eines anderen Adapters kopieren und nicht annehmen, dass die neueste API ältere Karten unterstützt."
+        },
+        "rollback": {
+          "en": "Keep the previously working kernel and firmware package available; restore that supported pair through the package manager if initialization regresses.",
+          "de": "Zuvor funktionierende Kernel- und Firmware-Pakete bereithalten; bei schlechterem Start dieses unterstützte Paar per Paketverwaltung wiederherstellen."
+        }
+      },
+      {
+        "id": "compare-kernel-and-early-boot-image",
+        "title": {
+          "en": "Compare the kernel and early-boot image",
+          "de": "Kernel und frühes Startabbild vergleichen"
+        },
+        "body": {
+          "en": "If the same adapter works with an installed previous kernel, compare the requested firmware API and package versions before replacing hardware. When Wi-Fi is needed during early boot and the installed file exists, rebuild the initramfs using the distribution’s procedure so it includes the required firmware.",
+          "de": "Wenn derselbe Adapter mit einem vorhandenen früheren Kernel funktioniert, angeforderte Firmware-API und Paketversionen vor Hardwaretausch vergleichen. Wird WLAN früh beim Start benötigt und existiert die Datei bereits, Initramfs nach Distributionsverfahren mit der nötigen Firmware neu erstellen."
+        },
+        "precautions": {
+          "en": "Do not rebuild an unrelated image or remove the only working kernel. Early-boot networking and encrypted-root recovery may require alternate boot media.",
+          "de": "Kein unbeteiligtes Abbild neu erstellen und nicht den einzigen funktionierenden Kernel entfernen. Frühe Netzwerk- und verschlüsselte Root-Rettung können ein alternatives Startmedium benötigen."
+        },
+        "rollback": {
+          "en": "Select the previous kernel and image from the boot menu. Restore the earlier image/package pair if the regenerated image prevents boot.",
+          "de": "Früheren Kernel und dessen Abbild im Startmenü wählen. Bei Startproblemen vorheriges Abbild-/Paketpaar wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux wireless: iwlwifi hardware and firmware requirements",
+        "url": "https://wireless.docs.kernel.org/en/latest/en/users/drivers/iwlwifi.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux iwlwifi: firmware version fallback and final rejection",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/net/wireless/intel/iwlwifi/iwl-drv.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Linux kernel: request_firmware interface",
+        "url": "https://docs.kernel.org/driver-api/firmware/request_firmware.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "iwlwifi-firmware-file-missing",
+        "all": [
+          "iwlwifi",
+          "Direct firmware load for",
+          "failed with error -2"
+        ],
+        "sample": "iwlwifi 0000:03:00.0: Direct firmware load for iwlwifi-example-99.ucode failed with error -2",
+        "negative": [
+          "iwlwifi 0000:03:00.0: loaded firmware version 98.example",
+          "Bluetooth: hci0: Direct firmware load for intel/example.sfi failed with error -2"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "An iwlwifi firmware request could not find one named file. The filename is a synthetic fixture.",
+          "de": "Eine iwlwifi-Firmware-Anfrage fand eine benannte Datei nicht. Der Dateiname ist ein synthetischer Testfall."
+        },
+        "significance": {
+          "en": "Check the following lines for a supported fallback; this warning alone does not establish an unusable adapter.",
+          "de": "Folgezeilen auf unterstützten Rückfall prüfen; diese Warnung allein beweist keinen unbrauchbaren Adapter."
+        }
+      },
+      {
+        "id": "iwlwifi-no-supported-firmware",
+        "all": [
+          "iwlwifi",
+          "no suitable firmware found!"
+        ],
+        "sample": "iwlwifi 0000:03:00.0: no suitable firmware found!",
+        "negative": [
+          "iwlwifi 0000:03:00.0: loaded firmware version 98.example",
+          "iwlwifi 0000:03:00.0: minimum version required: example-90"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "iwlwifi exhausted its supported firmware choices.",
+          "de": "iwlwifi hat seine unterstützten Firmware-Auswahlmöglichkeiten ausgeschöpft."
+        },
+        "significance": {
+          "en": "Match the driver’s requested API range to official firmware for the exact adapter and kernel.",
+          "de": "Angeforderten API-Bereich mit offizieller Firmware für den genauen Adapter und Kernel abgleichen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-dhcp-no-lease",
+    "slug": {
+      "en": "network-dhcp-no-lease",
+      "de": "dhcp-ohne-ipv4-lease"
+    },
+    "category": "network",
+    "title": {
+      "en": "Connected link but no DHCP IPv4 lease",
+      "de": "Verbindung steht, aber kein DHCP-IPv4-Lease"
+    },
+    "summary": {
+      "en": "Follow address acquisition after a working link or Wi-Fi authentication, separating a DHCP server or VLAN problem from DNS and duplicate-address refusal.",
+      "de": "Adresserwerb nach funktionierendem Link oder WLAN-Anmeldung prüfen; DHCP-Server- und VLAN-Probleme von DNS und Adresskonflikt-Verweigerung trennen."
+    },
+    "environment": {
+      "en": "NetworkManager profiles intended to use IPv4 DHCP; IPv6-only and intentionally static networks require different expectations.",
+      "de": "NetworkManager-Profile mit vorgesehenem IPv4-DHCP; reine IPv6- und absichtlich statische Netze haben andere Erwartungen."
+    },
+    "symptoms": {
+      "en": [
+        "A cable has carrier or Wi-Fi authenticates, but no expected IPv4 address appears.",
+        "Activation reaches ip-config and then fails, or only a link-local address remains."
+      ],
+      "de": [
+        "Ein Kabel hat Carrier oder WLAN meldet sich an, aber die erwartete IPv4-Adresse fehlt.",
+        "Aktivierung erreicht ip-config und scheitert dann; eventuell bleibt nur eine Link-Local-Adresse."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The DHCP server, relay, VLAN, exhausted pool or filtering may prevent a usable offer or acknowledgment from reaching the client.",
+        "de": "DHCP-Server, Relay, VLAN, erschöpfter Pool oder Filter können ein nutzbares Angebot beziehungsweise eine Bestätigung verhindern."
+      },
+      {
+        "en": "A wrong profile method or an IPv4 address conflict can also prevent IP configuration; ip-config-unavailable is not uniquely a DHCP timeout.",
+        "de": "Eine falsche Profilmethode oder ein IPv4-Adresskonflikt können ebenfalls die IP-Konfiguration verhindern; ip-config-unavailable ist kein eindeutiger DHCP-Timeout."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-live-address-and-lease",
+        "command": "nmcli -f GENERAL,IP4,DHCP4 device show IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the affected interface. Read active address, routes and received DHCP options without renewing or reconnecting.",
+          "de": "IFACE durch die betroffene Schnittstelle ersetzen. Aktive Adresse, Routen und erhaltene DHCP-Optionen ohne Erneuerung oder Neuverbindung lesen."
+        },
+        "interpretation": {
+          "en": "A missing DHCP4 lease on an auto profile supports failed acquisition. A valid lease but absent default route points to route/profile policy; missing DNS alone is a separate problem.",
+          "de": "Fehlendes DHCP4-Lease bei auto-Profil stützt gescheiterten Adresserwerb. Gültiges Lease ohne Standardroute verweist auf Routen-/Profilrichtlinien; nur fehlendes DNS ist ein anderes Problem."
+        }
+      },
+      {
+        "id": "read-ip-configuration-failure",
+        "command": "journalctl -b -u NetworkManager --no-pager -n 300",
+        "explanation": {
+          "en": "Read the activation sequence with journal privileges if needed; locate the interface and the events immediately before ip-config failure.",
+          "de": "Aktivierungsfolge bei Bedarf mit Journalrechten lesen; Schnittstelle und Ereignisse unmittelbar vor dem ip-config-Fehler zuordnen."
+        },
+        "interpretation": {
+          "en": "No offer, lease expiration or server rejection directs DHCP checks. An already-in-use address warning instead requires resolving the address conflict; successful Wi-Fi association does not prove DHCP reachability.",
+          "de": "Fehlendes Angebot, Lease-Ablauf oder Serverablehnung lenken auf DHCP. Eine already-in-use-Warnung erfordert dagegen Adresskonfliktklärung; erfolgreiche WLAN-Zuordnung beweist keine DHCP-Erreichbarkeit."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-address-acquisition-profile",
+        "title": {
+          "en": "Correct the intended address method",
+          "de": "Vorgesehene Adressmethode korrigieren"
+        },
+        "body": {
+          "en": "If this network is documented to use DHCP but the saved profile has the wrong IPv4 method or stale manual settings, save the current configuration and set that profile to automatic address acquisition. Reconnect only the affected profile and inspect the new lease.",
+          "de": "Wenn dieses Netz laut Vorgaben DHCP nutzt, das Profil aber falsche IPv4-Methode oder alte manuelle Werte enthält, Konfiguration sichern und genau dieses Profil auf automatischen Adresserwerb setzen. Nur dieses Profil erneut verbinden und das neue Lease prüfen."
+        },
+        "precautions": {
+          "en": "Use a local console or checkpoint if this is your remote-access link. Do not invent a static address or gateway simply to bypass DHCP.",
+          "de": "Bei Änderung des Fernzugangs lokal oder mit Checkpoint arbeiten. Nicht einfach eine statische Adresse oder ein Gateway erfinden, um DHCP zu umgehen."
+        },
+        "rollback": {
+          "en": "Restore the saved method, addresses, routes and DNS, then reactivate the prior profile locally if the comparison loses access.",
+          "de": "Gesicherte Methode, Adressen, Routen und DNS wiederherstellen; bei verlorenem Zugang voriges Profil lokal aktivieren."
+        }
+      },
+      {
+        "id": "repair-server-or-vlan-path",
+        "title": {
+          "en": "Repair the confirmed DHCP path",
+          "de": "Bestätigten DHCP-Pfad reparieren"
+        },
+        "body": {
+          "en": "If multiple clients on the same intended VLAN lack offers, inspect the DHCP server’s scope, lease capacity and relay/switch assignment with its administrator. If only this client fails, compare its profile and the server’s lease/reservation record before changing client identity.",
+          "de": "Wenn mehrere Clients im vorgesehenen VLAN kein Angebot erhalten, mit der Verwaltung DHCP-Bereich, Lease-Kapazität und Relay-/Switch-Zuordnung prüfen. Bei nur einem betroffenen Client Profil und serverseitigen Lease-/Reservierungseintrag vor Identitätsänderung vergleichen."
+        },
+        "precautions": {
+          "en": "Scope and switch edits affect other users; retain the previous configuration and make the smallest supported correction. Avoid indiscriminate firewall shutdown or DHCP-client replacement.",
+          "de": "Bereichs- und Switch-Änderungen betreffen andere Nutzer; vorige Konfiguration behalten und nur die belegte Korrektur vornehmen. Firewall nicht wahllos abschalten und DHCP-Client nicht blind ersetzen."
+        },
+        "rollback": {
+          "en": "Revert the server, VLAN or reservation change if other clients regress; restore the client profile and retry acquisition through the original working network.",
+          "de": "Bei Problemen anderer Clients Server-, VLAN- oder Reservierungsänderung zurücknehmen; Clientprofil wiederherstellen und Adresserwerb über das ursprünglich funktionierende Netz prüfen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: IPv4 method, DNS priorities and address conflict detection",
+        "url": "https://networkmanager.dev/docs/api/latest/settings-ipv4.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Fedora: NetworkManager IPv4 address conflict detection",
+        "url": "https://fedoramagazine.org/managing-ipv4-address-conflict-detection-with-networkmanager/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "networkmanager-ip-config-unavailable",
+        "all": [
+          "NetworkManager",
+          "state change:",
+          "ip-config -> failed",
+          "reason 'ip-config-unavailable'"
+        ],
+        "sample": "NetworkManager[650]: device (enp3s0): state change: ip-config -> failed (reason 'ip-config-unavailable', managed-type: 'full')",
+        "negative": [
+          "NetworkManager[650]: dhcp4 (enp3s0): activation: beginning transaction (timeout in 45 seconds)",
+          "NetworkManager[650]: device (enp3s0): state change: ip-config -> ip-check (reason 'none')"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "NetworkManager could not complete IP configuration.",
+          "de": "NetworkManager konnte die IP-Konfiguration nicht abschließen."
+        },
+        "significance": {
+          "en": "On a DHCP profile inspect offers and address-conflict events; this reason can also occur for static configuration failure.",
+          "de": "Bei DHCP-Profil Angebote und Adresskonfliktereignisse prüfen; dieser Grund kann auch bei statischem Konfigurationsfehler auftreten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-dns-stub-resolution",
+    "slug": {
+      "en": "network-dns-stub-resolution",
+      "de": "dns-stub-aufloesung-scheitert"
+    },
+    "category": "network",
+    "title": {
+      "en": "Address connectivity works but DNS resolution fails",
+      "de": "IP-Verbindung funktioniert, DNS-Auflösung scheitert"
+    },
+    "summary": {
+      "en": "Inspect systemd-resolved’s upstream servers and resolv.conf integration when names fail, including DNS loops and validation errors without disabling safeguards.",
+      "de": "Bei Namensfehlern Upstream-Server und resolv.conf-Anbindung von systemd-resolved prüfen; DNS-Schleifen und Validierung gezielt untersuchen."
+    },
+    "environment": {
+      "en": "Systems intentionally using systemd-resolved, often integrated with NetworkManager; other resolver managers need their own documented configuration.",
+      "de": "Systeme mit bewusst eingesetztem systemd-resolved, häufig an NetworkManager angebunden; andere Resolver benötigen ihre dokumentierte Konfiguration."
+    },
+    "symptoms": {
+      "en": [
+        "A known service remains reachable by its confirmed IP but its hostname fails.",
+        "resolvectl reports missing name servers, a resolver loop or DNSSEC validation failure."
+      ],
+      "de": [
+        "Ein bekannter Dienst bleibt über seine bestätigte IP erreichbar, der Hostname scheitert jedoch.",
+        "resolvectl meldet fehlende Nameserver, Resolver-Schleife oder gescheiterte DNSSEC-Prüfung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Per-link DNS can be absent or assigned to the wrong link, while /etc/resolv.conf may point to a stale file or inactive local stub.",
+        "de": "DNS je Verbindung kann fehlen oder falsch zugeordnet sein; /etc/resolv.conf kann auf eine alte Datei oder einen inaktiven lokalen Stub zeigen."
+      },
+      {
+        "en": "A local DNS stub configured as its own upstream creates a loop; DNSSEC failures instead require time, signing and upstream evidence.",
+        "de": "Ein lokaler DNS-Stub als eigener Upstream erzeugt eine Schleife; DNSSEC-Fehler benötigen dagegen Befunde zu Zeit, Signierung und Upstream."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-resolver-routing",
+        "command": "resolvectl status",
+        "explanation": {
+          "en": "Read global and per-link DNS servers, domains and default-route policy without changing them. If the service is unavailable, confirm whether this system is meant to use resolved.",
+          "de": "Globale und verbindungsspezifische DNS-Server, Domains und Standard-Richtlinie unverändert lesen. Bei nicht verfügbarem Dienst klären, ob dieses System resolved einsetzen soll."
+        },
+        "interpretation": {
+          "en": "127.0.0.53 is normally the local client stub, not an upstream DNS server for resolved. A correct per-link server still needs an IP route and may intentionally serve only a domain.",
+          "de": "127.0.0.53 ist gewöhnlich der lokale Client-Stub, kein Upstream-DNS-Server für resolved. Auch ein korrekter Server je Verbindung benötigt eine IP-Route und kann absichtlich nur eine Domain bedienen."
+        }
+      },
+      {
+        "id": "read-resolvconf-target",
+        "command": "readlink -f /etc/resolv.conf",
+        "explanation": {
+          "en": "Resolve the file’s path without editing it. A plain file can be a valid mode; compare the result with the distribution’s intended resolver integration.",
+          "de": "Dateipfad ohne Bearbeitung auflösen. Eine gewöhnliche Datei kann ein gültiger Modus sein; Ergebnis mit der vorgesehenen Resolver-Anbindung der Distribution vergleichen."
+        },
+        "interpretation": {
+          "en": "A stub-resolv.conf target expects the local stub to be available. The upstream resolv.conf mode bypasses stub-specific per-link routing for clients that read it directly; neither mode should be forced without checking the design.",
+          "de": "Ein stub-resolv.conf-Ziel erwartet verfügbaren lokalen Stub. Der Upstream-resolv.conf-Modus umgeht dessen verbindungsspezifisches Routing für direkt lesende Clients; keinen Modus ungeprüft erzwingen."
+        }
+      },
+      {
+        "id": "query-intended-hostname",
+        "command": "resolvectl query HOSTNAME",
+        "explanation": {
+          "en": "Replace HOSTNAME with a known hostname you are authorized to query. This sends a DNS query but does not alter configuration; avoid sharing private names in pasted output.",
+          "de": "HOSTNAME durch einen bekannten, zur Abfrage freigegebenen Namen ersetzen. Der Befehl sendet eine DNS-Abfrage, verändert aber keine Konfiguration; private Namen vor Weitergabe entfernen."
+        },
+        "interpretation": {
+          "en": "No appropriate name servers is a routing/server-selection failure, not proof that the name does not exist. DNSSEC validation failed is distinct from NXDOMAIN and warrants the detailed resolver log.",
+          "de": "No appropriate name servers ist ein Serverauswahl-/Routingfehler, kein Beweis für einen nicht existierenden Namen. DNSSEC validation failed unterscheidet sich von NXDOMAIN und erfordert das detaillierte Resolver-Log."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-intended-resolver-integration",
+        "title": {
+          "en": "Restore the intended local resolver integration",
+          "de": "Vorgesehene lokale Resolver-Anbindung herstellen"
+        },
+        "body": {
+          "en": "If the system is designed for resolved but /etc/resolv.conf or NetworkManager’s DNS plugin no longer matches that design, save the file/symlink and configure the documented distribution integration. Restore the local stub service only when that selected mode requires it.",
+          "de": "Wenn das System resolved vorsieht, /etc/resolv.conf oder NetworkManagers DNS-Plugin aber abweichen, Datei/Symlink sichern und die dokumentierte Distributions-Anbindung herstellen. Lokalen Stub-Dienst nur aktivieren, wenn der gewählte Modus ihn benötigt."
+        },
+        "precautions": {
+          "en": "Preserve VPN domain routing and any intentional alternative resolver. Do not make resolv.conf immutable or replace all DNS servers with a public server that cannot resolve internal names.",
+          "de": "VPN-Domainrouting und bewusst genutzte andere Resolver erhalten. resolv.conf nicht unveränderlich setzen und nicht alle Server durch einen öffentlichen DNS ohne interne Namen ersetzen."
+        },
+        "rollback": {
+          "en": "Restore the saved resolv.conf form and previous DNS plugin/service state, then reconnect the affected profile if DNS becomes worse.",
+          "de": "Gesicherte resolv.conf-Form und vorigen DNS-Plugin-/Dienstzustand wiederherstellen; bei schlechterem DNS betroffenes Profil erneut verbinden."
+        }
+      },
+      {
+        "id": "correct-upstream-dns-selection",
+        "title": {
+          "en": "Correct the confirmed upstream or loop",
+          "de": "Bestätigten Upstream oder Schleife korrigieren"
+        },
+        "body": {
+          "en": "If resolved lacks the intended per-link DNS or lists its own stub as upstream, correct that connection’s DNS source to the server supplied by the network administrator or valid DHCP configuration. Keep route-only domains attached to their intended link and compare the same hostname.",
+          "de": "Wenn resolved der vorgesehene DNS je Verbindung fehlt oder der eigene Stub als Upstream eingetragen ist, DNS-Quelle dieses Profils auf den vorgegebenen Server oder gültige DHCP-Konfiguration korrigieren. Routing-Domains an ihrer vorgesehenen Verbindung erhalten und denselben Namen vergleichen."
+        },
+        "precautions": {
+          "en": "The DNS server must be reachable through its intended network. Changing only a server address cannot repair a disconnected VPN or missing IP route.",
+          "de": "Der DNS-Server muss über sein vorgesehenes Netz erreichbar sein. Nur die Serveradresse zu ändern repariert weder getrenntes VPN noch fehlende IP-Route."
+        },
+        "rollback": {
+          "en": "Restore the saved per-link DNS addresses, domain list and ignore-auto-dns setting; reactivate the previous profile if necessary.",
+          "de": "Gesicherte DNS-Adressen, Domainliste und ignore-auto-dns-Einstellung je Verbindung wiederherstellen; bei Bedarf voriges Profil aktivieren."
+        }
+      },
+      {
+        "id": "repair-dnssec-evidence",
+        "title": {
+          "en": "Resolve a DNSSEC validation failure",
+          "de": "DNSSEC-Prüffehler anhand der Befunde beheben"
+        },
+        "body": {
+          "en": "If the resolver reports DNSSEC failure, check actual system time and the detailed failure reason before changing DNS policy. Correct verified clock drift through the intended time service; if only one signed domain fails, have its administrator inspect the signature/trust chain or a filtering upstream.",
+          "de": "Bei gemeldetem DNSSEC-Fehler tatsächliche Systemzeit und genauen Fehlergrund vor Richtlinienänderung prüfen. Belegte Uhrabweichung über den vorgesehenen Zeitdienst korrigieren; bei nur einer betroffenen signierten Domain Signatur/Vertrauenskette oder filternden Upstream mit deren Verwaltung prüfen."
+        },
+        "precautions": {
+          "en": "Do not globally disable DNSSEC to hide an unexplained validation failure. Large time changes can affect certificates and active sessions, so use the normal time-sync recovery procedure.",
+          "de": "DNSSEC nicht global zur Umgehung ungeklärter Validierungsfehler abschalten. Größere Zeitsprünge beeinflussen Zertifikate und Sitzungen; normales Verfahren zur Zeitsynchronisierung nutzen."
+        },
+        "rollback": {
+          "en": "Restore any saved DNS server or time-service configuration if that comparison regresses; keep validation policy intact while the authoritative problem is investigated.",
+          "de": "Bei schlechterem Ergebnis gesicherte DNS-Server- oder Zeitdienst-Konfiguration zurücknehmen; Validierungsrichtlinie während Klärung des autoritativen Problems erhalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian systemd manual: resolved routing and resolv.conf modes",
+        "url": "https://manpages.debian.org/trixie/systemd-resolved/systemd-resolved.service.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian systemd manual: resolvectl(1)",
+        "url": "https://manpages.debian.org/trixie/systemd-resolved/resolvectl.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: unmanaged devices, DNS and connectivity configuration",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/NetworkManager.conf.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd: resolvectl resolution errors",
+        "url": "https://github.com/systemd/systemd/blob/main/src/resolve/resolvectl.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "systemd: DNSSEC transaction failure reporting",
+        "url": "https://github.com/systemd/systemd/blob/main/src/resolve/resolved-dns-transaction.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "resolved-no-name-server",
+        "all": [
+          "resolve call failed:",
+          "No appropriate name servers or networks for name found"
+        ],
+        "sample": "intranet.example: resolve call failed: No appropriate name servers or networks for name found",
+        "negative": [
+          "intranet.example: 192.0.2.20",
+          "intranet.example: resolve call failed: Name intranet.example not found"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The resolver cannot select an appropriate name server or resolution network for this query.",
+          "de": "Der Resolver kann für die Abfrage keinen passenden Nameserver oder Auflösungspfad auswählen."
+        },
+        "significance": {
+          "en": "Inspect per-link DNS and domain routing; do not interpret this as an authoritative nonexistent-name response.",
+          "de": "DNS je Verbindung und Domainrouting prüfen; dies ist keine autoritative Meldung eines nicht vorhandenen Namens."
+        }
+      },
+      {
+        "id": "resolved-upstream-loop",
+        "all": [
+          "resolve call failed:",
+          "Configured DNS server loops back to us"
+        ],
+        "sample": "intranet.example: resolve call failed: Configured DNS server loops back to us",
+        "negative": [
+          "intranet.example: resolve call failed: Query timed out",
+          "systemd-resolved[720]: Using DNS server 192.0.2.53 for transaction 1"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The resolver detects a configured upstream path that returns to itself.",
+          "de": "Der Resolver erkennt einen konfigurierten Upstream-Pfad zurück zu sich selbst."
+        },
+        "significance": {
+          "en": "Check for the local stub address being supplied as upstream DNS or a loop between local forwarding resolvers.",
+          "de": "Lokale Stub-Adresse als Upstream-DNS oder Schleife zwischen lokalen weiterleitenden Resolvern prüfen."
+        }
+      },
+      {
+        "id": "resolved-dnssec-validation",
+        "all": [
+          "systemd-resolved",
+          "DNSSEC validation failed for question"
+        ],
+        "sample": "systemd-resolved[720]: DNSSEC validation failed for question signed.example IN A: signature-expired",
+        "negative": [
+          "systemd-resolved[720]: Positive Trust Anchors: . IN DS 20326",
+          "systemd-resolved[720]: DNSSEC validation succeeded for question signed.example IN A"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The transaction’s DNSSEC validation did not succeed; the detailed reason matters.",
+          "de": "Die DNSSEC-Validierung der Transaktion war nicht erfolgreich; der genaue Grund ist entscheidend."
+        },
+        "significance": {
+          "en": "Check time, the domain’s signing chain and upstream behavior before changing validation policy.",
+          "de": "Zeit, Signierungskette der Domain und Upstream-Verhalten vor Änderung der Validierungsrichtlinie prüfen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-vpn-split-dns",
+    "slug": {
+      "en": "network-vpn-split-dns",
+      "de": "vpn-split-dns-fehlzuordnung"
+    },
+    "category": "network",
+    "title": {
+      "en": "VPN works but internal names use the wrong DNS",
+      "de": "VPN funktioniert, interne Namen nutzen falsches DNS"
+    },
+    "summary": {
+      "en": "Trace domain-specific DNS selection when VPN addresses work but internal hostnames fail, preserving public DNS and the intended private lookup path.",
+      "de": "Domainabhängige DNS-Auswahl prüfen, wenn VPN-Adressen funktionieren, interne Namen aber scheitern; öffentliche und private Auflösungswege erhalten."
+    },
+    "environment": {
+      "en": "NetworkManager VPNs with systemd-resolved or another split-DNS-capable plugin; plain resolv.conf cannot express the same per-domain routing.",
+      "de": "NetworkManager-VPN mit systemd-resolved oder anderem Split-DNS-Plugin; einfache resolv.conf kann dieselbe Domainzuordnung nicht ausdrücken."
+    },
+    "symptoms": {
+      "en": [
+        "Public hostnames resolve while the VPN’s internal fully qualified names fail.",
+        "A private DNS server is present but its expected routing domain is missing or shadowed."
+      ],
+      "de": [
+        "Öffentliche Namen werden aufgelöst, vollständig qualifizierte interne VPN-Namen scheitern.",
+        "Privater DNS-Server ist vorhanden, seine Routing-Domain fehlt aber oder wird übersteuert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The VPN may omit a route-only domain, use an unintended ~. catch-all domain, or lose selection through DNS priority settings.",
+        "de": "Das VPN kann eine Routing-Domain auslassen, unbeabsichtigt ~. als Sammelzuordnung nutzen oder durch DNS-Prioritäten aus der Auswahl fallen."
+      },
+      {
+        "en": "The internal server may lack an IP route through the VPN; .local names also need explicit design because resolved normally treats that suffix as multicast DNS.",
+        "de": "Dem internen Server kann eine VPN-IP-Route fehlen; .local-Namen brauchen ein bewusstes Design, da resolved diese Endung gewöhnlich als Multicast-DNS behandelt."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-per-link-vpn-dns",
+        "command": "resolvectl status",
+        "explanation": {
+          "en": "Read DNS servers and routing domains after the VPN is active. Compare its link with the physical network without changing resolver state.",
+          "de": "DNS-Server und Routing-Domains bei aktivem VPN lesen. VPN-Verbindung mit physischem Netz vergleichen, ohne Resolverzustand zu ändern."
+        },
+        "interpretation": {
+          "en": "A ~corp.example domain routes that suffix to its link; the most specific matching suffix wins. ~. is a wildcard and can intentionally or accidentally capture unrelated queries.",
+          "de": "~corp.example leitet diese Endung an ihre Verbindung; die spezifischste passende Endung gewinnt. ~. ist eine Sammelzuordnung und kann andere Anfragen gewollt oder versehentlich erfassen."
+        }
+      },
+      {
+        "id": "read-vpn-dns-profile",
+        "command": "nmcli -f ipv4.dns,ipv4.dns-search,ipv4.dns-priority,ipv4.ignore-auto-dns,ipv6.dns,ipv6.dns-search,ipv6.dns-priority connection show \"VPN_PROFILE\"",
+        "explanation": {
+          "en": "Replace VPN_PROFILE with the saved VPN connection name. Read both families’ DNS policy without displaying credentials or activating the VPN.",
+          "de": "VPN_PROFILE durch den gespeicherten VPN-Verbindungsnamen ersetzen. DNS-Richtlinien beider Familien ohne Zugangsdaten oder VPN-Aktivierung lesen."
+        },
+        "interpretation": {
+          "en": "The active resolver result can include server-pushed values beyond the saved profile. A negative DNS priority can exclude other connections with greater numeric priority; compare all active profiles before adjusting it.",
+          "de": "Das aktive Resolverergebnis kann zusätzlich serverseitig übermittelte Werte enthalten. Negative DNS-Priorität kann andere Verbindungen mit höherem Zahlenwert ausschließen; vor Änderung alle aktiven Profile vergleichen."
+        }
+      },
+      {
+        "id": "read-private-dns-route",
+        "command": "ip route get DNS_IP",
+        "explanation": {
+          "en": "Replace DNS_IP with the confirmed private DNS server’s address; use ip -6 route get for IPv6. This calculates a route without sending a probe.",
+          "de": "DNS_IP durch die bestätigte private DNS-Serveradresse ersetzen; bei IPv6 ip -6 route get verwenden. Dies berechnet eine Route ohne Netzwerkprobe."
+        },
+        "interpretation": {
+          "en": "The selected device and gateway should match the intended VPN path. Correct domain selection cannot compensate for a route that sends the private server outside the tunnel.",
+          "de": "Gewähltes Gerät und Gateway sollen zum vorgesehenen VPN-Pfad passen. Korrekte Domainauswahl ersetzt keine Route, die den privaten Server außerhalb des Tunnels erreicht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "attach-intended-private-domain",
+        "title": {
+          "en": "Attach the intended private DNS domain",
+          "de": "Vorgesehene private DNS-Domain zuordnen"
+        },
+        "body": {
+          "en": "If the VPN is missing its administrator-specified routing domain, save the profile and add only that suffix as a route-only DNS domain, such as ~corp.example after replacing the example with the real domain. Reconnect the VPN and compare an internal fully qualified name.",
+          "de": "Wenn die vorgegebene Routing-Domain des VPN fehlt, Profil sichern und nur diese Endung als DNS-Routing-Domain ergänzen, beispielsweise ~corp.example mit tatsächlicher Domain statt Beispiel. VPN erneut verbinden und einen internen vollständig qualifizierten Namen vergleichen."
+        },
+        "precautions": {
+          "en": "Use ~. only when the VPN is intentionally responsible for all DNS. Preserve required search domains and any managed corporate profile that will overwrite local edits.",
+          "de": "~. nur nutzen, wenn das VPN absichtlich alle DNS-Anfragen übernimmt. Benötigte Suchdomains und verwaltete Unternehmensprofile beachten, die lokale Änderungen überschreiben können."
+        },
+        "rollback": {
+          "en": "Restore the saved DNS domain list and reconnect the VPN if public or private queries are routed incorrectly.",
+          "de": "Gesicherte DNS-Domainliste wiederherstellen und VPN erneut verbinden, wenn öffentliche oder private Anfragen falsch geleitet werden."
+        }
+      },
+      {
+        "id": "align-dns-priority-and-ip-route",
+        "title": {
+          "en": "Align DNS priority with the server route",
+          "de": "DNS-Priorität und Serverroute abstimmen"
+        },
+        "body": {
+          "en": "If the intended VPN DNS is excluded by a confirmed priority conflict, adjust only that profile’s DNS priority according to the network policy. If route lookup instead misses the tunnel, correct the VPN’s specific route to the private DNS server or its approved subnet.",
+          "de": "Wenn ein bestätigter Prioritätskonflikt das vorgesehene VPN-DNS ausschließt, nur dessen Profilpriorität gemäß Netzrichtlinie ändern. Wenn die Routenabfrage dagegen den Tunnel umgeht, gezielte VPN-Route zum privaten DNS-Server oder freigegebenen Subnetz korrigieren."
+        },
+        "precautions": {
+          "en": "DNS priority and IP route metrics solve different selection problems. Avoid changing all default routes or leaking internal lookups to a public server.",
+          "de": "DNS-Priorität und IP-Routenmetrik lösen verschiedene Auswahlprobleme. Nicht alle Standardrouten ändern und interne Namensabfragen nicht an öffentliche Server leiten."
+        },
+        "rollback": {
+          "en": "Restore the saved priorities and specific route list, then reconnect the VPN from a working network path if either address family regresses.",
+          "de": "Gesicherte Prioritäten und spezifische Routenliste wiederherstellen; bei Verschlechterung einer Adressfamilie VPN über funktionierenden Netzpfad erneut verbinden."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian systemd manual: resolved routing and resolv.conf modes",
+        "url": "https://manpages.debian.org/trixie/systemd-resolved/systemd-resolved.service.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: IPv4 method, DNS priorities and address conflict detection",
+        "url": "https://networkmanager.dev/docs/api/latest/settings-ipv4.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: IPv6 address and route configuration",
+        "url": "https://networkmanager.dev/docs/api/latest/settings-ipv6.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian iproute2 manual: ip-route(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-route.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "network-path-mtu",
+    "slug": {
+      "en": "network-path-mtu",
+      "de": "pfad-mtu-paketgroesse"
+    },
+    "category": "network",
+    "title": {
+      "en": "Small requests work but large transfers stall",
+      "de": "Kleine Anfragen funktionieren, große Transfers stocken"
+    },
+    "summary": {
+      "en": "Investigate a path MTU mismatch when large transfers stall through VPNs or tunnels, using destination-specific routing and measured packet-size evidence.",
+      "de": "Pfad-MTU bei stockenden großen Transfers über VPN oder Tunnel untersuchen; zielbezogene Routen und gemessene Paketgrößen als Befund nutzen."
+    },
+    "environment": {
+      "en": "IP paths involving VPN encapsulation, PPPoE or other reduced-MTU links; applications and transport policies can also cause similar stalls.",
+      "de": "IP-Pfade mit VPN-Kapselung, PPPoE oder anderen Links mit kleinerer MTU; Anwendungen und Transportregeln können ähnliche Pausen verursachen."
+    },
+    "symptoms": {
+      "en": [
+        "A session connects and small responses arrive, but larger downloads stop.",
+        "The problem appears on the tunneled path and changes with packet size."
+      ],
+      "de": [
+        "Eine Sitzung verbindet sich und kleine Antworten kommen an, größere Downloads stoppen.",
+        "Das Problem tritt auf dem Tunnelpfad auf und verändert sich mit der Paketgröße."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Encapsulation overhead may exceed the effective path MTU while required ICMP feedback is lost or filtered.",
+        "de": "Kapselungs-Overhead kann die wirksame Pfad-MTU überschreiten, während nötige ICMP-Rückmeldungen verloren gehen oder gefiltert werden."
+      },
+      {
+        "en": "A tunnel interface can advertise an unsuitable MTU; endpoint load, packet loss and application behavior remain alternative causes without size-dependent evidence.",
+        "de": "Eine Tunnelschnittstelle kann unpassende MTU melden; Endpunktlast, Paketverlust und Anwendungsverhalten bleiben ohne größenabhängige Befunde mögliche andere Ursachen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-selected-destination-route",
+        "command": "ip route get DEST_IP",
+        "explanation": {
+          "en": "Replace DEST_IP with a known affected destination’s IP; use ip -6 route get for IPv6. Read the chosen device, source and any cached MTU without sending traffic.",
+          "de": "DEST_IP durch IP eines bekannten betroffenen Ziels ersetzen; bei IPv6 ip -6 route get verwenden. Gewähltes Gerät, Quelle und gegebenenfalls gecachte MTU ohne Verkehr lesen."
+        },
+        "interpretation": {
+          "en": "Confirm the problem’s traffic actually uses the tunnel. The local interface MTU or a cached route value alone does not establish the entire path’s usable MTU.",
+          "de": "Bestätigen, dass der betroffene Verkehr den Tunnel nutzt. Lokale Schnittstellen-MTU oder ein gecachter Routenwert allein bestimmen nicht die nutzbare MTU des gesamten Pfads."
+        }
+      },
+      {
+        "id": "measure-path-mtu-feedback",
+        "command": "tracepath -n DEST_IP",
+        "explanation": {
+          "en": "Replace DEST_IP with that destination and run one bounded trace to a host you may probe. The command sends UDP probes without changing settings; tracepath may need a distribution package.",
+          "de": "DEST_IP durch dieses Ziel ersetzen und eine begrenzte Ablaufverfolgung zu einem erlaubten Ziel starten. Der Befehl sendet UDP-Proben ohne Einstellungsänderung; tracepath kann ein Distributionspaket benötigen."
+        },
+        "interpretation": {
+          "en": "A lower pmtu report supports a path-size limit. Missing replies can mean probe filtering, so they do not prove a black-hole MTU or identify the exact failing hop.",
+          "de": "Eine niedrigere pmtu-Meldung stützt ein Größenlimit des Pfads. Fehlende Antworten können Probe-Filterung bedeuten und beweisen weder MTU-Blackhole noch genauen fehlerhaften Hop."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "test-measured-tunnel-mtu",
+        "title": {
+          "en": "Compare a measured tunnel MTU",
+          "de": "Gemessene Tunnel-MTU vergleichen"
+        },
+        "body": {
+          "en": "If destination-specific probes and tunnel overhead support a lower limit, record the current MTU and change only the affected tunnel/profile to a value derived from those measurements. Compare the same previously stalled transfer before making the setting persistent.",
+          "de": "Wenn zielbezogene Proben und Tunnel-Overhead ein kleineres Limit stützen, aktuelle MTU dokumentieren und nur betroffenen Tunnel beziehungsweise dessen Profil auf einen daraus abgeleiteten Wert setzen. Denselben stockenden Transfer vor dauerhafter Übernahme vergleichen."
+        },
+        "precautions": {
+          "en": "Use local access or a checkpoint because changing MTU can interrupt the current connection. Do not paste a universal number; IPv6 links must respect the minimum MTU requirements.",
+          "de": "Lokal oder mit Checkpoint arbeiten, da MTU-Änderung die Verbindung unterbrechen kann. Keinen universellen Zahlenwert kopieren; IPv6-Links müssen Mindest-MTU-Vorgaben beachten."
+        },
+        "rollback": {
+          "en": "Restore the recorded MTU and reconnect the original tunnel profile if loss, throughput or reachability worsens.",
+          "de": "Dokumentierte MTU wiederherstellen und ursprüngliches Tunnelprofil erneut verbinden, wenn Verlust, Durchsatz oder Erreichbarkeit schlechter werden."
+        }
+      },
+      {
+        "id": "restore-required-pmtu-feedback",
+        "title": {
+          "en": "Restore the required PMTU feedback",
+          "de": "Erforderliche PMTU-Rückmeldung wiederherstellen"
+        },
+        "body": {
+          "en": "If filtering evidence shows necessary IPv4 fragmentation-needed or IPv6 Packet Too Big messages are blocked on this path, correct the specific firewall/router rule with its administrator. Retest the same path while keeping unrelated filtering intact.",
+          "de": "Wenn Filterbefunde blockierte IPv4-fragmentation-needed- oder IPv6-Packet-Too-Big-Meldungen auf diesem Pfad zeigen, mit der Verwaltung genau die Firewall-/Routerregel korrigieren. Denselben Pfad bei erhaltenen übrigen Filtern vergleichen."
+        },
+        "precautions": {
+          "en": "Do not disable the entire firewall. TCP MSS adjustment may help a particular tunnel’s TCP flow but does not repair UDP or all IPv6 PMTU behavior.",
+          "de": "Nicht die gesamte Firewall abschalten. TCP-MSS-Anpassung kann einzelne Tunnel-TCP-Flüsse verbessern, repariert aber weder UDP noch das gesamte IPv6-PMTU-Verhalten."
+        },
+        "rollback": {
+          "en": "Restore the saved rule if the scoped change creates unintended reachability; recover through the router’s management path and prior tunnel configuration.",
+          "de": "Gesicherte Regel bei unbeabsichtigter Erreichbarkeit wiederherstellen; über Router-Verwaltungszugang und vorige Tunnelkonfiguration zurückkehren."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian iputils manual: tracepath(8) and path MTU",
+        "url": "https://manpages.debian.org/trixie/iputils-tracepath/tracepath.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian iproute2 manual: ip-route(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-route.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel: IPv6 router advertisements and forwarding",
+        "url": "https://docs.kernel.org/networking/ip-sysctl.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "network-ethernet-carrier",
+    "slug": {
+      "en": "network-ethernet-carrier",
+      "de": "ethernet-ohne-carrier"
+    },
+    "category": "network",
+    "title": {
+      "en": "Ethernet has no carrier or repeatedly loses link",
+      "de": "Ethernet ohne Carrier oder mit wiederholtem Linkverlust"
+    },
+    "summary": {
+      "en": "Check physical Ethernet carrier and negotiated link mode before DHCP or DNS changes when a cable connection never becomes operational or keeps dropping.",
+      "de": "Physischen Ethernet-Carrier und ausgehandelten Linkmodus vor DHCP/DNS prüfen, wenn eine Kabelverbindung nicht betriebsbereit wird oder abbricht."
+    },
+    "environment": {
+      "en": "Physical Ethernet NICs; virtual interfaces, bridges and optical links have different operational-state and module requirements.",
+      "de": "Physische Ethernet-Karten; virtuelle Schnittstellen, Bridges und optische Links haben andere Zustands- und Modulanforderungen."
+    },
+    "symptoms": {
+      "en": [
+        "The interface is administratively up but has NO-CARRIER or link detected: no.",
+        "Repeated link-down/up events coincide with connection drops or speed renegotiation."
+      ],
+      "de": [
+        "Die Schnittstelle ist administrativ aktiv, meldet aber NO-CARRIER oder link detected: no.",
+        "Wiederholte Link-down/up-Ereignisse fallen mit Abbrüchen oder neuer Geschwindigkeitsaushandlung zusammen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Cable pairs, connectors, a switch port, power or a transceiver can prevent the lower-layer link from working.",
+        "de": "Kabeladern, Stecker, Switch-Port, Stromversorgung oder Transceiver können den Link auf unterer Ebene verhindern."
+      },
+      {
+        "en": "An unsupported optical module or incompatible link-mode configuration can matter on particular NICs; lack of an IP address alone is not a carrier diagnosis.",
+        "de": "Ein nicht unterstütztes optisches Modul oder unpassender Linkmodus können je nach Karte relevant sein; fehlende IP-Adresse allein ist keine Carrier-Diagnose."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-ethernet-operstate",
+        "command": "ip -details link show dev IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the physical Ethernet NIC. Read administrative flags, carrier-related flags, state and master membership without bringing it up or down.",
+          "de": "IFACE durch die physische Ethernet-Karte ersetzen. Verwaltungsflags, Carrier-Flags, Zustand und Master-Zugehörigkeit ohne Ein-/Ausschalten lesen."
+        },
+        "interpretation": {
+          "en": "UP means administratively enabled; LOWER_UP indicates the driver’s lower-layer signal. An interface enslaved to a bridge may receive its IP configuration on the bridge instead.",
+          "de": "UP bedeutet administrativ aktiviert; LOWER_UP zeigt das vom Treiber gemeldete Signal der unteren Ebene. Bei Bridge-Mitgliedschaft kann die IP-Konfiguration stattdessen auf der Bridge liegen."
+        }
+      },
+      {
+        "id": "read-negotiated-ethernet-link",
+        "command": "ethtool IFACE",
+        "explanation": {
+          "en": "Replace IFACE with that NIC. Query supported and advertised modes, speed, duplex and link detection; privileges may be required for some hardware queries.",
+          "de": "IFACE durch diese Karte ersetzen. Unterstützte/angebotene Modi, Geschwindigkeit, Duplex und Linkerkennung abfragen; manche Hardwareabfragen benötigen Rechte."
+        },
+        "interpretation": {
+          "en": "Link detected: no confirms no reported physical link at that time. Compare advertised modes with the switch; unknown speed with no link is expected and is not a DHCP error.",
+          "de": "Link detected: no bestätigt zu diesem Zeitpunkt fehlenden gemeldeten Link. Angebotene Modi mit Switch vergleichen; unbekannte Geschwindigkeit ohne Link ist erwartbar und kein DHCP-Fehler."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-cable-and-switch-port",
+        "title": {
+          "en": "Compare cable and switch port separately",
+          "de": "Kabel und Switch-Port getrennt vergleichen"
+        },
+        "body": {
+          "en": "If carrier is absent or flaps without intentional disconnects, compare one known-good appropriate cable on the same port, then a known-good switch port in a separate test. Check switch power and link indicators to determine whether the fault follows the path.",
+          "de": "Wenn Carrier ohne absichtliche Trennung fehlt oder wechselt, zuerst ein geeignetes bekannt gutes Kabel am gleichen Port, danach getrennt einen bekannt guten Switch-Port vergleichen. Switch-Versorgung und Linkanzeigen prüfen, um den Fehler dem Pfad zuzuordnen."
+        },
+        "precautions": {
+          "en": "Record VLAN and port policy before moving the cable; the alternate port may belong to another network. Physical changes interrupt active sessions.",
+          "de": "Vor Umstecken VLAN und Port-Richtlinie dokumentieren; Alternativport kann zu einem anderen Netz gehören. Mechanische Änderungen unterbrechen aktive Sitzungen."
+        },
+        "rollback": {
+          "en": "Reconnect the original cable and port if the comparison loses the expected VLAN or management path.",
+          "de": "Ursprüngliches Kabel und Port wieder anschließen, wenn Vergleich das erwartete VLAN oder den Verwaltungszugang verliert."
+        }
+      },
+      {
+        "id": "restore-supported-link-configuration",
+        "title": {
+          "en": "Restore supported link negotiation",
+          "de": "Unterstützte Linkaushandlung herstellen"
+        },
+        "body": {
+          "en": "If the profile or switch shows a manually forced incompatible speed/duplex setting, save both ends’ settings and restore the link mode recommended for that hardware. For ixgbe or another optical NIC, verify the exact transceiver/cable support in the driver and hardware documentation.",
+          "de": "Wenn Profil oder Switch manuell erzwungene unpassende Geschwindigkeit/Duplex zeigen, Einstellungen beider Seiten sichern und den für die Hardware empfohlenen Modus herstellen. Bei ixgbe oder anderer optischer Karte genaue Transceiver-/Kabelunterstützung in Treiber- und Hardwaredokumentation prüfen."
+        },
+        "precautions": {
+          "en": "Do not force one end to full duplex while the other negotiates an incompatible mode, or bypass module validation blindly. Use local or out-of-band access before changing a management link.",
+          "de": "Nicht nur eine Seite auf Vollduplex erzwingen, während die andere unpassend aushandelt, und Modulprüfung nicht blind umgehen. Vor Änderung des Verwaltungslinks lokalen oder separaten Zugang nutzen."
+        },
+        "rollback": {
+          "en": "Restore the saved NIC and switch settings together and return the original supported transceiver/cable if negotiation worsens.",
+          "de": "Gesicherte Karten- und Switch-Einstellungen gemeinsam wiederherstellen und bei schlechterer Aushandlung ursprünglichen unterstützten Transceiver beziehungsweise Kabel einsetzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: administrative and operational link states",
+        "url": "https://docs.kernel.org/networking/operstates.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian ethtool manual: driver, link and statistic queries",
+        "url": "https://manpages.debian.org/trixie/ethtool/ethtool.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel: ixgbe hardware and link requirements",
+        "url": "https://docs.kernel.org/networking/device_drivers/ethernet/intel/ixgbe.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux e1000e: hardware hang and carrier messages, source snapshot",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/d39a1d7486d98668dd34aaa6732aad7977c45f5a/drivers/net/ethernet/intel/e1000e/netdev.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "e1000e-carrier-lost",
+        "all": [
+          "e1000e",
+          "NIC Link is Down"
+        ],
+        "sample": "e1000e 0000:00:19.0 enp0s25: NIC Link is Down",
+        "negative": [
+          "e1000e 0000:00:19.0 enp0s25: NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx",
+          "NetworkManager[650]: device (enp0s25): state change: activated -> deactivating (reason 'user-requested')"
+        ],
+        "severity": "info",
+        "explanation": {
+          "en": "The e1000e driver reports a link-down transition.",
+          "de": "Der e1000e-Treiber meldet einen Link-down-Übergang."
+        },
+        "significance": {
+          "en": "It can also occur during deliberate interface closure. Only unexplained drops correlated with loss of connectivity justify physical-link investigation.",
+          "de": "Dies kann auch beim absichtlichen Schließen der Schnittstelle auftreten. Nur ungeklärte Abbrüche mit Verbindungsverlust begründen eine physische Linkprüfung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-driver-watchdog",
+    "slug": {
+      "en": "network-driver-watchdog",
+      "de": "netzwerktreiber-sendewarteschlange-haengt"
+    },
+    "category": "network",
+    "title": {
+      "en": "Network transmit queue watchdog or hardware hang",
+      "de": "Netzwerk-Sendewarteschlange oder Hardware hängt"
+    },
+    "summary": {
+      "en": "Investigate driver-level transmit stalls when the kernel watchdog fires, using the exact NIC and driver version before testing a narrowly scoped workaround.",
+      "de": "Sendestau auf Treiberebene bei Kernel-Watchdog untersuchen; genaue Karte und Treiberversion vor einem eng begrenzten Umgehungsversuch bestimmen."
+    },
+    "environment": {
+      "en": "Ethernet or other netdev drivers with transmit queues; the additional hardware-hang signature is specific to Intel e1000e.",
+      "de": "Ethernet- oder andere netdev-Treiber mit Sendewarteschlangen; zusätzliche Hardware-Hang-Signatur gilt speziell für Intel e1000e."
+    },
+    "symptoms": {
+      "en": [
+        "Network traffic stops until the driver resets or the system restarts.",
+        "The kernel reports NETDEV WATCHDOG or an e1000e hardware unit hang."
+      ],
+      "de": [
+        "Netzverkehr stoppt bis zum Treiber-Reset oder Neustart.",
+        "Der Kernel meldet NETDEV WATCHDOG oder einen e1000e-Hardware-Unit-Hang."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The transmit queue has not progressed within its watchdog window; driver, device, firmware, interrupt handling or lower-link trouble may be involved.",
+        "de": "Die Sendewarteschlange hat im Watchdog-Fenster keinen Fortschritt erzielt; Treiber, Gerät, Firmware, Interruptverarbeitung oder Linkprobleme können beteiligt sein."
+      },
+      {
+        "en": "An inappropriate driver-specific tuning option or kernel regression can contribute, but the watchdog alone cannot select a workaround.",
+        "de": "Unpassende treiberspezifische Optimierungsoption oder Kernel-Regression können beitragen; der Watchdog allein wählt jedoch keine Abhilfe aus."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-driver-and-firmware-version",
+        "command": "ethtool -i IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the interface named by the watchdog. Read driver, bus identity and reported firmware version without resetting the NIC.",
+          "de": "IFACE durch die Watchdog-Schnittstelle ersetzen. Treiber, Buskennung und gemeldete Firmware-Version ohne Kartenreset lesen."
+        },
+        "interpretation": {
+          "en": "Use the actual driver name when consulting fixes. A blank firmware-version field does not by itself mean firmware is missing; retain the PCI identity and running kernel version.",
+          "de": "Bei Abhilfen den tatsächlichen Treibernamen nutzen. Leeres firmware-version-Feld bedeutet allein keine fehlende Firmware; PCI-Kennung und laufende Kernelversion festhalten."
+        }
+      },
+      {
+        "id": "read-transmit-hang-context",
+        "command": "journalctl -k -b --no-pager -n 400",
+        "explanation": {
+          "en": "Read the driver events around the stall; journal privileges may be required. Preserve the watchdog line, preceding link/PCI errors and any driver-specific recovery guidance.",
+          "de": "Treiberereignisse um den Stillstand lesen; Journalrechte können nötig sein. Watchdog-Zeile, vorherige Link-/PCI-Fehler und treiberspezifische Rettungshinweise erhalten."
+        },
+        "interpretation": {
+          "en": "A watchdog is a transmit-progress failure, distinct from DNS timeout. e1000e hardware-unit-hang details are useful for a driver report; repeated resets do not prove the NIC is physically defective.",
+          "de": "Watchdog bezeichnet fehlenden Sendefortschritt statt DNS-Timeout. e1000e-Hardware-Hang-Details helfen beim Treiberbericht; wiederholte Resets beweisen keinen physischen Kartendefekt."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-supported-kernel-driver",
+        "title": {
+          "en": "Compare a supported kernel and driver",
+          "de": "Unterstützten Kernel und Treiber vergleichen"
+        },
+        "body": {
+          "en": "If the hang began after a kernel update, boot an already installed previous supported kernel and compare the same NIC, link and bounded workload. For a persistent fault, check the distribution’s documented driver/firmware fixes with the exact device ID and retained hang details.",
+          "de": "Wenn der Hang nach Kernel-Update begann, einen bereits installierten früheren unterstützten Kernel starten und dieselbe Karte, Verbindung und begrenzte Last vergleichen. Bei bleibendem Fehler Distributionshinweise zu Treiber/Firmware mit genauer Geräte-ID und Hang-Details prüfen."
+        },
+        "precautions": {
+          "en": "Keep both boot choices and local access. Avoid downloading an unrelated out-of-tree driver or unloading the only remote-access NIC during an active session.",
+          "de": "Beide Startoptionen und lokalen Zugang erhalten. Keinen unbeteiligten externen Treiber laden und einzige Fernzugangskarte nicht während aktiver Sitzung entladen."
+        },
+        "rollback": {
+          "en": "Return to the previous working kernel through the boot menu and restore the recorded driver options if a proposed update worsens access.",
+          "de": "Über das Startmenü zum funktionierenden Kernel zurückkehren und dokumentierte Treiberoptionen wiederherstellen, wenn eine vorgeschlagene Aktualisierung den Zugang verschlechtert."
+        }
+      },
+      {
+        "id": "remove-confirmed-driver-tuning",
+        "title": {
+          "en": "Undo a confirmed driver-specific tuning issue",
+          "de": "Bestätigte Treiberoptimierung zurücknehmen"
+        },
+        "body": {
+          "en": "If e1000e is bound and a saved module override sets RxIntDelay above its documented default of zero, remove only that override and compare after a controlled restart. Alternatively, use a workaround named by this exact driver/hardware’s log or official documentation, one setting at a time.",
+          "de": "Wenn e1000e gebunden ist und eine gespeicherte Moduloption RxIntDelay über den dokumentierten Standard null setzt, nur diese Option entfernen und nach kontrolliertem Neustart vergleichen. Alternativ eine vom genauen Treiber-/Hardware-Log oder offizieller Dokumentation genannte Abhilfe einzeln prüfen."
+        },
+        "precautions": {
+          "en": "This receive-delay caveat applies to e1000e, not every NIC. Record existing options and keep a recovery console; blanket offload or power-management disablement can hide evidence and reduce performance.",
+          "de": "Dieser Empfangsverzögerungshinweis gilt für e1000e, nicht jede Karte. Vorige Optionen dokumentieren und Rettungskonsole behalten; pauschales Abschalten von Offload/Energiesparen kann Befunde verdecken und Leistung senken."
+        },
+        "rollback": {
+          "en": "Restore the saved single override if the comparison has no benefit or causes new trouble, and return to the kernel that preserved connectivity.",
+          "de": "Gesicherte einzelne Option bei fehlendem Nutzen oder neuen Problemen wiederherstellen und zum Kernel mit funktionierender Verbindung zurückkehren."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux networking: transmit watchdog source",
+        "url": "https://github.com/torvalds/linux/blob/master/net/sched/sch_generic.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Debian ethtool manual: driver, link and statistic queries",
+        "url": "https://manpages.debian.org/trixie/ethtool/ethtool.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel: e1000e options and receive-delay caveat",
+        "url": "https://docs.kernel.org/networking/device_drivers/ethernet/intel/e1000e.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux e1000e: hardware hang and carrier messages, source snapshot",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/d39a1d7486d98668dd34aaa6732aad7977c45f5a/drivers/net/ethernet/intel/e1000e/netdev.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "netdev-transmit-watchdog",
+        "all": [
+          "NETDEV WATCHDOG:",
+          "transmit queue",
+          "timed out"
+        ],
+        "sample": "kernel: NETDEV WATCHDOG: CPU: 3: transmit queue 0 timed out 5260 ms",
+        "negative": [
+          "NetworkManager[650]: dhcp4 (enp3s0): request timed out",
+          "kernel: NETDEV WATCHDOG: enp3s0 link reinitialized"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The kernel’s transmit queue watchdog detected a stalled queue. The fixture reflects one upstream wording variant.",
+          "de": "Der Kernel-Watchdog der Sendewarteschlange hat Stillstand erkannt. Der Testfall bildet eine upstream verwendete Formulierung ab."
+        },
+        "significance": {
+          "en": "Retain adjacent interface and driver details; wording differs by kernel, and the signal does not identify one hardware cause.",
+          "de": "Benachbarte Schnittstellen- und Treiberdetails erhalten; Formulierung variiert nach Kernel und benennt keine einzelne Hardwareursache."
+        }
+      },
+      {
+        "id": "e1000e-hardware-unit-hang",
+        "all": [
+          "e1000e",
+          "Detected Hardware Unit Hang"
+        ],
+        "sample": "e1000e 0000:00:19.0 enp0s25: Detected Hardware Unit Hang:",
+        "negative": [
+          "e1000e 0000:00:19.0 enp0s25: NIC Link is Up 1000 Mbps Full Duplex",
+          "e1000e 0000:00:19.0 enp0s25: false hang detected, ignoring"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "e1000e reports a real transmit-ring hang after its recheck.",
+          "de": "e1000e meldet nach erneuter Prüfung einen tatsächlichen Hang des Senderings."
+        },
+        "significance": {
+          "en": "Read the following ring/PHY/PCI details and any device-specific guidance before selecting a workaround.",
+          "de": "Folgende Ring-/PHY-/PCI-Details und gerätespezifische Hinweise vor Wahl einer Abhilfe lesen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-ipv6-router-advertisement",
+    "slug": {
+      "en": "network-ipv6-router-advertisement",
+      "de": "ipv6-ohne-router-advertisement-route"
+    },
+    "category": "network",
+    "title": {
+      "en": "IPv6 has an address but no usable default route",
+      "de": "IPv6 hat eine Adresse, aber keine nutzbare Standardroute"
+    },
+    "summary": {
+      "en": "Separate IPv6 addressing from router-advertisement route learning when IPv4 works but IPv6 lacks a gateway, especially on hosts with forwarding enabled.",
+      "de": "IPv6-Adressen von RA-Routenlernen unterscheiden, wenn IPv4 funktioniert, IPv6 aber das Gateway fehlt; besonders bei Hosts mit aktiviertem Forwarding."
+    },
+    "environment": {
+      "en": "IPv6 networks using router advertisements and NetworkManager; routers and intentionally static deployments need an explicit routing design.",
+      "de": "IPv6-Netze mit Router Advertisements und NetworkManager; Router und absichtlich statische Umgebungen benötigen ein ausdrückliches Routingdesign."
+    },
+    "symptoms": {
+      "en": [
+        "IPv6 shows a link-local or global address but no expected default route.",
+        "The failure follows enabling forwarding for containers, virtualization or routing."
+      ],
+      "de": [
+        "IPv6 zeigt eine Link-Local- oder globale Adresse, aber keine erwartete Standardroute.",
+        "Der Fehler folgt aktiviertem Forwarding für Container, Virtualisierung oder Routing."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The local profile may suppress automatic routes, or the upstream router may not advertise a usable default-router lifetime.",
+        "de": "Das lokale Profil kann automatische Routen unterdrücken, oder der Router kündigt keine nutzbare Lebensdauer für die Standardroute an."
+      },
+      {
+        "en": "Kernel router-advertisement acceptance normally changes when forwarding is enabled; DHCPv6 address assignment does not itself supply a default gateway.",
+        "de": "Kernel-Annahme von Router Advertisements ändert sich gewöhnlich bei aktiviertem Forwarding; DHCPv6-Adressvergabe liefert selbst kein Standardgateway."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-ipv6-route-state",
+        "command": "ip -6 route show dev IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the IPv6 uplink. Read connected and default routes without soliciting advertisements or changing routes.",
+          "de": "IFACE durch den IPv6-Uplink ersetzen. Verbundene und Standardrouten ohne neue Advertisements oder Routenänderung lesen."
+        },
+        "interpretation": {
+          "en": "A default via a link-local router with proto ra supports RA learning. A global address without default route is possible; a fe80:: address alone does not establish Internet IPv6.",
+          "de": "Eine Standardroute über Link-Local-Router mit proto ra stützt RA-Lernen. Globale Adresse ohne Standardroute ist möglich; fe80::-Adresse allein beweist keine Internet-IPv6-Verbindung."
+        }
+      },
+      {
+        "id": "read-ra-forwarding-policy",
+        "command": "sysctl net.ipv6.conf.IFACE.accept_ra net.ipv6.conf.IFACE.forwarding",
+        "explanation": {
+          "en": "Replace IFACE with the uplink’s actual name; this reads two per-interface values without assigning them. Names containing dots may require reading the corresponding /proc/sys paths instead.",
+          "de": "IFACE durch den tatsächlichen Uplink-Namen ersetzen; zwei Schnittstellenwerte ohne Zuweisung lesen. Namen mit Punkten benötigen gegebenenfalls die entsprechenden /proc/sys-Pfade."
+        },
+        "interpretation": {
+          "en": "accept_ra=1 normally accepts RAs only without forwarding; accept_ra=2 permits acceptance even with forwarding. NetworkManager may manage RA processing, so also compare its active IPv6 profile before changing kernel settings.",
+          "de": "accept_ra=1 nimmt RAs gewöhnlich nur ohne Forwarding an; accept_ra=2 erlaubt Annahme trotz Forwarding. NetworkManager kann RA-Verarbeitung selbst steuern; vor Kerneländerung auch aktives IPv6-Profil vergleichen."
+        }
+      },
+      {
+        "id": "read-ipv6-profile-policy",
+        "command": "nmcli -f ipv6.method,ipv6.never-default,ipv6.ignore-auto-routes,ipv6.gateway connection show \"PROFILE\"",
+        "explanation": {
+          "en": "Replace PROFILE with the active uplink profile. Read how the manager intends to obtain addresses and routes, without modifying the profile.",
+          "de": "PROFILE durch aktives Uplink-Profil ersetzen. Vorgesehenen Adress-/Routenerwerb unverändert lesen."
+        },
+        "interpretation": {
+          "en": "never-default or ignore-auto-routes can intentionally suppress a learned gateway. An automatic host profile differs from a manually routed server; match the actual network design.",
+          "de": "never-default oder ignore-auto-routes können gelerntes Gateway absichtlich unterdrücken. Automatisches Hostprofil unterscheidet sich von manuell geroutetem Server; tatsächliches Netzdesign abgleichen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-intended-ipv6-auto-routing",
+        "title": {
+          "en": "Restore intended IPv6 route learning",
+          "de": "Vorgesehenes IPv6-Routenlernen herstellen"
+        },
+        "body": {
+          "en": "If the uplink is meant to be an automatic IPv6 host but the profile suppresses its default route, save the profile and correct that specific automatic-route setting. If all clients lack an RA default, have the router administrator inspect advertisement lifetime and upstream connectivity instead.",
+          "de": "Wenn der Uplink als automatischer IPv6-Host vorgesehen ist, sein Profil aber die Standardroute unterdrückt, Profil sichern und nur diese automatische Routeneinstellung korrigieren. Fehlt allen Clients die RA-Standardroute, Routerverwaltung stattdessen Lebensdauer und Upstream prüfen lassen."
+        },
+        "precautions": {
+          "en": "Preserve an intentional VPN-only or secondary interface never-default policy. Do not invent a global IPv6 gateway from an address alone.",
+          "de": "Absichtliche never-default-Richtlinie von reinem VPN oder Zweitschnittstelle erhalten. Aus einer Adresse allein kein globales IPv6-Gateway erfinden."
+        },
+        "rollback": {
+          "en": "Restore the saved profile and router advertisement settings; reactivate the original connection locally if another default route becomes preferred.",
+          "de": "Gesichertes Profil und RA-Einstellungen des Routers wiederherstellen; ursprüngliche Verbindung lokal aktivieren, wenn eine andere Standardroute bevorzugt wird."
+        }
+      },
+      {
+        "id": "configure-deliberate-forwarding-and-ra",
+        "title": {
+          "en": "Configure deliberate forwarding with RA acceptance",
+          "de": "Forwarding und RA-Annahme bewusst konfigurieren"
+        },
+        "body": {
+          "en": "If this machine intentionally forwards traffic but its uplink must also learn an upstream RA route, follow the owning network manager’s documented method for that design. For kernel-managed RA reception, accept_ra=2 on that exact uplink permits this combination; verify a learned route after the change.",
+          "de": "Wenn der Rechner bewusst Verkehr weiterleitet und sein Uplink zugleich eine RA-Route lernen muss, das dokumentierte Verfahren des zuständigen Netzwerkdienstes nutzen. Bei Kernel-gesteuerter RA-Annahme erlaubt accept_ra=2 an genau diesem Uplink die Kombination; gelernte Route anschließend prüfen."
+        },
+        "precautions": {
+          "en": "Do not change every interface or disable IPv6 globally. Forwarding has security and routing implications; retain the intended firewall and local recovery access.",
+          "de": "Nicht jede Schnittstelle ändern oder IPv6 global deaktivieren. Forwarding beeinflusst Sicherheit und Routing; vorgesehene Firewall und lokalen Rettungszugang erhalten."
+        },
+        "rollback": {
+          "en": "Restore the recorded per-interface RA/forwarding settings and manager profile, then restart only the affected connection using its normal procedure.",
+          "de": "Dokumentierte RA-/Forwarding-Werte je Schnittstelle und Dienstprofil wiederherstellen; nur betroffene Verbindung über ihr normales Verfahren neu starten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: IPv6 router advertisements and forwarding",
+        "url": "https://docs.kernel.org/networking/ip-sysctl.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: IPv6 address and route configuration",
+        "url": "https://networkmanager.dev/docs/api/latest/settings-ipv6.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian iproute2 manual: ip-route(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-route.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "network-duplicate-address",
+    "slug": {
+      "en": "network-duplicate-address",
+      "de": "doppelte-ip-adresse"
+    },
+    "category": "network",
+    "title": {
+      "en": "IPv4 conflict or IPv6 duplicate address detection",
+      "de": "IPv4-Konflikt oder doppelte IPv6-Adresse erkannt"
+    },
+    "summary": {
+      "en": "Resolve confirmed address conflicts when activation is refused or an IPv6 address remains unusable, retaining conflict detection instead of bypassing it.",
+      "de": "Bestätigte Adresskonflikte beheben, wenn Aktivierung verweigert wird oder IPv6-Adresse unbrauchbar bleibt; Konflikterkennung dabei erhalten."
+    },
+    "environment": {
+      "en": "NetworkManager IPv4 address conflict detection or kernel IPv6 DAD; detection defaults depend on the installed manager and distribution.",
+      "de": "NetworkManager-IPv4-Konflikterkennung oder Kernel-IPv6-DAD; Erkennungsstandards hängen vom installierten Dienst und der Distribution ab."
+    },
+    "symptoms": {
+      "en": [
+        "NetworkManager says an address is already in use and refuses to configure it.",
+        "An IPv6 address has dadfailed/tentative state or the kernel identifies a duplicate."
+      ],
+      "de": [
+        "NetworkManager meldet bereits genutzte Adresse und verweigert deren Konfiguration.",
+        "Eine IPv6-Adresse hat dadfailed/tentative-Zustand oder der Kernel meldet ein Duplikat."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A static address can overlap another host or a DHCP pool/reservation, or cloned systems can share intended network identity.",
+        "de": "Eine statische Adresse kann sich mit anderem Host oder DHCP-Pool/Reservierung überschneiden; geklonte Systeme können dieselbe vorgesehene Netzidentität besitzen."
+      },
+      {
+        "en": "A bridge loop or unexpected neighbor response can also trigger conflict detection; the reported peer MAC and network topology need confirmation.",
+        "de": "Eine Bridge-Schleife oder unerwartete Nachbarantwort können ebenfalls Konflikterkennung auslösen; gemeldete Peer-MAC und Topologie müssen geprüft werden."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-address-usability",
+        "command": "ip address show dev IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the interface named by the conflict. Read IPv4/IPv6 addresses and flags without adding, removing or reprobeing them.",
+          "de": "IFACE durch die im Konflikt genannte Schnittstelle ersetzen. IPv4-/IPv6-Adressen und Flags ohne Ergänzen, Löschen oder erneute Probe lesen."
+        },
+        "interpretation": {
+          "en": "dadfailed is an IPv6 conflict result; tentative alone can be a normal short-lived DAD phase. IPv4 may be absent because NetworkManager refused the conflicting address.",
+          "de": "dadfailed ist ein IPv6-Konfliktergebnis; tentative allein kann eine normale kurze DAD-Phase sein. IPv4 kann fehlen, weil NetworkManager die kollidierende Adresse verweigerte."
+        }
+      },
+      {
+        "id": "read-networkmanager-conflict-peer",
+        "command": "journalctl -b -u NetworkManager --no-pager -n 250",
+        "explanation": {
+          "en": "Read IPv4 conflict events with journal privileges if needed. Preserve the address, interface and reported peer MAC for the network administrator.",
+          "de": "IPv4-Konfliktereignisse bei Bedarf mit Journalrechten lesen. Adresse, Schnittstelle und gemeldete Peer-MAC für die Netzwerkverwaltung erhalten."
+        },
+        "interpretation": {
+          "en": "The already-in-use message is more specific than ip-config-unavailable. The peer MAC is a lead, not permission to change another host or proof of a malicious response.",
+          "de": "Already-in-use ist konkreter als ip-config-unavailable. Peer-MAC ist ein Hinweis, keine Erlaubnis zur Änderung anderer Hosts und kein Beweis einer böswilligen Antwort."
+        }
+      },
+      {
+        "id": "read-ipv6-duplicate-event",
+        "command": "journalctl -k -b --no-pager -n 250",
+        "explanation": {
+          "en": "Read kernel IPv6 duplicate events and their peer address/MAC context; access to the kernel journal may require privileges.",
+          "de": "IPv6-Duplikatereignisse im Kernel und deren Peer-Adresse/MAC-Kontext lesen; Kernel-Journalzugriff kann Rechte benötigen."
+        },
+        "interpretation": {
+          "en": "A duplicate detected event means DAD received conflicting evidence. Stable privacy generation may retry a different address; check whether a usable address appeared afterward.",
+          "de": "Duplicate-detected bedeutet, dass DAD widersprechende Befunde erhielt. Stabile Privacy-Generierung kann andere Adresse versuchen; danach entstandene nutzbare Adresse prüfen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "resolve-authorized-address-allocation",
+        "title": {
+          "en": "Correct the conflicting address allocation",
+          "de": "Kollidierende Adressvergabe korrigieren"
+        },
+        "body": {
+          "en": "If the peer and allocation records confirm a duplicate, have the address owner or DHCP administrator assign a free approved address or repair the overlapping reservation/pool. Update only the affected local profile and verify normal conflict detection succeeds afterward.",
+          "de": "Wenn Peer und Vergabeunterlagen ein Duplikat bestätigen, Adressinhaber oder DHCP-Verwaltung eine freie freigegebene Adresse zuweisen beziehungsweise überlappende Reservierung/Pool korrigieren lassen. Nur betroffenes lokales Profil ändern und erfolgreiche normale Konfliktprüfung verifizieren."
+        },
+        "precautions": {
+          "en": "Record the old address, routes and DNS; address changes interrupt sessions and may affect allowlists or service bindings. Do not use an arbitrary unused-looking IP.",
+          "de": "Alte Adresse, Routen und DNS dokumentieren; Adresswechsel unterbrechen Sitzungen und können Freigaben oder Dienstbindungen betreffen. Keine nur scheinbar freie beliebige IP nutzen."
+        },
+        "rollback": {
+          "en": "Restore the saved profile through local access if the replacement breaks routing, but leave the confirmed duplicate disconnected until allocation is resolved.",
+          "de": "Bei gestörtem Routing gesichertes Profil lokal wiederherstellen; bestätigtes Duplikat bis zur Vergabeklärung jedoch getrennt lassen."
+        }
+      },
+      {
+        "id": "fix-clone-identity-or-layer2-loop",
+        "title": {
+          "en": "Fix confirmed clone identity or a layer-two loop",
+          "de": "Bestätigte Klonidentität oder Layer-2-Schleife beheben"
+        },
+        "body": {
+          "en": "If conflicts occur only between cloned VMs, inspect their hypervisor MAC assignments and the manager’s DHCP/address-generation identity using the platform’s cloning procedure. If peer evidence indicates a bridge loop instead, remove the confirmed duplicate physical or virtual path with the network administrator.",
+          "de": "Wenn nur geklonte VMs kollidieren, Hypervisor-MAC-Zuweisung und DHCP-/Adressgenerierungsidentität anhand des Klonverfahrens der Plattform prüfen. Verweisen Peer-Befunde stattdessen auf Bridge-Schleife, bestätigten doppelten physischen oder virtuellen Pfad mit Netzwerkverwaltung entfernen."
+        },
+        "precautions": {
+          "en": "Do not disable DAD/ACD or regenerate every machine identity blindly. Identity changes can affect leases and management access; save the VM and network configuration first.",
+          "de": "DAD/ACD nicht abschalten und nicht blind jede Maschinenidentität neu erzeugen. Identitätswechsel können Leases und Verwaltungszugang beeinflussen; zuerst VM- und Netzkonfiguration sichern."
+        },
+        "rollback": {
+          "en": "Restore the saved VM identity or topology if the diagnosis was wrong, then recover the original management path and keep the conflicting interface down while investigating.",
+          "de": "Bei falscher Diagnose gesicherte VM-Identität oder Topologie wiederherstellen; ursprünglichen Verwaltungszugang retten und kollidierende Schnittstelle während Klärung deaktiviert lassen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NetworkManager: IPv4 method, DNS priorities and address conflict detection",
+        "url": "https://networkmanager.dev/docs/api/latest/settings-ipv4.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Fedora: NetworkManager IPv4 address conflict detection",
+        "url": "https://fedoramagazine.org/managing-ipv4-address-conflict-detection-with-networkmanager/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux IPv6: duplicate address detection source snapshot",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/d39a1d7486d98668dd34aaa6732aad7977c45f5a/net/ipv6/addrconf.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Debian iproute2 manual: ip-neighbour(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-neighbour.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "networkmanager-ipv4-address-conflict",
+        "all": [
+          "NetworkManager",
+          "IP address",
+          "cannot be configured because it is already in use in the network by host"
+        ],
+        "sample": "NetworkManager[650]: device (enp3s0): IP address 192.0.2.20 cannot be configured because it is already in use in the network by host 02:00:00:00:00:02",
+        "negative": [
+          "NetworkManager[650]: device (enp3s0): state change: ip-config -> failed (reason 'ip-config-unavailable')",
+          "NetworkManager[650]: dhcp4 (enp3s0): state changed new lease, address=192.0.2.20"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "NetworkManager rejected IPv4 assignment after address conflict evidence.",
+          "de": "NetworkManager hat IPv4-Zuweisung nach einem Adresskonfliktbefund abgelehnt."
+        },
+        "significance": {
+          "en": "Correlate the reported peer with authorized address allocation and topology; do not bypass detection.",
+          "de": "Gemeldeten Peer mit freigegebener Adressvergabe und Topologie abgleichen; Erkennung nicht umgehen."
+        }
+      },
+      {
+        "id": "ipv6-duplicate-address-detected",
+        "all": [
+          "IPv6 duplicate address",
+          "detected!"
+        ],
+        "sample": "kernel: IPv6: enp3s0: IPv6 duplicate address 2001:db8::20 used by 02:00:00:00:00:02 detected!",
+        "negative": [
+          "kernel: IPv6: ADDRCONF(NETDEV_CHANGE): enp3s0: link becomes ready",
+          "kernel: IPv6: enp3s0: generating new stable privacy address because of DAD conflict"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "IPv6 DAD received evidence of an address conflict.",
+          "de": "IPv6-DAD erhielt einen Adresskonfliktbefund."
+        },
+        "significance": {
+          "en": "Check dadfailed state and subsequent recovery; address conflict or layer-two behavior needs investigation rather than disabling DAD.",
+          "de": "Dadfailed-Zustand und spätere Wiederherstellung prüfen; Adresskonflikt oder Layer-2-Verhalten klären statt DAD abzuschalten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "network-overlapping-routes",
+    "slug": {
+      "en": "network-overlapping-routes",
+      "de": "ueberlappende-vpn-container-routen"
+    },
+    "category": "network",
+    "title": {
+      "en": "VPN and container routes overlap a local network",
+      "de": "VPN- und Container-Routen überlappen ein lokales Netz"
+    },
+    "summary": {
+      "en": "Find the actual route chosen for an affected address when VPN, VM or container subnets overlap, then correct the specific collision with a recovery path.",
+      "de": "Tatsächliche Route zu betroffener Adresse bei überlappenden VPN-, VM- oder Container-Netzen bestimmen und gezielten Konflikt mit Rettungsweg korrigieren."
+    },
+    "environment": {
+      "en": "Hosts with multiple routing tables, VPNs, virtual bridges or container networks; network namespaces can have separate route decisions.",
+      "de": "Hosts mit mehreren Routingtabellen, VPN, virtuellen Bridges oder Container-Netzen; Netzwerk-Namespaces können andere Routenentscheidungen treffen."
+    },
+    "symptoms": {
+      "en": [
+        "A local host becomes unreachable only while a VPN or container network is active.",
+        "Traffic for the destination is selected onto the wrong bridge, tunnel or policy table."
+      ],
+      "de": [
+        "Ein lokaler Host ist nur bei aktivem VPN oder Container-Netz unerreichbar.",
+        "Zielverkehr wird zur falschen Bridge, zum falschen Tunnel oder zur falschen Richtlinientabelle geleitet."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A virtual subnet can overlap the LAN or corporate VPN subnet, making a local connected route compete with the intended path.",
+        "de": "Virtuelles Subnetz kann LAN oder Unternehmens-VPN überlappen; lokale verbundene Route konkurriert dadurch mit dem vorgesehenen Pfad."
+      },
+      {
+        "en": "Policy rules or a more specific prefix can select an unexpected table or interface; a default-route metric change does not override every collision.",
+        "de": "Richtlinienregeln oder spezifischeres Präfix können unerwartete Tabelle oder Schnittstelle wählen; Standardroutenmetrik löst nicht jede Überschneidung."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-actual-route-choice",
+        "command": "ip route get DEST_IP",
+        "explanation": {
+          "en": "Replace DEST_IP with the confirmed affected IP, not a hostname; use ip -6 route get for IPv6. This asks the kernel for its route decision without sending a packet.",
+          "de": "DEST_IP durch bestätigte betroffene IP statt Hostname ersetzen; bei IPv6 ip -6 route get nutzen. Kernel-Routenentscheidung ohne Paketversand abfragen."
+        },
+        "interpretation": {
+          "en": "Compare selected dev, source, gateway and table with the intended network. Run the query in the affected namespace if the failure is inside a container rather than on the host.",
+          "de": "Gewähltes dev, Quelle, Gateway und Tabelle mit dem vorgesehenen Netz vergleichen. Bei Fehler im Container statt Host die Abfrage im betroffenen Namespace ausführen."
+        }
+      },
+      {
+        "id": "read-policy-rule-order",
+        "command": "ip rule show",
+        "explanation": {
+          "en": "Read the routing policy database in priority order without adding or deleting rules. Use ip -6 rule show for the IPv6 policy database.",
+          "de": "Routing-Richtliniendatenbank in Prioritätsfolge ohne Ergänzen/Löschen lesen. Für IPv6 ip -6 rule show verwenden."
+        },
+        "interpretation": {
+          "en": "A rule can select a non-main table before normal destination routing. Marked traffic, source-specific rules or VRFs may require a route query matching the affected flow.",
+          "de": "Eine Regel kann vor gewöhnlichem Zielrouting eine andere Tabelle als main wählen. Markierter Verkehr, Quellregeln oder VRF können eine zum betroffenen Fluss passende Routenabfrage benötigen."
+        }
+      },
+      {
+        "id": "read-all-route-tables",
+        "command": "ip route show table all",
+        "explanation": {
+          "en": "Read IPv4 route tables, including virtual and VPN paths; use ip -6 route show table all for IPv6. No table is flushed.",
+          "de": "IPv4-Routingtabellen einschließlich virtueller und VPN-Pfade lesen; für IPv6 ip -6 route show table all verwenden. Keine Tabelle wird geleert."
+        },
+        "interpretation": {
+          "en": "Identify equal or nested prefixes and the rule-selected table. Longest-prefix selection precedes metric comparison among otherwise comparable routes in that table.",
+          "de": "Gleiche oder verschachtelte Präfixe und durch Regeln ausgewählte Tabelle erkennen. Längstes Präfix geht innerhalb dieser Tabelle dem Metrikvergleich ansonsten vergleichbarer Routen voraus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "renumber-confirmed-virtual-subnet",
+        "title": {
+          "en": "Renumber a confirmed overlapping virtual subnet",
+          "de": "Bestätigtes überlappendes virtuelles Subnetz ändern"
+        },
+        "body": {
+          "en": "If the collision is an internally controlled VM/container bridge, choose an approved private subnet that does not overlap the documented LAN or VPN ranges. Save that platform’s network definition, update the bridge and its attached workloads together, and compare the original destination.",
+          "de": "Wenn eine intern verwaltete VM-/Container-Bridge kollidiert, ein freigegebenes privates Subnetz außerhalb dokumentierter LAN-/VPN-Bereiche wählen. Plattform-Netzdefinition sichern, Bridge und angeschlossene Workloads gemeinsam ändern und ursprüngliches Ziel vergleichen."
+        },
+        "precautions": {
+          "en": "Renumbering can interrupt containers, port bindings and local services. Do not change a corporate VPN range or assume any popular private subnet is collision-free.",
+          "de": "Umnummerierung kann Container, Portbindungen und lokale Dienste unterbrechen. Unternehmens-VPN-Bereich nicht eigenmächtig ändern und kein verbreitetes privates Subnetz als automatisch konfliktfrei ansehen."
+        },
+        "rollback": {
+          "en": "Restore the saved bridge/subnet and workload addresses if local services fail; stop the conflicting virtual network temporarily while recovering access.",
+          "de": "Bei Dienstproblemen gesicherte Bridge/Subnetzdefinition und Workload-Adressen wiederherstellen; kollidierendes virtuelles Netz während Zugangsrückkehr vorübergehend stoppen."
+        }
+      },
+      {
+        "id": "correct-specific-managed-route-or-rule",
+        "title": {
+          "en": "Correct the specific managed route or rule",
+          "de": "Gezielte verwaltete Route oder Regel korrigieren"
+        },
+        "body": {
+          "en": "If the required path is documented and renumbering is not appropriate, correct the exact destination route or policy rule in the manager that owns it, using its intended reachable gateway/table. Verify the same flow’s route decision before making the change persistent.",
+          "de": "Wenn der benötigte Pfad dokumentiert ist und Umnummerierung ungeeignet bleibt, genaue Zielroute oder Richtlinienregel beim zuständigen Dienst mit vorgesehenem erreichbarem Gateway/Tabelle korrigieren. Routenentscheidung desselben Flusses vor dauerhafter Übernahme prüfen."
+        },
+        "precautions": {
+          "en": "Record rule priorities and routes, keep local access, and use a checkpoint where supported. A more specific route cannot make the same IP identify two distinct hosts on two networks simultaneously.",
+          "de": "Regelprioritäten und Routen dokumentieren, lokalen Zugang erhalten und vorhandene Checkpoints nutzen. Spezifischere Route kann derselben IP nicht gleichzeitig zwei unterschiedliche Hosts in zwei Netzen zuordnen."
+        },
+        "rollback": {
+          "en": "Remove only the new route/rule or restore the saved profile, then reconnect the original VPN/bridge through the available local recovery path.",
+          "de": "Nur neue Route/Regel entfernen oder gesichertes Profil wiederherstellen; ursprüngliches VPN/Bridge über verfügbaren lokalen Rettungszugang verbinden."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian iproute2 manual: ip-route(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-route.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian iproute2 manual: ip-rule(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-rule.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "network-connectivity-check",
+    "slug": {
+      "en": "network-connectivity-check",
+      "de": "netzwerk-konnektivitaetsanzeige"
+    },
+    "category": "network",
+    "title": {
+      "en": "Desktop says limited connectivity despite working access",
+      "de": "Desktop meldet begrenzte Verbindung trotz funktionierendem Zugang"
+    },
+    "summary": {
+      "en": "Interpret NetworkManager’s optional connectivity probe when a desktop warning disagrees with actual access, including portal, filtering and route-metric effects.",
+      "de": "Optionale NetworkManager-Konnektivitätsprobe prüfen, wenn Desktop-Warnung und realer Zugang abweichen; Portal, Filter und Routenmetrik beachten."
+    },
+    "environment": {
+      "en": "NetworkManager installations with a configured connectivity-check URI; a disabled or unset check cannot establish global Internet availability.",
+      "de": "NetworkManager mit konfigurierter Prüf-URI; ausgeschaltete oder unkonfigurierte Prüfung bestimmt keine allgemeine Internet-Verfügbarkeit."
+    },
+    "symptoms": {
+      "en": [
+        "The desktop shows limited, portal or no Internet although some intended services work.",
+        "The indicator changes between links or after a VPN, firewall or captive-portal policy change."
+      ],
+      "de": [
+        "Der Desktop meldet begrenzt, Portal oder kein Internet, obwohl vorgesehene Dienste teilweise funktionieren.",
+        "Anzeige wechselt je Verbindung oder nach Änderung von VPN-, Firewall- oder Portalrichtlinien."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The specific probe endpoint can be unreachable, filtered or redirected while other application traffic remains usable.",
+        "de": "Der konkrete Prüf-Endpunkt kann unerreichbar, gefiltert oder umgeleitet sein, während anderer Anwendungsverkehr funktioniert."
+      },
+      {
+        "en": "A real captive portal, restricted network or strict reverse-path filtering on a multi-interface host can affect the probe; the indicator alone cannot distinguish them.",
+        "de": "Echtes Anmeldeportal, beschränktes Netz oder strikter Reverse-Path-Filter bei mehreren Schnittstellen können die Probe beeinflussen; Anzeige allein unterscheidet sie nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-cached-connectivity-state",
+        "command": "nmcli networking connectivity",
+        "explanation": {
+          "en": "Read the cached NetworkManager connectivity state. Do not append check: that would request a fresh network probe rather than simply reading the state.",
+          "de": "Gecachten NetworkManager-Konnektivitätszustand lesen. Kein check anhängen: Das würde eine neue Netzwerkprobe statt bloßer Zustandsabfrage anfordern."
+        },
+        "interpretation": {
+          "en": "Full, limited, portal, none and unknown describe the manager’s check result. Limited is not proof that every destination or application is unreachable.",
+          "de": "Full, limited, portal, none und unknown beschreiben das Prüfergebnis des Dienstes. Limited beweist nicht, dass jedes Ziel oder jede Anwendung unerreichbar ist."
+        }
+      },
+      {
+        "id": "read-connectivity-probe-policy",
+        "command": "NetworkManager --print-config",
+        "explanation": {
+          "en": "Print the effective daemon configuration without starting a daemon. Administrator privileges may be needed for protected files; inspect only the connectivity section for this diagnosis.",
+          "de": "Wirksame Daemon-Konfiguration ohne Daemonstart ausgeben. Geschützte Dateien können Administratorrechte benötigen; für diese Diagnose nur connectivity-Abschnitt prüfen."
+        },
+        "interpretation": {
+          "en": "A valid URI and nonzero interval enable the optional check. Compare its expected response with local filtering; unsuccessful per-link checks can also incur a route-metric penalty.",
+          "de": "Gültige URI und Intervall über null aktivieren die optionale Prüfung. Erwartete Antwort mit lokalen Filtern vergleichen; erfolglose Prüfungen je Verbindung können auch Routenmetrik-Aufschlag verursachen."
+        }
+      },
+      {
+        "id": "read-active-connectivity-routes",
+        "command": "nmcli -f GENERAL,IP4,IP6 device show IFACE",
+        "explanation": {
+          "en": "Replace IFACE with the affected physical or VPN interface. Read its live connection and routes without changing route metrics or requesting another check.",
+          "de": "IFACE durch betroffene physische oder VPN-Schnittstelle ersetzen. Aktive Verbindung und Routen ohne Metrikänderung oder erneute Prüfung lesen."
+        },
+        "interpretation": {
+          "en": "Compare the chosen default paths with the working application’s destination. A probe warning and incorrect routing can coexist; neither should be dismissed solely because one website opens.",
+          "de": "Gewählte Standardpfade mit Ziel der funktionierenden Anwendung vergleichen. Prüf-Warnung und falsches Routing können zugleich bestehen; eine erreichbare Website widerlegt keines von beiden allein."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "repair-intended-probe-or-portal-path",
+        "title": {
+          "en": "Repair the intended probe or portal path",
+          "de": "Vorgesehenen Prüf- oder Portalpfad korrigieren"
+        },
+        "body": {
+          "en": "If the network is supposed to allow the configured probe, have its administrator correct that endpoint’s DNS, filtering or expected response after confirming the rest of the path. If a genuine captive portal is confirmed, complete the network’s normal authorized sign-in and then reassess both indicator and application access.",
+          "de": "Wenn das Netz die konfigurierte Probe zulassen soll, nach Pfadprüfung mit Verwaltung DNS, Filter oder erwartete Antwort dieses Endpunkts korrigieren. Bei bestätigtem Anmeldeportal die normale autorisierte Netz-Anmeldung durchführen und danach Anzeige sowie Anwendungszugang prüfen."
+        },
+        "precautions": {
+          "en": "Verify the portal belongs to the intended network before submitting information. Do not treat a successful probe as a guarantee that all services work or disable unrelated firewall rules.",
+          "de": "Portal vor Eingaben dem vorgesehenen Netz zuordnen. Erfolgreiche Probe garantiert nicht alle Dienste; keine unbeteiligten Firewallregeln abschalten."
+        },
+        "rollback": {
+          "en": "Restore the saved probe-related filter/configuration if routing or access worsens; leave the portal session through its documented sign-out or disconnect procedure.",
+          "de": "Gesicherte probe-bezogene Filter/Konfiguration bei schlechterem Routing oder Zugang wiederherstellen; Portalsitzung über dokumentierte Abmeldung oder Trennung beenden."
+        }
+      },
+      {
+        "id": "configure-intentional-restricted-network",
+        "title": {
+          "en": "Configure an intentional restricted network",
+          "de": "Absichtlich beschränktes Netz passend konfigurieren"
+        },
+        "body": {
+          "en": "If this network intentionally has no public Internet or blocks the external probe, configure a policy-approved reachable connectivity endpoint with the required response, or set the documented check interval to zero if the indicator is not useful. Compare route selection as well as the warning afterward.",
+          "de": "Wenn das Netz absichtlich ohne öffentliches Internet arbeitet oder externe Probe blockiert, einen richtlinienkonformen erreichbaren Prüf-Endpunkt mit nötiger Antwort konfigurieren oder dokumentiertes Prüfintervall null setzen, falls die Anzeige keinen Nutzen hat. Danach auch Routenauswahl statt nur Warnung vergleichen."
+        },
+        "precautions": {
+          "en": "Save the current connectivity section. Disabling the check removes an optional availability signal and can alter connectivity-based metric handling; it does not repair actual DNS or routing faults.",
+          "de": "Aktuellen connectivity-Abschnitt sichern. Abschalten entfernt ein optionales Verfügbarkeitssignal und kann prüfabhängige Metrikbehandlung ändern; echte DNS-/Routenfehler werden nicht repariert."
+        },
+        "rollback": {
+          "en": "Restore the saved URI, interval and response settings, reload the daemon configuration using the supported procedure, and verify the original route behavior returns.",
+          "de": "Gesicherte URI-, Intervall- und Antworteinstellungen wiederherstellen, Daemon-Konfiguration nach vorgesehenem Verfahren neu laden und ursprüngliches Routenverhalten prüfen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NetworkManager: nmcli queries, profiles and checkpoints",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NetworkManager: unmanaged devices, DNS and connectivity configuration",
+        "url": "https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/NetworkManager.conf.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian iproute2 manual: ip-route(8)",
+        "url": "https://manpages.debian.org/trixie/iproute2/ip-route.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  }
+]

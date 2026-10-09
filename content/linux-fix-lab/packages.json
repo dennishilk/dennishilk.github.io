@@ -1,0 +1,1920 @@
+[
+  {
+    "id": "apt-dpkg-lock-busy",
+    "slug": {
+      "en": "apt-dpkg-lock-busy",
+      "de": "apt-dpkg-sperre-belegt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "Another package manager holds the APT/dpkg lock",
+      "de": "Ein anderer Paketmanager hält die APT-/dpkg-Sperre"
+    },
+    "summary": {
+      "en": "APT lock contention often means an update is still running. Identify the holder and its progress; deleting dpkg lock files is not a repair.",
+      "de": "Eine APT-Sperre bedeutet oft ein laufendes Update. Den Inhaber und seinen Fortschritt prüfen; dpkg-Sperrdateien zu löschen ist keine Reparatur."
+    },
+    "environment": {
+      "en": "Debian/Ubuntu APT and dpkg, including unattended upgrades; lock inspection may need administrator read access.",
+      "de": "Debian-/Ubuntu-APT und dpkg einschließlich automatischer Updates; Sperrprüfung kann administrative Leserechte benötigen."
+    },
+    "symptoms": {
+      "en": [
+        "APT reports that lock-frontend is held by another process.",
+        "A second package operation waits while an automatic upgrade runs."
+      ],
+      "de": [
+        "APT meldet eine durch einen anderen Prozess gehaltene lock-frontend-Sperre.",
+        "Ein zweiter Paketvorgang wartet während einer automatischen Aktualisierung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Another frontend or automatic update may own the exclusive process lock.",
+        "de": "Ein anderes Frontend oder automatisches Update kann die exklusive Prozesssperre halten."
+      },
+      {
+        "en": "A stalled package script may keep the lock while waiting for input or another service.",
+        "de": "Ein hängendes Paketskript kann die Sperre halten, während es auf Eingabe oder einen anderen Dienst wartet."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "identify-dpkg-lock-holders",
+        "command": "fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock",
+        "explanation": {
+          "en": "Reports processes using the existing lock files; do not add -k. Complete results may require root read privileges.",
+          "de": "Nennt Prozesse an den bestehenden Sperrdateien; kein -k ergänzen. Vollständige Ergebnisse können Root-Leserechte benötigen."
+        },
+        "interpretation": {
+          "en": "A PID is a candidate holder; verify that process. No output as an unprivileged user does not prove that no holder exists.",
+          "de": "Eine PID ist ein möglicher Inhaber; den Prozess prüfen. Keine Ausgabe ohne ausreichende Rechte beweist keine freie Sperre."
+        }
+      },
+      {
+        "id": "inspect-lock-holder-progress",
+        "command": "ps -p PID -o pid,ppid,stat,etime,comm",
+        "explanation": {
+          "en": "Replace PID with the reported holder; reads process state without killing or signaling it.",
+          "de": "PID durch den gemeldeten Inhaber ersetzen; liest den Prozesszustand, ohne ihn zu beenden oder zu signalisieren."
+        },
+        "interpretation": {
+          "en": "Check whether the expected package manager is still present. Elapsed time alone cannot distinguish a legitimate long script from a hung process.",
+          "de": "Prüfen, ob der erwartete Paketmanager noch läuft. Laufzeit allein trennt ein berechtigt langes Skript nicht von einem Hänger."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "wait-for-active-package-writer",
+        "title": {
+          "en": "Let an active package transaction finish",
+          "de": "Eine aktive Pakettransaktion abschließen lassen"
+        },
+        "body": {
+          "en": "If the holder is an active updater, close the duplicate package frontend and let the original transaction finish. Inspect its original terminal or service journal for a prompt or progress, then retry one package operation after the process has released the lock.",
+          "de": "Wenn ein aktiver Updater die Sperre hält, das doppelte Paketfrontend schließen und die ursprüngliche Transaktion fertigstellen lassen. Deren Terminal oder Dienstjournal auf Eingabeanforderungen und Fortschritt prüfen und nach Freigabe einen einzelnen Paketvorgang versuchen."
+        },
+        "precautions": {
+          "en": "Never remove dpkg lock files: the lock is tied to the process, and deleting its path can allow concurrent writers.",
+          "de": "dpkg-Sperrdateien niemals entfernen: Die Sperre gehört zum Prozess; das Löschen des Pfads kann gleichzeitige Schreiber ermöglichen."
+        },
+        "rollback": {
+          "en": "Waiting needs no rollback. Restart only the duplicate frontend after the original transaction is complete.",
+          "de": "Warten benötigt keine Rücknahme. Nur das doppelte Frontend nach Abschluss der ursprünglichen Transaktion neu starten."
+        }
+      },
+      {
+        "id": "resolve-confirmed-stalled-package-job",
+        "title": {
+          "en": "Resolve the confirmed stalled job before recovery",
+          "de": "Einen bestätigten hängenden Paketvorgang vor der Reparatur lösen"
+        },
+        "body": {
+          "en": "If the holder is genuinely stalled, first resolve its identified prompt or failing dependency. If it must be cancelled, use the original frontend’s supported cancellation or an administrator’s controlled termination, wait for all writers to exit, then inspect dpkg --audit before resuming configuration.",
+          "de": "Wenn der Inhaber nachweislich hängt, zuerst seine konkrete Eingabeanforderung oder fehlerhafte Abhängigkeit lösen. Muss er abgebrochen werden, die unterstützte Frontend-Rücknahme oder eine kontrollierte administrative Beendigung nutzen; alle Schreiber abwarten und vor neuer Konfiguration dpkg --audit prüfen."
+        },
+        "precautions": {
+          "en": "Do not SIGKILL a package writer simply because it is slow. Cancellation can leave packages unpacked or half-configured.",
+          "de": "Einen Paketschreiber nicht allein wegen Langsamkeit mit SIGKILL beenden. Ein Abbruch kann entpackte oder halb konfigurierte Pakete hinterlassen."
+        },
+        "rollback": {
+          "en": "A cancelled transaction has no universal undo. Resume the audited pending configuration or restore a coherent pre-transaction snapshot if necessary.",
+          "de": "Eine abgebrochene Transaktion hat keine allgemeine Rücknahme. Die geprüfte ausstehende Konfiguration fortsetzen oder nötigenfalls einen zusammenhängenden Snapshot vor der Transaktion herstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian dpkg team FAQ: lock files must not be removed",
+        "url": "https://wiki.debian.org/Teams/Dpkg/FAQ",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian dpkg: package states, audit and configure operations",
+        "url": "https://manpages.debian.org/trixie/dpkg/dpkg.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT source: dpkg locking and interrupted-state checks",
+        "url": "https://github.com/Debian/apt/blob/main/apt-pkg/deb/debsystem.cc",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "apt-dpkg-lock-held",
+        "all": [
+          "Could not get lock /var/lib/dpkg/lock-frontend",
+          "held by process"
+        ],
+        "sample": "E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2140 (apt)",
+        "negative": [
+          "E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)",
+          "Waiting for cache lock: Could not get lock /var/lib/apt/lists/lock"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Another process owns the dpkg frontend lock.",
+          "de": "Ein anderer Prozess hält die dpkg-Frontend-Sperre."
+        },
+        "significance": {
+          "en": "Inspect that PID and transaction; this signature excludes a simple lack of privilege opening the lock file.",
+          "de": "Diese PID und Transaktion prüfen; die Signatur unterscheidet fehlende Rechte beim Öffnen der Sperrdatei."
+        }
+      }
+    ]
+  },
+  {
+    "id": "dpkg-configuration-interrupted",
+    "slug": {
+      "en": "dpkg-configuration-interrupted",
+      "de": "dpkg-konfiguration-unterbrochen"
+    },
+    "category": "packages",
+    "title": {
+      "en": "dpkg has pending configuration after an interrupted transaction",
+      "de": "dpkg hat nach einem Abbruch ausstehende Konfiguration"
+    },
+    "summary": {
+      "en": "An interrupted install can leave packages unpacked but unconfigured. Audit the recorded states before resuming scripts or removing packages.",
+      "de": "Ein Installationsabbruch kann Pakete entpackt, aber unkonfiguriert lassen. Gespeicherte Zustände vor Skriptfortsetzung oder Paketentfernung prüfen."
+    },
+    "environment": {
+      "en": "Debian/Ubuntu dpkg and APT; configuration repair runs package scripts and may start or restart services.",
+      "de": "Debian-/Ubuntu-dpkg und APT; Konfigurationsreparatur führt Paketskripte aus und kann Dienste starten oder neu starten."
+    },
+    "symptoms": {
+      "en": [
+        "APT asks for dpkg --configure -a before proceeding.",
+        "dpkg --audit lists unpacked or half-configured packages."
+      ],
+      "de": [
+        "APT verlangt vor dem Fortsetzen dpkg --configure -a.",
+        "dpkg --audit nennt entpackte oder halb konfigurierte Pakete."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An installation may have been stopped before post-install scripts and triggers completed.",
+        "de": "Eine Installation kann vor Abschluss der Nachinstallationsskripte und Trigger gestoppt worden sein."
+      },
+      {
+        "en": "A package-specific script or missing dependency may cause every retry to stop at the same package.",
+        "de": "Ein Paketskript oder eine fehlende Abhängigkeit kann jeden Versuch an demselben Paket beenden."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "audit-pending-dpkg-state",
+        "command": "dpkg --audit",
+        "explanation": {
+          "en": "Read-only consistency audit; does not configure, remove or reinstall packages.",
+          "de": "Schreibgeschützte Konsistenzprüfung; konfiguriert, entfernt oder installiert keine Pakete."
+        },
+        "interpretation": {
+          "en": "Unpacked and half-configured states identify pending work. No audit output does not prove that a previously failing service now starts.",
+          "de": "Entpackte und halb konfigurierte Zustände zeigen offene Arbeit. Keine Ausgabe beweist nicht, dass ein zuvor fehlerhafter Dienst nun startet."
+        }
+      },
+      {
+        "id": "inspect-affected-package-state",
+        "command": "dpkg-query -s PACKAGE_NAME",
+        "explanation": {
+          "en": "Replace PACKAGE_NAME with the first package named by the audit or failed transaction. Reads local status and dependency fields.",
+          "de": "PACKAGE_NAME durch das erste Paket aus Prüfung oder fehlgeschlagener Transaktion ersetzen. Liest lokalen Status und Abhängigkeitsfelder."
+        },
+        "interpretation": {
+          "en": "Status: install ok unpacked differs from installed or half-configured. Record the first script error separately; later dependency errors may be consequences.",
+          "de": "Status: install ok unpacked unterscheidet sich von installed oder half-configured. Den ersten Skriptfehler getrennt notieren; spätere Abhängigkeitsfehler können Folgen sein."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "resume-pending-dpkg-configuration",
+        "title": {
+          "en": "Resume the audited pending configuration",
+          "de": "Die geprüfte ausstehende dpkg-Konfiguration fortsetzen"
+        },
+        "body": {
+          "en": "If no package writer is active and the audit confirms interrupted configuration, run dpkg --configure -a with administrator privileges in a terminal. Read prompts and the first failing script message rather than accepting repeated retries without investigating.",
+          "de": "Wenn kein Paketschreiber aktiv ist und die Prüfung offene Konfiguration bestätigt, dpkg --configure -a mit administrativen Rechten im Terminal ausführen. Abfragen und erste fehlerhafte Skriptmeldung lesen, statt ohne Untersuchung ständig neu zu versuchen."
+        },
+        "precautions": {
+          "en": "This runs maintainer scripts and triggers, which can change service state. Preserve configuration and a pre-repair snapshot where service availability matters.",
+          "de": "Dabei laufen Betreuerskripte und Trigger, die Dienstzustände ändern können. Bei wichtiger Verfügbarkeit Konfiguration und Snapshot vor der Reparatur sichern."
+        },
+        "rollback": {
+          "en": "Script effects have no universal undo. Restore saved service configuration or the coherent snapshot; do not edit /var/lib/dpkg/status manually.",
+          "de": "Skriptwirkungen haben keine allgemeine Rücknahme. Gesicherte Dienstkonfiguration oder zusammenhängenden Snapshot herstellen; /var/lib/dpkg/status nicht manuell bearbeiten."
+        }
+      },
+      {
+        "id": "repair-first-package-script-failure",
+        "title": {
+          "en": "Repair the first package-specific failure",
+          "de": "Den ersten paketspezifischen Fehler beheben"
+        },
+        "body": {
+          "en": "If configuration repeatedly fails for the same package, identify its first error and fix the named missing dependency or invalid service configuration using that package’s documentation. If its files are damaged, preview an APT reinstall of that exact package before applying it and rerun pending configuration afterward.",
+          "de": "Wenn die Konfiguration wieder am selben Paket scheitert, dessen ersten Fehler identifizieren und die genannte fehlende Abhängigkeit oder ungültige Dienstkonfiguration anhand seiner Dokumentation korrigieren. Bei beschädigten Dateien eine APT-Neuinstallation genau dieses Pakets vorab simulieren und anschließend offene Konfiguration erneut ausführen."
+        },
+        "precautions": {
+          "en": "Do not force-remove essential packages or delete maintainer scripts to make the warning disappear.",
+          "de": "Keine essenziellen Pakete zwangsweise entfernen oder Betreuerskripte löschen, um die Meldung verschwinden zu lassen."
+        },
+        "rollback": {
+          "en": "Restore the saved package configuration or supported matching package set; use the snapshot if a maintainer-script migration must be undone.",
+          "de": "Gesicherte Paketkonfiguration oder unterstützten zusammenpassenden Paketstand herstellen; bei nötiger Rücknahme einer Skriptmigration den Snapshot nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian dpkg: package states, audit and configure operations",
+        "url": "https://manpages.debian.org/trixie/dpkg/dpkg.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT: apt-get simulation and dependency repair",
+        "url": "https://manpages.debian.org/trixie/apt/apt-get.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT source: dpkg locking and interrupted-state checks",
+        "url": "https://github.com/Debian/apt/blob/main/apt-pkg/deb/debsystem.cc",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "apt-dpkg-interrupted-state",
+        "all": [
+          "dpkg was interrupted",
+          "dpkg --configure -a"
+        ],
+        "sample": "E: dpkg was interrupted, you must manually run 'sudo dpkg --configure -a' to correct the problem.",
+        "negative": [
+          "dpkg: warning: package not installed",
+          "Setting up example-package (1.0-1) ..."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "APT detected unfinished dpkg database/configuration work.",
+          "de": "APT hat unvollständige dpkg-Datenbank- oder Konfigurationsarbeit erkannt."
+        },
+        "significance": {
+          "en": "Inspect pending state and exclude another active writer before resuming maintainer scripts.",
+          "de": "Offene Zustände prüfen und einen anderen aktiven Schreiber ausschließen, bevor Betreuerskripte fortgesetzt werden."
+        }
+      }
+    ]
+  },
+  {
+    "id": "apt-unmet-dependencies",
+    "slug": {
+      "en": "apt-unmet-dependencies",
+      "de": "apt-abhaengigkeiten-nicht-erfuellt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "APT cannot resolve the requested dependencies",
+      "de": "APT kann angeforderte Abhängigkeiten nicht auflösen"
+    },
+    "summary": {
+      "en": "Held packages, pins and mixed release sources can make a dependency request impossible. Compare candidate versions and the simulated transaction.",
+      "de": "Gehaltene Pakete, Pins und gemischte Release-Quellen können Abhängigkeiten blockieren. Kandidatenversionen und simulierte Transaktion vergleichen."
+    },
+    "environment": {
+      "en": "APT-based Debian/Ubuntu system; simulations read cached package metadata and may be limited by configuration read permissions.",
+      "de": "Debian-/Ubuntu-System mit APT; Simulationen lesen gespeicherte Metadaten und können durch Konfigurations-Leserechte begrenzt sein."
+    },
+    "symptoms": {
+      "en": [
+        "APT prints a dependency version it cannot install.",
+        "A proposed repair unexpectedly removes important packages."
+      ],
+      "de": [
+        "APT nennt eine nicht installierbare Abhängigkeitsversion.",
+        "Eine vorgeschlagene Reparatur entfernt unerwartet wichtige Pakete."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A held package or pin may keep a required dependency at an incompatible version.",
+        "de": "Ein gehaltenes Paket oder Pin kann eine nötige Abhängigkeit auf einer unpassenden Version halten."
+      },
+      {
+        "en": "Repositories from different releases or third-party vendors may offer incompatible package sets.",
+        "de": "Quellen verschiedener Releases oder Drittanbieter können unvereinbare Paketstände anbieten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "compare-package-candidate-origins",
+        "command": "apt-cache policy PACKAGE_NAME DEPENDENCY_NAME",
+        "explanation": {
+          "en": "Replace both names with the requested package and the dependency named in the error; reads cached versions and priorities.",
+          "de": "Beide Namen durch das gewünschte Paket und seine im Fehler genannte Abhängigkeit ersetzen; liest gespeicherte Versionen und Prioritäten."
+        },
+        "interpretation": {
+          "en": "Check Installed, Candidate, origin and priority against the required version. A missing candidate differs from a candidate rejected by a pin.",
+          "de": "Installed, Candidate, Herkunft und Priorität mit der nötigen Version vergleichen. Ein fehlender Kandidat unterscheidet sich von einem durch Pinning abgelehnten."
+        }
+      },
+      {
+        "id": "simulate-target-package-transaction",
+        "command": "apt-get -s install PACKAGE_NAME",
+        "explanation": {
+          "en": "Replace PACKAGE_NAME with the intended target. -s simulates without installing; no sudo changes are performed.",
+          "de": "PACKAGE_NAME durch das gewünschte Ziel ersetzen. -s simuliert ohne Installation; keine sudo-Änderungen werden ausgeführt."
+        },
+        "interpretation": {
+          "en": "Inspect Inst, Conf and Remv lines and the dependency chain. Simulation cannot guarantee a later transaction if repositories or local state change.",
+          "de": "Inst-, Conf- und Remv-Zeilen sowie Abhängigkeitskette prüfen. Ändern sich Quellen oder lokaler Zustand, garantiert die Simulation keine spätere Transaktion."
+        }
+      },
+      {
+        "id": "list-held-packages",
+        "command": "apt-mark showhold",
+        "explanation": {
+          "en": "Lists packages explicitly held by APT without unholding them.",
+          "de": "Listet ausdrücklich gehaltene Pakete auf, ohne sie freizugeben."
+        },
+        "interpretation": {
+          "en": "A listed dependency supports a hold conflict; held broken packages in an error is not proof that an explicit hold exists.",
+          "de": "Eine gelistete Abhängigkeit stützt einen Haltekonflikt; held broken packages im Fehler beweist keine ausdrückliche Haltemarkierung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "align-intended-apt-package-sources",
+        "title": {
+          "en": "Align the intended sources and package candidates",
+          "de": "Vorgesehene Quellen und Paketkandidaten abstimmen"
+        },
+        "body": {
+          "en": "If policy shows an accidental foreign-release source or pin, save that configuration and correct only the affected source/pin to the intended supported release. Refresh metadata, repeat the simulation and apply only a reviewed transaction with compatible candidates.",
+          "de": "Wenn policy eine versehentliche fremde Release-Quelle oder einen Pin zeigt, die Konfiguration sichern und nur diese Quelle beziehungsweise diesen Pin auf das vorgesehene unterstützte Release korrigieren. Metadaten erneuern, Simulation wiederholen und nur eine geprüfte Transaktion mit passenden Kandidaten anwenden."
+        },
+        "precautions": {
+          "en": "Do not force dependencies or approve removal of the desktop/kernel merely to install one optional application.",
+          "de": "Abhängigkeiten nicht erzwingen oder Desktop-/Kernel-Entfernung freigeben, nur um eine optionale Anwendung zu installieren."
+        },
+        "rollback": {
+          "en": "Restore the saved source/pin; if package versions already changed, restore a coherent snapshot or a reviewed compatible package set.",
+          "de": "Quelle oder Pin aus der Sicherung herstellen; bei bereits geänderten Paketen einen zusammenhängenden Snapshot oder geprüften passenden Paketstand wiederherstellen."
+        }
+      },
+      {
+        "id": "review-intentional-hold-or-broken-state",
+        "title": {
+          "en": "Review the specific hold or incomplete local state",
+          "de": "Die konkrete Haltemarkierung oder offenen lokalen Zustand prüfen"
+        },
+        "body": {
+          "en": "If the required dependency is held, confirm why before releasing only that hold and resimulating. If dpkg --audit instead shows incomplete installed dependencies, simulate apt-get -s -f install and review every removal before an administrator runs the actual repair.",
+          "de": "Wenn die nötige Abhängigkeit gehalten wird, zuerst den Grund klären, nur diese Markierung freigeben und neu simulieren. Zeigt dpkg --audit stattdessen offene installierte Abhängigkeiten, apt-get -s -f install simulieren und jede Entfernung prüfen, bevor die Verwaltung wirklich repariert."
+        },
+        "precautions": {
+          "en": "An intentional compatibility hold may be protecting another workload. Preserve the held package/version list before changes.",
+          "de": "Eine gewollte Kompatibilitätsmarkierung kann eine andere Anwendung schützen. Liste gehaltener Pakete samt Versionen vor Änderungen sichern."
+        },
+        "rollback": {
+          "en": "Reapply the original hold; restore the pre-transaction snapshot if version changes or removals cannot be safely reversed as one compatible set.",
+          "de": "Die ursprüngliche Haltemarkierung wieder setzen; bei nicht sicher als passender Satz umkehrbaren Versionen oder Entfernungen den Snapshot vor der Transaktion herstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian APT: apt-cache policy and package metadata",
+        "url": "https://manpages.debian.org/trixie/apt/apt-cache.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT: apt-get simulation and dependency repair",
+        "url": "https://manpages.debian.org/trixie/apt/apt-get.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT: preferences and pin priority",
+        "url": "https://manpages.debian.org/trixie/apt/apt_preferences.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT: hold state inspection",
+        "url": "https://manpages.debian.org/trixie/apt/apt-mark.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "apt-unresolved-dependency-solver",
+        "all": [
+          "E:",
+          "Unable to correct problems, you have held broken packages."
+        ],
+        "sample": "E: Unable to correct problems, you have held broken packages.",
+        "negative": [
+          "0 upgraded, 0 newly installed, 0 to remove.",
+          "apt-mark showhold: example-package"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "APT could not produce a satisfiable package plan.",
+          "de": "APT konnte keinen erfüllbaren Paketplan erzeugen."
+        },
+        "significance": {
+          "en": "The wording does not establish an explicit apt-mark hold; inspect candidates, pins and the preceding dependency messages.",
+          "de": "Die Formulierung beweist keine apt-mark-Haltemarkierung; Kandidaten, Pins und vorherige Abhängigkeitsmeldungen prüfen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "apt-repository-signature-failure",
+    "slug": {
+      "en": "apt-repository-signature-failure",
+      "de": "apt-quellsignatur-fehler"
+    },
+    "category": "packages",
+    "title": {
+      "en": "APT rejects a repository’s signature or trust setup",
+      "de": "APT lehnt Quellsignatur oder Vertrauenskonfiguration ab"
+    },
+    "summary": {
+      "en": "Missing keys or an unsigned archive can block APT metadata updates. Verify the repository’s signing key and scoped Signed-By configuration.",
+      "de": "Fehlende Schlüssel oder ein unsigniertes Archiv können APT-Metadaten blockieren. Quellschlüssel und begrenzte Signed-By-Zuordnung prüfen."
+    },
+    "environment": {
+      "en": "APT authenticated repositories; legacy GPG diagnostics and newer signature-verifier wording can differ across releases.",
+      "de": "Authentifizierte APT-Quellen; ältere GPG-Meldungen und neuere Signaturprüfer können je nach Release unterschiedlich formulieren."
+    },
+    "symptoms": {
+      "en": [
+        "APT reports NO_PUBKEY or a repository that is not signed.",
+        "Only one third-party source fails metadata authentication."
+      ],
+      "de": [
+        "APT meldet NO_PUBKEY oder eine nicht signierte Quelle.",
+        "Nur eine Drittanbieterquelle scheitert an der Metadatenprüfung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The source may reference a missing, unreadable or wrong Signed-By keyring.",
+        "de": "Die Quelle kann eine fehlende, unlesbare oder falsche Signed-By-Schlüsseldatei nennen."
+      },
+      {
+        "en": "The repository may have rotated its signing key or stopped publishing authenticated metadata.",
+        "de": "Die Quelle kann ihren Signaturschlüssel gewechselt oder die Veröffentlichung authentifizierter Metadaten beendet haben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-repository-key-scope",
+        "command": "rg -n \"Signed-By|signed-by|URIs:|Suites:|^deb \" /etc/apt/sources.list /etc/apt/sources.list.d",
+        "explanation": {
+          "en": "Reads source definitions; missing legacy sources.list is normal with deb822 .sources files. Identify only the failed repository.",
+          "de": "Liest Quelldefinitionen; eine fehlende alte sources.list ist bei deb822-.sources-Dateien normal. Nur die fehlerhafte Quelle identifizieren."
+        },
+        "interpretation": {
+          "en": "Compare URI, suite and the exact keyring path. A globally trusted key is not equivalent to a correctly scoped Signed-By source.",
+          "de": "URI, Suite und genauen Schlüsselpfad vergleichen. Ein global vertrauter Schlüssel ersetzt keine korrekt begrenzte Signed-By-Quelle."
+        }
+      },
+      {
+        "id": "inspect-scoped-keyring-readability",
+        "command": "stat -c \"%A %U:%G %n\" /path/to/repository-keyring.gpg",
+        "explanation": {
+          "en": "Replace with the actual Signed-By path; reads metadata without importing keys or contacting keyservers.",
+          "de": "Durch den tatsächlichen Signed-By-Pfad ersetzen; liest Metadaten ohne Schlüsselimport oder Schlüsselserverzugriff."
+        },
+        "interpretation": {
+          "en": "The file must exist and be readable by APT’s verifier account, commonly _apt. Existence/readability does not establish that its fingerprint is authentic.",
+          "de": "Die Datei muss existieren und für das APT-Prüfkonto, häufig _apt, lesbar sein. Existenz und Lesbarkeit beweisen keinen authentischen Fingerabdruck."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "install-authentic-scoped-repository-key",
+        "title": {
+          "en": "Install the independently verified repository key in scope",
+          "de": "Den unabhängig bestätigten Quellschlüssel gezielt hinterlegen"
+        },
+        "body": {
+          "en": "If the publisher documents a legitimate key rotation or missing key, verify its full fingerprint through the publisher’s official channel. Save the old keyring/source, install the authentic key at the documented path and bind only that source to it with Signed-By.",
+          "de": "Wenn der Anbieter einen berechtigten Schlüsselwechsel oder fehlenden Schlüssel dokumentiert, dessen vollständigen Fingerabdruck über den offiziellen Kanal prüfen. Bisherige Schlüsseldatei und Quelle sichern, den echten Schlüssel am dokumentierten Ort ablegen und nur diese Quelle mit Signed-By darauf beziehen."
+        },
+        "precautions": {
+          "en": "Do not fetch an arbitrary matching short key ID and trust it globally. Keep authenticated repository verification enabled.",
+          "de": "Keine beliebige kurze Schlüssel-ID abrufen und global vertrauen. Die authentifizierte Quellenprüfung aktiviert lassen."
+        },
+        "rollback": {
+          "en": "Restore the saved scoped keyring and source entry if the update was incorrect; an obsolete restored key may remain unable to authenticate newer metadata.",
+          "de": "Bei falscher Änderung die gesicherte begrenzte Schlüsseldatei und Quelle herstellen; ein veralteter Schlüssel kann neue Metadaten weiterhin nicht bestätigen."
+        }
+      },
+      {
+        "id": "disable-unverifiable-optional-source",
+        "title": {
+          "en": "Disable an optional source that cannot be authenticated",
+          "de": "Eine nicht prüfbare optionale Quelle deaktivieren"
+        },
+        "body": {
+          "en": "If the repository no longer publishes verifiable metadata, disable only its source entry while investigating with its maintainer. In deb822 use Enabled: no; in a legacy list comment the specific deb line. Keep official distribution sources available for security updates.",
+          "de": "Wenn die Quelle keine prüfbaren Metadaten mehr veröffentlicht, nur ihren Eintrag bis zur Klärung mit dem Betreiber deaktivieren. Bei deb822 Enabled: no nutzen, bei einer alten Liste die konkrete deb-Zeile auskommentieren. Offizielle Distributionsquellen für Sicherheitsupdates erhalten."
+        },
+        "precautions": {
+          "en": "Do not use trusted=yes, allow-insecure or signature-check bypasses to silence the error. Installed packages from the disabled source may no longer receive updates.",
+          "de": "Nicht trusted=yes, allow-insecure oder Signaturumgehungen zur Unterdrückung verwenden. Installierte Pakete der deaktivierten Quelle erhalten eventuell keine Updates mehr."
+        },
+        "rollback": {
+          "en": "Reenable the saved source entry only after authentic key and metadata publication are confirmed.",
+          "de": "Den gesicherten Quelleneintrag erst nach Bestätigung echten Schlüssels und echter Metadaten wieder aktivieren."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian APT: authenticated repository metadata",
+        "url": "https://manpages.debian.org/trixie/apt/apt-secure.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT: repository sources, suites and Signed-By",
+        "url": "https://manpages.debian.org/trixie/apt/sources.list.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "apt-gpg-key-unavailable",
+        "all": [
+          "GPG error:",
+          "NO_PUBKEY"
+        ],
+        "sample": "W: GPG error: https://repo.example.invalid stable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 0123456789ABCDEF",
+        "negative": [
+          "W: GPG error: https://repo.example.invalid stable InRelease: EXPKEYSIG 0123456789ABCDEF Example",
+          "NO_PUBKEY is a key-verifier status token."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "APT’s GPG-based verifier did not find an accepted signing key.",
+          "de": "Der GPG-basierte APT-Prüfer fand keinen akzeptierten Signaturschlüssel."
+        },
+        "significance": {
+          "en": "Inspect scoped key configuration and provenance; this does not prove that the repository or a downloaded key is trustworthy.",
+          "de": "Begrenzte Schlüsselzuordnung und Herkunft prüfen; das beweist keine vertrauenswürdige Quelle oder keinen echten heruntergeladenen Schlüssel."
+        }
+      },
+      {
+        "id": "apt-repository-not-signed",
+        "all": [
+          "E: The repository",
+          "is not signed."
+        ],
+        "sample": "E: The repository 'https://repo.example.invalid stable Release' is not signed.",
+        "negative": [
+          "E: The repository 'https://repo.example.invalid stable Release' does not have a Release file.",
+          "Get:1 https://deb.example.invalid stable InRelease"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "APT refused a repository lacking an accepted authenticated Release.",
+          "de": "APT hat eine Quelle ohne akzeptierte authentifizierte Release-Datei abgelehnt."
+        },
+        "significance": {
+          "en": "Resolve repository trust or disable that optional source; do not mark it universally trusted.",
+          "de": "Quellenvertrauen klären oder die optionale Quelle deaktivieren; sie nicht pauschal als vertraut markieren."
+        }
+      }
+    ]
+  },
+  {
+    "id": "apt-repository-release-missing",
+    "slug": {
+      "en": "apt-repository-release-missing",
+      "de": "apt-release-datei-fehlt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "APT cannot find a repository Release file",
+      "de": "APT findet die Release-Datei einer Quelle nicht"
+    },
+    "summary": {
+      "en": "A wrong suite, obsolete release or incorrect repository URI can remove the Release path APT expects. Check the source against the installed OS.",
+      "de": "Falsche Suite, altes Release oder falsche Quell-URI kann den erwarteten Release-Pfad verlieren. Quelle mit installiertem Betriebssystem abgleichen."
+    },
+    "environment": {
+      "en": "APT .list or deb822 .sources entries; repository suites belong to each publisher and need not equal the operating system codename.",
+      "de": "APT-.list- oder deb822-.sources-Einträge; Suites gehören zum jeweiligen Anbieter und müssen nicht dem OS-Codenamen entsprechen."
+    },
+    "symptoms": {
+      "en": [
+        "APT reports that a configured repository has no Release file.",
+        "The source’s suite directory returns a missing-resource error."
+      ],
+      "de": [
+        "APT meldet eine konfigurierte Quelle ohne Release-Datei.",
+        "Das Suite-Verzeichnis der Quelle liefert eine fehlende Ressource."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The configured URI or suite may not exist for this publisher.",
+        "de": "Die eingetragene URI oder Suite kann bei diesem Anbieter fehlen."
+      },
+      {
+        "en": "An end-of-life release may have moved to an archive or lost vendor support.",
+        "de": "Ein nicht mehr unterstütztes Release kann ins Archiv verschoben worden sein oder den Herstellersupport verloren haben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-installed-os-release",
+        "command": "cat /etc/os-release",
+        "explanation": {
+          "en": "Reads local OS identity, version and codename without running package-manager operations.",
+          "de": "Liest lokale OS-Identität, Version und Codename ohne Paketmanager-Vorgänge."
+        },
+        "interpretation": {
+          "en": "Use this as the distribution reference, then check the third-party publisher’s supported suites separately; do not replace every suite mechanically.",
+          "de": "Dies als Distributionsreferenz nutzen, danach unterstützte Drittanbieter-Suites getrennt prüfen; nicht jede Suite mechanisch ersetzen."
+        }
+      },
+      {
+        "id": "inspect-failed-source-uri-and-suite",
+        "command": "rg -n \"URIs:|Suites:|Enabled:|^deb \" /etc/apt/sources.list /etc/apt/sources.list.d",
+        "explanation": {
+          "en": "Reads repository URI/suite definitions; inspect the exact file mentioned in the update error.",
+          "de": "Liest Quell-URI-/Suite-Definitionen; die genaue im Updatefehler genannte Datei prüfen."
+        },
+        "interpretation": {
+          "en": "A typo, duplicated distro path or wrong codename can explain the requested Release URL. Source definitions alone cannot confirm current server publication.",
+          "de": "Ein Tippfehler, doppelter Distributionspfad oder falscher Codename kann die angefragte Release-URL erklären. Quelleneinträge allein bestätigen keine aktuelle Serververöffentlichung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-supported-repository-location",
+        "title": {
+          "en": "Correct the URI and suite to the publisher’s supported values",
+          "de": "URI und Suite auf unterstützte Anbieterwerte korrigieren"
+        },
+        "body": {
+          "en": "If the publisher’s official instructions support this OS and identify a different URI/suite, back up the source and change only that entry. Keep its Signed-By configuration, refresh metadata and inspect package candidates before installing.",
+          "de": "Wenn offizielle Anbieterhinweise dieses OS unterstützen und eine andere URI/Suite nennen, die Quelle sichern und nur diesen Eintrag ändern. Signed-By-Zuordnung erhalten, Metadaten erneuern und Paketkandidaten vor Installation prüfen."
+        },
+        "precautions": {
+          "en": "Changing suites can expose another distribution’s packages. Do not disable Release verification to accommodate a wrong path.",
+          "de": "Ein Suite-Wechsel kann Pakete einer anderen Distribution anbieten. Release-Prüfung nicht für einen falschen Pfad abschalten."
+        },
+        "rollback": {
+          "en": "Restore the saved source entry; if any packages were upgraded, use a coherent supported rollback rather than only reversing the URI.",
+          "de": "Den gesicherten Eintrag herstellen; bei aktualisierten Paketen einen zusammenhängenden unterstützten Rollback nutzen, statt nur die URI zurückzusetzen."
+        }
+      },
+      {
+        "id": "retire-obsolete-source-or-plan-upgrade",
+        "title": {
+          "en": "Retire an obsolete source or plan the supported OS upgrade",
+          "de": "Eine alte Quelle stilllegen oder das unterstützte OS-Upgrade planen"
+        },
+        "body": {
+          "en": "If the optional vendor source no longer supports this release, disable that one entry and use a supported application distribution. If the OS itself is obsolete, plan its documented release upgrade with data and configuration backups; an archival mirror can aid recovery but does not imply ongoing security support.",
+          "de": "Wenn die optionale Anbieterquelle dieses Release nicht mehr unterstützt, nur sie deaktivieren und einen unterstützten Anwendungsweg nutzen. Bei veraltetem OS dessen dokumentiertes Release-Upgrade mit Daten- und Konfigurationssicherungen planen; ein Archivmirror kann bei Rettung helfen, bedeutet aber keinen laufenden Sicherheitssupport."
+        },
+        "precautions": {
+          "en": "Do not replace all repository suites at once or perform an unsupported cross-release package mix.",
+          "de": "Nicht alle Quell-Suites gleichzeitig ersetzen oder einen nicht unterstützten Paketmix über Releases hinweg erzeugen."
+        },
+        "rollback": {
+          "en": "Restore a disabled optional entry once it is again supported; an OS release upgrade requires its documented recovery plan or pre-upgrade snapshot.",
+          "de": "Eine deaktivierte optionale Quelle bei erneuter Unterstützung herstellen; ein OS-Release-Upgrade benötigt seinen dokumentierten Rettungsplan oder Snapshot vor dem Upgrade."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Debian APT: repository sources, suites and Signed-By",
+        "url": "https://manpages.debian.org/trixie/apt/sources.list.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian APT: authenticated repository metadata",
+        "url": "https://manpages.debian.org/trixie/apt/apt-secure.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "apt-release-metadata-absent",
+        "all": [
+          "E: The repository",
+          "does not have a Release file."
+        ],
+        "sample": "E: The repository 'https://repo.example.invalid wrong-suite Release' does not have a Release file.",
+        "negative": [
+          "E: The repository 'https://repo.example.invalid stable Release' is not signed.",
+          "Get:1 https://deb.example.invalid stable InRelease"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "APT could not obtain the expected Release metadata for this source.",
+          "de": "APT konnte die erwarteten Release-Metadaten dieser Quelle nicht beziehen."
+        },
+        "significance": {
+          "en": "Inspect the URI, suite and publisher support; importing keys does not create a missing Release file.",
+          "de": "URI, Suite und Anbieterunterstützung prüfen; ein Schlüsselimport erzeugt keine fehlende Release-Datei."
+        }
+      }
+    ]
+  },
+  {
+    "id": "pacman-database-locked",
+    "slug": {
+      "en": "pacman-database-locked",
+      "de": "pacman-datenbank-gesperrt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "pacman cannot acquire its database lock",
+      "de": "pacman erhält seine Datenbanksperre nicht"
+    },
+    "summary": {
+      "en": "A running libalpm writer or a stale db.lck after an interruption can block pacman. Prove which case applies before touching the lock file.",
+      "de": "Ein libalpm-Schreiber oder eine alte db.lck nach einem Abbruch kann pacman sperren. Den Fall vor Änderungen an der Sperrdatei nachweisen."
+    },
+    "environment": {
+      "en": "Arch Linux pacman/libalpm; unlike dpkg’s region-lock files, pacman db.lck is a transaction lock marker.",
+      "de": "Arch-Linux-pacman/libalpm; anders als dpkg-Regionalsperrdateien ist pacmans db.lck eine Transaktionsmarkierung."
+    },
+    "symptoms": {
+      "en": [
+        "pacman reports unable to lock database.",
+        "A crashed update leaves db.lck while no package frontend is active."
+      ],
+      "de": [
+        "pacman meldet unable to lock database.",
+        "Ein abgebrochenes Update hinterlässt db.lck ohne aktives Paketfrontend."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Another pacman or graphical libalpm frontend may be updating the database.",
+        "de": "Ein anderes pacman- oder grafisches libalpm-Frontend kann die Datenbank aktualisieren."
+      },
+      {
+        "en": "An interrupted writer may have left a stale lock marker and possibly incomplete packages.",
+        "de": "Ein unterbrochener Schreiber kann eine alte Sperrmarkierung und eventuell unvollständige Pakete hinterlassen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-pacman-lock-users",
+        "command": "fuser /var/lib/pacman/db.lck",
+        "explanation": {
+          "en": "Reads processes using the lock file; do not use -k. Complete inspection can require administrator read privileges.",
+          "de": "Liest Prozesse an der Sperrdatei; kein -k verwenden. Vollständige Prüfung kann administrative Leserechte benötigen."
+        },
+        "interpretation": {
+          "en": "A reported process must be examined. No output alone is insufficient: inspect all package frontends and permission limits.",
+          "de": "Einen gemeldeten Prozess untersuchen. Keine Ausgabe allein reicht nicht: alle Paketfrontends und Leserechtegrenzen prüfen."
+        }
+      },
+      {
+        "id": "read-pacman-transaction-tail",
+        "command": "tail -n 80 /var/log/pacman.log",
+        "explanation": {
+          "en": "Reads recent transaction events without opening or modifying the package database.",
+          "de": "Liest die letzten Transaktionsereignisse, ohne die Paketdatenbank zu öffnen oder zu ändern."
+        },
+        "interpretation": {
+          "en": "A started transaction without completion supports interruption, but a concurrently running transaction can look the same; confirm the process state.",
+          "de": "Eine gestartete Transaktion ohne Abschluss stützt einen Abbruch, kann aber noch laufen; den Prozesszustand bestätigen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "wait-for-lib-alpm-writer",
+        "title": {
+          "en": "Wait for the active libalpm writer",
+          "de": "Den aktiven libalpm-Schreiber abwarten"
+        },
+        "body": {
+          "en": "If a legitimate package frontend is active, use that frontend’s progress view and wait for completion. Close duplicate update tools and run one package operation after the writer exits and releases its lock.",
+          "de": "Wenn ein berechtigtes Paketfrontend aktiv ist, dessen Fortschrittsanzeige nutzen und den Abschluss abwarten. Doppelte Updater schließen und erst nach Ende des Schreibers und Freigabe einen Paketvorgang ausführen."
+        },
+        "precautions": {
+          "en": "Do not remove db.lck or kill the writer while it is applying files and hooks.",
+          "de": "db.lck nicht entfernen oder den Schreiber beenden, während er Dateien und Hooks anwendet."
+        },
+        "rollback": {
+          "en": "Waiting has no package rollback. Reopen the duplicate frontend only after the active transaction has finished.",
+          "de": "Warten benötigt keinen Paket-Rollback. Das doppelte Frontend erst nach Abschluss der aktiven Transaktion wieder öffnen."
+        }
+      },
+      {
+        "id": "remove-proven-stale-pacman-lock",
+        "title": {
+          "en": "Remove only a proven stale pacman lock",
+          "de": "Nur eine nachweislich veraltete pacman-Sperre entfernen"
+        },
+        "body": {
+          "en": "Only after confirming no pacman or other libalpm writer is active, remove the stale /var/lib/pacman/db.lck with administrative privileges. Then check local database consistency with pacman -Dk and review the interrupted transaction before completing a full supported system upgrade.",
+          "de": "Erst nach Bestätigung, dass weder pacman noch ein anderer libalpm-Schreiber aktiv ist, die alte /var/lib/pacman/db.lck administrativ entfernen. Anschließend mit pacman -Dk die lokale Datenbank prüfen und die unterbrochene Transaktion vor einem vollständigen unterstützten Systemupdate auswerten."
+        },
+        "precautions": {
+          "en": "This advice applies to pacman’s marker, not dpkg lock files. A stale lock does not establish that the interrupted package set is healthy.",
+          "de": "Das gilt für die pacman-Markierung, nicht für dpkg-Sperrdateien. Eine alte Sperre beweist keinen gesunden unterbrochenen Paketstand."
+        },
+        "rollback": {
+          "en": "The next transaction recreates its lock automatically. For detected package/database damage, restore a coherent snapshot or use Arch’s recovery procedure rather than restoring an orphan lock.",
+          "de": "Die nächste Transaktion erzeugt ihre Sperre selbst. Bei Paket-/Datenbankschäden einen zusammenhängenden Snapshot oder Arch-Rettungsweg nutzen, statt eine verwaiste Sperre wiederherzustellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Arch pacman manual: query, sync and alternate system roots",
+        "url": "https://man.archlinux.org/man/pacman.8",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ArchWiki: pacman lock and file-conflict recovery",
+        "url": "https://wiki.archlinux.org/title/Pacman",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pacman-transaction-lock-unavailable",
+        "all": [
+          "failed to init transaction",
+          "unable to lock database"
+        ],
+        "sample": "error: failed to init transaction (unable to lock database)",
+        "negative": [
+          "error: failed to init transaction (database is incorrect version)",
+          "[ALPM] transaction started"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "pacman could not obtain its transaction lock.",
+          "de": "pacman konnte seine Transaktionssperre nicht erhalten."
+        },
+        "significance": {
+          "en": "Check for a live writer before considering a stale marker; the log does not distinguish these cases.",
+          "de": "Vor Annahme einer alten Markierung auf aktive Schreiber prüfen; die Meldung trennt die Fälle nicht."
+        }
+      }
+    ]
+  },
+  {
+    "id": "pacman-conflicting-files",
+    "slug": {
+      "en": "pacman-conflicting-files",
+      "de": "pacman-dateikonflikt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "pacman refuses to overwrite a conflicting file",
+      "de": "pacman verweigert das Überschreiben einer Konfliktdatei"
+    },
+    "summary": {
+      "en": "A conflicting path may belong to another package or a manual installation. Query ownership before removing files or using overwrite options.",
+      "de": "Ein Konfliktpfad kann zu einem anderen Paket oder einer Handinstallation gehören. Vor Löschen oder overwrite zuerst den Besitzer abfragen."
+    },
+    "environment": {
+      "en": "Arch Linux pacman file-conflict checks; incoming package archives can be inspected without installing them.",
+      "de": "Arch-Linux-pacman-Dateikonfliktprüfung; eingehende Paketarchive lassen sich ohne Installation prüfen."
+    },
+    "symptoms": {
+      "en": [
+        "pacman ends a transaction with conflicting files.",
+        "An incoming file already exists and may belong to another package."
+      ],
+      "de": [
+        "pacman beendet eine Transaktion wegen Dateikonflikten.",
+        "Eine eingehende Datei existiert schon und gehört eventuell einem anderen Paket."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A manual installer may have placed unowned files at package-managed paths.",
+        "de": "Ein manueller Installer kann unverwaltete Dateien an Paketpfaden abgelegt haben."
+      },
+      {
+        "en": "A packaging transition or third-party package may conflict with an installed owner.",
+        "de": "Ein Paketübergang oder Drittanbieterpaket kann mit einem installierten Besitzer kollidieren."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "identify-conflicting-path-owner",
+        "command": "pacman -Qo /path/to/conflicting-file",
+        "explanation": {
+          "en": "Replace with the exact path printed by pacman; queries the installed file owner without removing anything.",
+          "de": "Durch den genauen von pacman genannten Pfad ersetzen; fragt dessen installierten Besitzer ab, ohne etwas zu entfernen."
+        },
+        "interpretation": {
+          "en": "A known package owner rules out blindly deleting the file. No owner suggests a manual file but does not prove it is disposable.",
+          "de": "Ein bekannter Paketbesitzer schließt blindes Löschen aus. Kein Besitzer spricht für eine manuelle Datei, beweist aber nicht ihre Entbehrlichkeit."
+        }
+      },
+      {
+        "id": "inspect-incoming-package-file-list",
+        "command": "pacman -Qlp /path/to/incoming-package.pkg.tar.zst",
+        "explanation": {
+          "en": "Replace with the downloaded archive for the failed transaction; lists incoming paths without extracting or installing it.",
+          "de": "Durch das heruntergeladene Archiv der fehlerhaften Transaktion ersetzen; listet eingehende Pfade ohne Entpacken oder Installation."
+        },
+        "interpretation": {
+          "en": "Compare the conflicting path and directory/file type with the existing object. Missing cache archives require obtaining the supported package before this comparison.",
+          "de": "Konfliktpfad und Verzeichnis-/Dateityp mit dem vorhandenen Objekt vergleichen. Bei fehlendem Cache-Archiv das unterstützte Paket vor diesem Vergleich beziehen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "move-confirmed-unowned-conflict-aside",
+        "title": {
+          "en": "Move a confirmed unowned manual file aside",
+          "de": "Eine bestätigte unverwaltete Handdatei beiseitelegen"
+        },
+        "body": {
+          "en": "If ownership checks prove the path is an obsolete manual installation and its purpose is understood, preserve a backup and move only that object outside the package path before retrying the reviewed transaction. Keep user data and configuration separate from program files.",
+          "de": "Wenn Besitzerprüfung und Zweck zeigen, dass der Pfad zu einer alten Handinstallation gehört, ihn sichern und nur dieses Objekt vor dem geprüften Transaktionsversuch aus dem Paketpfad verschieben. Benutzerdaten und Konfiguration von Programmdateien trennen."
+        },
+        "precautions": {
+          "en": "Do not remove directories recursively merely because one child conflicts. Symlinks and local configuration need explicit review.",
+          "de": "Nicht ganze Verzeichnisse rekursiv entfernen, weil eine enthaltene Datei kollidiert. Symlinks und lokale Konfiguration ausdrücklich prüfen."
+        },
+        "rollback": {
+          "en": "Restore the saved manual file only after removing the new owning package through pacman if necessary; never overwrite its managed file behind pacman’s back.",
+          "de": "Die gesicherte Handdatei erst nach nötiger regulärer Entfernung des neuen Besitzerpakets herstellen; dessen verwaltete Datei nicht an pacman vorbei überschreiben."
+        }
+      },
+      {
+        "id": "follow-packaging-transition-guidance",
+        "title": {
+          "en": "Follow the documented package ownership transition",
+          "de": "Den dokumentierten Paketbesitzerwechsel umsetzen"
+        },
+        "body": {
+          "en": "If another package owns the path, check Arch’s or the repository maintainer’s transition instructions for that exact package pair. Use the supported replacement/removal transaction; consider a narrowly matched --overwrite only when the maintainer explicitly identifies the path and ownership consequences.",
+          "de": "Wenn ein anderes Paket den Pfad besitzt, Arch- oder Betreuerhinweise für genau dieses Paketpaar prüfen. Den unterstützten Ersetzungs-/Entfernungsvorgang nutzen; ein enges --overwrite nur erwägen, wenn der Betreuer Pfad und Besitzerfolgen ausdrücklich nennt."
+        },
+        "precautions": {
+          "en": "Never use --overwrite \"*\" as a generic fix. Save the package/version list and configuration before a replacement.",
+          "de": "Nie --overwrite \"*\" als allgemeine Lösung verwenden. Paket-/Versionsliste und Konfiguration vor einem Austausch sichern."
+        },
+        "rollback": {
+          "en": "Restore the prior coherent package snapshot or perform the documented reverse replacement using supported package versions and saved configuration.",
+          "de": "Den vorherigen zusammenhängenden Paketsnapshot oder den dokumentierten Rücktausch mit unterstützten Versionen und gesicherter Konfiguration herstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Arch pacman manual: query, sync and alternate system roots",
+        "url": "https://man.archlinux.org/man/pacman.8",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ArchWiki: pacman lock and file-conflict recovery",
+        "url": "https://wiki.archlinux.org/title/Pacman",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ArchWiki: upgrade and file-conflict maintenance",
+        "url": "https://wiki.archlinux.org/title/System_maintenance",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pacman-file-conflict-transaction",
+        "all": [
+          "failed to commit transaction",
+          "conflicting files"
+        ],
+        "sample": "error: failed to commit transaction (conflicting files)",
+        "negative": [
+          "error: failed to commit transaction (invalid or corrupted package)",
+          "[ALPM] transaction completed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "pacman’s file-conflict check stopped this transaction.",
+          "de": "pacmans Dateikonfliktprüfung hat diese Transaktion gestoppt."
+        },
+        "significance": {
+          "en": "Use the preceding path list and ownership queries; the summary does not establish whether the file is manually installed.",
+          "de": "Vorherige Pfadliste und Besitzerabfragen nutzen; die Zusammenfassung beweist keine Handinstallation."
+        }
+      }
+    ]
+  },
+  {
+    "id": "pacman-partial-upgrade-libraries",
+    "slug": {
+      "en": "pacman-partial-upgrade-libraries",
+      "de": "pacman-teilupdate-bibliotheken"
+    },
+    "category": "packages",
+    "title": {
+      "en": "A partial Arch upgrade leaves incompatible libraries",
+      "de": "Ein Arch-Teilupdate hinterlässt inkompatible Bibliotheken"
+    },
+    "summary": {
+      "en": "Updating only part of a rolling system can break library consumers or pacman itself. Compare transaction history and ELF dependencies without symlink hacks.",
+      "de": "Ein Teilupdate kann Bibliotheksnutzer oder pacman stören. Transaktionsverlauf und ELF-Abhängigkeiten prüfen, statt Bibliotheks-Symlinks zu erfinden."
+    },
+    "environment": {
+      "en": "Arch Linux rolling package sets; readelf diagnostics work even when pacman cannot load its own shared libraries.",
+      "de": "Rollende Arch-Linux-Paketstände; readelf funktioniert auch, wenn pacman seine eigenen Shared Libraries nicht laden kann."
+    },
+    "symptoms": {
+      "en": [
+        "Applications ask for a removed library soname after selective updates.",
+        "pacman itself exits with a shared-library loader error."
+      ],
+      "de": [
+        "Anwendungen verlangen nach selektiven Updates einen entfernten Bibliotheks-Soname.",
+        "pacman selbst endet mit einem Shared-Library-Ladefehler."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A refreshed repository database followed by selective installation may create an unsupported mixed package set.",
+        "de": "Neue Repository-Datenbanken mit anschließender Einzelinstallation können einen nicht unterstützten Paketmix erzeugen."
+      },
+      {
+        "en": "A locally built/AUR consumer may still target an older library ABI even after a full system upgrade.",
+        "de": "Eine lokal gebaute/AUR-Anwendung kann auch nach vollständigem Update noch eine ältere Bibliotheks-ABI erwarten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-pacman-library-requirements",
+        "command": "readelf -d /usr/bin/pacman",
+        "explanation": {
+          "en": "Reads the executable’s ELF dependency metadata without launching pacman. Replace the path for a different affected native program.",
+          "de": "Liest die ELF-Abhängigkeiten, ohne pacman zu starten. Für ein anderes betroffenes natives Programm den Pfad ersetzen."
+        },
+        "interpretation": {
+          "en": "NEEDED sonames show the expected ABI names. A differently numbered installed library is not automatically binary-compatible.",
+          "de": "NEEDED-Sonames zeigen erwartete ABI-Namen. Eine anders nummerierte installierte Bibliothek ist nicht automatisch binärkompatibel."
+        }
+      },
+      {
+        "id": "inspect-selective-upgrade-history",
+        "command": "rg -n \"\\[ALPM\\] (installed|upgraded|removed)|\\[PACMAN\\] Running\" /var/log/pacman.log",
+        "explanation": {
+          "en": "Reads package transaction history and recorded pacman invocations; inspect the period immediately preceding the loader failure.",
+          "de": "Liest Paketverlauf und protokollierte pacman-Aufrufe; den Zeitraum unmittelbar vor dem Ladefehler prüfen."
+        },
+        "interpretation": {
+          "en": "Selective upgrades or -Sy followed by -S support a mixed-set hypothesis. A complete transaction can still leave external locally built packages needing a rebuild.",
+          "de": "Selektive Updates oder -Sy vor -S stützen einen Paketmix. Auch eine vollständige Transaktion kann lokale Fremdpakete mit nötigem Neubau hinterlassen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "complete-supported-full-system-upgrade",
+        "title": {
+          "en": "Complete a supported full system upgrade",
+          "de": "Ein unterstütztes vollständiges Systemupdate abschließen"
+        },
+        "body": {
+          "en": "If pacman still runs and history shows a partial upgrade, review Arch news, preserve a recovery snapshot and complete the supported pacman -Syu transaction rather than updating only the missing library. Rebuild local/AUR consumers against the resulting current library set when they alone remain broken.",
+          "de": "Wenn pacman läuft und der Verlauf ein Teilupdate zeigt, Arch-Neuigkeiten prüfen, einen Rettungssnapshot sichern und das unterstützte pacman -Syu vollständig durchführen, statt nur die fehlende Bibliothek zu aktualisieren. Verbliebene betroffene Pakete aus lokalen oder AUR-Installationen gegen den aktuellen Bibliotheksstand neu bauen."
+        },
+        "precautions": {
+          "en": "Do not symlink an old soname to an unrelated ABI or use -Sy followed by individual package installs. Review any manual interventions first.",
+          "de": "Keine alte Soname-Datei auf eine andere ABI verlinken oder -Sy mit anschließenden Einzelinstallationen nutzen. Nötige manuelle Eingriffe vorher prüfen."
+        },
+        "rollback": {
+          "en": "Restore the complete prior package snapshot if rollback is needed; isolated library downgrades can break the consumers just upgraded.",
+          "de": "Bei nötiger Rücknahme den vollständigen vorherigen Paketsnapshot herstellen; einzelne Bibliotheksdowngrades können gerade aktualisierte Nutzer stören."
+        }
+      },
+      {
+        "id": "recover-broken-pacman-with-trusted-media",
+        "title": {
+          "en": "Recover an unstartable pacman with trusted installation media",
+          "de": "Ein nicht startbares pacman mit vertrauenswürdigem Installationsmedium retten"
+        },
+        "body": {
+          "en": "If pacman cannot start, boot verified current Arch recovery media and mount the actual installation and required boot filesystems. Follow Arch’s recovery procedure with the live environment’s pacman and its documented --sysroot support to repair a coherent target package set. Confirm the target before any write.",
+          "de": "Wenn pacman nicht startet, ein geprüftes aktuelles Arch-Rettungsmedium booten und die tatsächliche Installation samt nötigen Boot-Dateisystemen einhängen. Mit dem pacman der Live-Umgebung und dessen dokumentiertem --sysroot den Arch-Rettungsweg für einen zusammenpassenden Zielpaketstand nutzen. Vor Schreibzugriffen das Ziel bestätigen."
+        },
+        "precautions": {
+          "en": "A plain chroot using the broken target pacman may fail identically. A wrong root or missing boot mount can update the wrong system.",
+          "de": "Ein einfacher chroot mit dem defekten Ziel-pacman kann gleich scheitern. Falsche Wurzel oder fehlender Boot-Mount kann das falsche System aktualisieren."
+        },
+        "rollback": {
+          "en": "Use the saved coherent snapshot or package/configuration backup through the same trusted recovery environment; keep recovery media available until the system boots.",
+          "de": "Gesicherten zusammenhängenden Snapshot oder Paket-/Konfigurationssicherung über dieselbe vertrauenswürdige Rettungsumgebung herstellen; Medium bis zum erfolgreichen Systemstart behalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Arch pacman manual: query, sync and alternate system roots",
+        "url": "https://man.archlinux.org/man/pacman.8",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ArchWiki: partial upgrades are unsupported",
+        "url": "https://wiki.archlinux.org/title/System_maintenance",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ArchWiki: pacman lock and file-conflict recovery",
+        "url": "https://wiki.archlinux.org/title/Pacman",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pacman-self-loader-library-missing",
+        "all": [
+          "pacman: error while loading shared libraries:",
+          "cannot open shared object file"
+        ],
+        "sample": "pacman: error while loading shared libraries: libalpm.so.99: cannot open shared object file: No such file or directory",
+        "negative": [
+          "example-app: error while loading shared libraries: libexample.so.1: cannot open shared object file: No such file or directory",
+          "pacman v7.0.0 - libalpm v15.0.0"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "pacman could not load a required shared library and has not reached its package logic.",
+          "de": "pacman konnte eine benötigte Shared Library nicht laden und hat seine Paketlogik noch nicht erreicht."
+        },
+        "significance": {
+          "en": "A partial upgrade is one cause; missing files or altered search paths can also produce this loader failure.",
+          "de": "Ein Teilupdate ist eine Ursache; fehlende Dateien oder veränderte Suchpfade können denselben Ladefehler erzeugen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "pacman-package-signature-untrusted",
+    "slug": {
+      "en": "pacman-package-signature-untrusted",
+      "de": "pacman-paketsignatur-nicht-vertraut"
+    },
+    "category": "packages",
+    "title": {
+      "en": "pacman cannot trust or validate a package signature",
+      "de": "pacman vertraut einer Paketsignatur nicht oder kann sie nicht prüfen"
+    },
+    "summary": {
+      "en": "Keyring age, clock errors and damaged downloads can break signature checks. Verify the signer and trust chain before refreshing any key material.",
+      "de": "Alte Schlüsseldateien, falsche Uhrzeit und beschädigte Downloads können Signaturen stören. Unterzeichner und Vertrauenskette vor Schlüsseländerungen prüfen."
+    },
+    "environment": {
+      "en": "Arch Linux official package signatures; other pacman-based distributions use their own trust roots and keyring packages.",
+      "de": "Offizielle Arch-Linux-Paketsignaturen; andere pacman-Distributionen nutzen eigene Vertrauenswurzeln und Schlüsselpakete."
+    },
+    "symptoms": {
+      "en": [
+        "pacman reports a signer with unknown trust.",
+        "A transaction stops with invalid or corrupted package (PGP signature)."
+      ],
+      "de": [
+        "pacman meldet einen Unterzeichner mit unknown trust.",
+        "Eine Transaktion endet mit invalid or corrupted package (PGP signature)."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The installed distribution keyring may not include a legitimate current signer or trust update.",
+        "de": "Das installierte Distributionsschlüsselpaket enthält möglicherweise keinen berechtigten aktuellen Unterzeichner oder Vertrauensstand."
+      },
+      {
+        "en": "Incorrect time or a damaged/tampered download may invalidate signature verification.",
+        "de": "Falsche Uhrzeit oder ein beschädigter/manipulierter Download kann die Signaturprüfung stören."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-package-keyring-version",
+        "command": "pacman -Q archlinux-keyring",
+        "explanation": {
+          "en": "Queries the local official Arch keyring package version; use the distribution’s own keyring name elsewhere.",
+          "de": "Fragt die lokale Version des offiziellen Arch-Schlüsselpakets ab; anderswo den eigenen Distributionsnamen verwenden."
+        },
+        "interpretation": {
+          "en": "A missing or old keyring supports a trust-update issue, but version alone cannot establish the authenticity of the failed download.",
+          "de": "Ein fehlendes oder altes Schlüsselpaket stützt einen Vertrauensfehler, beweist aber keine echte Herkunft des fehlgeschlagenen Downloads."
+        }
+      },
+      {
+        "id": "read-system-time-for-signatures",
+        "command": "timedatectl status",
+        "explanation": {
+          "en": "Reads wall clock, timezone and synchronization status; does not change the clock. On non-systemd systems use date -u.",
+          "de": "Liest Uhrzeit, Zeitzone und Synchronisationsstatus, ohne die Uhr zu ändern. Ohne systemd date -u nutzen."
+        },
+        "interpretation": {
+          "en": "A large time error can make a valid signature appear expired or not yet valid. Synchronized status is not an independent signer verification.",
+          "de": "Eine starke Uhrabweichung kann eine gültige Signatur als abgelaufen oder künftig gültig erscheinen lassen. Synchronisiert bedeutet keine unabhängige Unterzeichnerprüfung."
+        }
+      },
+      {
+        "id": "inspect-packager-key-fingerprint",
+        "command": "pacman-key --finger KEY_ID",
+        "explanation": {
+          "en": "Replace KEY_ID with the signer ID from the error; lists known fingerprints without importing, signing or refreshing keys. Keyring read access may require privileges.",
+          "de": "KEY_ID durch die Unterzeichner-ID aus dem Fehler ersetzen; listet bekannte Fingerabdrücke ohne Import, Signierung oder Aktualisierung. Schlüssel-Leserechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "Compare the full fingerprint with the distribution’s published signer. Missing keys and unknown trust are different from a verified signature on a damaged package.",
+          "de": "Den vollständigen Fingerabdruck mit dem veröffentlichten Distributionsunterzeichner vergleichen. Fehlender Schlüssel und unknown trust unterscheiden sich von einer geprüften Signatur eines beschädigten Pakets."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "refresh-official-distribution-keyring",
+        "title": {
+          "en": "Refresh the official distribution keyring through its trust chain",
+          "de": "Offizielles Distributionsschlüsselpaket über dessen Vertrauenskette erneuern"
+        },
+        "body": {
+          "en": "If the signer is legitimate and the keyring is outdated, use Arch’s documented keyring-first recovery procedure and then complete the full system upgrade immediately. If the existing keyring cannot verify its own update, use verified recovery media and the distribution’s documented trust bootstrap.",
+          "de": "Wenn der Unterzeichner echt und das Schlüsselpaket alt ist, Archs dokumentierten Schlüsselpaket-zuerst-Rettungsweg nutzen und direkt danach das vollständige Systemupdate abschließen. Kann der bestehende Schlüsselstand sein eigenes Update nicht bestätigen, geprüftes Rettungsmedium und dokumentierten Vertrauensaufbau der Distribution nutzen."
+        },
+        "precautions": {
+          "en": "Do not locally sign an unknown key or set SigLevel=Never. A keyserver response alone does not establish a trusted packager.",
+          "de": "Keinen unbekannten Schlüssel lokal signieren oder SigLevel=Never setzen. Eine Schlüsselserverantwort allein beweist keinen vertrauenswürdigen Paketbetreuer."
+        },
+        "rollback": {
+          "en": "Restore a saved coherent recovery snapshot if the bootstrap was incorrect; preserve authenticated verification instead of reverting to an obsolete trust bypass.",
+          "de": "Bei falschem Vertrauensaufbau einen zusammenhängenden Rettungssnapshot herstellen; authentifizierte Prüfung erhalten statt einer alten Prüfumgehung."
+        }
+      },
+      {
+        "id": "correct-clock-or-redownload-failed-archive",
+        "title": {
+          "en": "Correct confirmed time drift or replace the failed archive",
+          "de": "Bestätigte Uhrabweichung korrigieren oder das Fehlerarchiv ersetzen"
+        },
+        "body": {
+          "en": "If time is wrong, restore the approved time-synchronization setup before retrying. If the signer is verified and only one cached archive fails, move that exact archive aside and redownload it through the configured trusted mirror during the next reviewed transaction. Keep the original for comparison.",
+          "de": "Bei falscher Uhrzeit die freigegebene Zeitsynchronisation vor dem nächsten Versuch herstellen. Bei bestätigtem Unterzeichner und nur einem fehlerhaften Cache-Archiv genau dieses beiseitelegen und in der nächsten geprüften Transaktion über den vertrauten Mirror neu beziehen. Das Original zum Vergleich behalten."
+        },
+        "precautions": {
+          "en": "Do not purge the entire cache or install the rejected archive with signature checking disabled. Persistent failures require checking mirror/content provenance.",
+          "de": "Nicht den ganzen Cache leeren oder das abgelehnte Archiv ohne Signaturprüfung installieren. Dauerhafte Fehler brauchen eine Herkunftsprüfung von Mirror und Inhalt."
+        },
+        "rollback": {
+          "en": "Restore the prior time-service configuration if changed incorrectly; retain the rejected archive separately rather than reinstalling an unverifiable package.",
+          "de": "Bei falscher Änderung die vorherige Zeitdienst-Konfiguration herstellen; das abgelehnte Archiv getrennt behalten statt ein unprüfbares Paket zu installieren."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Arch pacman-key: fingerprints and trust operations",
+        "url": "https://man.archlinux.org/man/pacman-key.8",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Arch pacman.conf: repositories and signature checking",
+        "url": "https://man.archlinux.org/man/pacman.conf.5.en",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "ArchWiki: package signing and keyring maintenance",
+        "url": "https://wiki.archlinux.org/title/Pacman/Package_signing",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pacman-signature-unknown-trust",
+        "all": [
+          "error:",
+          "signature from",
+          "is unknown trust"
+        ],
+        "sample": "error: example-package: signature from \"Example Packager <example@archlinux.org>\" is unknown trust",
+        "negative": [
+          "error: example-package: signature from \"Example Packager\" is invalid",
+          ":: Import PGP key 0123456789ABCDEF, \"Example Packager\"?"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "pacman found a signing identity without the required trust.",
+          "de": "pacman fand eine Signaturidentität ohne das benötigte Vertrauen."
+        },
+        "significance": {
+          "en": "Verify its full fingerprint and distribution trust chain; this is not evidence that arbitrary local signing is safe.",
+          "de": "Vollständigen Fingerabdruck und Distributionsvertrauenskette prüfen; das belegt keine sichere beliebige lokale Signierung."
+        }
+      },
+      {
+        "id": "pacman-pgp-transaction-rejected",
+        "all": [
+          "error:",
+          "invalid or corrupted package (PGP signature)"
+        ],
+        "sample": "error: failed to commit transaction (invalid or corrupted package (PGP signature))",
+        "negative": [
+          "error: failed to commit transaction (conflicting files)",
+          "error: failed to commit transaction (invalid or corrupted package (checksum))"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A package signature check stopped the transaction.",
+          "de": "Eine Paketsignaturprüfung hat die Transaktion gestoppt."
+        },
+        "significance": {
+          "en": "Check earlier signer/clock/download messages; this summary does not distinguish stale trust from altered content.",
+          "de": "Vorherige Unterzeichner-, Uhrzeit- und Downloadmeldungen prüfen; die Zusammenfassung trennt altes Vertrauen nicht von verändertem Inhalt."
+        }
+      }
+    ]
+  },
+  {
+    "id": "dnf-dependency-conflict",
+    "slug": {
+      "en": "dnf-dependency-conflict",
+      "de": "dnf-abhaengigkeitskonflikt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "DNF cannot satisfy a package dependency plan",
+      "de": "DNF kann einen Abhängigkeitsplan nicht erfüllen"
+    },
+    "summary": {
+      "en": "A missing provider or incompatible repository package can block DNF. Compare installed requirements and cached providers before allowing removals.",
+      "de": "Fehlende Anbieter oder unpassende Repository-Pakete können DNF blockieren. Installierte Anforderungen und Cache-Anbieter vor Entfernungen vergleichen."
+    },
+    "environment": {
+      "en": "RPM-based system with DNF5; DNF4 has similar concepts but some options differ. Cached queries may reflect old repository metadata.",
+      "de": "RPM-System mit DNF5; DNF4 nutzt ähnliche Konzepte mit teils anderen Optionen. Cache-Abfragen können alte Quellmetadaten zeigen."
+    },
+    "symptoms": {
+      "en": [
+        "DNF reports nothing provides a required capability.",
+        "A provider exists but cannot coexist with the installed package set."
+      ],
+      "de": [
+        "DNF meldet keinen Anbieter einer benötigten Fähigkeit.",
+        "Ein Anbieter existiert, verträgt sich aber nicht mit dem installierten Paketstand."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A required repository may be disabled, missing this release or filtered by architecture/version policy.",
+        "de": "Eine nötige Quelle kann deaktiviert sein, dieses Release nicht anbieten oder nach Architektur/Version gefiltert werden."
+      },
+      {
+        "en": "Third-party or partially upgraded packages may require an incompatible dependency version.",
+        "de": "Drittanbieter- oder teilweise aktualisierte Pakete können eine unpassende Abhängigkeitsversion verlangen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-installed-rpm-requirements",
+        "command": "rpm -q --requires PACKAGE_NAME",
+        "explanation": {
+          "en": "Replace PACKAGE_NAME with the installed package named by the solver; reads RPM requirements without starting a transaction.",
+          "de": "PACKAGE_NAME durch das installierte vom Solver genannte Paket ersetzen; liest RPM-Anforderungen ohne Transaktion."
+        },
+        "interpretation": {
+          "en": "Compare the exact capability, soname and version expression. A package name alone is not always the dependency the solver needs.",
+          "de": "Konkrete Fähigkeit, Soname und Versionsausdruck vergleichen. Ein Paketname ist nicht immer die vom Solver benötigte Abhängigkeit."
+        }
+      },
+      {
+        "id": "query-cached-dnf-provider",
+        "command": "dnf5 --cacheonly repoquery --whatprovides 'CAPABILITY'",
+        "explanation": {
+          "en": "Replace CAPABILITY with the exact solver requirement and keep shell quoting for parentheses or comparison operators. Reads cached metadata only.",
+          "de": "CAPABILITY durch die genaue Solver-Anforderung ersetzen; Klammern oder Vergleichsoperatoren weiter für die Shell quotieren. Liest nur gespeicherte Metadaten."
+        },
+        "interpretation": {
+          "en": "No result can mean no cached provider or missing/stale cache; it does not prove the publisher has no current package. Compare provider release and architecture.",
+          "de": "Kein Treffer kann keinen Cache-Anbieter oder fehlenden/alten Cache bedeuten; er beweist kein fehlendes aktuelles Anbieterpaket. Release und Architektur vergleichen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-repository-release-mismatch",
+        "title": {
+          "en": "Correct the responsible repository or package release",
+          "de": "Die verantwortliche Quelle oder Paketversion korrigieren"
+        },
+        "body": {
+          "en": "If the package comes from a source for another OS release, save repository configuration and use the maintainer’s supported release source or package. Refresh metadata, preview the intended transaction with --assumeno and apply it only after checking replacements and removals.",
+          "de": "Wenn das Paket aus einer Quelle für ein anderes OS-Release stammt, Quellkonfiguration sichern und unterstützte Release-Quelle oder Paketversion des Betreuers verwenden. Metadaten erneuern, die Transaktion mit --assumeno vorprüfen und erst nach Prüfung von Austausch und Entfernung anwenden."
+        },
+        "precautions": {
+          "en": "Do not install arbitrary RPMs from another release or use --allowerasing without inspecting every proposed removal.",
+          "de": "Keine beliebigen RPMs eines anderen Releases installieren oder --allowerasing ohne Prüfung jeder vorgeschlagenen Entfernung nutzen."
+        },
+        "rollback": {
+          "en": "Restore the saved source and coherent pre-transaction snapshot; reverting only a repository file does not undo installed version changes.",
+          "de": "Gesicherte Quelle und zusammenhängenden Snapshot vor der Transaktion herstellen; nur die Quelldatei zurückzusetzen nimmt installierte Versionswechsel nicht zurück."
+        }
+      },
+      {
+        "id": "sync-reviewed-affected-package-set",
+        "title": {
+          "en": "Synchronize a reviewed affected package set",
+          "de": "Einen geprüften betroffenen Paketstand synchronisieren"
+        },
+        "body": {
+          "en": "If sources are correct but installed versions differ from their supported repository set, preview dnf5 --assumeno distro-sync PACKAGE_NAME for the affected package. Review its dependency transaction, including any downgrade, before an administrator applies it without automatic yes.",
+          "de": "Wenn Quellen stimmen, aber installierte Versionen vom unterstützten Paketstand der Repositories abweichen, dnf5 --assumeno distro-sync PACKAGE_NAME für das betroffene Paket vorprüfen. Abhängigkeitstransaktion samt Downgrades vor administrativer Anwendung ohne automatische Zustimmung prüfen."
+        },
+        "precautions": {
+          "en": "Distro-sync may downgrade packages; application data migrations may not be reversible. Do not use skip-broken to conceal an unresolved dependency.",
+          "de": "Distro-sync kann Pakete zurückstufen; Datenmigrationen können unumkehrbar sein. skip-broken nicht zum Verbergen offener Abhängigkeiten nutzen."
+        },
+        "rollback": {
+          "en": "Restore the saved application data/configuration and coherent snapshot if a downgrade causes incompatibility; history undo depends on package availability and is not guaranteed.",
+          "de": "Bei inkompatiblem Downgrade gesicherte Anwendungsdaten/-konfiguration und zusammenhängenden Snapshot herstellen; history undo hängt von Paketverfügbarkeit ab und ist nicht garantiert."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "DNF5: repoquery capability and provider filters",
+        "url": "https://dnf5.readthedocs.io/en/latest/commands/repoquery.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "DNF5: distro-sync upgrades, downgrades and removals",
+        "url": "https://dnf5.readthedocs.io/en/latest/commands/distro-sync.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "DNF5: cacheonly and assumeno options",
+        "url": "https://dnf5.readthedocs.io/en/latest/dnf5.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "DNF5 missing-provider diagnostic (upstream issue 726)",
+        "url": "https://github.com/rpm-software-management/dnf5/issues/726",
+        "kind": "official",
+        "evidence": "upstream-report"
+      },
+      {
+        "title": "DNF5 incompatible-provider diagnostic (upstream issue 934)",
+        "url": "https://github.com/rpm-software-management/dnf5/issues/934",
+        "kind": "official",
+        "evidence": "upstream-report"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "rpm-solver-provider-absent",
+        "all": [
+          "nothing provides ",
+          " needed by "
+        ],
+        "sample": " - nothing provides libexample.so.3()(64bit) needed by example-app-2.0-1.x86_64 from vendor-repo",
+        "negative": [
+          " - package example-app-2.0-1.x86_64 requires libexample.so.3()(64bit), but none of the providers can be installed",
+          "libexample.so.3()(64bit) is provided by example-lib-3.0-1.x86_64"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "An RPM dependency solver found no provider for the named requirement in its considered package set.",
+          "de": "Ein RPM-Abhängigkeitssolver fand im betrachteten Paketstand keinen Anbieter der genannten Anforderung."
+        },
+        "significance": {
+          "en": "Check enabled sources, release and architecture; this wording can also occur with other libsolv-based package managers.",
+          "de": "Aktive Quellen, Release und Architektur prüfen; diese Formulierung kommt auch bei anderen libsolv-Paketmanagern vor."
+        }
+      },
+      {
+        "id": "rpm-solver-providers-incompatible",
+        "all": [
+          "package ",
+          " requires ",
+          "but none of the providers can be installed"
+        ],
+        "sample": " - package example-app-2.0-1.x86_64 requires example-lib >= 3, but none of the providers can be installed",
+        "negative": [
+          " - nothing provides example-lib >= 3 needed by example-app-2.0-1.x86_64",
+          "Installing: example-lib-3.0-1.x86_64"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Available providers could not fit the requested RPM transaction.",
+          "de": "Verfügbare Anbieter passten nicht in die angeforderte RPM-Transaktion."
+        },
+        "significance": {
+          "en": "Read the following conflicts and constraints; an existing provider is different from a missing repository package.",
+          "de": "Nachfolgende Konflikte und Vorgaben lesen; ein vorhandener Anbieter unterscheidet sich von einem fehlenden Quellpaket."
+        }
+      }
+    ]
+  },
+  {
+    "id": "flatpak-runtime-missing",
+    "slug": {
+      "en": "flatpak-runtime-missing",
+      "de": "flatpak-runtime-fehlt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "A Flatpak app’s required runtime is unavailable",
+      "de": "Die benötigte Laufzeitumgebung einer Flatpak-App fehlt"
+    },
+    "summary": {
+      "en": "A Flatpak runtime must match its ID, architecture, branch and installation scope. Compare app metadata, installed refs and configured remotes.",
+      "de": "Eine Flatpak-Laufzeit braucht passende ID, Architektur, Branch und Installationsort. App-Metadaten, installierte Refs und Quellen vergleichen."
+    },
+    "environment": {
+      "en": "Flatpak user and system installations; apps can require different branches of the same runtime ID.",
+      "de": "Flatpak-Benutzer- und Systeminstallationen; Apps können verschiedene Branches derselben Laufzeit-ID benötigen."
+    },
+    "symptoms": {
+      "en": [
+        "Flatpak reports a runtime ref that is not installed.",
+        "The same runtime ID exists only for another branch or installation scope."
+      ],
+      "de": [
+        "Flatpak meldet eine nicht installierte Laufzeit-Ref.",
+        "Dieselbe Laufzeit-ID existiert nur für einen anderen Branch oder Installationsort."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The app’s exact runtime ref may be missing after an incomplete installation.",
+        "de": "Die genaue App-Laufzeit-Ref kann nach unvollständiger Installation fehlen."
+      },
+      {
+        "en": "The app’s origin remote may be disabled, absent in the relevant scope or no longer publish that branch.",
+        "de": "Die Herkunftsquelle kann deaktiviert sein, am passenden Ort fehlen oder den Branch nicht mehr veröffentlichen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-app-runtime-ref",
+        "command": "flatpak info --show-runtime APP_ID",
+        "explanation": {
+          "en": "Replace APP_ID with the affected installed application; add --user or --system if the ID exists in both scopes.",
+          "de": "APP_ID durch die betroffene installierte Anwendung ersetzen; bei beiden Orten --user oder --system ergänzen."
+        },
+        "interpretation": {
+          "en": "Record the full runtime ID/architecture/branch. A runtime with the same ID but a different branch cannot automatically substitute.",
+          "de": "Vollständige Laufzeit-ID, Architektur und Branch notieren. Gleiche ID mit anderem Branch ersetzt die Laufzeit nicht automatisch."
+        }
+      },
+      {
+        "id": "list-installed-runtime-origins",
+        "command": "flatpak list --runtime --columns=ref,origin,installation",
+        "explanation": {
+          "en": "Lists installed runtime refs and their origin/installation without installing or repairing them.",
+          "de": "Listet installierte Laufzeit-Refs samt Herkunft und Installationsort, ohne zu installieren oder zu reparieren."
+        },
+        "interpretation": {
+          "en": "Compare the exact ref and scope with the app. Presence in another installation does not prove the app’s dependency resolution will use it.",
+          "de": "Die genaue Ref und den Ort mit der App vergleichen. Eine andere Installation beweist keine Verwendung durch deren Abhängigkeitsauflösung."
+        }
+      },
+      {
+        "id": "inspect-flatpak-remotes",
+        "command": "flatpak remotes --show-details",
+        "explanation": {
+          "en": "Reads configured remote URLs, options and scopes. It does not add a remote or install metadata.",
+          "de": "Liest Quell-URLs, Optionen und Orte. Fügt keine Quelle hinzu und installiert keine Metadaten."
+        },
+        "interpretation": {
+          "en": "A disabled or wrong-scope origin supports an installation-source issue; the configured URL alone does not prove the branch is still published.",
+          "de": "Eine deaktivierte oder falsch zugeordnete Herkunft stützt einen Quellfehler; die konfigurierte URL beweist keinen weiterhin veröffentlichten Branch."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "install-exact-supported-runtime",
+        "title": {
+          "en": "Install the exact runtime through the trusted app origin",
+          "de": "Die genaue Laufzeit über die vertraute App-Quelle installieren"
+        },
+        "body": {
+          "en": "If the app origin still publishes the required ref, install or update through that trusted remote in the app’s intended installation scope so Flatpak resolves its declared runtime. Inspect the runtime ID, architecture and branch in the proposed transaction before accepting.",
+          "de": "Wenn die App-Quelle die nötige Ref noch anbietet, über diese vertraute Quelle am vorgesehenen Installationsort installieren oder aktualisieren, damit Flatpak die deklarierte Laufzeit auflöst. Laufzeit-ID, Architektur und Branch im Vorschlag vor Zustimmung prüfen."
+        },
+        "precautions": {
+          "en": "Do not add an unverified remote or force an unrelated runtime branch. Keep the app’s data directory and previous commit information.",
+          "de": "Keine ungeprüfte Quelle ergänzen oder einen fremden Laufzeitbranch erzwingen. App-Datenverzeichnis und bisherige Commit-Information erhalten."
+        },
+        "rollback": {
+          "en": "Remove only the newly added runtime when no installed app requires it; restore the saved compatible app/runtime snapshot if a version change must be undone.",
+          "de": "Nur die neu ergänzte Laufzeit entfernen, wenn keine installierte App sie benötigt; bei nötiger Versionsrücknahme den gesicherten passenden App-/Laufzeitstand herstellen."
+        }
+      },
+      {
+        "id": "move-app-to-maintained-runtime-branch",
+        "title": {
+          "en": "Use an app release based on a maintained runtime",
+          "de": "Eine App-Version mit gepflegter Laufzeit verwenden"
+        },
+        "body": {
+          "en": "If the required branch is no longer published or supported, obtain the maintainer’s supported app update that declares a maintained runtime. Preserve application data before migration and keep installation scope explicit; do not rewrite the app’s runtime metadata manually.",
+          "de": "Wenn der nötige Branch nicht mehr angeboten oder unterstützt wird, die unterstützte App-Aktualisierung mit gepflegter Laufzeit vom Betreuer beziehen. App-Daten vor der Migration sichern und Installationsort ausdrücklich erhalten; Laufzeitmetadaten nicht manuell umschreiben."
+        },
+        "precautions": {
+          "en": "A newer runtime by itself cannot fix an app built for another ABI. A no-ref error may also be a typo or wrong remote, so verify that first.",
+          "de": "Eine neuere Laufzeit allein repariert keine App für eine andere ABI. Ein No-ref-Fehler kann auch Tippfehler oder falsche Quelle bedeuten; das zuerst prüfen."
+        },
+        "rollback": {
+          "en": "Restore backed-up app data and the previous compatible supported app/runtime versions if available; do not remove all old runtimes blindly.",
+          "de": "Gesicherte App-Daten und verfügbare frühere passende unterstützte App-/Laufzeitversionen herstellen; nicht pauschal alle alten Laufzeiten entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Flatpak: command reference and installation scope",
+        "url": "https://docs.flatpak.org/en/latest/flatpak-command-reference.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Flatpak: apps, runtimes and user/system installations",
+        "url": "https://docs.flatpak.org/en/latest/using-flatpak.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Flatpak upstream: remote ref lookup failure",
+        "url": "https://github.com/flatpak/flatpak/issues/3769",
+        "kind": "official",
+        "evidence": "upstream-report"
+      },
+      {
+        "title": "Flatpak runtime-not-installed diagnostic (upstream issue 3033)",
+        "url": "https://github.com/flatpak/flatpak/issues/3033",
+        "kind": "official",
+        "evidence": "upstream-report"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "flatpak-runtime-ref-not-installed",
+        "all": [
+          "error: runtime/",
+          "not installed"
+        ],
+        "sample": "error: runtime/org.example.Platform/x86_64/1.0 not installed",
+        "negative": [
+          "error: app/org.example.App/x86_64/stable is not installed",
+          "runtime/org.example.Platform/x86_64/1.0 installed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Flatpak could not find an installed runtime ref required for the launch.",
+          "de": "Flatpak fand die für den Start benötigte installierte Laufzeit-Ref nicht."
+        },
+        "significance": {
+          "en": "Compare full ref and installation scope; this is not proof that no remote publishes it.",
+          "de": "Vollständige Ref und Installationsort vergleichen; das beweist keine fehlende Veröffentlichung durch eine Quelle."
+        }
+      },
+      {
+        "id": "flatpak-remote-ref-lookup-empty",
+        "all": [
+          "error:",
+          "No remote refs found similar to"
+        ],
+        "sample": "error: No remote refs found similar to 'org.example.Platform//1.0'",
+        "negative": [
+          "error: runtime/org.example.Platform/x86_64/1.0 is not installed",
+          "Installing runtime/org.example.Platform/x86_64/1.0"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Flatpak found no matching ref in the remotes considered for this request.",
+          "de": "Flatpak fand in den für die Anfrage betrachteten Quellen keine passende Ref."
+        },
+        "significance": {
+          "en": "Check spelling, branch, architecture and remote scope; this can refer to apps as well as runtimes.",
+          "de": "Schreibweise, Branch, Architektur und Quellort prüfen; das kann Apps ebenso wie Laufzeiten betreffen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "flatpak-file-access-restricted",
+    "slug": {
+      "en": "flatpak-file-access-restricted",
+      "de": "flatpak-dateizugriff-begrenzt"
+    },
+    "category": "packages",
+    "title": {
+      "en": "A Flatpak app cannot see a host file",
+      "de": "Eine Flatpak-App sieht eine Hostdatei nicht"
+    },
+    "summary": {
+      "en": "Host filesystem access and portal grants are separate from Unix file modes. Inspect app permissions before enlarging the sandbox’s access.",
+      "de": "Host-Dateizugriff und Portal-Freigaben sind von Unix-Dateirechten getrennt. App-Rechte prüfen, bevor der Sandbox-Zugriff erweitert wird."
+    },
+    "environment": {
+      "en": "Flatpak filesystem sandbox and document portals; app-specific user overrides can differ from system or manifest permissions.",
+      "de": "Flatpak-Dateisystemsandbox und Dokumentportale; benutzerbezogene App-Vorgaben können von System- oder Manifestrechten abweichen."
+    },
+    "symptoms": {
+      "en": [
+        "A file visible to the desktop file manager is absent inside one app.",
+        "A portal-selected document opens, while direct navigation to its host path fails."
+      ],
+      "de": [
+        "Eine im Desktop-Dateimanager sichtbare Datei fehlt in einer App.",
+        "Ein im Portal gewähltes Dokument öffnet sich, sein direkter Hostpfad dagegen nicht."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The sandbox may not expose the host path, even when Unix permissions allow it.",
+        "de": "Die Sandbox kann den Hostpfad ausblenden, obwohl Unix-Rechte ihn erlauben."
+      },
+      {
+        "en": "A per-app override or revoked document grant may narrow access further.",
+        "de": "Eine App-Vorgabe oder widerrufene Dokumentfreigabe kann den Zugriff weiter begrenzen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-flatpak-app-permissions",
+        "command": "flatpak info --show-permissions APP_ID",
+        "explanation": {
+          "en": "Replace APP_ID; specify --user or --system when scope is ambiguous. Reads declared permissions without launching the app.",
+          "de": "APP_ID ersetzen; bei unklarem Ort --user oder --system angeben. Liest deklarierte Rechte ohne App-Start."
+        },
+        "interpretation": {
+          "en": "Inspect filesystem entries and read-only suffixes. Declared access does not override the host file’s ordinary permissions or represent every dynamic portal grant.",
+          "de": "Dateisystemeinträge und Nur-Lesen-Zusätze prüfen. Deklarierter Zugriff überschreibt keine normalen Hostrechte und zeigt nicht jede dynamische Portal-Freigabe."
+        }
+      },
+      {
+        "id": "read-user-app-overrides",
+        "command": "flatpak override --user --show APP_ID",
+        "explanation": {
+          "en": "Shows the specified app’s user overrides without changing them; inspect --system separately for system-level overrides.",
+          "de": "Zeigt die Benutzer-Vorgaben der App ohne Änderung; System-Vorgaben getrennt mit --system prüfen."
+        },
+        "interpretation": {
+          "en": "A no-filesystem override can explain restricted paths. No user override does not prove unrestricted access because the manifest and portal decisions still apply.",
+          "de": "Eine no-filesystem-Vorgabe kann begrenzte Pfade erklären. Keine Benutzervorgabe bedeutet keinen unbegrenzten Zugriff, da Manifest und Portalentscheidungen weiter gelten."
+        }
+      },
+      {
+        "id": "read-dynamic-portal-grants",
+        "command": "flatpak permission-show APP_ID",
+        "explanation": {
+          "en": "Reads portal permission-store entries for this application; does not reset or grant access.",
+          "de": "Liest Portal-Rechtespeichereinträge dieser Anwendung; setzt nichts zurück und vergibt keinen Zugriff."
+        },
+        "interpretation": {
+          "en": "Compare relevant document/portal grants with the intended file. Table formats are portal-specific, so an unrelated permission is not evidence of file access.",
+          "de": "Betreffende Dokument-/Portal-Freigaben mit der Datei vergleichen. Tabellenformate sind portalspezifisch; eine fremde Freigabe belegt keinen Dateizugriff."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "use-document-portal-selection",
+        "title": {
+          "en": "Open the file through the application’s document portal",
+          "de": "Datei über das Dokumentportal der Anwendung öffnen"
+        },
+        "body": {
+          "en": "If the application supports a portal file chooser, select the needed file through its Open dialog rather than navigating an unexposed host path. This can grant access to that document without granting the whole home directory. Use the app’s supported save/export dialog for output files.",
+          "de": "Wenn die Anwendung eine Portal-Dateiauswahl unterstützt, die benötigte Datei über ihren Öffnen-Dialog wählen statt über einen ausgeblendeten Hostpfad. Das kann nur dieses Dokument freigeben, ohne das ganze Home zu öffnen. Für Ausgaben den unterstützten Speichern-/Export-Dialog nutzen."
+        },
+        "precautions": {
+          "en": "A broken portal backend needs its own diagnosis; a broad filesystem grant does not repair the chooser service.",
+          "de": "Ein defektes Portalbackend braucht eine eigene Diagnose; eine weite Dateisystemfreigabe repariert den Auswahldienst nicht."
+        },
+        "rollback": {
+          "en": "Close the document and revoke only its app-specific document permission in the portal permission store if persistent access was granted; preserve unrelated grants.",
+          "de": "Dokument schließen und bei dauerhafter Freigabe nur dessen appbezogenes Dokumentrecht im Portal-Rechtespeicher widerrufen; andere Freigaben erhalten."
+        }
+      },
+      {
+        "id": "grant-minimal-read-only-app-directory",
+        "title": {
+          "en": "Grant a necessary folder to this app with minimal rights",
+          "de": "Einen nötigen Ordner mit minimalen Rechten für diese App freigeben"
+        },
+        "body": {
+          "en": "If the app cannot use portals and genuinely needs a specific folder, save existing overrides and add only that app’s folder permission, preferably read-only with flatpak override --user --filesystem=/absolute/folder:ro APP_ID. Replace the absolute path and ID, and restart the app.",
+          "de": "Wenn die App keine Portale nutzen kann und einen konkreten Ordner wirklich benötigt, bestehende Vorgaben sichern und nur dieser App den Ordner freigeben, möglichst lesend mit flatpak override --user --filesystem=/absoluter/ordner:ro APP_ID. Absoluten Pfad und ID ersetzen und die App neu starten."
+        },
+        "precautions": {
+          "en": "Do not grant host or home as a default fix. Restricted/reserved paths and ordinary host permissions still apply.",
+          "de": "host oder home nicht pauschal freigeben. Reservierte/geschützte Pfade und normale Hostrechte gelten weiter."
+        },
+        "rollback": {
+          "en": "Restore the saved per-app override file or the prior specific filesystem entry. Do not use an app-wide override reset if other intentional settings exist.",
+          "de": "Die gesicherte App-Vorgabendatei oder den vorherigen konkreten Dateisystemeintrag herstellen. Bei anderen gewollten Einstellungen keine gesamte App-Vorgabe zurücksetzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Flatpak: filesystem permissions, restrictions and portals",
+        "url": "https://docs.flatpak.org/en/latest/sandbox-permissions.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Flatpak: command reference and installation scope",
+        "url": "https://docs.flatpak.org/en/latest/flatpak-command-reference.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Flatpak: portal support in GTK applications",
+        "url": "https://docs.flatpak.org/en/latest/portals.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  }
+]
