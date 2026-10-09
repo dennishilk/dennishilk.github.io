@@ -1,0 +1,41 @@
+name: Refresh blog RSS feeds
+on:
+  push:
+    branches: [main]
+    paths:
+      - "blog/**"
+      - "de/blog/**"
+      - "scripts/generate-blog-rss.mjs"
+      - ".github/workflows/blog-rss.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: blog-rss-main
+  cancel-in-progress: false
+jobs:
+  update-feeds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build feeds from article metadata
+        run: node scripts/generate-blog-rss.mjs
+      - name: Validate feeds
+        run: node --test tests/blog-rss.test.mjs
+      - name: Commit changed feeds to main
+        run: |
+          if git diff --quiet -- blog/feed.xml de/blog/feed.xml; then
+            echo "Feeds are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blog/feed.xml de/blog/feed.xml
+          git commit -m "blog: refresh RSS feeds"
+          git pull --rebase origin main
+          git push origin HEAD:main

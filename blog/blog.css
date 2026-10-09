@@ -135,3 +135,16 @@ tr:last-child td { border-bottom:0; }
 .section-return a { text-decoration:none; color:var(--muted); }
 .section-return a:hover { color:var(--accent); }
 @media(max-width:650px) { .guides-section,.blog-sections { scroll-margin-top:160px; } }
+
+
+/* Blog and Fediverse RSS subscriptions – localized, responsive, no external assets. */
+.blog-feeds { display:flex; align-items:center; justify-content:space-between; gap:22px; flex-wrap:wrap; padding:19px 23px; margin:0 0 30px; border:1px solid var(--line); border-radius:12px; background:var(--surface-soft); }
+.feed-copy { flex:1 1 240px; }
+.feed-copy h2 { margin:0 0 5px; font-size:16px; line-height:1.4; }
+.feed-copy p { margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
+.feed-links { display:flex; flex-wrap:wrap; gap:9px; }
+.feed-link { display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:8px; padding:9px 12px; color:var(--text); background:var(--surface); font-size:12px; font-weight:650; text-decoration:none; white-space:nowrap; }
+.feed-link:hover { color:var(--accent); border-color:var(--accent); }
+.feed-link:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.feed-icon { width:15px; height:15px; flex:none; color:#f5a623; }
+@media(max-width:650px) { .blog-feeds { padding:17px; gap:14px; } .feed-links { width:100%; } }
