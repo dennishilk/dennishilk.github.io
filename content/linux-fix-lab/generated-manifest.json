@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "publication": {
-    "phase": "live-test",
-    "robots": "noindex,follow",
-    "sitemapActive": false
+    "phase": "public-launch",
+    "robots": "index,follow,max-image-preview:large",
+    "sitemapActive": true
   },
   "problemCount": 150,
   "localizedProblemPages": 300,
@@ -11,1211 +11,1211 @@
   "assistantCount": 18,
   "pages": {
     "/linux-fix-lab/": {
-      "hash": "f4514ba8155a7f67cd57c4bff3fec2a4e54b5366cdde9617b28ed94da155bb89",
+      "hash": "2dcdf0e20656f11e78dc9de3bccc7b6a80cf7a8b3c81eb655398990ac0ec5da7",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/amdgpu-ring-timeout/": {
-      "hash": "e7badddf171fc8eb5e1b250b49a1b0a50c97640dfcbca6cca85db58b1ca4baa1",
+      "hash": "7efb6ab9103b180172cc8ee07fb6d750993621ca6c0214c961bc2397e4f9e9e9",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/amdgpu-missing-firmware/": {
-      "hash": "cf47f65f5f0cdd9224052d4cad7044914a07b8d6fd51cae5098593f6ee6511d9",
+      "hash": "67e10a8c83bbbd010c03d43cbf7032491d812022959afa1e75e450c4b649b78b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/amdgpu-vm-page-fault/": {
-      "hash": "d2f38a31422ceabfa0f5ee55d07412edb08029e27264b7945c1d6d42b1b2e30d",
+      "hash": "d0038ac24a08f0e3610535455b8845b877a490d59175a3a879bc9a85db4a9eec",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nvidia-gpu-fallen-off-bus/": {
-      "hash": "58f01b96f89f96f8a85ac0b52a0d18f00062643a84671429f83a09a9b51ade72",
+      "hash": "e30d197f792c233df9e650bf7fc286d40dca6ce882047af3d668c6875cacc63b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nvidia-driver-library-mismatch/": {
-      "hash": "f8aeb287c8c590eb04d8572a3430a3c8f58ecfb265346633ee51922ac1c2e19c",
+      "hash": "79480bb1c9b93136b67a92a7da5d64b7998a3d06a89c6f243d922533982e003e",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nvidia-module-signature-rejected/": {
-      "hash": "6bdc2da3b14a5a66d69ac1ca4112fa5722d38ec790b18db77815d6b7a8208b47",
+      "hash": "4e2a80cef24ccefffe066d56280d7acb86156f95806cbe7fa0ac5c3b73f3cd60",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nvidia-nouveau-driver-conflict/": {
-      "hash": "86105a25800912ce9e7ea98365397b024e78cedf63884f28e889fe9679d233bb",
+      "hash": "5b4de5fc11a8c40b4f5816d5e8b4400d1c28afd3bcceec006aa40a38bc583e49",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nvidia-suspend-memory-preservation/": {
-      "hash": "2acc9a9ea928175ced042e4fa2985173884c1a19d2e410baaecdd131fb855507",
+      "hash": "2be14dafe330695e956f64f564ceb75ca14a183c065ee7ce4b5af1106d56a993",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/mesa-software-rendering/": {
-      "hash": "602be6511285c5cf2b7f11857398e37424d5f86587515ad0c17033af9b8926ee",
+      "hash": "6967692466e3dc21a38bb682e2f58a5a53f0ff448b7883365709fbe3ee26eeee",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/vulkan-driver-discovery/": {
-      "hash": "ad56844b13ab2b8abfd0509ee763406c74311e8fc82c006f5b4468f6f7c5f147",
+      "hash": "2bd09c49fa8c437d83495e4a9111ff4cc27e70d078700b50f1a1952ca141c90b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/hybrid-gpu-selection/": {
-      "hash": "20b4ad0c452c7f48b704f4c9f719c2a142dd43df39db88b2ad894bbdda79b455",
+      "hash": "aaec5b735b4828c69d048ee452c17bef678c0d90319a7d5887e9e5725ba9389e",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/drm-invalid-edid/": {
-      "hash": "2475f0e82fe7a04fb7f6d9447042956de38c60f5d1c359cb01e1978f78996748",
+      "hash": "666f2dfd331a83ceb91f49b4657073c35fef815b7eae43b827c8410843272058",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/displayport-link-training/": {
-      "hash": "4d0002154700173becd2f8cea055fda4dbc098729e6b781d77b4db7fe221ab8a",
+      "hash": "1ab0f33be204fb1fa939666fc2312a06a0644118939e57244260a41e85516ba5",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/intel-gpu-hang/": {
-      "hash": "2e7098b9b9638cd1007dfffc5e2a706ab5100a1e4804377ee735bd007f6881e9",
+      "hash": "05427a08ad147acfcf8c4441383df9bd23c7ff3caf7a1b3d6ac9c37dd48d5e40",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-null-pointer-oops/": {
-      "hash": "8cd244d0e2571bd9310d05d40d58a31a942d1a1b0ce83518bb64adc326da273a",
+      "hash": "c24dbf2f7f7069e6cf83a7d187d6acf1f1bbcafd1bb449fc6f433a92bf2c5b05",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-soft-lockup/": {
-      "hash": "ab92233cab2c457aed7418c43630716088056c6421937897451be42d222501a7",
+      "hash": "2303d78d53662256282c7a9e28a97e85c7bb08fe0221e3c4df729b08f3fc7fb3",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-hung-task/": {
-      "hash": "e007420487b1ce2f1d706e5806d06e361182d498840fffbd0beeab0ec81b8857",
+      "hash": "a037992c7dd3a614ebc1b71bbfefb72d71cf0e32f39f6e82e45ebf5fe0012cf0",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-rcu-stall/": {
-      "hash": "da2d869e5c45d31b24fe76e6f919367db629b10d8c9e85ef6a6be79ad795b1f2",
+      "hash": "87044b1fdfdb2f897e9099f016c0ec9d524588946dc9657e6478354824ea5a9d",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-machine-check/": {
-      "hash": "60060361c6696aad1f1d7694b5cd11a66ffc3c64a779a4e3d5f55385e6dcb954",
+      "hash": "19d3aa4826489f689c7c70effc803ad5a92c4af3a7ca233e8cebe0009c06fd12",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-pcie-aer-errors/": {
-      "hash": "a2c426eb6811448d4c97b51bbd4c719aa7ff65b72d70abeee1fb892c26bfbd65",
+      "hash": "e1a87d9ff3c1fd3375536bb6086d7db887883c0b85c54d1fc85a1b4291138c6b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-iommu-dma-fault/": {
-      "hash": "54c2eceb59782d4b712932984c74e1f4037da6df2f06e933fd79cff5d929ecf7",
+      "hash": "ababba44394fd13e9f33a7811638acbf8fd409966d174af9165915f6e1ecbc56",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-module-vermagic/": {
-      "hash": "4e01bffaa31fff5c5d117e367c9a67bdce8ac0e62c057c01600148154586880e",
+      "hash": "79dce5a6cbb93330bfba13104f4febed99128a0787c9229306fc1f74aab7d567",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-module-unknown-symbol/": {
-      "hash": "d3b631a49bad48f236b3443920f2599bb4ceb1b72b6f46e0b396596c085e74f9",
+      "hash": "fb2dadc262bc0a87577ee405a144f6043d6823907a687cce750c061c5b57ca5d",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-suspend-aborted/": {
-      "hash": "28a6a5eb1d7b0f54b50ea9b63d14cb779228d566fa0452488e30cdf56025e204",
+      "hash": "5fd1dc304028aa9961a162d13c871ce97c460400f3ba2f6b6cd2bfe396a2194a",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-hard-lockup/": {
-      "hash": "ebd73e4070a0185ffe1ad0ba02d52b5224c8a9dfc9af0c7fe3cc043eb24d8613",
+      "hash": "94034fa84eaab79674d9041d76d620f19269964004039fe2f70dba48b84ff194",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/kernel-microcode-loading/": {
-      "hash": "0bc7599c09cf581204875c6d950eebddaa6e4f5cdef96249044228bf8a84978a",
+      "hash": "de0d4db62a341536f48a886154771f3f47cdc744bbec73f4f6d5d96bf1f527f8",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-fstab-emergency/": {
-      "hash": "9cb75c55b7b2d323e6d9dcd5cbcbf39613ce58e960487a0ce2a488d84f6ff656",
+      "hash": "a5da34a3cbb9f5214d4ecf652ed5e5e9775e2195ec9002e37276220e94c36f65",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-root-uuid-missing/": {
-      "hash": "dc2bbd762bc143f7efc10394f6f2d9734b63f8ffca3918b1e75d8f9831f30c46",
+      "hash": "da228772a322b17494b8ee84d7688825038cab7e55e3f62eb7f67e413b96f2c2",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-luks-unlock/": {
-      "hash": "b15a9b8dda7e8c4033f43d051108198ea31c0a69dc7ebb89830de0020aae07eb",
+      "hash": "07568b45fae3d436b011b9a4e51170df67ff71e549a8bd509471fa97a1100332",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-uefi-mode-mismatch/": {
-      "hash": "ceecf6efebe6d98ff8912b0a00fc676636ae8b3f5b14a6fc22e1392398a2970f",
+      "hash": "f31e2bc09d457d53984b7a53298cafe5e199df8dffab9aa4ccce4cfe2f63812b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/grub-rescue-prefix/": {
-      "hash": "b9d20453c396cf58cd07ea96821f64fa2864d2165b8dfcbc1290269046955c9a",
+      "hash": "3aec3d770b498f85af4201424b750ff1ffca6100ea27c654c886594a63c191cc",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-boot-entry-missing/": {
-      "hash": "209bab077df63fcf74295044c15c6e4a1d8120327b7d280ac4fb0d9cf67e4648",
+      "hash": "d7d701d3c76ee3302845fa026df9d5e204f197701da4755bf7df99d7084aff7c",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-secure-boot-rejected/": {
-      "hash": "c9ff9391773d558e3fd234d9a4cfc99f01b96f1f1c741266fd9683c4ea21d0d3",
+      "hash": "224189fee07a054e90c360c0ab16238219ed115a3a585680435316d7bf182adc",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-root-filesystem-check/": {
-      "hash": "fd9dc81236eafdfeee136f22ef4d8590e8009a654eea94062a046543277b4457",
+      "hash": "ea8c470d0df6c76b4c6489dce345773a75509b731f02ac018052dc11f5f431a8",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-resume-device-delay/": {
-      "hash": "9c95e064f61aaab95d7a867060b58df3986e24900f1cef37d4f8e2f810bbbbc9",
+      "hash": "19b1c2164d16808b2d72e292b84e3008c13a75c7c802f5de180268c8bcd32341",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-lvm-root-missing/": {
-      "hash": "c5a5ae6cf81adc7414ddc59d339c6774af1be7f6a58bfc7cd102f9b597f276bc",
+      "hash": "4db24230ad8c5df2341bd893b1149fb74a715501bf5443d25aabc2c5e85166d3",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-init-not-found/": {
-      "hash": "671e152b9b0d0d4cdec8264512ba2cf885750a67e50338606bb82a6224a97900",
+      "hash": "5f36d6be36a1fd0fdd5dc41f2545361a480071b1327d98a37d56b671f650a3d3",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/boot-esp-full/": {
-      "hash": "9b8317f395c56e74546a988410a7888ddd0649e44ce824bc3d1ac8e2806ec329",
+      "hash": "33af194d3cbe00cfaf8cc16ec3731e6f195e0d6da8f8260c73e0ac0f2ec8df0d",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-sata-crc-errors/": {
-      "hash": "eadbb15ddcf6048415bba6ec8ffd4033382118d151d74dce96dcec660cb47ef2",
+      "hash": "8aa26a3a8f1a4e433aa9def463ca0230f26e6c23ab59100ec614febcdd123277",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-uncorrectable-sectors/": {
-      "hash": "6114ff3ba8d1d787f027af8ab2006548eebc0964c26eba02707d475d5c487558",
+      "hash": "6207ef64cb48934f5be80dedfe78c3607180a71ab0b95b6d8d6af59aea1530d5",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-nvme-controller-reset/": {
-      "hash": "88bf9ab4e96d14bbfaf76f7729e54f6003502a3566c500e4d2624e2ebb0084ac",
+      "hash": "e28143cdfb6e5c5ee4b2d5fc4ea46ea87fba667e4faaa469138d18e0435e78f6",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-nvme-idle-resume/": {
-      "hash": "ccc8c823fe1105573346aa9fee5a8a23993e0ded878ac0038be58060ad42a8a6",
+      "hash": "7f620a8d2257f762f7b073320b171fa9a9ca6b350e7e8a31f5bfdd87583c77a7",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-ext4-emergency-readonly/": {
-      "hash": "b8be132dd12e18a4190b643bb42cbe74e082ed7e4885a6fcc0ec67667447a808",
+      "hash": "d9d2dca9c9e10fa635d7488451f2577b74d95a9aa57bfcedc2f48ab0a1ca2fb4",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-xfs-forced-shutdown/": {
-      "hash": "4166bc3d3257d4034f890b85e7efb5a904538f9593d069790671aa0349655967",
+      "hash": "542bbd7232271658696b4d852d4eeaf921f21fc42c81c36b702e8f445503f6a2",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-btrfs-metadata-space/": {
-      "hash": "b1f176f677849b559fa15b7e23736808c397144931a7f5eb7813058b0234c7d4",
+      "hash": "25adefcfa10c0ceeba3b2d5f7cc0efac77c6d596e782f5473e44fbb435c6588f",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-btrfs-checksum-errors/": {
-      "hash": "cfa1cdded82806de3a1edd67430c24def6f915a5383af974d4a1a755a4d707b5",
+      "hash": "4bebd22dc5b1552467e9fa861ba72486a5bd3103c0a217664d04928dde48bbc6",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-ext4-inode-exhaustion/": {
-      "hash": "f716c20a8793a6c534911f6765505fcf76154b29f54335444cc300b9cfe90779",
+      "hash": "c1b79ee0f8fd70cc6e0160cdfb25eb6c377d4640cf8b74f79adfcb50cc8a9400",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-deleted-open-files/": {
-      "hash": "f607614e277ded03488beef399bcd154613b4fc2fbafcc026656a9a95e29c036",
+      "hash": "03151d1424592eb24995643a5cb89af976682987ed4b63e244d6a5808046afbd",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-fstab-uuid-mismatch/": {
-      "hash": "ecf42f62f67c695d00398393a678c77dd5fb0e492f48b8239b92234519c6079f",
+      "hash": "c9ead5aa3035a7bf78f084d2e9e55c9be46d3805685320ecdd9857e1c9a0ffe3",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-ntfs-dirty-volume/": {
-      "hash": "7e0b1ca5e53b8d82d1eed60de56e61cdd1f1ad89ec4942a09a704a130314ca27",
+      "hash": "4e5acbc0d3a1f8da7b75cc493e7e0410a6d85745596896c46b171dabcdbbb414",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-usb-uas-resets/": {
-      "hash": "2ddc755e22705b95f1b0132fcc03765b2f00a79a8c54dede910298dd83fc226e",
+      "hash": "416da1d688498ee2430421e0361fa3c8f7dc6f133a22ff848d44d4027d4b73ac",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/storage-trim-not-supported/": {
-      "hash": "2493993a10eff66800d1e3955be835847d83238b5e7df52a09594ea9a377f807",
+      "hash": "56509c1ebc38830196e46ca791719f578332c5692f38a3fc548f67ddf25b5290",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-alsa-card-missing/": {
-      "hash": "d4277455e46ead92816dd1379d3b21df3babf3d8606a7c8b67c993bf9dbf4861",
+      "hash": "953fef3b82c2dd787dd4f60415e0849911d97b8fd9da1c6ab368771d39f0ca2d",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-pipewire-user-service/": {
-      "hash": "e238de06d8bb459971adeb28ad0bf047bf83db10051ad6d2ab7ca73ed8069552",
+      "hash": "3095a774e1cb4608bc48e7d1c4a19465aa0c141e3e8ee95f314c49cdb7bb4550",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-default-output-muted/": {
-      "hash": "da3a5c597dc425aa9dd95a58d79b044980ac43ba967bac6c542d18af6e44358c",
+      "hash": "3b8eacfe8ee8d0923906df56a7f5d9d51a6d6315fec7619da2478a77a13ca2ef",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-alsa-device-busy/": {
-      "hash": "9f6488b4c93fecc29aa532f39e51dd266f385969fe640f772fbe1045c20d4bdd",
+      "hash": "f3719c12a797f4aebdf28d71aa3ad11d9c6e8cc839aad3d20587bdc4a4abb6c4",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-pipewire-xruns/": {
-      "hash": "a969d7607e989a12e16dc81f9ccc89d18b6a5c2d34b3aca335af8fa1b57f88dd",
+      "hash": "e103b749b532fa229f92b17910981d322e0514ecd34f0748876bd94dc8715c39",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-bluetooth-headset-profile/": {
-      "hash": "ac6960a87f3fad8d4e75dff16a13cfc5f24b8cd609772262aa23b966891df92a",
+      "hash": "17b94f7ca6392e0de29bd5c0bc0444acaf0bcd67eb0e4296e808b93f58f814b7",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-hdmi-eld-missing/": {
-      "hash": "8f0d47327974ec0f7a9124a43ef79f6b6ae2c13fc4b1564d05eb4f429bf2cd0f",
+      "hash": "88a9440c9358efa96fbca22bb5cb44a3b17dbffe9deabb9e4200bf48465c64d8",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-spdif-profile/": {
-      "hash": "ee01b0f5a4c9a6e67abd6edd968ce75a0f5c8be109e81022003cf823b57df4b8",
+      "hash": "11d299dc29c8cb1d369e91b69da02daf9e7207e9ad7a4f1b778967b2b1f6a176",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-usb-rate-clock/": {
-      "hash": "a2a29fad6714f31b2d94cd58eb6e8712426334083ee090179e2fd9b0801802ed",
+      "hash": "3da202b7fa42a28293e6bdfa4c5487620578a3045355b6e8d510aeeb26dc0723",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-wireplumber-config-migration/": {
-      "hash": "ebfd38e195f1261b27edf46d44ed66847159c5106228bece8b6360e18314d2a4",
+      "hash": "571afa22bef51d77a16eff821e7cb8f5099378431fbca856806a94e25e6e77d7",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-microphone-capture-route/": {
-      "hash": "f4c55eed4f7620588ce1772036c91fa742bb4402c539a9d6f24f64fd1396d027",
+      "hash": "965ffc99711a1c8553f9999ff590904e0ff8e8e0a715f1380b3b636ac67198c7",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/audio-session-device-access/": {
-      "hash": "c18f6b463fba7c6b0011ac0ce15f50d3657f20ee059b85647b73330d58e32a16",
+      "hash": "6faa96817b7b2c4546b002ac090a192e2f632c725aea9ba91fda734366963b77",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-unmanaged-interface/": {
-      "hash": "f2afbe13cf7cf82e96353102d27e8bc5abd54c6538a82937d2120ef5b4df4fb1",
+      "hash": "10429df96918c635c8b10ebad5dfa54e442f152b018aeacb164b1fd78bc83a68",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-wifi-rfkill/": {
-      "hash": "25ca671aa08584d07cdb63fb766a559601852c844e45328e7e01764a7e9f9d9c",
+      "hash": "76b0053182c35e6009a4d6ba027a6600fa3f6f677cb664b95304fcf25b1f8cd0",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-wifi-authentication/": {
-      "hash": "bcff99eeba320e90e08c8915412ae716f4162f44183ddf625c7747873669334c",
+      "hash": "02370d6bd05fa8caae693e0b02128c5e306481cc6ce3bfbb89dbd72e6b842c90",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-wifi-firmware-missing/": {
-      "hash": "d96c7cb73e4265eea7e0fb783409be3c1316dc13feea10893f2b6d79d579c7a0",
+      "hash": "e7aaf337a69ef46b2e67bc1c6968036c513f2e2bb4c2772a16afc203cbe52eae",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-dhcp-no-lease/": {
-      "hash": "41e1c850dd00964175a3ec67a3930ac4e95f27d53a28a69073d9a05a5180d4b6",
+      "hash": "67e393d279d622686cfd0a9ded08190322f481b120fa47236ded01011f998d23",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-dns-stub-resolution/": {
-      "hash": "2e0140101091d3f7fcc2d0d9915e617be136847ee9d51df92ea8a6623ae150b3",
+      "hash": "c73da9ff60dca60ae38730cca22617fee60a74a5febcc92b6d02bea9e2435cf7",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-vpn-split-dns/": {
-      "hash": "df0d2121b92a1faa4a926cb6f7fbfbc964b217c196efec60a084be4b7e97de6e",
+      "hash": "a23c2413a427b9a4c871e40214f42bd56fcd7e7c4ecf1686d1fc01a8fdc7bede",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-path-mtu/": {
-      "hash": "ffdd72ae765bc2f35e4046ba9b7b7495283660911f572cd7de5ced0a0fa270b6",
+      "hash": "9b02488c2b1bbf4597c65a958cccfcf760b158dc02020ac3eb013986fd8b306a",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-ethernet-carrier/": {
-      "hash": "bccfca847296c42e7eb5cc2fceca3132e33db0b4960bf24e1fb87d6899c2a776",
+      "hash": "6fb28046fd920a962b1531a8bacbcde5787a6d2170acdf8ddb64d9f428cb0e25",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-driver-watchdog/": {
-      "hash": "97f2caed28fd09519a3a48ceda222815ade6dc756ac5b69d94c6d1e571227a50",
+      "hash": "068f99edc4d30a46faca1bc92e06a1676dbbc865407835681b15fd8800371f92",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-ipv6-router-advertisement/": {
-      "hash": "8458198bddf9090e6594d18cfe736aebe6efca8fbd2e3daaa98bf26c0c4d127a",
+      "hash": "8676d4d563a360e2b44752772715b6a84e887a11da6cfb0525cc41f722cca3f4",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-duplicate-address/": {
-      "hash": "2c1f0b97b64f5629df8d41e7e4d787b373f00a1658847754a64e96b848de20ef",
+      "hash": "d3ac5cf1b9a510ef4f0ce8214aaaefb8cfcca2bd573f841eae94a48ab5dca32d",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-overlapping-routes/": {
-      "hash": "a1cb68878b9729bc32a2026cd9d71b3383ff5e3d6fe3321428a6fd95d211ce9a",
+      "hash": "060591a8cec6c199a1b8455e0313b41a1f37ab4443649aa5980626d4e9741185",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/network-connectivity-check/": {
-      "hash": "a88a71cf83646eb59b113c8b2e72389c38fec31965dcdfc5068fc8f15e141eeb",
+      "hash": "47eae4d524b006b1b8f70799218e042cd68be9e13e7472fe22e5a7e28482b9cf",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/ssh-authorized-key-permissions/": {
-      "hash": "b1ee8cbcf07141265b7e02f960fcd54a44624daa0c57730f52baba41420f53b1",
+      "hash": "de68b152fffda1212603bb0780ba606c960f340190d4ded6c7c9c65a10514d72",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/ssh-host-key-changed/": {
-      "hash": "154019975076671d0b3711961cf02a4dcb87d9cee3dba07f9c3d8598fd4dac0c",
+      "hash": "8a23465d9a66e803c8b11e3b340ff457962e53d27d334cc5a689eb549e6ad984",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/ssh-too-many-identities/": {
-      "hash": "7547be164db247f90d08b764cd91ba6133bfe6332d5baad4cc2c74b1a278496a",
+      "hash": "5b9163cde82f0e9f61f927307425f623f4e371bbdb36feb6bfaf55f4cf93f598",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/sshd-invalid-configuration/": {
-      "hash": "14dd41955aba2576bae5cf630f329f34dad7395343cea557587bff0b58e4a425",
+      "hash": "080cbf46427db5a007047a67a084a404cc9a5bb390bbf7ad36e4db2ea8174ad9",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/ssh-algorithm-mismatch/": {
-      "hash": "60c93d6330ed900b20481eb8d7faa46bc5916ff6819bcbf65594f5842d219b3b",
+      "hash": "eea7034aaa6b7d7bb0c3494766e5a8cd57800ef2ecbafa2193ee56b046b718ca",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/sudo-policy-denied/": {
-      "hash": "8fa97fb986419809a5bd17680324413749f7977d02bda4ef5d33ed6658308797",
+      "hash": "3c8bae0d1e1f1bbc2e9d3a75daf9ffcb6f95e55eb152262897f095a6023ec1d8",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/sudo-terminal-required/": {
-      "hash": "4563217fa96cb243ac79d8e5eae0edc8934ad5b2dff865b6cb0718d7287c7bd2",
+      "hash": "48e60ec2fde133e860cca17dc3c6f3badae32b911e7df7b82a4cb06b3c5cd0ca",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/acl-mask-restricts-access/": {
-      "hash": "f33fab9f0f95b4adbc1e11b095800eabd6e2e4b9a3a43806e9f038e46ce5230a",
+      "hash": "66ab2fef34dde9d8322baa58980647197cb7a55c4486b896f277b759d497fb92",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/executable-on-noexec-mount/": {
-      "hash": "f25a7971b2bfd2fb14692648bfccb7e4fc52fd41fac1aab503c5a917132286ea",
+      "hash": "e2265b2f4ed28611b58b41582c815b9d46a754ae1c2d2fd6947047acafc72301",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/apparmor-profile-denial/": {
-      "hash": "9ba7c98d8f05bda9b35614eb28a75399a751a3a60f8b08d80d5e30cd34d953c7",
+      "hash": "6b52d8b8de9e8a33bc3e87d7bcc094676969ed26926c4b1db45a6d0c099a2308",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/selinux-avc-denial/": {
-      "hash": "8e4749c073858b3426ee329ca9c876950a61b14457aba286164283555a960d50",
+      "hash": "a81985fda3235e38a24c23575f985bb0f0144704d4c8b98cb48df369a68e1116",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/selinux-file-label-mismatch/": {
-      "hash": "c81618aeed13f84fa70c608b099aa19d24af915c9419c13129f545ee9179a361",
+      "hash": "2aad90047d0a7f8afeacfa5440bc64160644e851c2cdf6f956d9485ea69aa371",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/x11-display-unavailable/": {
-      "hash": "3eee227e9ec006186d54b4272af2fdef461faf25a29d56a8a4f89cfff639e874",
+      "hash": "49d504718a8e9d0bf1f540bc6a82e1b038fa4d7f4eb7503a5a26ecfdd59c16bf",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/qt-platform-plugin-failure/": {
-      "hash": "c13a2fc7bb159ac7673a00ec79d919d864212b1557392de3ea9efbe7b4bc3657",
+      "hash": "ebef8de9a6f25029d98dca0cd1386bfc70bc9d920c2c3c1cfa2fc8f1ba1224cf",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/xorg-no-screens-found/": {
-      "hash": "f727d1a4c1d970d4406a528b6b65b3b6d9808080df6edebd9080f98f10e3a683",
+      "hash": "2faa752af20b0c8f18c2b2a619ddb598a9fd1b6009f59860057cc261d82438a4",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/xdg-runtime-directory-invalid/": {
-      "hash": "8f972c82ff365de003c5a9a64ef4e7402260768434be176dfac9c2d152ceb638",
+      "hash": "3a952ebf8e5991116fb06f0d71805fee56e5c087ab79dd13c00ebb9ecc449215",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/desktop-portal-backend-missing/": {
-      "hash": "35314f2ca7e701a977348f154e9671e7fe21122225277b7548972734c1ca4a3d",
+      "hash": "e4cea00dc9677f4ccfe9ef34080694a752086952ce89a5c09dd1be3ad2072e93",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/user-session-dbus-unavailable/": {
-      "hash": "7da0f3942d0b344bb7239a79af53a3b6cfc4f4643f4de1399d729d36f48e7f0c",
+      "hash": "90dbef13df429debfa9203efbe61c5723ba6ff6867c136d6857890fe50f7e814",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/plasma-shortcuts-unresponsive/": {
-      "hash": "6df8fe56bebd6918e3da89213530230c36d8307ce09cc15b17f435893db15c1b",
+      "hash": "4907cfaac19e9989456cc9a179c768760fe31bf9f496f98fc2637bafcdd14b4a",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/gnome-extension-incompatible/": {
-      "hash": "7861ca8a9012d0a5b34293b9fac8c8c257b0704ca79964650f6348ef89bc9bb2",
+      "hash": "645265bcff1d7cd2f0fba7d084b20afb78b0a3572fc3bd3f0e8cd71e870709c8",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/plasma-display-scaling-unexpected/": {
-      "hash": "71641dda5c8103fdb7568c60a5775152aa73dceddf102e9ff073188aa53628db",
+      "hash": "ad872034b0344a587d4f2c931da956a5cfddf14956804e419756f3617ee5f2f3",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/xkb-layout-compilation-failure/": {
-      "hash": "bab8882561f4df53a6d2040ba44135ecb11ad74974b175aff50328e53e187647",
+      "hash": "e721f19b4c2fd70de4cb06e9672223f88086088c583c21334218edb2b10b6389",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/default-application-mismatch/": {
-      "hash": "8c2c9a9741884287b4a6f22606adea55e74f3db57df6e291e31b72c28ba4d6b0",
+      "hash": "7b3aae78ef754b6b7b07d61aeadfd44c991a5a214d9f5e2e32cf767b4dc64e57",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/polkit-authentication-agent-missing/": {
-      "hash": "d4128279f3a16ec7aac8623230151cbb248ded3c385ed55ee83a3e1c459f9261",
+      "hash": "8bfcd876ae33fc31648fa338df15b6f941032da6a2d4bc965b452e786d931a53",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/apt-dpkg-lock-busy/": {
-      "hash": "a7b356366f05e518b67b294508d176bcb307a761f710aa6cc61393ae197cbeea",
+      "hash": "3bc2970334c271e909a94540626c3feb61db91626df1e87f182d7b442320a0e6",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/dpkg-configuration-interrupted/": {
-      "hash": "98396301dc6acdb85a6d5506d93a1bb12f8e964d5e6986c0d08be48a10d0d85e",
+      "hash": "364aa549581c3c37edee341d6656a6c8b7664d354ca04018a950d5cc34e51d60",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/apt-unmet-dependencies/": {
-      "hash": "829877cfbc8ad53a54f7069398dab37c71a89db4b5fbb9f93f8e28ae0694e02f",
+      "hash": "8d920fbc7fd48cd81db087776f79998119df3df5153988c5ca43fdf2e27651e1",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/apt-repository-signature-failure/": {
-      "hash": "27192f99a6b22031a3f4ae0facc064a242738f35def9918f5806787313a82262",
+      "hash": "e152683d465401fce9330e8232c763dc263d9f2c60eeafec07d28403d404aeb6",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/apt-repository-release-missing/": {
-      "hash": "83ee6480dd99fdbd6932a9af71fabac8a4fb0e617f324bce42b7cbd447143db8",
+      "hash": "b819e7353c2ab608a3d6386b912e5ad3d17b40c4d8b6cc297c52c1308cd40fca",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/pacman-database-locked/": {
-      "hash": "749e790f11a782513db2ff3003ac624769c1e1cd046d799d04e7ba9d06858acc",
+      "hash": "306c08a5e3e14ccb248f3e6a5d5c4424778acadf0ea4a0f32b60280ab10ae413",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/pacman-conflicting-files/": {
-      "hash": "7dfab3dfef696833c4ed5bd887336064150542e41c804053f53723c34d9d4c63",
+      "hash": "30466a2ed5373dafe5704ff156ad932b1a6215de768a9d1df5434ecd31fa74ea",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/pacman-partial-upgrade-libraries/": {
-      "hash": "b99757a1162ed6b78a5d762e546805772cbb0db2ceeb342cf2774c44c13c0e09",
+      "hash": "00ea3f51c54d7ff7cb91ca74071625c8dc2168c8ca54a5875119a3f1054189f1",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/pacman-package-signature-untrusted/": {
-      "hash": "f0efdd46d86ae1fec8ceab9c28a8e5eca01bb15947d2ced3b7e2289ce8c58c34",
+      "hash": "72ecdf854a41300a923a55ab340d33ef42168b19b38002a4d7fa045bd56f46a9",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/dnf-dependency-conflict/": {
-      "hash": "45887b614fdb72ed532e8ae8147029d5bd225bd3f945c4b068003899588b6cde",
+      "hash": "d75c6b5828c924da843b6e3037ad1c28768096817f8d7a659a455ab2c1ed8afb",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/flatpak-runtime-missing/": {
-      "hash": "79e4ae28443d934c4da9ede5b11e4588063cf37444284be83f218c1edb9db012",
+      "hash": "30a1a862cfc9d4c0187c5f0c69868659d797ff8a161dfa70f4f0637b559c7676",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/flatpak-file-access-restricted/": {
-      "hash": "90fcd74f68ec6dec6486a06728cd98ab4f4ae2b701bcbae91077807c2ba939b0",
+      "hash": "d5a4574bf83a7f58e17775166adead641eab1d950a582154eb299a197187aa40",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-exec-launch-failure/": {
-      "hash": "c301f727dc269ed1cb1b40f2cb910af574b30d1a154fd91f7f61ea99dde76bd4",
+      "hash": "9ee09f68e0b40f5adcbf17a2fc504db9afd114094c903b4e56267f7b77d819a6",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-working-directory-missing/": {
-      "hash": "ac43b1e2299f136abb38df0c5924a9c46fe99460b47e20a2d1797dabda458be6",
+      "hash": "39a9174824aa9542e2dd6039f097d0946a27ec7a5d4832ff0733514e7a7fcaf0",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-service-identity-failure/": {
-      "hash": "16519513bb523b2889ea2e107f7e3e727c6ab9249d7b404590284cfb1dafeee8",
+      "hash": "dde6665b84189677712b19f9587174eec6f73699ecc43b602c4ef7284b668fca",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-notify-startup-timeout/": {
-      "hash": "7f3aace4f15e30794a2147d6ac284f22e2f69ad212f6eb5e2ca9d53b56e8786b",
+      "hash": "e0d7c668c11fdae751c51cfb30bb331a6032e506d32fc6ef5e29a55defcbf8bb",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-restart-rate-limit/": {
-      "hash": "e630b22afa6db9d96135892251afc102fd4659cfe38382896811b806208d7cae",
+      "hash": "505ce96f0a7421839f306b866a2fe457844edac4620d72d0045b36e760f2fa88",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-service-dependency-failure/": {
-      "hash": "31d738507c9fdbe6da80c3246e9ed037e5cc3c649eb1b6d8a9f7df41ee81ad83",
+      "hash": "090e2176d187bcf989dab1d766fdec10645ec0a0f08af9ab5a5b6d62e327a708",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-mount-namespace-failure/": {
-      "hash": "941b5db840e4a9085f5d8f11e72be89d3d09bd6204cb9003d338ee59f314fb26",
+      "hash": "10bd5b6896194e5c9c8c7ddff5af481b7506d0f30828a2bc1510ba04e329633b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-state-directory-failure/": {
-      "hash": "b5697a1bb7538e52b9e6a363d65adba6491cd514fc6ba255e3f2a0043fd671bc",
+      "hash": "fc2fbd1c8f358048d1b4b6f6245f5dc60a8a38f3e2b39c9a9833a8b3aa993274",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-timer-missed-runs/": {
-      "hash": "5fa2f5746647f5c2939717607761a8b3761071b91a38e04446fe505334559019",
+      "hash": "2f29d1d1c1d2567b6f7e7931dea5163a9d96b9b13ce533d59d5d4f7b82500169",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-socket-address-conflict/": {
-      "hash": "60430b925e2f10d207a3cafe16731d5ad2f2bb849a993389adb4d8750fffaf21",
+      "hash": "3b2ba33747d6c28d846ee1458f05f7eaaf4ecd98874dc4deddcb5d9f69f9d921",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/journald-service-rate-limiting/": {
-      "hash": "7daf86da3ddb4b9d5ca6fdee34fe1c445d1a522b895a8096379446e89e88fcd4",
+      "hash": "9b7353e5a806ffe66d7929c65b676a05efaecc6448b38fbc9be77ec4d04130d3",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/systemd-service-watchdog-expiry/": {
-      "hash": "aee6dd6a419ec04480e08a8177fba314f0bc36bdd9823e31c60faa5f4d20c451",
+      "hash": "9c30f333604501cd0e469d6bcfa3a203701dd7b5ce38c1d31d5811cb34295d42",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nixos-unknown-option/": {
-      "hash": "2f0f4a87c18de6c141d98b8d204dbe43fa605b591ee246546c0534c39a2dab81",
+      "hash": "dbb74c7f98319c1803d7594b81bf026f6336262e799650c9f12d68beaf8b6617",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nixos-option-definition-conflict/": {
-      "hash": "9b612cda1addc98acc5ff117055b33b4f64aaaebcc4f00331bd0ccf08bc68dd8",
+      "hash": "53ef9ba711deb4e343d4da8f465ff20794711854ecf2ff42ed4888dd0fdcb142",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nixos-module-infinite-recursion/": {
-      "hash": "7aaf088d32b5ed4a08925c620f8db9e9a05beaa2d20855ae718c18b9c771b50d",
+      "hash": "4dbc2d425026bbdeba040eac63bd730b7b3de8d148a0fdf33c0eb5777059a72a",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-flake-untracked-source/": {
-      "hash": "b27041e57e2358920969a33aa60169812a6922126688071d84e3dbd6b6db78b4",
+      "hash": "0bc6a11f46a80419204d1e7979f0ae268aea6455472ec145ee732630ddbad270",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-pure-evaluation-path/": {
-      "hash": "05ad50c4cb7eb45b8264de4c3c132c9bc227007a64691cb8894e04372850254a",
+      "hash": "f2ec7ba5aac2725f0fe47f4019dc2ad4969ea7277755fe4c9673d4a23710f2e1",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-experimental-features-disabled/": {
-      "hash": "13cdf81cf90a24603c8bed0d436e49b501ff055c48bd38c32d51b0b76feb849b",
+      "hash": "84c82fda1a4097ce8375a7b5fa81982b0dfa1c2bcc7a54846b5901d17011aff9",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-substitute-signature-rejected/": {
-      "hash": "c129299403929608e9c88c8914a2a9c3a3edc6b25c28e5373b64c7b8ae2081b2",
+      "hash": "322f90ec85aa2f388bd2e2aea9e3cdde182327f85914ebf4b5443faacbb91f33",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-fixed-output-hash-mismatch/": {
-      "hash": "35cfd1d6a46bf944e4cfc0ff355fc0de7017f839442fff331e21a12a799c466e",
+      "hash": "8eff69ed94c39c9c65e9e56d0363e46dfd7bfcd0895f5df7ba0ed9b9201f1321",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-daemon-access-denied/": {
-      "hash": "0241dcc53692d4b819b814981ed206f033435aaca97004cf33a18bd67810fe9d",
+      "hash": "98bf649d64ee7ddeb964a03db7e176a06dd369dcc172fd7593ff4c12846e8528",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nix-store-gc-roots-space/": {
-      "hash": "c8532e04add8ed58bfe77f179bdca24fe5576f708b6a0d5be644c7c3665e5c65",
+      "hash": "30d4cf3efbf792f22c691e7d26b9dd98aa129f50fcc7463ea5df2240fbe92056",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nixos-running-booted-generation-mismatch/": {
-      "hash": "bc94534af8cbaaacf0ac7e22069d57878a29fc2bbc0d8a9e2c7955fa2e0e7723",
+      "hash": "afbf5a01b9772314295f04510391ee377d0a242f0308c567def2b5158a51fe1a",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/nixos-foreign-elf-loader/": {
-      "hash": "ccf4c9c0a227954fa62b4418df2df67eac02109efee49e26822775e2abe3f962",
+      "hash": "cfbf53544a3ac7530450426c029d6d0de6fcfa175fef1bbc1f422d1df41692dc",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/cgroup-cpu-quota-throttling/": {
-      "hash": "756f58e4c768eee6d7bfcf823c7514714c3d61968bde73fbb1133cb70c52bf38",
+      "hash": "9c32883fdfdafcae9fe9dfc8116fb2dc293b932c4ecf4c4ae58e4fd21a873357",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/cpu-frequency-thermal-throttling/": {
-      "hash": "3cdfa5adf91b1cfa181a48109b10e1863bb7c8403c7d37974bb00aab9989102e",
+      "hash": "ee0588977a0b5fbe812185ccb78864faedd1e682787bca118142aaa47318479a",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/memory-pressure-reclaim-stalls/": {
-      "hash": "a22b7c8d40b1e1b68553e564a3264e0b456d4bc794fc1ecf50d4319905e384de",
+      "hash": "f5f6f86c7f0e5bcabbf19626540d9f6ac8763c484b4765d59bbf85151144fb47",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/cgroup-memory-oom-kill/": {
-      "hash": "cac88be853b15344beee5092ccff2173bfb9713e23a2513c3fb0cf1523722c97",
+      "hash": "3b8f042581621b83d19a64040f5a94099e39b2e182bd7cc1f35bd375aba79386",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/swap-thrashing-latency/": {
-      "hash": "1acdc052fb2797a90807df933886978a8d8e299df4d40ade26416b4af90720a6",
+      "hash": "c6ac9698ccae841e0f444075c82a97584aad14e21875ead25752b1e5b11a8d86",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/io-pressure-writeback-latency/": {
-      "hash": "a4562bd3ab1250498be4e34f7575ca6b030a56d08ee6195f7e1ce7fece0e6b5e",
+      "hash": "5c9e3e93b4939bb49fcbab4146f82afa44068c5c4766eeb3d9b5169a40119b7b",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/cgroup-process-limit-exhaustion/": {
-      "hash": "76d7e36840531dd138fd700dbae409beb6544bc46a8a0213c4d1058dd92aea28",
+      "hash": "056098dd03ad5c9ab801450c4a3fdaa0e7fbd0980dc29d1f5b6165dfc69a1725",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/perf-event-access-restricted/": {
-      "hash": "fac803d5c0b823d2d71e853df69fc8ec23218e01867052a99f3ca929e3d33c36",
+      "hash": "1cba8c75c398d7c85c63d9b676e085ceb84225de337dc64c690c6e1a67167cf0",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/perf-hardware-events-unavailable/": {
-      "hash": "1be4b9bf7cd3dd07bdd9534415aab2ed3bd11cc3a58fc8396fc1bf37f636513e",
+      "hash": "64d679f41cd99fc8812898b9c2db22dcec59888faed7361cfac984cdd0d783e1",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/numa-memory-locality/": {
-      "hash": "5460255f4a7541e15b498382bc960028df0b53d098aaa3f168fcda1e0082d0cb",
+      "hash": "7fb6cd2698c919eb349c2eb0513081ada0c9d55e7a2b9211e13a64824d1532a9",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/qemu-kvm-acceleration-unavailable/": {
-      "hash": "b7fb5f388e3781d9a433fa00dc00698954c400b1b0efd0282f7d9693f10d31e8",
+      "hash": "c826e982c92661c259441707a61607cdefa8cb5c464fe80449056d0f8a470b72",
       "lastmod": "2026-10-09"
     },
     "/linux-fix-lab/virtual-machine-vcpu-contention/": {
-      "hash": "4019cf9492f9930805f5e5af1ab84e8e969f943f79f27a7116bec034f456e375",
+      "hash": "f5c9667c204c6b8e4e56c5a5d9b71a38380fb41471ce49331584e89f3ca5ee2f",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/": {
-      "hash": "127cc0957762791646189dd5a5a51bfd6eb0b40a502d8ee5ba3eafce18aec29d",
+      "hash": "3f7683d5384827a510185aa8e5a6b04f9174bd9bc64232f379ac9f559a009b6e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/amdgpu-ring-zeitueberschreitung/": {
-      "hash": "021b5ecdc4c655550ea22d8da44149d6e98fca25932243959dd64990fd43df40",
+      "hash": "01096f61f4664ef322579ebdfe7ff40b04c5fb3da0ad9ae24089497c6bda2276",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/amdgpu-firmware-fehlt/": {
-      "hash": "4915a0e0d766fa8d80558d61b16f5085611135e4053f24186ac9be62c7b13fe9",
+      "hash": "5a2362834b72df776959d7a540abd39ae118668bd12fed69fd383fad6cecbadd",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/amdgpu-vm-seitenfehler/": {
-      "hash": "94ebdd471194188858bede10f9f78b79892ba84ae4e541bfba81db4c37ba6373",
+      "hash": "72e353aed578feedcef7130dacea855707fbf75ab3d904521b26b3563b2e1b49",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvidia-gpu-vom-bus-verschwunden/": {
-      "hash": "b14038a122789f41bbe123c570365dfaff9fdef6e0ba31a3840f13681da915fb",
+      "hash": "e80656c6d8c97eb9020050ffd783912aa006d9b50ce55e7c99876c6f57ff7f13",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvidia-treiber-bibliotheksversionen/": {
-      "hash": "110be843b6c9cdaf7343f98420ab8766908d933d7d6884ff7fcd1fc7b3b478ff",
+      "hash": "112261e8bc72f91566ae772d9d93eb627e6947b095696a1a129283f02507ca66",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvidia-modulsignatur-abgelehnt/": {
-      "hash": "bd34d2dd9d8faad2a3777bcb7d8fdf33d53747fabde920cbfcb32d42a1115a9a",
+      "hash": "65af887218e3fc15aab3286061f37f360b5cf13beecf66d476e9a2437155b059",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvidia-nouveau-treiberkonflikt/": {
-      "hash": "8bc69c6fd026326c0a3bd80cb22bd71edcb2bb31e01f4fb7e2200185f10af101",
+      "hash": "f73d4188cb388189bb7e1243b6b7b21ce24aefd565375eda1e489ca8b0e0e2fc",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvidia-suspend-speichererhalt/": {
-      "hash": "2797975f69369f805aa095a0ee8ae0e0c8a17287874989490df002423865d05c",
+      "hash": "a98055d77b2dbacac90dfd3aecadf2040d8d5c5bc25fbe61b0071e9cbb82b872",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/mesa-software-rendering/": {
-      "hash": "499f6a5b428160fbe19d761a25cf6925e2e5d49cc7c16b7c5f462a89ae8c8aac",
+      "hash": "3092fac85d1be721e13c682adff68c8041c235ee43014808a2c48beb732ecc18",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/vulkan-treibererkennung/": {
-      "hash": "cc411f3d7dc8d10561f9e7d9d2fae638720fa86a82ec46a7ee17025df7eb6e07",
+      "hash": "48675177ba3f03d9dcc2637565f3a4bfa85f85a7691ddcc2d5271ca553848786",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/hybrid-gpu-auswahl/": {
-      "hash": "19c0284f1eef667720f0669a7ac4079d5de902cc56e923c20a5da8763610aa5f",
+      "hash": "796fc464d3d39d772d08fc8a5b8ceac7feb7666aadd46e81d53d412b871f47e4",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/drm-ungueltige-edid/": {
-      "hash": "db55fd9ec5244bd563801fc501307aa4da8b1ce1266ad52c787c64f824fa9dc8",
+      "hash": "813e44e9e23197ccbbdb0305a145c0956583a18af75e4e9125d7da553f43fc7e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/displayport-linktraining/": {
-      "hash": "9df5e33a314f5ba0446b1548e9ac0337eb55d0ca11eb1cceb94c09a0a139f8bc",
+      "hash": "b512255d1cdabd4d5195f3766cbdefef9a6519547b777aa145eea8a9ca2e1be5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/intel-gpu-haenger/": {
-      "hash": "9649f72cca54c5834036ee046db0d1230616325a6d9f7aad51e489d8069caf12",
+      "hash": "63de2484414aed7e9ba1635e90535e358df13d4cd0a12ba9dfc1c11e637ae870",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-nullzeiger-oops/": {
-      "hash": "385def277b455ba28c298eeb9655a73ae726fd74239a188cb5d152493f472ba7",
+      "hash": "95d326f3f280208761bde20b608adfb878dc9276367f67635390817f360637ee",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-softlockup/": {
-      "hash": "bdcea65c2e96d8566a64476a85175ef6af340f942e7ef145e0e87c230e3b0e73",
+      "hash": "d18e056163b6299f5e82afc64aabc1b235199e81411a976c1b771c0f0c7f50ee",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-blockierte-aufgabe/": {
-      "hash": "2471fb1bcf1932120d83c8743bf95abf883e9d9a82b53ca24cfa784ec6f169da",
+      "hash": "15586436bbf65a2fe69f2987f8180890da4f42b5682a481370641172f3c9bf14",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-rcu-blockade/": {
-      "hash": "fb35ca1ac297df72994f90852e301531a8eb6bcb75844ad17352fa847eaecaec",
+      "hash": "09ac11e8a87c50641d5ce521fb2783b883eb8bf10117247d0074e642f854bc4b",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-machine-check/": {
-      "hash": "6c1c0e898853b52daef2997c7926ba95f2daa0eccf61644f04aff185e2bf8455",
+      "hash": "e55f48a3c20d342251adfde03d77b733d91bb163e56e4db710b03850d69485c5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-pcie-aer-fehler/": {
-      "hash": "8262f9a6d2fb8e524c7d7bf3431346ea077c6fc8a8face9829574a9e972db298",
+      "hash": "3470cb929dca6425414ab88be6533411441b3d6d441dde405999b648ee22dc8b",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-iommu-dma-fehler/": {
-      "hash": "ac44f66b7853b7139a80ace8b2a8b3fd4176088ec722acbcf3f736dd2f94e8fa",
+      "hash": "b1e45556e6449b8ca53c199ceed11cffcc4ec05c25b51dedf70cd4020675219c",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-modul-vermagic/": {
-      "hash": "69662833255447490eddfa41baca61063d580ed2a7859e9c9889635c05c1b420",
+      "hash": "dc752b51c4838cbc783b495abc64a92751d294e588527e67c82239ec0e7041b0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-modul-unbekanntes-symbol/": {
-      "hash": "1a936bfcbbbe699a9c68eec8bbedae41338c411848045de427670d0a98294ad4",
+      "hash": "c8e61c618776df033c6bdc7f31422f148761a9da4c582919d9981f9fdd472a42",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-suspend-abgebrochen/": {
-      "hash": "acc3cea8623e3475fcfbbfaac0817ca88d722e4ae29989f3371c8333691ba536",
+      "hash": "8ba8ea02cbfb6216cf443e8ce4293c40f8f20d0c4559edaa61c3bfaaf3345547",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-hardlockup/": {
-      "hash": "7b28ac83d418742b800e3cd205147d3adba3e5e54fb5a65bd4b3ac4f85da7f1b",
+      "hash": "e88f18a0d1a8cd74afe4dffeb815529d145c3ae15af07c016d03f314df42a0c4",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/kernel-microcode-laden/": {
-      "hash": "9e1c086316ce7fc6cd252f519325bd032113ed40edb0ccb53872e20f7dc03a97",
+      "hash": "b6359376bece9c2b0814ddfd08093d9f1dd2af8eb34fe08b4f552d5ab2870787",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-fstab-notfallmodus/": {
-      "hash": "70625d90e5136b98e2df1ee7e0edb313f9ff7a74d922227e6ce79a19f235acbb",
+      "hash": "397cb6c2b09cae6860a1e8f164b610010e08e4c309e46c5aff4b6e9b76b00b34",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-root-uuid-fehlt/": {
-      "hash": "f62a915f6713d854bc9b0ef6d2f62168135b827df5e0c384e918b5081b613c43",
+      "hash": "40a3998d795eedf43fa332f44d4119105c776fd152ec1a4e7438df6da136c70a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-luks-entsperren/": {
-      "hash": "872e2a3356d03928023f97e84df6091ac491dea9c59232e2314716e23699fe1f",
+      "hash": "dc7ddfe770fb5690e534e500028fcfbbfb1b5079581623277429a258a9d26561",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-uefi-moduskonflikt/": {
-      "hash": "6615c80474abd47220fa322c772dde84401ab5663bed6e6d4938f3d6a986a42d",
+      "hash": "489e4d9143c33906acd0a99ec86a673cf2dc85e0dbcecb2001a300bbf558cff7",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/grub-rescue-prefix-pfad/": {
-      "hash": "ec1a6f6ef07d5ff32fdcfbe343a905039db4cb942b5579387792276a9b418834",
+      "hash": "0d7af4c3444cd6dc7ccc0aed762181c050257cd1d88953c213f9ca5b8599cf79",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-boot-eintrag-fehlt/": {
-      "hash": "904532f82266d5d8445de2482b9d6270736edac93596e6935547406112d4325c",
+      "hash": "b9317f162e40809c53ede44659ba2f68840defe3c1642d4b53196535f024b90e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-secure-boot-abgelehnt/": {
-      "hash": "88c405db5a86c4fbb0a72aea46bb424f9a36f6a7d39d5d7cc04182eb6a2bfd72",
+      "hash": "baecd4b364e478e2fac9b08ff6c4f8492dcf67087e077f13bf514ad5a15cba0b",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-root-dateisystempruefung/": {
-      "hash": "e1ad2eb545827ea59d4090e311d2b6d8f0d0672e8b9ae8f93618a80f15df2136",
+      "hash": "35e2c285b4a1720e56ff71ed90d06a7cf85ce25ad166fb9747e3b97bbd630be7",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-resume-geraet-verzoegerung/": {
-      "hash": "4bda6da27b11afe146312a4c686da4e7996bf4b576e2162a43d6b625d8e5cd03",
+      "hash": "1a2fdc95e6b4c5d9a4749013f4f0c13e69788ef3d23248fd5d7854d32c0425bc",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-lvm-root-fehlt/": {
-      "hash": "072a5c269e3742ff7d75b50202cb8b392e3826c6f13687a44497fac456709aac",
+      "hash": "6827b5f6c40ae76e3189cc652258dde6a5e28ffbce2f6d20592f9df7552eba74",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-init-nicht-gefunden/": {
-      "hash": "65ffac8bcf524ae0a43802c32a3162d7618e4346ffcce032b78f4ba72d22b9d7",
+      "hash": "1d88c8829c0a56ed6c4c7ab2007483007f306537ac122c96a398041081ffeaa0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/boot-esp-voll/": {
-      "hash": "3fb63a575b88a88917ffe7d3223b5a083f67ff2869f83d5b35e58b7a4fd95062",
+      "hash": "5cdef904f6b91d5a57f53cace121c6feb21597e25663efae4bbe607fb56a3172",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/sata-crc-uebertragungsfehler/": {
-      "hash": "4fc012852d75bfe2ad3b7855fbf13b13a8b29f4ece1244c12078888c97a8e89d",
+      "hash": "1272a5ae9fb71d9e3aa52ec8851369bac03b9b4c30760a2b75d90971992be92c",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nicht-korrigierbare-sektoren/": {
-      "hash": "71edf8351c78694e5239a72c113675bba2a25c9422f36820142b4791df3cc06a",
+      "hash": "562a547eff69e6e0e50092c46e12f12a4df61cceb897dae5a3d7fc61bd9547da",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvme-controller-resets/": {
-      "hash": "1d413fc59f37d7fb60a0ce543a96c21248e82b7d42b95dcedc2e623ed3d040be",
+      "hash": "fc701de9e5d7f1a578cf56cd52d4aec72ac1af58fd2c26594c470bc7d637bdac",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nvme-ausfall-nach-leerlauf/": {
-      "hash": "05b29d5b4a0266f1cc9885635b4dd973cea272a535382d49249b23fbb21932e7",
+      "hash": "7bf516998ca7548cb158d2a58140529851247d9d48c24545bf469d96ecd7c254",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ext4-notfall-schreibschutz/": {
-      "hash": "177272e50912ea9f030fc7d8a4f8f312059e183eb47b9c839c7b6468bf37fbd3",
+      "hash": "2dd5d90d8878e327a4c8057c5e31319e4be902b3904f5b1d6e42ab956e59c11c",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/xfs-erzwungenes-abschalten/": {
-      "hash": "13ffd321fe29ffa561979efc3c8f1bfcda154ff6709f38fee8dc9b6c7138e362",
+      "hash": "59e90b2d13fc210487011c7935bb0184dbac0c0deb23b6e8ea369f48aa0b9e64",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/btrfs-metadaten-speicherplatz/": {
-      "hash": "75a281dccde915150f4e2be1497afe91a3f6b447b126f7ef869728e69938a17c",
+      "hash": "b0577ca95d4884e19d1354e780c6641d32a8908c224d449ff26321592652af83",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/btrfs-pruefsummenfehler/": {
-      "hash": "7d5c91414bf8bc9ccb3d29e94fc9a7b0c032b4a31d7414ea8c4794aade0d8145",
+      "hash": "87760088ebaef161520b5a4c45330e1b0189b3b29f10fb30c032dae5dae1d1b6",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ext4-inodes-aufgebraucht/": {
-      "hash": "3c25ccc38ce03c072cb540ad5eb3caba4bb88e40784d0b05afa9544b205195fa",
+      "hash": "998a7d3798b88e144a9f8ba1166ffa911a80f1c3c2b3b76532722c25f6388d0c",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/geloeschte-offene-dateien/": {
-      "hash": "2bd96d775feeca578f0a32f622255b0e75c9978b4ab8c17f40b25819dac1f2c9",
+      "hash": "854451f868652ce62afc5be8e91d542eac5dad86dd8812fa2470e32b95fc8c8e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/fstab-uuid-passt-nicht/": {
-      "hash": "f471b60d322bcb68dc3eba09696c6e854885fd17af944bd43138db6e011bc194",
+      "hash": "643b871b3e5e561853dccbea4a88d26e6b6f2c0a5e19fce0cf232b7ec34b80a5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ntfs-unsauberes-volume/": {
-      "hash": "90623cd1d4e856a2af588da4c1d113bd7e478d375ad28c4a613bf813003991ab",
+      "hash": "c28b9cf007221fd7068764408ac1c992d9ebf54452d5e8a3869dadd693946758",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/usb-uas-resets/": {
-      "hash": "1131a0079fb7a0c6e2cc86a70a6422c0e0338520fabba46393b827b1a65cb175",
+      "hash": "e4f2c51550d8557418cbe3107cfbd225b4f5183146f504bb29d61c7b0149ba6d",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/trim-nicht-unterstuetzt/": {
-      "hash": "c68a25adca137a848adb62278be51c67f29115fac79557b7a76157774315fce2",
+      "hash": "2014fb44ab7ae1e75e84c6a73f54d86e9a8b6f007bd349676f1541fd79e9415f",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/alsa-soundkarte-fehlt/": {
-      "hash": "db932aeb10a78b0aaca9e39ef0cc256c43edf333c3c9c8c931f8d65dec692a1c",
+      "hash": "bfc0651a256961b62e8d232a710fd8023cdbb95cd405c42f6a3d34fe138ab5b4",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pipewire-benutzerdienst-startet-nicht/": {
-      "hash": "be8edf91860f4291b801a14a86783fb8cdf23765a9f91a2267b0744480fd9ef4",
+      "hash": "cf8d1352a1efb72d3194302ae90956b905e63e1a71d172177e63be0d135f2bb0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/standardausgabe-stumm-oder-falsch/": {
-      "hash": "a8ecfc4ff46726d27110705c350d0f8a7352d6e04d152699140d9fff0c250be5",
+      "hash": "7410dd6e28ad59f79e6bd359a842d75e2e43f15c1f9ad648b1897067f012465e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/alsa-geraet-belegt/": {
-      "hash": "fe0d22b0b9f66e406bdcf2d8067d31956bdde6d95b12e8851a770dfc1674ae14",
+      "hash": "a9bd9fcd265dfc7fae9d4634ebdabe9f16de6e5df71bcb86d6fc0dd397ed9214",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pipewire-xruns-aussetzer/": {
-      "hash": "ffd0ce953d325cce17b8928fdd64eeff863cc291c8fe9a85886a7af4fcbedad7",
+      "hash": "ec97f65083eaeb07ce5e58e2deed75c1692bde269cb06b3e732a316b8e5825d2",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/bluetooth-headset-profil/": {
-      "hash": "5e07fcdf50f19807ad8edf629514c8062a42cd3d9e5720cab2bf8f39f7739f11",
+      "hash": "50109b73c17364fcde94441821abf6971c2573057a2d2f45d4fa35f3abde6f8f",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/hdmi-eld-fehlt/": {
-      "hash": "efcfe5a4e647875e4a5068bde31bd735fb1efd9afbdfed2e4ed5034fd7dc6496",
+      "hash": "14e52acada597c30243caf8defe543654e0cc9d8b3b475a95794da0c39891876",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/spdif-digitalprofil-stumm/": {
-      "hash": "934e59529ddfc3f91fc6c1774c86b6ecfc1a5f488e96fc132c53a47c807ad063",
+      "hash": "7bbc6918c946bedc8746e1fc027363d3388775c2b5c603375e9c46c6be0e4c23",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/usb-audio-abtastrate-clock/": {
-      "hash": "f8fb3ba455abebe7676a775e0d3abca490bdab5114e9426dbc2529d9e2516a79",
+      "hash": "5a4f283502a7c9787112b163739a0c8f835c1f3cbfd6f58a821fe118a8a7c9a9",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/wireplumber-konfiguration-migrieren/": {
-      "hash": "5d43b83db419d6f90de3a735e26e81a27311f7ef855f1e41e2f3c620b6cbeb65",
+      "hash": "0c04e4a7d36acb8cc673c4f0194491cf50d1378eca171f1c6ebfd14671ead6b0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/mikrofon-aufnahmeroute/": {
-      "hash": "58b1be9958ddf3546dc1908d9a4b78281a46cbe448c0e442541a3fb9f07ebe27",
+      "hash": "af2e6436f186503b5644352dc1f526109851478547370f75247affcc1f74962d",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/audio-sitzung-geraetezugriff/": {
-      "hash": "8b2298dc1a735739bd6aafce33eab4af7de37ac0538088a3e6b85e8c8a0b81f5",
+      "hash": "766440b3e029f96c668916b934228dbc0ced42a0c9c6e69f9bd765c827b8293f",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/netzwerkschnittstelle-nicht-verwaltet/": {
-      "hash": "dd60f4cd2bbe9e54aa35078fe17f85167d2986f7843a6c523aebbbd5e027f33b",
+      "hash": "8c85d8f81febb076f01d99c6d676062b1beb3dbe4a4ab106b58f4749832f7c30",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/wlan-durch-rfkill-gesperrt/": {
-      "hash": "b8788a6ea71ab3595b98f14c9a7f4a8f02c83eae336c74f4b7e277123d0638df",
+      "hash": "b8e91f0c9fc4ed42be07f4ab08821a9c0f374cf9327a1ceba46145b99a3b3c72",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/wlan-authentifizierung-scheitert/": {
-      "hash": "a993b80fa2abfd0c0b00fbb4f33366d921e54d7607a1ae743ad74c86407998d2",
+      "hash": "83fabe24f70681bd0d8d4b87cd7ab5397a803306fc0089d620c85f93aab694c0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/wlan-firmware-fehlt/": {
-      "hash": "a256823a810bfbbdca53fee21a77480feccabc750cd55f30a9f60e5e2e675b9f",
+      "hash": "c1eecf5f0091f0361c20b6a684d32d0ad981d3d311b56d16c4c10ed598d05220",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/dhcp-ohne-ipv4-lease/": {
-      "hash": "9a960b3c9cec0e71f078e5d7672013d861aea0ed68237fffe8b3d42bd046b9b8",
+      "hash": "67af60079f885e7717775c41efefb4bb9f8add30f62d8d804231b2db361b40f6",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/dns-stub-aufloesung-scheitert/": {
-      "hash": "0142a42d93c68122628ba31b39f3bcd462f8d0092447fd80e085f6be067a708c",
+      "hash": "f135bd634396e9d1fe4f2ddc458df8f86a20fa3db773cd7390040d56133a92e2",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/vpn-split-dns-fehlzuordnung/": {
-      "hash": "129bbc0c71bccfd40e9d471ebcf16c1c6faa3458e3cce66cb50c9cb02fa8d479",
+      "hash": "cd58ef267f7586afedf8c17f344a561427dfc86c0852fddb2cea6e3b4b57ce7f",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pfad-mtu-paketgroesse/": {
-      "hash": "e782726c9620b517a51fd937200aa99a0c83be87c006d7013bccb681a9185473",
+      "hash": "819c1dc7dabcd1f5a605bd85a9d68ed62991642c4796397bb44a7e41cae26730",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ethernet-ohne-carrier/": {
-      "hash": "0ffb21c97c060a501564b678d139088a4af5fc6ccbe30f69d8532be51dfd7a54",
+      "hash": "96074192b800fc4f5a79c369ff23a0bc175d070d557e380592c0f0f904a32a5e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/netzwerktreiber-sendewarteschlange-haengt/": {
-      "hash": "382f142da95c0955a3505ac11f1c6a6ac4737755836aa34bf48fb2a51fc507e9",
+      "hash": "e6d17f2c4c97a875bbc9ded8f6580d780557d14e880e191c3121dd2d2d2c05eb",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ipv6-ohne-router-advertisement-route/": {
-      "hash": "5604d3d50a3b1cbb55b835cbfff5e26d13fa2683eaca4feed65b88d4174bbf7f",
+      "hash": "d0b98971a3aff9c36187661b17c5e7c1f0981af94e51f0d2ec40c49712499f83",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/doppelte-ip-adresse/": {
-      "hash": "f17e2e99190a96586ac84c1cd7aead6ca79dbe27a21ea0f28bdee5bf84c225a0",
+      "hash": "0284bc696305053eded5877b45574d3b9b4b35f0dd3a9b0fcaa16927cd061684",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ueberlappende-vpn-container-routen/": {
-      "hash": "69e1d18d38e2ad896bfb21044bf8dbb4615bef0a6e196b8e8879ad0ff4804ca7",
+      "hash": "197ce17b22a7380616fdde01f7effbdbf3486630eb26b5fe9c5fb9ec78ca88f0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/netzwerk-konnektivitaetsanzeige/": {
-      "hash": "1fac0f0134745a96aca4e9a894d7b3b7dabe8334b49c00dc3c441c997b972ecf",
+      "hash": "8bc512435b0d689db4fe97c6ccac13b7bcd563137c003961e1e486191c78673b",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ssh-schluessel-dateirechte/": {
-      "hash": "730d09152fc9be61395301cde44c54a9b86fc628ff604cb3257de1da01a649b0",
+      "hash": "1c103efb059549ff72ec26a7e8614cc3ef5375265516c9fa80d10a64a6c19096",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ssh-hostschluessel-geaendert/": {
-      "hash": "87bfe3ca17603567ac3ef61be9ca4230ca9dd33d5900e7627c21647b150f203b",
+      "hash": "1609edf58759a51ba251776a0d947d61d0a958929fe5d6085571c8f5ee12ffce",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ssh-zu-viele-identitaeten/": {
-      "hash": "6c27afc0c156bfc3178dce9121725c713cbebf7956a05311c95c12ecae761b12",
+      "hash": "3c33b002fe0c678083ed39e69999359224db4f931e309cd1336b5a3472ec5285",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/sshd-konfiguration-ungueltig/": {
-      "hash": "c3730572129be99bf2bbce2319cd95c5b517352f0b7bb8b882f8dc919ade958d",
+      "hash": "1403ac9a3e3db0c9b49f45a8735d0e770eefea2673f101d6fcebc9e928604951",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/ssh-algorithmen-passen-nicht/": {
-      "hash": "f3358fc1e40ab5c2e20adc96b1dff8a55ac6812af9ccc0f9c6e2737dfd48be99",
+      "hash": "dc821cfe00e11d9a4025489bf665c4b885f4a53f4eda0d7bd8ddb499dfcad6d8",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/sudo-regel-lehnt-ab/": {
-      "hash": "7cfee41019a4a7df03a6946e155b3373c83668658066e1910f3e258689f1c238",
+      "hash": "fb7f6e3c7a9befd8f96673a7273a71d13cff57e1c1df483f36ca576f9273b86f",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/sudo-terminal-fehlt/": {
-      "hash": "5d24aad384f936cd97a3e914cb0e8cacc7a5f37033babe6e5914f2d356ceb862",
+      "hash": "067aa3510bf9ea40f13997a7ce0ca146ac77713442dabd2a4c268bc1ce0a83b2",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/acl-maske-begrenzt-zugriff/": {
-      "hash": "df98eeea2ec57b11f70296c66447195ac8f29addba882bfb3e219b70237fc4c7",
+      "hash": "0475c46a6cd3e2f906ba646525e37b06445f5c2ea24340fb4f137dcf2adc5a3b",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/programm-auf-noexec-mount/": {
-      "hash": "3da4ed31a6c116e46af22f1e772e8ff3fca445f73970bc3b71167ef5f6f7464c",
+      "hash": "4666117ef9e8535233e934b53b29e0762abd6db6424c302ff454899b966722b2",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/apparmor-profil-verweigert/": {
-      "hash": "3f875b34aef7615689b74d0ee1f1aeca6dca0a805ea0a7601ccc34606da34424",
+      "hash": "c110246f8ce0fe1832ea89e72c5e52f04978afc17a5f815931b330859d427327",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/selinux-avc-ablehnung/": {
-      "hash": "07962ecae9c03f8546a4c459440a3557f6c666e91807eafbdf3f8abee9515faa",
+      "hash": "1fc63bcffcc713ecba8ccd575263bb28fbf9bd2dde3dd2fe26dc0db09f3ccae8",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/selinux-dateilabel-falsch/": {
-      "hash": "1e3dbaa277a3ea5b00bf187fa31ed90a05e6fc7ea0ec53b35f6f30b2d26cdfb1",
+      "hash": "d527a42ef87e9ad12d51d91d5a800f1d7a3a51b919d8fb82f6859c187683f1b0",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/x11-display-nicht-erreichbar/": {
-      "hash": "5d2345070e58c7fcdfcd59220cd14c793971bef7ae3576ce2af2c6dfc6bd9652",
+      "hash": "42566b334076a455943df0a41931aaf1eb7779ea1aeb4a6ff247a9205df0f5ba",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/qt-plattformplugin-fehler/": {
-      "hash": "f6e923b1dc3a36555ba1523e5893275e6cfd1bbaea18b5a39d7b31f560949c06",
+      "hash": "1273e594afd1eaeaf7ad88a7717e19e36cf0425564b806d1fd1dd369abd5bc11",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/xorg-kein-screen-gefunden/": {
-      "hash": "df8ceb97aa7f48907c97b3a2e02bd26d216557ffb5dbc3aa086042b2242efdb6",
+      "hash": "0fb18b12272a1d77d65939041d1f3d85b7d448f5325eafb41cd08283edd6d3d2",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/xdg-runtime-verzeichnis-falsch/": {
-      "hash": "6a59ffcabc3e2f210969811733180e638f731fecf4107c3ce0a0fb81a6074c0f",
+      "hash": "bb216db8709f9d19eaa3fe9fab10783ecd35321baf6c2baa3e096af1ed5e1193",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/desktop-portal-backend-fehlt/": {
-      "hash": "b59cf3dabaf6d0ec053afd6aa879282de110cd8566712115084a6ec9449aacb4",
+      "hash": "d728e7d79c26bf32bcd8c384421538b23faba6bedff7610bba9c2a2492df2d06",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/benutzersitzung-dbus-fehlt/": {
-      "hash": "74dd27ebcf8f199bbd3a8ddc8e827813837c05fe59bd92f08a362c1365020da5",
+      "hash": "39fc734ed2fb0e4267b62f432385c4786ef109d1d52f0679ace2be9ccaac1b40",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/plasma-kurzbefehle-ohne-wirkung/": {
-      "hash": "ddfa01c8b89bce64cf9566419d03ae3bced91d1b72196a711401b359dd335967",
+      "hash": "ca83b122de521619257265cfdb475e144dff5ba31f5d78b2f5514733b2cf85ee",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/gnome-erweiterung-inkompatibel/": {
-      "hash": "f01d77cd28ba88949b973c86efeedf0e29035d73c61498932b1ed7389aa709c8",
+      "hash": "fffa8d933f0562854a318e6cfadf0503241c0b45d16c2e491641ef4d54660ea5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/plasma-skalierung-unerwartet/": {
-      "hash": "a1c31c320f46a00f1d8201af9769dc72d842fff4c8987363daf0f6f016786b36",
+      "hash": "d9859fbc3e1a64f19975af1b4c8b39f30de8025c71d4b3ea944c65a50cfe0ec4",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/xkb-tastaturlayout-kompiliert-nicht/": {
-      "hash": "e3e8b9dd09102e85b1a5b62e36b65b7a01bc8be2aabe46d6d848b84bdb2c7a06",
+      "hash": "876e21c319229abfdbb2fbedec5cae86fb0eda0761309a18090b9a946d1b7127",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/standardanwendung-falsch/": {
-      "hash": "06df7912e38b07c0cf046e9ec0829de2c7a03995bff48fd1a0f32dc21bd25ba7",
+      "hash": "cfbcfd16e37406d5167588fd2d5b43755e2838e562f9ffd1c60c33c99917a9d2",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/polkit-anmeldeagent-fehlt/": {
-      "hash": "dabb7c8b09f0cc02520dd6caea4c0e9859cd0ad11da0c1ca9c673aebaf19c6ca",
+      "hash": "6b52f5a7668f92256f5112e43f6158b8c10d4d25723c6b301dbbe80964b79b94",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/apt-dpkg-sperre-belegt/": {
-      "hash": "6f1f835cfacee4a7d873490ac4b11e14f1a89a1e57373171a2c517d883e26ac3",
+      "hash": "b7de2b75e268c50c22f59acf38fa7eb27dc3e9a3dc31daf5fdac4367cbf6fc68",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/dpkg-konfiguration-unterbrochen/": {
-      "hash": "1242b10c57c87779b7dd2b04f302a5119452db6a92f7cef1159d824662d53180",
+      "hash": "80650baf8521a48cc969cc23ad57135b158e30357eeb81d5e45d3062bddeb615",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/apt-abhaengigkeiten-nicht-erfuellt/": {
-      "hash": "d8f137c25917d23463727d19bc87197e55f39963d6798a39c6fab1fa23c1a674",
+      "hash": "fe417aba04f5dfeb0b0a116c7a0f7e4973c977bca6b5b6334524cb8dafdc11c5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/apt-quellsignatur-fehler/": {
-      "hash": "a2239d64ce139d48b7bc8f59a0c674c4a734fc76f07495feac8a699041215c5f",
+      "hash": "46779a3c19e90fdc973919ceb39ae0d3e39bb657ddbf7988b2465f96a1ab7cb9",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/apt-release-datei-fehlt/": {
-      "hash": "f9003858b4a1a26537f575971a195be3102be8708b2e33d00f9720d9cb9c6a32",
+      "hash": "34bd0cb84688de693332acb10208226c534657244e4618a34da11b512b198205",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pacman-datenbank-gesperrt/": {
-      "hash": "b979be0f486f2da801c82e113ca49ad61737284eb48a2a6a4f7ab350beea1db4",
+      "hash": "9fb7db5f2b49ea01131e589cbe07a15477cf09bc304871f2d69bc00d218cad97",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pacman-dateikonflikt/": {
-      "hash": "2188c719891f0059ac26a91f0ea0bf4e3b28f4a4d2519ef97e7dff1f959ff831",
+      "hash": "d6af3d13fec1794cca9299d0d4512e6cc72aa732c872e2fe4fd8bf101c722d06",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pacman-teilupdate-bibliotheken/": {
-      "hash": "cca9ce16489614388f165960a584aba0a4ed42240073e96ae205a8c99008d0d2",
+      "hash": "ef5e7ed858f475d86c7da50e3c183e02e21c17f3d76c6a3a9ad824d95cfe5837",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/pacman-paketsignatur-nicht-vertraut/": {
-      "hash": "c4461fe413cb333bf3d2166d3149d5ef0af8b22dfe4f7b7a34c6d6accd7e2572",
+      "hash": "01fa5fe67ef2a928736c5da37206ce5077d7b1935ecfb10189746d304602be77",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/dnf-abhaengigkeitskonflikt/": {
-      "hash": "1ac5eb0030a92084350abc1860e0a79858f4e762768956edabdb0b95772ea301",
+      "hash": "2f10675cffd3d1f2fa5f88981b0b78fd3b6b0c7e3ae3efb807fc5855767f4337",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/flatpak-runtime-fehlt/": {
-      "hash": "214faae24f8760ad7a04078f5c75e45a1bfcb2274e32557a443ff5ca96368174",
+      "hash": "6eefad5190a6d761f8b641df6b4658e6b27c3acf0d62df7153e8d72804ddbb7a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/flatpak-dateizugriff-begrenzt/": {
-      "hash": "89382f06ae3667cf87a5fe0613a46c4d5fd49911a357f62c095281df4d69c764",
+      "hash": "e2426c1bbac933d708fb05c11a95d6c657f2db6fa088530b798749423ef08925",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-programmstart-fehlgeschlagen/": {
-      "hash": "ef531b4505034e6f048a5582ff9409114d5bc7ccb2d9f536198c6d91759b03b0",
+      "hash": "1a53c6b8359a825e6350a3f837f83bbfaa9519f7658a27602789d172a2c8213b",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-arbeitsverzeichnis-fehlt/": {
-      "hash": "6a2285de9744febbf36a2bd0274e0a700a0d8be16a58b38f5c10b273c037b8fc",
+      "hash": "771a5c7ad31a8a23a39ae09ec50eba437d8bd549430a5abb7a6bb49f23f1a594",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-dienstkonto-fehler/": {
-      "hash": "59c866cc1699e1170a3e66dd9e237b6be37d4ff4fe94c4008e766a4d5114e374",
+      "hash": "3035d2985519a1e399fcbc1bc5f534bbc09bdbbb71eb13b1aca17a6dc6ecc201",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-notify-startzeit-ueberschritten/": {
-      "hash": "e1b9332f701153b529451fe46a9cba46a02171413c225d5027395243269cd1e0",
+      "hash": "a386503ab82702f8681bdb269a7484b6f194aa75305582c7ecdf57359a72350d",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-neustartlimit-erreicht/": {
-      "hash": "b68ea4c61403ea9b1e28bf137ed74856bd5e0089ad7e2eb5c84b83a750c74745",
+      "hash": "95b73427830fde25ba438b826dded527f5dcc486dda56f81cf435dcaf609c138",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-dienstabhaengigkeit-fehlgeschlagen/": {
-      "hash": "955fcac0c0c81b6f6a7a9a6bc469ffe0741dfdb544eca54975021acad8fa19fe",
+      "hash": "626b80068ca1208d8729aca1e81fdb73c1a7398adca835a358ee92a8378dad86",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-mount-namespace-fehler/": {
-      "hash": "47188f692e698476baa80f7484a0c8f355e1e48eec7fb25de28d2a441b9ef1cd",
+      "hash": "140686637705c72d05192539119c6f6c99065e1e47a0a82c2b89c3817d164739",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-verwaltetes-datenverzeichnis-fehler/": {
-      "hash": "f3724283471678a10343005230318a61369d78a60b8efa8c8128c41daa7f58aa",
+      "hash": "3bcf259c1a360878aa2a9cc24d6604c0b8c6012c62e67bdc7e97124a230c7141",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-timer-verpasste-laeufe/": {
-      "hash": "2fb3703609cc825226a86240a6e3ea148c9def92b9b7a4c3c3933247e429b9c6",
+      "hash": "7a6c19a850b5d902c0aa9f1b19dd902a5a37dace93899c58b1cfd09fb1a53131",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-socket-adresse-belegt/": {
-      "hash": "3be896f367fb7f5d37d2426de69a6e59989bc9b53e341574e8341409d161c1ed",
+      "hash": "2d53cf0f217162fce7844385cf5c163a2c4c28dc05c89af7bb9a12922a1d76e9",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/journald-dienstmeldungen-begrenzt/": {
-      "hash": "ba3256cc4f10320d79f8dfbd699e7c2e9759f6e0adc10721f40e46f8f31317a4",
+      "hash": "9e8019bff4a13e2bf418643c6c7e3abf480fc00a8fdaa3e56b09885753b759b6",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/systemd-dienst-watchdog-abgelaufen/": {
-      "hash": "7b844eecb07b279a292322c494f6e17b568875a832b52f04c3b07744a9136cb7",
+      "hash": "3ec351f3b72dfbb136863abe0b5818df593c0277f9047d9e1ac0de2130a8233a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nixos-unbekannte-option/": {
-      "hash": "8fa128167e0b32445522877912d3cce81ce4d247143883c62a43f068f96826fd",
+      "hash": "fb74483ea7e95df3c19b6206089dacfc5dcee70e79b091dc248e9d4319bb4ae5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nixos-widerspruechliche-optionswerte/": {
-      "hash": "355b8f59a42331c9550cf3f374cd7515edb4f40189e5cb35a8b1585afc920bce",
+      "hash": "40a5daae612831458c44fa1054ab84b3f8a07104e20e22421fb91a0491cb116a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nixos-modul-unendliche-rekursion/": {
-      "hash": "09fb5db4b443447cb2d723d9eb3d1b043da3bc368fdd1cc4cb5719ae8c298fd8",
+      "hash": "c6a404c31cbcf6519ab46ec62b04a443005867701cb251b026cb10e7ef79e721",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-flake-unversionierte-quelle/": {
-      "hash": "59904df7c9cdc1e031bd562ececf465cb37d1e3087c3cceb4d35c91698157666",
+      "hash": "1d59e47e33d9710da86b6882bb81d22a07d1971616d61f40a79f320b243710bf",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-reine-auswertung-externer-pfad/": {
-      "hash": "a4f05048e3fea57e423542dd80ac27c6c85c5ff982a22ee2a34f8ba1911d0046",
+      "hash": "0b1624131eeccac151e805d9d567f477ad00f56447193195f87db754112e1772",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-experimentelle-funktionen-deaktiviert/": {
-      "hash": "c101715547d202b3187649e252a83c27c13969b44597b6bc45da93dd9848ca73",
+      "hash": "62299ef54ab58ae9d76b22700575e447b4f52b4e22135bfff49a07461c875cd1",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-cache-signatur-abgelehnt/": {
-      "hash": "3206e8bafeaa96abe4e45eb5af8454060abc5f5c6d7226e8f2fddc1cbaee9377",
+      "hash": "5df4f8db5991d08385fa61f2d7a3fd2dd306539c85f57ef14e969ea6cb561cea",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-fixed-output-hash-stimmt-nicht/": {
-      "hash": "b11f0fa1fe01a599a1b258e817070174d071e1d6845d8226ffbd41b26fb8d186",
+      "hash": "b6d8be1f9aee138554c762b80645503c14f3289b1238020c76d04873b67f01e4",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-daemon-zugriff-verweigert/": {
-      "hash": "056d544cf4e8ac256f80201e3b1f32383f54a6bba43a0432c973fc1f4c36c32f",
+      "hash": "97fb7693f89c2db25d860a38d952843b60f76b64f598ee266d2ae6f3d71e8118",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nix-store-gc-wurzeln-speicherplatz/": {
-      "hash": "356dde3bbc15c9d5aa52dafb5a1d39f68a9a726930898b398bb0472351e1b0e9",
+      "hash": "1cebbd9eb025dacf2382bc351240904b89900cfd6b8a3bd57fdac23b3bedf293",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nixos-laufende-boot-generation-unterschied/": {
-      "hash": "8d6383d98034dbd2f4fe4541ecb15bf4b8d36853365c809e130d58b17d4ea231",
+      "hash": "d82dd51f67309b069a8b78152d4b6a2d4c8531e9c86878bab637a075c7d05abe",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/nixos-fremdes-elf-programm-loader/": {
-      "hash": "3a9f2cb93ddaa953569319a1638afa2d9c11d6adbd965dd08ea2be5657185f48",
+      "hash": "b087de69ff48eb4db0e413f04727877e3b515c64ed30a54f71d4eb97e5a1c9de",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/cgroup-cpu-kontingent-drosselung/": {
-      "hash": "fe7ad6cfdf43c4657d0c96d180cf3c648b7601b644f34b6c681a6cf195f3cfda",
+      "hash": "0d11f3fb5132f43911b034e3e66a6e4387ed6d4507a6b1ef52ff88f8194e471a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/cpu-takt-thermisch-begrenzt/": {
-      "hash": "ebb0f0fb2d914877bf1cdf20af925094cde32ad2c85078cd1318b6390d8c58aa",
+      "hash": "992b90bc26f9ec80e2c4c0cc5eaec523be71e0214e524365cdde09a967e42412",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/speicherdruck-reclaim-pausen/": {
-      "hash": "2cc9f64ca846677019cef168cd65cff6bc662b92e4c976bd789e3e77043173f1",
+      "hash": "7db2e9088bc4280b78a678ff255c45974e9f7c132805e32bf851732b142b827a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/cgroup-speicherlimit-oom/": {
-      "hash": "b96b11fb59377a82f767c0ae330f0205f4dedd715841b60833f7d37a77782717",
+      "hash": "820651bfedf8321214d49f260f80943cd3e2a3a52b8e86aadb8cb22580996639",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/swap-thrashing-latenz/": {
-      "hash": "dbd483e9779728c7d5649f28983f5d36f7210174d828bc19114e6992fb020c31",
+      "hash": "d3311685e2f9e265c09d232c850749e88865648c05bb9358ce1c750d8d60ef30",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/io-druck-writeback-latenz/": {
-      "hash": "2a61821a574d25ecd262625b31dfe4229b713094589b99e513387907115c8c95",
+      "hash": "451a58d87d3c7883646770261d61e3ac511ac2dd282296f52efb22ef878b505e",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/cgroup-prozesslimit-erschoepft/": {
-      "hash": "d908949f33e42a5c35972f66c008b3a6a67b3907a15b6ad09b96ea92420ac049",
+      "hash": "a6be0227c5136f10f4f6164672218b9b79847d667546ab8c2a42cea4c63e47a5",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/perf-event-zugriff-beschraenkt/": {
-      "hash": "d1356b71c5d1ea4066f72f98812fb356fad4373a9f0c9d5ea0d6fd1dbfddd2c1",
+      "hash": "5185c617f7bbb3478c0d0061b09d170a5b95e876e86b4d78c01c6fb0875ed231",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/perf-hardware-events-fehlen/": {
-      "hash": "8f2f74b0e6cef048096316c2d4c31008f4f7568a734a3162d5b7e7318b591fa5",
+      "hash": "65c7f5684976ed08dab55bdb6f1de11fef4dc77f81d71bed5a7c57c200f27537",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/numa-speicherlokalitaet/": {
-      "hash": "2b806730091f6ffd7b7b40ff61f37e2c6a7002019c987cbe75bc306c8754abae",
+      "hash": "13e8c4329904315e6106b2dbed9c26c39fe22fe840b2299181f42527f1f9cc8d",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/qemu-kvm-beschleunigung-fehlt/": {
-      "hash": "ef9e27405480ca7cbfe0fa526b670ebf5a69c683e42c79ffabed3e024591d90d",
+      "hash": "26908f7a12ca50c950ea772ab3feea31e4919813742fdafc70624f4eb01aca0a",
       "lastmod": "2026-10-09"
     },
     "/de/linux-fix-lab/virtuelle-maschine-vcpu-konkurrenz/": {
-      "hash": "b69d0e2c3b5eb26782314177543bc40e4c3d015d4920d22b555efd496c1cc163",
+      "hash": "e8489682355883b33ca07ba65b1982a8641137fa67c1a91342f1bc4e5bc2f5e7",
       "lastmod": "2026-10-09"
     }
   }

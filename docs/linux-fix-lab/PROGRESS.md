@@ -1,6 +1,6 @@
-# Linux Fix Lab — current implementation checkpoint
+# Linux Fix Lab — official launch checkpoint
 
-2026-10-09: Dennis explicitly approved an unlisted public live test on main. Initial review baseline: `17a5b92af148cc76fd52ecaf3be12a2d5aca1551`. Before publishing, fetch current main and preserve intervening changes.
+2026-10-09: Dennis explicitly approved the official launch after browsing the unlisted real-site release 3f07061f. Scope: enable indexing and the dedicated sitemap; replace the World Observer Featured Projects card on both homepages with Linux Fix Lab. Preserve World Observer navigation, pages, dashboard data, every other featured card, the blog and other existing pages.
 
 | Component | Actual completion |
 | --- | ---: |
@@ -11,17 +11,20 @@
 | Diagnostic command strings | 325 |
 | Solution sections / localized anchors | 301 / 602 |
 | Lab tests | 655 passed, 0 failed |
-| Integration tests | 42 passed, 0 failed |
-| Indexable existing-site sitemap URLs | 309, SEO errors 0 |
-| New Lab indexing policy | All 302 pages: noindex,follow |
-| Active Lab sitemap / existing inbound links | None / none |
+| Launch homepage/sitemap integration | 15 passed, 0 failed |
+| New Lab indexing policy | index,follow,max-image-preview:large |
+| Dedicated sitemap | 302 unique Lab URLs |
+| Sitewide sitemap URLs / SEO errors | 611 / 0 |
+| Existing pages receiving new Lab links | English and German homepages only |
 
-The first-review homepage/blog/RSS/sitemap-advertising changes were reverted before publication. The existing World Observer cards and navigation remain untouched. A 302-URL draft sitemap and disabled future generator/audit integration are prepared. Publication policy is stored in content/linux-fix-lab/publication.json; the next official-launch phase requires a separate explicit approval.
+Publication controls are in content/linux-fix-lab/publication.json. All three launch gates are enabled. The root Lab sitemap is integrated in sitemap-index.xml and robots.txt; its URLs are excluded from other sitemaps to avoid duplicate ownership. Homepage changes are limited to the requested card in its existing position and layout.
 
-An actual server HEAD check found .mjs served as application/octet-stream. Browser assets were consequently renamed to .js with updated imports; no nginx or shared language/CSS changes were made. Rebuilt static pages use these .js modules.
+The original unlisted release passed 655 Lab and 42 integration tests. The official launch retains the content and runtime assets; updated release tests verify indexing, sitemap ownership and the two authorized homepage links. See REVIEW.md and REGRESSION-BASELINE.md for verification results and limits.
 
-The full regression suite has 1,205 passed / 29 inherited failures out of 1,234, versus 550 passed / 29 failed out of 579 in an unchanged export. No new failing subtest names. Independent complete source sample: 24 entries / 12 categories, plus seven additional reads; all supplied signature fixtures pass. See REVIEW.md, CONTENT-AUDIT.md and REGRESSION-BASELINE.md.
+Before the launch update, actual HTTPS verification of the unlisted release passed for all 302 pages, six Lab assets and 82 existing files. All pages matched their approved commit bytes; 9,040 internal Lab links and 602 solution anchors across 301 solution pairs were valid. These are HTTP/source checks, not automated browser interaction. Repeat against the launch commit after Worldnode sync.
 
-Continue by editing source JSON and running build:fix-lab, test:fix-lab and test:seo separately. Preserve semantic IDs, localized slugs and anchors. HTML/catalog/manifest/draft sitemap are generated. No fix was reproduced on an affected machine. Browser visuals and actual interactions remain for the live-site test; required control-browser support is unavailable, so no preview or improvised browser path is used here.
+Browser modules use .js after an actual nginx check found .mjs served as application/octet-stream. No nginx or shared language/CSS changes are required. No extra dependency, backend or paid API is introduced.
 
-The current release is authorized for main publication. Search indexing, public inbound links and sitemap activation remain unauthorized until Dennis's next approval. Actual live-route results are reported after publication.
+Worldnode serves /srv/www/dennishilk.github.io directly through nginx. The first server sync retained its separate dashboard commit through a normal merge. After each main update, synchronize that checkout while preserving its local commits, then verify the actual HTTPS URLs and assets. GitHub Pages success alone does not establish deployment on the real domain.
+
+Edit source JSON and run build:fix-lab, test:fix-lab and test:seo separately. Preserve IDs, localized slugs and solution anchors. HTML/catalog/manifest/sitemaps are generated. Sources and synthetic fixtures do not establish a reproduced cure on an affected machine. Browser interactions are tested by Dennis on the actual site; automated control-browser is unavailable in this session.

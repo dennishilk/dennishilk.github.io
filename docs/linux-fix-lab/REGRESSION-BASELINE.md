@@ -2,9 +2,9 @@
 
 Main baseline: `17a5b92af148cc76fd52ecaf3be12a2d5aca1551`.
 
-The unchanged baseline has 579 tests: 550 passed, 29 failed. The approved unlisted live-test implementation has 1,234 tests: 1,205 passed, 29 failed. No failing subtest name was added or removed. Existing homepage tests and pages remain unchanged.
+The unchanged baseline has 579 tests: 550 passed, 29 failed. The unlisted live test had 1,234 tests: 1,205 passed, 29 failed. The separately approved official launch has 1,234 tests: 1,206 passed, 28 failed. No new failing subtest name was added. The obsolete homepage featured-project assertion is updated for the requested launch card and now passes; all other baseline failures remain inherited.
 
-Lab-only: 655 passed, 0 failed. Affected integration: 42 passed, 0 failed. The full suite remains red because of inherited unrelated failures.
+Official-launch Lab tests: 655 passed, 0 failed. Targeted homepage/sitemap integration: 15 passed, 0 failed. SEO: 611 unique sitemap URLs, 0 validation errors. The full suite remains red because of 28 inherited unrelated failures. The list below records the original baseline; the homepage featured-project failure is resolved in this launch.
 
 | Existing failing subtest | Location |
 | --- | --- |

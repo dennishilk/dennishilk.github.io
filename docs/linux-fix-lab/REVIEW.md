@@ -1,25 +1,24 @@
-# Linux Fix Lab 1.0 — approved unlisted live test
+# Linux Fix Lab 1.0 — approved official launch
 
-Dennis approved publication on 2026-10-09 under `/linux-fix-lab/` and `/de/linux-fix-lab/`, with all 300 localized articles and browser tools.
+Dennis approved the official launch on 2026-10-09 after browsing the real unlisted release. Final routes remain /linux-fix-lab/ and /de/linux-fix-lab/.
 
-## Current release boundaries
+## Approved changes
 
-- All 302 new HTML pages use `noindex,follow`.
-- Existing homepages, Featured Projects, World Observer, navigation, blog pages, RSS, robots.txt and advertised sitemaps remain unchanged.
-- No existing page links to the Lab. The final URLs are public and do not require a password.
-- A draft sitemap with 302 reciprocal language pairs is prepared in `content/linux-fix-lab/prepared-launch-sitemap.xml`. It is not an active root sitemap or an advertised sitemap.
-- The existing sitemap generator and SEO audit contain disabled, explicit launch integration. `publication.json` keeps it inactive; a later change requires Dennis's separate approval.
-- Browser modules use `.js`, because an actual server header check found `.mjs` served as `application/octet-stream` while `.js` is served as `application/javascript`. No server configuration or shared assets were changed.
+- All 302 Lab pages use index,follow,max-image-preview:large.
+- /sitemap-linux-fix-lab.xml contains the two landings and 300 localized articles, with exact reciprocal language pairs and build dates. It is integrated in sitemap-index.xml and robots.txt and owns its URLs exclusively.
+- Linux Fix Lab replaces the World Observer Featured Projects card, in the existing layout and position, on both homepages. Each card links to its own language.
+- World Observer navigation, pages and dashboard data remain intact. Other featured cards, blog/RSS and other existing pages remain unchanged. No new Lab links are added elsewhere.
+- No preview, password, server configuration change, shared CSS/language change or new dependency is required.
 
-## Delivered implementation
+## Implementation and verification
 
-150 problem types, 12 categories, 300 localized articles, two landings, 163 explainable signatures, 18 diagnostic assistants / 126 reachable nodes, 325 diagnostic command strings and 301 solutions with 602 localized stable anchors. Search, local worker parsing, contextual assistants, per-solution local confirmation and editable sharing are implemented. Raw log excerpts are omitted from exports by default; optional redaction is best effort. Logs are never uploaded or placed in storage/URLs.
+150 problem types, 12 categories, 300 localized articles, two landings, 163 signatures, 18 assistants / 126 reachable nodes, 325 diagnostic command strings and 301 solutions with 602 stable localized anchors. Search, worker-based local log parsing, contextual assistants, per-solution local confirmation and editable sharing are implemented. Raw log excerpts are omitted from exports by default; optional redaction is best effort. Logs are never uploaded or placed in storage/URLs.
 
-655 Lab tests and 42 affected integration tests pass. Sitewide SEO remains at the existing 309 indexable URLs with zero errors. New Lab pages are deliberately excluded. Full regression: 1,205 passed / 29 inherited failures out of 1,234; no new failure names versus the unchanged main baseline. The independent source audit checks 24 complete entries across 12 categories, plus seven additional reads. See CONTENT-AUDIT.md and REGRESSION-BASELINE.md for limits.
+655 Lab tests pass. Sitewide SEO reports 611 unique indexable sitemap URLs and zero validation errors. Affected integration and regression results are recorded in REGRESSION-BASELINE.md. The independent content audit samples 24 complete entries across 12 categories plus seven additional reads; it is not an all-entry or hardware reproduction claim.
 
-## Reproduction
+## Reproduction and deployment
 
-Use Node 22 or later. Edit source JSON, preserve IDs/slugs/solution anchors, then run each command separately:
+Use Node 22 or later. Edit source JSON, preserve identifiers and run these commands separately:
 
 ```bash
 npm run build:fix-lab
@@ -33,12 +32,12 @@ npm run test:fix-lab
 npm run test:seo
 ```
 
-No new package dependency, backend or paid API is required. Static HTML, catalog and manifest are generated; do not edit them directly. Existing integration is disabled until the explicitly approved official launch.
+The publication controls explicitly require public-launch, indexing permission and sitemap activation. The builder preserves lastmod on unchanged outputs. Browser modules use .js for the real nginx MIME configuration.
+
+Reconcile current main before publishing, preserve intervening dashboard updates and use a guarded non-forced main update. Worldnode serves its local checkout, so that checkout must also be synchronized while retaining local commits. Confirm all real HTTPS pages, exact localized language links, canonical/robots metadata, solution anchors, MIME/content of modules and the advertised sitemap after server sync.
 
 ## Verification limits
 
-After the authorized main update, verify all actual HTTPS routes, canonical/language metadata, noindex directives, static solution anchors and browser asset status/MIME/content. Verify that existing pages and sitemap advertisements remain unchanged. Post-publication HTTP results are reported separately.
+Automated browser interaction is unavailable: the Sites skill requires control-browser and forbids an improvised browser path when it is absent. HTTP checks and Node tests do not establish visual layout, focus behavior, Web Share permissions or execution on every browser/hardware. Dennis tests directly on the real site. Primary references and synthetic fixtures do not imply a reproduced cure on an affected computer.
 
-Automated browser interaction is unavailable in this session: the Sites skill requires control-browser and forbids an improvised browser path when it is absent. No separate preview or server is started. HTTP checks and Node tests do not establish actual visual layout, tab/focus behavior, Web Share permissions or execution on all hardware. The user will test directly on the real URLs. Sources and synthetic fixtures never imply a reproduced cure on a affected computer.
-
-The original first-review archive proposed homepage/blog integration and indexable pages. This current live-test release supersedes that proposal and deliberately does not activate those items.
+The original proposal archive and first unlisted release are historical. This separately approved launch activates indexing/sitemaps and only the requested homepage card integration.
