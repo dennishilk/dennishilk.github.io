@@ -1,0 +1,1819 @@
+[
+  {
+    "id": "kernel-null-pointer-oops",
+    "slug": {
+      "en": "kernel-null-pointer-oops",
+      "de": "kernel-nullzeiger-oops"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "Kernel Oops: NULL pointer dereference",
+      "de": "Kernel-Oops durch NULL-Zeigerzugriff"
+    },
+    "summary": {
+      "en": "A kernel NULL-pointer Oops is a kernel execution fault, not an ordinary application crash; preserve the first trace and loaded-module context.",
+      "de": "Ein Kernel-Oops durch NULL-Zeiger ist ein Fehler im Kernel-Ablauf statt eines normalen Anwendungsabsturzes; erste Spur und Modulkontext sichern."
+    },
+    "environment": {
+      "en": "Any Linux kernel reporting BUG: unable to handle kernel NULL pointer dereference. Continuing after an Oops does not guarantee a healthy system.",
+      "de": "Linux-Kernel mit BUG: unable to handle kernel NULL pointer dereference. Weiterlauf nach einem Oops garantiert keinen gesunden Systemzustand."
+    },
+    "symptoms": {
+      "en": [
+        "A device operation or system call stops working after a kernel trace.",
+        "The machine may remain partially usable or escalate to a panic."
+      ],
+      "de": [
+        "Eine Geräteoperation oder ein Systemaufruf funktioniert nach einer Kernel-Spur nicht mehr.",
+        "Der Rechner kann teilweise nutzbar bleiben oder später eine Panic auslösen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A kernel or external-module bug may dereference an absent object.",
+        "de": "Ein Fehler in Kernel oder externem Modul kann auf ein nicht vorhandenes Objekt zugreifen."
+      },
+      {
+        "en": "Memory corruption can surface in an innocent function; the final stack frame alone does not identify the original fault.",
+        "de": "Speicherbeschädigung kann in einer unbeteiligten Funktion sichtbar werden; der letzte Stack-Frame identifiziert den ursprünglichen Fehler nicht allein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-first-oops",
+        "command": "journalctl -b -k --no-pager",
+        "explanation": {
+          "en": "Read the complete affected boot, with administrator journal access if needed. Use -b -1 after reboot when that boot exists.",
+          "de": "Betroffenen Start vollständig lesen, bei Bedarf mit Administrator-Journalzugriff. Nach Neustart -b -1 verwenden, sofern dieser Start existiert."
+        },
+        "interpretation": {
+          "en": "Preserve the first BUG/Oops, RIP, call trace, hardware and module list. Later warnings may be consequences of the first fault.",
+          "de": "Erste BUG-/Oops-Meldung, RIP, Aufrufspur, Hardware und Modulliste sichern. Spätere Warnungen können Folgen des ersten Fehlers sein."
+        }
+      },
+      {
+        "id": "read-kernel-taint",
+        "command": "cat /proc/sys/kernel/tainted",
+        "explanation": {
+          "en": "Read the current taint bitmask without changing it. Decode using the upstream table rather than treating the number as an error code.",
+          "de": "Aktuelle Taint-Bitmaske unverändert lesen. Mit der Upstream-Tabelle entschlüsseln, statt die Zahl als Fehlercode zu deuten."
+        },
+        "interpretation": {
+          "en": "Zero means no taint recorded in this boot. A nonzero value records context such as external modules or an earlier Oops; it does not prove causation.",
+          "de": "Null bedeutet keine gespeicherte Markierung dieses Starts. Ein anderer Wert dokumentiert etwa externe Module oder einen früheren Oops; er beweist keine Ursache."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-without-optional-external-module",
+        "title": {
+          "en": "Compare without the optional external module",
+          "de": "Ohne optionales externes Modul vergleichen"
+        },
+        "body": {
+          "en": "If the first trace involves an optional third-party module, plan a fresh supported boot without that module and repeat the minimal trigger only when safe. This tests whether its presence matters without force-unloading an active driver.",
+          "de": "Betrifft die erste Spur ein optionales Drittanbieter-Modul, einen frischen unterstützten Start ohne dieses Modul planen und den Minimalauslöser nur sicher wiederholen. So wird sein Einfluss ohne erzwungenes Entladen eines aktiven Treibers geprüft."
+        },
+        "precautions": {
+          "en": "Do not omit storage, encryption or network drivers needed for recovery. Save important work and use a retained boot entry.",
+          "de": "Für Wiederherstellung nötige Speicher-, Verschlüsselungs- oder Netzwerktreiber nicht weglassen. Wichtige Arbeit sichern und vorhandenen Starteintrag nutzen."
+        },
+        "rollback": {
+          "en": "Boot the original entry and restore the recorded optional-module configuration if it was changed.",
+          "de": "Ursprünglichen Eintrag starten und geänderte optionale Modulkonfiguration dokumentiert wiederherstellen."
+        }
+      },
+      {
+        "id": "use-supported-fix-and-report",
+        "title": {
+          "en": "Apply a supported fix using the first trace",
+          "de": "Unterstützte Korrektur anhand der ersten Spur prüfen"
+        },
+        "body": {
+          "en": "If the Oops began after a kernel update, compare a retained earlier supported kernel and report the exact first trace to the distribution or identified subsystem. Apply a packaged fix when its issue and hardware context match.",
+          "de": "Begann der Oops nach einem Kernel-Update, einen vorhandenen älteren unterstützten Kernel vergleichen und die erste Spur an Distribution oder ermitteltes Subsystem melden. Paketierte Korrektur bei passendem Fehler- und Hardware-Kontext anwenden."
+        },
+        "precautions": {
+          "en": "Do not patch a running production kernel from an unrelated report. A fresh reboot is prudent after saving evidence from an Oops-affected system.",
+          "de": "Keinen laufenden Produktionskernel anhand eines fremden Berichts patchen. Nach Beweissicherung auf einem Oops-betroffenen System ist ein frischer Neustart sinnvoll."
+        },
+        "rollback": {
+          "en": "Select the retained supported kernel if a proposed fix prevents normal operation; keep both entries until comparison is complete.",
+          "de": "Bei Betriebsproblemen durch eine vorgeschlagene Korrektur den vorhandenen unterstützten Kernel wählen; beide Einträge bis zum Vergleich behalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel bug hunting: Oops and call traces",
+        "url": "https://docs.kernel.org/admin-guide/bug-hunting.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel taint interpretation",
+        "url": "https://docs.kernel.org/admin-guide/tainted-kernels.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-null-dereference",
+        "all": [
+          "BUG: unable to handle kernel NULL pointer dereference"
+        ],
+        "sample": "BUG: unable to handle kernel NULL pointer dereference at 0000000000000000",
+        "negative": [
+          "app[520]: segfault at 0 ip 00000001",
+          "kernel: null pointer test completed successfully"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The kernel attempted a NULL-pointer access.",
+          "de": "Der Kernel hat einen Zugriff über einen NULL-Zeiger versucht."
+        },
+        "significance": {
+          "en": "Preserve the first call trace and module context; this line alone cannot select a driver fix.",
+          "de": "Erste Aufrufspur und Modulkontext sichern; diese Zeile allein erlaubt keine Wahl einer Treiberkorrektur."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-soft-lockup",
+    "slug": {
+      "en": "kernel-soft-lockup",
+      "de": "kernel-softlockup"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "CPU soft lockup detected by the kernel watchdog",
+      "de": "Kernel-Watchdog erkennt CPU-Softlockup"
+    },
+    "summary": {
+      "en": "A soft lockup means the watchdog task did not run in time; inspect its CPU trace and distinguish a guest pause from a repeatable kernel stall.",
+      "de": "Ein Softlockup heißt, dass die Watchdog-Aufgabe nicht rechtzeitig lief; CPU-Spur prüfen und eine VM-Pause von einer wiederholbaren Kernel-Blockade trennen."
+    },
+    "environment": {
+      "en": "Linux with the soft-lockup detector enabled, on bare metal or virtual machines. The threshold can be configured and is not a benchmark.",
+      "de": "Linux mit aktivem Softlockup-Detektor, auf Hardware oder in VMs. Das Zeitlimit ist einstellbar und kein Leistungstest."
+    },
+    "symptoms": {
+      "en": [
+        "The desktop or service becomes unresponsive for an extended interval.",
+        "The kernel names a stuck CPU and task in a soft lockup warning."
+      ],
+      "de": [
+        "Desktop oder Dienst reagieren über längere Zeit nicht.",
+        "Der Kernel nennt festhängende CPU und Aufgabe in einer Softlockup-Warnung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A long non-preemptible kernel path, driver loop or scheduling starvation may delay the watchdog.",
+        "de": "Ein langer nicht unterbrechbarer Kernelpfad, eine Treiberschleife oder fehlende Scheduling-Zeit können den Watchdog verzögern."
+      },
+      {
+        "en": "A paused or severely descheduled virtual machine and altered watchdog thresholds can produce misleading timing evidence.",
+        "de": "Eine pausierte oder lange nicht eingeplante VM sowie geänderte Watchdog-Zeitlimits können zeitlich irreführende Hinweise liefern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-soft-lockup-traces",
+        "command": "journalctl -b -k --no-pager --grep='soft lockup|watchdog|Call Trace|RIP:'",
+        "explanation": {
+          "en": "Read watchdog and stack lines; administrator journal access may be required. Also retain the surrounding unfiltered log when reporting.",
+          "de": "Watchdog- und Stack-Zeilen lesen; Administratorzugriff kann nötig sein. Für einen Bericht zusätzlich den umgebenden ungefilterten Verlauf behalten."
+        },
+        "interpretation": {
+          "en": "Repeated stalls with the same execution path are more actionable than isolated warnings after a VM pause. The named task may be interrupted rather than responsible.",
+          "de": "Wiederholte Blockaden im gleichen Ausführungspfad sind aussagekräftiger als einzelne Warnungen nach einer VM-Pause. Die genannte Aufgabe kann betroffen statt verantwortlich sein."
+        }
+      },
+      {
+        "id": "read-watchdog-policy",
+        "command": "sysctl kernel.watchdog_thresh kernel.softlockup_panic",
+        "explanation": {
+          "en": "Read threshold and panic policy without assigning values. Availability depends on the kernel configuration.",
+          "de": "Zeitlimit und Panic-Richtlinie ohne Wertzuweisung lesen. Verfügbarkeit hängt von der Kernel-Konfiguration ab."
+        },
+        "interpretation": {
+          "en": "An unusually low threshold can explain earlier reporting, but raising it would hide rather than fix a recurring stall. A panic policy explains automatic restarts.",
+          "de": "Ein ungewöhnlich niedriges Zeitlimit kann frühere Meldungen erklären; Erhöhen würde eine wiederkehrende Blockade jedoch verstecken. Die Panic-Richtlinie erklärt automatische Neustarts."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-identified-debug-overhead",
+        "title": {
+          "en": "Reduce identified tracing or console overhead",
+          "de": "Ermittelten Tracing- oder Konsolenaufwand reduzieren"
+        },
+        "body": {
+          "en": "If the incident occurs only with heavy tracing or very verbose slow-console logging, disable that optional instrumentation through its documented configuration and repeat the minimal workload. Compare the stack and elapsed pause.",
+          "de": "Tritt der Vorfall nur bei starkem Tracing oder sehr ausführlicher Ausgabe auf einer langsamen Konsole auf, diese optionale Instrumentierung dokumentiert abschalten und Minimal-Arbeitslast vergleichen. Stack und Pausendauer gegenüberstellen."
+        },
+        "precautions": {
+          "en": "Keep normal kernel error logging and watchdog detection active. Do not stop essential monitoring solely because the warning is inconvenient.",
+          "de": "Normale Kernel-Fehlerprotokollierung und Watchdog-Erkennung aktiv halten. Notwendige Überwachung nicht lediglich wegen störender Warnungen stoppen."
+        },
+        "rollback": {
+          "en": "Restore the recorded tracing or console profile if it is needed for a targeted follow-up capture.",
+          "de": "Dokumentiertes Tracing- oder Konsolenprofil bei Bedarf für einen gezielten weiteren Mitschnitt wiederherstellen."
+        }
+      },
+      {
+        "id": "compare-stalling-kernel-or-host",
+        "title": {
+          "en": "Compare the kernel or VM scheduling context",
+          "de": "Kernel oder VM-Scheduling-Kontext vergleichen"
+        },
+        "body": {
+          "en": "For a repeated bare-metal trace, compare a supported earlier kernel and a matching packaged fix. For warnings only after guest pause or migration, investigate the host timeline and scheduling before changing guest kernel policy.",
+          "de": "Bei wiederholter Hardware-Spur einen unterstützten älteren Kernel und passende paketierte Korrektur vergleichen. Bei Warnungen nur nach VM-Pause oder Migration zuerst Host-Zeitlinie und Scheduling statt Gast-Kernelrichtlinie prüfen."
+        },
+        "precautions": {
+          "en": "Keep workloads and hardware settings constant; avoid repeated destructive stress when the machine cannot recover cleanly.",
+          "de": "Arbeitslasten und Hardware-Einstellungen gleich halten; zerstörende Wiederholungstests bei fehlender sauberer Wiederherstellung vermeiden."
+        },
+        "rollback": {
+          "en": "Return to the original supported boot entry or restore the prior VM scheduling profile if the comparison worsens behavior.",
+          "de": "Bei Verschlechterung ursprünglichen unterstützten Starteintrag oder vorheriges VM-Scheduling-Profil wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel soft-lockup detector",
+        "url": "https://docs.kernel.org/admin-guide/lockup-watchdogs.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel watchdog policy sysctls",
+        "url": "https://docs.kernel.org/admin-guide/sysctl/kernel.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-watchdog-soft-lockup",
+        "all": [
+          "watchdog:",
+          "soft lockup",
+          "stuck for"
+        ],
+        "sample": "watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [worker:440]",
+        "negative": [
+          "watchdog: Watchdog detected hard LOCKUP on cpu 2",
+          "watchdog: NMI watchdog enabled"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The watchdog’s scheduling heartbeat was delayed on the named CPU.",
+          "de": "Der Scheduling-Heartbeat des Watchdogs auf der genannten CPU kam verspätet."
+        },
+        "significance": {
+          "en": "Inspect execution traces and virtualization context; a soft lockup is different from a GPU ring timeout or an interrupt hard lockup.",
+          "de": "Ausführungsspuren und Virtualisierungskontext prüfen; ein Softlockup unterscheidet sich von GPU-Ring-Zeitüberschreitung und Interrupt-Hardlockup."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-hung-task",
+    "slug": {
+      "en": "kernel-hung-task",
+      "de": "kernel-blockierte-aufgabe"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "Kernel reports a task blocked for too long",
+      "de": "Kernel meldet eine zu lange blockierte Aufgabe"
+    },
+    "summary": {
+      "en": "Hung-task warnings identify prolonged uninterruptible waiting; inspect the wait path and preceding I/O events instead of killing the named task.",
+      "de": "Hung-Task-Warnungen zeigen langes nicht unterbrechbares Warten; Wartepfad und vorherige E/A-Ereignisse prüfen, statt die genannte Aufgabe zu töten."
+    },
+    "environment": {
+      "en": "Linux kernels with hung-task detection, including local storage, network filesystems and device-driver waits.",
+      "de": "Linux-Kernel mit Hung-Task-Erkennung, etwa bei lokalen Datenträgern, Netzwerkdateisystemen und Wartezuständen in Gerätetreibern."
+    },
+    "symptoms": {
+      "en": [
+        "A process stays in D state and cannot complete an operation.",
+        "The kernel prints INFO: task ... blocked for more than ... seconds."
+      ],
+      "de": [
+        "Ein Prozess bleibt im Zustand D und beendet eine Operation nicht.",
+        "Der Kernel meldet INFO: task ... blocked for more than ... seconds."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A device or network filesystem may not complete an I/O request.",
+        "de": "Ein Gerät oder Netzwerkdateisystem kann eine E/A-Anforderung nicht abschließen."
+      },
+      {
+        "en": "A kernel lock dependency can also block progress; the named task is often a waiter rather than the root cause.",
+        "de": "Auch eine Kernel-Sperrabhängigkeit kann Fortschritt verhindern; die genannte Aufgabe wartet oft nur und ist nicht die Ursache."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-process-wait-channels",
+        "command": "ps -eo pid,ppid,stat,wchan:32,comm",
+        "explanation": {
+          "en": "Read task states and wait-channel names without sending signals; some symbols may be hidden by privilege policy.",
+          "de": "Aufgabenzustände und Namen der Wartepunkte ohne Signale lesen; manche Symbole können durch Berechtigungen verborgen sein."
+        },
+        "interpretation": {
+          "en": "D indicates uninterruptible wait at this instant. Multiple tasks in the same wait path can point to a shared dependency; this snapshot cannot establish a deadlock alone.",
+          "de": "D zeigt in diesem Moment nicht unterbrechbares Warten. Mehrere Aufgaben im gleichen Wartepfad können eine gemeinsame Abhängigkeit zeigen; ein Snapshot allein belegt keinen Deadlock."
+        }
+      },
+      {
+        "id": "read-hung-task-and-io-context",
+        "command": "journalctl -b -k --no-pager --grep='blocked.*for more than|I/O error|resetting link|nvme|nfs|Call Trace'",
+        "explanation": {
+          "en": "Read likely related kernel context with administrator access if necessary; keep complete adjacent traces for diagnosis.",
+          "de": "Wahrscheinlich zugehörigen Kernel-Kontext bei Bedarf mit Administratorzugriff lesen; vollständige benachbarte Spuren für die Diagnose behalten."
+        },
+        "interpretation": {
+          "en": "A storage reset or NFS recovery before the warning may explain the wait. With no I/O evidence, inspect the complete lock-related call trace rather than assume a disk failure.",
+          "de": "Ein Speicher-Reset oder NFS-Wiederherstellung vor der Warnung kann das Warten erklären. Ohne E/A-Hinweise die vollständige sperrbezogene Spur prüfen, statt Plattenausfall anzunehmen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-blocked-dependency",
+        "title": {
+          "en": "Restore the identified blocking dependency",
+          "de": "Ermittelte blockierende Abhängigkeit wiederherstellen"
+        },
+        "body": {
+          "en": "If the trace points to an unavailable network filesystem or device, restore that server, link or device through its normal recovery process and wait for pending I/O to resolve. Stop submitting new work to the affected path.",
+          "de": "Verweist die Spur auf ein nicht verfügbares Netzwerkdateisystem oder Gerät, Server, Verbindung oder Gerät über normalen Wiederherstellungsweg zurückbringen und ausstehende E/A abwarten. Keine neue Arbeit an den betroffenen Pfad senden."
+        },
+        "precautions": {
+          "en": "A forced unmount or repeated SIGKILL cannot repair kernel I/O and may lose data. Do not run filesystem repair on a mounted writable filesystem.",
+          "de": "Erzwungenes Aushängen oder wiederholtes SIGKILL repariert keine Kernel-E/A und kann Daten verlieren. Kein Dateisystem reparieren, das beschreibbar eingehängt ist."
+        },
+        "rollback": {
+          "en": "Return stopped workloads gradually after the dependency is healthy; undo only temporary workload routing changes.",
+          "de": "Angehaltene Arbeitslasten nach gesunder Abhängigkeit schrittweise zurücknehmen; nur vorübergehende Umleitungen zurücksetzen."
+        }
+      },
+      {
+        "id": "resolve-repeated-kernel-wait",
+        "title": {
+          "en": "Investigate a repeated kernel wait path",
+          "de": "Wiederholten Kernel-Wartepfad untersuchen"
+        },
+        "body": {
+          "en": "If hardware and remote dependencies are responsive but the same call trace recurs, compare a supported kernel with a relevant fix and report the full blocked-task trace. A controlled reboot can clear a deadlock after evidence and work are saved.",
+          "de": "Sind Hardware und entfernte Abhängigkeiten erreichbar, wiederholt sich aber dieselbe Spur, einen unterstützten Kernel mit relevanter Korrektur vergleichen und vollständige Blockadespur melden. Ein kontrollierter Neustart kann einen Deadlock nach Sicherung von Belegen und Arbeit lösen."
+        },
+        "precautions": {
+          "en": "Do not set hung_task_timeout_secs to zero as a repair; that suppresses evidence. A reboot is recovery, not proof of a fixed cause.",
+          "de": "hung_task_timeout_secs nicht zur Reparatur auf null setzen; das unterdrückt Belege. Ein Neustart ist Wiederherstellung, kein Beweis einer behobenen Ursache."
+        },
+        "rollback": {
+          "en": "Choose the earlier retained kernel if the new one adds failures; restore temporary boot options used for the comparison.",
+          "de": "Bei neuen Fehlern den vorherigen vorhandenen Kernel wählen; temporäre Boot-Optionen des Vergleichs zurückstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel hung-task sysctls",
+        "url": "https://docs.kernel.org/admin-guide/sysctl/kernel.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Hung-task diagnostic implementation",
+        "url": "https://github.com/torvalds/linux/blob/master/kernel/hung_task.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-hung-task-warning",
+        "all": [
+          "INFO: task ",
+          "blocked",
+          "for more than",
+          "seconds."
+        ],
+        "sample": "INFO: task file-worker:1240 blocked in I/O wait for more than 120 seconds.",
+        "negative": [
+          "INFO: task file-worker:1240 completed after 3 seconds.",
+          "application: worker blocked for more than one polling interval"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "The kernel’s hung-task detector observed a prolonged blocked task.",
+          "de": "Der Hung-Task-Detektor des Kernels hat eine lange blockierte Aufgabe erkannt."
+        },
+        "significance": {
+          "en": "Use the following call trace to find its dependency; the task name is not a diagnosis of the underlying device or lock.",
+          "de": "Folgende Aufrufspur zur Abhängigkeit nutzen; der Aufgabenname diagnostiziert kein zugrunde liegendes Gerät und keine Sperre."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-rcu-stall",
+    "slug": {
+      "en": "kernel-rcu-stall",
+      "de": "kernel-rcu-blockade"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "RCU grace-period progress stalls",
+      "de": "Fortschritt einer RCU-Grace-Period stockt"
+    },
+    "summary": {
+      "en": "RCU stall warnings concern delayed kernel synchronization; compare CPU traces and timer progress before attributing the failure to RCU itself.",
+      "de": "RCU-Stall-Warnungen betreffen verzögerte Kernel-Synchronisation; CPU-Spuren und Timer-Fortschritt vergleichen, bevor RCU selbst verantwortlich gemacht wird."
+    },
+    "environment": {
+      "en": "Linux using RCU stall detection. Stalls can arise in other code, under real-time scheduling or with heavy instrumentation.",
+      "de": "Linux mit RCU-Stall-Erkennung. Blockaden können in anderem Code, bei Echtzeit-Scheduling oder starker Instrumentierung entstehen."
+    },
+    "symptoms": {
+      "en": [
+        "Kernel prints detected stalls on CPUs/tasks while responsiveness degrades.",
+        "Repeated reports may show the same CPU stack or a starved RCU thread."
+      ],
+      "de": [
+        "Der Kernel meldet detected stalls on CPUs/tasks bei schlechter Reaktion.",
+        "Wiederholte Berichte können dieselbe CPU-Spur oder einen ausgehungerten RCU-Thread zeigen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Code may fail to reach a quiescent state, disable interrupts too long or starve an RCU thread.",
+        "de": "Code kann keinen Ruhezustand erreichen, Interrupts zu lange abschalten oder einem RCU-Thread Rechenzeit entziehen."
+      },
+      {
+        "en": "Timer faults, verbose console output and tracing overhead can resemble an RCU implementation problem.",
+        "de": "Timerfehler, ausführliche Konsolenausgabe und Tracing-Aufwand können wie ein RCU-Implementierungsfehler aussehen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-rcu-stall-context",
+        "command": "journalctl -b -k --no-pager --grep='rcu|RCU|Call Trace|RIP:'",
+        "explanation": {
+          "en": "Read RCU and CPU trace context; administrator journal access may be required. Preserve repeated traces, not only a single headline.",
+          "de": "RCU- und CPU-Spurkontext lesen; Administratorzugriff kann nötig sein. Wiederholte Spuren statt nur einer Überschrift behalten."
+        },
+        "interpretation": {
+          "en": "Compare stable stack frames, softirq counts and timer messages between reports. The CPU detecting the stall can differ from the CPU causing it.",
+          "de": "Gleichbleibende Stack-Frames, Softirq-Zähler und Timer-Meldungen zwischen Berichten vergleichen. Erkennende und verursachende CPU können verschieden sein."
+        }
+      },
+      {
+        "id": "read-rcu-stall-threshold",
+        "command": "cat /sys/module/rcupdate/parameters/rcu_cpu_stall_timeout",
+        "explanation": {
+          "en": "Read this kernel’s RCU stall threshold if the parameter exists; do not change it during evidence collection.",
+          "de": "RCU-Stall-Zeitlimit dieses Kernels lesen, sofern der Parameter existiert; während Beweissicherung nicht verändern."
+        },
+        "interpretation": {
+          "en": "A custom very low value can report short delays. A normal value plus repeated unchanged stack frames supports investigating stalled progress, not just tuning the timeout.",
+          "de": "Ein sehr niedriger eigener Wert kann kurze Verzögerungen melden. Ein normaler Wert mit wiederholt gleicher Spur stützt die Untersuchung stockenden Fortschritts statt bloßen Zeitlimit-Tunings."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-unnecessary-stall-trigger",
+        "title": {
+          "en": "Remove an identified scheduling or tracing trigger",
+          "de": "Ermittelten Scheduling- oder Tracing-Auslöser entfernen"
+        },
+        "body": {
+          "en": "If RCU warnings begin only with an optional real-time workload or heavy tracer, compare its documented default scheduling or reduced tracing profile. Verify that normal RCU progress returns while keeping error detection enabled.",
+          "de": "Beginnen RCU-Warnungen nur mit optionaler Echtzeit-Arbeitslast oder starkem Tracer, dessen dokumentiertes Standard-Scheduling oder reduziertes Tracing vergleichen. Normale RCU-Fortschritte bei aktiver Fehlererkennung prüfen."
+        },
+        "precautions": {
+          "en": "Do not change safety-critical real-time policy casually. Record the previous profile and change only the optional triggering component.",
+          "de": "Sicherheitsrelevante Echtzeit-Richtlinien nicht beiläufig ändern. Vorheriges Profil dokumentieren und nur die optionale auslösende Komponente ändern."
+        },
+        "rollback": {
+          "en": "Restore the recorded profile if needed for an isolated reproducer; avoid returning a known-stalling workload to daily operation.",
+          "de": "Dokumentiertes Profil bei Bedarf für ein isoliertes Minimalbeispiel wiederherstellen; bekannte blockierende Arbeitslast nicht in täglichen Betrieb zurückbringen."
+        }
+      },
+      {
+        "id": "compare-rcu-related-kernel-fix",
+        "title": {
+          "en": "Compare a kernel fix matching the stalled path",
+          "de": "Kernel-Korrektur für den blockierten Pfad vergleichen"
+        },
+        "body": {
+          "en": "If the same kernel path stalls without optional instrumentation, compare a supported packaged kernel with a relevant fix and report all repeated traces plus timing context. Suspect the implicated path before assuming an RCU-core defect.",
+          "de": "Blockiert derselbe Kernelpfad ohne optionale Instrumentierung, einen unterstützten Paketkernel mit relevanter Korrektur vergleichen und alle wiederholten Spuren samt Zeitkontext melden. Zuerst genannten Pfad statt pauschal RCU-Kern verdächtigen."
+        },
+        "precautions": {
+          "en": "Do not suppress RCU stall warnings as a repair. Retain the boot entry used before testing.",
+          "de": "RCU-Stall-Warnungen nicht als Reparatur unterdrücken. Starteintrag vor dem Test behalten."
+        },
+        "rollback": {
+          "en": "Boot the earlier entry and remove any temporary debugging boot parameters after the comparison.",
+          "de": "Älteren Eintrag starten und temporäre Debug-Boot-Parameter nach dem Vergleich entfernen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "RCU CPU stall detector: causes and interpretation",
+        "url": "https://docs.kernel.org/RCU/stallwarn.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel RCU and watchdog command-line options",
+        "url": "https://docs.kernel.org/admin-guide/kernel-parameters.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-rcu-cpu-stalls",
+        "all": [
+          "rcu",
+          "detected stalls on CPUs/tasks:"
+        ],
+        "sample": "rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:",
+        "negative": [
+          "rcu: Hierarchical RCU implementation.",
+          "rcu: INFO: Stall ended before state dump start"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "An RCU grace period has exceeded its stall-detection interval.",
+          "de": "Eine RCU-Grace-Period hat ihr Erkennungszeitlimit überschritten."
+        },
+        "significance": {
+          "en": "Compare the subsequent CPU/task traces; a detecting CPU is not necessarily the stalled CPU.",
+          "de": "Folgende CPU-/Aufgabenspuren vergleichen; die erkennende CPU ist nicht zwingend die blockierte CPU."
+        }
+      },
+      {
+        "id": "kernel-rcu-thread-starved",
+        "all": [
+          "rcu",
+          "kthread starved for",
+          "jiffies!"
+        ],
+        "sample": "rcu: rcu_preempt kthread starved for 24000 jiffies! g700 f0x0 RCU_GP_WAIT_FQS(3)",
+        "negative": [
+          "rcu: rcu_preempt kthread started on cpu 2",
+          "application: worker starved for a timeslice"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "The RCU grace-period thread has not received required scheduling time.",
+          "de": "Der RCU-Grace-Period-Thread hat nötige Scheduling-Zeit nicht erhalten."
+        },
+        "significance": {
+          "en": "Inspect real-time scheduling and timer context; this is more specific than treating every RCU warning as a broken synchronization implementation.",
+          "de": "Echtzeit-Scheduling und Timer-Kontext prüfen; dies ist genauer, als jede RCU-Warnung als fehlerhafte Synchronisationsimplementierung zu deuten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-machine-check",
+    "slug": {
+      "en": "kernel-machine-check",
+      "de": "kernel-machine-check"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "Processor reports a machine-check hardware error",
+      "de": "Prozessor meldet einen Machine-Check-Hardwarefehler"
+    },
+    "summary": {
+      "en": "Machine-check records need CPU-family and bank-specific decoding; separate corrected reports from fatal events before replacing a component.",
+      "de": "Machine-Check-Daten brauchen CPU-familien- und bankspezifische Auswertung; korrigierte Meldungen vor einem Bauteiltausch von fatalen Ereignissen trennen."
+    },
+    "environment": {
+      "en": "x86 systems with Machine Check Architecture and optional rasdaemon/EDAC collection; reporting coverage depends on hardware and firmware.",
+      "de": "x86-Systeme mit Machine Check Architecture und optionaler rasdaemon-/EDAC-Erfassung; Umfang hängt von Hardware und Firmware ab."
+    },
+    "symptoms": {
+      "en": [
+        "Kernel logs mce or Hardware Error records.",
+        "A workload may crash, the machine may reboot, or only corrected-error counters rise."
+      ],
+      "de": [
+        "Der Kernel protokolliert mce- oder Hardware-Error-Daten.",
+        "Eine Arbeitslast kann abstürzen, der Rechner neu starten oder nur Zähler korrigierter Fehler können steigen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "CPU, memory, interconnect or platform errors may be reported through MCA.",
+        "de": "CPU-, Speicher-, Verbindungs- oder Plattformfehler können über MCA gemeldet werden."
+      },
+      {
+        "en": "Overclocking, undervolting and firmware errata can contribute; an MCA bank number is not universally a DIMM or core number.",
+        "de": "Übertaktung, Undervolting und Firmware-Errata können beitragen; eine MCA-Banknummer ist nicht universell eine DIMM- oder Kernnummer."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-machine-check-records",
+        "command": "journalctl -b -k --no-pager --grep='mce:|Hardware Error|EDAC'",
+        "explanation": {
+          "en": "Read this boot’s hardware-error reports, or -b -1 for a retained previous boot. Access may require an administrator.",
+          "de": "Hardware-Fehlermeldungen dieses Starts lesen oder -b -1 für einen gespeicherten vorherigen Start nutzen. Administratorzugriff kann nötig sein."
+        },
+        "interpretation": {
+          "en": "Preserve status, bank, CPU family and corrected/uncorrected designation. A single summary saying events logged requires the detailed records, not a part replacement.",
+          "de": "Status, Bank, CPU-Familie und Kennzeichnung korrigiert/unkorrigiert sichern. Eine Zusammenfassung events logged braucht Detaildaten statt sofortigen Teiletausch."
+        }
+      },
+      {
+        "id": "read-rasdaemon-history",
+        "command": "ras-mc-ctl --errors",
+        "explanation": {
+          "en": "If rasdaemon recording is already configured, this reads its saved events; database access may need administrator rights. This syntax is documented by distribution packages such as Debian trixie; newer upstream releases use ras-mc-ctl db --errors.",
+          "de": "Bei bereits eingerichteter rasdaemon-Aufzeichnung liest dies gespeicherte Ereignisse; der Datenbankzugriff kann Administratorrechte benötigen. Diese Syntax dokumentieren etwa Pakete aus Debian trixie; neuere Upstream-Versionen verwenden ras-mc-ctl db --errors."
+        },
+        "interpretation": {
+          "en": "Repeated decoded errors on the same component merit vendor review. An empty database does not exclude errors if recording was absent or unsupported.",
+          "de": "Wiederholt entschlüsselte Fehler derselben Komponente verdienen Herstellerprüfung. Eine leere Datenbank schließt bei fehlender oder nicht unterstützter Erfassung keine Fehler aus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-recorded-platform-defaults",
+        "title": {
+          "en": "Restore recorded CPU and memory defaults",
+          "de": "Dokumentierte CPU- und Speicherstandards wiederherstellen"
+        },
+        "body": {
+          "en": "If custom clocks, memory profiles or voltage offsets were applied, return those settings to manufacturer-supported defaults one at a time and observe normal workloads. Preserve the original error records for comparison.",
+          "de": "Wurden eigene Taktraten, Speicherprofile oder Spannungen gesetzt, diese einzeln auf herstellerunterstützte Standardwerte zurückstellen und normale Arbeitslasten beobachten. Ursprüngliche Fehlerdaten für Vergleich behalten."
+        },
+        "precautions": {
+          "en": "Record firmware settings before changing them and retain encryption recovery information. Do not raise voltage or disable machine-check reporting to hide an event.",
+          "de": "Firmware-Einstellungen vorher dokumentieren und Verschlüsselungs-Wiederherstellungsdaten behalten. Spannung nicht erhöhen und Machine-Check-Meldungen nicht zum Verbergen abschalten."
+        },
+        "rollback": {
+          "en": "Use the saved firmware profile only if it is supported and not implicated; keep the stable default when tuning reproduces errors.",
+          "de": "Gesichertes Firmware-Profil nur verwenden, wenn unterstützt und nicht verdächtig; stabile Standards behalten, wenn Tuning Fehler reproduziert."
+        }
+      },
+      {
+        "id": "escalate-decoded-hardware-event",
+        "title": {
+          "en": "Act on the decoded hardware event",
+          "de": "Nach entschlüsseltem Hardware-Ereignis handeln"
+        },
+        "body": {
+          "en": "If uncorrected events recur at supported defaults, back up important data and present decoded records to the hardware vendor. Use a CPU/board-specific firmware fix or targeted component diagnosis when the records and vendor guidance justify it.",
+          "de": "Kehren unkorrigierte Ereignisse bei unterstützten Standards wieder, wichtige Daten sichern und ausgewertete Fehlerdaten dem Hardware-Hersteller vorlegen. CPU-/Board-spezifische Firmware-Korrektur oder gezielte Bauteildiagnose nur anhand passender Daten und Herstelleranleitung nutzen."
+        },
+        "precautions": {
+          "en": "Corrected events need trend and context; an uncorrected event can threaten reliable computation. Do not force exhaustive stress on a repeatedly failing production machine.",
+          "de": "Korrigierte Ereignisse brauchen Verlauf und Kontext; ein unkorrigiertes Ereignis kann verlässliche Berechnung gefährden. Wiederholt ausfallenden Produktionsrechner nicht zu umfassendem Stresstest zwingen."
+        },
+        "rollback": {
+          "en": "Retain vendor-supported recovery firmware and the original configuration; hardware replacement should follow the verified diagnosis.",
+          "de": "Herstellerunterstützte Rettungs-Firmware und ursprüngliche Konfiguration behalten; Hardware-Tausch sollte der verifizierten Diagnose folgen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel RAS and MCA error handling",
+        "url": "https://docs.kernel.org/admin-guide/RAS/main.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "x86 machine-check reporting parameters",
+        "url": "https://docs.kernel.org/arch/x86/x86_64/machinecheck.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Debian ras-mc-ctl: reading the recorded error database",
+        "url": "https://manpages.debian.org/trixie/rasdaemon/ras-mc-ctl.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-mce-events-recorded",
+        "all": [
+          "mce:",
+          "[Hardware Error]:",
+          "Machine check events logged"
+        ],
+        "sample": "mce: [Hardware Error]: Machine check events logged",
+        "negative": [
+          "mce: CPU supports 24 MCE banks",
+          "kernel: ACPI Error: method execution failed"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "Machine-check events were recorded by the processor error handler.",
+          "de": "Der Prozessor-Fehlerhandler hat Machine-Check-Ereignisse erfasst."
+        },
+        "significance": {
+          "en": "Obtain the detailed bank/status records and corrected severity; the summary cannot identify a replaceable component.",
+          "de": "Detaillierte Bank-/Statusdaten und Korrekturstatus einholen; die Zusammenfassung identifiziert kein austauschbares Bauteil."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-pcie-aer-errors",
+    "slug": {
+      "en": "kernel-pcie-aer-errors",
+      "de": "kernel-pcie-aer-fehler"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "PCIe AER reports corrected or uncorrected errors",
+      "de": "PCIe-AER meldet korrigierte oder unkorrigierte Fehler"
+    },
+    "summary": {
+      "en": "PCIe AER records describe transaction or link errors with different severities; map the reporting port to its devices before blaming an endpoint.",
+      "de": "PCIe-AER-Daten beschreiben Transaktions- oder Linkfehler unterschiedlicher Schwere; meldenden Port seinen Geräten zuordnen, bevor ein Endgerät verdächtigt wird."
+    },
+    "environment": {
+      "en": "PCI Express systems where firmware grants Linux AER control; physical devices, bridges and root ports can all appear in reports.",
+      "de": "PCI-Express-Systeme, deren Firmware Linux AER-Kontrolle erlaubt; Geräte, Brücken und Root-Ports können alle in Meldungen erscheinen."
+    },
+    "symptoms": {
+      "en": [
+        "Kernel repeatedly prints PCIe Bus Error messages.",
+        "An endpoint may reset or disappear, while corrected errors can occur without visible interruption."
+      ],
+      "de": [
+        "Der Kernel meldet wiederholt PCIe Bus Error.",
+        "Ein Endgerät kann sich zurücksetzen oder verschwinden; korrigierte Fehler können ohne sichtbare Unterbrechung auftreten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Signal integrity, risers, connectors, endpoint firmware or platform firmware may contribute.",
+        "de": "Signalqualität, Riser, Stecker, Geräte-Firmware oder Plattform-Firmware können beitragen."
+      },
+      {
+        "en": "Driver transaction behavior can also trigger reports; the root port that reports the event need not be the defective part.",
+        "de": "Auch Treiber-Transaktionen können Meldungen auslösen; der meldende Root-Port muss nicht das fehlerhafte Bauteil sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-aer-severity",
+        "command": "journalctl -b -k --no-pager --grep='AER|PCIe Bus Error|DPC:'",
+        "explanation": {
+          "en": "Read AER severity, source IDs and recovery events; administrator journal access may be required.",
+          "de": "AER-Schwere, Quell-IDs und Wiederherstellungsereignisse lesen; Administrator-Journalzugriff kann nötig sein."
+        },
+        "interpretation": {
+          "en": "Corrected means the protocol recovered that error; Uncorrectable Fatal is more serious. Compare event rate and device symptoms instead of treating all AER messages alike.",
+          "de": "Corrected bedeutet Protokoll-Wiederherstellung dieses Fehlers; Uncorrectable Fatal ist schwerer. Ereignisrate und Gerätesymptome vergleichen, statt alle AER-Meldungen gleich zu behandeln."
+        }
+      },
+      {
+        "id": "map-pcie-topology",
+        "command": "lspci -t",
+        "explanation": {
+          "en": "Read the PCI bridge topology without changing devices. Match bus addresses with the detailed AER record.",
+          "de": "PCI-Brückentopologie unverändert lesen. Bus-Adressen mit detaillierten AER-Daten abgleichen."
+        },
+        "interpretation": {
+          "en": "Locate the reporting upstream port and its endpoints. A shared bridge can explain several affected devices without proving every endpoint is defective.",
+          "de": "Meldenden vorgelagerten Port und seine Endgeräte finden. Eine gemeinsame Brücke kann mehrere betroffene Geräte erklären, ohne jedes als defekt zu belegen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "inspect-identified-link-path",
+        "title": {
+          "en": "Inspect the identified link path while powered off",
+          "de": "Ermittelten Link-Pfad ausgeschaltet prüfen"
+        },
+        "body": {
+          "en": "If repeated link errors map to one physical path, shut down normally and inspect seating, supported cables and risers using manufacturer instructions. Compare a supported direct connection with the same workload if possible.",
+          "de": "Ordnen sich wiederholte Linkfehler einem physischen Pfad zu, normal ausschalten und Sitz, unterstützte Kabel sowie Riser nach Herstelleranleitung prüfen. Wenn möglich direkte unterstützte Verbindung bei gleicher Arbeitslast vergleichen."
+        },
+        "precautions": {
+          "en": "Disconnect mains power before reseating. A lower negotiated link speed alone does not prove faulty wiring; power-saving and device capabilities also matter.",
+          "de": "Vor neuem Stecken Netzstrom trennen. Eine niedrigere ausgehandelte Link-Geschwindigkeit allein beweist keine fehlerhafte Verkabelung; Energiesparen und Gerätefähigkeiten zählen ebenfalls."
+        },
+        "rollback": {
+          "en": "Return to the recorded supported layout once inspected; keep the stable direct path if an intermediary is implicated.",
+          "de": "Nach Prüfung zur dokumentierten unterstützten Anordnung zurückkehren; bei verdächtigem Zwischengerät stabilen direkten Pfad behalten."
+        }
+      },
+      {
+        "id": "apply-targeted-pcie-fix",
+        "title": {
+          "en": "Apply a targeted firmware or kernel fix",
+          "de": "Gezielte Firmware- oder Kernel-Korrektur anwenden"
+        },
+        "body": {
+          "en": "If the errors started after an update or match a vendor erratum, compare the relevant supported kernel or device/platform firmware fix during maintenance. Include topology and full status fields in a vendor report.",
+          "de": "Begannen Fehler nach einem Update oder passen zu Hersteller-Erratum, im Wartungsfenster relevanten unterstützten Kernel oder Geräte-/Plattform-Firmware-Korrektur vergleichen. Topologie und vollständige Statusfelder dem Hersteller melden."
+        },
+        "precautions": {
+          "en": "Do not use pci=noaer as a repair; it hides reporting. Do not force unsupported PCIe generations or disable protection across all devices without device-specific evidence.",
+          "de": "pci=noaer nicht als Reparatur verwenden; es versteckt Meldungen. Keine ununterstützten PCIe-Generationen erzwingen und Schutz nicht ohne gerätespezifische Belege überall abschalten."
+        },
+        "rollback": {
+          "en": "Boot the earlier supported kernel or use the vendor’s documented firmware recovery procedure if the update worsens access.",
+          "de": "Bei schlechterem Zugriff älteren unterstützten Kernel oder dokumentierten Firmware-Rettungsweg des Herstellers nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel PCIe AER severity and recovery",
+        "url": "https://docs.kernel.org/PCI/pcieaer-howto.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel PCI error recovery model",
+        "url": "https://docs.kernel.org/PCI/pci-error-recovery.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "pcie-aer-corrected-error",
+        "all": [
+          "PCIe Bus Error: severity=Corrected"
+        ],
+        "sample": "pcieport 0000:00:03.1: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)",
+        "negative": [
+          "pcieport 0000:00:03.1: AER enabled",
+          "pcieport 0000:00:03.1: PCIe Bus Error: severity=Uncorrectable (Fatal)"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "PCIe reported an error recovered by the protocol.",
+          "de": "PCIe meldete einen durch das Protokoll korrigierten Fehler."
+        },
+        "significance": {
+          "en": "Monitor rate and symptoms; corrected does not mean harmless forever, and a single report does not identify the failing component.",
+          "de": "Rate und Symptome beobachten; korrigiert heißt nicht dauerhaft unbedenklich und eine Meldung identifiziert kein fehlerhaftes Bauteil."
+        }
+      },
+      {
+        "id": "pcie-aer-uncorrectable-error",
+        "all": [
+          "PCIe Bus Error: severity=Uncorrectable"
+        ],
+        "sample": "pcieport 0000:00:03.1: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Requester ID)",
+        "negative": [
+          "pcieport 0000:00:03.1: PCIe Bus Error: severity=Corrected, type=Physical Layer",
+          "pcieport 0000:00:03.1: AER recovery completed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The PCIe protocol could not correct the reported error.",
+          "de": "Das PCIe-Protokoll konnte den gemeldeten Fehler nicht korrigieren."
+        },
+        "significance": {
+          "en": "Inspect Fatal versus Non-Fatal and the recovery result; preserve full requester/status fields before any reset.",
+          "de": "Fatal gegenüber Non-Fatal und Wiederherstellungsergebnis prüfen; vollständige Anforderer-/Statusfelder vor Reset sichern."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-iommu-dma-fault",
+    "slug": {
+      "en": "kernel-iommu-dma-fault",
+      "de": "kernel-iommu-dma-fehler"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "IOMMU blocks an invalid device DMA access",
+      "de": "IOMMU blockiert ungültigen DMA-Gerätezugriff"
+    },
+    "summary": {
+      "en": "IOMMU fault records identify a device and DMA address domain; inspect its driver and passthrough setup while retaining isolation protections.",
+      "de": "IOMMU-Fehlerdaten nennen Gerät und DMA-Adressbereich; Treiber sowie Passthrough-Einrichtung prüfen und dabei die Isolationsschutzmaßnahmen behalten."
+    },
+    "environment": {
+      "en": "Intel VT-d/DMAR or AMD-Vi systems using translated DMA, including virtual-machine device assignment.",
+      "de": "Intel-VT-d-/DMAR- oder AMD-Vi-Systeme mit übersetztem DMA, einschließlich Gerätezuweisung an virtuelle Maschinen."
+    },
+    "symptoms": {
+      "en": [
+        "A PCI device stops responding while IOMMU faults accumulate.",
+        "Kernel logs DMA Read/Write faults or AMD IO_PAGE_FAULT events."
+      ],
+      "de": [
+        "Ein PCI-Gerät reagiert nicht mehr, während IOMMU-Fehler zunehmen.",
+        "Der Kernel meldet DMA-Read-/Write-Fehler oder AMD-IO_PAGE_FAULT-Ereignisse."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A driver may submit DMA outside a valid mapping or use a stale mapping.",
+        "de": "Ein Treiber kann DMA außerhalb gültiger Zuordnung oder über alte Zuordnungen auslösen."
+      },
+      {
+        "en": "Firmware reservations, reset behavior or incorrect VM assignment can conflict with DMA translation; a GPU virtual-memory fault is a separate mechanism.",
+        "de": "Firmware-Reservierungen, Reset-Verhalten oder falsche VM-Zuweisung können mit DMA-Übersetzung kollidieren; GPU-Seitenfehler sind ein anderer Mechanismus."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-iommu-fault-fields",
+        "command": "journalctl -b -k --no-pager --grep='DMAR:|AMD-Vi:|IO_PAGE_FAULT'",
+        "explanation": {
+          "en": "Read device address, fault reason and DMA direction; journal access may require administrator rights.",
+          "de": "Geräteadresse, Fehlergrund und DMA-Richtung lesen; Journalzugriff kann Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "Repeated faults from one device narrow the affected driver/domain. Early firmware messages before driver binding need separate interpretation from runtime DMA faults.",
+          "de": "Wiederholte Fehler eines Geräts grenzen Treiber/Domain ein. Frühe Firmware-Meldungen vor Treiberbindung getrennt von DMA-Laufzeitfehlern bewerten."
+        }
+      },
+      {
+        "id": "inspect-faulting-device-binding",
+        "command": "lspci -nnk -s 03:00.0",
+        "explanation": {
+          "en": "Replace 03:00.0 with the address in the fault record. Read binding without changing it.",
+          "de": "03:00.0 durch die Adresse der Fehlermeldung ersetzen. Bindung lesen, ohne sie zu ändern."
+        },
+        "interpretation": {
+          "en": "Confirm whether the host driver or vfio-pci owns the device. Binding unexpected for the intended VM setup warrants checking its configuration before launching another guest.",
+          "de": "Prüfen, ob Host-Treiber oder vfio-pci das Gerät belegt. Unerwartete Bindung für die geplante VM-Einrichtung begründet Konfigurationsprüfung vor erneutem Gaststart."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-device-driver-fix",
+        "title": {
+          "en": "Compare a fix for the identified device driver",
+          "de": "Korrektur des ermittelten Gerätetreibers vergleichen"
+        },
+        "body": {
+          "en": "If a runtime fault repeatedly identifies the same normally host-driven device, use a supported kernel or device firmware fix matching that device and fault reason. Temporarily stop its optional workload while collecting evidence.",
+          "de": "Nennt ein Laufzeitfehler wiederholt dasselbe normal vom Host genutzte Gerät, eine unterstützte Kernel- oder Geräte-Firmware-Korrektur passend zu Gerät und Fehlergrund nutzen. Optionale Arbeitslast während Beweissicherung vorübergehend stoppen."
+        },
+        "precautions": {
+          "en": "Do not disable the IOMMU globally to silence faults; it provides DMA isolation and may be essential to the VM configuration.",
+          "de": "IOMMU nicht global zum Unterdrücken abschalten; sie bietet DMA-Isolation und kann für die VM-Konfiguration notwendig sein."
+        },
+        "rollback": {
+          "en": "Restore the earlier supported kernel and stopped workload configuration if the comparison introduces new faults.",
+          "de": "Bei neuen Fehlern vorherigen unterstützten Kernel und Konfiguration der gestoppten Arbeitslast wiederherstellen."
+        }
+      },
+      {
+        "id": "correct-supported-device-assignment",
+        "title": {
+          "en": "Correct a documented passthrough assignment",
+          "de": "Dokumentierte Passthrough-Zuweisung korrigieren"
+        },
+        "body": {
+          "en": "If faults begin on guest start or stop, review the hypervisor’s supported device group, host binding and reset requirements. Correct the VM definition with guests shut down, then compare a single controlled lifecycle.",
+          "de": "Beginnen Fehler beim Gaststart oder -stopp, unterstützte Gerätegruppe, Host-Bindung und Reset-Anforderungen des Hypervisors prüfen. VM-Definition bei ausgeschalteten Gästen korrigieren und einen kontrollierten Lebenszyklus vergleichen."
+        },
+        "precautions": {
+          "en": "Do not force ACS overrides, unsafe interrupt settings or assignment of a device needed by the host. Preserve the original VM definition.",
+          "de": "Keine ACS-Overrides, unsicheren Interrupt-Optionen oder Zuweisung eines vom Host benötigten Geräts erzwingen. Ursprüngliche VM-Definition behalten."
+        },
+        "rollback": {
+          "en": "Restore the saved VM definition and host driver configuration with guests stopped if the corrected assignment cannot initialize safely.",
+          "de": "Bei unsicherer Initialisierung gesicherte VM-Definition und Host-Treiberkonfiguration bei gestoppten Gästen wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel x86 IOMMU support",
+        "url": "https://docs.kernel.org/arch/x86/iommu.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "AMD IOMMU fault reporting implementation",
+        "url": "https://github.com/torvalds/linux/blob/master/drivers/iommu/amd/iommu.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Intel DMAR implementation",
+        "url": "https://code.googlesource.com/linux/torvalds/linux/+/e2e13630f93d942d02f3b3f98660228a3545c60e/drivers/iommu/intel/dmar.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "intel-dmar-dma-fault",
+        "all": [
+          "DMAR:",
+          "DMA",
+          "fault reason"
+        ],
+        "sample": "DMAR: [DMA Read NO_PASID] Request device [03:00.0] fault addr 0x1000 [fault reason 0x06] PTE Read access is not set",
+        "negative": [
+          "DMAR: IOMMU enabled",
+          "amdgpu 0000:03:00.0: [gfxhub] page fault (src_id:0 ring:0 vmid:2 pasid:100)"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Intel DMA remapping rejected the specified device access.",
+          "de": "Intel-DMA-Remapping hat den genannten Gerätezugriff abgelehnt."
+        },
+        "significance": {
+          "en": "Use device address, DMA direction and reason to investigate the host mapping; do not classify this as an application CPU page fault.",
+          "de": "Geräteadresse, DMA-Richtung und Grund für Host-Zuordnungsprüfung nutzen; nicht als CPU-Seitenfehler einer Anwendung einordnen."
+        }
+      },
+      {
+        "id": "amd-vi-io-page-fault",
+        "all": [
+          "AMD-Vi:",
+          "IO_PAGE_FAULT"
+        ],
+        "sample": "AMD-Vi: Event logged [IO_PAGE_FAULT device=03:00.0 domain=0x000a address=0x1000 flags=0x0000]",
+        "negative": [
+          "AMD-Vi: Found IOMMU at 0000:00:00.2",
+          "AMD-Vi: Interrupt remapping enabled"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "AMD DMA remapping reports an invalid device page access.",
+          "de": "AMD-DMA-Remapping meldet einen ungültigen Geräte-Seitenzugriff."
+        },
+        "significance": {
+          "en": "Check the device’s active driver and domain; the record demonstrates isolation enforcement, not that disabling isolation is a fix.",
+          "de": "Aktiven Gerätetreiber und Domain prüfen; die Meldung zeigt durchgesetzte Isolation, nicht dass deren Abschalten repariert."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-module-vermagic",
+    "slug": {
+      "en": "kernel-module-vermagic",
+      "de": "kernel-modul-vermagic"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "Kernel module was built for a different kernel",
+      "de": "Kernelmodul wurde für einen anderen Kernel gebaut"
+    },
+    "summary": {
+      "en": "A module’s version magic must fit the running kernel build; compare installed module metadata before rebuilding or selecting a boot entry.",
+      "de": "Die Version Magic eines Moduls muss zum laufenden Kernel-Build passen; Modulmetadaten vor Neubau oder Auswahl eines Starteintrags vergleichen."
+    },
+    "environment": {
+      "en": "Externally built or incorrectly packaged kernel modules after a kernel upgrade, custom build or copied module installation.",
+      "de": "Extern gebaute oder falsch paketierte Kernelmodule nach Kernel-Upgrade, eigenem Build oder kopierter Modulinstallation."
+    },
+    "symptoms": {
+      "en": [
+        "A driver fails to load with invalid module format.",
+        "Kernel log compares version magic with should be."
+      ],
+      "de": [
+        "Ein Treiber lädt nicht und meldet invalid module format.",
+        "Das Kernel-Protokoll vergleicht version magic mit should be."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The module may target another kernel release or configuration.",
+        "de": "Das Modul kann für andere Kernel-Version oder Konfiguration gebaut sein."
+      },
+      {
+        "en": "A stale initramfs or incorrectly installed custom module can select an old build; matching release text alone may still miss configuration differences.",
+        "de": "Eine alte Initramfs oder falsch installiertes eigenes Modul kann alten Build wählen; gleiche Versionszeichenfolge allein erfasst nicht jeden Konfigurationsunterschied."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-running-kernel-release",
+        "command": "uname -r",
+        "explanation": {
+          "en": "Read the running kernel release, rather than the newest installed package version.",
+          "de": "Laufende Kernel-Version statt neuestem installiertem Paketstand lesen."
+        },
+        "interpretation": {
+          "en": "Use this exact release when checking headers and module installation directories. Installing a new kernel does not switch the running kernel.",
+          "de": "Genau diese Version für Header und Modul-Installationsverzeichnisse verwenden. Die Installation eines neuen Kernels wechselt den laufenden Kernel nicht."
+        }
+      },
+      {
+        "id": "read-target-module-magic",
+        "command": "modinfo -F vermagic example_module",
+        "explanation": {
+          "en": "Replace example_module with the failed module name. This reads the installed module metadata and does not load it.",
+          "de": "example_module durch den Namen des gescheiterten Moduls ersetzen. Dies liest installierte Modulmetadaten und lädt nicht."
+        },
+        "interpretation": {
+          "en": "Compare release and build flags with the kernel’s rejection text. A match here may mean a different stale copy was loaded from the initramfs.",
+          "de": "Version und Build-Schalter mit Ablehnungszeile des Kernels vergleichen. Ein Treffer hier kann bedeuten, dass eine andere alte Kopie aus der Initramfs geladen wurde."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "rebuild-for-selected-kernel",
+        "title": {
+          "en": "Rebuild for the selected supported kernel",
+          "de": "Für gewählten unterstützten Kernel neu bauen"
+        },
+        "body": {
+          "en": "If metadata targets another kernel, install its exact supported headers/development package and rebuild the external module through the distribution’s DKMS or module-package workflow. Check build completion before reboot.",
+          "de": "Zeigen Metadaten anderen Kernel, dessen exaktes unterstütztes Header-/Entwicklungspaket installieren und externes Modul über DKMS- oder Modulpaket-Verfahren der Distribution neu bauen. Abschluss vor Neustart prüfen."
+        },
+        "precautions": {
+          "en": "Do not use --force-vermagic or force-load incompatible modules; bypassing the check can corrupt kernel memory.",
+          "de": "Kein --force-vermagic verwenden und unpassende Module nicht erzwingen; umgangene Prüfung kann Kernel-Speicher beschädigen."
+        },
+        "rollback": {
+          "en": "Boot the prior supported kernel and its original module package if rebuilding cannot produce a compatible module.",
+          "de": "Falls Neubau kein kompatibles Modul liefert, vorherigen unterstützten Kernel mit ursprünglichem Modulpaket starten."
+        }
+      },
+      {
+        "id": "replace-stale-early-module",
+        "title": {
+          "en": "Replace the stale early module copy",
+          "de": "Veraltete frühe Modulkopie ersetzen"
+        },
+        "body": {
+          "en": "If the disk module is correct but the error persists in early boot, rebuild the selected kernel’s initramfs with the packaged module and verify the boot entry references it. Avoid manually copying .ko files between release directories.",
+          "de": "Ist Plattenmodul passend, bleibt der Fehler aber beim frühen Start, Initramfs des gewählten Kernels mit Paketmodul erneuern und Referenz des Starteintrags prüfen. .ko-Dateien nicht manuell zwischen Versionsverzeichnissen kopieren."
+        },
+        "precautions": {
+          "en": "Verify /boot or the ESP is mounted correctly and keep an older boot image. Signed-module enforcement can independently reject the rebuilt module.",
+          "de": "Richtig eingehängtes /boot oder ESP prüfen und älteres Startabbild behalten. Signaturpflicht kann das neu gebaute Modul unabhängig ablehnen."
+        },
+        "rollback": {
+          "en": "Restore the previous boot image or generation and corresponding module package if the regenerated entry fails.",
+          "de": "Bei fehlerhaftem erneuertem Eintrag vorheriges Startabbild oder Generation mit passendem Modulpaket wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel external-module build requirements",
+        "url": "https://docs.kernel.org/kbuild/modules.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NVIDIA documented kernel/header mismatch example",
+        "url": "https://download.nvidia.com/XFree86/Linux-x86_64/570.124.04/README/commonproblems.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel vermagic: release, configuration and architecture fields",
+        "url": "https://github.com/torvalds/linux/blob/master/include/linux/vermagic.h",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-module-magic-rejected",
+        "all": [
+          "version magic",
+          "should be"
+        ],
+        "sample": "example_module: version magic '6.10.0 SMP preempt mod_unload' should be '6.11.0 SMP preempt mod_unload'",
+        "negative": [
+          "example_module: module version 1.0 loaded",
+          "application: unsupported document format"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The module loader rejected metadata incompatible with the running kernel build.",
+          "de": "Der Modullader hat Metadaten abgelehnt, die nicht zum laufenden Kernel-Build passen."
+        },
+        "significance": {
+          "en": "Rebuild or select the matching supported kernel/module pair; bypassing the validation does not establish compatibility.",
+          "de": "Neu bauen oder passendes unterstütztes Kernel-/Modulpaar wählen; umgangene Prüfung stellt keine Kompatibilität her."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-module-unknown-symbol",
+    "slug": {
+      "en": "kernel-module-unknown-symbol",
+      "de": "kernel-modul-unbekanntes-symbol"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "Kernel module cannot resolve a required symbol",
+      "de": "Kernelmodul kann benötigtes Symbol nicht auflösen"
+    },
+    "summary": {
+      "en": "Unknown-symbol errors can reflect missing module dependencies or ABI mismatch; inspect the exact symbol and dependency chain before forcing loads.",
+      "de": "Unknown-Symbol-Fehler können fehlende Modulabhängigkeiten oder ABI-Konflikt bedeuten; exaktes Symbol und Abhängigkeitskette vor erzwungenem Laden prüfen."
+    },
+    "environment": {
+      "en": "Kernel modules installed through packages or external builds; symbol resolution differs from userspace shared-library linking.",
+      "de": "Kernelmodule aus Paketen oder externen Builds; Symbolauflösung unterscheidet sich vom Laden gemeinsamer Userspace-Bibliotheken."
+    },
+    "symptoms": {
+      "en": [
+        "The module load fails even though its file exists.",
+        "Kernel log names Unknown symbol or disagrees about version of symbol."
+      ],
+      "de": [
+        "Das Modul lädt trotz vorhandener Datei nicht.",
+        "Der Kernel nennt Unknown symbol oder disagrees about version of symbol."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A required provider module or optional kernel component may be missing.",
+        "de": "Ein benötigtes Bereitsteller-Modul oder optionaler Kernelbestandteil kann fehlen."
+      },
+      {
+        "en": "The module may be built against the wrong kernel configuration or symbol-version data; a matching uname release alone is insufficient.",
+        "de": "Das Modul kann gegen falsche Kernel-Konfiguration oder Symbolversionsdaten gebaut sein; passende uname-Version allein genügt nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-module-symbol-errors",
+        "command": "journalctl -b -k --no-pager --grep='Unknown symbol|disagrees about version of symbol'",
+        "explanation": {
+          "en": "Read the exact missing or mismatched symbols; kernel journal access may require an administrator.",
+          "de": "Exakte fehlende oder unpassende Symbole lesen; Kernel-Journalzugriff kann Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "A version-disagreement line supports ABI mismatch, while an unresolved symbol alone can also mean its provider was not installed or loaded.",
+          "de": "Eine Versionsabweichung stützt ABI-Konflikt; ein ungelöstes Symbol allein kann auch einen nicht installierten oder nicht geladenen Bereitsteller bedeuten."
+        }
+      },
+      {
+        "id": "inspect-module-dependencies",
+        "command": "modprobe --show-depends example_module",
+        "explanation": {
+          "en": "Replace example_module with the failed module. This lists planned module dependencies without loading them.",
+          "de": "example_module durch das gescheiterte Modul ersetzen. Geplante Modulabhängigkeiten werden ohne Laden aufgelistet."
+        },
+        "interpretation": {
+          "en": "A missing provider or unexpected path points to packaging/dependency problems. Successful dependency listing does not prove symbol ABI compatibility.",
+          "de": "Fehlender Bereitsteller oder unerwarteter Pfad deutet auf Paket-/Abhängigkeitsprobleme. Erfolgreiches Auflisten belegt keine passende Symbol-ABI."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-provider-package",
+        "title": {
+          "en": "Restore the required provider package",
+          "de": "Benötigtes Bereitsteller-Paket wiederherstellen"
+        },
+        "body": {
+          "en": "If the symbol belongs to a supported optional kernel component that is absent, install the corresponding distribution module package for the running kernel. Use the package’s normal dependency-index regeneration and load sequence.",
+          "de": "Gehört das Symbol zu einem fehlenden unterstützten optionalen Kernelbestandteil, entsprechendes Distributions-Modulpaket für laufenden Kernel installieren. Normale Paketaktualisierung des Abhängigkeitsindexes und Ladereihenfolge nutzen."
+        },
+        "precautions": {
+          "en": "Do not guess a provider by similarly named symbols or copy modules from another release. Avoid loading a replacement into an active device path without its documented procedure.",
+          "de": "Bereitsteller nicht anhand ähnlich benannter Symbole raten und keine Module anderer Version kopieren. Ersatz nicht ohne dokumentiertes Verfahren in einen aktiven Gerätepfad laden."
+        },
+        "rollback": {
+          "en": "Restore the prior package snapshot and boot entry if the provider package changes a working device.",
+          "de": "Bei Auswirkungen auf funktionierendes Gerät vorherigen Paket-Snapshot und Starteintrag wiederherstellen."
+        }
+      },
+      {
+        "id": "rebuild-with-matching-symbol-data",
+        "title": {
+          "en": "Rebuild using matching symbol-version data",
+          "de": "Mit passenden Symbolversionsdaten neu bauen"
+        },
+        "body": {
+          "en": "If versions disagree, rebuild the external module against the exact supported kernel build and its Module.symvers through the documented package workflow. Keep related external modules built against the same symbol data.",
+          "de": "Bei Versionsabweichung externes Modul gegen exakten unterstützten Kernel-Build samt Module.symvers über dokumentiertes Paketverfahren neu bauen. Zusammengehörige externe Module gegen dieselben Symbolinformationen bauen."
+        },
+        "precautions": {
+          "en": "modules_prepare alone does not generate Module.symvers when module versioning is enabled. Do not use force-modversion to bypass this evidence.",
+          "de": "modules_prepare allein erzeugt bei aktiver Modulversionierung keine Module.symvers. Keine force-modversion-Umgehung dieses Hinweises nutzen."
+        },
+        "rollback": {
+          "en": "Use the previous compatible module/kernel package pair if the rebuild fails; restore the previous image if it contained external modules.",
+          "de": "Bei fehlgeschlagenem Neubau vorheriges kompatibles Modul-/Kernelpaketpaar nutzen; vorheriges Abbild bei enthaltenen externen Modulen wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "External modules: Module.symvers and modversions",
+        "url": "https://docs.kernel.org/kbuild/modules.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "NVIDIA unresolved kernel-symbol examples",
+        "url": "https://download.nvidia.com/XFree86/Linux-x86_64/570.124.04/README/commonproblems.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel module symbol-version rejection implementation",
+        "url": "https://github.com/torvalds/linux/blob/master/kernel/module/version.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-module-unknown-symbol",
+        "all": [
+          "Unknown symbol ",
+          "(err "
+        ],
+        "sample": "example_module: Unknown symbol drm_open (err -2)",
+        "negative": [
+          "application: symbol lookup error: undefined symbol: example_open",
+          "example_module: symbol drm_open resolved"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A kernel module could not resolve a required symbol.",
+          "de": "Ein Kernelmodul konnte ein benötigtes Symbol nicht auflösen."
+        },
+        "significance": {
+          "en": "Check provider availability and the module’s build context; unlike a userspace linker error, this belongs to kernel module loading.",
+          "de": "Bereitsteller-Verfügbarkeit und Modul-Build-Kontext prüfen; dies betrifft im Unterschied zum Userspace-Linker das Laden eines Kernelmoduls."
+        }
+      },
+      {
+        "id": "kernel-module-symbol-version-conflict",
+        "all": [
+          "disagrees about version of symbol "
+        ],
+        "sample": "example_module: disagrees about version of symbol module_layout",
+        "negative": [
+          "example_module: module_layout symbol version accepted",
+          "application: disagrees about document version"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The kernel and module disagree on a required symbol’s version.",
+          "de": "Kernel und Modul haben unterschiedliche Versionen eines benötigten Symbols."
+        },
+        "significance": {
+          "en": "Rebuild against the exact kernel and symbol data rather than force-load the incompatible module.",
+          "de": "Gegen exakten Kernel und Symbolinformationen neu bauen, statt das unpassende Modul zu erzwingen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-suspend-aborted",
+    "slug": {
+      "en": "kernel-suspend-aborted",
+      "de": "kernel-suspend-abgebrochen"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "A device callback aborts system suspend",
+      "de": "Geräterückmeldung bricht System-Suspend ab"
+    },
+    "summary": {
+      "en": "Suspend can fail before entering a sleep state when a device callback rejects it; use the first PM error to separate rejection from wakeup.",
+      "de": "Suspend kann vor Eintritt in den Schlafmodus durch eine Geräterückmeldung scheitern; ersten PM-Fehler nutzen, um Ablehnung und Aufwecken zu trennen."
+    },
+    "environment": {
+      "en": "Linux system suspend through the kernel PM framework; this entry covers device suspend rejection rather than a compositor-only black screen.",
+      "de": "Linux-System-Suspend über Kernel-PM; dieser Eintrag betrifft abgelehnten Geräte-Suspend statt eines reinen Compositor-Schwarzbilds."
+    },
+    "symptoms": {
+      "en": [
+        "The suspend request returns to the running session immediately.",
+        "PM messages name a failing device or asynchronous suspend error."
+      ],
+      "de": [
+        "Der Suspend-Aufruf kehrt sofort zur laufenden Sitzung zurück.",
+        "PM-Meldungen nennen ein scheiterndes Gerät oder einen asynchronen Suspend-Fehler."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A driver may be unable to quiesce its device or requires missing integration.",
+        "de": "Ein Treiber kann sein Gerät nicht ruhigstellen oder benötigt fehlende Einbindung."
+      },
+      {
+        "en": "A platform or device firmware regression may reject transition; a successfully entered state followed by wake is a different path.",
+        "de": "Plattform- oder Geräte-Firmware kann nach Regression den Übergang ablehnen; erfolgreich erreichter Schlafzustand mit anschließendem Aufwachen ist ein anderer Pfad."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-suspend-stage-events",
+        "command": "journalctl -b -k --no-pager --grep='PM:|suspend|dpm_run_callback'",
+        "explanation": {
+          "en": "Read transition stages and callbacks, with administrator journal access when needed.",
+          "de": "Übergangsstufen und Rückmeldungen bei Bedarf mit Administrator-Journalzugriff lesen."
+        },
+        "interpretation": {
+          "en": "Identify the first device error before PM reports the aggregate failure. suspend entry followed by an error is not proof that hardware reached sleep.",
+          "de": "Ersten Gerätefehler vor der PM-Gesamtmeldung bestimmen. suspend entry mit anschließendem Fehler beweist keinen tatsächlich erreichten Hardware-Schlaf."
+        }
+      },
+      {
+        "id": "read-available-sleep-modes",
+        "command": "cat /sys/power/mem_sleep",
+        "explanation": {
+          "en": "Read supported suspend-to-memory variants; brackets mark the current selection. This does not initiate sleep.",
+          "de": "Unterstützte Varianten von Suspend-to-Memory lesen; Klammern markieren Auswahl. Dies löst keinen Schlaf aus."
+        },
+        "interpretation": {
+          "en": "Only modes listed by this kernel/platform are available. The current mode can guide comparison, but changing it will not automatically repair a failing device callback.",
+          "de": "Nur vom Kernel/der Plattform gelistete Modi sind verfügbar. Aktueller Modus hilft beim Vergleich, doch Wechsel repariert nicht automatisch scheiternde Geräterückmeldung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "isolate-optional-failing-device",
+        "title": {
+          "en": "Isolate the optional failing device",
+          "de": "Optionales scheiterndes Gerät eingrenzen"
+        },
+        "body": {
+          "en": "If the first PM error identifies an optional USB peripheral or its workload, safely stop the workload and disconnect that peripheral before a controlled suspend test. Do not unload essential drivers merely to follow the last error line.",
+          "de": "Nennt der erste PM-Fehler ein optionales USB-Gerät oder dessen Arbeitslast, Arbeit sicher stoppen und Gerät vor kontrolliertem Suspend-Test trennen. Notwendige Treiber nicht allein anhand der letzten Fehlerzeile entladen."
+        },
+        "precautions": {
+          "en": "Save work, unmount removable storage normally and test on local access. A remote-only sleep test can leave recovery unavailable.",
+          "de": "Arbeit speichern, Wechselmedien normal aushängen und lokal testen. Ein reiner Fernzugriffstest kann Wiederherstellung unerreichbar machen."
+        },
+        "rollback": {
+          "en": "Reconnect the peripheral and restore its workload when ready; keep it disconnected if it reproducibly blocks suspend until a supported fix exists.",
+          "de": "Gerät und Arbeitslast bei Bereitschaft wieder verbinden; bei reproduzierbarer Blockade bis zu unterstützter Korrektur getrennt lassen."
+        }
+      },
+      {
+        "id": "correct-driver-pm-integration",
+        "title": {
+          "en": "Correct the identified driver’s PM integration",
+          "de": "PM-Einbindung des ermittelten Treibers korrigieren"
+        },
+        "body": {
+          "en": "If the failing driver documents required sleep hooks or a matching bug fix, align its distribution integration or compare the supported fixed kernel. Advanced staged pm_test work belongs in a planned local diagnostic session with the kernel guide.",
+          "de": "Dokumentiert betroffener Treiber nötige Schlaf-Hooks oder passende Korrektur, dessen Distributionseinbindung abgleichen oder unterstützten korrigierten Kernel vergleichen. Fortgeschrittene pm_test-Stufen gehören in geplante lokale Diagnose nach Kernel-Anleitung."
+        },
+        "precautions": {
+          "en": "Do not leave pm_test active accidentally or disable all wakeup sources. A staged test can still hang and should not run with unsaved work.",
+          "de": "pm_test nicht versehentlich aktiv lassen und nicht alle Weckquellen abschalten. Ein Stufentest kann hängen und darf nicht mit ungesicherter Arbeit laufen."
+        },
+        "rollback": {
+          "en": "Restore the previous driver package/boot entry and any recorded sleep settings; return pm_test to none if a guided test changed it.",
+          "de": "Vorheriges Treiberpaket/Starteintrag und dokumentierte Schlaf-Einstellungen wiederherstellen; nach geführtem Test pm_test bei Änderung auf none zurückstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel staged suspend debugging",
+        "url": "https://docs.kernel.org/power/basic-pm-debugging.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Suspend and device interrupt semantics",
+        "url": "https://docs.kernel.org/power/suspend-and-interrupts.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-device-suspend-failed",
+        "all": [
+          "PM:",
+          "failed to suspend async:"
+        ],
+        "sample": "usb 1-2: PM: failed to suspend async: error -16",
+        "negative": [
+          "PM: suspend entry (s2idle)",
+          "PM: suspend exit"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The PM framework reports an unsuccessful asynchronous device suspend.",
+          "de": "Das PM-Framework meldet gescheiterten asynchronen Geräte-Suspend."
+        },
+        "significance": {
+          "en": "Find the earlier driver-specific error and device address; the aggregate failure alone does not explain whether a driver or firmware blocked transition.",
+          "de": "Frühere treiberspezifische Meldung und Geräteadresse finden; Gesamtfehler allein erklärt keinen Treiber- oder Firmware-Auslöser."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-hard-lockup",
+    "slug": {
+      "en": "kernel-hard-lockup",
+      "de": "kernel-hardlockup"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "CPU hard lockup detected by a watchdog",
+      "de": "Watchdog erkennt CPU-Hardlockup"
+    },
+    "summary": {
+      "en": "A hard-lockup report means CPU interrupt heartbeats stopped; preserve watchdog traces and hardware context without assuming it is a GPU hang.",
+      "de": "Eine Hardlockup-Meldung heißt, dass CPU-Interrupt-Heartbeats ausblieben; Watchdog-Spuren und Hardware-Kontext sichern, statt GPU-Hänger anzunehmen."
+    },
+    "environment": {
+      "en": "Kernels with NMI/perf or another supported hard-lockup detector. A silent freeze without a watchdog report is not classified by this entry.",
+      "de": "Kernel mit NMI-/Perf- oder anderem unterstütztem Hardlockup-Detektor. Ein stilles Einfrieren ohne Watchdog-Meldung wird hier nicht eingeordnet."
+    },
+    "symptoms": {
+      "en": [
+        "The system stops responding to normal interrupts or restarts by panic policy.",
+        "Kernel reports Watchdog detected hard LOCKUP on a CPU."
+      ],
+      "de": [
+        "Das System reagiert nicht mehr auf normale Interrupts oder startet durch Panic-Richtlinie neu.",
+        "Der Kernel meldet Watchdog detected hard LOCKUP für eine CPU."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A kernel path may loop with interrupts disabled or stall CPU progress.",
+        "de": "Ein Kernelpfad kann mit abgeschalteten Interrupts schleifen oder CPU-Fortschritt blockieren."
+      },
+      {
+        "en": "Hardware instability or platform problems can also stop progress; the watchdog reports detection, not the uniquely faulty part.",
+        "de": "Hardware-Instabilität oder Plattformprobleme können ebenfalls Fortschritt stoppen; der Watchdog meldet Erkennung, kein eindeutig defektes Bauteil."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-hard-lockup-evidence",
+        "command": "journalctl -b -1 -k --no-pager --grep='hard LOCKUP|watchdog|Hardware Error|Call Trace|RIP:'",
+        "explanation": {
+          "en": "Read the previous retained boot after recovery, with administrator access if needed; use -b when the same boot is still accessible.",
+          "de": "Nach Wiederherstellung vorherigen gespeicherten Start bei Bedarf mit Administratorzugriff lesen; bei erreichbarem selben Start -b nutzen."
+        },
+        "interpretation": {
+          "en": "Preserve the first watchdog trace and any preceding hardware error. Empty prior logs can mean retention or write-out failed during the lockup.",
+          "de": "Erste Watchdog-Spur und vorherige Hardwarefehler sichern. Leere Vorprotokolle können fehlende Speicherung oder Schreiben während Blockade bedeuten."
+        }
+      },
+      {
+        "id": "read-hard-watchdog-policy",
+        "command": "sysctl kernel.nmi_watchdog kernel.hardlockup_panic",
+        "explanation": {
+          "en": "Read available detector/panic policy without setting it; kernel build and architecture can omit these keys.",
+          "de": "Vorhandene Detektor-/Panic-Richtlinie ohne Zuweisung lesen; Kernel-Build und Architektur können diese Schlüssel weglassen."
+        },
+        "interpretation": {
+          "en": "A disabled or unavailable detector explains missing watchdog evidence, not a healthy machine. Panic configuration can explain an automatic reboot after detection.",
+          "de": "Fehlender oder abgeschalteter Detektor erklärt fehlende Belege, keinen gesunden Rechner. Panic-Einstellung kann Neustart nach Erkennung erklären."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-at-supported-platform-defaults",
+        "title": {
+          "en": "Compare at supported platform defaults",
+          "de": "Bei unterstützten Plattformstandards vergleichen"
+        },
+        "body": {
+          "en": "If tuning preceded lockups, restore documented CPU/memory defaults and compare only a short non-destructive trigger. If the same stack appears after a kernel update, compare an already installed supported earlier kernel.",
+          "de": "Ging Tuning den Blockaden voraus, dokumentierte CPU-/Speicherstandards wiederherstellen und nur kurzen nicht zerstörenden Auslöser vergleichen. Erscheint gleiche Spur nach Kernel-Update, bereits installierten unterstützten älteren Kernel vergleichen."
+        },
+        "precautions": {
+          "en": "Back up critical data and avoid repeated hard power cycles. Changing several firmware and kernel options together destroys useful comparison evidence.",
+          "de": "Wichtige Daten sichern und wiederholte harte Stromunterbrechungen vermeiden. Mehrere Firmware- und Kerneloptionen zugleich zu ändern zerstört brauchbare Vergleichshinweise."
+        },
+        "rollback": {
+          "en": "Boot the retained original supported entry; restore only recorded stable hardware settings rather than known-triggering tuning.",
+          "de": "Vorhandenen ursprünglichen unterstützten Eintrag starten; nur dokumentierte stabile Hardware-Einstellungen statt bekannten auslösenden Tunings zurückstellen."
+        }
+      },
+      {
+        "id": "plan-supported-crash-capture",
+        "title": {
+          "en": "Plan a supported crash capture",
+          "de": "Unterstützte Absturzerfassung planen"
+        },
+        "body": {
+          "en": "If repeated hard lockups lose all logs, prepare the distribution’s supported kdump or external-console capture during maintenance and report the earliest trace. Verify the capture configuration without deliberately crashing a production session.",
+          "de": "Gehen bei wiederholten Hardlockups alle Meldungen verloren, im Wartungsfenster unterstützte kdump- oder externe Konsolenerfassung der Distribution vorbereiten und früheste Spur melden. Konfiguration ohne absichtlichen Absturz einer Produktionssitzung prüfen."
+        },
+        "precautions": {
+          "en": "Crash dumps can contain sensitive memory and reserve RAM. Kdump is not guaranteed to run when hardware or every CPU has lost progress.",
+          "de": "Speicherabbilder können sensible Daten enthalten und RAM reservieren. Kdump startet bei Hardwarefehlern oder stillstehenden gesamten CPUs nicht garantiert."
+        },
+        "rollback": {
+          "en": "Restore the previous crash-capture configuration and boot memory reservation if the setup prevents normal operation.",
+          "de": "Bei Betriebsproblemen vorherige Absturzerfassungskonfiguration und Speicherreservierung beim Start wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel hard-lockup detector behavior",
+        "url": "https://docs.kernel.org/admin-guide/lockup-watchdogs.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Kernel kdump capture and requirements",
+        "url": "https://docs.kernel.org/admin-guide/kdump/kdump.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-watchdog-hard-lockup",
+        "all": [
+          "watchdog:",
+          "hard LOCKUP",
+          "cpu"
+        ],
+        "sample": "NMI watchdog: Watchdog detected hard LOCKUP on cpu 1",
+        "negative": [
+          "watchdog: BUG: soft lockup - CPU#1 stuck for 26s!",
+          "watchdog: NMI watchdog enabled"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A watchdog detected missing CPU interrupt progress.",
+          "de": "Ein Watchdog hat fehlenden CPU-Interrupt-Fortschritt erkannt."
+        },
+        "significance": {
+          "en": "Inspect the NMI trace and earlier hardware context; absence of a detector report cannot exclude a silent system lockup.",
+          "de": "NMI-Spur und früheren Hardware-Kontext prüfen; fehlende Detektormeldung schließt stillen Systemstillstand nicht aus."
+        }
+      }
+    ]
+  },
+  {
+    "id": "kernel-microcode-loading",
+    "slug": {
+      "en": "kernel-microcode-loading",
+      "de": "kernel-microcode-laden"
+    },
+    "category": "kernel",
+    "title": {
+      "en": "CPU microcode update is absent or loads too late",
+      "de": "CPU-Microcode-Update fehlt oder wird zu spät geladen"
+    },
+    "summary": {
+      "en": "CPU microcode must match the processor and early boot path; compare the active revision and update packaging without forcing a live reload.",
+      "de": "CPU-Microcode muss zu Prozessor und frühem Startpfad passen; aktive Revision und Paketierung vergleichen, ohne Neuladen im Betrieb zu erzwingen."
+    },
+    "environment": {
+      "en": "x86 Intel or AMD CPUs with distribution-managed microcode, firmware-provided baseline patches and possible initramfs or UKI integration.",
+      "de": "x86-Intel- oder AMD-CPUs mit Microcode der Distribution, Basisstand aus Firmware und möglicher Initramfs- oder UKI-Einbindung."
+    },
+    "symptoms": {
+      "en": [
+        "An expected microcode revision is not active after an update.",
+        "A documented CPU erratum or mitigation requires a revision not yet loaded."
+      ],
+      "de": [
+        "Nach einem Update ist eine erwartete Microcode-Revision nicht aktiv.",
+        "Ein dokumentiertes CPU-Erratum oder eine Schutzmaßnahme braucht eine noch nicht geladene Revision."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The update may target another CPU family or already be superseded by firmware.",
+        "de": "Das Update kann eine andere CPU-Familie betreffen oder durch Firmware schon ersetzt sein."
+      },
+      {
+        "en": "An outdated early image or omitted microcode package can prevent loading; missing update messages alone do not prove vulnerability or instability.",
+        "de": "Ein altes frühes Abbild oder fehlendes Microcode-Paket kann Laden verhindern; fehlende Update-Meldungen allein beweisen weder Verwundbarkeit noch Instabilität."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-active-cpu-microcode",
+        "command": "rg 'vendor_id|cpu family|model[[:space:]]*:|stepping|microcode' /proc/cpuinfo",
+        "explanation": {
+          "en": "Read CPU identity and active revisions; requires ripgrep and changes no microcode.",
+          "de": "CPU-Identität und aktive Revisionen lesen; benötigt ripgrep und ändert keinen Microcode."
+        },
+        "interpretation": {
+          "en": "Compare vendor, family, model and stepping with the exact advisory/package entry. A hexadecimal revision from a different processor is not a meaningful benchmark.",
+          "de": "Anbieter, Familie, Modell und Stepping mit exakter Meldung/Paketeintrag vergleichen. Eine hexadezimale Revision anderer CPU ist kein sinnvoller Vergleichsmaßstab."
+        }
+      },
+      {
+        "id": "read-microcode-loader-events",
+        "command": "journalctl -b -k --no-pager --grep='microcode'",
+        "explanation": {
+          "en": "Read early-loader messages, with administrator journal access if required.",
+          "de": "Meldungen des frühen Laders bei Bedarf mit Administrator-Journalzugriff lesen."
+        },
+        "interpretation": {
+          "en": "An early update message confirms that update path ran; no update can mean the firmware already supplied the applicable revision or no matching newer patch exists.",
+          "de": "Eine frühe Update-Meldung bestätigt diesen Update-Pfad; kein Update kann passende Revision aus Firmware oder fehlenden neueren passenden Patch bedeuten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "refresh-early-microcode-package",
+        "title": {
+          "en": "Refresh the matching early microcode package",
+          "de": "Passendes frühes Microcode-Paket erneuern"
+        },
+        "body": {
+          "en": "If the CPU-specific advisory and package metadata identify a missing required patch, update the official distribution microcode package and rebuild its documented early boot image or UKI. Reboot normally and re-read the active revision.",
+          "de": "Benennen CPU-spezifische Meldung und Paketmetadaten einen fehlenden benötigten Patch, offizielles Microcode-Paket der Distribution aktualisieren und dokumentiertes frühes Startabbild oder UKI erneuern. Normal neu starten und aktive Revision erneut lesen."
+        },
+        "precautions": {
+          "en": "Do not force a live reload as a routine fix; upstream documents late-loading hazards and configurations that disable it. Keep the previous boot image.",
+          "de": "Kein Neuladen im Betrieb als Routinekorrektur erzwingen; Upstream dokumentiert Risiken späten Ladens und dessen deaktivierende Konfigurationen. Vorheriges Startabbild behalten."
+        },
+        "rollback": {
+          "en": "Boot the previous image if the new one fails. Firmware-supplied or anti-rollback-protected microcode may not be downgradeable by restoring a package.",
+          "de": "Bei fehlerhaftem neuem Abbild vorheriges starten. Firmware-gelieferter oder gegen Rücksetzen geschützter Microcode lässt sich eventuell nicht durch Paket-Rückkehr herabstufen."
+        }
+      },
+      {
+        "id": "apply-matching-vendor-firmware",
+        "title": {
+          "en": "Apply a matching vendor firmware update",
+          "de": "Passendes Hersteller-Firmware-Update anwenden"
+        },
+        "body": {
+          "en": "If the system vendor supplies the relevant CPU patch only through board firmware, use its CPU/board-specific update instructions and release notes during maintenance. Recheck the revision and the original documented symptom afterward.",
+          "de": "Liefert Systemhersteller relevanten CPU-Patch nur durch Board-Firmware, CPU-/Board-spezifische Update-Anleitung und Versionshinweise im Wartungsfenster nutzen. Danach Revision und ursprüngliches dokumentiertes Symptom erneut prüfen."
+        },
+        "precautions": {
+          "en": "Record firmware settings and keep encryption recovery information available. Do not assume a microcode update fixes an unrelated GPU or storage problem.",
+          "de": "Firmware-Einstellungen dokumentieren und Verschlüsselungs-Wiederherstellungsdaten bereithalten. Kein Microcode-Update als Korrektur fremder GPU- oder Speicherprobleme ansehen."
+        },
+        "rollback": {
+          "en": "Use the vendor’s supported firmware recovery method if necessary; do not promise rollback when the platform enforces anti-rollback.",
+          "de": "Bei Bedarf unterstützten Firmware-Rettungsweg des Herstellers nutzen; bei Rücksetzschutz keinen Rollback versprechen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Kernel microcode loading and late-loading hazards",
+        "url": "https://docs.kernel.org/arch/x86/microcode.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "BLFS: checking CPU identity and early microcode loading",
+        "url": "https://www.linuxfromscratch.org/blfs/view/stable/postlfs/firmware.html#postlfs-firmware-cpu",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  }
+]

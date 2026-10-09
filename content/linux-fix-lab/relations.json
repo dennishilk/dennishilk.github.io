@@ -1,0 +1,16 @@
+{
+  "amdgpu-ring-timeout": ["amdgpu-vm-page-fault", "kernel-pcie-aer-errors", "vulkan-driver-discovery"],
+  "nvidia-gpu-fallen-off-bus": ["kernel-pcie-aer-errors", "nvidia-driver-library-mismatch", "kernel-hard-lockup"],
+  "storage-sata-crc-errors": ["storage-uncorrectable-sectors", "storage-usb-uas-resets", "io-pressure-writeback-latency"],
+  "storage-ext4-emergency-readonly": ["boot-root-filesystem-check", "storage-uncorrectable-sectors", "storage-fstab-uuid-mismatch"],
+  "boot-fstab-emergency": ["storage-fstab-uuid-mismatch", "boot-root-uuid-missing", "systemd-service-dependency-failure"],
+  "audio-pipewire-user-service": ["user-session-dbus-unavailable", "audio-wireplumber-config-migration", "audio-session-device-access"],
+  "systemd-exec-launch-failure": ["executable-on-noexec-mount", "nixos-foreign-elf-loader", "systemd-working-directory-missing"],
+  "network-dns-stub-resolution": ["network-vpn-split-dns", "network-dhcp-no-lease", "network-overlapping-routes"],
+  "ssh-authorized-key-permissions": ["acl-mask-restricts-access", "sshd-invalid-configuration", "ssh-too-many-identities"],
+  "acl-mask-restricts-access": ["apparmor-profile-denial", "selinux-avc-denial", "audio-session-device-access"],
+  "desktop-portal-backend-missing": ["user-session-dbus-unavailable", "xdg-runtime-directory-invalid", "flatpak-file-access-restricted"],
+  "nixos-unknown-option": ["nixos-option-definition-conflict", "nixos-module-infinite-recursion", "nix-flake-untracked-source"],
+  "cgroup-memory-oom-kill": ["memory-pressure-reclaim-stalls", "swap-thrashing-latency", "cgroup-cpu-quota-throttling"],
+  "qemu-kvm-acceleration-unavailable": ["virtual-machine-vcpu-contention", "numa-memory-locality", "cgroup-cpu-quota-throttling"]
+}

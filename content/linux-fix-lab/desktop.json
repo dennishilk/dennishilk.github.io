@@ -1,0 +1,1760 @@
+[
+  {
+    "id": "x11-display-unavailable",
+    "slug": {
+      "en": "x11-display-unavailable",
+      "de": "x11-display-nicht-erreichbar"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "An X11 application cannot open its display",
+      "de": "Eine X11-Anwendung erreicht ihr Display nicht"
+    },
+    "summary": {
+      "en": "A stale DISPLAY or missing X authorization can break one launch context. Compare the failing process with the working desktop session.",
+      "de": "Ein veraltetes DISPLAY oder fehlende X-Freigabe kann einen Startkontext stören. Den fehlerhaften Start mit der funktionierenden Sitzung vergleichen."
+    },
+    "environment": {
+      "en": "X11 apps on Xorg or Xwayland, including SSH forwarding; run checks as the desktop user, not root.",
+      "de": "X11-Anwendungen auf Xorg oder Xwayland, auch über SSH-Weiterleitung; als Desktop-Benutzer prüfen, nicht als root."
+    },
+    "symptoms": {
+      "en": [
+        "The application opens from a desktop terminal but not a launcher or remote shell.",
+        "A toolkit reports that it cannot open the display."
+      ],
+      "de": [
+        "Die Anwendung startet im Desktop-Terminal, aber nicht über Starter oder Remote-Shell.",
+        "Ein Toolkit meldet ein nicht erreichbares Display."
+      ]
+    },
+    "causes": [
+      {
+        "en": "DISPLAY may refer to a previous session or an unavailable Xwayland server.",
+        "de": "DISPLAY kann auf eine frühere Sitzung oder einen nicht verfügbaren Xwayland-Server zeigen."
+      },
+      {
+        "en": "XAUTHORITY may refer to the wrong account or authority file.",
+        "de": "XAUTHORITY kann auf ein anderes Konto oder die falsche Freigabedatei zeigen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-x11-environment",
+        "command": "printenv DISPLAY XAUTHORITY XDG_SESSION_TYPE",
+        "explanation": {
+          "en": "Run in the failing context and compare with a working terminal in the same session. Missing variables can make printenv return nonzero.",
+          "de": "Im fehlerhaften Kontext ausführen und mit einem funktionierenden Terminal derselben Sitzung vergleichen. Fehlende Variablen können einen Rückgabestatus ungleich null erzeugen."
+        },
+        "interpretation": {
+          "en": "A different display or authority path suggests stale launcher exports; an unset XAUTHORITY is not automatically wrong because a default file may be used.",
+          "de": "Ein anderes Display oder ein anderer Freigabepfad spricht für veraltete Starter-Exporte; ein fehlendes XAUTHORITY ist nicht automatisch falsch, da eine Standarddatei genutzt werden kann."
+        }
+      },
+      {
+        "id": "inspect-x-authority-metadata",
+        "command": "xauth info",
+        "explanation": {
+          "en": "Reads authority-file metadata and entry count without printing reusable authentication cookies.",
+          "de": "Liest Metadaten und Eintragszahl der Freigabedatei, ohne wiederverwendbare Anmeldecookies auszugeben."
+        },
+        "interpretation": {
+          "en": "The authority file should belong to the intended session. A missing file, wrong path or no entries is a clue, not proof that the display server is stopped.",
+          "de": "Die Freigabedatei sollte zur vorgesehenen Sitzung gehören. Fehlende Datei, falscher Pfad oder fehlende Einträge sind Hinweise, aber kein Beweis für einen gestoppten Display-Server."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-stale-display-exports",
+        "title": {
+          "en": "Remove stale display overrides from the launcher",
+          "de": "Veraltete Display-Vorgaben aus dem Starter entfernen"
+        },
+        "body": {
+          "en": "If the working terminal has different session values, back up the launcher or shell fragment and remove only hard-coded DISPLAY and XAUTHORITY assignments. Start the program as the logged-in desktop user so it inherits the session’s current values.",
+          "de": "Wenn das funktionierende Terminal andere Sitzungswerte hat, Starter oder Shell-Datei sichern und nur feste DISPLAY- und XAUTHORITY-Zuweisungen entfernen. Das Programm als angemeldeter Desktop-Benutzer mit den aktuellen Sitzungswerten starten."
+        },
+        "precautions": {
+          "en": "Do not run the GUI as root or use xhost + to bypass authentication. Wayland’s presence does not guarantee Xwayland is enabled.",
+          "de": "Die GUI nicht als root starten oder mit xhost + die Anmeldung umgehen. Eine Wayland-Sitzung garantiert kein aktiviertes Xwayland."
+        },
+        "rollback": {
+          "en": "Restore the saved launcher or shell fragment if the override was required for a separate verified display.",
+          "de": "Den gesicherten Starter oder die Shell-Datei wiederherstellen, falls die Vorgabe für ein anderes bestätigtes Display nötig war."
+        }
+      },
+      {
+        "id": "reestablish-untrusted-ssh-x-forwarding",
+        "title": {
+          "en": "Reestablish the intended SSH X11 forwarding",
+          "de": "Vorgesehene X11-Weiterleitung über SSH neu herstellen"
+        },
+        "body": {
+          "en": "If the failure occurs only over SSH, verify the local X server is available and the remote server permits X11 forwarding, then create a fresh ssh -X session. Use the DISPLAY assigned by SSH rather than setting the remote machine’s display manually.",
+          "de": "Wenn der Fehler nur über SSH auftritt, lokalen X-Server und serverseitige Freigabe der X11-Weiterleitung prüfen und eine neue ssh -X-Sitzung öffnen. Das von SSH gesetzte DISPLAY verwenden, statt das Display des Remote-Rechners manuell einzutragen."
+        },
+        "precautions": {
+          "en": "Trusted -Y forwarding increases the remote application’s access to the local display; use it only for an explicitly trusted host and application.",
+          "de": "Vertrauenswürdige -Y-Weiterleitung erweitert den Zugriff der Remote-Anwendung auf das lokale Display; nur für ausdrücklich vertrauenswürdige Hosts und Programme nutzen."
+        },
+        "rollback": {
+          "en": "Close the forwarded session and restore any host-specific forwarding setting changed for the test.",
+          "de": "Die weitergeleitete Sitzung schließen und gegebenenfalls die geänderte hostspezifische Weiterleitungsregel wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "X.Org xauth: authorization files and display selection",
+        "url": "https://man.archlinux.org/man/xauth.1.en",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "OpenSSH ssh: X11 forwarding and DISPLAY",
+        "url": "https://man.openbsd.org/ssh.1",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "GTK: display environment and backends",
+        "url": "https://docs.gtk.org/gtk3/running.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "gtk-x11-display-unreachable",
+        "all": [
+          "Gtk-WARNING",
+          "cannot open display:"
+        ],
+        "sample": "(example-app:841): Gtk-WARNING **: cannot open display: :99",
+        "negative": [
+          "(example-app:841): Gtk-WARNING **: Theme parsing error",
+          "DISPLAY=:0"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "GTK could not establish its requested display connection.",
+          "de": "GTK konnte die angeforderte Display-Verbindung nicht aufbauen."
+        },
+        "significance": {
+          "en": "Check the launch environment, server availability and authorization; this is not a GPU-crash diagnosis.",
+          "de": "Startumgebung, Serververfügbarkeit und Freigabe prüfen; das ist keine Diagnose eines GPU-Absturzes."
+        }
+      }
+    ]
+  },
+  {
+    "id": "qt-platform-plugin-failure",
+    "slug": {
+      "en": "qt-platform-plugin-failure",
+      "de": "qt-plattformplugin-fehler"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "Qt cannot initialize its platform plugin",
+      "de": "Qt kann sein Plattformplugin nicht initialisieren"
+    },
+    "summary": {
+      "en": "A found Qt platform plugin can still fail to load due to dependencies or mixed versions. Inspect plugin selection before reinstalling everything.",
+      "de": "Ein gefundenes Qt-Plattformplugin kann an Abhängigkeiten oder gemischten Versionen scheitern. Vor Neuinstallationen die Pluginauswahl prüfen."
+    },
+    "environment": {
+      "en": "Qt 5/6 application on Linux; bundled AppImage/Python environments and distribution packages may use different plugin directories.",
+      "de": "Qt-5/6-Anwendung auf Linux; gebündelte AppImage-/Python-Umgebungen und Distributionspakete können verschiedene Pluginpfade nutzen."
+    },
+    "symptoms": {
+      "en": [
+        "Qt names xcb or wayland and exits before a window appears.",
+        "The plugin exists but cannot be loaded."
+      ],
+      "de": [
+        "Qt nennt xcb oder wayland und beendet sich vor dem ersten Fenster.",
+        "Das Plugin existiert, kann aber nicht geladen werden."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A platform-plugin dependency may be missing from the application’s own runtime.",
+        "de": "Eine Abhängigkeit des Plattformplugins fehlt möglicherweise in der eigenen Laufzeitumgebung der Anwendung."
+      },
+      {
+        "en": "QT_PLUGIN_PATH or library-path overrides may mix incompatible Qt builds.",
+        "de": "QT_PLUGIN_PATH oder Bibliothekspfadvorgaben können inkompatible Qt-Builds mischen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-qt-plugin-overrides",
+        "command": "printenv QT_QPA_PLATFORM QT_QPA_PLATFORM_PLUGIN_PATH QT_PLUGIN_PATH LD_LIBRARY_PATH",
+        "explanation": {
+          "en": "Reads only variables relevant to plugin selection and library loading; missing values can return nonzero.",
+          "de": "Liest nur Variablen für Pluginauswahl und Bibliotheksladen; fehlende Werte können einen Status ungleich null erzeugen."
+        },
+        "interpretation": {
+          "en": "A forced xcb backend or plugin directory outside the app bundle may be unintended. Absence of overrides does not establish that dependencies are complete.",
+          "de": "Ein erzwungenes xcb-Backend oder ein Pluginpfad außerhalb des Bundles kann ungewollt sein. Fehlende Vorgaben beweisen keine vollständigen Abhängigkeiten."
+        }
+      },
+      {
+        "id": "inspect-qt-platform-library",
+        "command": "readelf -d /path/to/platforms/libqxcb.so",
+        "explanation": {
+          "en": "Replace with the exact plugin path named by the application. Reads ELF metadata without executing an untrusted binary; use the Wayland plugin path when relevant.",
+          "de": "Durch den genauen von der Anwendung genannten Pluginpfad ersetzen. Liest ELF-Metadaten, ohne fremde Programme auszuführen; gegebenenfalls den Wayland-Pluginpfad nutzen."
+        },
+        "interpretation": {
+          "en": "NEEDED entries identify required libraries, while RPATH/RUNPATH can explain which bundle directories are searched. This does not resolve every transitive dependency.",
+          "de": "NEEDED-Einträge nennen nötige Bibliotheken; RPATH/RUNPATH können gesuchte Bundle-Verzeichnisse erklären. Nicht jede indirekte Abhängigkeit wird dadurch aufgelöst."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-unintended-qt-path-overrides",
+        "title": {
+          "en": "Launch with a consistent Qt environment",
+          "de": "Mit einer zusammenpassenden Qt-Umgebung starten"
+        },
+        "body": {
+          "en": "If global Qt or library overrides point outside the supported runtime, save them and remove those overrides only for this application’s launch. Use its official launcher so its own Qt libraries and platform plugins remain together.",
+          "de": "Wenn globale Qt- oder Bibliotheksvorgaben außerhalb der unterstützten Laufzeitumgebung zeigen, diese sichern und nur beim Start dieser Anwendung entfernen. Den vorgesehenen Starter nutzen, damit ihre Qt-Bibliotheken und Plattformplugins zusammenbleiben."
+        },
+        "precautions": {
+          "en": "Do not copy random libqxcb.so files between Qt versions or add a bundle’s plugin directory to every application.",
+          "de": "Keine beliebigen libqxcb.so-Dateien zwischen Qt-Versionen kopieren oder einen Bundle-Pluginpfad für alle Programme setzen."
+        },
+        "rollback": {
+          "en": "Restore the saved per-application environment or launcher; a clean one-time launch changes no global files.",
+          "de": "Die gesicherte anwendungsbezogene Umgebung oder den Starter wiederherstellen; ein einmaliger bereinigter Start ändert keine globalen Dateien."
+        }
+      },
+      {
+        "id": "repair-app-runtime-dependency",
+        "title": {
+          "en": "Repair the missing dependency in the correct runtime",
+          "de": "Fehlende Abhängigkeit in der richtigen Laufzeitumgebung ergänzen"
+        },
+        "body": {
+          "en": "If the named plugin dependency is genuinely missing, install the distribution package providing it for a native app, or obtain a corrected bundle from the application maintainer. For Python Qt environments, use a coherent environment matching that binding’s Qt version.",
+          "de": "Wenn die genannte Pluginabhängigkeit tatsächlich fehlt, bei einer nativen Anwendung das zuständige Distributionspaket installieren oder ein korrigiertes Bundle vom Betreuer beziehen. Für Python-Qt eine zusammenpassende Umgebung mit der Qt-Version der Bindings nutzen."
+        },
+        "precautions": {
+          "en": "A found plugin is not proof that all its libraries or the display connection work. Preserve the current bundle before replacing it.",
+          "de": "Ein gefundenes Plugin beweist weder vollständige Bibliotheken noch eine funktionierende Display-Verbindung. Das aktuelle Bundle vor dem Austausch sichern."
+        },
+        "rollback": {
+          "en": "Restore the saved bundle/environment or remove only the newly installed optional dependency if nothing else now requires it.",
+          "de": "Das gesicherte Bundle beziehungsweise die Umgebung wiederherstellen oder nur die neu installierte optionale Abhängigkeit entfernen, sofern nichts anderes sie benötigt."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Qt: deploying plugins and compatibility checks",
+        "url": "https://doc.qt.io/qt-6/deployment-plugins.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Qt for Linux: deployment and platform plugin dependencies",
+        "url": "https://doc.qt.io/qt-6/linux-deployment.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "qt-qpa-plugin-not-loadable",
+        "all": [
+          "qt.qpa.plugin:",
+          "Could not load the Qt platform plugin"
+        ],
+        "sample": "qt.qpa.plugin: Could not load the Qt platform plugin \"xcb\" in \"\" even though it was found.",
+        "negative": [
+          "qt.qpa.plugin: Successfully loaded Qt platform plugin \"xcb\"",
+          "qt.qpa.xcb: could not connect to display :99"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Qt found or selected a platform plugin but could not load it.",
+          "de": "Qt hat ein Plattformplugin gefunden oder gewählt, konnte es aber nicht laden."
+        },
+        "significance": {
+          "en": "Inspect the preceding dependency and plugin-path messages; this line does not name the missing library.",
+          "de": "Die vorherigen Abhängigkeits- und Pluginpfadmeldungen prüfen; diese Zeile nennt die fehlende Bibliothek nicht."
+        }
+      },
+      {
+        "id": "qt-qpa-plugin-not-found",
+        "all": [
+          "qt.qpa.plugin:",
+          "Could not find the Qt platform plugin"
+        ],
+        "sample": "qt.qpa.plugin: Could not find the Qt platform plugin \"wayland\" in \"/opt/example/plugins\"",
+        "negative": [
+          "qt.qpa.plugin: Could not load the Qt platform plugin \"wayland\" even though it was found.",
+          "Available platform plugins are: xcb, wayland."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Qt could not find the requested platform plugin in its search path.",
+          "de": "Qt hat das angeforderte Plattformplugin im Suchpfad nicht gefunden."
+        },
+        "significance": {
+          "en": "Check deployment and a forced backend before diagnosing binary compatibility.",
+          "de": "Installation und erzwungenes Backend prüfen, bevor Binärkompatibilität vermutet wird."
+        }
+      }
+    ]
+  },
+  {
+    "id": "xorg-no-screens-found",
+    "slug": {
+      "en": "xorg-no-screens-found",
+      "de": "xorg-kein-screen-gefunden"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "Xorg exits with no screens found",
+      "de": "Xorg endet mit no screens found"
+    },
+    "summary": {
+      "en": "The final no-screens message summarizes an Xorg startup failure. Read the earlier device and configuration errors to identify the blocked step.",
+      "de": "Die letzte no-screens-Meldung fasst einen Xorg-Startfehler zusammen. Frühere Geräte- und Konfigurationsfehler zeigen den blockierten Schritt."
+    },
+    "environment": {
+      "en": "Xorg session startup, not a native Wayland compositor. Logs may live under the user’s local share directory or /var/log.",
+      "de": "Start einer Xorg-Sitzung, kein nativer Wayland-Compositor. Protokolle liegen teils im lokalen Benutzerverzeichnis, teils unter /var/log."
+    },
+    "symptoms": {
+      "en": [
+        "The display manager returns to the greeter after choosing X11.",
+        "Xorg’s final fatal error says no screens found."
+      ],
+      "de": [
+        "Nach Auswahl von X11 kehrt die Anzeigeverwaltung zur Anmeldung zurück.",
+        "Xorg nennt abschließend no screens found als fatalen Fehler."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A static Device/Screen configuration may select an unavailable driver or PCI device.",
+        "de": "Eine feste Device-/Screen-Konfiguration kann einen fehlenden Treiber oder ein falsches PCI-Gerät wählen."
+      },
+      {
+        "en": "Earlier driver, device-access or connector errors may leave no usable screen.",
+        "de": "Frühere Treiber-, Gerätezugriffs- oder Anschlussfehler können keinen nutzbaren Screen übriglassen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-xorg-startup-errors",
+        "command": "rg -n \"\\(EE\\)|no screens found|No devices detected|LoadModule|Using config\" /path/to/Xorg.0.log",
+        "explanation": {
+          "en": "Replace with the current failed session’s log, often ~/.local/share/xorg/Xorg.0.log or /var/log/Xorg.0.log.",
+          "de": "Durch das aktuelle Protokoll des fehlgeschlagenen Starts ersetzen, häufig ~/.local/share/xorg/Xorg.0.log oder /var/log/Xorg.0.log."
+        },
+        "interpretation": {
+          "en": "Read earlier errors and the used configuration path; the legend containing (EE) is not itself an error record. Old logs can describe a previous boot.",
+          "de": "Frühere Fehler und verwendeten Konfigurationspfad lesen; die Legende mit (EE) ist selbst kein Fehler. Alte Protokolle können einen früheren Start beschreiben."
+        }
+      },
+      {
+        "id": "inspect-static-xorg-device-selection",
+        "command": "rg -n \"Driver|BusID|Screen|Device|ServerLayout\" /etc/X11/xorg.conf /etc/X11/xorg.conf.d",
+        "explanation": {
+          "en": "Reads static overrides; missing xorg.conf is normal on automatically configured systems.",
+          "de": "Liest feste Vorgaben; eine fehlende xorg.conf ist bei automatisch konfigurierten Systemen normal."
+        },
+        "interpretation": {
+          "en": "Compare selected driver and BusID with the earlier log. A stale override is a hypothesis only when it affects the configuration Xorg actually loaded.",
+          "de": "Gewählten Treiber und BusID mit den früheren Meldungen vergleichen. Eine alte Vorgabe ist nur relevant, wenn Xorg die betreffende Konfiguration wirklich geladen hat."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "isolate-stale-xorg-override",
+        "title": {
+          "en": "Isolate a confirmed stale Xorg override",
+          "de": "Eine bestätigte alte Xorg-Vorgabe isolieren"
+        },
+        "body": {
+          "en": "If the log proves a stale administrator-created Device/Screen fragment is loaded, back it up and move only that fragment outside Xorg’s configuration search paths. Retry an X11 login to let supported automatic device selection operate.",
+          "de": "Wenn das Protokoll eine alte selbst angelegte Device-/Screen-Datei als geladen bestätigt, diese sichern und nur sie aus den Xorg-Suchpfaden verschieben. Eine X11-Anmeldung mit der unterstützten automatischen Geräteauswahl erneut versuchen."
+        },
+        "precautions": {
+          "en": "Preserve input configuration and distribution-managed files. Save open work and keep a text console before retrying the graphical session.",
+          "de": "Eingabekonfiguration und von der Distribution verwaltete Dateien erhalten. Arbeit speichern und vor dem nächsten Grafikstart eine Textkonsole bereithalten."
+        },
+        "rollback": {
+          "en": "Move the saved fragment back to its original location and retry the prior session configuration.",
+          "de": "Die gesicherte Datei an den ursprünglichen Ort zurücklegen und die vorherige Sitzungskonfiguration erneut nutzen."
+        }
+      },
+      {
+        "id": "repair-earlier-xorg-driver-error",
+        "title": {
+          "en": "Repair the specific earlier driver or device error",
+          "de": "Den konkret vorherigen Treiber- oder Gerätefehler beheben"
+        },
+        "body": {
+          "en": "If an earlier line names a missing Xorg module or device, use the distribution’s matching driver package and seat/device-access setup for that exact failure. Inspect that subsystem’s documentation rather than treating no screens found as a driver recommendation.",
+          "de": "Wenn eine frühere Zeile ein fehlendes Xorg-Modul oder Gerät nennt, für genau diesen Fehler das passende Distributionspaket und die vorgesehene Seat-/Gerätefreigabe verwenden. Die betroffene Dokumentation prüfen; no screens found empfiehlt keinen bestimmten Treiber."
+        },
+        "precautions": {
+          "en": "Do not mix proprietary and distribution driver stacks or grant everyone access to /dev/dri.",
+          "de": "Keine proprietären und Distributions-Treiberstapel mischen oder /dev/dri für alle freigeben."
+        },
+        "rollback": {
+          "en": "Restore the saved driver/configuration snapshot or matching package set through the distribution’s recovery process.",
+          "de": "Die gesicherte Treiber-/Konfigurationsversion oder den passenden Paketstand über den Rettungsweg der Distribution wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "X.Org: interpreting X server error messages",
+        "url": "https://www.x.org/FAQErrorMessages/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "X.Org xorg.conf: configuration paths and device/screen sections",
+        "url": "https://xorg.freedesktop.org/archive/X11R7.5/doc/man/man5/xorg.conf.5.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "xorg-no-screen-fatal",
+        "all": [
+          "(EE)",
+          "no screens found"
+        ],
+        "sample": "[ 14.812] (EE) no screens found(EE)",
+        "negative": [
+          "[ 14.812] (II) Screen 0 initialized",
+          "(EE) error, (NI) not implemented, (??) unknown."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Xorg terminated without a usable screen configuration.",
+          "de": "Xorg wurde ohne nutzbare Screen-Konfiguration beendet."
+        },
+        "significance": {
+          "en": "The preceding errors matter; this final line does not distinguish driver, permissions or stale configuration.",
+          "de": "Die vorherigen Fehler sind entscheidend; diese letzte Zeile trennt Treiber, Rechte und alte Konfiguration nicht."
+        }
+      }
+    ]
+  },
+  {
+    "id": "xdg-runtime-directory-invalid",
+    "slug": {
+      "en": "xdg-runtime-directory-invalid",
+      "de": "xdg-runtime-verzeichnis-falsch"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "The session runtime directory is missing or invalid",
+      "de": "Das Sitzungs-Laufzeitverzeichnis fehlt oder ist ungültig"
+    },
+    "summary": {
+      "en": "Wayland and desktop IPC depend on a private runtime directory. Check ownership, mode and login lifetime before changing session variables.",
+      "de": "Wayland und Desktop-IPC brauchen ein privates Laufzeitverzeichnis. Besitzer, Modus und Anmeldelebensdauer vor Variablenänderungen prüfen."
+    },
+    "environment": {
+      "en": "Desktop sessions using XDG_RUNTIME_DIR; systemd/logind commands apply only to distributions using that session integration.",
+      "de": "Desktop-Sitzungen mit XDG_RUNTIME_DIR; systemd-/logind-Befehle gelten nur für Distributionen mit dieser Sitzungsintegration."
+    },
+    "symptoms": {
+      "en": [
+        "Apps warn about XDG_RUNTIME_DIR after su, sudo or a custom login.",
+        "A compositor cannot create or connect to its session socket."
+      ],
+      "de": [
+        "Anwendungen warnen nach su, sudo oder eigener Anmeldung über XDG_RUNTIME_DIR.",
+        "Ein Compositor kann seinen Sitzungssocket nicht anlegen oder erreichen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The process may belong to another user than the original login session.",
+        "de": "Der Prozess kann einem anderen Konto als die ursprüngliche Anmeldesitzung gehören."
+      },
+      {
+        "en": "A hard-coded runtime path may have the wrong owner, mode or lifetime.",
+        "de": "Ein fest gesetzter Laufzeitpfad kann falschen Besitzer, Modus oder Lebensdauer haben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-runtime-environment",
+        "command": "printenv XDG_RUNTIME_DIR XDG_SESSION_ID XDG_SESSION_TYPE",
+        "explanation": {
+          "en": "Read these values in the failing process’s launch context, not only in another working terminal.",
+          "de": "Diese Werte im Startkontext des betroffenen Prozesses lesen, nicht nur in einem anderen funktionierenden Terminal."
+        },
+        "interpretation": {
+          "en": "An unset directory or one belonging to another account supports a session-setup problem; a session ID can be absent in non-logind environments.",
+          "de": "Ein fehlender oder zu einem anderen Konto gehörender Pfad spricht für Sitzungsaufbaufehler; außerhalb von logind kann eine Sitzungs-ID fehlen."
+        }
+      },
+      {
+        "id": "inspect-runtime-directory-metadata",
+        "command": "stat -Lc \"%U %u %a %F %n\" \"$XDG_RUNTIME_DIR\"",
+        "explanation": {
+          "en": "Run only after checking the variable; reads the existing directory and follows its target without changing it.",
+          "de": "Erst nach Prüfung der Variablen ausführen; liest das bestehende Verzeichnis und folgt dessen Ziel, ohne es zu ändern."
+        },
+        "interpretation": {
+          "en": "The directory must be local, owned by this user and mode 0700. Metadata alone cannot establish that its creation and removal follow session lifetime.",
+          "de": "Das Verzeichnis muss lokal sein, diesem Benutzer gehören und Modus 0700 haben. Metadaten allein beweisen keinen an die Sitzung gebundenen Lebenszyklus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "start-with-real-user-login",
+        "title": {
+          "en": "Start from the intended user’s real login session",
+          "de": "Aus der echten Anmeldung des vorgesehenen Kontos starten"
+        },
+        "body": {
+          "en": "If the app is launched via another user or an incomplete login wrapper, save work and start it from the intended account’s normal display-manager or PAM-backed login. On logind systems this allows the supported login stack to create the private runtime directory.",
+          "de": "Wenn die Anwendung über ein anderes Konto oder einen unvollständigen Login-Wrapper startet, Arbeit sichern und aus der normalen Display-Manager- oder PAM-Anmeldung des vorgesehenen Kontos starten. Bei logind erzeugt der unterstützte Anmeldestapel das private Laufzeitverzeichnis."
+        },
+        "precautions": {
+          "en": "Do not reuse another user’s /run/user directory or chmod it 0777. Do not run the compositor as root.",
+          "de": "Nicht das /run/user-Verzeichnis eines anderen Kontos nutzen oder auf 0777 setzen. Den Compositor nicht als root starten."
+        },
+        "rollback": {
+          "en": "Close the temporary session. If a login wrapper was changed, restore its backup through a working console.",
+          "de": "Die vorübergehende Sitzung schließen. Bei geändertem Login-Wrapper dessen Sicherung über eine funktionierende Konsole wiederherstellen."
+        }
+      },
+      {
+        "id": "remove-invalid-runtime-export",
+        "title": {
+          "en": "Remove a stale runtime-directory export",
+          "de": "Einen veralteten Laufzeitverzeichnis-Export entfernen"
+        },
+        "body": {
+          "en": "If shell or launcher files force an obsolete runtime path, back up the file and remove only that assignment. Log out fully and log back in so the normal session environment is rebuilt; verify the actual directory rather than creating a replacement in /tmp.",
+          "de": "Wenn Shell- oder Starterdateien einen alten Laufzeitpfad erzwingen, die Datei sichern und nur diese Zuweisung entfernen. Vollständig ab- und neu anmelden, damit die normale Sitzungsumgebung aufgebaut wird; das tatsächliche Verzeichnis prüfen statt eines Ersatzes in /tmp."
+        },
+        "precautions": {
+          "en": "Deleting a live runtime directory interrupts sockets and user services. Leave its lifetime to the supported session manager.",
+          "de": "Das Löschen eines aktiven Laufzeitverzeichnisses unterbricht Sockets und Benutzerdienste. Seine Lebensdauer dem vorgesehenen Sitzungsmanager überlassen."
+        },
+        "rollback": {
+          "en": "Restore the saved assignment only if it belongs to a verified custom session setup; otherwise restore the supported login configuration.",
+          "de": "Die gesicherte Zuweisung nur bei einer bestätigten eigenen Sitzungsintegration wiederherstellen; sonst die unterstützte Anmeldekonfiguration herstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "freedesktop.org: XDG Base Directory Specification",
+        "url": "https://specifications.freedesktop.org/basedir/latest/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd pam_systemd: login-session runtime directories",
+        "url": "https://manpages.ubuntu.com/manpages/noble/man8/pam_systemd.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Wayland: connection and compositor model",
+        "url": "https://wayland.freedesktop.org/docs/book/Protocol.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "wayland-runtime-directory-unset",
+        "all": [
+          "XDG_RUNTIME_DIR is invalid or not set in the environment"
+        ],
+        "sample": "error: XDG_RUNTIME_DIR is invalid or not set in the environment.",
+        "negative": [
+          "XDG_RUNTIME_DIR=/run/user/1000",
+          "QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to /tmp/runtime-example"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A Wayland client path lacks a usable runtime-directory setting.",
+          "de": "Ein Wayland-Clientpfad besitzt keine nutzbare Laufzeitverzeichnis-Einstellung."
+        },
+        "significance": {
+          "en": "Inspect the login context and ownership; setting a directory string alone does not create a valid session.",
+          "de": "Anmeldekontext und Besitzer prüfen; ein gesetzter Pfad allein erzeugt keine gültige Sitzung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "desktop-portal-backend-missing",
+    "slug": {
+      "en": "desktop-portal-backend-missing",
+      "de": "desktop-portal-backend-fehlt"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "A desktop portal cannot activate its backend",
+      "de": "Ein Desktop-Portal kann sein Backend nicht aktivieren"
+    },
+    "summary": {
+      "en": "A missing file picker or screen-sharing dialog can reflect wrong portal selection. Inspect backend support and the desktop session environment.",
+      "de": "Fehlende Dateiauswahl oder Bildschirmfreigabe kann an der Portalwahl liegen. Backend-Unterstützung und Desktop-Sitzungsumgebung prüfen."
+    },
+    "environment": {
+      "en": "Desktop using xdg-desktop-portal; backend capabilities vary, and file chooser support need not come from the screen-capture backend.",
+      "de": "Desktop mit xdg-desktop-portal; Backend-Fähigkeiten unterscheiden sich, Dateiauswahl und Bildschirmaufnahme können verschiedene Backends nutzen."
+    },
+    "symptoms": {
+      "en": [
+        "A sandboxed app hangs while opening a file chooser.",
+        "Screen sharing offers no selection dialog or a backend activation error."
+      ],
+      "de": [
+        "Eine Sandbox-Anwendung hängt beim Öffnen der Dateiauswahl.",
+        "Bildschirmfreigabe zeigt keinen Auswahl-Dialog oder einen Backend-Aktivierungsfehler."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Desktop-specific portal configuration may select an unavailable backend.",
+        "de": "Eine desktopspezifische Portalregel kann ein fehlendes Backend wählen."
+      },
+      {
+        "en": "The backend process may inherit a stale desktop or display environment.",
+        "de": "Der Backend-Prozess kann eine veraltete Desktop- oder Display-Umgebung erben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-portal-user-service",
+        "command": "systemctl --user status xdg-desktop-portal.service --no-pager",
+        "explanation": {
+          "en": "Reads service status and recent logs in the affected desktop account; applies to systemd user sessions.",
+          "de": "Liest Dienststatus und letzte Meldungen im betroffenen Desktop-Konto; gilt für systemd-Benutzersitzungen."
+        },
+        "interpretation": {
+          "en": "Inspect the named org.freedesktop.impl.portal backend and failing interface. A running frontend does not guarantee its backend is available.",
+          "de": "Das genannte org.freedesktop.impl.portal-Backend und die fehlerhafte Schnittstelle prüfen. Ein laufendes Frontend beweist kein verfügbares Backend."
+        }
+      },
+      {
+        "id": "inspect-portal-selection",
+        "command": "rg -n \"preferred|default=|FileChooser=|ScreenCast=|Interfaces=|UseIn=\" \"$HOME/.config/xdg-desktop-portal\" /usr/share/xdg-desktop-portal",
+        "explanation": {
+          "en": "Reads user overrides and installed portal definitions; adapt the user path if XDG_CONFIG_HOME is customized.",
+          "de": "Liest Benutzer-Vorgaben und installierte Portaldefinitionen; bei eigenem XDG_CONFIG_HOME den Benutzerpfad anpassen."
+        },
+        "interpretation": {
+          "en": "Check precedence and which backend actually implements the needed interface. Merely installing several backends does not select the right one.",
+          "de": "Vorrang und tatsächlich unterstützte Schnittstelle prüfen. Mehrere installierte Backends wählen nicht automatisch das richtige aus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "select-supported-portal-backends",
+        "title": {
+          "en": "Select installed backends for the needed interfaces",
+          "de": "Installierte Backends für die benötigten Schnittstellen wählen"
+        },
+        "body": {
+          "en": "If configuration selects an absent or unsupported backend, back up the user portals.conf and use installed desktop-compatible providers for FileChooser and ScreenCast as appropriate. Install the distribution’s matching backend if needed, then restart the portal services after closing active portal requests.",
+          "de": "Wenn die Konfiguration ein fehlendes oder ungeeignetes Backend wählt, die Benutzer-portals.conf sichern und passende installierte Anbieter für FileChooser beziehungsweise ScreenCast wählen. Falls nötig das passende Distributions-Backend installieren und Portaldienste nach Schließen aktiver Anfragen neu starten."
+        },
+        "precautions": {
+          "en": "A wlroots screen-capture backend may not implement a file chooser. Do not remove every other desktop backend blindly.",
+          "de": "Ein wlroots-Aufnahmebackend bietet möglicherweise keine Dateiauswahl. Andere Desktop-Backends nicht pauschal entfernen."
+        },
+        "rollback": {
+          "en": "Restore the saved user portals.conf or remove only the new override, then restart the same portal services.",
+          "de": "Die gesicherte Benutzer-portals.conf wiederherstellen oder nur die neue Vorgabe entfernen; anschließend dieselben Portaldienste neu starten."
+        }
+      },
+      {
+        "id": "repair-portal-session-environment",
+        "title": {
+          "en": "Repair the session environment supplied to portals",
+          "de": "Den Portalen übergebene Sitzungsumgebung korrigieren"
+        },
+        "body": {
+          "en": "If the backend is installed but targets a different desktop or display, correct the compositor’s documented session-start environment integration for DISPLAY, WAYLAND_DISPLAY and XDG_CURRENT_DESKTOP. Save its configuration and relogin to restart affected services with the intended values.",
+          "de": "Wenn das Backend installiert ist, aber einen anderen Desktop oder ein anderes Display erwartet, die dokumentierte Sitzungsintegration des Compositors für DISPLAY, WAYLAND_DISPLAY und XDG_CURRENT_DESKTOP korrigieren. Konfiguration sichern und neu anmelden, damit betroffene Dienste die vorgesehenen Werte erhalten."
+        },
+        "precautions": {
+          "en": "Do not import all environment variables indiscriminately; multiple simultaneous desktops for one account can share a user manager.",
+          "de": "Nicht wahllos alle Umgebungsvariablen importieren; mehrere gleichzeitige Desktops desselben Kontos können einen Benutzermanager teilen."
+        },
+        "rollback": {
+          "en": "Restore the saved session-start integration and relogin; end the conflicting temporary desktop if it changed shared values.",
+          "de": "Die gesicherte Sitzungsintegration wiederherstellen und neu anmelden; einen störenden temporären Desktop mit gemeinsamen Werten beenden."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "XDG Desktop Portal: backend configuration and precedence",
+        "url": "https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "XDG Desktop Portal: desktop session integration",
+        "url": "https://flatpak.github.io/xdg-desktop-portal/docs/system-integration.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "XDG Desktop Portal upstream: file chooser backend activation example",
+        "url": "https://github.com/flatpak/xdg-desktop-portal/issues/1859",
+        "kind": "official",
+        "evidence": "upstream-report"
+      },
+      {
+        "title": "XDG Desktop Portal upstream: screenshot backend activation example",
+        "url": "https://github.com/flatpak/xdg-desktop-portal/issues/607",
+        "kind": "official",
+        "evidence": "upstream-report"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "portal-file-chooser-backend-unavailable",
+        "all": [
+          "Failed to create file chooser proxy:",
+          "org.freedesktop.impl.portal.desktop."
+        ],
+        "sample": "xdg-desktop-portal[510]: Failed to create file chooser proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: Timeout was reached",
+        "negative": [
+          "xdg-desktop-portal[510]: Using gtk.portal for org.freedesktop.impl.portal.FileChooser",
+          "xdg-desktop-portal[510]: Failed to create settings proxy: org.freedesktop.impl.portal.desktop.gnome"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The portal frontend could not create its file-chooser backend proxy.",
+          "de": "Das Portalfrontend konnte seinen Dateiauswahl-Backend-Proxy nicht erzeugen."
+        },
+        "significance": {
+          "en": "Check that specific backend and session; this line does not justify enlarging filesystem sandbox permissions.",
+          "de": "Dieses Backend und die Sitzung prüfen; die Zeile rechtfertigt keine erweiterten Dateisystemrechte der Sandbox."
+        }
+      },
+      {
+        "id": "portal-screenshot-backend-unavailable",
+        "all": [
+          "Failed to create screenshot proxy:",
+          "org.freedesktop.impl.portal.desktop."
+        ],
+        "sample": "xdg-desktop-portal[510]: Failed to create screenshot proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.wlr: Timeout was reached",
+        "negative": [
+          "xdg-desktop-portal[510]: Using wlr.portal for org.freedesktop.impl.portal.Screenshot",
+          "xdg-desktop-portal[510]: Failed to create file chooser proxy: org.freedesktop.impl.portal.desktop.gtk"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The screenshot portal backend did not become available.",
+          "de": "Das Screenshot-Portalbackend wurde nicht verfügbar."
+        },
+        "significance": {
+          "en": "Investigate interface support, activation and compositor environment; do not infer a GPU fault from this alone.",
+          "de": "Schnittstellenunterstützung, Aktivierung und Compositor-Umgebung prüfen; daraus allein keinen GPU-Fehler ableiten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "user-session-dbus-unavailable",
+    "slug": {
+      "en": "user-session-dbus-unavailable",
+      "de": "benutzersitzung-dbus-fehlt"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "A desktop process cannot reach its session D-Bus",
+      "de": "Ein Desktop-Prozess erreicht seinen Sitzungs-D-Bus nicht"
+    },
+    "summary": {
+      "en": "Applications launched outside the desktop can inherit a missing or obsolete session bus address. Compare process context before starting another bus.",
+      "de": "Außerhalb des Desktops gestartete Anwendungen können eine alte oder fehlende Busadresse erben. Vor einem weiteren Bus den Startkontext prüfen."
+    },
+    "environment": {
+      "en": "D-Bus session messaging; busctl applies where installed, and custom sessions may use dbus-daemon or dbus-broker.",
+      "de": "D-Bus-Sitzungsnachrichten; busctl bei vorhandener Installation, eigene Sitzungen können dbus-daemon oder dbus-broker nutzen."
+    },
+    "symptoms": {
+      "en": [
+        "A launcher cannot reach desktop services that work in a terminal.",
+        "A process attempts D-Bus autolaunch without an X11 display."
+      ],
+      "de": [
+        "Ein Starter erreicht Desktop-Dienste nicht, die im Terminal funktionieren.",
+        "Ein Prozess versucht D-Bus-Autostart ohne X11-Display."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The launcher may carry an address from a previous login or another account.",
+        "de": "Der Starter kann eine Busadresse einer früheren Anmeldung oder eines anderen Kontos übernehmen."
+      },
+      {
+        "en": "A custom session may omit its supported D-Bus startup integration.",
+        "de": "Eine eigene Sitzung kann die vorgesehene D-Bus-Startintegration auslassen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-session-bus-environment",
+        "command": "printenv DBUS_SESSION_BUS_ADDRESS XDG_RUNTIME_DIR",
+        "explanation": {
+          "en": "Compare the failing context with the working terminal of the intended account; do not copy another account’s address.",
+          "de": "Den fehlerhaften Kontext mit einem funktionierenden Terminal des vorgesehenen Kontos vergleichen; keine fremde Konto-Adresse übernehmen."
+        },
+        "interpretation": {
+          "en": "A stale Unix-socket path suggests an inherited address problem. An unset variable may still work with runtime-directory discovery.",
+          "de": "Ein alter Unix-Socketpfad spricht für eine geerbte Adresse. Eine fehlende Variable kann mit Laufzeitverzeichnis-Erkennung trotzdem funktionieren."
+        }
+      },
+      {
+        "id": "query-existing-user-bus",
+        "command": "busctl --user list",
+        "explanation": {
+          "en": "Queries existing bus names without launching desktop applications or changing service configuration.",
+          "de": "Fragt vorhandene Busnamen ab, ohne Desktop-Anwendungen zu starten oder Diensteinstellungen zu ändern."
+        },
+        "interpretation": {
+          "en": "A successful list establishes connectivity for this context, not for another launcher. Failure can reflect a missing bus, address or runtime directory.",
+          "de": "Eine Liste bestätigt den Zugang dieses Kontexts, nicht eines anderen Starters. Fehler können an Bus, Adresse oder Laufzeitverzeichnis liegen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "inherit-supported-desktop-bus",
+        "title": {
+          "en": "Launch within the existing desktop bus",
+          "de": "Innerhalb des bestehenden Desktop-Busses starten"
+        },
+        "body": {
+          "en": "If a launcher sets a stale DBUS_SESSION_BUS_ADDRESS, save and remove only that override, then launch as the logged-in desktop account. Correct the documented session-start integration rather than manually exporting a socket from another login.",
+          "de": "Wenn ein Starter eine alte DBUS_SESSION_BUS_ADDRESS setzt, diese sichern und nur die Vorgabe entfernen. Als angemeldetes Desktop-Konto starten und die dokumentierte Sitzungsintegration korrigieren, statt manuell einen Socket einer anderen Anmeldung zu exportieren."
+        },
+        "precautions": {
+          "en": "Starting extra independent session buses inside a working desktop can isolate applications from portal and notification services.",
+          "de": "Weitere unabhängige Sitzungsbusse in einem laufenden Desktop können Anwendungen von Portal- und Benachrichtigungsdiensten isolieren."
+        },
+        "rollback": {
+          "en": "Restore the saved launcher or session configuration and relogin if the integration change was incorrect.",
+          "de": "Den gesicherten Starter oder die Sitzungsdatei wiederherstellen und bei falscher Integration neu anmelden."
+        }
+      },
+      {
+        "id": "wrap-standalone-custom-session",
+        "title": {
+          "en": "Wrap a genuinely standalone session in dbus-run-session",
+          "de": "Eine tatsächlich eigenständige Sitzung mit dbus-run-session starten"
+        },
+        "body": {
+          "en": "If a standalone custom session has no provided bus integration, use its documented dbus-run-session -- SESSION_PROGRAM wrapper at the session boundary. The child inherits a new bus that ends with the session program; replace SESSION_PROGRAM with the actual supported session command.",
+          "de": "Wenn eine eigenständige eigene Sitzung keine Busintegration mitbringt, deren dokumentierten Wrapper dbus-run-session -- SESSION_PROGRAM am Sitzungsbeginn nutzen. Das Kind erhält einen neuen Bus, der mit dem Sitzungsprogramm endet; SESSION_PROGRAM durch den tatsächlichen unterstützten Sitzungsbefehl ersetzen."
+        },
+        "precautions": {
+          "en": "Use this only when the session is intended to own a separate bus, not as a blanket fix for applications in an existing GNOME or Plasma session.",
+          "de": "Nur nutzen, wenn die Sitzung einen eigenen Bus erhalten soll, nicht pauschal für Anwendungen in einer bestehenden GNOME- oder Plasma-Sitzung."
+        },
+        "rollback": {
+          "en": "Remove the wrapper and restore the saved session-start command; ending the wrapped session also ends its temporary bus.",
+          "de": "Den Wrapper entfernen und den gesicherten Sitzungsstart herstellen; das Ende der umhüllten Sitzung beendet auch ihren temporären Bus."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "D-Bus: session daemon and service activation",
+        "url": "https://dbus.freedesktop.org/doc/dbus-daemon.1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "D-Bus dbus-launch: autolaunch limitations",
+        "url": "https://dbus.freedesktop.org/doc/dbus-launch.1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "D-Bus dbus-run-session: scoped session bus",
+        "url": "https://dbus.freedesktop.org/doc/dbus-run-session.1.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "dbus-autolaunch-no-display",
+        "all": [
+          "Cannot autolaunch D-Bus without X11 $DISPLAY"
+        ],
+        "sample": "Error: Cannot autolaunch D-Bus without X11 $DISPLAY",
+        "negative": [
+          "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus",
+          "Failed to connect to system bus: No such file or directory"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "A D-Bus client fell back to X11-based autolaunch without an X11 display.",
+          "de": "Ein D-Bus-Client ist ohne X11-Display auf X11-basierten Autostart zurückgefallen."
+        },
+        "significance": {
+          "en": "Restore the correct session-bus context; a native Wayland session does not need an invented DISPLAY value.",
+          "de": "Den korrekten Sitzungsbus-Kontext herstellen; eine native Wayland-Sitzung benötigt keinen erfundenen DISPLAY-Wert."
+        }
+      }
+    ]
+  },
+  {
+    "id": "plasma-shortcuts-unresponsive",
+    "slug": {
+      "en": "plasma-shortcuts-unresponsive",
+      "de": "plasma-kurzbefehle-ohne-wirkung"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "Plasma global shortcuts stop responding",
+      "de": "Plasma-Kurzbefehle reagieren nicht mehr"
+    },
+    "summary": {
+      "en": "One broken shortcut can be a conflicting assignment; many broken shortcuts may reflect session integration. Inspect the affected component first.",
+      "de": "Ein defekter Kurzbefehl kann doppelt belegt sein, viele können die Sitzung betreffen. Zuerst die konkret betroffene Komponente prüfen."
+    },
+    "environment": {
+      "en": "KDE Plasma; global shortcuts differ from application-local shortcuts, and a VM or remote desktop can capture input.",
+      "de": "KDE Plasma; globale und anwendungsinterne Kurzbefehle unterscheiden sich, eine VM oder Remote-Sitzung kann Eingaben abfangen."
+    },
+    "symptoms": {
+      "en": [
+        "A global key combination no longer activates its assigned action.",
+        "Shortcuts work after leaving a VM or remote-desktop window."
+      ],
+      "de": [
+        "Eine globale Tastenkombination löst ihre zugewiesene Aktion nicht mehr aus.",
+        "Kurzbefehle funktionieren nach Verlassen eines VM- oder Remote-Desktop-Fensters."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The shortcut may be assigned twice or disabled for its component.",
+        "de": "Der Kurzbefehl kann doppelt zugewiesen oder für die Komponente deaktiviert sein."
+      },
+      {
+        "en": "Input capture or a missing user-bus component may prevent dispatch.",
+        "de": "Eingabeübernahme oder eine fehlende Benutzerbus-Komponente kann die Weitergabe verhindern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-global-shortcut-config",
+        "command": "rg -n \"krunner|kwin|plasmashell|Volume|mute|launch\" \"$HOME/.config/kglobalshortcutsrc\"",
+        "explanation": {
+          "en": "Reads common component assignments; narrow the search to the affected action. The file can be absent before custom settings exist.",
+          "de": "Liest häufige Komponentenzuweisungen; die Suche auf die betroffene Aktion eingrenzen. Vor eigenen Einstellungen kann die Datei fehlen."
+        },
+        "interpretation": {
+          "en": "An empty or unexpected assignment supports a settings problem. This file alone does not show whether another application currently captures the keys.",
+          "de": "Eine leere oder unerwartete Zuweisung stützt einen Einstellungsfehler. Die Datei zeigt nicht allein, ob ein anderes Programm die Tasten abfängt."
+        }
+      },
+      {
+        "id": "inspect-shortcut-session-services",
+        "command": "busctl --user list",
+        "explanation": {
+          "en": "Reads existing user-bus service names as the Plasma account without altering services.",
+          "de": "Liest vorhandene Benutzerbus-Dienstnamen als Plasma-Konto, ohne Dienste zu ändern."
+        },
+        "interpretation": {
+          "en": "Look for the expected KDE session services. Presence does not prove shortcut delivery; if bus connectivity itself fails, diagnose the session bus before rebinding keys.",
+          "de": "Die erwarteten KDE-Sitzungsdienste suchen. Ihre Präsenz beweist keine Tastenzustellung; bei gestörter Busverbindung zuerst den Sitzungsbus prüfen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "repair-one-shortcut-assignment",
+        "title": {
+          "en": "Repair only the affected shortcut assignment",
+          "de": "Nur die betroffene Kurzbefehl-Zuweisung korrigieren"
+        },
+        "body": {
+          "en": "If the action’s assignment is missing or conflicts, export the current shortcut scheme in System Settings, then reset or reassign only that action in Shortcuts. Distinguish its global component entry from the application’s own shortcut dialog.",
+          "de": "Wenn die Zuweisung fehlt oder kollidiert, das aktuelle Schema in den Systemeinstellungen exportieren und nur diese Aktion unter Kurzbefehle zurücksetzen oder neu belegen. Den globalen Komponenteneintrag vom eigenen Kurzbefehl-Dialog der Anwendung unterscheiden."
+        },
+        "precautions": {
+          "en": "Do not delete the entire kglobalshortcutsrc. Avoid overwriting familiar accessibility or assistive-tool bindings.",
+          "de": "Nicht die ganze kglobalshortcutsrc löschen. Vertraute Belegungen von Bedienungshilfen nicht überschreiben."
+        },
+        "rollback": {
+          "en": "Import the saved scheme or restore the recorded assignment for that one action.",
+          "de": "Das gesicherte Schema importieren oder die notierte Zuweisung dieser einen Aktion herstellen."
+        }
+      },
+      {
+        "id": "release-captured-input",
+        "title": {
+          "en": "Release input captured by a VM or remote session",
+          "de": "Von VM oder Remote-Sitzung übernommene Eingaben freigeben"
+        },
+        "body": {
+          "en": "If shortcuts fail only while a guest or remote window owns input, release its keyboard grab using that application’s documented host key and disable capture only where needed. If all applications remain affected and bus errors are present, save work and relogin to refresh the Plasma session.",
+          "de": "Wenn Kurzbefehle nur bei aktiver Gast- oder Remote-Eingabe ausfallen, die Tastaturübernahme mit der dokumentierten Host-Taste des Programms lösen und nur die nötige Übernahme abschalten. Bei weiter betroffenem Desktop mit Busfehlern Arbeit speichern und die Plasma-Sitzung neu anmelden."
+        },
+        "precautions": {
+          "en": "A session restart closes unsaved windows; a guest’s capture behavior is not repaired by global keyboard remapping.",
+          "de": "Ein Sitzungsneustart schließt ungesicherte Fenster; Eingabeübernahme eines Gasts wird nicht durch globale Tastaturumstellung behoben."
+        },
+        "rollback": {
+          "en": "Reenable the original capture setting in the guest/remote application or restore the saved session-start configuration.",
+          "de": "Die ursprüngliche Eingabeübernahme im Gast-/Remote-Programm aktivieren oder die gesicherte Sitzungsstartdatei wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "KDE: standard and global shortcut configuration",
+        "url": "https://docs.kde.org/stable_kf6/en/plasma-desktop/kcontrol/keys/index.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "KDE: common shortcuts and component-specific editing",
+        "url": "https://docs.kde.org/trunk_kf6/en/khelpcenter/fundamentals/kbd.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "gnome-extension-incompatible",
+    "slug": {
+      "en": "gnome-extension-incompatible",
+      "de": "gnome-erweiterung-inkompatibel"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "A GNOME Shell extension breaks after a Shell update",
+      "de": "Eine GNOME-Shell-Erweiterung scheitert nach einem Update"
+    },
+    "summary": {
+      "en": "GNOME Shell API changes can make an extension incompatible. Compare supported Shell versions and disable the affected extension in isolation.",
+      "de": "GNOME-Shell-API-Änderungen können Erweiterungen stören. Unterstützte Shell-Versionen vergleichen und die betroffene Erweiterung gezielt deaktivieren."
+    },
+    "environment": {
+      "en": "GNOME Shell with user or system extensions; command names and supported extension releases depend on the installed Shell version.",
+      "de": "GNOME Shell mit Benutzer- oder Systemerweiterungen; Befehle und unterstützte Erweiterungsstände hängen von der installierten Shell ab."
+    },
+    "symptoms": {
+      "en": [
+        "An extension becomes disabled or reports an error after an upgrade.",
+        "The issue disappears with the affected extension disabled."
+      ],
+      "de": [
+        "Eine Erweiterung wird nach einem Upgrade deaktiviert oder meldet einen Fehler.",
+        "Der Fehler verschwindet bei deaktivierter betroffener Erweiterung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Extension metadata may not declare compatibility with the installed Shell.",
+        "de": "Die Metadaten können die installierte Shell nicht als kompatibel nennen."
+      },
+      {
+        "en": "A JavaScript API or import used by the extension may have changed.",
+        "de": "Eine verwendete JavaScript-API oder ein Import kann sich geändert haben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-installed-shell-version",
+        "command": "gnome-shell --version",
+        "explanation": {
+          "en": "Reads the installed Shell executable’s version without starting a new desktop session.",
+          "de": "Liest die Version des installierten Shell-Programms, ohne einen neuen Desktop zu starten."
+        },
+        "interpretation": {
+          "en": "Compare this release with the extension’s supported shell-version list; the running session can still use an older binary until relogin.",
+          "de": "Mit der shell-version-Liste der Erweiterung vergleichen; die laufende Sitzung kann bis zur Neuanmeldung noch eine ältere Version verwenden."
+        }
+      },
+      {
+        "id": "inspect-affected-extension",
+        "command": "gnome-extensions info EXTENSION_UUID",
+        "explanation": {
+          "en": "Replace EXTENSION_UUID with the exact extension identifier, including any @ suffix; run as the desktop account.",
+          "de": "EXTENSION_UUID durch den genauen Erweiterungsbezeichner einschließlich eines @-Zusatzes ersetzen; als Desktop-Konto ausführen."
+        },
+        "interpretation": {
+          "en": "Read its path, state and version. A missing UUID or bus error differs from a known extension in an incompatible/error state.",
+          "de": "Pfad, Zustand und Version lesen. Eine fehlende UUID oder ein Busfehler unterscheidet sich von einer bekannten inkompatiblen oder fehlerhaften Erweiterung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "disable-one-shell-extension",
+        "title": {
+          "en": "Disable the one implicated extension",
+          "de": "Die konkret betroffene Erweiterung deaktivieren"
+        },
+        "body": {
+          "en": "If the extension is implicated, use gnome-extensions disable EXTENSION_UUID or the Extensions app to disable only it. Save the previous state, then check the same desktop action; relogin if the installed Shell version and running session differ.",
+          "de": "Wenn die Erweiterung betroffen ist, nur sie mit gnome-extensions disable EXTENSION_UUID oder der Erweiterungsverwaltung deaktivieren. Den vorherigen Zustand notieren und dieselbe Desktop-Aktion prüfen; bei abweichender installierter und laufender Shell neu anmelden."
+        },
+        "precautions": {
+          "en": "Do not bypass extension-version validation or reset all GNOME settings. System-enforced extensions may require administrator policy changes.",
+          "de": "Versionsprüfung nicht umgehen oder alle GNOME-Einstellungen zurücksetzen. Systemweit erzwungene Erweiterungen können administrative Regeländerungen benötigen."
+        },
+        "rollback": {
+          "en": "Reenable that UUID with gnome-extensions enable EXTENSION_UUID once a compatible version is available; retain the old disabled state if it was already disabled.",
+          "de": "Diese UUID mit gnome-extensions enable EXTENSION_UUID wieder aktivieren, sobald eine passende Version vorliegt; war sie vorher deaktiviert, diesen Zustand erhalten."
+        }
+      },
+      {
+        "id": "install-compatible-extension-release",
+        "title": {
+          "en": "Install the extension release supporting this Shell",
+          "de": "Eine zur Shell passende Erweiterungsversion installieren"
+        },
+        "body": {
+          "en": "If the maintainer offers a compatible release, back up the user extension and its relevant settings, then update through the official Extensions service or the distribution’s package route. For a system extension, use its owning package rather than replacing files manually.",
+          "de": "Wenn der Betreuer eine passende Version anbietet, Benutzererweiterung und betreffende Einstellungen sichern und über den offiziellen Erweiterungsdienst oder die Distribution aktualisieren. Bei Systemerweiterungen das zuständige Paket nutzen, statt Dateien manuell auszutauschen."
+        },
+        "precautions": {
+          "en": "Adding the new Shell version to metadata cannot repair changed APIs. Keep the extension disabled while compatibility remains uncertain.",
+          "de": "Das Ergänzen der Shell-Version in Metadaten repariert keine geänderten APIs. Bei ungeklärter Kompatibilität die Erweiterung deaktiviert lassen."
+        },
+        "rollback": {
+          "en": "Restore the saved user extension/settings or supported package version, keeping it disabled if that version cannot run on the current Shell.",
+          "de": "Die gesicherte Benutzererweiterung samt Einstellungen oder einen unterstützten Paketstand herstellen; bei Inkompatibilität zur aktuellen Shell deaktiviert lassen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "GNOME JavaScript: extension updates and API breakage",
+        "url": "https://gjs.guide/extensions/overview/updates-and-breakage.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "GNOME JavaScript: extension debugging and session logs",
+        "url": "https://gjs.guide/extensions/development/debugging.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "GNOME extension anatomy: UUID and shell-version metadata",
+        "url": "https://gjs.guide/extensions/overview/anatomy.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "plasma-display-scaling-unexpected",
+    "slug": {
+      "en": "plasma-display-scaling-unexpected",
+      "de": "plasma-skalierung-unerwartet"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "Plasma applications have unexpected display scaling",
+      "de": "Plasma-Anwendungen werden unerwartet skaliert"
+    },
+    "summary": {
+      "en": "Different output scale settings and Qt overrides can multiply application scaling. Compare native output settings with the app’s launch environment.",
+      "de": "Ausgabeskalierung und Qt-Vorgaben können sich vervielfachen. Native Monitoreinstellungen mit der Startumgebung der betroffenen Anwendung vergleichen."
+    },
+    "environment": {
+      "en": "Plasma with mixed-resolution displays; native Wayland, Xwayland and X11 apps can follow different scaling paths.",
+      "de": "Plasma mit unterschiedlich auflösenden Monitoren; native Wayland-, Xwayland- und X11-Anwendungen können verschiedene Skalierungswege nutzen."
+    },
+    "symptoms": {
+      "en": [
+        "Only certain applications appear twice as large.",
+        "Moving an app between displays changes size or sharpness unexpectedly."
+      ],
+      "de": [
+        "Nur bestimmte Anwendungen erscheinen doppelt so groß.",
+        "Beim Verschieben zwischen Monitoren ändern sich Größe oder Schärfe unerwartet."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A Qt scale override may multiply the compositor’s native scale factor.",
+        "de": "Eine Qt-Skalierungsvorgabe kann den nativen Compositor-Faktor multiplizieren."
+      },
+      {
+        "en": "Per-output settings or an application’s Xwayland behavior may differ.",
+        "de": "Monitorbezogene Einstellungen oder das Xwayland-Verhalten einer Anwendung können abweichen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-native-output-scales",
+        "command": "kscreen-doctor -o",
+        "explanation": {
+          "en": "Queries output names, modes and scale without setting display configuration; run in the Plasma session.",
+          "de": "Fragt Ausgabenamen, Modi und Skalierung ab, ohne Monitoreinstellungen zu ändern; in der Plasma-Sitzung ausführen."
+        },
+        "interpretation": {
+          "en": "Compare Scale for the affected output and verify its resolution. A native scale of 1.5 and an app-specific factor of 2 can produce an effective factor of 3.",
+          "de": "Scale des betroffenen Ausgangs und Auflösung vergleichen. Eine native Skalierung von 1,5 und ein App-Faktor von 2 können effektiv Faktor 3 ergeben."
+        }
+      },
+      {
+        "id": "read-application-scale-overrides",
+        "command": "printenv QT_SCALE_FACTOR QT_SCREEN_SCALE_FACTORS QT_FONT_DPI GDK_SCALE GDK_DPI_SCALE XDG_SESSION_TYPE",
+        "explanation": {
+          "en": "Read from the affected app’s launch context; toolkit-specific overrides may not be present in a different terminal.",
+          "de": "Im Startkontext der Anwendung lesen; toolkitbezogene Vorgaben können in einem anderen Terminal fehlen."
+        },
+        "interpretation": {
+          "en": "A global Qt factor or forced font DPI can explain app-only differences. Empty output does not rule out app settings or Xwayland-specific scaling.",
+          "de": "Ein globaler Qt-Faktor oder erzwungene Schrift-DPI können nur diese App betreffen. Keine Ausgabe schließt App-Einstellungen oder Xwayland-Skalierung nicht aus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-redundant-app-scale-override",
+        "title": {
+          "en": "Remove a redundant application scale override",
+          "de": "Eine überflüssige App-Skalierungsvorgabe entfernen"
+        },
+        "body": {
+          "en": "If the app inherits an unintended Qt/GDK factor, save its launcher environment and remove only the extra factor for that application. Close and reopen it so it can use the desktop’s native scale. Leave other toolkit settings intact.",
+          "de": "Wenn die App einen ungewollten Qt-/GDK-Faktor erbt, die Starterumgebung sichern und nur den zusätzlichen Faktor dieser Anwendung entfernen. App schließen und neu öffnen, damit sie die native Desktop-Skalierung nutzt. Andere Toolkit-Einstellungen erhalten."
+        },
+        "precautions": {
+          "en": "Qt’s QT_SCALE_FACTOR multiplies native scaling; setting it to 1 does not force a native 200% screen to 100%.",
+          "de": "Qt multipliziert mit QT_SCALE_FACTOR die native Skalierung; Faktor 1 zwingt einen nativ mit 200% skalierten Monitor nicht auf 100%."
+        },
+        "rollback": {
+          "en": "Restore the saved per-application factor and relaunch if the override was intentionally required.",
+          "de": "Den gesicherten anwendungsbezogenen Faktor herstellen und neu starten, falls die Vorgabe gewollt nötig war."
+        }
+      },
+      {
+        "id": "adjust-native-output-scale",
+        "title": {
+          "en": "Adjust the intended output’s native scale",
+          "de": "Native Skalierung des vorgesehenen Monitors anpassen"
+        },
+        "body": {
+          "en": "If every native app is wrong on one output, record the current display settings and adjust only that output’s scale in Plasma Display Configuration. Keep its resolution and refresh rate unchanged for this comparison, then assess the affected app across displays.",
+          "de": "Wenn alle nativen Apps an einem Monitor falsch skaliert werden, die aktuellen Monitoreinstellungen notieren und nur dessen Skalierung in der Plasma-Anzeigekonfiguration ändern. Auflösung und Bildrate für diesen Vergleich erhalten und die App auf beiden Monitoren beurteilen."
+        },
+        "precautions": {
+          "en": "Fractional scaling and Xwayland rendering can affect sharpness independently of size. Do not delete the entire display profile as a first step.",
+          "de": "Fraktionale Skalierung und Xwayland-Rendering können Schärfe unabhängig von Größe beeinflussen. Nicht zuerst das gesamte Monitorprofil löschen."
+        },
+        "rollback": {
+          "en": "Restore the recorded output scale in Display Configuration; use the settings dialog’s revert option if the display becomes unusable.",
+          "de": "Die notierte Monitorskalierung in der Anzeigekonfiguration herstellen; bei unbenutzbarem Bild die Rücknahme im Dialog nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "KDE KScreen doctor: read output configuration",
+        "url": "https://github.com/KDE/libkscreen/blob/master/src/doctor/doctor.cpp",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "Qt: native DPI and scale-factor environment variables",
+        "url": "https://doc.qt.io/qt-6/highdpi.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "GTK: application scaling environment",
+        "url": "https://docs.gtk.org/gtk3/running.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "xkb-layout-compilation-failure",
+    "slug": {
+      "en": "xkb-layout-compilation-failure",
+      "de": "xkb-tastaturlayout-kompiliert-nicht"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "XKB cannot compile the configured keyboard layout",
+      "de": "XKB kann das konfigurierte Tastaturlayout nicht kompilieren"
+    },
+    "summary": {
+      "en": "A layout typo or missing include can prevent keymap compilation. Test the selected names without applying an experimental map to the session.",
+      "de": "Ein Layout-Tippfehler oder fehlendes Include kann die Tastaturbelegung blockieren. Gewählte Namen prüfen, ohne die aktive Belegung zu ersetzen."
+    },
+    "environment": {
+      "en": "libxkbcommon-based desktops and compositors; xkbcli is supplied by a distribution-specific tools package. Xorg has different include-path rules.",
+      "de": "Desktops und Compositoren mit libxkbcommon; xkbcli kommt aus einem distributionsabhängigen Werkzeugpaket. Xorg nutzt andere Include-Pfadregeln."
+    },
+    "symptoms": {
+      "en": [
+        "The compositor rejects a keyboard layout setting.",
+        "Logs identify a missing symbols include or failed keymap compilation."
+      ],
+      "de": [
+        "Der Compositor lehnt eine Tastaturlayout-Einstellung ab.",
+        "Protokolle nennen ein fehlendes Symbols-Include oder eine gescheiterte Kompilierung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A human language name may have been used instead of an XKB layout or variant code.",
+        "de": "Ein ausgeschriebener Sprachname kann anstelle eines XKB-Layout- oder Variantencodes stehen."
+      },
+      {
+        "en": "A custom symbols file or xkeyboard-config resource may be absent from the active include paths.",
+        "de": "Eine eigene Symbols-Datei oder xkeyboard-config-Ressource kann in den aktiven Include-Pfaden fehlen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "compile-layout-without-applying",
+        "command": "xkbcli compile-keymap --layout LAYOUT --variant VARIANT",
+        "explanation": {
+          "en": "Replace LAYOUT and VARIANT with the configured codes; omit --variant if none is configured. Compiles to output without changing the active keyboard.",
+          "de": "LAYOUT und VARIANT durch die eingetragenen Codes ersetzen; bei fehlender Variante --variant weglassen. Kompiliert zur Ausgabe, ohne die aktive Tastatur umzustellen."
+        },
+        "interpretation": {
+          "en": "A compiler error identifies the missing symbols or syntax. A successful compile does not prove the compositor loads the same configuration.",
+          "de": "Ein Kompilierungsfehler nennt fehlende Symbols-Dateien oder Syntax. Eine erfolgreiche Kompilierung beweist nicht, dass der Compositor dieselbe Konfiguration lädt."
+        }
+      },
+      {
+        "id": "inspect-xkb-include-environment",
+        "command": "printenv XKB_CONFIG_ROOT XKB_CONFIG_EXTRA_PATH XDG_CONFIG_HOME",
+        "explanation": {
+          "en": "Reads custom include-path variables without loading a keymap. Check compositor-specific environment separately when necessary.",
+          "de": "Liest eigene Include-Pfadvariablen, ohne eine Belegung zu laden. Bei Bedarf die Umgebung des Compositors getrennt prüfen."
+        },
+        "interpretation": {
+          "en": "A custom root can hide distribution layouts. User configuration and privileged contexts may search different paths, so root is not an equivalent test.",
+          "de": "Eine eigene Wurzel kann Distributionslayouts verdecken. Benutzer- und privilegierte Kontexte können andere Pfade durchsuchen; root ist kein gleichwertiger Test."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-layout-and-variant-codes",
+        "title": {
+          "en": "Correct the layout and variant codes",
+          "de": "Layout- und Variantencodes korrigieren"
+        },
+        "body": {
+          "en": "If the missing symbol names come from a typo, save the compositor’s keyboard configuration and choose an installed layout/variant pair through its settings. Compile that pair first, then apply only the keyboard change through the desktop’s supported reload or relogin.",
+          "de": "Wenn fehlende Symbols-Namen aus einem Tippfehler stammen, die Tastaturkonfiguration sichern und ein installiertes Layout-/Variantenpaar in den Einstellungen wählen. Dieses zuerst kompilieren und dann nur die Tastaturänderung per unterstütztem Neuladen oder Neuanmeldung anwenden."
+        },
+        "precautions": {
+          "en": "Keep a working fallback layout and another input/recovery path; an invalid active map can prevent typing a rollback command.",
+          "de": "Eine funktionierende Ersatzbelegung und einen weiteren Eingabe-/Rettungsweg behalten; eine ungültige aktive Belegung kann das Tippen der Rücknahme verhindern."
+        },
+        "rollback": {
+          "en": "Restore the saved keyboard settings and apply the previous working layout through the same session mechanism.",
+          "de": "Die gesicherten Tastatureinstellungen herstellen und die zuvor funktionierende Belegung über denselben Sitzungsweg anwenden."
+        }
+      },
+      {
+        "id": "repair-custom-xkb-include",
+        "title": {
+          "en": "Repair the specific custom include or resource package",
+          "de": "Das konkrete eigene Include oder Ressourcenpaket korrigieren"
+        },
+        "body": {
+          "en": "If a custom layout is intentional, place only its missing resource in the documented user include location and test it from a temporary include path before activating it. If standard layouts are missing, repair the owning xkeyboard-config package through the distribution.",
+          "de": "Wenn ein eigenes Layout gewollt ist, nur dessen fehlende Ressource am dokumentierten Benutzer-Include-Ort ergänzen und vor Aktivierung aus einem temporären Include-Pfad testen. Bei fehlenden Standardlayouts das zuständige xkeyboard-config-Paket über die Distribution reparieren."
+        },
+        "precautions": {
+          "en": "Do not overwrite system symbols files or assume Xorg honors libxkbcommon’s user include paths.",
+          "de": "Keine System-Symbols-Dateien überschreiben oder annehmen, dass Xorg die Benutzerpfade von libxkbcommon berücksichtigt."
+        },
+        "rollback": {
+          "en": "Remove the added custom resource or restore its saved version and the original include-path setting.",
+          "de": "Die ergänzte eigene Ressource entfernen oder deren gesicherte Version und die ursprüngliche Include-Pfadregel wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "libxkbcommon: read-only keymap compilation and debugging",
+        "url": "https://xkbcommon.org/doc/current/debugging.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "libxkbcommon: custom configuration and include paths",
+        "url": "https://xkbcommon.github.io/libxkbcommon/custom-configuration.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "QEMU upstream: missing XKB resource compiler output",
+        "url": "https://gitlab.com/qemu-project/qemu/-/issues/1709",
+        "kind": "official",
+        "evidence": "upstream-report"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "xkb-symbol-include-missing",
+        "all": [
+          "xkbcommon:",
+          "ERROR:",
+          "Couldn't find file",
+          "symbols/"
+        ],
+        "sample": "xkbcommon: ERROR: Couldn't find file \"symbols/example-layout\" in include paths",
+        "negative": [
+          "xkbcommon: DEBUG: Include path added: /usr/share/X11/xkb",
+          "xkbcommon: ERROR: Couldn't find file \"types/custom\" in include paths"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The keymap compiler could not locate a requested symbols include.",
+          "de": "Der Tastaturcompiler konnte ein angefordertes Symbols-Include nicht finden."
+        },
+        "significance": {
+          "en": "Inspect the layout code and include path before changing keyboard hardware or input drivers.",
+          "de": "Layoutcode und Include-Pfad prüfen, bevor Tastaturhardware oder Eingabetreiber geändert werden."
+        }
+      },
+      {
+        "id": "xkb-symbol-compilation-failed",
+        "all": [
+          "xkbcommon:",
+          "ERROR:",
+          "Failed to compile xkb_symbols"
+        ],
+        "sample": "xkbcommon: ERROR: Failed to compile xkb_symbols",
+        "negative": [
+          "xkbcommon: ERROR: Failed to compile xkb_types",
+          "xkbcommon: DEBUG: Compiling xkb_symbols"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "The symbols component of an XKB map failed to compile.",
+          "de": "Der Symbols-Bestandteil einer XKB-Belegung konnte nicht kompiliert werden."
+        },
+        "significance": {
+          "en": "Read the preceding compiler error to separate missing includes from invalid custom syntax.",
+          "de": "Den vorherigen Kompilierungsfehler lesen, um fehlende Includes von eigener ungültiger Syntax zu trennen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "default-application-mismatch",
+    "slug": {
+      "en": "default-application-mismatch",
+      "de": "standardanwendung-falsch"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "Files or links open in the wrong default application",
+      "de": "Dateien oder Links öffnen die falsche Standardanwendung"
+    },
+    "summary": {
+      "en": "MIME defaults and desktop-specific overrides can select an unexpected application. Compare detected type, handler ID and configuration precedence.",
+      "de": "MIME-Vorgaben und desktopspezifische Regeln können eine andere Anwendung wählen. Erkannten Typ, Starter-ID und Vorrang der Regeln vergleichen."
+    },
+    "environment": {
+      "en": "freedesktop.org MIME application associations; file types and URL scheme handlers are separate identifiers.",
+      "de": "MIME-Anwendungszuordnungen nach freedesktop.org; Dateitypen und URL-Schemata besitzen getrennte Bezeichner."
+    },
+    "symptoms": {
+      "en": [
+        "PDF files open in a different viewer than expected.",
+        "A web link launches an old browser despite a newer install."
+      ],
+      "de": [
+        "PDF-Dateien öffnen sich in einem unerwarteten Betrachter.",
+        "Ein Weblink startet trotz neuer Installation einen alten Browser."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A higher-priority user or desktop-specific mimeapps.list may override a system default.",
+        "de": "Eine vorrangige Benutzer- oder Desktop-mimeapps.list kann die Systemvorgabe überschreiben."
+      },
+      {
+        "en": "The application may use a different MIME type or URL-scheme association.",
+        "de": "Die Anwendung kann einen anderen MIME-Typ oder eine URL-Schema-Zuordnung verwenden."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "identify-file-mime-type",
+        "command": "xdg-mime query filetype /path/to/file",
+        "explanation": {
+          "en": "Replace with a representative existing file; classifies it without opening an associated GUI application.",
+          "de": "Durch eine vorhandene repräsentative Datei ersetzen; klassifiziert sie, ohne die zugeordnete GUI-Anwendung zu öffnen."
+        },
+        "interpretation": {
+          "en": "Use the reported type for the next query. A filename extension alone does not establish the MIME type used by the desktop.",
+          "de": "Den ausgegebenen Typ für die nächste Abfrage nutzen. Eine Dateiendung allein beweist nicht den vom Desktop verwendeten MIME-Typ."
+        }
+      },
+      {
+        "id": "query-current-mime-handler",
+        "command": "xdg-mime query default MIME_TYPE",
+        "explanation": {
+          "en": "Replace MIME_TYPE with the reported type, such as application/pdf, or the actual URL scheme, such as x-scheme-handler/https.",
+          "de": "MIME_TYPE durch den erkannten Typ wie application/pdf oder das tatsächliche URL-Schema wie x-scheme-handler/https ersetzen."
+        },
+        "interpretation": {
+          "en": "The output is a desktop-file ID, not an executable path. Empty output suggests no resolved default; another app may still choose its own handler.",
+          "de": "Die Ausgabe ist eine Desktop-Datei-ID, kein Programmpfad. Keine Ausgabe spricht für keine ermittelte Vorgabe; eine App kann trotzdem eine eigene Zuordnung wählen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "set-one-mime-default",
+        "title": {
+          "en": "Set the default for the actual MIME type",
+          "de": "Die Vorgabe für den tatsächlichen MIME-Typ setzen"
+        },
+        "body": {
+          "en": "If the resolved default is wrong, record its desktop-file ID and choose the intended installed application through the desktop’s default-app settings or xdg-mime default APP.desktop MIME_TYPE. Change the HTTPS scheme separately when the issue concerns web links.",
+          "de": "Wenn die ermittelte Vorgabe falsch ist, deren Desktop-Datei-ID notieren und die vorgesehene installierte Anwendung über die Standardprogrammeinstellungen oder xdg-mime default APP.desktop MIME_TYPE wählen. Bei Weblinks das HTTPS-Schema getrennt ändern."
+        },
+        "precautions": {
+          "en": "Use a real installed desktop-file ID. Do not bind every file type to a single application.",
+          "de": "Eine tatsächlich installierte Desktop-Datei-ID verwenden. Nicht alle Dateitypen einer einzigen Anwendung zuweisen."
+        },
+        "rollback": {
+          "en": "Restore the recorded desktop-file ID for the same MIME type, or restore the saved mimeapps.list if there was previously no explicit association.",
+          "de": "Die notierte Desktop-Datei-ID für denselben MIME-Typ herstellen oder die gesicherte mimeapps.list nutzen, wenn vorher keine ausdrückliche Zuordnung bestand."
+        }
+      },
+      {
+        "id": "remove-stale-higher-priority-association",
+        "title": {
+          "en": "Correct a stale higher-priority association",
+          "de": "Eine veraltete vorrangige Zuordnung korrigieren"
+        },
+        "body": {
+          "en": "If the new default is immediately shadowed, inspect the active desktop’s user mimeapps.list and desktop-specific overrides. Back up the owning file and remove only the stale Default Applications entry for that type, preserving Added and Removed Associations.",
+          "de": "Wenn die neue Vorgabe sofort überschattet wird, Benutzer-mimeapps.list und desktopspezifische Vorgaben des aktiven Desktops prüfen. Die betreffende Datei sichern und nur den alten Default-Applications-Eintrag dieses Typs korrigieren; Added und Removed Associations erhalten."
+        },
+        "precautions": {
+          "en": "Configuration locations have precedence; editing a low-priority system file may have no effect on a user override.",
+          "de": "Konfigurationsorte haben einen Vorrang; eine niedrig priorisierte Systemdatei beeinflusst eine Benutzer-Vorgabe möglicherweise nicht."
+        },
+        "rollback": {
+          "en": "Restore the saved association file or original entry for this type, without replacing unrelated defaults.",
+          "de": "Die gesicherte Zuordnungsdatei oder den ursprünglichen Eintrag dieses Typs herstellen, ohne andere Vorgaben zu ersetzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "xdg-mime: filetype and default queries",
+        "url": "https://portland.freedesktop.org/doc/xdg-mime.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "freedesktop.org: MIME application association specification",
+        "url": "https://specifications.freedesktop.org/mime-apps/latest/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "polkit-authentication-agent-missing",
+    "slug": {
+      "en": "polkit-authentication-agent-missing",
+      "de": "polkit-anmeldeagent-fehlt"
+    },
+    "category": "desktop",
+    "title": {
+      "en": "A privileged desktop action has no authentication agent",
+      "de": "Eine Desktop-Aktion hat keinen polkit-Anmeldeagenten"
+    },
+    "summary": {
+      "en": "A working polkit daemon does not guarantee a password dialog in a custom desktop. Inspect the session and its registered authentication agent.",
+      "de": "Ein laufender polkit-Daemon garantiert keinen Passwortdialog im eigenen Desktop. Sitzung und zugehörigen Anmeldeagenten prüfen."
+    },
+    "environment": {
+      "en": "Desktop actions using polkit; minimal window-manager sessions may need a separate agent. This is distinct from sudo prompting.",
+      "de": "Desktop-Aktionen mit polkit; minimale Fenstermanager-Sitzungen können einen eigenen Agenten benötigen. Das unterscheidet sich von sudo-Abfragen."
+    },
+    "symptoms": {
+      "en": [
+        "A disk or network settings action shows no authentication dialog.",
+        "pkexec reports that no authentication agent was found."
+      ],
+      "de": [
+        "Eine Datenträger- oder Netzwerkaktion zeigt keinen Anmeldedialog.",
+        "pkexec meldet einen fehlenden Anmeldeagenten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "No desktop authentication agent may be running or registered for this session.",
+        "de": "Für diese Sitzung läuft oder registriert sich möglicherweise kein Desktop-Anmeldeagent."
+      },
+      {
+        "en": "The process may be associated with another or inactive login session.",
+        "de": "Der Prozess kann einer anderen oder inaktiven Anmeldesitzung zugeordnet sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-login-session-association",
+        "command": "loginctl session-status",
+        "explanation": {
+          "en": "Reads the invoking process’s login session where logind is used; run from the same desktop launch context.",
+          "de": "Liest bei logind die Anmeldesitzung des aufrufenden Prozesses; aus demselben Desktop-Startkontext ausführen."
+        },
+        "interpretation": {
+          "en": "Check the intended account and active/local session. An SSH session is not interchangeable with the GUI session for policy decisions.",
+          "de": "Vorgesehenes Konto und aktive lokale Sitzung prüfen. Eine SSH-Sitzung ist für Regelentscheidungen nicht mit der GUI-Sitzung austauschbar."
+        }
+      },
+      {
+        "id": "read-polkit-registration-events",
+        "command": "journalctl -b -u polkit.service --no-pager",
+        "explanation": {
+          "en": "Reads this boot’s authority-service messages; journal permissions and the unit name vary by distribution.",
+          "de": "Liest Meldungen des Autorisierungsdienstes dieses Starts; Journalrechte und Unit-Name variieren je nach Distribution."
+        },
+        "interpretation": {
+          "en": "Correlate agent registration/unregistration with the desktop’s session ID. A running polkit service alone does not show a usable prompt agent.",
+          "de": "Agent-An- und Abmeldungen mit der Desktop-Sitzungs-ID vergleichen. Ein laufender polkit-Dienst zeigt allein keinen nutzbaren Dialogagenten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "start-desktop-matching-auth-agent",
+        "title": {
+          "en": "Start the intended desktop’s authentication agent",
+          "de": "Den vorgesehenen Desktop-Anmeldeagenten starten"
+        },
+        "body": {
+          "en": "If the desktop provides an agent but its autostart entry is disabled, restore that entry for the affected session. For a minimal WM, install the distribution’s supported agent and start exactly one instance through the WM’s documented session startup as the logged-in user.",
+          "de": "Wenn der Desktop einen Agenten mitbringt, dessen Autostart aber deaktiviert ist, den Eintrag für diese Sitzung herstellen. Bei einem minimalen WM den unterstützten Distributionsagenten installieren und genau eine Instanz über dessen dokumentierten Sitzungsstart als angemeldeter Benutzer starten."
+        },
+        "precautions": {
+          "en": "Do not launch the agent as root or grant all polkit actions globally to avoid the dialog. Agent executable paths differ by distribution.",
+          "de": "Den Agenten nicht als root starten oder alle polkit-Aktionen global freigeben, um den Dialog zu vermeiden. Programmpfade unterscheiden sich nach Distribution."
+        },
+        "rollback": {
+          "en": "Disable only the autostart entry added for this fix and end its agent process, or restore the saved desktop autostart setting.",
+          "de": "Nur den neu ergänzten Autostart deaktivieren und dessen Agent-Prozess beenden oder die gesicherte Desktop-Autostarteinstellung herstellen."
+        }
+      },
+      {
+        "id": "restore-correct-polkit-session",
+        "title": {
+          "en": "Run the action in its intended active session",
+          "de": "Die Aktion in der vorgesehenen aktiven Sitzung ausführen"
+        },
+        "body": {
+          "en": "If registration exists for another session, close the stale launcher and start the action from the intended desktop account’s active session. If login integration is broken, repair the distribution’s supported PAM/session configuration with a saved backup and console access before relogin.",
+          "de": "Wenn die Registrierung zu einer anderen Sitzung gehört, den alten Starter schließen und die Aktion aus der aktiven Desktop-Sitzung des vorgesehenen Kontos starten. Bei defekter Anmeldeintegration die unterstützte PAM-/Sitzungskonfiguration mit Sicherung und Konsolenzugang vor Neuanmeldung reparieren."
+        },
+        "precautions": {
+          "en": "A registered agent cannot authorize an operation excluded by policy. A cancelled or denied request differs from an absent agent.",
+          "de": "Ein registrierter Agent erlaubt keinen regelwidrigen Vorgang. Eine abgebrochene oder abgelehnte Anfrage unterscheidet sich von einem fehlenden Agenten."
+        },
+        "rollback": {
+          "en": "Restore the saved login configuration from the working console and start a fresh session; undo only the launcher changes made here.",
+          "de": "Die gesicherte Anmeldekonfiguration über die funktionierende Konsole herstellen und eine neue Sitzung starten; nur die hier geänderten Starter zurücknehmen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "polkit: architecture, subjects and authentication agents",
+        "url": "https://polkit.pages.freedesktop.org/polkit/polkit.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "polkit: authentication-agent registration",
+        "url": "https://polkit.pages.freedesktop.org/polkit/polkit-agents.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "polkit pkexec source: missing authentication-agent diagnostic",
+        "url": "https://github.com/polkit-org/polkit/blob/main/src/programs/pkexec.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "polkit-agent-unavailable",
+        "all": [
+          "Error executing command as another user:",
+          "No authentication agent found."
+        ],
+        "sample": "Error executing command as another user: No authentication agent found.",
+        "negative": [
+          "Error executing command as another user: Not authorized",
+          "Error executing command as another user: Request dismissed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "pkexec could not obtain an authentication agent for the requested challenge.",
+          "de": "pkexec konnte für die angeforderte Anmeldung keinen Agenten verwenden."
+        },
+        "significance": {
+          "en": "Check the desktop session and agent; do not interpret this as a wrong password or authorization to bypass policy.",
+          "de": "Desktop-Sitzung und Agent prüfen; das bedeutet weder ein falsches Passwort noch eine Freigabe zur Regelumgehung."
+        }
+      }
+    ]
+  }
+]

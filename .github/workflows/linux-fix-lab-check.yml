@@ -1,0 +1,23 @@
+name: Linux Fix Lab
+on:
+  pull_request:
+    paths: ['linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
+  push:
+    branches: [main]
+    paths: ['linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run build:fix-lab
+      - run: npm run test:fix-lab
+      - run: node --test tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
+      - run: npm run test:seo
+      - name: Generated pages and sitemap must be current
+        run: git diff --exit-code -- linux-fix-lab de/linux-fix-lab assets/linux-fix-lab/catalog.js content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml 'sitemap*.xml'

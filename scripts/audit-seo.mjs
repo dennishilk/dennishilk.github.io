@@ -3,6 +3,10 @@ import { join, relative, resolve, sep } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://www.dennishilk.com";
+// Fail closed: the unlisted live test is excluded until a separately approved launch.
+const labPublicationFile = join(root, "content/linux-fix-lab/publication.json");
+const labPublication = existsSync(labPublicationFile) ? JSON.parse(readFileSync(labPublicationFile, "utf8")) : {};
+const labSitemapActive = labPublication.phase === "public-launch" && labPublication.allowIndexing === true && labPublication.activateSitemap === true;
 const sitemapNames = [
   "sitemap.xml",
   "sitemap-de.xml",
@@ -10,7 +14,7 @@ const sitemapNames = [
   "sitemap-technology-observers.xml",
   "sitemap-images.xml",
   "sitemap-cisco-doom.xml",
-  "sitemap-blog.xml",
+  "sitemap-blog.xml", ...(labSitemapActive ? ["sitemap-linux-fix-lab.xml"] : []),
 ];
 
 const technicalPages = new Set([

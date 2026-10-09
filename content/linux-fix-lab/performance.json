@@ -1,0 +1,1839 @@
+[
+  {
+    "id": "cgroup-cpu-quota-throttling",
+    "slug": {
+      "en": "cgroup-cpu-quota-throttling",
+      "de": "cgroup-cpu-kontingent-drosselung"
+    },
+    "category": "performance",
+    "title": {
+      "en": "A service is slow while the host still has idle CPU",
+      "de": "Ein Dienst ist langsam trotz freier Host-CPU"
+    },
+    "summary": {
+      "en": "CPU quota can suspend a busy cgroup while other CPUs remain idle. Compare quota settings and throttling deltas before adding threads or changing governors.",
+      "de": "Ein CPU-Kontingent kann eine aktive cgroup trotz freier CPUs pausieren. Vergleiche Grenzen und Drosselungszähler vor mehr Threads oder Governor-Wechsel."
+    },
+    "environment": {
+      "en": "Linux cgroup v2 CPU controller and systemd CPUQuota; controller files depend on the active hierarchy.",
+      "de": "Linux-cgroup-v2-CPU-Controller und systemd-CPUQuota; Controllerdateien hängen von der aktiven Hierarchie ab."
+    },
+    "symptoms": {
+      "en": [
+        "Work slows in bursts although the machine has spare CPU capacity.",
+        "The affected cgroup's throttling counters increase during the workload."
+      ],
+      "de": [
+        "Arbeit wird schubweise langsam, obwohl CPU-Kapazität frei ist.",
+        "Drosselungszähler der betroffenen cgroup steigen während der Arbeit."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A finite cpu.max or systemd CPUQuota can cap aggregate execution time across the service's threads.",
+        "de": "Endliches cpu.max oder systemd-CPUQuota kann die gesamte Ausführungszeit aller Dienstthreads begrenzen."
+      },
+      {
+        "en": "An ancestor slice may impose the effective cap; CPUWeight only distributes contention and is not a hard quota.",
+        "de": "Eine übergeordnete Slice kann die wirksame Grenze setzen; CPUWeight verteilt Konkurrenz und ist kein hartes Kontingent."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-service-cpu-policy",
+        "command": "systemctl show example.service -p ControlGroup -p CPUQuotaPerSecUSec -p CPUQuotaPeriodUSec -p CPUWeight",
+        "explanation": {
+          "en": "Replace example.service; no runtime settings are changed.",
+          "de": "Ersetze example.service; keine Laufzeitwerte werden geändert."
+        },
+        "interpretation": {
+          "en": "A quota equivalent to 100% caps about one CPU's aggregate time, not one fixed core. Inspect parent slices if the local quota is unlimited.",
+          "de": "Ein Kontingent von 100% begrenzt ungefähr die Gesamtzeit einer CPU, nicht einen festen Kern. Prüfe bei lokal unbegrenzten Werten die Eltern-Slices."
+        }
+      },
+      {
+        "id": "inspect-quota-and-throttling",
+        "command": "cat /sys/fs/cgroup/system.slice/example.service/cpu.max /sys/fs/cgroup/system.slice/example.service/cpu.stat",
+        "explanation": {
+          "en": "Replace the path with ControlGroup under /sys/fs/cgroup on cgroup v2; repeat this read around the same workload.",
+          "de": "Ersetze den Pfad durch ControlGroup unter /sys/fs/cgroup bei cgroup v2; wiederhole das Lesen rund um dieselbe Last."
+        },
+        "interpretation": {
+          "en": "cpu.max gives budget and period. Rising nr_throttled or throttled_usec shows local quota enforcement; inspect ancestors because their throttling may not appear in the child's counters.",
+          "de": "cpu.max nennt Budget und Periode. Steigende nr_throttled oder throttled_usec zeigen lokale Begrenzung; Elternlimits erscheinen möglicherweise nicht im Kindzähler."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "right-size-measured-quota",
+        "title": {
+          "en": "Right-size the measured CPU quota",
+          "de": "Gemessenes CPU-Kontingent passend wählen"
+        },
+        "body": {
+          "en": "If throttling coincides with latency and more CPU time is intended, raise the finite quota for this service or its constraining slice through the owner configuration. Recheck latency and neighboring workloads.",
+          "de": "Wenn Drosselung und Latenz zusammenfallen und mehr CPU-Zeit vorgesehen ist, erhöhe das endliche Kontingent dieses Dienstes oder seiner begrenzenden Slice in der Konfiguration. Prüfe Nachbarlasten mit."
+        },
+        "precautions": {
+          "en": "A child cannot escape a tighter parent cap. Record old settings and avoid removing isolation for all services.",
+          "de": "Eine Kind-cgroup entgeht keinem strengeren Elternlimit. Notiere alte Werte und entferne nicht die Grenzen aller Dienste."
+        },
+        "rollback": {
+          "en": "Restore previous quota and period at the same hierarchy level and compare the same workload.",
+          "de": "Stelle Kontingent und Periode auf derselben Hierarchieebene zurück und vergleiche gleiche Last."
+        }
+      },
+      {
+        "id": "reduce-burst-demand",
+        "title": {
+          "en": "Reduce the application's burst demand",
+          "de": "Lastspitzen der Anwendung reduzieren"
+        },
+        "body": {
+          "en": "If the quota is intentional, reduce worker concurrency or batch size so the application fits its CPU budget. For best-effort prioritization rather than a hard cap, assess CPUWeight with measured competing workloads.",
+          "de": "Wenn das Kontingent beabsichtigt ist, reduziere Worker oder Batchgröße für dieses Budget. Prüfe CPUWeight bei konkurrierender Last, falls relative Bevorzugung statt harter Grenze gewünscht ist."
+        },
+        "precautions": {
+          "en": "Less concurrency may reduce throughput; changing quota to weight also changes resource-isolation semantics.",
+          "de": "Weniger Parallelität kann Durchsatz verringern; der Wechsel von Kontingent zu Gewicht ändert die Ressourcenisolation."
+        },
+        "rollback": {
+          "en": "Restore application concurrency and the original quota/weight settings if measured results worsen.",
+          "de": "Stelle Parallelität und ursprüngliche Kontingent-/Gewichtswerte bei schlechteren Messwerten zurück."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — cgroup v2 controllers",
+        "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd resource control — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.resource-control.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "cpu-frequency-thermal-throttling",
+    "slug": {
+      "en": "cpu-frequency-thermal-throttling",
+      "de": "cpu-takt-thermisch-begrenzt"
+    },
+    "category": "performance",
+    "title": {
+      "en": "CPU frequency remains low under sustained work",
+      "de": "CPU-Takt bleibt unter Dauerlast niedrig"
+    },
+    "summary": {
+      "en": "Low reported frequency can reflect policy caps, thermal limits or a requested frequency rather than actual clock speed. Compare policy and sensor evidence.",
+      "de": "Niedriger gemeldeter Takt kann an Vorgaben, Wärmegrenzen oder einer Sollfrequenz liegen. Vergleiche Taktregeln und Sensorhinweise unter derselben Last."
+    },
+    "environment": {
+      "en": "Linux CPUFreq policies; sensor support and thermal counters vary by platform and driver.",
+      "de": "Linux-CPUFreq-Regeln; Sensoren und thermische Zähler unterscheiden sich nach Plattform und Treiber."
+    },
+    "symptoms": {
+      "en": [
+        "Sustained throughput drops after a warm-up period.",
+        "The configured maximum or measured temperature coincides with low effective clock."
+      ],
+      "de": [
+        "Dauerlastdurchsatz sinkt nach einer Aufwärmphase.",
+        "Konfiguriertes Maximum oder gemessene Temperatur passt zu niedrigem wirksamem Takt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The active profile, firmware cap or scaling maximum may restrict the requested performance.",
+        "de": "Aktives Profil, Firmwaregrenze oder maximales Scaling kann die angeforderte Leistung begrenzen."
+      },
+      {
+        "en": "Thermal or power limits can constrain actual performance even when scaling_cur_freq reports a high requested state.",
+        "de": "Wärme- oder Leistungsgrenzen können tatsächliche Leistung trotz hoher gemeldeter scaling_cur_freq begrenzen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-frequency-policy",
+        "command": "cat /sys/devices/system/cpu/cpufreq/policy0/scaling_driver /sys/devices/system/cpu/cpufreq/policy0/scaling_governor /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_max_freq",
+        "explanation": {
+          "en": "Reads one CPUFreq policy in argument order; select the policy covering the affected CPUs. Missing files indicate unsupported interfaces.",
+          "de": "Liest eine CPUFreq-Regel in Argumentreihenfolge; wähle die betroffenen CPUs. Fehlende Dateien bedeuten nicht unterstützte Schnittstellen."
+        },
+        "interpretation": {
+          "en": "A low scaling maximum supports a policy cap. Governor names and scaling_cur_freq do not alone prove the hardware's effective frequency.",
+          "de": "Ein niedriges Scaling-Maximum spricht für eine Vorgabengrenze. Governorname und scaling_cur_freq beweisen allein keinen tatsächlichen Hardwaretakt."
+        }
+      },
+      {
+        "id": "inspect-temperature",
+        "command": "sensors",
+        "explanation": {
+          "en": "Read-only lm-sensors output; the tool and sensor drivers must already be available.",
+          "de": "Liest lm-sensors-Ausgabe; Werkzeug und Sensortreiber müssen vorhanden sein."
+        },
+        "interpretation": {
+          "en": "Compare CPU sensor labels and limits with throughput over time. A single cool sample after load ended does not exclude earlier thermal limiting.",
+          "de": "Vergleiche CPU-Sensorbezeichnungen und Grenzen mit zeitlichem Durchsatz. Ein kühler Einzelwert nach Lastende schließt vorherige Drosselung nicht aus."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-unintended-performance-cap",
+        "title": {
+          "en": "Correct an unintended performance cap",
+          "de": "Unbeabsichtigte Leistungsgrenze korrigieren"
+        },
+        "body": {
+          "en": "If the active profile or scaling cap is unintentionally low, select the intended supported power profile or restore its documented CPUFreq limits. Keep the policy change controlled and compare identical work.",
+          "de": "Wenn Profil oder Taktgrenze ungewollt niedrig sind, wähle das vorgesehene unterstützte Leistungsprofil oder stelle dokumentierte CPUFreq-Grenzen her. Vergleiche identische Arbeit mit kontrollierter Änderung."
+        },
+        "precautions": {
+          "en": "Higher requested performance increases heat and power. Do not write frequencies outside the driver's supported range.",
+          "de": "Mehr angeforderte Leistung erhöht Wärme und Verbrauch. Schreibe keine Takte außerhalb des unterstützten Treiberbereichs."
+        },
+        "rollback": {
+          "en": "Restore the recorded profile and policy limits; verify that automation does not immediately overwrite them.",
+          "de": "Stelle Profil und notierte Grenzen zurück; prüfe, ob Automatik sie sofort wieder überschreibt."
+        }
+      },
+      {
+        "id": "resolve-confirmed-cooling-constraint",
+        "title": {
+          "en": "Resolve a confirmed cooling constraint",
+          "de": "Bestätigte Kühlungsgrenze beheben"
+        },
+        "body": {
+          "en": "If sensor and sustained-work evidence support thermal limiting, reduce workload intensity while checking fan operation, blocked airflow and the platform's supported cooling configuration. Reassess sustained throughput after correcting the actual constraint.",
+          "de": "Wenn Sensoren und Dauerlast thermische Begrenzung stützen, reduziere Last und prüfe Lüfter, blockierten Luftstrom und unterstützte Kühlung. Bewerte Durchsatz nach Behebung der tatsächlichen Grenze neu."
+        },
+        "precautions": {
+          "en": "Do not disable thermal protection to preserve a benchmark. Missing sensors or model-specific counters do not prove temperatures are safe or unsafe.",
+          "de": "Deaktiviere keine Wärmeschutzfunktion für einen Benchmark. Fehlende Sensoren oder modellspezifische Zähler beweisen weder niedrige noch hohe Temperaturen."
+        },
+        "rollback": {
+          "en": "Restore any temporary workload or profile restriction after verified cooling correction; undo only documented configuration changes.",
+          "de": "Stelle vorübergehende Last- oder Profilgrenzen nach geprüfter Kühlkorrektur zurück; nimm nur dokumentierte Konfigurationsänderungen zurück."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — CPU performance scaling",
+        "url": "https://docs.kernel.org/admin-guide/pm/cpufreq.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — hardware monitoring sensor interfaces",
+        "url": "https://docs.kernel.org/hwmon/sysfs-interface.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "memory-pressure-reclaim-stalls",
+    "slug": {
+      "en": "memory-pressure-reclaim-stalls",
+      "de": "speicherdruck-reclaim-pausen"
+    },
+    "category": "performance",
+    "title": {
+      "en": "Memory reclaim stalls interactive work",
+      "de": "Speicherrückgewinnung bremst interaktive Arbeit"
+    },
+    "summary": {
+      "en": "Applications pause during memory pressure before any OOM kill. Use memory PSI, available memory and reclaim deltas to separate pressure from a CPU bottleneck.",
+      "de": "Anwendungen pausieren bei Speicherdruck bereits vor OOM. Nutze Memory-PSI, verfügbaren Speicher und Reclaim-Zähler zur Abgrenzung eines CPU-Engpasses."
+    },
+    "environment": {
+      "en": "Linux with PSI and proc memory accounting; host-wide pressure and cgroup-local pressure can differ.",
+      "de": "Linux mit PSI und proc-Speicherstatistik; Hostdruck und cgroup-lokaler Druck können abweichen."
+    },
+    "symptoms": {
+      "en": [
+        "Interactive latency rises while the machine reclaims memory.",
+        "Memory PSI rises even without a killed process."
+      ],
+      "de": [
+        "Interaktive Latenz steigt während der Speicherrückgewinnung.",
+        "Memory-PSI steigt auch ohne beendeten Prozess."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The active working set may exceed accessible memory and force direct reclaim.",
+        "de": "Die aktive Arbeitsmenge kann verfügbaren Speicher übersteigen und direkte Rückgewinnung erzwingen."
+      },
+      {
+        "en": "A constrained cgroup may be reclaiming locally although the host has spare memory.",
+        "de": "Eine begrenzte cgroup kann lokal zurückgewinnen, obwohl der Host freien Speicher hat."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-memory-pressure",
+        "command": "cat /proc/pressure/memory",
+        "explanation": {
+          "en": "Reads host memory PSI; missing output can mean PSI support is disabled or unavailable.",
+          "de": "Liest Host-Memory-PSI; fehlende Ausgabe kann deaktivierte oder fehlende PSI-Unterstützung bedeuten."
+        },
+        "interpretation": {
+          "en": "some measures time with at least some tasks stalled; full means all non-idle tasks stalled together. Percentages are time, not RAM utilization.",
+          "de": "some misst Zeit mit teilweise blockierter Arbeit; full gemeinsam blockierte nicht inaktive Arbeit. Prozentwerte beschreiben Zeit, nicht RAM-Auslastung."
+        }
+      },
+      {
+        "id": "read-available-memory",
+        "command": "rg '^(MemAvailable|MemFree|Cached|SwapTotal|SwapFree):' /proc/meminfo",
+        "explanation": {
+          "en": "Reads selected kernel accounting fields; normally no elevation required.",
+          "de": "Liest gezielte Kernelstatistik; normalerweise ohne erhöhte Rechte."
+        },
+        "interpretation": {
+          "en": "Low MemFree alone is normal with caching. Low MemAvailable combined with PSI supports real pressure; swap occupancy alone does not prove thrashing.",
+          "de": "Wenig MemFree allein ist bei Cache normal. Wenig MemAvailable mit PSI stützt echten Druck; belegter Swap allein beweist kein Thrashing."
+        }
+      },
+      {
+        "id": "read-reclaim-counters",
+        "command": "rg '^(pgscan_direct|pgsteal_direct|allocstall)' /proc/vmstat",
+        "explanation": {
+          "en": "Reads cumulative reclaim counters; repeat before and after the same workload, without changing VM settings.",
+          "de": "Liest kumulative Reclaim-Zähler; wiederhole vor und nach gleicher Last ohne VM-Änderung."
+        },
+        "interpretation": {
+          "en": "Rising direct-reclaim and allocation-stall counters correlate with reclaim work. A historical total without a workload-time delta is weak evidence.",
+          "de": "Steigende direkte Reclaim- und Allokationsstauzähler passen zur Rückgewinnung. Ein historischer Gesamtwert ohne Lastdifferenz ist schwach."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "reduce-working-set-pressure",
+        "title": {
+          "en": "Reduce the measured working set",
+          "de": "Gemessene Arbeitsmenge reduzieren"
+        },
+        "body": {
+          "en": "If pressure tracks a specific application's memory growth, reduce its documented cache, batch size or worker count and investigate unbounded growth. Compare pressure and latency under the same workload.",
+          "de": "Wenn Druck mit Speicherwachstum einer Anwendung zusammenfällt, reduziere dokumentierten Cache, Batchgröße oder Worker und untersuche unbegrenztes Wachstum. Vergleiche Druck und Latenz bei gleicher Last."
+        },
+        "precautions": {
+          "en": "Dropping system caches is not a durable fix and can increase I/O. Save workload results before stopping heavy jobs.",
+          "de": "Systemcache-Leeren ist keine dauerhafte Lösung und kann I/O erhöhen. Sichere Ergebnisse vor dem Stopp großer Aufträge."
+        },
+        "rollback": {
+          "en": "Restore recorded application settings if the throughput tradeoff is unsuitable; retain the measured baseline.",
+          "de": "Stelle Anwendungswerte bei ungeeignetem Durchsatzverlust zurück; behalte die Ausgangsmessung."
+        }
+      },
+      {
+        "id": "correct-local-or-host-memory-budget",
+        "title": {
+          "en": "Correct the applicable memory budget",
+          "de": "Den zuständigen Speicherrahmen korrigieren"
+        },
+        "body": {
+          "en": "If pressure is local, review the service's MemoryHigh and parent budget rather than assuming host RAM is exhausted. If the host itself is constrained, schedule fewer concurrent jobs or add suitable capacity with a planned swap policy.",
+          "de": "Bei lokalem Druck prüfe MemoryHigh und Elternbudget statt automatisch erschöpften Host-RAM anzunehmen. Bei Hostgrenzen plane weniger parallele Aufträge oder passende Kapazität mit bewusster Swap-Regel."
+        },
+        "precautions": {
+          "en": "Raising one budget can pressure neighboring services. PSI does not identify a single leaking application.",
+          "de": "Ein höheres Einzelbudget kann Nachbardienste belasten. PSI identifiziert keine einzelne undichte Anwendung."
+        },
+        "rollback": {
+          "en": "Restore the prior service budgets or scheduling plan and compare host plus local pressure again.",
+          "de": "Stelle frühere Dienstbudgets oder Ablaufplanung zurück und vergleiche Host- und lokalen Druck erneut."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — Pressure Stall Information",
+        "url": "https://docs.kernel.org/accounting/psi.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — proc memory fields",
+        "url": "https://www.kernel.org/doc/html/latest/filesystems/proc.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — OOM kill implementation",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/refs/heads/master/mm/oom_kill.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-global-oom-kill",
+        "all": [
+          "Out of memory:",
+          "Killed process",
+          "anon-rss:"
+        ],
+        "sample": "kernel: Out of memory: Killed process 824 (example) total-vm:8000000kB, anon-rss:6200000kB, file-rss:0kB, shmem-rss:0kB",
+        "negative": [
+          "kernel: Memory cgroup out of memory: Killed process 824 (example) total-vm:8000000kB, anon-rss:6200000kB",
+          "example[824]: Out of memory: allocation rejected"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a kernel OOM victim report without a memory-cgroup prefix.",
+          "de": "Synthetisches Beispiel für einen Kernel-OOM-Abbruch ohne Memory-cgroup-Präfix."
+        },
+        "significance": {
+          "en": "An allocation reached OOM handling; inspect surrounding constraints before calling this simple total-RAM exhaustion.",
+          "de": "Eine Allokation erreichte die OOM-Behandlung; prüfe benachbarte Einschränkungen vor der Annahme erschöpften Gesamt-RAMs."
+        },
+        "none": [
+          "Memory cgroup"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cgroup-memory-oom-kill",
+    "slug": {
+      "en": "cgroup-memory-oom-kill",
+      "de": "cgroup-speicherlimit-oom"
+    },
+    "category": "performance",
+    "title": {
+      "en": "A service hits its cgroup memory boundary",
+      "de": "Ein Dienst erreicht seine cgroup-Speichergrenze"
+    },
+    "summary": {
+      "en": "A process is killed although host RAM remains available. Correlate cgroup limits, memory.events and the kill record before increasing a service budget.",
+      "de": "Ein Prozess wird trotz verfügbarem Host-RAM beendet. Vergleiche cgroup-Grenzen, memory.events und Abbruchmeldung vor mehr Dienstspeicher."
+    },
+    "environment": {
+      "en": "Linux cgroup v2 memory controller; systemd MemoryHigh, MemoryMax and ancestor slices.",
+      "de": "Linux-cgroup-v2-Memory-Controller; systemd-MemoryHigh, MemoryMax und Eltern-Slices."
+    },
+    "symptoms": {
+      "en": [
+        "A kernel message names Memory cgroup out of memory.",
+        "The service fails with oom-kill while other applications remain active."
+      ],
+      "de": [
+        "Eine Kernelmeldung nennt Memory cgroup out of memory.",
+        "Der Dienst scheitert mit oom-kill, während andere Anwendungen aktiv bleiben."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The cgroup or ancestor may reach memory.max and be unable to reclaim enough for an allocation.",
+        "de": "Die cgroup oder ihr Elternbereich kann memory.max erreichen und zu wenig für eine Allokation zurückgewinnen."
+      },
+      {
+        "en": "Excessive concurrency or a growing cache can breach an otherwise intentional memory boundary.",
+        "de": "Zu hohe Parallelität oder wachsender Cache kann eine ansonsten beabsichtigte Speichergrenze überschreiten."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-service-memory-policy",
+        "command": "systemctl show example.service -p ControlGroup -p MemoryHigh -p MemoryMax -p MemorySwapMax -p Result",
+        "explanation": {
+          "en": "Replace the unit; reads policy and failure result without restarting it.",
+          "de": "Ersetze die Unit; liest Regel und Fehlerergebnis ohne Neustart."
+        },
+        "interpretation": {
+          "en": "MemoryHigh drives pressure and reclaim; MemoryMax is a hard boundary. Parent limits can dominate the local values.",
+          "de": "MemoryHigh erzeugt Druck und Reclaim; MemoryMax ist eine harte Grenze. Elternlimits können lokale Werte überwiegen."
+        }
+      },
+      {
+        "id": "inspect-cgroup-memory-events",
+        "command": "cat /sys/fs/cgroup/system.slice/example.service/memory.events /sys/fs/cgroup/system.slice/example.service/memory.current /sys/fs/cgroup/system.slice/example.service/memory.max",
+        "explanation": {
+          "en": "Use ControlGroup under /sys/fs/cgroup; requires cgroup v2 and a still-existing cgroup.",
+          "de": "Nutze ControlGroup unter /sys/fs/cgroup; benötigt cgroup v2 und eine noch vorhandene cgroup."
+        },
+        "interpretation": {
+          "en": "Correlate max/oom events with the kill record. oom_kill counts members killed by any OOM type, so that counter alone does not prove a local limit hit.",
+          "de": "Vergleiche max-/oom-Ereignisse mit der Abbruchmeldung. oom_kill zählt Mitglieder aller OOM-Arten; der Zähler allein beweist kein lokales Limit."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "right-size-confirmed-memory-limit",
+        "title": {
+          "en": "Right-size a confirmed memory limit",
+          "de": "Bestätigte Speichergrenze passend wählen"
+        },
+        "body": {
+          "en": "If legitimate peak usage exceeds an accidentally low budget, increase this service's finite MemoryMax and review MemoryHigh and its parent's allocation. Check host headroom and repeat the intended workload.",
+          "de": "Wenn berechtigte Spitzen eine versehentlich niedrige Grenze übersteigen, erhöhe endliches MemoryMax dieses Dienstes und prüfe MemoryHigh sowie Elternbudget. Prüfe Hostreserve und dieselbe Last."
+        },
+        "precautions": {
+          "en": "A larger budget can move OOM pressure to the host. Increasing a child limit cannot override its parent.",
+          "de": "Mehr Einzelbudget kann OOM-Druck auf den Host verlagern. Ein Kindlimit überschreibt sein Elternlimit nicht."
+        },
+        "rollback": {
+          "en": "Restore recorded budgets and restart affected work through its supported recovery path; a killed process's unsaved state is not restored.",
+          "de": "Stelle Budgets zurück und starte Arbeit nach ihrem unterstützten Rückweg; ungesicherter Zustand eines beendeten Prozesses kommt nicht zurück."
+        }
+      },
+      {
+        "id": "keep-budget-reduce-demand",
+        "title": {
+          "en": "Keep the budget and reduce demand",
+          "de": "Budget behalten und Bedarf senken"
+        },
+        "body": {
+          "en": "If isolation is deliberate, reduce worker count, batch size or application cache to fit it and investigate leaks. Make the workload resumable or checkpointed using the application's supported mechanism.",
+          "de": "Wenn Isolation beabsichtigt ist, reduziere Worker, Batchgröße oder Cache für das Budget und untersuche Speicherlecks. Nutze unterstützte Wiederaufnahme oder Checkpoints."
+        },
+        "precautions": {
+          "en": "Do not disable OOM protection or set every service unlimited. A cgroup kill record does not identify which allocation caused the peak.",
+          "de": "Deaktiviere keinen OOM-Schutz und setze nicht alle Dienste unbegrenzt. Die Abbruchmeldung identifiziert nicht die verursachende Allokation."
+        },
+        "rollback": {
+          "en": "Restore prior application sizing only if it fits the restored budget; recover from valid application checkpoints or backups.",
+          "de": "Stelle frühere Anwendungsgrößen nur bei passendem Budget zurück; nutze gültige Checkpoints oder Sicherungen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — cgroup v2 controllers",
+        "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd resource control — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.resource-control.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — OOM kill implementation",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/refs/heads/master/mm/oom_kill.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-memory-cgroup-oom",
+        "all": [
+          "Memory cgroup out of memory:",
+          "Killed process",
+          "anon-rss:"
+        ],
+        "sample": "kernel: Memory cgroup out of memory: Killed process 932 (example) total-vm:3000000kB, anon-rss:1900000kB, file-rss:0kB",
+        "negative": [
+          "kernel: Out of memory: Killed process 932 (example) total-vm:3000000kB, anon-rss:1900000kB",
+          "kernel: memory cgroup example current=1900000kB"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for an OOM kill with memory-cgroup context.",
+          "de": "Synthetisches Beispiel für einen OOM-Abbruch im Memory-cgroup-Kontext."
+        },
+        "significance": {
+          "en": "Inspect local and parent limits plus the surrounding OOM constraints.",
+          "de": "Prüfe lokale und Elternlimits samt umgebenden OOM-Einschränkungen."
+        }
+      },
+      {
+        "id": "systemd-oom-kill-result",
+        "all": [
+          ".service:",
+          "Failed with result 'oom-kill'"
+        ],
+        "sample": "systemd[1]: example.service: Failed with result 'oom-kill'.",
+        "negative": [
+          "systemd[1]: example.service: Failed with result 'signal'.",
+          "systemd[1]: example.service: Deactivated successfully."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a systemd OOM-related service result.",
+          "de": "Synthetisches Beispiel für einen OOM-bezogenen Dienststatus."
+        },
+        "significance": {
+          "en": "This reports an OOM-related death, not necessarily a local MemoryMax violation.",
+          "de": "Dies meldet eine OOM-bezogene Beendigung, nicht zwingend eine lokale MemoryMax-Verletzung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "swap-thrashing-latency",
+    "slug": {
+      "en": "swap-thrashing-latency",
+      "de": "swap-thrashing-latenz"
+    },
+    "category": "performance",
+    "title": {
+      "en": "Swap activity causes repeated interactive pauses",
+      "de": "Swap-Aktivität verursacht wiederholte interaktive Pausen"
+    },
+    "summary": {
+      "en": "Occupied swap is not itself a fault. Correlate swap-in/out rates, memory pressure and working-set demand before changing swappiness or disabling swap.",
+      "de": "Belegter Swap allein ist kein Fehler. Vergleiche Ein-/Auslagerungsraten, Speicherdruck und Arbeitsmenge vor Änderungen an swappiness oder Swap."
+    },
+    "environment": {
+      "en": "Linux swap accounting, VM policy and procps vmstat; compressed swap has different cost tradeoffs.",
+      "de": "Linux-Swap-Statistik, VM-Regeln und procps-vmstat; komprimierter Swap besitzt andere Kosten."
+    },
+    "symptoms": {
+      "en": [
+        "Pauses coincide with sustained swap-in and swap-out traffic.",
+        "Memory pressure persists while the same pages are repeatedly revisited."
+      ],
+      "de": [
+        "Pausen fallen mit dauernder Ein- und Auslagerung zusammen.",
+        "Speicherdruck bleibt bestehen, während dieselben Seiten wiederholt benötigt werden."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The active working set may not fit accessible RAM, causing repeated page eviction and refaults.",
+        "de": "Die aktive Arbeitsmenge passt eventuell nicht in verfügbaren RAM und erzeugt wiederholte Verdrängung und Neuladung."
+      },
+      {
+        "en": "Swap device latency, compression CPU cost or a cgroup's swap policy may amplify pressure; occupancy alone does not distinguish these.",
+        "de": "Swap-Latenz, Kompressionskosten oder cgroup-Regeln können Druck verstärken; belegter Swap allein unterscheidet dies nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "sample-swap-rates",
+        "command": "vmstat 1 6",
+        "explanation": {
+          "en": "Read-only procps sampling for six reports; the first report summarizes time since boot.",
+          "de": "Liest sechs procps-Berichte; der erste fasst die Zeit seit dem Boot zusammen."
+        },
+        "interpretation": {
+          "en": "Use later si/so intervals, not only total swap occupancy. Sustained traffic with latency supports thrashing, while old inactive swapped pages can be harmless.",
+          "de": "Nutze spätere si-/so-Intervalle statt nur Belegung. Dauernder Verkehr mit Latenz stützt Thrashing; alte inaktive ausgelagerte Seiten können unkritisch sein."
+        }
+      },
+      {
+        "id": "inspect-swap-devices",
+        "command": "swapon --show --bytes",
+        "explanation": {
+          "en": "The --show form only lists active swap devices and usage; do not omit it.",
+          "de": "Die Form --show listet nur aktive Swap-Geräte und Belegung; lasse sie nicht weg."
+        },
+        "interpretation": {
+          "en": "Compare device type, priority and use with observed rates. A high used value is not proof that this device is busy during the pause.",
+          "de": "Vergleiche Gerätetyp, Priorität und Belegung mit den Raten. Hohe Belegung beweist keine Aktivität während der Pause."
+        }
+      },
+      {
+        "id": "inspect-swappiness",
+        "command": "sysctl vm.swappiness",
+        "explanation": {
+          "en": "Reads the current swappiness value without assigning one.",
+          "de": "Liest den aktuellen swappiness-Wert ohne Zuweisung."
+        },
+        "interpretation": {
+          "en": "Swappiness expresses relative reclaim cost; it is not a percentage of RAM at which swapping begins.",
+          "de": "Swappiness beschreibt relative Rückgewinnungskosten; es ist kein RAM-Prozentwert für den Beginn des Swappings."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "reduce-recurring-page-demand",
+        "title": {
+          "en": "Reduce recurring page demand",
+          "de": "Wiederkehrenden Seitenbedarf verringern"
+        },
+        "body": {
+          "en": "If the workload repeatedly exceeds RAM, reduce concurrent jobs, application caches or batch size, or provide capacity appropriate to its working set. Compare later vmstat intervals and PSI under the same load.",
+          "de": "Wenn die Last RAM wiederholt übersteigt, reduziere parallele Aufträge, Cache oder Batchgröße oder stelle passende Kapazität bereit. Vergleiche spätere vmstat-Intervalle und PSI bei gleicher Last."
+        },
+        "precautions": {
+          "en": "Turning off occupied swap can force pages back into insufficient RAM and trigger OOM. Save application state before stopping work.",
+          "de": "Abschalten belegten Swaps kann Seiten in zu wenig RAM zurückzwingen und OOM auslösen. Sichere Anwendungszustand vor Arbeitsstopp."
+        },
+        "rollback": {
+          "en": "Restore application sizing gradually only within the available budget; retain the previous scheduling plan.",
+          "de": "Stelle Anwendungsgrößen nur innerhalb des Budgets schrittweise zurück; behalte die frühere Ablaufplanung."
+        }
+      },
+      {
+        "id": "tune-verified-swap-cost",
+        "title": {
+          "en": "Tune swap policy for measured cost",
+          "de": "Swap-Regel an gemessene Kosten anpassen"
+        },
+        "body": {
+          "en": "If measurements show swap cost differs from filesystem refault cost, trial a documented swappiness adjustment for this host and monitor latency plus OOM events. Evaluate compressed or faster swap as a separate planned configuration change.",
+          "de": "Wenn Swap-Kosten messbar von erneuten Dateiseitenzugriffen abweichen, erprobe dokumentiertes swappiness und überwache Latenz sowie OOM. Prüfe komprimierten oder schnelleren Swap als gesonderte geplante Änderung."
+        },
+        "precautions": {
+          "en": "Keep the old value and change one factor. A lower value is not universally faster, particularly with compressed memory-backed swap.",
+          "de": "Bewahre den alten Wert auf und ändere einen Faktor. Niedrigere Werte sind nicht allgemein schneller, besonders bei komprimiertem Speicher-Swap."
+        },
+        "rollback": {
+          "en": "Restore the recorded swappiness and original swap configuration; do not deactivate busy swap without sufficient memory headroom.",
+          "de": "Stelle swappiness und Swap-Konfiguration zurück; deaktiviere beschäftigten Swap nicht ohne genügend Speicherreserve."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — VM sysctl semantics",
+        "url": "https://docs.kernel.org/admin-guide/sysctl/vm.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "vmstat — procps upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/procps/vmstat.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "io-pressure-writeback-latency",
+    "slug": {
+      "en": "io-pressure-writeback-latency",
+      "de": "io-druck-writeback-latenz"
+    },
+    "category": "performance",
+    "title": {
+      "en": "Background writeback stalls foreground work",
+      "de": "Hintergrundschreibvorgänge bremsen Vordergrundarbeit"
+    },
+    "summary": {
+      "en": "Foreground latency rises during bulk writes without device errors. Compare I/O PSI, queue latency and dirty pages before changing writeback or I/O budgets.",
+      "de": "Vordergrundlatenz steigt bei großen Schreibvorgängen ohne Gerätefehler. Vergleiche I/O-PSI, Wartelatenz und Dirty-Pages vor Änderungen an I/O-Budgets."
+    },
+    "environment": {
+      "en": "Linux PSI, dirty-page writeback and cgroup v2 I/O control; sysstat tools must already be installed.",
+      "de": "Linux-PSI, Dirty-Page-Writeback und cgroup-v2-I/O-Regeln; sysstat muss vorhanden sein."
+    },
+    "symptoms": {
+      "en": [
+        "Interactive reads pause while a backup or large copy runs.",
+        "I/O pressure rises without a corresponding hardware-error record."
+      ],
+      "de": [
+        "Interaktive Lesezugriffe pausieren während Backup oder großer Kopie.",
+        "I/O-Druck steigt ohne passende Hardwarefehlermeldung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A bulk writer may saturate the device queue or cause foreground dirty-page throttling.",
+        "de": "Ein großer Schreibauftrag kann die Gerätewarteschlange sättigen oder Vordergrundschreibende wegen Dirty-Pages bremsen."
+      },
+      {
+        "en": "An io.max or parent resource budget can limit throughput; high utilization alone does not prove a failing disk.",
+        "de": "io.max oder ein Elternbudget kann Durchsatz begrenzen; hohe Auslastung allein beweist keinen defekten Datenträger."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-io-pressure",
+        "command": "cat /proc/pressure/io",
+        "explanation": {
+          "en": "Reads host I/O stall time; PSI must be supported and enabled.",
+          "de": "Liest Host-I/O-Stauzeit; PSI muss unterstützt und aktiviert sein."
+        },
+        "interpretation": {
+          "en": "Rising some or full identifies time lost to I/O stalls, not a specific device. Compare changes during and after the bulk writer.",
+          "de": "Steigende some- oder full-Werte zeigen durch I/O verlorene Zeit, kein bestimmtes Gerät. Vergleiche während und nach dem großen Schreiber."
+        }
+      },
+      {
+        "id": "sample-block-queue-latency",
+        "command": "iostat -xz 1 6",
+        "explanation": {
+          "en": "Read-only sysstat sampling; first report is usually since boot, so use later intervals.",
+          "de": "Liest sysstat-Stichproben; erster Bericht gewöhnlich seit Boot, daher spätere Intervalle nutzen."
+        },
+        "interpretation": {
+          "en": "Compare read/write await, queue depth and throughput for the actual backing device. %util alone is not a universal saturation threshold on parallel devices.",
+          "de": "Vergleiche Lese-/Schreib-await, Warteschlangentiefe und Durchsatz des tatsächlichen Geräts. %util allein ist keine universelle Sättigungsgrenze paralleler Geräte."
+        }
+      },
+      {
+        "id": "inspect-dirty-pages",
+        "command": "rg '^(Dirty|Writeback|MemAvailable):' /proc/meminfo",
+        "explanation": {
+          "en": "Reads relevant memory accounting; repeat around the pause.",
+          "de": "Liest relevante Speicherstatistik; wiederhole rund um die Pause."
+        },
+        "interpretation": {
+          "en": "Dirty pages awaiting writeback and active Writeback support a buffered-writer correlation. One snapshot does not establish queue service time.",
+          "de": "Auf Writeback wartende Dirty-Pages und aktives Writeback stützen den Zusammenhang. Ein Einzelwert bestimmt keine Warteschlangen-Servicezeit."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "limit-background-writer",
+        "title": {
+          "en": "Limit the identified background writer",
+          "de": "Ermittelten Hintergrundschreiber begrenzen"
+        },
+        "body": {
+          "en": "If bulk writes correlate with foreground pauses, reduce that job's application-level concurrency or use a finite device-specific IO bandwidth budget for its cgroup. Verify the device mapping and latency impact.",
+          "de": "Wenn große Schreibvorgänge mit Pausen zusammenfallen, reduziere ihre Parallelität oder nutze ein endliches gerätespezifisches I/O-Budget ihrer cgroup. Prüfe Gerätezuordnung und Latenzwirkung."
+        },
+        "precautions": {
+          "en": "The backup or copy will take longer. Device-mapper stacks and filesystem support can affect where cgroup accounting applies.",
+          "de": "Backup oder Kopie dauert länger. Device-Mapper und Dateisystemunterstützung beeinflussen die wirksame cgroup-Zuordnung."
+        },
+        "rollback": {
+          "en": "Restore the recorded job settings or I/O limit on the same device and cgroup.",
+          "de": "Stelle Auftragseinstellungen oder I/O-Grenze am selben Gerät und in derselben cgroup zurück."
+        }
+      },
+      {
+        "id": "adjust-measured-writeback-budget",
+        "title": {
+          "en": "Adjust a measured writeback budget",
+          "de": "Gemessenen Writeback-Rahmen anpassen"
+        },
+        "body": {
+          "en": "If buffered dirty-page bursts are the verified trigger, trial documented dirty_background_bytes and dirty_bytes thresholds appropriate to device speed and RAM. Alternatively reschedule bulk writers away from interactive work.",
+          "de": "Wenn gepufferte Dirty-Page-Spitzen bestätigt auslösen, erprobe dokumentierte dirty_background_bytes und dirty_bytes passend zu Gerät und RAM. Plane alternativ große Schreiber außerhalb interaktiver Arbeit."
+        },
+        "precautions": {
+          "en": "Byte and ratio forms supersede their counterpart; record all original values. Smaller bursts can improve latency while reducing peak throughput.",
+          "de": "Byte- und Ratioformen ersetzen ihr Gegenstück; notiere sämtliche Ausgangswerte. Kleinere Spitzen können Latenz auf Kosten des Spitzendurchsatzes verbessern."
+        },
+        "rollback": {
+          "en": "Restore original VM thresholds or schedule and compare identical I/O work; do not disable writeback safety mechanisms.",
+          "de": "Stelle VM-Schwellen oder Ablaufplan zurück und vergleiche identische I/O-Arbeit; deaktiviere keine Writeback-Schutzmechanismen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — Pressure Stall Information",
+        "url": "https://docs.kernel.org/accounting/psi.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — VM sysctl semantics",
+        "url": "https://docs.kernel.org/admin-guide/sysctl/vm.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "iostat — sysstat upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/sysstat/iostat.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — cgroup v2 controllers",
+        "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "cgroup-process-limit-exhaustion",
+    "slug": {
+      "en": "cgroup-process-limit-exhaustion",
+      "de": "cgroup-prozesslimit-erschoepft"
+    },
+    "category": "performance",
+    "title": {
+      "en": "A service cannot create more threads or processes",
+      "de": "Ein Dienst kann keine weiteren Threads oder Prozesse erzeugen"
+    },
+    "summary": {
+      "en": "Fork or thread creation fails while memory remains available. Check cgroup task counts and ancestor limits before raising TasksMax or blaming the application.",
+      "de": "Fork oder Thread-Erstellung scheitert trotz verfügbarem Speicher. Prüfe cgroup-Aufgabenzahlen und Elternlimits vor mehr TasksMax."
+    },
+    "environment": {
+      "en": "Linux cgroup v2 pids controller and systemd TasksMax; threads count toward the task budget.",
+      "de": "Linux-cgroup-v2-pids-Controller und systemd-TasksMax; Threads zählen zum Aufgabenbudget."
+    },
+    "symptoms": {
+      "en": [
+        "The kernel reports fork rejected by pids controller.",
+        "A worker pool or shell cannot create additional tasks."
+      ],
+      "de": [
+        "Der Kernel meldet fork rejected by pids controller.",
+        "Ein Worker-Pool oder eine Shell kann keine weiteren Aufgaben erzeugen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The service or an ancestor may reach pids.max; the count includes threads, not just process leaders.",
+        "de": "Dienst oder Elternbereich kann pids.max erreichen; gezählt werden Threads, nicht nur Prozessführer."
+      },
+      {
+        "en": "An application may leak threads or create excessive workers; RLIMIT_NPROC is a separate possible constraint.",
+        "de": "Eine Anwendung kann Threads verlieren oder zu viele Worker erzeugen; RLIMIT_NPROC ist eine getrennte mögliche Grenze."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-systemd-task-budget",
+        "command": "systemctl show example.service -p ControlGroup -p TasksCurrent -p TasksMax -p LimitNPROC",
+        "explanation": {
+          "en": "Replace the affected unit; reads current task count and configured limits.",
+          "de": "Ersetze die betroffene Unit; liest aktuelle Aufgabenzahl und Grenzen."
+        },
+        "interpretation": {
+          "en": "TasksMax is cgroup-based, while LimitNPROC is user-account-based. A parent pids limit can block a service below its local maximum.",
+          "de": "TasksMax gilt pro cgroup, LimitNPROC pro Benutzerkonto. Ein Elternlimit kann unterhalb des lokalen Dienstmaximums blockieren."
+        }
+      },
+      {
+        "id": "inspect-pids-events",
+        "command": "cat /sys/fs/cgroup/system.slice/example.service/pids.current /sys/fs/cgroup/system.slice/example.service/pids.max /sys/fs/cgroup/system.slice/example.service/pids.events",
+        "explanation": {
+          "en": "Replace the path with ControlGroup under /sys/fs/cgroup; reads existing cgroup v2 files.",
+          "de": "Ersetze den Pfad durch ControlGroup unter /sys/fs/cgroup; liest vorhandene cgroup-v2-Dateien."
+        },
+        "interpretation": {
+          "en": "Compare current count with the limit and max-event deltas. Counts can temporarily exceed a limit after policy changes; thread creation still cannot violate the enforced budget.",
+          "de": "Vergleiche Anzahl, Limit und max-Ereignisdifferenzen. Nach Regeländerung kann die Zahl vorübergehend höher liegen; neue Threads überschreiten die wirksame Grenze nicht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "bound-worker-creation",
+        "title": {
+          "en": "Bound worker and thread creation",
+          "de": "Worker- und Thread-Erstellung begrenzen"
+        },
+        "body": {
+          "en": "If counts grow with connections or jobs and fail to fall afterward, cap the application's documented worker pool and investigate lifecycle leaks. Reduce accepted concurrency rather than restarting blindly.",
+          "de": "Wenn die Anzahl mit Verbindungen oder Aufträgen steigt und danach nicht fällt, begrenze den dokumentierten Worker-Pool und untersuche Lebenszykluslecks. Reduziere zugelassene Parallelität statt blinder Neustarts."
+        },
+        "precautions": {
+          "en": "Stopping or restarting workers may interrupt requests. Preserve thread-count evidence before reset.",
+          "de": "Worker-Stopp oder Neustart kann Anfragen unterbrechen. Sichere Zählerhinweise vor einem Reset."
+        },
+        "rollback": {
+          "en": "Restore prior application concurrency only within the intended task budget; recover interrupted jobs using their supported mechanism.",
+          "de": "Stelle Parallelität nur im vorgesehenen Budget zurück; nutze den unterstützten Rückweg unterbrochener Aufträge."
+        }
+      },
+      {
+        "id": "right-size-intended-task-budget",
+        "title": {
+          "en": "Right-size the intended task budget",
+          "de": "Vorgesehenes Aufgabenbudget passend wählen"
+        },
+        "body": {
+          "en": "If legitimate thread demand exceeds an accidental low TasksMax, increase the finite budget for this service or its limiting parent. Recheck memory cost and host headroom while keeping a protective bound.",
+          "de": "Wenn berechtigter Threadbedarf ein zu niedriges TasksMax übersteigt, erhöhe das endliche Budget dieses Dienstes oder seines begrenzenden Elternbereichs. Prüfe Speicherbedarf und Hostreserve mit weiterhin vorhandener Grenze."
+        },
+        "precautions": {
+          "en": "Raising only the child cannot override its parent. Unlimited tasks can amplify a runaway worker loop.",
+          "de": "Nur das Kindlimit zu erhöhen übersteuert den Elternbereich nicht. Unbegrenzte Aufgaben können eine Worker-Schleife verschärfen."
+        },
+        "rollback": {
+          "en": "Restore the recorded task budgets at their original hierarchy levels and compare the same connection load.",
+          "de": "Stelle Aufgabenbudgets auf ihren ursprünglichen Ebenen zurück und vergleiche dieselbe Verbindungslast."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — cgroup v2 controllers",
+        "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd resource control — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.resource-control.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — pids controller fork-rejection implementation",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/refs/heads/master/kernel/cgroup/pids.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-pids-controller-rejected",
+        "all": [
+          "cgroup: fork rejected by pids controller in /"
+        ],
+        "sample": "kernel: cgroup: fork rejected by pids controller in /system.slice/example.service",
+        "negative": [
+          "kernel: cgroup: enabled pids controller in /system.slice/example.service",
+          "example[912]: fork: Resource temporarily unavailable"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "Synthetic fixture for a kernel pids-controller rejection.",
+          "de": "Synthetisches Beispiel für eine Kernel-pids-Controller-Ablehnung."
+        },
+        "significance": {
+          "en": "A task budget blocked creation; inspect local and parent limits and actual thread demand.",
+          "de": "Ein Aufgabenbudget blockierte die Erstellung; prüfe lokale und Elternlimits sowie Threadbedarf."
+        }
+      }
+    ]
+  },
+  {
+    "id": "perf-event-access-restricted",
+    "slug": {
+      "en": "perf-event-access-restricted",
+      "de": "perf-event-zugriff-beschraenkt"
+    },
+    "category": "performance",
+    "title": {
+      "en": "Perf is denied access to performance events",
+      "de": "Perf erhält keinen Zugriff auf Performance-Events"
+    },
+    "summary": {
+      "en": "Perf cannot enable an event under the current security scope. Check paranoid policy, capabilities and container restrictions before enabling broad monitoring.",
+      "de": "Perf kann unter dem Sicherheitsrahmen kein Event aktivieren. Prüfe Paranoid-Regel, Capabilities und Containergrenzen vor umfassender Beobachtungsfreigabe."
+    },
+    "environment": {
+      "en": "Linux perf_events access control; perf must already be installed and event scope affects permissions.",
+      "de": "Linux-perf_events-Zugriffskontrolle; perf muss installiert sein und der Beobachtungsbereich beeinflusst Rechte."
+    },
+    "symptoms": {
+      "en": [
+        "Perf reports no permission to enable a requested event.",
+        "A command works as an authorized administrator but fails in a user or container context."
+      ],
+      "de": [
+        "Perf meldet fehlende Erlaubnis für ein angefordertes Event.",
+        "Ein Befehl funktioniert administrativ, scheitert aber als Benutzer oder im Container."
+      ]
+    },
+    "causes": [
+      {
+        "en": "perf_event_paranoid or a missing CAP_PERFMON permission may forbid the requested observation scope.",
+        "de": "perf_event_paranoid oder fehlendes CAP_PERFMON kann den Beobachtungsbereich verbieten."
+      },
+      {
+        "en": "Container seccomp or a security policy may block perf_event_open independently of the host's paranoid value.",
+        "de": "Container-Seccomp oder eine Sicherheitsregel kann perf_event_open unabhängig vom Host-Paranoid-Wert sperren."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-perf-policy",
+        "command": "sysctl kernel.perf_event_paranoid",
+        "explanation": {
+          "en": "Read-only policy query; it does not set a value.",
+          "de": "Reine Regelabfrage; sie setzt keinen Wert."
+        },
+        "interpretation": {
+          "en": "The value helps explain allowed scope, but distributions may add stronger restrictions. A permissive value does not override seccomp or mandatory policy.",
+          "de": "Der Wert hilft beim erlaubten Bereich, Distributionen können strenger sein. Ein freier Wert übersteuert weder Seccomp noch Sicherheitsrichtlinien."
+        }
+      },
+      {
+        "id": "test-scoped-user-event",
+        "command": "perf stat -e cycles:u -p 1234 --timeout 5000",
+        "explanation": {
+          "en": "Replace 1234 with your own existing process; reads user-space counters for five seconds and writes no perf data file.",
+          "de": "Ersetze 1234 durch einen eigenen vorhandenen Prozess; liest fünf Sekunden Userspace-Zähler ohne perf-Datendatei."
+        },
+        "interpretation": {
+          "en": "Permission failure indicates access policy; not-supported indicates event availability instead. A user-space-only event narrows scope but cannot bypass an outright syscall denial.",
+          "de": "Rechtefehler zeigt Zugriffspolitik; not-supported dagegen Event-Verfügbarkeit. Nur Userspace begrenzt den Bereich, umgeht aber keine vollständige Syscall-Sperre."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "narrow-observation-scope",
+        "title": {
+          "en": "Use the narrow permitted observation scope",
+          "de": "Den erlaubten engen Beobachtungsbereich nutzen"
+        },
+        "body": {
+          "en": "If policy permits own-process user-space counters, collect only those rather than system-wide or kernel events. Use application timings when the needed event is not allowed in this environment.",
+          "de": "Wenn eigene Userspace-Zähler erlaubt sind, erfasse nur diese statt systemweite oder Kernel-Events. Nutze Anwendungszeiten, wenn das benötigte Event in dieser Umgebung nicht erlaubt ist."
+        },
+        "precautions": {
+          "en": "Monitoring can reveal workload details. Keep collected output within the intended review scope and do not assume fewer events remove every restriction.",
+          "de": "Beobachtung kann Lastdetails offenlegen. Halte Ergebnisse im vorgesehenen Prüfbereich und erwarte nicht, dass weniger Events jede Grenze aufheben."
+        },
+        "rollback": {
+          "en": "Stop the bounded collection; no persistent access policy changes are needed for this approach.",
+          "de": "Beende die begrenzte Erfassung; dieser Weg benötigt keine dauerhafte Regeländerung."
+        }
+      },
+      {
+        "id": "grant-controlled-perf-access",
+        "title": {
+          "en": "Grant controlled performance-monitoring access",
+          "de": "Kontrollierten Performance-Zugriff erteilen"
+        },
+        "body": {
+          "en": "If broader profiling is required and authorized, use a narrowly managed CAP_PERFMON-enabled tool or administrator-run bounded capture according to host policy. In a container, review the exact syscall and capability restriction rather than enabling all privileges.",
+          "de": "Wenn umfassende Analyse erforderlich und erlaubt ist, nutze ein gezielt verwaltetes CAP_PERFMON-Werkzeug oder eine begrenzte administrative Erfassung nach Hostregel. Prüfe im Container genaue Syscall- und Capability-Grenzen."
+        },
+        "precautions": {
+          "en": "CAP_PERFMON is preferred over general CAP_SYS_ADMIN for this purpose. Avoid globally lowering paranoid policy as a routine shortcut.",
+          "de": "CAP_PERFMON ist dafür gegenüber allgemeinem CAP_SYS_ADMIN vorgesehen. Senke die Paranoid-Regel nicht routinemäßig global."
+        },
+        "rollback": {
+          "en": "Revoke the temporary capability or profiling access and restore the recorded host or container policy.",
+          "de": "Entziehe vorübergehende Capability oder Analysefreigabe und stelle notierte Host- oder Containerregeln zurück."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — perf events security",
+        "url": "https://docs.kernel.org/admin-guide/perf-security.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "perf-stat — upstream perf manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/linux-perf/perf-stat.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux perf — upstream event permission error implementation",
+        "url": "https://code.googlesource.com/linux/torvalds/linux/+/10dd1a736d557e310a77117832874729a0175d57/tools/perf/util/evsel.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "perf-no-permission-event",
+        "all": [
+          "No permission to enable"
+        ],
+        "sample": "No permission to enable cycles:u event.",
+        "negative": [
+          "cycles event enabled successfully",
+          "No permission to enable application logging."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for perf's event-access rejection.",
+          "de": "Synthetisches Beispiel für eine perf-Event-Zugriffsablehnung."
+        },
+        "significance": {
+          "en": "Review event scope and security policy; this is different from an unavailable PMU.",
+          "de": "Prüfe Event-Bereich und Sicherheitsregel; dies unterscheidet sich von einer fehlenden PMU."
+        },
+        "any": [
+          "cycles event",
+          "cycles:u event",
+          "task-clock event",
+          "task-clock:u event"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "perf-hardware-events-unavailable",
+    "slug": {
+      "en": "perf-hardware-events-unavailable",
+      "de": "perf-hardware-events-fehlen"
+    },
+    "category": "performance",
+    "title": {
+      "en": "Hardware counters are unavailable to perf",
+      "de": "Hardwarezähler stehen perf nicht zur Verfügung"
+    },
+    "summary": {
+      "en": "Perf software events work while CPU cycles or instructions are unavailable. Check PMU exposure, supported event names and the guest CPU model.",
+      "de": "Perf-Software-Events funktionieren, doch CPU-Zyklen oder Instruktionen fehlen. Prüfe PMU-Freigabe, Eventnamen und das Gast-CPU-Modell."
+    },
+    "environment": {
+      "en": "Linux perf and hardware PMUs, including virtual machines with a limited or disabled virtual PMU.",
+      "de": "Linux-perf und Hardware-PMUs, auch virtuelle Maschinen mit begrenzter oder deaktivierter virtueller PMU."
+    },
+    "symptoms": {
+      "en": [
+        "cycles or instructions reports not supported despite working software counters.",
+        "The boot journal reports no PMU driver and software events only."
+      ],
+      "de": [
+        "cycles oder instructions meldet not supported trotz funktionierender Softwarezähler.",
+        "Das Bootjournal meldet keinen PMU-Treiber und nur Software-Events."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The kernel may not support this CPU PMU, or virtualization may hide it from the guest.",
+        "de": "Der Kernel kann diese CPU-PMU nicht unterstützen oder Virtualisierung versteckt sie vor dem Gast."
+      },
+      {
+        "en": "An event name may belong to another CPU model or PMU; permission errors are a separate problem.",
+        "de": "Ein Eventname kann zu einem anderen CPU-Modell oder einer anderen PMU gehören; Rechtefehler sind ein anderes Problem."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "list-perf-events",
+        "command": "perf list",
+        "explanation": {
+          "en": "Reads event descriptions; listing does not start a measurement and requires perf to be installed.",
+          "de": "Liest Eventbeschreibungen; startet keine Messung und benötigt installiertes perf."
+        },
+        "interpretation": {
+          "en": "Separate hardware, software and tracepoint categories. A listed generic alias may still fail to open on an unsupported or hidden PMU.",
+          "de": "Unterscheide Hardware, Software und Tracepoints. Ein gelisteter allgemeiner Alias kann bei fehlender PMU trotzdem nicht geöffnet werden."
+        }
+      },
+      {
+        "id": "inspect-available-pmus",
+        "command": "ls /sys/bus/event_source/devices",
+        "explanation": {
+          "en": "Read-only directory listing of kernel event-source devices; normally no elevation needed.",
+          "de": "Liest Kernel-Eventquellen als Verzeichnisliste; normalerweise ohne erhöhte Rechte."
+        },
+        "interpretation": {
+          "en": "A cpu or architecture-specific PMU device supports hardware exposure. Only software sources support inspecting guest PMU policy, not lowering perf permissions.",
+          "de": "Eine cpu- oder architekturspezifische PMU stützt Hardwarefreigabe. Nur Softwarequellen sprechen für die Prüfung der Gast-PMU statt niedrigerer perf-Rechtegrenzen."
+        }
+      },
+      {
+        "id": "read-pmu-initialization",
+        "command": "journalctl -k -b --grep='Performance Events|PMU' --no-pager",
+        "explanation": {
+          "en": "Reads kernel initialization messages; authorized journal read access may be needed.",
+          "de": "Liest Kernel-Initialisierung; berechtigte Journal-Leserechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "A software-only message identifies PMU availability at boot. Successful PMU initialization does not guarantee every vendor-specific event exists.",
+          "de": "Eine Nur-Software-Meldung nennt die PMU-Verfügbarkeit beim Boot. Erfolgreiche Initialisierung garantiert nicht jedes herstellerspezifische Event."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "use-supported-event-set",
+        "title": {
+          "en": "Use supported events for this PMU",
+          "de": "Unterstützte Events dieser PMU verwenden"
+        },
+        "body": {
+          "en": "If the event belongs to another CPU model, choose events documented by this machine's perf list and use software counters or application timing when hardware support is absent. Label the measurement type accurately.",
+          "de": "Wenn das Event zu einem anderen CPU-Modell gehört, wähle durch perf list dokumentierte Events dieses Rechners und nutze bei fehlender Hardware Softwarezähler oder Anwendungszeiten. Benenne den Messtyp genau."
+        },
+        "precautions": {
+          "en": "Software time is not interchangeable with retired instructions or hardware cycles. Do not compare unlike counters as the same metric.",
+          "de": "Softwarezeit ist nicht mit ausgeführten Instruktionen oder Hardwarezyklen austauschbar. Vergleiche verschiedene Zähler nicht als dieselbe Metrik."
+        },
+        "rollback": {
+          "en": "Restore the original event selection for a later supported environment; no system policy changes are needed.",
+          "de": "Stelle frühere Eventwahl für eine später unterstützte Umgebung zurück; keine Systemregeländerung ist nötig."
+        }
+      },
+      {
+        "id": "expose-supported-virtual-pmu",
+        "title": {
+          "en": "Expose a supported virtual PMU deliberately",
+          "de": "Eine unterstützte virtuelle PMU bewusst freigeben"
+        },
+        "body": {
+          "en": "If the host supports a PMU and profiling is intended, configure the guest's documented PMU feature and a compatible CPU model through its hypervisor configuration. If the host kernel lacks support, assess an appropriate supported kernel upgrade with a retained recovery kernel.",
+          "de": "Wenn der Host eine PMU unterstützt und Analyse vorgesehen ist, konfiguriere dokumentierte Gast-PMU und passendes CPU-Modell über den Hypervisor. Fehlt Host-Kernel-Unterstützung, prüfe ein geeignetes Kernelupdate mit Rückkehrkernel."
+        },
+        "precautions": {
+          "en": "Changing the guest CPU model can affect migration and requires a controlled guest restart. More permissions do not create an absent PMU.",
+          "de": "Ein anderes Gast-CPU-Modell kann Migration beeinflussen und verlangt kontrollierten Neustart. Zusätzliche Rechte erzeugen keine fehlende PMU."
+        },
+        "rollback": {
+          "en": "Restore recorded guest CPU/PMU settings or boot the retained kernel, then verify the same event availability.",
+          "de": "Stelle Gast-CPU-/PMU-Werte zurück oder starte den Rückkehrkernel und prüfe dieselbe Event-Verfügbarkeit."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "perf-list — upstream perf event documentation",
+        "url": "https://manpages.debian.org/testing/linux-perf/perf-list.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "libvirt — domain CPU and PMU features",
+        "url": "https://libvirt.org/formatdomain.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — perf security and event scope",
+        "url": "https://docs.kernel.org/admin-guide/perf-security.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux x86 — upstream PMU initialization and fallback messages",
+        "url": "https://code.googlesource.com/linux/torvalds/linux/+/9f7853d7609d59172eecfc5e7ccf503bc1b690bd/arch/x86/events/core.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "kernel-pmu-software-only",
+        "all": [
+          "Performance Events:",
+          "no PMU driver, software events only"
+        ],
+        "sample": "kernel: Performance Events: no PMU driver, software events only.",
+        "negative": [
+          "kernel: Performance Events: AMD PMU driver.",
+          "kernel: Performance Events: PEBS fmt4+, 32-deep LBR, full-width counters"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "Synthetic fixture for the x86 kernel's software-only PMU fallback report.",
+          "de": "Synthetisches Beispiel für den Nur-Software-PMU-Rückfall eines x86-Kernels."
+        },
+        "significance": {
+          "en": "Hardware counter support is absent in that boot context; this does not imply CPU execution itself is broken.",
+          "de": "Hardwarezähler fehlen in diesem Bootkontext; dies bedeutet keinen Defekt der CPU-Ausführung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "numa-memory-locality",
+    "slug": {
+      "en": "numa-memory-locality",
+      "de": "numa-speicherlokalitaet"
+    },
+    "category": "performance",
+    "title": {
+      "en": "CPU placement and memory policy do not align",
+      "de": "CPU-Platzierung und Speicherregeln passen nicht zusammen"
+    },
+    "summary": {
+      "en": "A NUMA workload runs far from its memory or fails policy setup. Inspect topology, allowed nodes and process page placement before adding hard bindings.",
+      "de": "Eine NUMA-Last arbeitet fern von ihren Daten oder scheitert am Regelaufbau. Prüfe Topologie, erlaubte Nodes und Seitenplatzierung vor festen Bindungen."
+    },
+    "environment": {
+      "en": "Linux multi-node NUMA hosts or guests; a single-node system does not gain remote-memory locality tuning.",
+      "de": "Linux-Hosts oder Gäste mit mehreren NUMA-Nodes; ein Einzel-Node-System gewinnt keine Remote-Speicheroptimierung."
+    },
+    "symptoms": {
+      "en": [
+        "A memory-intensive workload has variable throughput after CPU pinning.",
+        "A systemd unit with NUMAPolicy exits with NUMA_POLICY."
+      ],
+      "de": [
+        "Eine speicherintensive Last schwankt nach CPU-Pinning im Durchsatz.",
+        "Eine systemd-Unit mit NUMAPolicy endet mit NUMA_POLICY."
+      ]
+    },
+    "causes": [
+      {
+        "en": "CPU affinity and memory placement may refer to different nodes after migration or first-touch allocation.",
+        "de": "CPU-Affinität und Speicherplatzierung können nach Migration oder First-Touch unterschiedliche Nodes betreffen."
+      },
+      {
+        "en": "A policy mask may name unavailable nodes or conflict with the task's allowed cpuset memory nodes.",
+        "de": "Eine Regelmaske kann nicht verfügbare Nodes nennen oder mit erlaubten cpuset-Speicher-Nodes kollidieren."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-numa-topology",
+        "command": "numactl --hardware",
+        "explanation": {
+          "en": "Read-only NUMA topology from the installed numactl tool.",
+          "de": "Liest NUMA-Topologie mit vorhandenem numactl."
+        },
+        "interpretation": {
+          "en": "Compare node CPU sets, available memory and distance matrix. One node means this remote-locality hypothesis is inapplicable.",
+          "de": "Vergleiche Node-CPUs, freien Speicher und Distanzmatrix. Ein einzelner Node schließt diese Remote-Lokalitätsannahme aus."
+        }
+      },
+      {
+        "id": "inspect-process-page-placement",
+        "command": "cat /proc/1234/numa_maps",
+        "explanation": {
+          "en": "Replace 1234 with the workload PID; proc access may require its owner or an authorized administrator.",
+          "de": "Ersetze 1234 durch den Last-PID; proc-Zugriff kann Eigentümer- oder berechtigte Administratorrechte erfordern."
+        },
+        "interpretation": {
+          "en": "N0/N1 counts show where mapped pages currently reside; policy labels show requested behavior. Shared mappings and migration mean one snapshot is not a latency measurement.",
+          "de": "N0-/N1-Zahlen zeigen aktuelle Seitenorte, Regelbezeichnungen das gewünschte Verhalten. Gemeinsame Mappings und Migration machen einen Einzelwert nicht zur Latenzmessung."
+        }
+      },
+      {
+        "id": "inspect-service-numa-policy",
+        "command": "systemctl show example.service -p NUMAPolicy -p NUMAMask -p CPUAffinity -p AllowedMemoryNodes",
+        "explanation": {
+          "en": "Replace the affected unit; reads configured policy without changing affinity.",
+          "de": "Ersetze die betroffene Unit; liest Regeln ohne Affinitätsänderung."
+        },
+        "interpretation": {
+          "en": "Compare the memory mask with actual available and allowed nodes. CPUAffinity alone does not make already allocated memory local.",
+          "de": "Vergleiche Speichermaske mit vorhandenen und erlaubten Nodes. CPUAffinity macht bereits belegten Speicher nicht automatisch lokal."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "align-cpu-and-memory-placement",
+        "title": {
+          "en": "Align placement with measured locality",
+          "de": "Platzierung an gemessene Lokalität anpassen"
+        },
+        "body": {
+          "en": "If topology and page placement support a locality problem, trial CPU and memory placement together using a supported launch-time policy. Reinitialize or restart the workload in a controlled window so first-touch placement follows the intended node.",
+          "de": "Wenn Topologie und Seitenorte ein Lokalitätsproblem stützen, erprobe CPU- und Speicherplatzierung gemeinsam über eine unterstützte Startregel. Initialisiere die Last kontrolliert neu für passende First-Touch-Platzierung."
+        },
+        "precautions": {
+          "en": "Hard binding can fail allocations while other nodes have free memory. Changing CPU affinity does not automatically migrate every existing page.",
+          "de": "Feste Bindung kann trotz freiem Speicher anderer Nodes Allokationen verhindern. CPU-Affinität migriert nicht automatisch jede vorhandene Seite."
+        },
+        "rollback": {
+          "en": "Restore original launch policy and affinity and restart the workload with its previous placement.",
+          "de": "Stelle Startregel und Affinität zurück und starte die Last mit vorheriger Platzierung."
+        }
+      },
+      {
+        "id": "correct-invalid-node-mask",
+        "title": {
+          "en": "Correct an invalid or overly strict node mask",
+          "de": "Ungültige oder zu strenge Node-Maske korrigieren"
+        },
+        "body": {
+          "en": "If policy setup fails because the mask is invalid or excluded by the cpuset, select valid allowed nodes or return to the documented default/preferred policy. Use interleave only for a workload whose measured bandwidth benefits justify it.",
+          "de": "Wenn die Maske ungültig oder durch cpuset ausgeschlossen ist, wähle gültige erlaubte Nodes oder die dokumentierte Standard-/Preferred-Regel. Nutze Interleave nur bei begründetem gemessenem Bandbreitengewinn."
+        },
+        "precautions": {
+          "en": "Policy names have different allocation fallback behavior. Check the installed systemd and kernel support before keeping a policy.",
+          "de": "Regeln besitzen unterschiedliche Allokations-Rückfälle. Prüfe installierte systemd- und Kernel-Unterstützung vor dem Beibehalten."
+        },
+        "rollback": {
+          "en": "Restore the recorded NUMAPolicy, NUMAMask and cpuset settings and recheck topology plus application startup.",
+          "de": "Stelle NUMAPolicy, NUMAMask und cpuset-Werte zurück und prüfe Topologie sowie Anwendungsstart."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel — NUMA memory policy",
+        "url": "https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "numactl — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/numactl/numactl.8.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-numa-policy-status",
+        "all": [
+          ".service:",
+          "status=242/NUMA_POLICY"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=242/NUMA_POLICY",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=215/CPUAFFINITY",
+          "systemd[1]: example.service: NUMAPolicy=preferred"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for failed NUMA policy setup.",
+          "de": "Synthetisches Beispiel für gescheiterten NUMA-Regelaufbau."
+        },
+        "significance": {
+          "en": "This is a startup policy failure, not proof that remote-memory traffic caused a running workload's slowdown.",
+          "de": "Dies ist ein Startregelfehler, kein Beweis für Remote-Speicher als Ursache laufender Latenz."
+        }
+      }
+    ]
+  },
+  {
+    "id": "qemu-kvm-acceleration-unavailable",
+    "slug": {
+      "en": "qemu-kvm-acceleration-unavailable",
+      "de": "qemu-kvm-beschleunigung-fehlt"
+    },
+    "category": "performance",
+    "title": {
+      "en": "QEMU cannot initialize KVM acceleration",
+      "de": "QEMU kann KVM-Beschleunigung nicht starten"
+    },
+    "summary": {
+      "en": "A guest fails to start with KVM or runs using a slower software accelerator. Check hardware support, /dev/kvm access and the chosen domain type.",
+      "de": "Ein Gast startet mit KVM nicht oder nutzt langsamere Softwareemulation. Prüfe Hardwareunterstützung, /dev/kvm-Zugriff und gewählten Domaintyp."
+    },
+    "environment": {
+      "en": "QEMU on Linux with KVM, direct invocation or libvirt; nested guests depend on host exposure.",
+      "de": "QEMU unter Linux mit KVM, direkt oder durch libvirt; verschachtelte Gäste hängen von Hostfreigaben ab."
+    },
+    "symptoms": {
+      "en": [
+        "QEMU reports failed to initialize KVM.",
+        "Guest execution is unexpectedly slow when an explicitly permitted TCG fallback is used."
+      ],
+      "de": [
+        "QEMU meldet failed to initialize KVM.",
+        "Gastausführung ist bei ausdrücklich erlaubtem TCG-Rückfall unerwartet langsam."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The KVM device may be absent because module, firmware or nested virtualization support is unavailable.",
+        "de": "Das KVM-Gerät kann wegen fehlendem Modul, Firmwarefreigabe oder verschachtelter Virtualisierung fehlen."
+      },
+      {
+        "en": "The actual QEMU identity or sandbox may be unable to open /dev/kvm; the caller's permissions alone are insufficient evidence.",
+        "de": "Die tatsächliche QEMU-Identität oder Sandbox kann /dev/kvm nicht öffnen; Benutzerrechte allein beweisen den Dienstzugriff nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "validate-kvm-host",
+        "command": "virt-host-validate qemu",
+        "explanation": {
+          "en": "Read-only libvirt host checks from an already installed tool; full visibility may require authorized administrative read access.",
+          "de": "Liest libvirt-Hostprüfungen mit vorhandenem Werkzeug; vollständige Sichtbarkeit kann berechtigte administrative Leserechte brauchen."
+        },
+        "interpretation": {
+          "en": "Distinguish virtualization capability, KVM device existence and accessibility results. Warnings for unrelated optional devices do not prove KVM is unavailable.",
+          "de": "Unterscheide Virtualisierungsfähigkeit, KVM-Geräteexistenz und Zugriff. Hinweise zu optionalen fremden Geräten beweisen keine fehlende KVM-Funktion."
+        }
+      },
+      {
+        "id": "inspect-kvm-device",
+        "command": "ls -l /dev/kvm",
+        "explanation": {
+          "en": "Reads KVM device ownership and mode; no VM is created.",
+          "de": "Liest KVM-Geräteeigentümer und Rechte; es wird keine VM erzeugt."
+        },
+        "interpretation": {
+          "en": "A missing node differs from a denied open. Compare ownership with the real QEMU service identity, not only your shell.",
+          "de": "Ein fehlender Knoten unterscheidet sich von verweigertem Öffnen. Vergleiche den tatsächlichen QEMU-Dienst statt nur die Shell."
+        }
+      },
+      {
+        "id": "inspect-libvirt-domain-type",
+        "command": "virsh -c qemu:///system dumpxml example-vm",
+        "explanation": {
+          "en": "Replace example-vm with the guest name; reads its definition and requires existing libvirt access.",
+          "de": "Ersetze example-vm durch den Gastnamen; liest die Definition mit vorhandenem libvirt-Zugriff."
+        },
+        "interpretation": {
+          "en": "The domain type kvm requests hardware acceleration; qemu denotes software emulation. Direct QEMU accelerator configuration must be inspected in its launch arguments instead.",
+          "de": "Domaintyp kvm verlangt Hardwarebeschleunigung; qemu bezeichnet Softwareemulation. Bei direktem QEMU prüfe stattdessen die Startargumente."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-supported-kvm-exposure",
+        "title": {
+          "en": "Restore supported KVM exposure",
+          "de": "Unterstützte KVM-Freigabe herstellen"
+        },
+        "body": {
+          "en": "If host validation identifies missing hardware exposure, enable the platform's documented virtualization setting or correct the host's KVM module configuration. For a nested guest, configure exposure on the real parent hypervisor where supported.",
+          "de": "Wenn die Hostprüfung fehlende Hardwarefreigabe nennt, aktiviere die dokumentierte Plattformfunktion oder korrigiere KVM-Module. Konfiguriere bei verschachtelten Gästen die Freigabe im tatsächlichen Eltern-Hypervisor."
+        },
+        "precautions": {
+          "en": "Firmware or module changes may require a reboot and can affect existing VMs. Keep the previous boot configuration.",
+          "de": "Firmware- oder Moduländerungen können Neustart erfordern und bestehende VMs betreffen. Bewahre die vorherige Bootkonfiguration auf."
+        },
+        "rollback": {
+          "en": "Restore prior firmware/module or parent-hypervisor settings and reboot only through the planned maintenance path.",
+          "de": "Stelle Firmware-/Modul- oder Eltern-Hypervisor-Werte zurück und starte nur im geplanten Wartungsablauf neu."
+        }
+      },
+      {
+        "id": "correct-qemu-access-and-accelerator",
+        "title": {
+          "en": "Correct QEMU identity access and accelerator choice",
+          "de": "QEMU-Zugriff und Beschleunigerwahl korrigieren"
+        },
+        "body": {
+          "en": "If /dev/kvm exists but the QEMU identity is denied, grant access through the intended group or narrow device policy and start a fresh identity context. If KVM is the intended requirement, explicitly select it so unsupported fallback does not hide the failure.",
+          "de": "Wenn /dev/kvm existiert, QEMU aber abgelehnt wird, erteile Zugriff über vorgesehene Gruppe oder enge Geräteregel und erneuere den Identitätskontext. Wähle KVM bei benötigter Beschleunigung ausdrücklich."
+        },
+        "precautions": {
+          "en": "Do not make all host devices writable or run QEMU as root to bypass one denial. Changing domain type can require a fully stopped guest.",
+          "de": "Mache nicht alle Hostgeräte schreibbar und starte QEMU nicht als root gegen eine einzelne Ablehnung. Domaintypwechsel kann einen ganz gestoppten Gast benötigen."
+        },
+        "rollback": {
+          "en": "Restore group/device policy and accelerator or domain-type settings, then restart the guest through its manager.",
+          "de": "Stelle Gruppen-/Geräteregel und Beschleuniger- oder Domaintyp zurück und starte den Gast durch seine Verwaltung."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "QEMU — accelerators and invocation",
+        "url": "https://www.qemu.org/docs/master/system/invocation.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel — KVM /dev/kvm API",
+        "url": "https://docs.kernel.org/virt/kvm/api.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "libvirt — host validation",
+        "url": "https://libvirt.org/manpages/virt-host-validate.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "QEMU — upstream KVM device-open implementation",
+        "url": "https://qemu.googlesource.com/qemu/+/06152b89db64bc5ccec1e54576706ba891654df9/accel/kvm/kvm-all.c",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "QEMU — upstream accelerator initialization failure implementation",
+        "url": "https://qemu.googlesource.com/qemu/+/1e4ebc895ac41eddc67b123121aca2bd58e1d0a5/system/vl.c",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "qemu-kvm-initialization-error",
+        "all": [
+          "qemu-system-",
+          "failed to initialize kvm:"
+        ],
+        "sample": "qemu-system-x86_64: failed to initialize kvm: No such file or directory",
+        "negative": [
+          "qemu-system-x86_64: KVM acceleration enabled",
+          "qemu-system-x86_64: failed to initialize audio: No such file or directory"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a QEMU KVM initialization failure.",
+          "de": "Synthetisches Beispiel für einen QEMU-KVM-Initialisierungsfehler."
+        },
+        "significance": {
+          "en": "Read the errno and host validation; absent device and denied access need different fixes.",
+          "de": "Prüfe errno und Hostprüfung; fehlendes Gerät und verweigerter Zugriff brauchen andere Maßnahmen."
+        },
+        "any": [
+          "No such file or directory",
+          "Permission denied",
+          "Operation not permitted"
+        ]
+      },
+      {
+        "id": "qemu-kvm-device-access-denied",
+        "all": [
+          "qemu-system-",
+          "Could not access KVM kernel module",
+          "Permission denied"
+        ],
+        "sample": "qemu-system-x86_64: Could not access KVM kernel module: Permission denied",
+        "negative": [
+          "qemu-system-x86_64: Could not access KVM kernel module: No such file or directory",
+          "qemu-system-x86_64: KVM kernel module access available"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for QEMU's denied KVM-device open.",
+          "de": "Synthetisches Beispiel für einen verweigerten KVM-Gerätezugriff durch QEMU."
+        },
+        "significance": {
+          "en": "Check the actual QEMU identity and device policy, not only firmware support.",
+          "de": "Prüfe tatsächliche QEMU-Identität und Geräteregel statt nur Firmwareunterstützung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "virtual-machine-vcpu-contention",
+    "slug": {
+      "en": "virtual-machine-vcpu-contention",
+      "de": "virtuelle-maschine-vcpu-konkurrenz"
+    },
+    "category": "performance",
+    "title": {
+      "en": "A guest loses CPU time to host contention or quotas",
+      "de": "Ein Gast verliert CPU-Zeit durch Host-Konkurrenz oder Grenzen"
+    },
+    "summary": {
+      "en": "A guest feels CPU-starved despite unused virtual CPUs. Compare guest steal time with host placement and quotas before adding more vCPUs.",
+      "de": "Ein Gast wirkt CPU-arm trotz ungenutzter vCPUs. Vergleiche Gast-Steal-Zeit mit Host-Platzierung und Grenzen vor dem Hinzufügen weiterer vCPUs."
+    },
+    "environment": {
+      "en": "Linux guests under QEMU/libvirt; reported steal time depends on hypervisor support and is not every source of scheduling delay.",
+      "de": "Linux-Gäste unter QEMU/libvirt; Steal-Anzeige hängt vom Hypervisor ab und erfasst nicht jede Scheduling-Verzögerung."
+    },
+    "symptoms": {
+      "en": [
+        "Guest response time worsens while the host runs other busy workloads.",
+        "Guest steal time rises or vCPU pinning concentrates work on a small host CPU set."
+      ],
+      "de": [
+        "Gastantworten werden bei weiteren aktiven Hostlasten langsamer.",
+        "Gast-Steal-Zeit steigt oder vCPU-Pinning konzentriert Arbeit auf wenige Host-CPUs."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Overcommitted host CPUs or restrictive pinning may delay runnable virtual CPU threads.",
+        "de": "Überbuchte Host-CPUs oder enge Bindung können ausführbare virtuelle CPU-Threads verzögern."
+      },
+      {
+        "en": "Per-vCPU or whole-domain quotas can cap aggregate time; adding vCPUs does not increase that budget automatically.",
+        "de": "vCPU- oder Gesamt-Domain-Kontingente können Zeit begrenzen; mehr vCPUs erhöht das Budget nicht automatisch."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "sample-guest-steal-time",
+        "command": "mpstat -P ALL 1 5",
+        "explanation": {
+          "en": "Run read-only sysstat sampling inside the Linux guest; requires installed mpstat.",
+          "de": "Führe die sysstat-Stichprobe im Linux-Gast aus; benötigt installiertes mpstat."
+        },
+        "interpretation": {
+          "en": "%steal is involuntary vCPU wait while the hypervisor serves other work. High values support host scheduling contention, but zero does not exclude all hypervisor or quota delay.",
+          "de": "%steal ist unfreiwillige vCPU-Wartezeit bei anderer Hypervisorarbeit. Hohe Werte stützen Hostkonkurrenz; null schließt nicht jede Hypervisor- oder Kontingentverzögerung aus."
+        }
+      },
+      {
+        "id": "inspect-live-vcpu-placement",
+        "command": "virsh -c qemu:///system vcpupin example-vm",
+        "explanation": {
+          "en": "Run on the host and replace the domain name; omitting CPU and vCPU assignments makes this a read-only query.",
+          "de": "Führe dies auf dem Host mit passendem Domainnamen aus; ohne CPU- und vCPU-Zuweisung ist es eine reine Abfrage."
+        },
+        "interpretation": {
+          "en": "Compare allowed host CPUs per vCPU with real host load and topology. Several busy vCPUs pinned to one host CPU can contend despite a wide guest topology.",
+          "de": "Vergleiche erlaubte Host-CPUs mit Last und Topologie. Mehrere aktive vCPUs an einer Host-CPU konkurrieren trotz großer Gasttopologie."
+        }
+      },
+      {
+        "id": "inspect-domain-scheduler-budget",
+        "command": "virsh -c qemu:///system schedinfo example-vm",
+        "explanation": {
+          "en": "Reads scheduler values with existing libvirt access; do not add --set or assignments.",
+          "de": "Liest Schedulerwerte mit vorhandenem libvirt-Zugriff; ergänze kein --set oder Zuweisungen."
+        },
+        "interpretation": {
+          "en": "Finite vcpu_quota or global_quota can explain a service budget. Live and persistent XML may differ, so inspect the appropriate state before editing.",
+          "de": "Endliches vcpu_quota oder global_quota kann das Budget erklären. Laufende und dauerhafte XML können abweichen; prüfe den passenden Zustand vor Änderungen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "right-size-guest-and-host-allocation",
+        "title": {
+          "en": "Right-size guest and host CPU allocation",
+          "de": "Gast- und Host-CPU-Zuteilung passend wählen"
+        },
+        "body": {
+          "en": "If host contention is measured, reduce competing concurrent jobs or right-size the guest's vCPU count to available host capacity. Remove accidental overconcentration in pinning while preserving intended isolation.",
+          "de": "Wenn Hostkonkurrenz gemessen ist, reduziere parallele Nachbaraufträge oder passe vCPU-Zahl an verfügbare Kapazität an. Behebe unbeabsichtigte enge Bindung unter Erhalt gewünschter Isolation."
+        },
+        "precautions": {
+          "en": "More vCPUs can worsen contention and are not automatically more throughput. Preserve emulator and I/O thread placement when reviewing affinity.",
+          "de": "Mehr vCPUs können Konkurrenz verschärfen und garantieren keinen Durchsatz. Beachte Emulator- und I/O-Thread-Platzierung bei Affinitätsprüfung."
+        },
+        "rollback": {
+          "en": "Restore recorded vCPU topology and pinning through the same live/persistent configuration scope; reboot only if required by the guest change.",
+          "de": "Stelle vCPU-Topologie und Bindung im selben Laufzeit-/Dauerkontext zurück; starte nur bei erforderlicher Gaständerung neu."
+        }
+      },
+      {
+        "id": "correct-domain-cpu-budget",
+        "title": {
+          "en": "Correct the intended domain CPU budget",
+          "de": "Vorgesehenes Domain-CPU-Budget korrigieren"
+        },
+        "body": {
+          "en": "If an unintended finite quota is the constraint, adjust that domain's per-vCPU or global budget through libvirt using measured host headroom. If the budget is deliberate, reduce guest concurrency to fit it.",
+          "de": "Wenn ein unbeabsichtigtes endliches Kontingent begrenzt, passe vCPU- oder Gesamtbudget dieser Domain mit gemessener Hostreserve durch libvirt an. Bei bewusstem Budget reduziere Gastparallelität."
+        },
+        "precautions": {
+          "en": "Changing global and per-vCPU quotas has different effects. A larger domain budget can degrade neighboring guests.",
+          "de": "Gesamt- und Einzel-vCPU-Kontingente wirken verschieden. Mehr Domainbudget kann Nachbargäste verschlechtern."
+        },
+        "rollback": {
+          "en": "Restore saved quota/period values and guest concurrency, then compare the same guest workload and host load.",
+          "de": "Stelle Kontingent/Periode und Gastparallelität zurück und vergleiche dieselbe Gast- und Hostlast."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "libvirt — CPU tuning, pinning and bandwidth",
+        "url": "https://libvirt.org/formatdomain.html#cpu-tuning",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "libvirt — virsh scheduler and pinning queries",
+        "url": "https://libvirt.org/manpages/virsh.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "mpstat — sysstat steal-time interpretation",
+        "url": "https://manpages.debian.org/testing/sysstat/mpstat.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  }
+]

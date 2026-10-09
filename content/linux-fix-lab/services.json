@@ -1,0 +1,1869 @@
+[
+  {
+    "id": "systemd-exec-launch-failure",
+    "slug": {
+      "en": "systemd-exec-launch-failure",
+      "de": "systemd-programmstart-fehlgeschlagen"
+    },
+    "category": "services",
+    "title": {
+      "en": "Service stops before its executable starts",
+      "de": "Dienst scheitert vor dem Programmstart"
+    },
+    "summary": {
+      "en": "A service exits with 203/EXEC although a similar shell command works. Check the exact executable, interpreter, mount flags and unit context.",
+      "de": "Ein Dienst endet mit 203/EXEC, obwohl ein ähnlicher Shellbefehl funktioniert. Prüfe Programm, Interpreter, Mount-Optionen und Dienstkontext."
+    },
+    "environment": {
+      "en": "systemd system services; interpreter and executable paths depend on the distribution.",
+      "de": "systemd-Systemdienste; Interpreter- und Programmpfade hängen von der Distribution ab."
+    },
+    "symptoms": {
+      "en": [
+        "The process reports status=203/EXEC.",
+        "The normal application startup message never appears."
+      ],
+      "de": [
+        "Der Prozess meldet status=203/EXEC.",
+        "Die normale Startmeldung der Anwendung fehlt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A stale ExecStart path, missing interpreter or incompatible binary can prevent execve.",
+        "de": "Ein veralteter ExecStart-Pfad, ein fehlender Interpreter oder ein ungeeignetes Binärformat kann execve verhindern."
+      },
+      {
+        "en": "File access, noexec mounts or the service root may differ from the interactive shell.",
+        "de": "Dateizugriff, noexec-Mounts oder Dienst-Root können vom Terminalkontext abweichen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-launch",
+        "command": "systemctl show example.service -p ExecStart -p RootDirectory -p User",
+        "explanation": {
+          "en": "Replace example.service with the failing unit; normally readable without elevation.",
+          "de": "Ersetze example.service durch den betroffenen Dienst; normalerweise ohne erhöhte Rechte lesbar."
+        },
+        "interpretation": {
+          "en": "Read the actual executable, not a shell alias. RootDirectory changes which paths exist for the child.",
+          "de": "Prüfe das tatsächliche Programm statt eines Shell-Alias. RootDirectory verändert die für den Prozess sichtbaren Pfade."
+        }
+      },
+      {
+        "id": "inspect-path",
+        "command": "namei -l /opt/example/bin/server",
+        "explanation": {
+          "en": "Replace the path with the executable from ExecStart; this only lists path metadata.",
+          "de": "Ersetze den Pfad durch das Programm aus ExecStart; der Befehl liest nur Pfadmetadaten."
+        },
+        "interpretation": {
+          "en": "Every parent directory needs traversal permission. An existing executable still needs its ELF loader or shebang interpreter.",
+          "de": "Jedes Elternverzeichnis braucht Durchsuchungsrechte. Auch eine vorhandene Programmdatei benötigt ihren ELF-Loader oder Shebang-Interpreter."
+        }
+      },
+      {
+        "id": "read-launch-error",
+        "command": "journalctl -b -u example.service --no-pager -n 60",
+        "explanation": {
+          "en": "Use the same unit; system journal visibility may require administrative read permission.",
+          "de": "Nutze dieselbe Unit; für das Systemjournal können administrative Leserechte erforderlich sein."
+        },
+        "interpretation": {
+          "en": "The error before 203/EXEC distinguishes absent files, denied access and executable format failures; 203 alone does not.",
+          "de": "Die Meldung vor 203/EXEC unterscheidet fehlende Dateien, verweigerten Zugriff und Formatfehler; 203 allein tut das nicht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-executable-reference",
+        "title": {
+          "en": "Correct the executable or interpreter",
+          "de": "Programmpfad oder Interpreter korrigieren"
+        },
+        "body": {
+          "en": "If the logged path is absent, point ExecStart to the installed executable. Fix a script shebang to an interpreter available inside the service root. On NixOS, reference the package path declaratively.",
+          "de": "Wenn der protokollierte Pfad fehlt, richte ExecStart auf das installierte Programm. Verwende im Shebang einen im Dienst-Root verfügbaren Interpreter. Unter NixOS hinterlege den Paketpfad deklarativ."
+        },
+        "precautions": {
+          "en": "Keep the prior unit and arguments. ExecStart is not implicitly run through a shell.",
+          "de": "Bewahre frühere Unit und Argumente auf. ExecStart wird nicht automatisch durch eine Shell ausgeführt."
+        },
+        "rollback": {
+          "en": "Restore the prior unit, reload the manager and restart only this service at a suitable time.",
+          "de": "Stelle die vorherige Unit wieder her, lade den Manager neu und starte nur diesen Dienst zu einem passenden Zeitpunkt."
+        }
+      },
+      {
+        "id": "restore-narrow-execution-access",
+        "title": {
+          "en": "Restore the necessary execution access",
+          "de": "Benötigte Ausführungsrechte herstellen"
+        },
+        "body": {
+          "en": "If traversal permissions or a noexec mount explain the error, grant the service identity specific path access or deploy the executable to a suitable filesystem. Investigate mandatory access-control denials separately.",
+          "de": "Wenn Durchsuchungsrechte oder noexec den Fehler erklären, erteile dem Dienstkonto gezielte Pfadrechte oder verlagere das Programm auf ein geeignetes Dateisystem. Prüfe Sicherheitsrichtlinien gesondert."
+        },
+        "precautions": {
+          "en": "Record ownership and modes first. Do not broadly open application data or remount unrelated filesystems.",
+          "de": "Notiere vorher Eigentümer und Rechte. Öffne Anwendungsdaten nicht pauschal und ändere keine unbeteiligten Mounts."
+        },
+        "rollback": {
+          "en": "Restore the recorded permissions or original deployment path and unit definition.",
+          "de": "Stelle notierte Rechte oder ursprünglichen Programmpfad und Dienstdefinition wieder her."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.service — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.service.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-exec-status",
+        "all": [
+          ".service:",
+          "status=203/EXEC"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=203/EXEC",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=0/SUCCESS",
+          "systemd[1]: example.service: Main process exited, code=exited, status=200/CHDIR"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for execution setup failure.",
+          "de": "Synthetisches Beispiel für einen Fehler beim Ausführen."
+        },
+        "significance": {
+          "en": "Inspect execve prerequisites before debugging the application itself.",
+          "de": "Prüfe die Voraussetzungen für execve vor der Anwendung selbst."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-working-directory-missing",
+    "slug": {
+      "en": "systemd-working-directory-missing",
+      "de": "systemd-arbeitsverzeichnis-fehlt"
+    },
+    "category": "services",
+    "title": {
+      "en": "WorkingDirectory prevents a service from starting",
+      "de": "WorkingDirectory verhindert den Dienststart"
+    },
+    "summary": {
+      "en": "A unit can fail with 200/CHDIR before launching its program. Resolve missing mounts, traversal permissions and the directory visible inside its root.",
+      "de": "Eine Unit kann vor dem Programmstart mit 200/CHDIR scheitern. Prüfe fehlende Mounts, Durchsuchungsrechte und das Verzeichnis innerhalb ihres Root."
+    },
+    "environment": {
+      "en": "systemd units with WorkingDirectory and optional RootDirectory or separate application mounts.",
+      "de": "systemd-Units mit WorkingDirectory, optionalem RootDirectory oder eigenen Anwendungs-Mounts."
+    },
+    "symptoms": {
+      "en": [
+        "The service reports status=200/CHDIR.",
+        "The expected directory appears only after a mount or deployment step."
+      ],
+      "de": [
+        "Der Dienst meldet status=200/CHDIR.",
+        "Das erwartete Verzeichnis erscheint erst nach einem Mount- oder Deployment-Schritt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "WorkingDirectory may reference a removed directory or the wrong path inside the service root.",
+        "de": "WorkingDirectory kann auf ein entferntes Verzeichnis oder den falschen Pfad im Dienst-Root verweisen."
+      },
+      {
+        "en": "Unavailable backing storage or denied traversal can prevent chdir before execution.",
+        "de": "Nicht verfügbarer Speicher oder verweigerter Verzeichniszugriff kann chdir vor dem Start verhindern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-working-directory",
+        "command": "systemctl show example.service -p WorkingDirectory -p RootDirectory -p RequiresMountsFor",
+        "explanation": {
+          "en": "Replace the unit name; this reads effective settings.",
+          "de": "Ersetze den Unit-Namen; die Abfrage liest wirksame Einstellungen."
+        },
+        "interpretation": {
+          "en": "WorkingDirectory adds relevant mount dependencies automatically but does not create its directory. Compare it with RootDirectory.",
+          "de": "WorkingDirectory ergänzt passende Mount-Abhängigkeiten, erstellt aber kein Verzeichnis. Vergleiche den Wert mit RootDirectory."
+        }
+      },
+      {
+        "id": "inspect-directory-components",
+        "command": "namei -l /srv/example/current",
+        "explanation": {
+          "en": "Replace the path with the configured host directory; no files are changed.",
+          "de": "Ersetze den Pfad durch das konfigurierte Host-Verzeichnis; es werden keine Dateien verändert."
+        },
+        "interpretation": {
+          "en": "A missing symlink target or inaccessible ancestor explains failure. Host visibility does not prove visibility inside the service root.",
+          "de": "Ein fehlendes Symlink-Ziel oder unzugänglicher Elternpfad erklärt den Fehler. Sichtbarkeit auf dem Host beweist keine Sichtbarkeit im Dienst-Root."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "align-working-directory",
+        "title": {
+          "en": "Align the directory with deployment",
+          "de": "Verzeichnis an das Deployment anpassen"
+        },
+        "body": {
+          "en": "If deployment moved, set WorkingDirectory to its actual path inside the service root. If the application needs no particular working directory, replace relative configuration and data references with explicit paths.",
+          "de": "Wenn das Deployment umgezogen ist, setze WorkingDirectory auf den tatsächlichen Pfad im Dienst-Root. Braucht die Anwendung kein festes Arbeitsverzeichnis, ersetze relative Daten- und Konfigurationspfade gezielt."
+        },
+        "precautions": {
+          "en": "Removing the setting can change which relative files are read. Preserve the old deployment symlink and unit.",
+          "de": "Ohne diese Vorgabe können andere relative Dateien gelesen werden. Bewahre früheren Deployment-Symlink und Unit auf."
+        },
+        "rollback": {
+          "en": "Restore the original WorkingDirectory and symlink, reload the unit and start when its path is available.",
+          "de": "Stelle WorkingDirectory und Symlink zurück, lade die Unit neu und starte sie bei verfügbarem Pfad."
+        }
+      },
+      {
+        "id": "prepare-managed-directory",
+        "title": {
+          "en": "Provision the intended directory",
+          "de": "Das vorgesehene Verzeichnis bereitstellen"
+        },
+        "body": {
+          "en": "If the path holds service state, provision it using StateDirectory or distribution configuration with the correct service owner. If data resides on a separate mount, repair that mount rather than merely creating an empty directory.",
+          "de": "Wenn der Pfad Dienstdaten enthält, stelle ihn mit StateDirectory oder der Distributionskonfiguration und passendem Eigentümer bereit. Liegen die Daten auf einem eigenen Mount, behebe dessen Fehler."
+        },
+        "precautions": {
+          "en": "An empty replacement directory can initialize a second dataset. Verify the expected mount source before starting.",
+          "de": "Ein leeres Ersatzverzeichnis kann einen zweiten Datenbestand erzeugen. Prüfe vor dem Start die erwartete Mount-Quelle."
+        },
+        "rollback": {
+          "en": "Revert provisioning, retain any newly written data separately and reconnect the original mount before restart.",
+          "de": "Nimm die Bereitstellung zurück, sichere neue Daten getrennt und verbinde den ursprünglichen Mount vor dem Neustart."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.unit — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.unit.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-chdir-status",
+        "all": [
+          ".service:",
+          "status=200/CHDIR"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=200/CHDIR",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=203/EXEC",
+          "systemd[1]: example.service: Changed working directory to /srv/example"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for working-directory setup failure.",
+          "de": "Synthetisches Beispiel für einen Fehler beim Arbeitsverzeichnis."
+        },
+        "significance": {
+          "en": "The failure precedes the application; inspect path visibility and access.",
+          "de": "Der Fehler liegt vor dem Anwendungsstart; prüfe Pfadsichtbarkeit und Zugriff."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-service-identity-failure",
+    "slug": {
+      "en": "systemd-service-identity-failure",
+      "de": "systemd-dienstkonto-fehler"
+    },
+    "category": "services",
+    "title": {
+      "en": "Service user or group setup fails",
+      "de": "Einrichten des Dienstkontos scheitert"
+    },
+    "summary": {
+      "en": "A service fails with USER or GROUP before its program runs. Separate absent accounts, NSS lookup problems and credential or user namespace restrictions.",
+      "de": "Ein Dienst scheitert vor dem Programmstart mit USER oder GROUP. Unterscheide fehlende Konten, NSS-Probleme und Identitäts- oder Namespace-Einschränkungen."
+    },
+    "environment": {
+      "en": "systemd services using User, Group, SupplementaryGroups, DynamicUser or PrivateUsers.",
+      "de": "systemd-Dienste mit User, Group, SupplementaryGroups, DynamicUser oder PrivateUsers."
+    },
+    "symptoms": {
+      "en": [
+        "The service reports 217/USER or 216/GROUP.",
+        "A configured static account is unresolved at startup."
+      ],
+      "de": [
+        "Der Dienst meldet 217/USER oder 216/GROUP.",
+        "Ein konfiguriertes statisches Konto wird beim Start nicht aufgelöst."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A static account or supplementary group may be missing or depend on unavailable NSS infrastructure.",
+        "de": "Ein statisches Konto oder eine Zusatzgruppe kann fehlen oder von nicht verfügbarer NSS-Infrastruktur abhängen."
+      },
+      {
+        "en": "217/USER also covers credential changes and user namespace setup; it does not prove a username is absent.",
+        "de": "217/USER umfasst auch Identitätswechsel und User-Namespaces; der Status beweist keinen fehlenden Benutzernamen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-identity-settings",
+        "command": "systemctl show example.service -p User -p Group -p SupplementaryGroups -p DynamicUser -p PrivateUsers",
+        "explanation": {
+          "en": "Replace example.service; these settings normally need no elevated read access.",
+          "de": "Ersetze example.service; diese Einstellungen benötigen normalerweise keine erhöhten Leserechte."
+        },
+        "interpretation": {
+          "en": "DynamicUser allocates identities differently. PrivateUsers adds namespace setup not covered by static-account lookup.",
+          "de": "DynamicUser vergibt Identitäten anders. PrivateUsers ergänzt einen Namespace-Schritt, den statische Kontenabfragen nicht prüfen."
+        }
+      },
+      {
+        "id": "resolve-static-account",
+        "command": "getent passwd example",
+        "explanation": {
+          "en": "Replace example with the static User value; do not expect an inactive DynamicUser to exist permanently.",
+          "de": "Ersetze example durch den statischen User-Wert; ein inaktiver DynamicUser muss nicht dauerhaft existieren."
+        },
+        "interpretation": {
+          "en": "No result means unresolved in the host NSS context. A result does not prove credential switching or namespace creation succeeds.",
+          "de": "Keine Ausgabe bedeutet fehlende Auflösung im Host-NSS. Ein Treffer beweist keinen erfolgreichen Identitätswechsel oder Namespace-Aufbau."
+        }
+      },
+      {
+        "id": "resolve-static-group",
+        "command": "getent group example",
+        "explanation": {
+          "en": "Replace example with each affected static Group or SupplementaryGroups value.",
+          "de": "Ersetze example durch den jeweils betroffenen statischen Wert aus Group oder SupplementaryGroups."
+        },
+        "interpretation": {
+          "en": "A missing supplementary group can fail setup even if User resolves. Compare the exact names with the unit.",
+          "de": "Eine fehlende Zusatzgruppe kann den Start verhindern, obwohl User aufgelöst wird. Vergleiche die Namen genau mit der Unit."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "provision-static-identity",
+        "title": {
+          "en": "Provision the intended static account",
+          "de": "Das vorgesehene statische Konto bereitstellen"
+        },
+        "body": {
+          "en": "If NSS confirms a missing local identity, declare the account and groups with the distribution user configuration or sysusers before service startup. Match data ownership to the documented service identity.",
+          "de": "Wenn NSS ein fehlendes lokales Konto bestätigt, deklariere Konto und Gruppen über Benutzerkonfiguration oder sysusers vor dem Dienststart. Passe Dateneigentümer an die dokumentierte Identität an."
+        },
+        "precautions": {
+          "en": "Do not substitute root or another application's UID. Account changes can affect ownership of existing data.",
+          "de": "Verwende nicht ersatzweise root oder die UID einer anderen Anwendung. Kontoänderungen können bestehende Dateneigentümer betreffen."
+        },
+        "rollback": {
+          "en": "Restore prior account and unit definitions. Remove an added identity only after checking its files and keeping ownership consistent.",
+          "de": "Stelle Konto und Unit zurück. Entferne eine ergänzte Identität erst nach Dateiprüfung und mit weiterhin passenden Eigentümern."
+        }
+      },
+      {
+        "id": "correct-namespace-or-nss-context",
+        "title": {
+          "en": "Correct the proven namespace or NSS issue",
+          "de": "Bestätigten Namespace- oder NSS-Fehler beheben"
+        },
+        "body": {
+          "en": "If the detailed journal identifies a user namespace restriction, adapt that specific feature to the container or user-manager capabilities. If remote NSS is unavailable, repair it instead of inventing a duplicate local identity.",
+          "de": "Wenn das Journal eine User-Namespace-Einschränkung nennt, passe genau diese Funktion an Container oder Benutzer-Manager an. Ist entferntes NSS nicht verfügbar, behebe es statt eines doppelten lokalen Kontos."
+        },
+        "precautions": {
+          "en": "Review the security effect of PrivateUsers changes and avoid UID collisions with directory-backed accounts.",
+          "de": "Prüfe die Schutzwirkung von PrivateUsers-Änderungen und vermeide UID-Kollisionen mit Verzeichnisdienst-Konten."
+        },
+        "rollback": {
+          "en": "Restore the namespace or NSS settings and restart after account resolution is available again.",
+          "de": "Stelle Namespace- oder NSS-Einstellungen wieder her und starte bei wieder verfügbarer Kontenauflösung."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.unit — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.unit.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-user-status",
+        "all": [
+          ".service:",
+          "status=217/USER"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=217/USER",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=0/SUCCESS",
+          "systemd[1]: example.service: Started under User=example"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for credential or user namespace setup failure.",
+          "de": "Synthetisches Beispiel für Konto- oder User-Namespace-Fehler."
+        },
+        "significance": {
+          "en": "Read the preceding error before deciding that an account is absent.",
+          "de": "Prüfe die vorherige Meldung vor der Annahme eines fehlenden Kontos."
+        }
+      },
+      {
+        "id": "systemd-group-status",
+        "all": [
+          ".service:",
+          "status=216/GROUP"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=216/GROUP",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=217/USER",
+          "systemd[1]: example.service: Supplementary group setup complete"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for group credential setup failure.",
+          "de": "Synthetisches Beispiel für einen Fehler der Gruppenidentität."
+        },
+        "significance": {
+          "en": "Inspect both primary and supplementary groups.",
+          "de": "Prüfe Haupt- und Zusatzgruppen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-notify-startup-timeout",
+    "slug": {
+      "en": "systemd-notify-startup-timeout",
+      "de": "systemd-notify-startzeit-ueberschritten"
+    },
+    "category": "services",
+    "title": {
+      "en": "A notify service never becomes ready",
+      "de": "Ein notify-Dienst wird nicht startbereit"
+    },
+    "summary": {
+      "en": "The process exists but Type=notify remains activating until its deadline. Check readiness messages, sender attribution and blocked initialization work.",
+      "de": "Der Prozess läuft, doch Type=notify bleibt bis zum Zeitlimit im Startzustand. Prüfe Bereitschaftsmeldungen, Absender und blockierte Initialisierung."
+    },
+    "environment": {
+      "en": "systemd services using Type=notify or notify-reload; the application must implement readiness notification.",
+      "de": "systemd-Dienste mit Type=notify oder notify-reload; die Anwendung muss Bereitschaftsmeldungen unterstützen."
+    },
+    "symptoms": {
+      "en": [
+        "The unit stays activating for the startup interval.",
+        "systemd terminates it at the deadline even though the process exists."
+      ],
+      "de": [
+        "Die Unit bleibt während des Startintervalls auf activating.",
+        "systemd beendet sie am Zeitlimit, obwohl ihr Prozess existiert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "READY=1 may be absent or sent by a process excluded by NotifyAccess.",
+        "de": "READY=1 kann fehlen oder von einem durch NotifyAccess ausgeschlossenen Prozess stammen."
+      },
+      {
+        "en": "A migration, blocked lookup or unavailable dependency may prevent real startup completion.",
+        "de": "Eine Migration, blockierte Abfrage oder fehlende Abhängigkeit kann den tatsächlichen Startabschluss verhindern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-readiness-policy",
+        "command": "systemctl show example.service -p Type -p NotifyAccess -p TimeoutStartUSec -p MainPID -p SubState",
+        "explanation": {
+          "en": "Replace the unit name; no state transition is requested.",
+          "de": "Ersetze den Unit-Namen; es wird kein Zustandswechsel angefordert."
+        },
+        "interpretation": {
+          "en": "Type=notify waits for readiness. NotifyAccess=main accepts the main process; wrappers and children can change attribution.",
+          "de": "Type=notify wartet auf Bereitschaft. NotifyAccess=main akzeptiert den Hauptprozess; Wrapper und Kindprozesse können die Zuordnung verändern."
+        }
+      },
+      {
+        "id": "inspect-startup-sequence",
+        "command": "journalctl -b -u example.service -o short-monotonic --no-pager -n 100",
+        "explanation": {
+          "en": "Read the affected unit's journal; administrative read permission may be needed.",
+          "de": "Lies das Journal der betroffenen Unit; administrative Leserechte können nötig sein."
+        },
+        "interpretation": {
+          "en": "Compare progress with the deadline. An application serving requests without notifying differs from one stuck during migration.",
+          "de": "Vergleiche Fortschritt und Zeitlimit. Eine antwortende Anwendung ohne Meldung unterscheidet sich von einer blockierten Migration."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "match-readiness-protocol",
+        "title": {
+          "en": "Match the program's supported service type",
+          "de": "Den unterstützten Diensttyp verwenden"
+        },
+        "body": {
+          "en": "If the application lacks notify support, use its documented service type, such as exec for a foreground program where supported. If notify is implemented, correct the wrapper or sender attribution so actual readiness reaches systemd.",
+          "de": "Wenn die Anwendung notify nicht unterstützt, nutze ihren dokumentierten Diensttyp, etwa exec für ein Vordergrundprogramm, sofern unterstützt. Bei notify korrigiere Wrapper oder Absenderzuordnung."
+        },
+        "precautions": {
+          "en": "Leaving notify removes its readiness guarantee for dependent units. Never announce readiness before initialization completes.",
+          "de": "Ohne notify entfällt die Bereitschaftsgarantie für abhängige Units. Melde Bereitschaft nie vor Abschluss der Initialisierung."
+        },
+        "rollback": {
+          "en": "Restore Type and NotifyAccess, reload the definition and restart when interruption is acceptable.",
+          "de": "Stelle Type und NotifyAccess wieder her, lade die Definition neu und starte bei zulässiger Unterbrechung."
+        }
+      },
+      {
+        "id": "budget-confirmed-initialization",
+        "title": {
+          "en": "Allow measured initialization time",
+          "de": "Gemessene Initialisierung berücksichtigen"
+        },
+        "body": {
+          "en": "If startup is progressing but takes longer than the finite deadline, choose an appropriate TimeoutStartSec or use application-supported EXTEND_TIMEOUT_USEC notifications. Resolve blocked prerequisites before increasing time.",
+          "de": "Wenn der Start voranschreitet, aber länger als das endliche Limit dauert, wähle ein passendes TimeoutStartSec oder unterstützte EXTEND_TIMEOUT_USEC-Meldungen. Behebe blockierte Voraussetzungen zuerst."
+        },
+        "precautions": {
+          "en": "More startup time can delay boot and deployments. It does not repair a permanent hang.",
+          "de": "Mehr Startzeit kann Boot und Deployments verzögern. Sie behebt keinen dauerhaften Hänger."
+        },
+        "rollback": {
+          "en": "Restore the previous timeout and application configuration; compare another startup with the saved timeline.",
+          "de": "Stelle früheres Zeitlimit und Anwendungskonfiguration wieder her; vergleiche einen weiteren Start mit der gespeicherten Zeitfolge."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.service — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.service.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "sd_notify — upstream readiness protocol",
+        "url": "https://manpages.debian.org/testing/libsystemd-dev/sd_notify.3.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-start-operation-timeout",
+        "all": [
+          ".service:",
+          "start operation timed out"
+        ],
+        "sample": "systemd[1]: example.service: start operation timed out. Terminating.",
+        "negative": [
+          "systemd[1]: example.service: stop operation timed out. Killing.",
+          "systemd[1]: example.service: Startup completed in 2s"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for expiration of a service startup deadline.",
+          "de": "Synthetisches Beispiel für ein überschrittenes Dienst-Startzeitlimit."
+        },
+        "significance": {
+          "en": "Other service types can produce this too; verify Type=notify before readiness-specific changes.",
+          "de": "Auch andere Diensttypen erzeugen dies; prüfe Type=notify vor Änderungen am Bereitschaftsprotokoll."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-restart-rate-limit",
+    "slug": {
+      "en": "systemd-restart-rate-limit",
+      "de": "systemd-neustartlimit-erreicht"
+    },
+    "category": "services",
+    "title": {
+      "en": "Crash loops reach the systemd start limit",
+      "de": "Absturzschleife erreicht das systemd-Startlimit"
+    },
+    "summary": {
+      "en": "Repeated restarts eventually stop with start-limit-hit. Find the earliest application failure before changing backoff or resetting the start counter.",
+      "de": "Wiederholte Neustarts enden mit start-limit-hit. Finde den ersten Anwendungsfehler vor Änderungen an Neustartabständen oder dem Zurücksetzen des Zählers."
+    },
+    "environment": {
+      "en": "systemd services with Restart and StartLimitIntervalSec/StartLimitBurst policies.",
+      "de": "systemd-Dienste mit Restart und StartLimitIntervalSec/StartLimitBurst."
+    },
+    "symptoms": {
+      "en": [
+        "The restart counter rises quickly before the unit fails.",
+        "A further start is refused with start-limit-hit."
+      ],
+      "de": [
+        "Der Neustartzähler steigt vor dem Fehler schnell.",
+        "Ein weiterer Start wird mit start-limit-hit verweigert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A configuration fault or unavailable resource can make every attempt exit immediately.",
+        "de": "Ein Konfigurationsfehler oder eine fehlende Ressource kann jeden Versuch sofort beenden."
+      },
+      {
+        "en": "A short RestartSec may turn a transient failure into a burst that exhausts the allowed starts.",
+        "de": "Kurzes RestartSec kann aus einem vorübergehenden Fehler eine Wiederholungsschleife bis zum Startlimit machen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-restart-policy",
+        "command": "systemctl show example.service -p Result -p NRestarts -p Restart -p RestartUSec -p StartLimitIntervalUSec -p StartLimitBurst",
+        "explanation": {
+          "en": "Replace example.service; reading the counters does not reset them.",
+          "de": "Ersetze example.service; das Lesen setzt die Zähler nicht zurück."
+        },
+        "interpretation": {
+          "en": "Result identifies the gate, not the original crash. Check whether the restart delay permits recovery of the failing prerequisite.",
+          "de": "Result zeigt die Begrenzung, nicht den ursprünglichen Absturz. Prüfe, ob der Neustartabstand eine Erholung der Voraussetzung erlaubt."
+        }
+      },
+      {
+        "id": "find-first-crash",
+        "command": "journalctl -b -u example.service -o short-monotonic --no-pager -n 200",
+        "explanation": {
+          "en": "Read the service journal; access may require an authorized administrator or journal group.",
+          "de": "Lies das Dienstjournal; Zugriff kann Administratorrechte oder die Journal-Gruppe erfordern."
+        },
+        "interpretation": {
+          "en": "Trace back to the first error before repeated restarts. The final start-limit message usually describes a consequence.",
+          "de": "Gehe zum ersten Fehler vor den Neustarts zurück. Die letzte Startlimit-Meldung beschreibt meist eine Folge."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "repair-before-retrying",
+        "title": {
+          "en": "Repair the first failure, then retry",
+          "de": "Ersten Fehler beheben und danach starten"
+        },
+        "body": {
+          "en": "If the first exit names a configuration or resource fault, correct it first. Then reset only this unit's failed state and start it once with administrator privileges to inspect the result.",
+          "de": "Wenn der erste Abbruch einen Konfigurations- oder Ressourcenfehler nennt, behebe ihn zuerst. Setze danach nur den Fehlerzustand dieser Unit zurück und prüfe einen einzelnen Start mit Administratorrechten."
+        },
+        "precautions": {
+          "en": "reset-failed clears relevant rate-limit counters. Repeated resets can hide an unresolved crash loop; retain the journal.",
+          "de": "reset-failed löscht relevante Startlimit-Zähler. Wiederholtes Zurücksetzen kann eine ungelöste Absturzschleife verdecken; bewahre das Journal auf."
+        },
+        "rollback": {
+          "en": "Restore any configuration change that regresses behavior. A reset counter cannot be recreated; compare saved logs.",
+          "de": "Stelle verschlechternde Konfigurationsänderungen zurück. Ein zurückgesetzter Zähler lässt sich nicht rekonstruieren; vergleiche die gespeicherten Logs."
+        }
+      },
+      {
+        "id": "add-specific-restart-backoff",
+        "title": {
+          "en": "Add a deliberate restart delay",
+          "de": "Gezielten Neustartabstand festlegen"
+        },
+        "body": {
+          "en": "If retrying is suitable for the documented failure mode, increase this service's RestartSec and retain a finite start limit. Classify expected clean exits with the application's documented exit-status policy.",
+          "de": "Wenn Wiederholungen zum dokumentierten Fehlerfall passen, erhöhe RestartSec dieses Dienstes und behalte ein endliches Startlimit. Ordne erwartete Beendigungen anhand der dokumentierten Exit-Status-Regel ein."
+        },
+        "precautions": {
+          "en": "Backoff increases outage duration. Disabling global limits can let a broken service consume CPU and flood logs.",
+          "de": "Ein größerer Abstand verlängert Ausfälle. Global ausgeschaltete Grenzen können CPU und Logs durch einen defekten Dienst überlasten."
+        },
+        "rollback": {
+          "en": "Restore prior RestartSec and exit-status settings, reload the manager and observe one controlled restart.",
+          "de": "Stelle frühere Neustart- und Exit-Status-Werte zurück, lade den Manager neu und beobachte einen kontrollierten Neustart."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.unit — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.unit.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.service — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.service.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-repeated-start",
+        "all": [
+          ".service:",
+          "Start request repeated too quickly"
+        ],
+        "sample": "systemd[1]: example.service: Start request repeated too quickly.",
+        "negative": [
+          "systemd[1]: example.service: Scheduled restart job, restart counter is at 2.",
+          "systemd[1]: example.service: Started successfully."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for systemd refusing an excessive start burst.",
+          "de": "Synthetisches Beispiel für einen von systemd abgelehnten Start-Burst."
+        },
+        "significance": {
+          "en": "Find the first failed attempt; the limit is not its cause.",
+          "de": "Finde den ersten fehlgeschlagenen Versuch; das Limit ist nicht dessen Ursache."
+        }
+      },
+      {
+        "id": "systemd-start-limit-result",
+        "all": [
+          ".service:",
+          "Failed with result 'start-limit-hit'"
+        ],
+        "sample": "systemd[1]: example.service: Failed with result 'start-limit-hit'.",
+        "negative": [
+          "systemd[1]: example.service: Failed with result 'exit-code'.",
+          "systemd[1]: example.service: Deactivated successfully."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the explicit start-limit result.",
+          "de": "Synthetisches Beispiel für das ausdrückliche Startlimit-Ergebnis."
+        },
+        "significance": {
+          "en": "A configured policy denied a further start.",
+          "de": "Eine konfigurierte Regel hat einen weiteren Start verweigert."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-service-dependency-failure",
+    "slug": {
+      "en": "systemd-service-dependency-failure",
+      "de": "systemd-dienstabhaengigkeit-fehlgeschlagen"
+    },
+    "category": "services",
+    "title": {
+      "en": "A failed prerequisite prevents service activation",
+      "de": "Eine fehlgeschlagene Voraussetzung blockiert den Dienst"
+    },
+    "summary": {
+      "en": "A service ends with a dependency result without running its own program. Trace required jobs and ordering before weakening dependencies or adding delays.",
+      "de": "Ein Dienst meldet einen Abhängigkeitsfehler ohne eigenen Programmstart. Prüfe erforderliche Aufträge und Reihenfolgen vor schwächeren Abhängigkeiten."
+    },
+    "environment": {
+      "en": "systemd dependency jobs involving Requires, Wants, After and RequiresMountsFor.",
+      "de": "systemd-Abhängigkeiten mit Requires, Wants, After und RequiresMountsFor."
+    },
+    "symptoms": {
+      "en": [
+        "No new application startup message appears.",
+        "The start job ends with result dependency."
+      ],
+      "de": [
+        "Es erscheint keine neue Startmeldung der Anwendung.",
+        "Der Startauftrag endet mit Ergebnis dependency."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A required mount or daemon may have failed before this service was allowed to start.",
+        "de": "Ein benötigter Mount oder Daemon kann vor der Startfreigabe dieses Dienstes gescheitert sein."
+      },
+      {
+        "en": "An optional resource may be declared as required; After alone orders units but does not start them.",
+        "de": "Eine optionale Ressource kann als erforderlich deklariert sein; After ordnet Units, startet sie aber nicht."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-unit-graph",
+        "command": "systemctl show example.service -p Requires -p Wants -p After -p RequiresMountsFor",
+        "explanation": {
+          "en": "Replace the target service; this only reads its dependency declarations.",
+          "de": "Ersetze den Zieldienst; es werden nur Abhängigkeiten gelesen."
+        },
+        "interpretation": {
+          "en": "Requires and Wants pull units into a transaction; After adds ordering. Match the failure to a specific prerequisite.",
+          "de": "Requires und Wants ziehen Units in einen Auftrag; After ergänzt die Reihenfolge. Ordne den Fehler einer konkreten Voraussetzung zu."
+        }
+      },
+      {
+        "id": "inspect-failed-prerequisites",
+        "command": "systemctl --failed --no-pager",
+        "explanation": {
+          "en": "Lists failed system units; use the corresponding user manager for user services.",
+          "de": "Listet fehlgeschlagene System-Units; nutze bei Benutzerdiensten den passenden Benutzer-Manager."
+        },
+        "interpretation": {
+          "en": "A failed mount in the chain is relevant; unrelated failed units do not establish the cause.",
+          "de": "Ein fehlgeschlagener Mount in der Kette ist relevant; unbeteiligte fehlerhafte Units belegen keine Ursache."
+        }
+      },
+      {
+        "id": "read-prerequisite-journal",
+        "command": "journalctl -b -u prerequisite.service --no-pager -n 80",
+        "explanation": {
+          "en": "Replace prerequisite.service with the identified dependency; journal access may be restricted.",
+          "de": "Ersetze prerequisite.service durch die ermittelte Abhängigkeit; Journalzugriff kann eingeschränkt sein."
+        },
+        "interpretation": {
+          "en": "Resolve its first error before retrying the target. A healthy prerequisite suggests checking graph accuracy and ordering.",
+          "de": "Behebe ihren ersten Fehler vor dem erneuten Zielstart. Eine gesunde Voraussetzung spricht für die Prüfung von Graph und Reihenfolge."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-required-prerequisite",
+        "title": {
+          "en": "Restore the actual prerequisite",
+          "de": "Die tatsächliche Voraussetzung wiederherstellen"
+        },
+        "body": {
+          "en": "If the service requires the failed mount or daemon, repair that unit and verify readiness first. For a data directory, verify the expected filesystem is mounted rather than merely that the directory exists.",
+          "de": "Wenn der Dienst den Mount oder Daemon benötigt, behebe diese Unit und prüfe zuerst ihre Bereitschaft. Prüfe bei Datenverzeichnissen das erwartete Dateisystem statt nur die Existenz des Pfads."
+        },
+        "precautions": {
+          "en": "Starting on an empty mountpoint can create a second dataset on the root filesystem. Preserve the original dependency logs.",
+          "de": "Ein Start auf einem leeren Mountpunkt kann einen zweiten Datenbestand im Root-Dateisystem erzeugen. Bewahre die Abhängigkeitslogs auf."
+        },
+        "rollback": {
+          "en": "Restore prerequisite configuration changes and keep the dependent service stopped until its required resource is valid.",
+          "de": "Stelle Änderungen an der Voraussetzung zurück und lasse den abhängigen Dienst gestoppt, bis seine Ressource gültig ist."
+        }
+      },
+      {
+        "id": "model-optional-dependency",
+        "title": {
+          "en": "Model an optional dependency correctly",
+          "de": "Eine optionale Abhängigkeit passend modellieren"
+        },
+        "body": {
+          "en": "If documentation confirms operation without that component, replace the unnecessary Requires relation with an appropriate Wants relation while retaining needed ordering. Check application behavior with the optional component absent.",
+          "de": "Wenn die Dokumentation den Betrieb ohne die Komponente erlaubt, ersetze unnötiges Requires durch ein passendes Wants und behalte erforderliche Reihenfolgen bei. Prüfe das Verhalten ohne diese Komponente."
+        },
+        "precautions": {
+          "en": "This changes failure propagation. Never weaken required database, secret or storage dependencies just to obtain an active state.",
+          "de": "Das verändert die Fehlerweitergabe. Schwäche benötigte Datenbank-, Geheimnis- oder Speicherabhängigkeiten nicht nur für einen aktiven Zustand."
+        },
+        "rollback": {
+          "en": "Restore the original relation, reload units and start the complete prerequisite chain.",
+          "de": "Stelle die ursprüngliche Beziehung zurück, lade Units neu und starte die vollständige Voraussetzungskette."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.unit — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.unit.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemctl — upstream dependency inspection",
+        "url": "https://manpages.debian.org/testing/systemd/systemctl.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-dependency-job",
+        "all": [
+          ".service:",
+          "/start failed with result",
+          "'dependency'"
+        ],
+        "sample": "systemd[1]: example.service: Job example.service/start failed with result 'dependency'.",
+        "negative": [
+          "systemd[1]: example.service: Job example.service/start finished with result 'done'.",
+          "systemd[1]: example.service: Job example.service/stop failed with result 'timeout'."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for propagated prerequisite failure.",
+          "de": "Synthetisches Beispiel für einen weitergegebenen Voraussetzungsfehler."
+        },
+        "significance": {
+          "en": "This does not establish that the application executable crashed.",
+          "de": "Das belegt keinen Absturz des Anwendungsprogramms."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-mount-namespace-failure",
+    "slug": {
+      "en": "systemd-mount-namespace-failure",
+      "de": "systemd-mount-namespace-fehler"
+    },
+    "category": "services",
+    "title": {
+      "en": "Service sandbox setup fails with NAMESPACE",
+      "de": "Dienst-Sandbox scheitert mit NAMESPACE"
+    },
+    "summary": {
+      "en": "A unit fails with 226/NAMESPACE before execution. Inspect sandbox paths, root images and host capabilities to identify the specific isolation failure.",
+      "de": "Eine Unit scheitert vor dem Start mit 226/NAMESPACE. Prüfe Sandbox-Pfade, Root-Images und Host-Fähigkeiten für den konkreten Isolationsfehler."
+    },
+    "environment": {
+      "en": "systemd filesystem sandbox directives, root images and mount namespaces in system or user managers.",
+      "de": "systemd-Dateisystem-Sandbox, Root-Images und Mount-Namespaces in System- oder Benutzer-Managern."
+    },
+    "symptoms": {
+      "en": [
+        "Startup reports status=226/NAMESPACE.",
+        "The journal names a failed namespace mount or source path."
+      ],
+      "de": [
+        "Der Start meldet status=226/NAMESPACE.",
+        "Das Journal nennt einen fehlgeschlagenen Namespace-Mount oder Quellpfad."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A mandatory ReadWritePaths, BindPaths or image source may be absent.",
+        "de": "Ein erforderlicher Pfad aus ReadWritePaths, BindPaths oder einer Image-Quelle kann fehlen."
+      },
+      {
+        "en": "A container or user manager may lack the namespace capabilities requested by the unit.",
+        "de": "Ein Container oder Benutzer-Manager kann die angeforderten Namespace-Fähigkeiten nicht besitzen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-sandbox-settings",
+        "command": "systemctl show example.service -p RootDirectory -p RootImage -p ReadWritePaths -p BindPaths -p ProtectSystem -p PrivateTmp",
+        "explanation": {
+          "en": "Replace example.service; the query creates no namespace.",
+          "de": "Ersetze example.service; die Abfrage erstellt keinen Namespace."
+        },
+        "interpretation": {
+          "en": "Compare source paths with their host or service-root context. Distinguish required paths from genuinely optional paths.",
+          "de": "Vergleiche Quellpfade mit Host- oder Dienst-Root-Kontext. Unterscheide erforderliche von tatsächlich optionalen Pfaden."
+        }
+      },
+      {
+        "id": "read-namespace-setup",
+        "command": "journalctl -b -u example.service --no-pager -n 80",
+        "explanation": {
+          "en": "Read the affected journal with authorized read access if restricted.",
+          "de": "Lies das betroffene Journal mit berechtigten Leserechten, falls eingeschränkt."
+        },
+        "interpretation": {
+          "en": "The preceding error can name a missing file, unsupported operation or denied namespace setup. 226 alone does not distinguish them.",
+          "de": "Die vorherige Meldung kann fehlende Datei, nicht unterstützte Operation oder verweigerten Aufbau nennen. 226 allein unterscheidet sie nicht."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "repair-sandbox-source",
+        "title": {
+          "en": "Repair the named sandbox source",
+          "de": "Die genannte Sandbox-Quelle korrigieren"
+        },
+        "body": {
+          "en": "If the error identifies a missing required path, provision it or correct its binding. Use the documented optional-path prefix only if the application truly tolerates that resource being absent.",
+          "de": "Wenn ein erforderlicher Pfad fehlt, stelle ihn bereit oder korrigiere seine Bindung. Nutze den dokumentierten Präfix für optionale Pfade nur, wenn die Anwendung ohne die Ressource auskommt."
+        },
+        "precautions": {
+          "en": "An optional prefix can hide missing state or secrets and grants no extra access. Review the effective unit after editing.",
+          "de": "Ein optionaler Präfix kann fehlende Daten oder Geheimnisse verdecken und erteilt keine zusätzlichen Rechte. Prüfe die wirksame Unit nach der Änderung."
+        },
+        "rollback": {
+          "en": "Restore the original path declaration and deployment layout, reload the unit and restart when its source exists.",
+          "de": "Stelle Pfadvorgabe und Deployment-Struktur zurück, lade die Unit neu und starte bei vorhandener Quelle."
+        }
+      },
+      {
+        "id": "align-isolation-with-host",
+        "title": {
+          "en": "Align isolation with host capabilities",
+          "de": "Isolation an Host-Fähigkeiten anpassen"
+        },
+        "body": {
+          "en": "If logs prove the host cannot create the requested namespace, use a supported environment or narrowly adapt that particular sandbox feature after reviewing its security purpose. Retain unrelated isolation directives.",
+          "de": "Wenn Logs fehlende Host-Fähigkeiten belegen, nutze eine unterstützte Umgebung oder passe nach Prüfung ihrer Schutzwirkung genau diese Sandbox-Funktion an. Behalte unbeteiligte Schutzvorgaben bei."
+        },
+        "precautions": {
+          "en": "Do not grant blanket container privileges for one unit failure. Check directive availability in the installed systemd manual.",
+          "de": "Erteile keine pauschalen Container-Privilegien für einen Unit-Fehler. Prüfe Vorgaben im Handbuch der installierten systemd-Version."
+        },
+        "rollback": {
+          "en": "Restore the isolation directive or runtime environment and compare the same startup inspection.",
+          "de": "Stelle Isolationsvorgabe oder Laufzeitumgebung wieder her und vergleiche denselben Dienststart."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.unit — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.unit.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-namespace-status",
+        "all": [
+          ".service:",
+          "status=226/NAMESPACE"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=226/NAMESPACE",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=217/USER",
+          "systemd[1]: example.service: Mount namespace configured successfully"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for mount namespace preparation failure.",
+          "de": "Synthetisches Beispiel für einen Mount-Namespace-Aufbaufehler."
+        },
+        "significance": {
+          "en": "Inspect setup paths and host support before application settings.",
+          "de": "Prüfe Aufbaupfade und Host-Unterstützung vor Anwendungseinstellungen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-state-directory-failure",
+    "slug": {
+      "en": "systemd-state-directory-failure",
+      "de": "systemd-verwaltetes-datenverzeichnis-fehler"
+    },
+    "category": "services",
+    "title": {
+      "en": "Managed state or runtime directories cannot be prepared",
+      "de": "Verwaltete Daten- oder Laufzeitverzeichnisse scheitern"
+    },
+    "summary": {
+      "en": "StateDirectory or RuntimeDirectory fails before ExecStart. Check path collisions, ownership and capacity while preserving existing application state.",
+      "de": "StateDirectory oder RuntimeDirectory scheitert vor ExecStart. Prüfe Pfadkollisionen, Eigentümer und Platz unter Erhalt vorhandener Anwendungsdaten."
+    },
+    "environment": {
+      "en": "systemd units using StateDirectory or RuntimeDirectory, including DynamicUser storage layout.",
+      "de": "systemd-Units mit StateDirectory oder RuntimeDirectory, einschließlich DynamicUser-Verzeichnisstruktur."
+    },
+    "symptoms": {
+      "en": [
+        "Startup exits with STATE_DIRECTORY or RUNTIME_DIRECTORY.",
+        "The expected directory path collides with a file or unsuitable link."
+      ],
+      "de": [
+        "Der Start endet mit STATE_DIRECTORY oder RUNTIME_DIRECTORY.",
+        "Der vorgesehene Verzeichnispfad kollidiert mit einer Datei oder ungeeigneten Verknüpfung."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A path collision, ownership setup error or read-only backing filesystem can block preparation.",
+        "de": "Eine Pfadkollision, fehlerhafte Eigentümerzuordnung oder schreibgeschützter Speicher kann den Aufbau blockieren."
+      },
+      {
+        "en": "Storage or inode exhaustion can prevent directory creation; /run may be full independently of /var/lib.",
+        "de": "Erschöpfter Platz oder Inode-Vorrat kann die Erstellung verhindern; /run kann unabhängig von /var/lib voll sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-managed-directories",
+        "command": "systemctl show example.service -p StateDirectory -p RuntimeDirectory -p User -p DynamicUser",
+        "explanation": {
+          "en": "Replace the unit; inspect settings before assuming path ownership.",
+          "de": "Ersetze die Unit; prüfe Vorgaben vor Annahmen zu Pfadeigentümern."
+        },
+        "interpretation": {
+          "en": "StateDirectory is persistent state; RuntimeDirectory is runtime data. DynamicUser can use private storage and compatibility symlinks.",
+          "de": "StateDirectory enthält dauerhafte Daten, RuntimeDirectory Laufzeitdaten. DynamicUser kann privaten Speicher mit Kompatibilitäts-Symlinks nutzen."
+        }
+      },
+      {
+        "id": "inspect-state-path",
+        "command": "namei -l /var/lib/example",
+        "explanation": {
+          "en": "Replace the path with the failing managed path from the journal; metadata only.",
+          "de": "Ersetze den Pfad durch den betroffenen verwalteten Journalpfad; nur Metadaten."
+        },
+        "interpretation": {
+          "en": "A regular file at a required directory differs from a legitimate DynamicUser symlink. Inspect targets before moving anything.",
+          "de": "Eine Datei am Verzeichnispfad unterscheidet sich von einem legitimen DynamicUser-Symlink. Prüfe Ziele vor Verschiebungen."
+        }
+      },
+      {
+        "id": "inspect-directory-capacity",
+        "command": "df -h /var/lib /run",
+        "explanation": {
+          "en": "Reads typical state and runtime filesystem capacity; adjust for alternate roots.",
+          "de": "Liest Platz üblicher Daten- und Laufzeitdateisysteme; passe Pfade für andere Roots an."
+        },
+        "interpretation": {
+          "en": "A full /run tmpfs can block runtime setup while persistent storage has room. If allocation fails despite room, check inode availability as well.",
+          "de": "Ein volles /run-tmpfs kann trotz Platz auf dauerhaftem Speicher blockieren. Prüfe bei Allokationsfehlern trotz Platz auch freie Inodes."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "resolve-managed-path-collision",
+        "title": {
+          "en": "Resolve a verified path collision",
+          "de": "Bestätigte Pfadkollision auflösen"
+        },
+        "body": {
+          "en": "If a stray file occupies the required directory, stop the service and archive it before provisioning the intended directory through the configured manager mechanism. Preserve existing state and documented private-directory layout.",
+          "de": "Wenn eine fremde Datei den Verzeichnispfad belegt, stoppe den Dienst und sichere sie vor der vorgesehenen Verzeichnisbereitstellung. Erhalte bestehende Daten und die dokumentierte private Struktur."
+        },
+        "precautions": {
+          "en": "Do not delete service data or recursively change ownership without identifying contents and DynamicUser behavior.",
+          "de": "Lösche keine Dienstdaten und ändere Eigentümer nicht rekursiv ohne Prüfung von Inhalt und DynamicUser-Verhalten."
+        },
+        "rollback": {
+          "en": "Stop the service, restore the archived path and previous unit, and reconnect the original state before startup.",
+          "de": "Stoppe den Dienst, stelle gesicherten Pfad und frühere Unit zurück und verbinde vor dem Start die ursprünglichen Daten."
+        }
+      },
+      {
+        "id": "correct-directory-storage",
+        "title": {
+          "en": "Correct the specific storage constraint",
+          "de": "Gezielte Speicherbeschränkung beheben"
+        },
+        "body": {
+          "en": "If capacity or a read-only mount caused failure, restore writable capacity on that filesystem or move state using the application's supported procedure. Reduce the identified runtime-data consumer if /run is exhausted.",
+          "de": "Wenn Platz oder Schreibschutz den Fehler verursacht, stelle auf diesem Dateisystem nutzbaren Platz her oder verschiebe Daten nach dem unterstützten Verfahren. Reduziere den ermittelten Laufzeitverbraucher bei vollem /run."
+        },
+        "precautions": {
+          "en": "State migration can require shutdown and backups. RuntimeDirectory contents usually disappear when stopping unless preservation is configured.",
+          "de": "Datenumzüge können Stopp und Sicherungen erfordern. RuntimeDirectory-Inhalte verschwinden beim Stopp normalerweise, sofern kein Erhalt konfiguriert ist."
+        },
+        "rollback": {
+          "en": "Restore old directory settings and backed-up data with the application stopped; do not merge divergent live datasets.",
+          "de": "Stelle alte Verzeichniseinstellungen und Sicherungen bei gestoppter Anwendung zurück; vermische keine auseinanderentwickelten Live-Daten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.service — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.service.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-state-directory-status",
+        "all": [
+          ".service:",
+          "status=238/STATE_DIRECTORY"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=238/STATE_DIRECTORY",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=203/EXEC",
+          "systemd[1]: example.service: State directory already exists"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for persistent directory setup failure.",
+          "de": "Synthetisches Beispiel für einen Fehler beim dauerhaften Datenverzeichnis."
+        },
+        "significance": {
+          "en": "Inspect the named directory and preceding filesystem error.",
+          "de": "Prüfe genanntes Verzeichnis und vorhergehenden Dateisystemfehler."
+        }
+      },
+      {
+        "id": "systemd-runtime-directory-status",
+        "all": [
+          ".service:",
+          "status=233/RUNTIME_DIRECTORY"
+        ],
+        "sample": "systemd[1]: example.service: Main process exited, code=exited, status=233/RUNTIME_DIRECTORY",
+        "negative": [
+          "systemd[1]: example.service: Main process exited, code=exited, status=238/STATE_DIRECTORY",
+          "systemd[1]: example.service: RuntimeDirectoryPreserve=yes"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for runtime-directory setup failure.",
+          "de": "Synthetisches Beispiel für einen Laufzeitverzeichnis-Aufbaufehler."
+        },
+        "significance": {
+          "en": "Check /run context and capacity before assuming persistent corruption.",
+          "de": "Prüfe /run-Kontext und Platz vor der Annahme beschädigter dauerhafter Daten."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-timer-missed-runs",
+    "slug": {
+      "en": "systemd-timer-missed-runs",
+      "de": "systemd-timer-verpasste-laeufe"
+    },
+    "category": "services",
+    "title": {
+      "en": "A timer runs late or misses offline periods",
+      "de": "Ein Timer läuft verspätet oder verpasst Auszeiten"
+    },
+    "summary": {
+      "en": "Scheduled jobs miss the expected time. Check calendar interpretation, activation, random delays and whether offline calendar runs should be caught up.",
+      "de": "Geplante Aufträge verpassen die erwartete Zeit. Prüfe Kalenderausdruck, Aktivierung, Zufallsverzögerung und das Nachholen während Auszeiten."
+    },
+    "environment": {
+      "en": "systemd calendar or monotonic timers; Persistent catch-up applies to OnCalendar.",
+      "de": "systemd-Kalender- oder monotone Timer; Persistent holt verpasste OnCalendar-Termine nach."
+    },
+    "symptoms": {
+      "en": [
+        "The next trigger differs from the intended local time.",
+        "No task runs after downtime covering the scheduled deadline."
+      ],
+      "de": [
+        "Der nächste Termin weicht von der beabsichtigten Ortszeit ab.",
+        "Nach einer Auszeit während des Termins läuft kein Auftrag."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The timer may be inactive, use a wrong timezone or expression, or include a configured random delay.",
+        "de": "Der Timer kann inaktiv sein, eine falsche Zeitzone oder Syntax verwenden oder eine Zufallsverzögerung enthalten."
+      },
+      {
+        "en": "Persistent may be absent or the timer monotonic; an already active target is not restarted whenever the timer expires.",
+        "de": "Persistent kann fehlen oder der Timer monoton arbeiten; ein bereits aktives Ziel wird beim Ablauf nicht erneut gestartet."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-next-trigger",
+        "command": "systemctl list-timers --all --no-pager",
+        "explanation": {
+          "en": "Lists deadlines and activations; use --user for user timers.",
+          "de": "Listet Termine und Auslösungen; nutze --user für Benutzertimer."
+        },
+        "interpretation": {
+          "en": "An absent next deadline suggests an inactive or exhausted timer. A recent trigger does not prove the target completed.",
+          "de": "Ein fehlender nächster Termin deutet auf einen inaktiven oder ausgeschöpften Timer. Eine Auslösung beweist keinen erfolgreichen Auftrag."
+        }
+      },
+      {
+        "id": "inspect-timer-definition",
+        "command": "systemctl cat example.timer",
+        "explanation": {
+          "en": "Replace the timer name; reads its definition without running the job.",
+          "de": "Ersetze den Timernamen; liest seine Definition ohne Auftragstart."
+        },
+        "interpretation": {
+          "en": "Compare OnCalendar, timezone, Persistent, AccuracySec and RandomizedDelaySec. OnBootSec has different missed-run behavior.",
+          "de": "Vergleiche OnCalendar, Zeitzone, Persistent, AccuracySec und RandomizedDelaySec. OnBootSec behandelt verpasste Läufe anders."
+        }
+      },
+      {
+        "id": "check-calendar-expression",
+        "command": "systemd-analyze calendar 'Mon..Fri 18:00 Europe/Berlin'",
+        "explanation": {
+          "en": "Replace the quoted expression with the exact OnCalendar value; calculation only.",
+          "de": "Ersetze den Ausdruck durch den genauen OnCalendar-Wert; reine Berechnung."
+        },
+        "interpretation": {
+          "en": "Normalization and next elapse reveal syntax and timezone assumptions. Repair rejected syntax before evaluating delays.",
+          "de": "Normalisierung und nächster Ablauf zeigen Syntax und Zeitzonenannahmen. Behebe abgelehnte Syntax vor der Bewertung von Verzögerungen."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "correct-calendar-and-activation",
+        "title": {
+          "en": "Correct schedule and timer activation",
+          "de": "Zeitplan und Timeraktivierung korrigieren"
+        },
+        "body": {
+          "en": "If the expression resolves to the wrong deadline, declare the intended schedule and timezone. Enable and start the timer, rather than only its service, for recurring execution.",
+          "de": "Wenn der Ausdruck den falschen Termin ergibt, hinterlege Zeitplan und Zeitzone. Aktiviere und starte für wiederkehrende Läufe den Timer statt nur seinen Dienst."
+        },
+        "precautions": {
+          "en": "Check daylight-saving transitions and task duration. Preserve the old schedule and avoid overlapping manual runs.",
+          "de": "Prüfe Sommerzeitwechsel und Laufzeit. Bewahre den alten Plan auf und vermeide überlappende manuelle Läufe."
+        },
+        "rollback": {
+          "en": "Restore the old timer definition and enabled state, reload the manager and inspect its next deadline.",
+          "de": "Stelle Timerdefinition und Aktivierungszustand zurück, lade den Manager neu und prüfe den nächsten Termin."
+        }
+      },
+      {
+        "id": "choose-offline-catch-up",
+        "title": {
+          "en": "Choose catch-up behavior deliberately",
+          "de": "Nachholverhalten bewusst festlegen"
+        },
+        "body": {
+          "en": "For calendar jobs that should catch up after downtime, set Persistent=true on this timer. If late execution is undesirable, leave it disabled and handle missed business deadlines in the job.",
+          "de": "Setze für Kalenderaufträge mit gewünschtem Nachholen Persistent=true auf diesem Timer. Ist späte Ausführung unerwünscht, lasse es aus und behandle fachlich verpasste Termine im Auftrag."
+        },
+        "precautions": {
+          "en": "Activation can trigger the task, subject to random delay. Persistent does not replay every missed occurrence.",
+          "de": "Die Aktivierung kann den Auftrag mit möglicher Zufallsverzögerung auslösen. Persistent wiederholt nicht jeden verpassten Termin."
+        },
+        "rollback": {
+          "en": "Restore the previous Persistent value and timer state; completed task side effects are not undone by a timer edit.",
+          "de": "Stelle früheren Persistent-Wert und Timerzustand zurück; erfolgte Auftragswirkungen werden durch eine Timeränderung nicht rückgängig."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.timer — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.timer.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd-analyze — calendar inspection",
+        "url": "https://manpages.debian.org/testing/systemd/systemd-analyze.1.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-invalid-calendar",
+        "all": [
+          ".timer:",
+          "Failed to parse calendar specification"
+        ],
+        "sample": "systemd[1]: example.timer: Failed to parse calendar specification, ignoring: every-workday",
+        "negative": [
+          "systemd[1]: example.timer: Adding 30min random time.",
+          "systemd[1]: example.service: Failed to parse configuration file."
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a rejected calendar expression.",
+          "de": "Synthetisches Beispiel für einen abgelehnten Kalenderausdruck."
+        },
+        "significance": {
+          "en": "This detects invalid syntax, not every late timer.",
+          "de": "Dies erkennt ungültige Syntax, nicht jeden verspäteten Timer."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-socket-address-conflict",
+    "slug": {
+      "en": "systemd-socket-address-conflict",
+      "de": "systemd-socket-adresse-belegt"
+    },
+    "category": "services",
+    "title": {
+      "en": "Socket activation cannot bind its listening address",
+      "de": "Socket-Aktivierung kann die Adresse nicht binden"
+    },
+    "summary": {
+      "en": "A .socket unit fails because another listener owns its endpoint. Identify the owner and intended activation model before changing bindings or stopping it.",
+      "de": "Eine .socket-Unit scheitert an einem belegten Endpunkt. Ermittle Eigentümer und Aktivierungsmodell vor dem Ändern der Bindung oder einem Stopp."
+    },
+    "environment": {
+      "en": "systemd TCP or Unix socket activation; ss is provided by iproute2.",
+      "de": "systemd-TCP- oder Unix-Socket-Aktivierung; ss gehört zu iproute2."
+    },
+    "symptoms": {
+      "en": [
+        "The socket unit reports Address already in use.",
+        "Another daemon already listens at the endpoint."
+      ],
+      "de": [
+        "Die Socket-Unit meldet Address already in use.",
+        "Ein anderer Daemon lauscht bereits am Endpunkt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "An application-owned listener may compete with systemd socket activation.",
+        "de": "Ein anwendungseigener Listener kann mit systemd-Socket-Aktivierung konkurrieren."
+      },
+      {
+        "en": "Duplicate units, wildcard IPv4/IPv6 overlap or stale Unix socket nodes can conflict.",
+        "de": "Doppelte Units, überlappende IPv4-/IPv6-Wildcards oder alte Unix-Socket-Knoten können kollidieren."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-listen-definition",
+        "command": "systemctl cat example.socket",
+        "explanation": {
+          "en": "Replace example.socket; read ListenStream and binding options.",
+          "de": "Ersetze example.socket; lies ListenStream und Bindevorgaben."
+        },
+        "interpretation": {
+          "en": "A wildcard IPv6 socket may also cover IPv4 depending on BindIPv6Only. Distinguish TCP from a Unix path.",
+          "de": "Ein IPv6-Wildcard-Socket kann je nach BindIPv6Only auch IPv4 abdecken. Unterscheide TCP von einem Unix-Pfad."
+        }
+      },
+      {
+        "id": "identify-tcp-owner",
+        "command": "ss -ltnp",
+        "explanation": {
+          "en": "Read-only TCP listeners; seeing all process owners may require administrative read access.",
+          "de": "Liest TCP-Listener; alle Prozesseigentümer können administrative Leserechte benötigen."
+        },
+        "interpretation": {
+          "en": "Match address and port including wildcard listeners. The socket manager differs from an independent standalone daemon.",
+          "de": "Vergleiche Adresse und Port einschließlich Wildcards. Der Socket-Manager unterscheidet sich von einem unabhängigen Daemon."
+        }
+      },
+      {
+        "id": "identify-unix-owner",
+        "command": "ss -lxnp",
+        "explanation": {
+          "en": "Use for Unix endpoints; process details may be restricted.",
+          "de": "Nutze dies für Unix-Endpunkte; Prozessdetails können eingeschränkt sein."
+        },
+        "interpretation": {
+          "en": "Do not unlink a path with an active listener. An existing node without a listener requires lifecycle and ownership inspection.",
+          "de": "Entferne keinen Pfad mit aktivem Listener. Ein Knoten ohne Listener benötigt Lebenszyklus- und Eigentümerprüfung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "choose-one-listener-owner",
+        "title": {
+          "en": "Choose one intended listener owner",
+          "de": "Einen Listener-Eigentümer festlegen"
+        },
+        "body": {
+          "en": "If the application supports socket activation, configure its documented inherited-socket mode and remove the competing standalone listener. Otherwise disable the unused socket unit and let the daemon own the endpoint.",
+          "de": "Unterstützt die Anwendung Socket-Aktivierung, konfiguriere ihren dokumentierten Modus für übergebene Sockets und entferne den konkurrierenden Listener. Andernfalls deaktiviere die ungenutzte Socket-Unit."
+        },
+        "precautions": {
+          "en": "Stopping a listener interrupts clients. Verify inherited file-descriptor support before enabling activation.",
+          "de": "Ein Listener-Stopp unterbricht Clients. Prüfe die Unterstützung übergebener Dateideskriptoren vor der Aktivierung."
+        },
+        "rollback": {
+          "en": "Restore prior listener settings and unit enablement, then restart the original owner during maintenance.",
+          "de": "Stelle Listenerwerte und Unit-Aktivierung zurück und starte den früheren Eigentümer im Wartungsfenster."
+        }
+      },
+      {
+        "id": "resolve-endpoint-collision",
+        "title": {
+          "en": "Resolve the verified endpoint collision",
+          "de": "Bestätigte Endpunktkollision beheben"
+        },
+        "body": {
+          "en": "If distinct services need separate endpoints, change one binding and update clients or the proxy. Remove a stale Unix node only after confirming ownership and absence of a live listener.",
+          "de": "Benötigen verschiedene Dienste eigene Endpunkte, ändere eine Bindung und passe Clients oder Proxy an. Entferne alte Unix-Knoten erst nach Eigentümerprüfung und Ausschluss eines aktiven Listeners."
+        },
+        "precautions": {
+          "en": "Record firewall and client assumptions. Unlinking an active socket makes a running service unreachable.",
+          "de": "Notiere Firewall- und Clientannahmen. Ein entfernter aktiver Socket macht einen laufenden Dienst unerreichbar."
+        },
+        "rollback": {
+          "en": "Restore old binding and client settings; recreate a Unix socket by restarting its owner, not by creating a normal file.",
+          "de": "Stelle Bindung und Clients zurück; ein Unix-Socket entsteht beim Neustart seines Eigentümers, nicht durch eine normale Datei."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.socket — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.socket.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.service — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.service.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-socket-bind-conflict",
+        "all": [
+          ".socket:",
+          "Failed to listen on sockets",
+          "Address already in use"
+        ],
+        "sample": "systemd[1]: example.socket: Failed to listen on sockets: Address already in use",
+        "negative": [
+          "systemd[1]: example.socket: Listening on Example Socket.",
+          "systemd[1]: example.socket: Failed to listen on sockets: Permission denied"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a socket-unit endpoint collision.",
+          "de": "Synthetisches Beispiel für eine Endpunktkollision einer Socket-Unit."
+        },
+        "significance": {
+          "en": "Find the listener owner before changing network or service policy.",
+          "de": "Ermittle den Listener-Eigentümer vor Netzwerk- oder Dienständerungen."
+        }
+      }
+    ]
+  },
+  {
+    "id": "journald-service-rate-limiting",
+    "slug": {
+      "en": "journald-service-rate-limiting",
+      "de": "journald-dienstmeldungen-begrenzt"
+    },
+    "category": "services",
+    "title": {
+      "en": "Journald suppresses a burst of service messages",
+      "de": "Journald verwirft eine Flut von Dienstmeldungen"
+    },
+    "summary": {
+      "en": "A noisy service has log gaps with suppression notices. Distinguish journal rate limits from application-side logging and storage retention settings.",
+      "de": "Bei einem lauten Dienst fehlen Logs mit Unterdrückungsmeldungen. Unterscheide Journalbegrenzung, Anwendungslogging und Aufbewahrungseinstellungen."
+    },
+    "environment": {
+      "en": "systemd-journald and service LogRateLimitIntervalSec/LogRateLimitBurst overrides.",
+      "de": "systemd-journald und Dienstvorgaben LogRateLimitIntervalSec/LogRateLimitBurst."
+    },
+    "symptoms": {
+      "en": [
+        "Journald names a service whose messages were suppressed.",
+        "The service remains active but parts of its output are absent."
+      ],
+      "de": [
+        "Journald nennt einen Dienst mit unterdrückten Meldungen.",
+        "Der Dienst bleibt aktiv, doch Teile der Ausgabe fehlen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Rapid repeated messages may exceed journal or per-service burst limits.",
+        "de": "Schnell wiederholte Meldungen können Journal- oder Dienst-Burst-Grenzen überschreiten."
+      },
+      {
+        "en": "An application can also limit its own messages; journald reports only drops after reception.",
+        "de": "Eine Anwendung kann selbst begrenzen; journald meldet nur verworfene Nachrichten nach ihrem Empfang."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-suppression-notices",
+        "command": "journalctl -b -u systemd-journald.service --no-pager -n 100",
+        "explanation": {
+          "en": "Reads journald notices; system journal access may require authorized administrative read access.",
+          "de": "Liest journald-Meldungen; das Systemjournal kann berechtigte administrative Leserechte benötigen."
+        },
+        "interpretation": {
+          "en": "A notice names the source and count but cannot reconstruct the missing message text.",
+          "de": "Eine Meldung nennt Quelle und Anzahl, rekonstruiert aber nicht den fehlenden Text."
+        }
+      },
+      {
+        "id": "inspect-unit-log-limit",
+        "command": "systemctl show example.service -p LogRateLimitIntervalUSec -p LogRateLimitBurst -p StandardOutput -p StandardError",
+        "explanation": {
+          "en": "Replace example.service; shows logging targets and unit overrides without restart.",
+          "de": "Ersetze example.service; zeigt Log-Ziele und Unit-Ergänzungen ohne Neustart."
+        },
+        "interpretation": {
+          "en": "Unit rate-limit settings can supersede global values. File-only output needs the application's own logging inspection.",
+          "de": "Unit-Vorgaben können globale Werte ersetzen. Nur in Dateien geschriebene Ausgabe benötigt eine Prüfung des Anwendungsloggings."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "reduce-repeated-log-source",
+        "title": {
+          "en": "Fix the repeated message source",
+          "de": "Die Quelle wiederholter Meldungen beheben"
+        },
+        "body": {
+          "en": "If one reconnect or configuration failure floods output, repair that condition or reduce documented application verbosity. Save a representative sample before lowering the log level.",
+          "de": "Wenn ein Verbindungs- oder Konfigurationsfehler die Ausgabe flutet, behebe ihn oder reduziere die dokumentierte Ausführlichkeit. Sichere vorher eine repräsentative Stichprobe."
+        },
+        "precautions": {
+          "en": "Reducing verbosity can hide other evidence. Do not suppress all errors solely to remove the notice.",
+          "de": "Weniger Ausgabe kann andere Hinweise verdecken. Unterdrücke nicht sämtliche Fehler nur gegen diese Meldung."
+        },
+        "rollback": {
+          "en": "Restore the prior application log level. Already dropped journal messages cannot be recovered.",
+          "de": "Stelle den früheren Log-Level zurück. Bereits verworfene Journalmeldungen lassen sich nicht nachträglich wiederherstellen."
+        }
+      },
+      {
+        "id": "adjust-per-service-log-budget",
+        "title": {
+          "en": "Adjust this service's log budget temporarily",
+          "de": "Log-Budget dieses Dienstes vorübergehend anpassen"
+        },
+        "body": {
+          "en": "If a necessary diagnostic burst must be retained, temporarily increase this unit's documented log budget and monitor journal capacity. Restore normal limits after evidence collection.",
+          "de": "Wenn eine notwendige Diagnoseflut erhalten bleiben muss, erhöhe vorübergehend das dokumentierte Budget dieser Unit und überwache Journalplatz. Stelle danach normale Grenzen zurück."
+        },
+        "precautions": {
+          "en": "Extra output consumes I/O and storage. Check local directive support and avoid disabling global limits for unrelated services.",
+          "de": "Zusätzliche Ausgabe verbraucht I/O und Platz. Prüfe lokale Unterstützung und deaktiviere keine globalen Grenzen für unbeteiligte Dienste."
+        },
+        "rollback": {
+          "en": "Restore recorded unit values, reload the manager and apply a restart only if the unit change requires it and interruption is acceptable.",
+          "de": "Stelle notierte Unit-Werte zurück, lade den Manager neu und starte nur bei nötiger Änderung und zulässiger Unterbrechung."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "journald.conf — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/journald.conf.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "systemd.exec — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.exec.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "journald-suppressed-service",
+        "all": [
+          "systemd-journald",
+          "Suppressed",
+          "messages from",
+          ".service"
+        ],
+        "sample": "systemd-journald[412]: Suppressed 1200 messages from example.service",
+        "negative": [
+          "systemd-journald[412]: Journal started",
+          "example[812]: Suppressed duplicate progress messages"
+        ],
+        "severity": "warning",
+        "explanation": {
+          "en": "Synthetic fixture for journald dropping a service message burst.",
+          "de": "Synthetisches Beispiel für von journald verworfene Dienstmeldungen."
+        },
+        "significance": {
+          "en": "Missing log messages are weak evidence during the dropped burst.",
+          "de": "Fehlende Logmeldungen sind während der verworfenen Flut nur schwache Hinweise."
+        }
+      }
+    ]
+  },
+  {
+    "id": "systemd-service-watchdog-expiry",
+    "slug": {
+      "en": "systemd-service-watchdog-expiry",
+      "de": "systemd-dienst-watchdog-abgelaufen"
+    },
+    "category": "services",
+    "title": {
+      "en": "A service misses its userspace watchdog heartbeat",
+      "de": "Ein Dienst verpasst seinen Userspace-Watchdog"
+    },
+    "summary": {
+      "en": "A running service aborts after missing WATCHDOG=1 heartbeats. Check notification support, sender identity and workload stalls before changing its deadline.",
+      "de": "Ein Dienst wird wegen fehlender WATCHDOG=1-Meldungen abgebrochen. Prüfe Meldungsunterstützung, Absender und Arbeitsstaus vor dem Ändern des Zeitlimits."
+    },
+    "environment": {
+      "en": "systemd per-service WatchdogSec; separate from kernel lockup detectors and hardware watchdog devices.",
+      "de": "systemd-Watchdog mit WatchdogSec pro Dienst; getrennt von Kernel-Lockup-Erkennung und Hardware-Watchdogs."
+    },
+    "symptoms": {
+      "en": [
+        "The service journal reports Watchdog timeout.",
+        "An abort may be followed by Restart-policy recovery."
+      ],
+      "de": [
+        "Das Dienstjournal meldet Watchdog timeout.",
+        "Auf den Abbruch kann eine Erholung nach Restart-Regel folgen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Watchdog support may be absent or notifications sent by a process not accepted by NotifyAccess.",
+        "de": "Watchdog-Unterstützung kann fehlen oder Meldungen stammen von einem durch NotifyAccess ausgeschlossenen Prozess."
+      },
+      {
+        "en": "An event-loop blockage, scheduling delay or I/O stall can prevent otherwise implemented heartbeats.",
+        "de": "Eine blockierte Ereignisschleife, Scheduling-Verzögerung oder ein I/O-Stau kann vorhandene Heartbeats verhindern."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-watchdog-policy",
+        "command": "systemctl show example.service -p WatchdogUSec -p NotifyAccess -p WatchdogTimestampMonotonic -p Result",
+        "explanation": {
+          "en": "Replace the service name; reads watchdog state without changing it.",
+          "de": "Ersetze den Dienstnamen; liest den Watchdog-Zustand unverändert."
+        },
+        "interpretation": {
+          "en": "A nonzero interval requires periodic application support. Result=watchdog differs from an ordinary exit-code failure.",
+          "de": "Ein Intervall größer null verlangt regelmäßige Unterstützung der Anwendung. Result=watchdog unterscheidet sich von einem normalen Exit-Code-Fehler."
+        }
+      },
+      {
+        "id": "inspect-heartbeat-failure",
+        "command": "journalctl -b -u example.service -o short-monotonic --no-pager -n 120",
+        "explanation": {
+          "en": "Use the affected unit; restricted journals require authorized read access.",
+          "de": "Nutze die betroffene Unit; eingeschränkte Journale brauchen berechtigten Lesezugriff."
+        },
+        "interpretation": {
+          "en": "Compare expiration with last progress. Repeated stalls at one stage justify profiling that stage, but do not identify its blocking resource.",
+          "de": "Vergleiche Ablauf und letzten Fortschritt. Wiederholte Staus an einer Stelle rechtfertigen deren Untersuchung, bestimmen aber nicht die blockierende Ressource."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "repair-heartbeat-support",
+        "title": {
+          "en": "Repair the watchdog notification path",
+          "de": "Den Watchdog-Meldeweg korrigieren"
+        },
+        "body": {
+          "en": "If support exists, configure the documented notification mode and accepted sender. If the program lacks support, remove a locally added WatchdogSec setting for that service.",
+          "de": "Wenn Unterstützung vorhanden ist, konfiguriere dokumentierten Meldemodus und zugelassenen Absender. Fehlt Unterstützung, entferne eine lokal ergänzte WatchdogSec-Vorgabe dieses Dienstes."
+        },
+        "precautions": {
+          "en": "Removing it removes hang detection. A heartbeat unrelated to application health can hide deadlocks.",
+          "de": "Ohne Vorgabe entfällt die Hängererkennung. Ein vom Anwendungszustand unabhängiger Heartbeat kann Blockaden verbergen."
+        },
+        "rollback": {
+          "en": "Restore notification mode and prior WatchdogSec/NotifyAccess values, then observe normal operation.",
+          "de": "Stelle Meldemodus sowie frühere WatchdogSec-/NotifyAccess-Werte wieder her und beobachte normalen Betrieb."
+        }
+      },
+      {
+        "id": "address-stall-or-watchdog-budget",
+        "title": {
+          "en": "Address a measured stall or deadline mismatch",
+          "de": "Gemessenen Stau oder Zeitlimitfehler beheben"
+        },
+        "body": {
+          "en": "If progress stops, investigate blocked work and fix its resource or concurrency issue. If a documented healthy operation exceeds the interval, choose a finite service-specific watchdog budget covering it.",
+          "de": "Wenn Fortschritt ausbleibt, untersuche blockierte Arbeit und behebe Ressourcen- oder Parallelitätsprobleme. Überschreitet eine dokumentierte gesunde Operation das Intervall, wähle ein passendes endliches Budget nur für diesen Dienst."
+        },
+        "precautions": {
+          "en": "A larger interval delays genuine hang recovery. Preserve timing and core-dump evidence before repeated restarts.",
+          "de": "Ein größeres Intervall verzögert die Erholung von echten Hängern. Sichere Zeitfolge und Core-Dump-Hinweise vor Neustartserien."
+        },
+        "rollback": {
+          "en": "Restore the previous interval or application change and compare progress plus heartbeats under the same workload.",
+          "de": "Stelle das frühere Intervall oder die Anwendung zurück und vergleiche Fortschritt und Heartbeats bei gleicher Last."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.service — upstream manual hosted by Debian",
+        "url": "https://manpages.debian.org/testing/systemd/systemd.service.5.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "sd_notify — watchdog notification",
+        "url": "https://manpages.debian.org/testing/libsystemd-dev/sd_notify.3.en.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "systemd-service-watchdog",
+        "all": [
+          ".service:",
+          "Watchdog timeout"
+        ],
+        "sample": "systemd[1]: example.service: Watchdog timeout (limit 30s)!",
+        "negative": [
+          "kernel: watchdog: BUG: soft lockup - CPU#1 stuck for 26s!",
+          "systemd[1]: example.service: Watchdog interval set to 30s"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a userspace service watchdog expiration.",
+          "de": "Synthetisches Beispiel für einen abgelaufenen Userspace-Dienst-Watchdog."
+        },
+        "significance": {
+          "en": "A service heartbeat was missed; this is not a kernel watchdog diagnosis.",
+          "de": "Ein Dienst-Heartbeat fehlt; dies ist keine Kernel-Watchdog-Diagnose."
+        }
+      }
+    ]
+  }
+]

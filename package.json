@@ -4,6 +4,8 @@
     "build:novel": "node scripts/build-lost-administrator-novel.mjs",
     "sync:seo": "node scripts/sync-seo.mjs",
     "test:seo": "node scripts/audit-seo.mjs",
-    "test:novel": "node --test tests/lost-administrator-novel.test.mjs"
+    "test:novel": "node --test tests/lost-administrator-novel.test.mjs",
+    "build:fix-lab": "node scripts/build-linux-fix-lab.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:fix-lab": "node --test tests/linux-fix-lab*.test.mjs"
   }
 }

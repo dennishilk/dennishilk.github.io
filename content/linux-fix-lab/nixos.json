@@ -1,0 +1,1771 @@
+[
+  {
+    "id": "nixos-unknown-option",
+    "slug": {
+      "en": "nixos-unknown-option",
+      "de": "nixos-unbekannte-option"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "A configuration option does not exist",
+      "de": "Eine Konfigurationsoption existiert nicht"
+    },
+    "summary": {
+      "en": "Evaluation rejects an option before any system build. Check spelling, imported modules and the exact Nixpkgs revision instead of guessing replacement names.",
+      "de": "Die Auswertung lehnt eine Option vor dem Systembau ab. Prüfe Schreibweise, Modulimporte und die genaue Nixpkgs-Revision statt geratener Ersatznamen."
+    },
+    "environment": {
+      "en": "NixOS module configurations using channels or a locked flake; option availability follows the evaluated Nixpkgs input.",
+      "de": "NixOS-Modulkonfigurationen mit Channels oder Flake-Lock; verfügbare Optionen folgen dem ausgewerteten Nixpkgs-Eingang."
+    },
+    "symptoms": {
+      "en": [
+        "Evaluation reports that an option does not exist.",
+        "A copied configuration works against a different release or module set."
+      ],
+      "de": [
+        "Die Auswertung meldet eine nicht existierende Option.",
+        "Eine kopierte Konfiguration funktioniert mit anderer Version oder anderen Modulen."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The option may be misspelled, renamed or supplied by a module that is not imported.",
+        "de": "Die Option kann falsch geschrieben, umbenannt oder durch ein nicht importiertes Modul bereitgestellt sein."
+      },
+      {
+        "en": "Documentation for another Nixpkgs revision may describe an option absent from the pinned input.",
+        "de": "Dokumentation einer anderen Nixpkgs-Revision kann eine in der festgelegten Quelle fehlende Option beschreiben."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "locate-option-definition",
+        "command": "rg -n 'services\\.example' /etc/nixos",
+        "explanation": {
+          "en": "Replace services.example with the rejected option namespace and /etc/nixos with your configuration checkout; rg only reads files.",
+          "de": "Ersetze services.example durch den abgelehnten Optionsbereich und /etc/nixos durch deinen Konfigurations-Checkout; rg liest nur Dateien."
+        },
+        "interpretation": {
+          "en": "Locate the defining module and its imports. The reported definition location is more useful than changing every similar name.",
+          "de": "Ermittle definierendes Modul und Importe. Die gemeldete Definitionsstelle ist hilfreicher als das Ändern aller ähnlichen Namen."
+        }
+      },
+      {
+        "id": "inspect-pinned-input",
+        "command": "jq '.nodes.nixpkgs.locked' flake.lock",
+        "explanation": {
+          "en": "Run in the flake checkout with jq installed; adapt the input name if Nixpkgs is not named nixpkgs.",
+          "de": "Führe dies im Flake-Checkout mit installiertem jq aus; passe den Eingangsname an, falls er nicht nixpkgs heißt."
+        },
+        "interpretation": {
+          "en": "The locked revision identifies the option source to inspect. In a channel setup, inspect its actual source instead; a lock from another project is irrelevant.",
+          "de": "Die festgelegte Revision benennt die zu prüfende Optionsquelle. Bei Channels prüfe deren tatsächliche Quelle; ein Lock einer anderen Konfiguration ist irrelevant."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "match-option-to-input",
+        "title": {
+          "en": "Use the option defined by this input",
+          "de": "Die Option dieser Quelle verwenden"
+        },
+        "body": {
+          "en": "If the pinned release renamed or removed the option, migrate the setting using that revision's module documentation and release notes. Keep its type and semantic meaning, not merely a similar name.",
+          "de": "Wenn die festgelegte Version die Option umbenannt oder entfernt hat, migriere anhand ihrer Modulbeschreibung und Versionshinweise. Erhalte Typ und Bedeutung statt nur eines ähnlichen Namens."
+        },
+        "precautions": {
+          "en": "Build the candidate before activation. Changing system.stateVersion is not a way to select a newer option schema.",
+          "de": "Baue den Kandidaten vor der Aktivierung. system.stateVersion wählt kein neueres Optionsschema."
+        },
+        "rollback": {
+          "en": "Restore the configuration and lock file together if migration regresses behavior; retain a known-good generation.",
+          "de": "Stelle bei Verschlechterung Konfiguration und Lock gemeinsam zurück; behalte eine funktionierende Generation."
+        }
+      },
+      {
+        "id": "import-required-module",
+        "title": {
+          "en": "Import the module that declares the option",
+          "de": "Das deklarierende Modul importieren"
+        },
+        "body": {
+          "en": "If the option belongs to an external or custom module, add its intended import in the correct NixOS module scope. Verify that its input version is compatible with the rest of the configuration.",
+          "de": "Wenn die Option zu einem externen oder eigenen Modul gehört, ergänze seinen vorgesehenen Import im passenden NixOS-Modulbereich. Prüfe die Version im Verhältnis zur übrigen Konfiguration."
+        },
+        "precautions": {
+          "en": "Do not disable unmatched-option checks or add a freeform escape just to silence a typo. Imported modules can introduce additional defaults.",
+          "de": "Schalte Prüfungen unbekannter Optionen nicht für einen Tippfehler ab. Importierte Module können weitere Standardwerte ergänzen."
+        },
+        "rollback": {
+          "en": "Remove the added import and restore previous input pins and settings, then rebuild the former configuration.",
+          "de": "Entferne den Import und stelle vorherige Eingänge und Einstellungen wieder her; baue dann die frühere Konfiguration."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NixOS manual — configuration and module system",
+        "url": "https://nixos.org/manual/nixos/stable/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Nixpkgs module system implementation",
+        "url": "https://github.com/NixOS/nixpkgs/blob/master/lib/modules.nix",
+        "kind": "official",
+        "evidence": "source-code"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nixos-option-absent",
+        "all": [
+          "error: The option",
+          "does not exist"
+        ],
+        "sample": "error: The option `services.example.enable' does not exist. Definition values:",
+        "negative": [
+          "error: The option `services.example.enable' has conflicting definition values.",
+          "warning: services.example.enable is deprecated"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the NixOS unmatched-option error.",
+          "de": "Synthetisches Beispiel für eine nicht deklarierte NixOS-Option."
+        },
+        "significance": {
+          "en": "Check declaration scope and input revision; this is evaluation, not activation failure.",
+          "de": "Prüfe Deklarationsbereich und Eingangsrevision; dies ist Auswertung, kein Aktivierungsfehler."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nixos-option-definition-conflict",
+    "slug": {
+      "en": "nixos-option-definition-conflict",
+      "de": "nixos-widerspruechliche-optionswerte"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "Two modules define incompatible option values",
+      "de": "Zwei Module definieren widersprüchliche Optionswerte"
+    },
+    "summary": {
+      "en": "Evaluation cannot merge a scalar option defined in several modules. Trace definition locations and priorities before applying a force override.",
+      "de": "Die Auswertung kann mehrfach definierte Einzelwerte nicht zusammenführen. Prüfe Definitionsstellen und Prioritäten vor einem erzwungenen Override."
+    },
+    "environment": {
+      "en": "NixOS module merging, especially scalar options with multiple same-priority definitions.",
+      "de": "NixOS-Modulzusammenführung, besonders Einzelwerte mit mehreren Definitionen gleicher Priorität."
+    },
+    "symptoms": {
+      "en": [
+        "The evaluator lists conflicting values and source files.",
+        "A newly imported profile duplicates a host-specific setting."
+      ],
+      "de": [
+        "Der Evaluator nennt widersprüchliche Werte und Quelldateien.",
+        "Ein neuer Profilimport verdoppelt eine hostspezifische Vorgabe."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Two normal-priority definitions may disagree for a non-mergeable scalar option.",
+        "de": "Zwei Definitionen normaler Priorität können sich bei einem nicht zusammenführbaren Einzelwert widersprechen."
+      },
+      {
+        "en": "A shared profile may use a hard setting where an overridable default was intended.",
+        "de": "Ein gemeinsames Profil kann einen festen Wert verwenden, obwohl ein überschreibbarer Standard beabsichtigt war."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "locate-competing-values",
+        "command": "rg -n 'example\\.option|mkDefault|mkForce|mkOverride' /etc/nixos",
+        "explanation": {
+          "en": "Replace example.option with the failing option and use the real configuration directory.",
+          "de": "Ersetze example.option durch die betroffene Option und nutze das tatsächliche Konfigurationsverzeichnis."
+        },
+        "interpretation": {
+          "en": "Compare the error's source files with definitions and explicit priorities. List ordering does not make a scalar definition win.",
+          "de": "Vergleiche Quelldateien der Fehlermeldung mit Definitionen und Prioritäten. Die Listenreihenfolge lässt keinen Einzelwert automatisch gewinnen."
+        }
+      },
+      {
+        "id": "trace-profile-imports",
+        "command": "rg -n 'imports|disabledModules' /etc/nixos",
+        "explanation": {
+          "en": "Read the import declarations in the same configuration tree; adapt the directory for flakes.",
+          "de": "Lies die Importe im selben Konfigurationsbaum; passe den Pfad bei Flakes an."
+        },
+        "interpretation": {
+          "en": "Identify which host and common profiles both contribute the option. A repeated import is not equivalent to two different modules defining it.",
+          "de": "Ermittle beteiligte Host- und gemeinsame Profile. Ein wiederholter Import ist nicht dasselbe wie zwei verschiedene definierende Module."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "remove-accidental-definition",
+        "title": {
+          "en": "Remove the accidental competing value",
+          "de": "Unbeabsichtigten konkurrierenden Wert entfernen"
+        },
+        "body": {
+          "en": "If one definition is obsolete or unintended, remove it or move host-specific data out of the common profile. Keep the one intended source of the scalar value.",
+          "de": "Wenn eine Definition veraltet oder unbeabsichtigt ist, entferne sie oder trenne Hostwerte vom gemeinsamen Profil. Behalte die vorgesehene Quelle des Einzelwerts."
+        },
+        "precautions": {
+          "en": "The same common profile may serve several machines. Check their intended defaults before changing it.",
+          "de": "Dasselbe Profil kann mehrere Rechner versorgen. Prüfe deren vorgesehene Standardwerte vor der Änderung."
+        },
+        "rollback": {
+          "en": "Restore the removed definition or profile change and its associated host configuration if another machine regresses.",
+          "de": "Stelle entfernte Definition oder Profiländerung samt Hostkonfiguration bei Verschlechterungen zurück."
+        }
+      },
+      {
+        "id": "declare-intended-priority",
+        "title": {
+          "en": "Declare the intended default or override",
+          "de": "Vorgesehene Standard- oder Override-Priorität deklarieren"
+        },
+        "body": {
+          "en": "If the shared value is a fallback, use lib.mkDefault there so a host's normal value wins. Use lib.mkForce only when intentionally discarding all weaker definitions; document why that policy is required.",
+          "de": "Wenn der gemeinsame Wert ein Ersatzwert ist, nutze dort lib.mkDefault für Vorrang eines normalen Hostwerts. Nutze lib.mkForce nur zum beabsichtigten Verwerfen schwächerer Definitionen und begründe die Regel."
+        },
+        "precautions": {
+          "en": "Lower numeric override priority wins; mkForce is not a universal repair. Lists and mergeable types need their own merge semantics.",
+          "de": "Niedrigere numerische Override-Priorität gewinnt; mkForce ist keine Universalreparatur. Listen und zusammenführbare Typen besitzen eigene Regeln."
+        },
+        "rollback": {
+          "en": "Restore previous priorities and build the old configuration; keep a prior bootable generation before activation.",
+          "de": "Stelle frühere Prioritäten zurück und baue die alte Konfiguration; behalte vor der Aktivierung eine bootfähige Generation."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NixOS manual — configuration and module system",
+        "url": "https://nixos.org/manual/nixos/stable/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Official NixOS Wiki — module declarations and definitions",
+        "url": "https://wiki.nixos.org/wiki/NixOS_modules",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nixos-conflicting-definition",
+        "all": [
+          "error: The option",
+          "has conflicting definition values"
+        ],
+        "sample": "error: The option `networking.hostName' has conflicting definition values:",
+        "negative": [
+          "error: The option `networking.hostName' does not exist.",
+          "networking.hostName has value example"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for incompatible scalar module definitions.",
+          "de": "Synthetisches Beispiel für widersprüchliche Modul-Einzelwerte."
+        },
+        "significance": {
+          "en": "Read all listed definition locations before introducing an override.",
+          "de": "Prüfe alle genannten Definitionsstellen vor einem Override."
+        }
+      },
+      {
+        "id": "nixos-cannot-merge-definitions",
+        "all": [
+          "error: Cannot merge definitions of",
+          "Definition values"
+        ],
+        "sample": "error: Cannot merge definitions of `example.option'. Definition values:",
+        "negative": [
+          "error: Cannot merge definitions of `example.option'. Conflicting types:",
+          "warning: Definition values were merged successfully"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the documented older merge-error wording.",
+          "de": "Synthetisches Beispiel für die dokumentierte ältere Form des Zusammenführungsfehlers."
+        },
+        "significance": {
+          "en": "The option type and source definitions determine the correct fix.",
+          "de": "Optionstyp und Quelldefinitionen bestimmen die passende Änderung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nixos-module-infinite-recursion",
+    "slug": {
+      "en": "nixos-module-infinite-recursion",
+      "de": "nixos-modul-unendliche-rekursion"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "Module evaluation enters an infinite recursion",
+      "de": "Die Modulauswertung gerät in unendliche Rekursion"
+    },
+    "summary": {
+      "en": "Nix cannot resolve a configuration dependency cycle. Inspect config-dependent imports, self-referencing values and argument timing before restructuring modules.",
+      "de": "Nix kann einen Konfigurationszyklus nicht auflösen. Prüfe config-abhängige Importe, Selbstbezüge und Argumentzeitpunkt vor dem Umbau von Modulen."
+    },
+    "environment": {
+      "en": "NixOS module fixed-point evaluation, custom modules and flake specialArgs.",
+      "de": "NixOS-Modulauswertung mit Fixpunkt, eigenen Modulen und Flake-specialArgs."
+    },
+    "symptoms": {
+      "en": [
+        "Evaluation reports infinite recursion encountered.",
+        "The trace repeatedly returns to imports or the same option dependency."
+      ],
+      "de": [
+        "Die Auswertung meldet infinite recursion encountered.",
+        "Der Trace kehrt wiederholt zu imports oder derselben Optionsabhängigkeit zurück."
+      ]
+    },
+    "causes": [
+      {
+        "en": "imports cannot depend on a config value whose definition itself requires collecting those imports.",
+        "de": "imports kann nicht von einem config-Wert abhängen, dessen Definition erst das Einsammeln dieser Importe benötigt."
+      },
+      {
+        "en": "Self-referencing option expressions or mutually derived module arguments can also create cycles.",
+        "de": "Selbstbezügliche Optionsausdrücke oder gegenseitig abgeleitete Modulargumente können ebenfalls Zyklen erzeugen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-evaluation-dependencies",
+        "command": "rg -n 'imports|config\\.|_module\\.args|specialArgs' /etc/nixos",
+        "explanation": {
+          "en": "Read the real module checkout; focus on locations named by the saved evaluation trace.",
+          "de": "Lies den tatsächlichen Modul-Checkout; konzentriere dich auf Stellen im gespeicherten Auswertungs-Trace."
+        },
+        "interpretation": {
+          "en": "Config use in ordinary values can be valid, but using it to choose imports can cycle before values exist. specialArgs is available earlier.",
+          "de": "config in gewöhnlichen Werten kann gültig sein; davon gewählte Importe können vor vorhandenen Werten zyklisch werden. specialArgs ist früher verfügbar."
+        }
+      },
+      {
+        "id": "separate-syntax-from-evaluation",
+        "command": "nix-instantiate --parse /etc/nixos/configuration.nix",
+        "explanation": {
+          "en": "Replace the file with the module named by the error; parsing reads it without evaluating or building it.",
+          "de": "Ersetze die Datei durch das betroffene Modul; Parsen liest sie ohne Auswertung oder Bau."
+        },
+        "interpretation": {
+          "en": "Successful parsing confirms only grammar. It does not resolve imports or prove the dependency graph is acyclic.",
+          "de": "Erfolgreiches Parsen bestätigt nur die Grammatik. Es löst keine Importe auf und beweist keinen zyklusfreien Graph."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "make-import-selection-static",
+        "title": {
+          "en": "Make import selection independent of config",
+          "de": "Importauswahl von config unabhängig machen"
+        },
+        "body": {
+          "en": "If imports consult config, import the available modules statically and put conditional option definitions behind lib.mkIf. For external import parameters, pass deliberately static values via specialArgs.",
+          "de": "Wenn imports config abfragt, importiere verfügbare Module statisch und nutze lib.mkIf für bedingte Optionsdefinitionen. Übergib externe Importparameter als bewusst statische Werte durch specialArgs."
+        },
+        "precautions": {
+          "en": "mkIf does not make a config-dependent imports list safe. Avoid passing the entire config back through specialArgs.",
+          "de": "mkIf macht eine config-abhängige Importliste nicht sicher. Übergib nicht die gesamte config erneut über specialArgs."
+        },
+        "rollback": {
+          "en": "Restore the previous module structure from version control if the refactor changes unintended option defaults.",
+          "de": "Stelle bei unbeabsichtigten Standardwertänderungen die frühere Modulstruktur aus der Versionsverwaltung zurück."
+        }
+      },
+      {
+        "id": "break-value-cycle",
+        "title": {
+          "en": "Break the proven value dependency cycle",
+          "de": "Den bestätigten Wertezyklus auflösen"
+        },
+        "body": {
+          "en": "If the trace identifies two values derived from each other, introduce one independent input and derive the others from it. Replace self-references such as assigning an option from its own final value with a local let binding or separate input option.",
+          "de": "Wenn der Trace zwei gegenseitig abgeleitete Werte zeigt, führe eine unabhängige Eingabe ein. Ersetze die Ableitung einer Option aus ihrem eigenen Endwert durch einen lokalen let-Wert oder eine getrennte Eingabeoption."
+        },
+        "precautions": {
+          "en": "Change only the identified cycle. Removing unrelated imports can silence an error by silently disabling functionality.",
+          "de": "Ändere nur den gefundenen Zyklus. Entfernte unbeteiligte Importe können Funktionen still deaktivieren und den Fehler nur verdecken."
+        },
+        "rollback": {
+          "en": "Restore original bindings and inputs; evaluate or build the candidate without activation before keeping the refactor.",
+          "de": "Stelle ursprüngliche Bindungen und Eingaben zurück; prüfe den Kandidaten ohne Aktivierung vor dem Beibehalten."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nixpkgs module system implementation",
+        "url": "https://github.com/NixOS/nixpkgs/blob/master/lib/modules.nix",
+        "kind": "official",
+        "evidence": "source-code"
+      },
+      {
+        "title": "NixOS manual — delayed conditionals and module arguments",
+        "url": "https://nixos.org/manual/nixos/stable/#sec-option-definitions",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-infinite-recursion",
+        "all": [
+          "error: infinite recursion encountered"
+        ],
+        "sample": "error: infinite recursion encountered",
+        "negative": [
+          "error: undefined variable 'config'",
+          "warning: recursion depth is 2"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the Nix evaluator's recursion error.",
+          "de": "Synthetisches Beispiel für den Rekursionsfehler des Nix-Evaluators."
+        },
+        "significance": {
+          "en": "The surrounding trace is required; this message also occurs outside NixOS modules.",
+          "de": "Der zugehörige Trace ist nötig; diese Meldung tritt auch außerhalb von NixOS-Modulen auf."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-flake-untracked-source",
+    "slug": {
+      "en": "nix-flake-untracked-source",
+      "de": "nix-flake-unversionierte-quelle"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "A flake cannot see a newly created source file",
+      "de": "Eine Flake sieht eine neue Quelldatei nicht"
+    },
+    "summary": {
+      "en": "A file exists in the checkout but is absent from the copied flake source. Check Git tracking, ignored paths and the import relative to the flake root.",
+      "de": "Eine Datei liegt im Checkout, fehlt aber in der kopierten Flake-Quelle. Prüfe Git-Erfassung, ignorierte Pfade und den Import relativ zur Flake."
+    },
+    "environment": {
+      "en": "Local Git-backed Nix flakes; source filtering differs from a plain path input.",
+      "de": "Lokale Git-basierte Nix-Flakes; die Quellfilterung unterscheidet sich von einem einfachen Pfadeingang."
+    },
+    "symptoms": {
+      "en": [
+        "An import fails under a /nix/store/...-source path.",
+        "The same relative file is present in the working checkout."
+      ],
+      "de": [
+        "Ein Import scheitert unter einem /nix/store/...-source-Pfad.",
+        "Dieselbe relative Datei ist im Arbeits-Checkout vorhanden."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A newly created module may not yet be tracked in Git and is omitted from the flake snapshot.",
+        "de": "Ein neues Modul kann noch nicht in Git erfasst und deshalb aus der Flake-Kopie ausgeschlossen sein."
+      },
+      {
+        "en": "A wrong relative import, ignore rule or explicit source filter may omit the expected file.",
+        "de": "Ein falscher relativer Import, eine Ignore-Regel oder explizite Quellfilterung kann die Datei ausschließen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-untracked-files",
+        "command": "git status --short --untracked-files=all",
+        "explanation": {
+          "en": "Run in the configuration repository; this is a read-only Git status query.",
+          "de": "Führe dies im Konfigurationsrepository aus; reine Git-Statusabfrage."
+        },
+        "interpretation": {
+          "en": "A ?? marker on an imported module supports an untracked-source explanation. Tracked modifications alone are not the same failure.",
+          "de": "Ein ??-Marker an einem importierten Modul spricht für eine nicht erfasste Quelle. Änderungen an erfassten Dateien sind nicht derselbe Fehler."
+        }
+      },
+      {
+        "id": "check-imported-file-tracking",
+        "command": "git ls-files --error-unmatch modules/example.nix",
+        "explanation": {
+          "en": "Replace the relative path with the imported file, from the repository root.",
+          "de": "Ersetze den relativen Pfad durch die importierte Datei ab Repositorywurzel."
+        },
+        "interpretation": {
+          "en": "A matching path confirms tracking. A nonzero result means it is not in the index; inspect ignore rules if expected tracking was omitted.",
+          "de": "Ein Treffer bestätigt die Erfassung. Ein Fehlercode bedeutet fehlenden Indexeintrag; prüfe bei unerwartetem Ausschluss die Ignore-Regeln."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "track-intended-source",
+        "title": {
+          "en": "Track the intended source file",
+          "de": "Die vorgesehene Quelldatei erfassen"
+        },
+        "body": {
+          "en": "If the imported nonsecret module is untracked, add that specific file to Git and inspect the staged diff. A commit is not required merely for Nix to see a tracked working-tree file.",
+          "de": "Wenn das importierte Modul keine Geheimnisse enthält und nicht erfasst ist, füge genau diese Datei zu Git hinzu und prüfe die vorgemerkte Änderung. Nix benötigt dafür nicht erst einen Commit."
+        },
+        "precautions": {
+          "en": "Flake sources are copied into the normally world-readable Nix store. Never add plaintext credentials as a repair.",
+          "de": "Flake-Quellen landen im normalerweise allgemein lesbaren Nix-Store. Erfasse niemals Klartext-Zugangsdaten als Reparatur."
+        },
+        "rollback": {
+          "en": "Unstage a newly added file with git restore --staged for that path and restore its old import if needed; keep the local file.",
+          "de": "Entferne eine neue Datei mit git restore --staged für diesen Pfad aus der Vormerkung und stelle bei Bedarf ihren Import zurück; behalte die lokale Datei."
+        }
+      },
+      {
+        "id": "correct-source-boundary",
+        "title": {
+          "en": "Correct the import or source boundary",
+          "de": "Import oder Quellgrenze korrigieren"
+        },
+        "body": {
+          "en": "If the file is tracked, compare the reported store-relative path with the module's actual relative import. Move intended source into the flake tree or model an external repository as an explicit input instead of reaching outside its snapshot.",
+          "de": "Wenn die Datei erfasst ist, vergleiche Store-Pfad und tatsächlichen relativen Import. Verschiebe vorgesehene Quellen in den Flake-Baum oder modelliere externe Repositories als explizite Eingänge."
+        },
+        "precautions": {
+          "en": "Source filters can intentionally exclude large data or secrets; preserve that intent instead of widening to the entire home directory.",
+          "de": "Quellfilter können große Daten oder Geheimnisse bewusst ausschließen; erweitere sie nicht auf das gesamte Home-Verzeichnis."
+        },
+        "rollback": {
+          "en": "Restore the previous import and source layout plus any modified input lock entries.",
+          "de": "Stelle vorherigen Import, Quellstruktur und geänderte Lock-Einträge wieder her."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Official NixOS Wiki — Flakes",
+        "url": "https://wiki.nixos.org/wiki/Flakes",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Nix flake — source reference semantics",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-flake.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-missing-flake-source",
+        "all": [
+          "error: path '/nix/store/",
+          "-source/",
+          "does not exist"
+        ],
+        "sample": "error: path '/nix/store/00000000000000000000000000000000-source/modules/example.nix' does not exist",
+        "negative": [
+          "error: path '/home/example/modules/example.nix' does not exist",
+          "copying path '/nix/store/00000000000000000000000000000000-source/modules/example.nix'"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a missing file inside a copied source tree.",
+          "de": "Synthetisches Beispiel für eine fehlende Datei im kopierten Quellbaum."
+        },
+        "significance": {
+          "en": "Tracking is only one possible cause; confirm the path and filtering.",
+          "de": "Git-Erfassung ist nur eine mögliche Ursache; bestätige Pfad und Filterung."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-pure-evaluation-path",
+    "slug": {
+      "en": "nix-pure-evaluation-path",
+      "de": "nix-reine-auswertung-externer-pfad"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "Pure evaluation rejects a host-local file",
+      "de": "Reine Auswertung lehnt eine lokale Hostdatei ab"
+    },
+    "summary": {
+      "en": "A flake reads a path outside its declared inputs and pure evaluation rejects it. Distinguish build-time source data from runtime filesystem paths.",
+      "de": "Eine Flake liest außerhalb deklarierter Eingänge und die reine Auswertung lehnt dies ab. Unterscheide Bauquellen von Pfaden für die Laufzeit."
+    },
+    "environment": {
+      "en": "Pure flake evaluation; path literals, readFile and host-local data are not interchangeable with runtime path strings.",
+      "de": "Reine Flake-Auswertung; Pfadwerte, readFile und lokale Daten sind nicht dasselbe wie Pfadstrings für die Laufzeit."
+    },
+    "symptoms": {
+      "en": [
+        "Evaluation reports access forbidden in pure evaluation mode.",
+        "Configuration references a personal home file or /var data at evaluation time."
+      ],
+      "de": [
+        "Die Auswertung meldet verweigerten Zugriff im reinen Auswertungsmodus.",
+        "Die Konfiguration liest beim Auswerten eine persönliche Home-Datei oder /var-Daten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A source file outside the flake tree may be read using an absolute path or builtins.readFile.",
+        "de": "Eine Quelle außerhalb des Flake-Baums kann über absoluten Pfad oder builtins.readFile gelesen werden."
+      },
+      {
+        "en": "A runtime path may accidentally be expressed as a Nix path value, causing evaluation-time access instead of passing a string.",
+        "de": "Ein Laufzeitpfad kann versehentlich als Nix-Pfadwert statt String geschrieben sein und dadurch beim Auswerten gelesen werden."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "locate-host-local-read",
+        "command": "rg -n 'builtins\\.readFile|builtins\\.getEnv|/home/|/var/' /etc/nixos",
+        "explanation": {
+          "en": "Use the actual configuration checkout; rg reads matching lines without evaluating Nix.",
+          "de": "Nutze den tatsächlichen Konfigurations-Checkout; rg liest Treffer ohne Nix-Auswertung."
+        },
+        "interpretation": {
+          "en": "Compare the denied path with its expression and option type. A runtime string may be valid where copying source data is not.",
+          "de": "Vergleiche den verweigerten Pfad mit Ausdruck und Optionstyp. Ein Laufzeitstring kann gültig sein, wo eine Quellkopie nicht passt."
+        }
+      },
+      {
+        "id": "inspect-declared-inputs",
+        "command": "rg -n 'inputs|url|path:|readFile' flake.nix",
+        "explanation": {
+          "en": "Run in the flake checkout; inspect whether the file belongs to an explicit input.",
+          "de": "Führe dies im Flake-Checkout aus; prüfe die Zugehörigkeit zu einem expliziten Eingang."
+        },
+        "interpretation": {
+          "en": "A file absent from declared inputs is not made reproducible merely because it exists on this host.",
+          "de": "Eine Datei außerhalb deklarierter Eingänge wird nicht dadurch reproduzierbar, dass sie auf diesem Host existiert."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "declare-reproducible-source",
+        "title": {
+          "en": "Declare nonsecret source data as an input",
+          "de": "Nicht geheime Quelldaten als Eingang deklarieren"
+        },
+        "body": {
+          "en": "If the file is build-time source, place it in the tracked flake tree or use an explicit pinned input. Reference it relative to that source so another machine can evaluate the same configuration.",
+          "de": "Wenn die Datei eine Bauquelle ist, lege sie in den erfassten Flake-Baum oder einen expliziten festgelegten Eingang. Referenziere sie relativ dazu für dieselbe Auswertung auf anderen Rechnern."
+        },
+        "precautions": {
+          "en": "Source files normally enter the world-readable Nix store. Keep secrets out and preserve source filtering.",
+          "de": "Quellen landen normalerweise im allgemein lesbaren Nix-Store. Halte Geheimnisse heraus und erhalte die Quellfilterung."
+        },
+        "rollback": {
+          "en": "Restore previous source layout, references and lock file; retain any moved original file until the new layout is verified.",
+          "de": "Stelle Quellstruktur, Verweise und Lock zurück; behalte verschobene Originaldateien bis zur Prüfung."
+        }
+      },
+      {
+        "id": "keep-runtime-path-at-runtime",
+        "title": {
+          "en": "Keep runtime resources as runtime paths",
+          "de": "Laufzeitressourcen als Laufzeitpfade halten"
+        },
+        "body": {
+          "en": "If the option expects a runtime filename such as an EnvironmentFile, use its documented string form and provision the file outside the store. If impurity is intentional for local experimentation, confine --impure to that explicit evaluation and document the dependency.",
+          "de": "Wenn die Option einen Laufzeitdateinamen wie EnvironmentFile erwartet, verwende die dokumentierte Stringform und stelle die Datei außerhalb des Stores bereit. Begrenze bewusstes --impure für lokale Versuche auf diese Auswertung."
+        },
+        "precautions": {
+          "en": "A string only helps if the option really opens it at runtime. --impure does not keep secrets out of build outputs automatically.",
+          "de": "Ein String hilft nur bei tatsächlichem Laufzeitzugriff der Option. --impure hält Geheimnisse nicht automatisch aus Bauausgaben heraus."
+        },
+        "rollback": {
+          "en": "Restore the old expression and runtime-file configuration; revoke any exposed secret before further use if it was copied to the store.",
+          "de": "Stelle Ausdruck und Laufzeitdateikonfiguration zurück; ersetze ein in den Store gelangtes Geheimnis vor weiterer Verwendung."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nix eval — pure and impure evaluation",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-eval.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Official NixOS Wiki — flake source boundaries",
+        "url": "https://wiki.nixos.org/wiki/Flakes",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-pure-absolute-path",
+        "all": [
+          "error: access to absolute path",
+          "forbidden in pure evaluation mode"
+        ],
+        "sample": "error: access to absolute path '/home/example/wallpaper.png' is forbidden in pure evaluation mode (use '--impure' to override)",
+        "negative": [
+          "error: path '/home/example/wallpaper.png' does not exist",
+          "access to absolute path '/home/example/wallpaper.png' is allowed"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the Nix pure-evaluation boundary.",
+          "de": "Synthetisches Beispiel für die Grenze reiner Nix-Auswertung."
+        },
+        "significance": {
+          "en": "Inspect expression purpose before adding an impurity override.",
+          "de": "Prüfe den Zweck des Ausdrucks vor einer Unreinheitsfreigabe."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-experimental-features-disabled",
+    "slug": {
+      "en": "nix-experimental-features-disabled",
+      "de": "nix-experimentelle-funktionen-deaktiviert"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "The Nix command requires a disabled experimental feature",
+      "de": "Der Nix-Befehl benötigt eine deaktivierte experimentelle Funktion"
+    },
+    "summary": {
+      "en": "Nix rejects flakes or the modern CLI before evaluation. Check the active binary and settings scope, then enable only the features the workflow needs.",
+      "de": "Nix lehnt Flakes oder die moderne CLI vor der Auswertung ab. Prüfe aktives Programm und Einstellungsbereich und aktiviere nur benötigte Funktionen."
+    },
+    "environment": {
+      "en": "Nix installations using feature-gated nix-command and flakes; defaults vary by installation.",
+      "de": "Nix-Installationen mit nix-command und flakes hinter Funktionsfreigaben; Vorgaben unterscheiden sich je nach Installation."
+    },
+    "symptoms": {
+      "en": [
+        "The command says experimental Nix feature flakes or nix-command is disabled.",
+        "A privileged invocation behaves differently from the user's shell."
+      ],
+      "de": [
+        "Der Befehl meldet deaktivierte experimentelle Funktion flakes oder nix-command.",
+        "Ein privilegierter Aufruf verhält sich anders als die Benutzershell."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The required feature may not be enabled in the configuration read by that command.",
+        "de": "Die benötigte Funktion kann in der für diesen Aufruf gelesenen Konfiguration fehlen."
+      },
+      {
+        "en": "Another Nix executable or a different user configuration can produce different effective settings.",
+        "de": "Ein anderes Nix-Programm oder eine andere Benutzerkonfiguration kann abweichende wirksame Einstellungen erzeugen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-nix-version",
+        "command": "nix --version",
+        "explanation": {
+          "en": "Reads the Nix version without building or evaluating a flake; run in the failing shell.",
+          "de": "Liest die Nix-Version ohne Bau oder Flake-Auswertung; nutze die betroffene Shell."
+        },
+        "interpretation": {
+          "en": "Compare the actual executable version with the installed manual. A tutorial's feature assumptions may not match this installation.",
+          "de": "Vergleiche die tatsächliche Version mit dem installierten Handbuch. Funktionsannahmen einer Anleitung können abweichen."
+        }
+      },
+      {
+        "id": "inspect-feature-settings",
+        "command": "rg -n 'experimental-features|include' /etc/nix/nix.conf ~/.config/nix/nix.conf",
+        "explanation": {
+          "en": "Reads usual global and user settings; a missing user file is normal, and included files may require separate inspection.",
+          "de": "Liest übliche globale und Benutzerwerte; eine fehlende Benutzerdatei ist normal, eingebundene Dateien sind gesondert zu prüfen."
+        },
+        "interpretation": {
+          "en": "Check whether nix-command and flakes are present in the relevant scope. Root commands do not necessarily read the user's file.",
+          "de": "Prüfe nix-command und flakes im passenden Bereich. Root-Aufrufe lesen nicht zwingend die Benutzerdatei."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "enable-per-command-feature",
+        "title": {
+          "en": "Enable the required feature for one command",
+          "de": "Benötigte Funktion für einen Aufruf aktivieren"
+        },
+        "body": {
+          "en": "If this is an occasional flake workflow, add --extra-experimental-features 'nix-command flakes' to that Nix command where supported. This makes the requirement explicit without a permanent settings edit.",
+          "de": "Wenn dies nur ein gelegentlicher Flake-Ablauf ist, ergänze beim Nix-Befehl das unterstützte --extra-experimental-features 'nix-command flakes'. Das hält den Bedarf ohne dauerhafte Änderung ausdrücklich fest."
+        },
+        "precautions": {
+          "en": "Experimental interfaces can change. A feature flag does not make an arbitrary flake trusted; inspect its source before building.",
+          "de": "Experimentelle Schnittstellen können sich ändern. Eine Freigabe macht eine beliebige Flake nicht vertrauenswürdig; prüfe ihre Quelle vor dem Bau."
+        },
+        "rollback": {
+          "en": "Remove the per-command flag to restore the original invocation; no persistent feature state was changed.",
+          "de": "Entferne die Aufruffreigabe für den früheren Befehl; kein dauerhafter Funktionszustand wurde geändert."
+        }
+      },
+      {
+        "id": "declare-needed-features",
+        "title": {
+          "en": "Declare the needed features persistently",
+          "de": "Benötigte Funktionen dauerhaft deklarieren"
+        },
+        "body": {
+          "en": "If flakes are an intended part of the NixOS configuration, declare nix.settings.experimental-features with the needed nix-command and flakes values, preserving other intentionally enabled features. Build and activate through the existing working workflow.",
+          "de": "Wenn Flakes zur NixOS-Konfiguration gehören, deklariere benötigtes nix-command und flakes in nix.settings.experimental-features und erhalte weitere bewusst freigegebene Funktionen. Nutze den bisherigen funktionierenden Bau- und Aktivierungsweg."
+        },
+        "precautions": {
+          "en": "Do not edit generated /etc/nix/nix.conf as the long-term NixOS source. Keep a route that can rebuild the configuration after reverting.",
+          "de": "Bearbeite generiertes /etc/nix/nix.conf nicht als dauerhafte NixOS-Quelle. Behalte einen nach Rücknahme funktionierenden Bauweg."
+        },
+        "rollback": {
+          "en": "Restore the prior declarative feature list and generation or remove the user-level setting you added.",
+          "de": "Stelle frühere deklarative Funktionsliste und Generation zurück oder entferne die ergänzte Benutzerfreigabe."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nix manual — nix.conf settings",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/conf-file.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Nix manual — experimental feature lifecycle",
+        "url": "https://nix.dev/manual/nix/2.34/development/experimental-features.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-flakes-feature-disabled",
+        "all": [
+          "error: experimental Nix feature 'flakes' is disabled"
+        ],
+        "sample": "error: experimental Nix feature 'flakes' is disabled; add '--extra-experimental-features flakes' to enable it",
+        "negative": [
+          "experimental-features = nix-command flakes",
+          "warning: experimental Nix feature 'flakes' is enabled"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a missing flakes feature gate.",
+          "de": "Synthetisches Beispiel für die fehlende Flakes-Freigabe."
+        },
+        "significance": {
+          "en": "The failure precedes evaluation of the flake's outputs.",
+          "de": "Der Fehler liegt vor der Auswertung der Flake-Ausgaben."
+        }
+      },
+      {
+        "id": "nix-command-feature-disabled",
+        "all": [
+          "error: experimental Nix feature 'nix-command' is disabled"
+        ],
+        "sample": "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it",
+        "negative": [
+          "experimental-features = nix-command",
+          "error: experimental Nix feature 'flakes' is disabled"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the modern Nix CLI gate.",
+          "de": "Synthetisches Beispiel für die Freigabe der modernen Nix-CLI."
+        },
+        "significance": {
+          "en": "This can fail even before flakes are involved.",
+          "de": "Dies kann bereits ohne Beteiligung von Flakes scheitern."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-substitute-signature-rejected",
+    "slug": {
+      "en": "nix-substitute-signature-rejected",
+      "de": "nix-cache-signatur-abgelehnt"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "Nix rejects a store path's cache signature",
+      "de": "Nix lehnt die Cache-Signatur eines Store-Pfads ab"
+    },
+    "summary": {
+      "en": "A substitute or copied store path lacks a trusted signature. Verify the cache identity, public key and daemon configuration before changing trust rules.",
+      "de": "Ein Cache- oder kopierter Store-Pfad besitzt keine vertrauenswürdige Signatur. Prüfe Cache-Identität, öffentlichen Schlüssel und Daemon-Konfiguration."
+    },
+    "environment": {
+      "en": "Multi-user Nix, binary substituters and store transfers; signature policy depends on path addressing and trust settings.",
+      "de": "Mehrbenutzer-Nix, Binärcaches und Store-Übertragungen; Signaturregeln hängen von Adressierung und Vertrauenseinstellungen ab."
+    },
+    "symptoms": {
+      "en": [
+        "A path cannot be added because it lacks a signature by a trusted key.",
+        "A custom cache works on one machine but is rejected on another."
+      ],
+      "de": [
+        "Ein Pfad kann wegen fehlender Signatur eines vertrauenswürdigen Schlüssels nicht hinzugefügt werden.",
+        "Ein eigener Cache funktioniert auf einem Rechner und wird auf einem anderen abgelehnt."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A cache may be missing its intended public key or return a path signed by a different key.",
+        "de": "Dem Cache kann sein vorgesehener öffentlicher Schlüssel fehlen oder der Pfad trägt eine andere Signatur."
+      },
+      {
+        "en": "Client settings can differ from the daemon's effective configuration; a store transfer has the same relevant trust boundary.",
+        "de": "Clientwerte können von der Daemon-Konfiguration abweichen; Store-Übertragungen besitzen dieselbe relevante Vertrauensgrenze."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-declared-cache-trust",
+        "command": "rg -n 'substituters|trusted-public-keys|require-sigs|trusted-users' /etc/nixos",
+        "explanation": {
+          "en": "Read your declarative configuration tree; do not publish credential-bearing configuration files.",
+          "de": "Lies deinen deklarativen Konfigurationsbaum; veröffentliche keine Dateien mit Zugangsdaten."
+        },
+        "interpretation": {
+          "en": "Match each intended cache to its independently verified signing key. trusted-users is broader privilege than a cache-key declaration.",
+          "de": "Ordne jedem vorgesehenen Cache seinen unabhängig geprüften Schlüssel zu. trusted-users verleiht weit mehr Rechte als ein Cache-Schlüssel."
+        }
+      },
+      {
+        "id": "inspect-generated-daemon-trust",
+        "command": "rg -n 'substituters|trusted-public-keys|require-sigs|trusted-users|include' /etc/nix/nix.conf",
+        "explanation": {
+          "en": "Reads selected global configuration lines; included files and daemon restart timing can matter.",
+          "de": "Liest gezielte globale Zeilen; eingebundene Dateien und Zeitpunkt des Daemon-Neustarts können relevant sein."
+        },
+        "interpretation": {
+          "en": "If declarative intent is absent here, the change may not be activated. The caller's settings are not proof of daemon acceptance.",
+          "de": "Fehlt die deklarative Absicht hier, wurde sie eventuell nicht aktiviert. Benutzerwerte beweisen keine Annahme durch den Daemon."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "declare-verified-cache-key",
+        "title": {
+          "en": "Declare the verified cache public key",
+          "de": "Den geprüften Cache-Schlüssel deklarieren"
+        },
+        "body": {
+          "en": "If the cache is intended and its signing key is verified from the cache operator's official documentation, add that exact key to nix.settings.trusted-public-keys alongside the intended substituter. Apply the daemon configuration through NixOS.",
+          "de": "Wenn der Cache vorgesehen und sein Schlüssel aus offizieller Betreiberquelle geprüft ist, ergänze genau ihn in nix.settings.trusted-public-keys zum vorgesehenen Substituter. Übernimm die Daemon-Konfiguration durch NixOS."
+        },
+        "precautions": {
+          "en": "A trusted cache can supply executable system content. Do not disable require-sigs or mark every user trusted to bypass one rejection.",
+          "de": "Ein vertrauenswürdiger Cache liefert ausführbare Systeminhalte. Deaktiviere require-sigs nicht und erkläre nicht alle Benutzer für vertrauenswürdig."
+        },
+        "rollback": {
+          "en": "Remove the added cache/key and restore the prior generation and daemon settings. Already installed paths are not removed by reversing trust.",
+          "de": "Entferne Cache und Schlüssel und stelle vorherige Generation und Daemon-Werte zurück. Installierte Pfade verschwinden dadurch nicht."
+        }
+      },
+      {
+        "id": "avoid-unverified-substitute",
+        "title": {
+          "en": "Use a verified alternative source",
+          "de": "Eine geprüfte alternative Quelle verwenden"
+        },
+        "body": {
+          "en": "If the cache identity or signature cannot be established, disable only that substituter and use a known intended cache or build from the pinned source. For owned store transfers, arrange signing using the administrator's documented key policy.",
+          "de": "Wenn Identität oder Signatur ungeklärt sind, deaktiviere nur diesen Substituter und nutze einen bekannten vorgesehenen Cache oder baue aus festgelegter Quelle. Signiere eigene Store-Übertragungen nach der dokumentierten Schlüsselregel."
+        },
+        "precautions": {
+          "en": "Source builds can consume significant time and memory. Content-addressed objects have different verification semantics; inspect the exact path type.",
+          "de": "Quellbauten können viel Zeit und Speicher benötigen. Inhaltsadressierte Objekte haben andere Prüfregeln; beachte den genauen Pfadtyp."
+        },
+        "rollback": {
+          "en": "Restore the old substituter only after its key and signing issue is resolved; preserve the previous cache configuration.",
+          "de": "Stelle den früheren Substituter erst nach geklärtem Schlüssel- und Signaturproblem wieder her; bewahre seine Konfiguration auf."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nix manual — nix.conf settings",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/conf-file.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Nix manual — store types and trust",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-help-stores.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-untrusted-path-signature",
+        "all": [
+          "error: cannot add path '/nix/store/",
+          "lacks a signature by a trusted key"
+        ],
+        "sample": "error: cannot add path '/nix/store/00000000000000000000000000000000-example' because it lacks a signature by a trusted key",
+        "negative": [
+          "copying path '/nix/store/00000000000000000000000000000000-example' from 'https://cache.example.org'",
+          "error: cannot add path '/nix/store/00000000000000000000000000000000-example': No space left on device"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for Nix rejecting a nontrusted path signature.",
+          "de": "Synthetisches Beispiel für eine von Nix abgelehnte Pfadsignatur."
+        },
+        "significance": {
+          "en": "This is an integrity/trust rejection, not proof of cache compromise.",
+          "de": "Dies ist eine Integritäts- oder Vertrauensablehnung, kein Beweis eines kompromittierten Caches."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-fixed-output-hash-mismatch",
+    "slug": {
+      "en": "nix-fixed-output-hash-mismatch",
+      "de": "nix-fixed-output-hash-stimmt-nicht"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "A fetched fixed-output source has a different hash",
+      "de": "Eine Fixed-Output-Quelle hat einen anderen Hash"
+    },
+    "summary": {
+      "en": "A fetcher output differs from its expected hash. Verify the pinned revision, artifact and hashing mode before accepting the newly reported digest.",
+      "de": "Die Fetcher-Ausgabe weicht vom erwarteten Hash ab. Prüfe feste Revision, Artefakt und Hash-Verfahren vor der Übernahme des neu gemeldeten Hashs."
+    },
+    "environment": {
+      "en": "Nix fixed-output derivations such as fetchurl, fetchzip and fetchFromGitHub; hash mode is fetcher-specific.",
+      "de": "Nix-Fixed-Output-Derivationen wie fetchurl, fetchzip und fetchFromGitHub; das Hash-Verfahren hängt vom Fetcher ab."
+    },
+    "symptoms": {
+      "en": [
+        "The build prints specified and got hashes for a fixed-output derivation.",
+        "A source URL or revision was edited without its matching hash."
+      ],
+      "de": [
+        "Der Bau nennt specified- und got-Hash einer Fixed-Output-Derivation.",
+        "Quell-URL oder Revision wurde ohne passenden Hash geändert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The upstream artifact or revision may have changed, or the URL may now return unintended content.",
+        "de": "Upstream-Artefakt oder Revision kann geändert sein oder die URL liefert nun unerwarteten Inhalt."
+      },
+      {
+        "en": "A flat file digest differs from the hash of unpacked recursive content; switching fetcher semantics can change the required hash.",
+        "de": "Ein Dateihash unterscheidet sich vom Hash entpackter rekursiver Inhalte; geänderte Fetcher-Regeln können einen anderen Hash verlangen."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-source-and-hash",
+        "command": "rg -n 'fetchurl|fetchzip|fetchFromGitHub|url|rev|hash|sha256' package.nix",
+        "explanation": {
+          "en": "Replace package.nix with the local derivation source; this reads it without downloading.",
+          "de": "Ersetze package.nix durch die lokale Paketquelle; sie wird ohne Download gelesen."
+        },
+        "interpretation": {
+          "en": "Compare URL/rev changes with the declared hash and fetcher type. An archive's raw checksum is not interchangeable with unpacked-content hashing.",
+          "de": "Vergleiche URL-/rev-Änderungen mit Hash und Fetcher-Typ. Ein Rohhash des Archivs ist nicht mit dem entpackten Inhaltshash austauschbar."
+        }
+      },
+      {
+        "id": "inspect-existing-fetch-derivation",
+        "command": "nix --extra-experimental-features nix-command derivation show /nix/store/00000000000000000000000000000000-source.drv",
+        "explanation": {
+          "en": "Replace the synthetic path with an existing .drv named in the failure; shows metadata and does not build it.",
+          "de": "Ersetze den synthetischen Pfad durch die vorhandene .drv aus dem Fehler; zeigt Metadaten ohne Bau."
+        },
+        "interpretation": {
+          "en": "Read outputHash, outputHashMode and source URL where present. Metadata confirms what was requested, not that the downloaded bytes are legitimate.",
+          "de": "Lies outputHash, outputHashMode und Quell-URL, sofern vorhanden. Metadaten bestätigen den Auftrag, nicht die Legitimität der geladenen Bytes."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "pin-verified-artifact-and-hash",
+        "title": {
+          "en": "Pin the verified artifact and matching hash",
+          "de": "Geprüftes Artefakt mit passendem Hash festlegen"
+        },
+        "body": {
+          "en": "If the source change is intentional, verify the artifact against the upstream release or immutable commit and calculate the hash using the selected fetcher's documented mode. Update source reference and hash together.",
+          "de": "Wenn die Quelländerung beabsichtigt ist, prüfe das Artefakt anhand der Upstream-Veröffentlichung oder eines unveränderlichen Commits. Berechne den Hash im dokumentierten Fetcher-Modus und ändere Verweis und Hash gemeinsam."
+        },
+        "precautions": {
+          "en": "Blindly copying got accepts whatever was returned, including an unexpected replacement. Preserve the old artifact identity and digest.",
+          "de": "Blindes Übernehmen von got akzeptiert den gelieferten Inhalt auch bei unerwartetem Ersatz. Bewahre frühere Artefaktidentität und Hash auf."
+        },
+        "rollback": {
+          "en": "Restore the prior source URL/revision and hash together, then rebuild the previous package definition.",
+          "de": "Stelle frühere URL/Revision und Hash gemeinsam zurück und baue die vorherige Paketdefinition."
+        }
+      },
+      {
+        "id": "recover-unexpected-source-change",
+        "title": {
+          "en": "Recover an unexpectedly changed source",
+          "de": "Unerwartet veränderte Quelle behandeln"
+        },
+        "body": {
+          "en": "If the artifact changed without an intended upgrade, retain the mismatch evidence and use a verified immutable release or wait for the upstream or packaging correction. If the fetcher was changed, restore its former hashing semantics first.",
+          "de": "Wenn das Artefakt ohne beabsichtigtes Update verändert wurde, sichere den Hinweis und nutze eine geprüfte unveränderliche Quelle oder warte auf die Korrektur. Bei geändertem Fetcher stelle zuerst dessen frühere Regeln wieder her."
+        },
+        "precautions": {
+          "en": "Deleting caches or weakening hashes does not establish authenticity. A temporary workaround must keep an expected digest.",
+          "de": "Cache-Löschen oder schwächere Hashs beweisen keine Echtheit. Auch eine Übergangslösung braucht einen erwarteten Hash."
+        },
+        "rollback": {
+          "en": "Revert the temporary source or fetcher selection after a verified upstream correction; preserve the known-good pin for recovery.",
+          "de": "Nimm vorübergehende Quell- oder Fetcherwahl nach geprüfter Korrektur zurück; bewahre den funktionierenden Pin auf."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nix manual — fixed-output derivation attributes",
+        "url": "https://nix.dev/manual/nix/2.34/language/advanced-attributes.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "nix.dev — packaging existing software, hash mismatch",
+        "url": "https://nix.dev/tutorials/packaging-existing-software.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-fixed-output-mismatch",
+        "all": [
+          "error: hash mismatch in fixed-output derivation",
+          "/nix/store/",
+          ".drv"
+        ],
+        "sample": "error: hash mismatch in fixed-output derivation '/nix/store/00000000000000000000000000000000-source.drv':",
+        "negative": [
+          "error: builder for '/nix/store/00000000000000000000000000000000-source.drv' failed with exit code 1",
+          "checking hash of '/nix/store/00000000000000000000000000000000-source'"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for a fixed-output content mismatch.",
+          "de": "Synthetisches Beispiel für abweichenden Fixed-Output-Inhalt."
+        },
+        "significance": {
+          "en": "The expected and returned content differ; the line does not establish why.",
+          "de": "Erwarteter und gelieferter Inhalt unterscheiden sich; die Zeile erklärt nicht warum."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-daemon-access-denied",
+    "slug": {
+      "en": "nix-daemon-access-denied",
+      "de": "nix-daemon-zugriff-verweigert"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "An unprivileged user cannot reach the Nix daemon",
+      "de": "Ein Benutzer erreicht den Nix-Daemon nicht"
+    },
+    "summary": {
+      "en": "Nix operations fail at the daemon socket or admission policy. Separate socket access, allowed-users and administrator-level trusted-users privileges.",
+      "de": "Nix scheitert am Daemon-Socket oder seiner Zulassungsregel. Unterscheide Socket-Zugriff, allowed-users und weitreichende trusted-users-Rechte."
+    },
+    "environment": {
+      "en": "Multi-user Nix with nix-daemon.socket and allowed-users admission control.",
+      "de": "Mehrbenutzer-Nix mit nix-daemon.socket und Zulassung über allowed-users."
+    },
+    "symptoms": {
+      "en": [
+        "Nix reports permission denied connecting to the daemon socket.",
+        "The daemon rejects a username before starting a build."
+      ],
+      "de": [
+        "Nix meldet verweigerten Zugriff beim Verbinden zum Daemon-Socket.",
+        "Der Daemon lehnt einen Benutzernamen vor dem Bau ab."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Socket path traversal or socket permissions can prevent transport access.",
+        "de": "Durchsuchungsrechte im Socket-Pfad oder Socket-Rechte können den Verbindungsaufbau verhindern."
+      },
+      {
+        "en": "allowed-users can reject a connected user; trusted-users grants extra powers and is not the normal build permission switch.",
+        "de": "allowed-users kann verbundene Benutzer ablehnen; trusted-users verleiht Zusatzrechte und ist nicht die normale Baufreigabe."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-daemon-socket",
+        "command": "namei -l /nix/var/nix/daemon-socket/socket",
+        "explanation": {
+          "en": "Read socket path metadata; this does not contact or restart the daemon.",
+          "de": "Lies Socket-Pfadmetadaten; der Daemon wird weder kontaktiert noch neu gestartet."
+        },
+        "interpretation": {
+          "en": "Check traversal and final socket permissions for the actual user. A missing socket differs from a permission denial.",
+          "de": "Prüfe Pfaddurchsuchung und Socket-Rechte für den tatsächlichen Benutzer. Ein fehlender Socket ist etwas anderes als verweigerter Zugriff."
+        }
+      },
+      {
+        "id": "inspect-daemon-admission",
+        "command": "rg -n 'allowed-users|trusted-users|include' /etc/nix/nix.conf",
+        "explanation": {
+          "en": "Reads selected global policy lines; inspect included policy files if present.",
+          "de": "Liest gezielte globale Regelzeilen; prüfe gegebenenfalls eingebundene Dateien."
+        },
+        "interpretation": {
+          "en": "An absent explicit allowed-users value may mean its documented default applies. trusted-users is broader store administration, not merely permission to build.",
+          "de": "Ohne ausdrückliches allowed-users kann der dokumentierte Standard gelten. trusted-users erlaubt umfassendere Store-Verwaltung statt nur Bauen."
+        }
+      },
+      {
+        "id": "inspect-socket-unit",
+        "command": "systemctl status nix-daemon.socket --no-pager",
+        "explanation": {
+          "en": "Reads the system socket unit; no restart or connection attempt is requested.",
+          "de": "Liest die System-Socket-Unit; kein Neustart oder Verbindungsversuch."
+        },
+        "interpretation": {
+          "en": "Inactive, absent and inaccessible sockets need different fixes. On non-systemd hosts use the installation's supervisor instead.",
+          "de": "Inaktive, fehlende und unzugängliche Sockets brauchen verschiedene Maßnahmen. Nutze ohne systemd die jeweilige Installationsverwaltung."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "restore-intended-daemon-access",
+        "title": {
+          "en": "Restore intended socket access",
+          "de": "Vorgesehenen Socket-Zugriff herstellen"
+        },
+        "body": {
+          "en": "If socket permissions differ from the installed unit's intended policy, correct the declarative socket configuration or installation ownership and restore that socket through its supervisor. Reconnect after an intended group membership change.",
+          "de": "Wenn Socket-Rechte von der vorgesehenen Unit-Regel abweichen, korrigiere deklarative Socket-Konfiguration oder Installationseigentümer und stelle den Socket durch seine Verwaltung bereit. Melde dich nach beabsichtigter Gruppenänderung neu an."
+        },
+        "precautions": {
+          "en": "Do not make the entire /nix tree writable or modify store ownership recursively. Restarting a daemon during builds needs coordination.",
+          "de": "Mache nicht den gesamten /nix-Baum schreibbar und ändere Store-Eigentümer nicht rekursiv. Ein Daemon-Neustart während Bauten benötigt Abstimmung."
+        },
+        "rollback": {
+          "en": "Restore prior socket settings and group membership; recreate the socket through the original manager configuration.",
+          "de": "Stelle frühere Socket-Werte und Gruppenmitgliedschaft zurück; lasse den ursprünglichen Manager den Socket wieder bereitstellen."
+        }
+      },
+      {
+        "id": "grant-ordinary-admission",
+        "title": {
+          "en": "Grant ordinary daemon admission",
+          "de": "Normale Daemon-Zulassung erteilen"
+        },
+        "body": {
+          "en": "If the transport works but the intended user is excluded, add that user or appropriate group to the deliberately maintained allowed-users policy. Keep trusted-users limited to identities requiring its administrator-like powers.",
+          "de": "Wenn die Verbindung funktioniert, der vorgesehene Benutzer aber ausgeschlossen ist, ergänze ihn oder seine passende Gruppe in allowed-users. Begrenze trusted-users auf Identitäten mit benötigten Verwaltungsrechten."
+        },
+        "precautions": {
+          "en": "Trusted Nix users can affect the store in ways comparable to root. A socket refusal is not justification to grant that role.",
+          "de": "Vertrauenswürdige Nix-Benutzer können den Store ähnlich weitreichend wie root beeinflussen. Eine Socket-Ablehnung begründet diese Rolle nicht."
+        },
+        "rollback": {
+          "en": "Restore the previous admission list and daemon configuration; newly created build outputs are not deleted by policy rollback.",
+          "de": "Stelle frühere Zulassungsliste und Daemon-Konfiguration zurück; neue Bauausgaben werden durch Regelrücknahme nicht gelöscht."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nix manual — multi-user mode",
+        "url": "https://nix.dev/manual/nix/2.34/installation/multi-user.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Nix manual — allowed-users and trusted-users",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/conf-file.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nix-daemon-socket-denied",
+        "all": [
+          "error: cannot connect to socket at '/nix/var/nix/daemon-socket/socket'",
+          "Permission denied"
+        ],
+        "sample": "error: cannot connect to socket at '/nix/var/nix/daemon-socket/socket': Permission denied",
+        "negative": [
+          "error: cannot connect to socket at '/nix/var/nix/daemon-socket/socket': No such file or directory",
+          "connected to socket at '/nix/var/nix/daemon-socket/socket'"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for denied Nix daemon transport access.",
+          "de": "Synthetisches Beispiel für verweigerten Nix-Daemon-Verbindungszugriff."
+        },
+        "significance": {
+          "en": "Inspect transport permissions separately from daemon trust privileges.",
+          "de": "Prüfe Verbindungsrechte getrennt von Daemon-Vertrauensprivilegien."
+        }
+      },
+      {
+        "id": "nix-daemon-user-rejected",
+        "all": [
+          "error: user '",
+          "is not allowed to connect to the Nix daemon"
+        ],
+        "sample": "error: user 'example' is not allowed to connect to the Nix daemon",
+        "negative": [
+          "user 'example' connected to the Nix daemon",
+          "error: user 'example' is not a trusted user"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for allowed-users admission rejection.",
+          "de": "Synthetisches Beispiel für eine allowed-users-Zulassungsablehnung."
+        },
+        "significance": {
+          "en": "The daemon is reachable but its admission policy rejected the identity.",
+          "de": "Der Daemon ist erreichbar, aber seine Zulassungsregel lehnt die Identität ab."
+        }
+      }
+    ]
+  },
+  {
+    "id": "nix-store-gc-roots-space",
+    "slug": {
+      "en": "nix-store-gc-roots-space",
+      "de": "nix-store-gc-wurzeln-speicherplatz"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "Garbage collection frees less space than expected",
+      "de": "Garbage Collection gibt weniger Platz frei als erwartet"
+    },
+    "summary": {
+      "en": "The Nix store remains large after collection because roots retain closures. Inspect generations and result links before deleting recovery paths or store files.",
+      "de": "Der Nix-Store bleibt nach GC groß, weil Wurzeln Inhalte halten. Prüfe Generationen und result-Links vor dem Entfernen von Rückwegen oder Store-Dateien."
+    },
+    "environment": {
+      "en": "Nix store garbage collection, profile generations and direct or indirect GC roots.",
+      "de": "Nix-Store-Garbage-Collection, Profilgenerationen und direkte oder indirekte GC-Wurzeln."
+    },
+    "symptoms": {
+      "en": [
+        "Collection frees little despite a large /nix/store.",
+        "Builds run out of filesystem space while many old outputs remain referenced."
+      ],
+      "de": [
+        "GC gibt trotz großem /nix/store wenig frei.",
+        "Bauten verlieren Dateisystemplatz, während viele alte Ausgaben referenziert bleiben."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Profiles, previous system generations or project result links may retain large dependency closures.",
+        "de": "Profile, frühere Systemgenerationen oder result-Links können große Abhängigkeitsmengen halten."
+      },
+      {
+        "en": "Filesystem usage can include data outside the store; store size is not identical to reclaimable space.",
+        "de": "Dateisystemverbrauch kann Daten außerhalb des Stores enthalten; Store-Größe ist nicht gleich freigebbarer Platz."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-gc-roots",
+        "command": "nix-store --gc --print-roots",
+        "explanation": {
+          "en": "The --print-roots suboperation lists roots instead of collecting; do not omit that flag.",
+          "de": "Die Unteroperation --print-roots listet Wurzeln statt zu löschen; lasse diese Option nicht weg."
+        },
+        "interpretation": {
+          "en": "Profile and result-link roots explain retained closures. Roots may be indirect and belong to users or projects other than this shell.",
+          "de": "Profil- und result-Wurzeln erklären gehaltene Inhalte. Wurzeln können indirekt sein und anderen Benutzern oder Projekten gehören."
+        }
+      },
+      {
+        "id": "inspect-system-generations",
+        "command": "nix-env --profile /nix/var/nix/profiles/system --list-generations",
+        "explanation": {
+          "en": "Lists system-profile generations without switching or deleting; profile visibility may be restricted.",
+          "de": "Listet Systemprofilgenerationen ohne Wechsel oder Löschen; Profilzugriff kann eingeschränkt sein."
+        },
+        "interpretation": {
+          "en": "Compare older generations with the recovery versions you intentionally keep. Current user-profile generations are a separate root set.",
+          "de": "Vergleiche ältere Generationen mit bewusst behaltenen Rückwegen. Benutzerprofilgenerationen sind eine eigene Wurzelmenge."
+        }
+      },
+      {
+        "id": "inspect-store-filesystem-space",
+        "command": "df -h /nix/store",
+        "explanation": {
+          "en": "Reads filesystem capacity and does not scan or modify store files.",
+          "de": "Liest Dateisystemplatz ohne Store-Dateien zu durchsuchen oder zu verändern."
+        },
+        "interpretation": {
+          "en": "Low available space may also come from other directories on that filesystem. Check inode exhaustion separately when allocation fails despite free bytes.",
+          "de": "Wenig freier Platz kann auch von anderen Verzeichnissen dieses Dateisystems stammen. Prüfe Inodes bei Allokationsfehlern trotz freier Bytes."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "retire-obsolete-roots-deliberately",
+        "title": {
+          "en": "Retire only obsolete roots",
+          "de": "Nur veraltete Wurzeln gezielt aufgeben"
+        },
+        "body": {
+          "en": "If a project result link or profile generation is confirmed obsolete, remove it through that project's or profile's supported lifecycle, then collect unreferenced store paths. Keep current, booted and a known-good recovery generation intentionally.",
+          "de": "Wenn ein result-Link oder eine Profilgeneration bestätigt veraltet ist, entferne sie durch den vorgesehenen Projekt- oder Profilablauf und sammle dann unreferenzierte Pfade. Behalte aktuelle, gestartete und eine funktionierende Rückkehrgeneration."
+        },
+        "precautions": {
+          "en": "Removing roots can make outputs collectible permanently. Never delete arbitrary /nix/store files or the whole gcroots directory.",
+          "de": "Ohne Wurzeln können Ausgaben dauerhaft eingesammelt werden. Lösche nie beliebige /nix/store-Dateien oder das gesamte gcroots-Verzeichnis."
+        },
+        "rollback": {
+          "en": "Before collection, restore a removed link if its store target still exists. After collection, recovery requires a rebuild or a verified available substitute.",
+          "de": "Stelle vor GC entfernte Links bei vorhandenen Zielen zurück. Nach GC braucht die Erholung einen Neubau oder einen verfügbaren geprüften Cache."
+        }
+      },
+      {
+        "id": "budget-store-retention",
+        "title": {
+          "en": "Set an explicit retention and capacity budget",
+          "de": "Aufbewahrung und Kapazität bewusst planen"
+        },
+        "body": {
+          "en": "If regular builds outgrow storage, configure finite generation retention and scheduled GC suited to your recovery needs, or expand the filesystem. Inspect all user roots before assuming system-generation cleanup is sufficient.",
+          "de": "Wenn regelmäßige Bauten den Speicher übersteigen, plane endliche Generationserhaltung und passende GC oder erweitere das Dateisystem. Prüfe alle Benutzerwurzeln vor der Annahme ausreichender Systembereinigung."
+        },
+        "precautions": {
+          "en": "A removed generation is not restored just by switching back. Store cleanup does not back up mutable application data.",
+          "de": "Eine entfernte Generation wird nicht durch Zurückwechseln wiederhergestellt. Store-Bereinigung sichert keine veränderlichen Anwendungsdaten."
+        },
+        "rollback": {
+          "en": "Disable the new automatic policy and restore retained links while targets exist; rebuild collected outputs from saved configuration pins if needed.",
+          "de": "Deaktiviere die neue Automatik und stelle Links bei vorhandenen Zielen zurück; baue eingesammelte Ausgaben nötigenfalls aus gesicherten Pins neu."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nix manual — GC roots and inspection suboperations",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/nix-store/gc.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Nix manual — store roots and references",
+        "url": "https://nix.dev/manual/nix/2.34/command-ref/nix-store/query.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "nixos-running-booted-generation-mismatch",
+    "slug": {
+      "en": "nixos-running-booted-generation-mismatch",
+      "de": "nixos-laufende-boot-generation-unterschied"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "A tested generation disappears after reboot",
+      "de": "Eine getestete Generation verschwindet nach Neustart"
+    },
+    "summary": {
+      "en": "Runtime changes worked but reboot restores an older configuration. Compare running, booted and profile targets and choose the intended rebuild action.",
+      "de": "Änderungen liefen, doch nach Neustart gilt eine ältere Konfiguration. Vergleiche laufende, gestartete und Profilziele und den gewählten Rebuild-Modus."
+    },
+    "environment": {
+      "en": "NixOS system generations; test, boot and switch update different parts of activation and boot selection.",
+      "de": "NixOS-Systemgenerationen; test, boot und switch ändern unterschiedliche Teile von Aktivierung und Bootauswahl."
+    },
+    "symptoms": {
+      "en": [
+        "A configuration activated with test is not the boot default.",
+        "The running kernel remains older after switch until reboot."
+      ],
+      "de": [
+        "Eine mit test aktivierte Konfiguration ist nicht der Bootstandard.",
+        "Nach switch bleibt der laufende Kernel bis zum Neustart älter."
+      ]
+    },
+    "causes": [
+      {
+        "en": "nixos-rebuild test changes runtime without setting the boot default; boot does the converse.",
+        "de": "nixos-rebuild test ändert die Laufzeit ohne neuen Bootstandard; boot macht das Gegenstück."
+      },
+      {
+        "en": "The firmware may boot a different loader or generation, or a bootloader update may have failed during activation.",
+        "de": "Firmware kann einen anderen Loader oder eine andere Generation starten; ein Bootloader-Update kann bei der Aktivierung gescheitert sein."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "compare-generation-targets",
+        "command": "readlink -f /run/current-system /run/booted-system /nix/var/nix/profiles/system",
+        "explanation": {
+          "en": "Reads the three usual NixOS targets without switching; keep the output order aligned with the arguments.",
+          "de": "Liest drei übliche NixOS-Ziele ohne Wechsel; beachte die Argumentreihenfolge der Ausgabe."
+        },
+        "interpretation": {
+          "en": "current-system reflects active userspace, booted-system the booted closure, and the system profile the selected generation. Differences can be intentional after test or switch.",
+          "de": "current-system zeigt aktiven Userspace, booted-system die gestartete Umgebung und das Systemprofil die gewählte Generation. Unterschiede können nach test oder switch beabsichtigt sein."
+        }
+      },
+      {
+        "id": "inspect-retained-generations",
+        "command": "nix-env --profile /nix/var/nix/profiles/system --list-generations",
+        "explanation": {
+          "en": "Lists system profile history; read access may be restricted, and no boot choice is changed.",
+          "de": "Listet Systemprofilhistorie; Leserechte können eingeschränkt sein, die Bootauswahl bleibt unverändert."
+        },
+        "interpretation": {
+          "en": "The profile's current marker does not prove firmware booted it. Compare dates with the tested change and saved rebuild output.",
+          "de": "Die Profilmarkierung beweist nicht, dass Firmware dies gestartet hat. Vergleiche Datum mit Änderung und gesicherter Rebuild-Ausgabe."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "select-intended-rebuild-action",
+        "title": {
+          "en": "Choose the intended rebuild action",
+          "de": "Passenden Rebuild-Modus wählen"
+        },
+        "body": {
+          "en": "If a successful test should persist, build and use switch for runtime plus boot default or boot for activation at next reboot, with the same explicit flake host or channel input. Verify the command completed its bootloader stage.",
+          "de": "Wenn ein erfolgreicher test bleiben soll, nutze switch für Laufzeit und Bootstandard oder boot für den nächsten Start mit demselben Flake-Host oder Channel. Prüfe den abgeschlossenen Bootloader-Schritt."
+        },
+        "precautions": {
+          "en": "switch can restart services but cannot replace the running kernel. Keep console access and a known-good boot entry before remote activation.",
+          "de": "switch kann Dienste neu starten, ersetzt aber nicht den laufenden Kernel. Behalte vor Fernaktivierung Konsole und funktionierenden Booteintrag."
+        },
+        "rollback": {
+          "en": "Choose a retained known-good boot generation or use the documented rollback action; boot changes and mutable state migrations need separate review.",
+          "de": "Wähle eine erhaltene funktionierende Bootgeneration oder den dokumentierten Rollback; Bootänderungen und Datenmigrationen sind gesondert zu prüfen."
+        }
+      },
+      {
+        "id": "repair-boot-selection",
+        "title": {
+          "en": "Repair the verified boot-selection mismatch",
+          "de": "Bestätigte Bootauswahl-Abweichung beheben"
+        },
+        "body": {
+          "en": "If the rebuild succeeded but the wrong loader or entry boots, inspect the machine's actual firmware choice and the configured ESP/bootloader location. Correct only the NixOS boot target proven inconsistent with that choice.",
+          "de": "Wenn der Rebuild gelang, aber falscher Loader oder Eintrag startet, prüfe tatsächliche Firmwareauswahl und konfigurierten ESP-/Bootloader-Ort. Korrigiere nur das nachweislich unpassende NixOS-Bootziel."
+        },
+        "precautions": {
+          "en": "Do not reinstall a bootloader to an assumed disk. Preserve other OS entries and record current firmware selection.",
+          "de": "Installiere keinen Bootloader auf einen vermuteten Datenträger. Erhalte andere Betriebssystemeinträge und notiere die Firmwareauswahl."
+        },
+        "rollback": {
+          "en": "Restore the recorded firmware choice and previous bootloader configuration, then boot the known-good retained generation.",
+          "de": "Stelle Firmwareauswahl und frühere Bootloader-Konfiguration zurück und starte die erhaltene funktionierende Generation."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "NixOS manual — changing configuration and rollback",
+        "url": "https://nixos.org/manual/nixos/stable/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Official NixOS Wiki — nixos-rebuild modes",
+        "url": "https://wiki.nixos.org/wiki/Nixos-rebuild",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": []
+  },
+  {
+    "id": "nixos-foreign-elf-loader",
+    "slug": {
+      "en": "nixos-foreign-elf-loader",
+      "de": "nixos-fremdes-elf-programm-loader"
+    },
+    "category": "nixos",
+    "title": {
+      "en": "A generic Linux binary cannot find its loader on NixOS",
+      "de": "Ein allgemeines Linux-Programm findet unter NixOS seinen Loader nicht"
+    },
+    "summary": {
+      "en": "An existing executable fails before normal startup because it expects an FHS loader or libraries. Inspect ELF metadata and choose a scoped packaging route.",
+      "de": "Eine vorhandene Programmdatei scheitert wegen erwartetem FHS-Loader oder Bibliotheken. Prüfe ELF-Metadaten und wähle einen gezielten Paketweg."
+    },
+    "environment": {
+      "en": "NixOS running externally distributed dynamically linked ELF binaries; architecture and ABI must also match.",
+      "de": "NixOS mit extern verteilten dynamisch gelinkten ELF-Programmen; Architektur und ABI müssen ebenfalls passen."
+    },
+    "symptoms": {
+      "en": [
+        "An existing executable reports a missing interpreter or the NixOS stub-loader message.",
+        "Libraries installed in systemPackages do not automatically satisfy its generic library search path."
+      ],
+      "de": [
+        "Eine vorhandene Programmdatei meldet fehlenden Interpreter oder den NixOS-Stub-Loader.",
+        "Bibliotheken in systemPackages erfüllen nicht automatisch seinen allgemeinen Suchpfad."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The binary may request a conventional /lib loader absent or replaced by a stub on NixOS.",
+        "de": "Das Programm kann einen üblichen /lib-Loader anfordern, der unter NixOS fehlt oder durch einen Stub ersetzt ist."
+      },
+      {
+        "en": "Its runtime library search paths may not include the Nix store; wrong architecture is a separate possible failure.",
+        "de": "Seine Bibliothekssuchpfade können den Nix-Store nicht enthalten; eine falsche Architektur ist ein eigener möglicher Fehler."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-elf-interpreter",
+        "command": "readelf -l /path/to/program",
+        "explanation": {
+          "en": "Replace the path with the binary; readelf from binutils inspects it without executing it.",
+          "de": "Ersetze den Pfad durch das Programm; readelf aus binutils liest es ohne Ausführung."
+        },
+        "interpretation": {
+          "en": "The INTERP segment names the requested loader. No interpreter segment may mean a static binary or a different file type; confirm its ELF header.",
+          "de": "Das INTERP-Segment nennt den angeforderten Loader. Ohne Segment kann die Datei statisch oder ein anderer Dateityp sein; prüfe den ELF-Header."
+        }
+      },
+      {
+        "id": "inspect-needed-libraries",
+        "command": "readelf -d /path/to/program",
+        "explanation": {
+          "en": "Use the same trusted or untrusted file; this metadata read does not run its loader or entry point.",
+          "de": "Nutze dieselbe Datei auch bei ungeklärter Herkunft; die Metadatenprüfung startet weder Loader noch Programm."
+        },
+        "interpretation": {
+          "en": "NEEDED and RPATH/RUNPATH identify dependencies and search assumptions. Installing a package globally does not rewrite these fields.",
+          "de": "NEEDED und RPATH/RUNPATH nennen Abhängigkeiten und Suchannahmen. Globale Paketinstallation schreibt diese Felder nicht um."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "package-binary-for-nixos",
+        "title": {
+          "en": "Use or create a Nix-compatible package",
+          "de": "Ein Nix-kompatibles Paket nutzen oder erstellen"
+        },
+        "body": {
+          "en": "If available, use the intended Nixpkgs package. Otherwise package the verified upstream binary with suitable dependencies and autoPatchelfHook, or build from source so its loader and runtime references enter the correct closure.",
+          "de": "Nutze nach Möglichkeit das vorgesehene Nixpkgs-Paket. Verpacke sonst das geprüfte Upstream-Programm mit passenden Abhängigkeiten und autoPatchelfHook oder baue aus Quellen für korrekte Laufzeitverweise."
+        },
+        "precautions": {
+          "en": "Keep the original binary immutable for comparison and verify licensing and source identity. Do not create random global loader symlinks.",
+          "de": "Bewahre das Originalprogramm zum Vergleich unverändert auf und prüfe Lizenz und Quellidentität. Erstelle keine beliebigen globalen Loader-Symlinks."
+        },
+        "rollback": {
+          "en": "Remove the custom package reference and restore the previous configuration or package version; retain original artifacts.",
+          "de": "Entferne den eigenen Paketverweis und stelle frühere Konfiguration oder Paketversion zurück; behalte Originalartefakte."
+        }
+      },
+      {
+        "id": "use-scoped-compatibility-environment",
+        "title": {
+          "en": "Use a scoped compatibility environment",
+          "de": "Eine gezielte Kompatibilitätsumgebung verwenden"
+        },
+        "body": {
+          "en": "If the program downloads further binaries or resists packaging, use a documented buildFHSEnv wrapper or deliberately enable nix-ld with its required library set. Keep compatibility limited to the intended architecture and workflow.",
+          "de": "Wenn das Programm weitere Binärdateien lädt oder schwer paketierbar ist, nutze einen dokumentierten buildFHSEnv-Wrapper oder bewusst nix-ld mit benötigten Bibliotheken. Begrenze dies auf vorgesehene Architektur und Ablauf."
+        },
+        "precautions": {
+          "en": "nix-ld is not an architecture emulator or a guarantee of library ABI compatibility. Its libraries belong in its documented setting, not merely environment.systemPackages.",
+          "de": "nix-ld emuliert keine Architektur und garantiert keine ABI-Kompatibilität. Seine Bibliotheken gehören in die dokumentierte Vorgabe, nicht nur environment.systemPackages."
+        },
+        "rollback": {
+          "en": "Remove the wrapper or revert nix-ld settings and start a fresh login environment to restore prior variables.",
+          "de": "Entferne den Wrapper oder stelle nix-ld-Werte zurück und melde dich neu an für die früheren Umgebungsvariablen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "nix.dev FAQ — running non-Nix executables",
+        "url": "https://nix.dev/guides/faq#how-to-run-non-nix-executables",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Official NixOS Wiki — nix-ld",
+        "url": "https://wiki.nixos.org/wiki/Nix-ld",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "reviewed": "2026-10-09",
+    "logPatterns": [
+      {
+        "id": "nixos-stub-loader-message",
+        "all": [
+          "Could not start dynamically linked executable:"
+        ],
+        "sample": "Could not start dynamically linked executable: /home/example/vendor/bin/tool",
+        "negative": [
+          "Could not start executable: /home/example/vendor/bin/tool",
+          "/home/example/vendor/bin/tool: error while loading shared libraries: libexample.so: cannot open shared object file"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "Synthetic fixture for the NixOS stub-loader diagnostic.",
+          "de": "Synthetisches Beispiel für die NixOS-Stub-Loader-Diagnose."
+        },
+        "significance": {
+          "en": "This points to environment assumptions; inspect the ELF interpreter before treating it as an application crash.",
+          "de": "Dies verweist auf Umgebungsannahmen; prüfe den ELF-Interpreter vor der Annahme eines Anwendungsabsturzes."
+        }
+      }
+    ]
+  }
+]
