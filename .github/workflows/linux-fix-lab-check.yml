@@ -1,10 +1,10 @@
 name: Linux Fix Lab
 on:
   pull_request:
-    paths: ['linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
+    paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
   push:
     branches: [main]
-    paths: ['linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
+    paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
 permissions:
   contents: read
 jobs:
@@ -17,7 +17,7 @@ jobs:
           node-version: '22'
       - run: npm run build:fix-lab
       - run: npm run test:fix-lab
-      - run: node --test tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
+      - run: node --test tests/homepage-featured-projects.test.mjs tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
       - run: npm run test:seo
       - name: Generated pages and sitemap must be current
-        run: git diff --exit-code -- linux-fix-lab de/linux-fix-lab assets/linux-fix-lab/catalog.js content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml 'sitemap*.xml'
+        run: git diff --exit-code -- linux-fix-lab de/linux-fix-lab assets/linux-fix-lab/catalog.js content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml robots.txt 'sitemap*.xml'

@@ -21,7 +21,7 @@ for(const problem of problems)for(const lang of ['en','de'])test(`${problemPath(
   const data=JSON.parse(source.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const article=data['@graph'].find(item=>item['@type']==='TechArticle');assert.equal(article.url,origin+path);assert.equal(article.inLanguage,lang);assert.equal(article.dateModified,problem.reviewed);assert.deepEqual(article.citation,problem.sources.map(source=>source.url));
   const crumbs=data['@graph'].find(item=>item['@type']==='BreadcrumbList');assert.deepEqual(crumbs.itemListElement.map(item=>item.position),[1,2,3]);assert.equal(crumbs.itemListElement.at(-1).item,origin+path);
-  assert.ok(source.includes('name="robots" content="noindex,follow"'));assert.ok(source.includes("connect-src 'none'"));assert.match(source,/<noscript>/);
+  assert.ok(source.includes('name="robots" content="index,follow,max-image-preview:large"'));assert.ok(source.includes("connect-src 'none'"));assert.match(source,/<noscript>/);
   for(const match of source.matchAll(/<a\b[^>]*href="([^"]+)"/g)) {
     const href=decode(match[1]);if(/^https?:/.test(href))continue;
     const url=new URL(href,origin+path),file=resolve(root,url.pathname.slice(1),url.pathname.endsWith('/')?'index.html':'');
@@ -32,7 +32,7 @@ for(const problem of problems)for(const lang of ['en','de'])test(`${problemPath(
 
 for(const lang of ['en','de'])test(`${lang} landing: complete static search list and labeled functional controls`,()=> {
   const source=sourceFor(landingPath(lang));
-  assert.ok(source.includes('name="robots" content="noindex,follow"'));
+  assert.ok(source.includes('name="robots" content="index,follow,max-image-preview:large"'));
   assert.equal((source.match(/data-problem="/g)||[]).length,150);
   assert.equal((source.match(/data-assistant="/g)||[]).length,18);
   assert.equal(new Set(ids(source)).size,ids(source).length);
