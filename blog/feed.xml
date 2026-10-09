@@ -8,6 +8,14 @@
     <lastBuildDate>Thu, 08 Oct 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://www.dennishilk.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Build your own operating system: bootloaders and BoringKernel</title>
+      <link>https://www.dennishilk.com/blog/build-your-own-os-boringos/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/build-your-own-os-boringos/</guid>
+      <description>OS development for beginners through BoringOS: Limine, kernel entry, memory management and QEMU. Understand the path from boot to a native desktop.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>BoringOS &amp; OS Development</category>
+    </item>
+    <item>
       <title>Configure Dunst: Linux desktop notifications explained</title>
       <link>https://www.dennishilk.com/blog/configure-dunst/</link>
       <guid isPermaLink="true">https://www.dennishilk.com/blog/configure-dunst/</guid>
@@ -48,6 +56,14 @@
       <category>fish &amp; Shell</category>
     </item>
     <item>
+      <title>Git pull fails: understand diverging branches, merge and rebase</title>
+      <link>https://www.dennishilk.com/blog/git-pull-diverging-branches/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/git-pull-diverging-branches/</guid>
+      <description>Git reports diverging branches? Understand fast-forward, merge and rebase through my server update, including diagnosis, conflicts and recovery.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Git &amp; Server Workflow</category>
+    </item>
+    <item>
       <title>journalctl for beginners: find Linux errors in system logs</title>
       <link>https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/</link>
       <guid isPermaLink="true">https://www.dennishilk.com/blog/journalctl-linux-troubleshooting/</guid>
@@ -64,12 +80,68 @@
       <category>Linux &amp; Storage</category>
     </item>
     <item>
+      <title>Linux framebuffers explained: DOOM on my Cisco phone</title>
+      <link>https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/linux-framebuffer-cisco-phone-doom/</guid>
+      <description>How DOOM runs locally on the Cisco CP-9951: framebuffers, pixel formats, stride and real keys explained, with a small calculation and project links.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Embedded Linux &amp; DOOM</category>
+    </item>
+    <item>
+      <title>Try Linux in a VM: KVM and virt-manager for beginners</title>
+      <link>https://www.dennishilk.com/blog/linux-virtual-machine-kvm-virt-manager/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/linux-virtual-machine-kvm-virt-manager/</guid>
+      <description>Try Linux before migrating: understand KVM, QEMU, libvirt and virt-manager. Includes a NixOS example, virtual storage and NAT networking.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Linux &amp; Virtual Machines</category>
+    </item>
+    <item>
       <title>NixOS rollback: understand generations and undo an update</title>
       <link>https://www.dennishilk.com/blog/nixos-generations-rollback/</link>
       <guid isPermaLink="true">https://www.dennishilk.com/blog/nixos-generations-rollback/</guid>
       <description>Understand NixOS generations: boot an older system, roll back with nixos-rebuild and repair your configuration. Cthulhu provides the concrete example.</description>
       <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
       <category>NixOS &amp; Recovery</category>
+    </item>
+    <item>
+      <title>Source2Reel: turn a GitHub project into a local explainer video</title>
+      <link>https://www.dennishilk.com/blog/source2reel-github-local-explainer-video/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/source2reel-github-local-explainer-video/</guid>
+      <description>My Source2Reel workflow explained: inspect sources, create a storyboard, use local AI and narration, then render with FFmpeg. Cisco DOOM provides the example.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Source2Reel &amp; Explainer Videos</category>
+    </item>
+    <item>
+      <title>SSH keys on Linux: connect from your laptop to a server</title>
+      <link>https://www.dennishilk.com/blog/ssh-keys-linux-server/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/ssh-keys-linux-server/</guid>
+      <description>Set up SSH keys step by step: Ed25519, public and private keys, ssh-copy-id, server identity checks and a readable client configuration.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>SSH &amp; Servers</category>
+    </item>
+    <item>
+      <title>From Azeroth to Linux: Why I&apos;ve Been Nebu for 20 Years</title>
+      <link>https://www.dennishilk.com/blog/why-im-called-nebu/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/why-im-called-nebu/</guid>
+      <description>From my WoW warlock Nebukatneza through motorcycles, video editing and Linux to my own GoToSocial instance, NEBUVERSE: the story behind the name Nebu.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Behind the Projects</category>
+    </item>
+    <item>
+      <title>Wine prefixes explained: separate Windows environments on Linux</title>
+      <link>https://www.dennishilk.com/blog/wine-prefix-linux-games/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/wine-prefix-linux-games/</guid>
+      <description>Wine prefixes for beginners: understand WINEPREFIX, drive_c, registry files and Lutris. Try a separate environment and learn its backup and safety limits.</description>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Wine &amp; Linux Gaming</category>
+    </item>
+    <item>
+      <title>Back up Linux configuration: Dotfiles, package lists and data backups</title>
+      <link>https://www.dennishilk.com/blog/backup-linux-configuration/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/backup-linux-configuration/</guid>
+      <description>Plan Linux backups clearly: distinguish dotfiles, package lists, NixOS files and personal data, with Cthulhu examples and practical restore checks.</description>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Linux &amp; Backups</category>
     </item>
     <item>
       <title>Configure Fastfetch: My Cthulhu system overview step by step</title>
@@ -96,6 +168,14 @@
       <category>Gruvnode &amp; ThinkPad</category>
     </item>
     <item>
+      <title>Understand Linux gaming: Steam, Proton, Lutris and MangoHud</title>
+      <link>https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/linux-gaming-steam-proton-lutris/</guid>
+      <description>Linux gaming for beginners: understand Steam, Proton, Lutris, GameMode and MangoHud, test one game deliberately and inspect the Linux Gaming Toolkit scope.</description>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Linux &amp; Gaming</category>
+    </item>
+    <item>
       <title>NixOS for beginners: My configuration.nix explained</title>
       <link>https://www.dennishilk.com/blog/nixos-configuration-nix-explained/</link>
       <guid isPermaLink="true">https://www.dennishilk.com/blog/nixos-configuration-nix-explained/</guid>
@@ -118,6 +198,54 @@
       <description>Understand my xmonad.hs: the Super key, Tall and Full layouts, keybindings and hooks, then compile, restart and undo a small configuration change.</description>
       <pubDate>Wed, 07 Oct 2026 00:00:00 GMT</pubDate>
       <category>XMonad &amp; X11</category>
+    </item>
+    <item>
+      <title>Convert images without uploading them: JPG, PNG and WebP explained</title>
+      <link>https://www.dennishilk.com/blog/convert-images-without-upload/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/convert-images-without-upload/</guid>
+      <description>Convert and resize JPG, PNG and WebP locally in your browser. Learn about format choice, quality, transparency, metadata and browser support.</description>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Images &amp; Formats</category>
+    </item>
+    <item>
+      <title>Delete files on Linux: What HDDs, SSDs and TRIM mean for Skynet Shredder</title>
+      <link>https://www.dennishilk.com/blog/delete-files-linux-hdd-ssd/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/delete-files-linux-hdd-ssd/</guid>
+      <description>Understand Skynet Shredder: delete local files and folders on Linux, compare HDD overwriting with SSD TRIM and learn the limits of file deletion.</description>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Linux &amp; Data</category>
+    </item>
+    <item>
+      <title>SPDIF audio delay on Linux: Why the first sound disappears and what helps</title>
+      <link>https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/fix-spdif-audio-delay-linux/</guid>
+      <description>Missing the first SPDIF sound after an idle period on Linux? Explore suspend, PulseAudio, PipeWire and a local SoX keepalive with the SPDIF-Fix project.</description>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Linux &amp; Audio</category>
+    </item>
+    <item>
+      <title>Inspect Windows network traffic: Which process connects where?</title>
+      <link>https://www.dennishilk.com/blog/inspect-windows-network-traffic/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/inspect-windows-network-traffic/</guid>
+      <description>Use Windows Telemetry Inspector to investigate Windows 11 network traffic by process, service and DNS – locally, without uploading your capture.</description>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Windows &amp; Privacy</category>
+    </item>
+    <item>
+      <title>Install NVIDIA drivers on Debian 12 and 13: APT, CUDA and Secure Boot</title>
+      <link>https://www.dennishilk.com/blog/install-nvidia-drivers-debian/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/install-nvidia-drivers-debian/</guid>
+      <description>Install NVIDIA drivers on Debian 12 and 13 using APT. Understand Stable, Backports, optional CUDA, kernel headers and Secure Boot with this script.</description>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Debian &amp; NVIDIA</category>
+    </item>
+    <item>
+      <title>Switching from Windows to Linux: What to check first</title>
+      <link>https://www.dennishilk.com/blog/windows-to-linux-migration-checklist/</link>
+      <guid isPermaLink="true">https://www.dennishilk.com/blog/windows-to-linux-migration-checklist/</guid>
+      <description>Plan your Linux migration: check apps, games, hardware, live tests and data transfer with the local-first Linux Migration Companion.</description>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <category>Linux Migration</category>
     </item>
   </channel>
 </rss>
