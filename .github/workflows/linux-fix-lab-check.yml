@@ -1,10 +1,10 @@
 name: Linux Fix Lab
 on:
   pull_request:
-    paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
+    paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'scripts/gaming-integration.mjs', 'content/linux-gaming-repair/publication.json', 'content/linux-gaming-repair/integration.json', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
   push:
     branches: [main]
-    paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
+    paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'scripts/gaming-integration.mjs', 'content/linux-gaming-repair/publication.json', 'content/linux-gaming-repair/integration.json', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
 permissions:
   contents: read
 jobs:

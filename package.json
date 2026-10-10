@@ -9,6 +9,8 @@
     "test:fix-lab": "node --test tests/linux-fix-lab*.test.mjs",
     "build:hardware-explorer": "node scripts/build-linux-hardware-explorer.mjs && node scripts/build-linux-fix-lab.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:hardware-explorer": "node --test tests/linux-hardware-explorer*.test.mjs",
-    "test:hardware-release": "node scripts/check-hardware-release.mjs"
+    "test:hardware-release": "node scripts/check-hardware-release.mjs",
+    "build:gaming-repair": "node scripts/build-linux-gaming-repair.mjs && node scripts/build-linux-hardware-explorer.mjs && node scripts/build-linux-fix-lab.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:gaming-repair": "node --test tests/linux-gaming-repair*.test.mjs"
   }
 }

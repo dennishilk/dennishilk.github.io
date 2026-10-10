@@ -17,6 +17,7 @@ test("SEO synchronization discovers new translated blog slugs, preserves dates a
   await mkdir(join(fixture, "scripts"));
   await cp(new URL("scripts/sync-seo.mjs", root), join(fixture, "scripts/sync-seo.mjs"));
   await cp(new URL("scripts/hardware-integration.mjs", root), join(fixture, "scripts/hardware-integration.mjs"));
+  await cp(new URL("scripts/gaming-integration.mjs", root), join(fixture, "scripts/gaming-integration.mjs"));
   for (const name of await readdir(root)) {
     if (/^site-i18n-de.*\.js$/.test(name)) await cp(new URL(name, root), join(fixture, name));
   }

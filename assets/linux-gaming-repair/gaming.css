@@ -1,0 +1,106 @@
+/* Gaming tools extend the shared blog and Fix Lab theme. */
+.gaming-main { padding-bottom:65px; }
+.gaming-intro { padding:42px 0 24px; max-width:880px; }
+.gaming-intro h1 { margin:9px 0 14px; font-size:clamp(30px,4.2vw,47px); line-height:1.14; letter-spacing:-.035em; }
+.gaming-intro .intro { max-width:780px; margin-bottom:17px; }
+.gaming-intro .eyebrow { margin:0; }
+.gaming-privacy { color:var(--muted); font-size:13px; line-height:1.65; margin:0; }
+.gaming-privacy strong { color:var(--green); font-weight:600; }
+.gaming-modules { display:flex; flex-wrap:wrap; gap:8px; padding:17px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.gaming-modules a { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:6px; padding:10px 12px; min-height:44px; font-size:13px; color:var(--text); text-decoration:none; background:var(--surface); }
+.gaming-modules a:hover { border-color:var(--accent); color:var(--accent); }
+.gaming-modules span { color:var(--accent); font:11px ui-monospace,monospace; }
+.gaming-main .lab-section { border-bottom:1px solid var(--line); padding:35px 0; scroll-margin-top:110px; }
+.gaming-main .lab-section:last-of-type { border-bottom:0; }
+.gaming-section-header { display:flex; align-items:baseline; flex-wrap:wrap; gap:10px 18px; margin-bottom:10px; }
+.gaming-section-header h2 { margin:0; font-size:26px; letter-spacing:-.025em; }
+.gaming-section-header .eyebrow { margin:0; font-size:10px; }
+.gaming-main .lab-section>p { max-width:850px; margin-top:12px; }
+.gaming-doctor { border:1px solid var(--line); border-radius:8px; padding:16px 19px; margin:20px 0; background:var(--surface-soft); }
+.gaming-doctor summary { cursor:pointer; font-size:15px; font-weight:600; line-height:1.6; }
+.gaming-stack { display:grid; grid-template-columns:100px minmax(0,1fr); gap:12px 19px; margin:20px 0 4px; font-size:14px; line-height:1.75; }
+.gaming-stack dt { font-weight:600; color:var(--text); }
+.gaming-stack dd { margin:0; color:var(--muted); }
+.gaming-main .assistant-select { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.gaming-main .assistant-select .lab-button { min-height:63px; font-size:14px; }
+.gaming-main .assistant-select [aria-pressed=true] { border-color:var(--accent); background:#153346; }
+.gaming-main .assistant-panel h3 { margin:0 0 15px; font-size:22px; line-height:1.4; }
+.gaming-main .assistant-panel .gaming-flow-note { color:var(--muted); font-size:13px; margin-top:0; }
+.gaming-flow-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:23px; border-top:1px solid var(--line); padding-top:17px; }
+.gaming-related { padding:15px 18px; border-left:3px solid var(--accent); margin:20px 0 0; background:var(--surface-soft); }
+.gaming-related h4 { margin:0 0 8px; font-size:14px; }
+.gaming-related ul { margin:0; padding-left:18px; font-size:14px; line-height:1.85; }
+.gaming-related a { overflow-wrap:anywhere; }
+.gaming-main details:not(.gaming-doctor)>summary { cursor:pointer; line-height:1.7; }
+.gaming-main details p,.gaming-main details li { font-size:14px; line-height:1.8; color:var(--muted); }
+.gaming-example { margin:24px 0 8px; padding:17px 20px; border:1px solid var(--line); border-radius:8px; }
+.gaming-example ul { padding-left:20px; }
+.gaming-helper { font-size:13px!important; line-height:1.75!important; color:var(--muted); margin:8px 0 16px; }
+.gaming-limits { font:12px/1.75 ui-monospace,monospace; color:var(--muted); }
+.gaming-main .lab-tool { margin-top:18px; }
+.gaming-main textarea { max-width:100%; }
+.gaming-main #gaming-log { min-height:185px; }
+.gaming-main #graphics-input { min-height:145px; }
+.gaming-main .lab-status:empty { display:none; }
+.gaming-main .lab-status { overflow-wrap:anywhere; }
+.gaming-findings { margin-top:22px; }
+.gaming-findings article { border-top:1px solid var(--line); padding:22px 0 6px; }
+.gaming-findings h3 { font-size:20px; line-height:1.45; margin:7px 0 12px; }
+.gaming-findings p { color:var(--muted); font-size:14px; line-height:1.8; }
+.gaming-badge { display:inline-flex; padding:4px 7px; border:1px solid var(--line); border-radius:4px; font:11px/1.5 ui-monospace,monospace; color:var(--accent); }
+.gaming-badge[data-severity=error] { color:#ffc1af; border-color:#775246; }
+.gaming-badge[data-severity=warning] { color:#ead1a2; border-color:#746240; }
+.gaming-evidence { white-space:pre-wrap; overflow-wrap:anywhere; max-height:230px; overflow:auto; padding:13px; border:1px solid var(--line); border-radius:6px; background:var(--bg); font:12px/1.7 ui-monospace,monospace; }
+.gaming-layers { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:15px 0 23px; }
+.gaming-layers div { border:1px solid var(--line); border-radius:7px; padding:13px 15px; }
+.gaming-layers dt { font-size:13px; color:var(--text); }
+.gaming-layers dd { margin:7px 0 0; color:var(--muted); font-size:12px; line-height:1.6; }
+.gaming-main .gaming-summary { margin-top:22px; border-top:1px solid var(--line); padding-top:22px; }
+.gaming-summary h3 { font-size:19px; margin:0 0 9px; }
+.gaming-summary #diagnostic-summary { font-size:12px; min-height:170px; }
+.gaming-main .gaming-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; }
+.gaming-grid label { display:flex; flex-direction:column; gap:8px; font-size:13px; color:var(--muted); min-width:0; }
+.gaming-grid input,.gaming-grid select { padding:11px 12px; width:100%; max-width:100%; min-height:44px; border:1px solid #587389; border-radius:7px; color:var(--text); background:var(--bg); font:inherit; }
+.gaming-main fieldset { border:0; margin:22px 0; padding:0; min-width:0; }
+.gaming-main legend { font-weight:600; font-size:15px; margin-bottom:12px; }
+.gaming-option { display:grid; grid-template-columns:24px minmax(0,1fr); gap:10px; padding:16px 0; border-bottom:1px solid var(--line); }
+.gaming-option>input { width:18px; height:18px; margin:4px 0 0; }
+.gaming-option label { font-size:14px; font-weight:600; color:var(--text); line-height:1.6; cursor:pointer; }
+.gaming-option p { margin:6px 0; color:var(--muted); font-size:13px; line-height:1.75; }
+.gaming-option details { margin-top:8px; font-size:13px; }
+.gaming-launch-output { padding:15px; margin:13px 0; white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid #587389; border-radius:7px; font:13px/1.75 ui-monospace,monospace; background:var(--bg); }
+.gaming-launch-warnings { padding-left:20px; font-size:13px; line-height:1.8; color:var(--muted); }
+.gaming-main .gaming-command { margin:18px 0 25px; }
+.gaming-command .gaming-command-kind { font-size:11px; color:var(--accent); margin:0 0 9px; }
+.gaming-command pre { margin:0 0 10px; padding:14px; border:1px solid var(--line); border-radius:7px; background:var(--bg); overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; font:12px/1.75 ui-monospace,monospace; }
+.gaming-command p { color:var(--muted); font-size:14px; line-height:1.75; }
+.gaming-command .lab-button { font-size:12px; padding:7px 11px; min-height:36px; }
+.gaming-main .problem-list { margin:15px 0; }
+.gaming-main .problem-list .gaming-card-links { margin-top:10px; font-size:12px; }
+.gaming-result-heading { margin:24px 0 10px; font-size:19px; }
+.gaming-main .gaming-no-results { color:var(--muted); }
+.gaming-header .main-nav { gap:17px; }
+.gaming-article .article-copy>section:first-of-type h2 { margin-top:0; }
+.gaming-article .article-copy h2 { scroll-margin-top:110px; }
+.gaming-article .gaming-related { margin:28px 0; }
+.gaming-article .gaming-source-claim { font-size:14px; color:var(--muted); }
+.gaming-js-note { font-size:13px; color:var(--muted); }
+@media(max-width:850px) { .gaming-main .assistant-select { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:650px) {
+  .gaming-intro { padding-top:31px; }
+  .gaming-intro h1 { font-size:33px; }
+  .gaming-modules { gap:7px; }
+  .gaming-modules a { font-size:12px; padding:9px 10px; flex:1 1 135px; }
+  .gaming-header .main-nav { flex-wrap:wrap; font-size:12px; gap:10px 13px; }
+  .gaming-main .lab-section,.gaming-article .article-copy h2 { scroll-margin-top:165px; }
+  .gaming-section-header h2 { font-size:23px; }
+  .gaming-main .assistant-select,.gaming-main .gaming-grid,.gaming-layers { grid-template-columns:1fr; }
+  .gaming-main .assistant-select .lab-button { min-height:49px; }
+  .gaming-stack { grid-template-columns:1fr; gap:4px; }
+  .gaming-stack dd { margin-bottom:12px; }
+  .gaming-doctor { padding:14px; }
+  .gaming-example { padding:15px; }
+  .gaming-main .lab-tool { padding:17px; }
+  .gaming-main .lab-actions { gap:9px; }
+  .gaming-main .lab-actions>.lab-button { flex:1 1 120px; }
+}

@@ -1,0 +1,471 @@
+{
+  "schemaVersion": 1,
+  "articlesByProblem": {
+    "vulkan-driver-discovery": [
+      {
+        "id": "proton-startup",
+        "title": {
+          "en": "A Proton game fails to launch",
+          "de": "Ein Proton-Spiel startet nicht"
+        }
+      },
+      {
+        "id": "vulkan-initialization",
+        "title": {
+          "en": "Vulkan initialization fails",
+          "de": "Vulkan-Initialisierung schlägt fehl"
+        }
+      },
+      {
+        "id": "dxvk-no-device",
+        "title": {
+          "en": "DXVK cannot find a usable Vulkan device",
+          "de": "DXVK findet kein nutzbares Vulkan-Gerät"
+        }
+      },
+      {
+        "id": "vulkan-32-bit",
+        "title": {
+          "en": "Check missing 32-bit Vulkan support",
+          "de": "Fehlende 32-Bit-Vulkan-Unterstützung prüfen"
+        }
+      },
+      {
+        "id": "vkd3d-startup",
+        "title": {
+          "en": "A Direct3D 12 game fails in VKD3D-Proton",
+          "de": "Ein Direct3D-12-Spiel scheitert in VKD3D-Proton"
+        }
+      },
+      {
+        "id": "steam-deck-startup",
+        "title": {
+          "en": "A game will not start on Steam Deck",
+          "de": "Ein Spiel startet auf dem Steam Deck nicht"
+        }
+      }
+    ],
+    "nixos-foreign-elf-loader": [
+      {
+        "id": "proton-startup",
+        "title": {
+          "en": "A Proton game fails to launch",
+          "de": "Ein Proton-Spiel startet nicht"
+        }
+      },
+      {
+        "id": "vulkan-32-bit",
+        "title": {
+          "en": "Check missing 32-bit Vulkan support",
+          "de": "Fehlende 32-Bit-Vulkan-Unterstützung prüfen"
+        }
+      }
+    ],
+    "mesa-software-rendering": [
+      {
+        "id": "vulkan-initialization",
+        "title": {
+          "en": "Vulkan initialization fails",
+          "de": "Vulkan-Initialisierung schlägt fehl"
+        }
+      },
+      {
+        "id": "wrong-gpu",
+        "title": {
+          "en": "The game selects the wrong GPU",
+          "de": "Das Spiel wählt die falsche GPU"
+        }
+      }
+    ],
+    "hybrid-gpu-selection": [
+      {
+        "id": "dxvk-no-device",
+        "title": {
+          "en": "DXVK cannot find a usable Vulkan device",
+          "de": "DXVK findet kein nutzbares Vulkan-Gerät"
+        }
+      },
+      {
+        "id": "wrong-gpu",
+        "title": {
+          "en": "The game selects the wrong GPU",
+          "de": "Das Spiel wählt die falsche GPU"
+        }
+      }
+    ],
+    "amdgpu-ring-timeout": [
+      {
+        "id": "amdgpu-ring-timeout",
+        "title": {
+          "en": "A game triggers an AMDGPU ring timeout",
+          "de": "Ein Spiel löst einen AMDGPU-Ring-Timeout aus"
+        }
+      },
+      {
+        "id": "vkd3d-startup",
+        "title": {
+          "en": "A Direct3D 12 game fails in VKD3D-Proton",
+          "de": "Ein Direct3D-12-Spiel scheitert in VKD3D-Proton"
+        }
+      },
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "amdgpu-vm-page-fault": [
+      {
+        "id": "amdgpu-ring-timeout",
+        "title": {
+          "en": "A game triggers an AMDGPU ring timeout",
+          "de": "Ein Spiel löst einen AMDGPU-Ring-Timeout aus"
+        }
+      }
+    ],
+    "kernel-pcie-aer-errors": [
+      {
+        "id": "amdgpu-ring-timeout",
+        "title": {
+          "en": "A game triggers an AMDGPU ring timeout",
+          "de": "Ein Spiel löst einen AMDGPU-Ring-Timeout aus"
+        }
+      },
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "nvidia-driver-library-mismatch": [
+      {
+        "id": "nvidia-mismatch",
+        "title": {
+          "en": "NVIDIA kernel module and libraries disagree",
+          "de": "NVIDIA-Kernelmodul und Bibliotheken passen nicht zusammen"
+        }
+      }
+    ],
+    "nvidia-module-signature-rejected": [
+      {
+        "id": "nvidia-mismatch",
+        "title": {
+          "en": "NVIDIA kernel module and libraries disagree",
+          "de": "NVIDIA-Kernelmodul und Bibliotheken passen nicht zusammen"
+        }
+      }
+    ],
+    "kernel-module-vermagic": [
+      {
+        "id": "nvidia-mismatch",
+        "title": {
+          "en": "NVIDIA kernel module and libraries disagree",
+          "de": "NVIDIA-Kernelmodul und Bibliotheken passen nicht zusammen"
+        }
+      }
+    ],
+    "memory-pressure-reclaim-stalls": [
+      {
+        "id": "shader-stutter",
+        "title": {
+          "en": "Distinguish shader compilation from other stutter",
+          "de": "Shader-Kompilierung von anderen Rucklern unterscheiden"
+        }
+      }
+    ],
+    "io-pressure-writeback-latency": [
+      {
+        "id": "shader-stutter",
+        "title": {
+          "en": "Distinguish shader compilation from other stutter",
+          "de": "Shader-Kompilierung von anderen Rucklern unterscheiden"
+        }
+      },
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "storage-sata-crc-errors": [
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "acl-mask-restricts-access": [
+      {
+        "id": "controller-input",
+        "title": {
+          "en": "A USB controller is missing from Steam",
+          "de": "Ein USB-Controller fehlt in Steam"
+        }
+      }
+    ],
+    "flatpak-file-access-restricted": [
+      {
+        "id": "steam-deck-startup",
+        "title": {
+          "en": "A game will not start on Steam Deck",
+          "de": "Ein Spiel startet auf dem Steam Deck nicht"
+        }
+      }
+    ],
+    "executable-on-noexec-mount": [
+      {
+        "id": "steam-deck-startup",
+        "title": {
+          "en": "A game will not start on Steam Deck",
+          "de": "Ein Spiel startet auf dem Steam Deck nicht"
+        }
+      }
+    ],
+    "audio-default-output-muted": [
+      {
+        "id": "proton-audio",
+        "title": {
+          "en": "Audio is missing or crackles in Wine and Proton",
+          "de": "Audio fehlt oder knistert in Wine und Proton"
+        }
+      }
+    ],
+    "audio-pipewire-user-service": [
+      {
+        "id": "proton-audio",
+        "title": {
+          "en": "Audio is missing or crackles in Wine and Proton",
+          "de": "Audio fehlt oder knistert in Wine und Proton"
+        }
+      }
+    ],
+    "audio-pipewire-xruns": [
+      {
+        "id": "proton-audio",
+        "title": {
+          "en": "Audio is missing or crackles in Wine and Proton",
+          "de": "Audio fehlt oder knistert in Wine und Proton"
+        }
+      }
+    ]
+  },
+  "articlesByHardware": {
+    "amd-navi44": [
+      {
+        "id": "vulkan-initialization",
+        "title": {
+          "en": "Vulkan initialization fails",
+          "de": "Vulkan-Initialisierung schlägt fehl"
+        }
+      },
+      {
+        "id": "amdgpu-ring-timeout",
+        "title": {
+          "en": "A game triggers an AMDGPU ring timeout",
+          "de": "Ein Spiel löst einen AMDGPU-Ring-Timeout aus"
+        }
+      },
+      {
+        "id": "vkd3d-startup",
+        "title": {
+          "en": "A Direct3D 12 game fails in VKD3D-Proton",
+          "de": "Ein Direct3D-12-Spiel scheitert in VKD3D-Proton"
+        }
+      },
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "intel-dg2-g10-desktop": [
+      {
+        "id": "vulkan-initialization",
+        "title": {
+          "en": "Vulkan initialization fails",
+          "de": "Vulkan-Initialisierung schlägt fehl"
+        }
+      }
+    ],
+    "nvidia-rtx-3080": [
+      {
+        "id": "vulkan-initialization",
+        "title": {
+          "en": "Vulkan initialization fails",
+          "de": "Vulkan-Initialisierung schlägt fehl"
+        }
+      },
+      {
+        "id": "wrong-gpu",
+        "title": {
+          "en": "The game selects the wrong GPU",
+          "de": "Das Spiel wählt die falsche GPU"
+        }
+      },
+      {
+        "id": "nvidia-mismatch",
+        "title": {
+          "en": "NVIDIA kernel module and libraries disagree",
+          "de": "NVIDIA-Kernelmodul und Bibliotheken passen nicht zusammen"
+        }
+      }
+    ],
+    "amd-polaris10": [
+      {
+        "id": "dxvk-no-device",
+        "title": {
+          "en": "DXVK cannot find a usable Vulkan device",
+          "de": "DXVK findet kein nutzbares Vulkan-Gerät"
+        }
+      }
+    ],
+    "intel-haswell-gt2-desktop": [
+      {
+        "id": "dxvk-no-device",
+        "title": {
+          "en": "DXVK cannot find a usable Vulkan device",
+          "de": "DXVK findet kein nutzbares Vulkan-Gerät"
+        }
+      }
+    ],
+    "amd-renoir": [
+      {
+        "id": "wrong-gpu",
+        "title": {
+          "en": "The game selects the wrong GPU",
+          "de": "Das Spiel wählt die falsche GPU"
+        }
+      }
+    ],
+    "intel-tiger-lake-graphics": [
+      {
+        "id": "wrong-gpu",
+        "title": {
+          "en": "The game selects the wrong GPU",
+          "de": "Das Spiel wählt die falsche GPU"
+        }
+      }
+    ],
+    "pcie-root-port-context": [
+      {
+        "id": "amdgpu-ring-timeout",
+        "title": {
+          "en": "A game triggers an AMDGPU ring timeout",
+          "de": "Ein Spiel löst einen AMDGPU-Ring-Timeout aus"
+        }
+      }
+    ],
+    "nvidia-rtx-4090": [
+      {
+        "id": "nvidia-mismatch",
+        "title": {
+          "en": "NVIDIA kernel module and libraries disagree",
+          "de": "NVIDIA-Kernelmodul und Bibliotheken passen nicht zusammen"
+        }
+      },
+      {
+        "id": "vkd3d-startup",
+        "title": {
+          "en": "A Direct3D 12 game fails in VKD3D-Proton",
+          "de": "Ein Direct3D-12-Spiel scheitert in VKD3D-Proton"
+        }
+      }
+    ],
+    "generic-pci-nvme": [
+      {
+        "id": "shader-stutter",
+        "title": {
+          "en": "Distinguish shader compilation from other stutter",
+          "de": "Shader-Kompilierung von anderen Rucklern unterscheiden"
+        }
+      },
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      },
+      {
+        "id": "steam-deck-startup",
+        "title": {
+          "en": "A game will not start on Steam Deck",
+          "de": "Ein Spiel startet auf dem Steam Deck nicht"
+        }
+      }
+    ],
+    "pcie-switch-port-context": [
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "generic-pci-ahci": [
+      {
+        "id": "movement-freezes",
+        "title": {
+          "en": "A game freezes when moving through the world",
+          "de": "Ein Spiel friert bei Bewegung durch die Welt ein"
+        }
+      }
+    ],
+    "input-xbox360-wired-028e": [
+      {
+        "id": "controller-input",
+        "title": {
+          "en": "A USB controller is missing from Steam",
+          "de": "Ein USB-Controller fehlt in Steam"
+        }
+      }
+    ],
+    "input-usb-hid-class": [
+      {
+        "id": "controller-input",
+        "title": {
+          "en": "A USB controller is missing from Steam",
+          "de": "Ein USB-Controller fehlt in Steam"
+        }
+      }
+    ],
+    "bluetooth-usb-hci-class": [
+      {
+        "id": "controller-input",
+        "title": {
+          "en": "A USB controller is missing from Steam",
+          "de": "Ein USB-Controller fehlt in Steam"
+        }
+      }
+    ],
+    "audio-usb-audio-class": [
+      {
+        "id": "proton-audio",
+        "title": {
+          "en": "Audio is missing or crackles in Wine and Proton",
+          "de": "Audio fehlt oder knistert in Wine und Proton"
+        }
+      }
+    ],
+    "audio-hda-hdmi-display-codec": [
+      {
+        "id": "proton-audio",
+        "title": {
+          "en": "Audio is missing or crackles in Wine and Proton",
+          "de": "Audio fehlt oder knistert in Wine und Proton"
+        }
+      }
+    ]
+  }
+}

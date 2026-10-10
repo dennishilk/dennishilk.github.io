@@ -28,7 +28,7 @@ test('the approved public launch is indexable and advertises exactly one complet
 
 test('Fix Lab inbound links stay within approved homepages and its diagnostic ecosystem',()=> {
   const homepages=new Set([resolve(root,'index.html'),resolve(root,'de/index.html')]);
-  const paths=walk(root).filter(path=>path.endsWith('.html')&&!homepages.has(path)&&!/^\/(?:de\/)?linux-(?:fix-lab|hardware-explorer)\//.test(path.slice(root.length).replaceAll('\\','/')));
+  const paths=walk(root).filter(path=>path.endsWith('.html')&&!homepages.has(path)&&!/^\/(?:de\/)?linux-(?:fix-lab|hardware-explorer|gaming-repair)\//.test(path.slice(root.length).replaceAll('\\','/')));
   assert.ok(paths.length>300);
   for(const path of paths)assert.doesNotMatch(readFileSync(path,'utf8'),/\b(?:href|action)\s*=\s*["'](?:https?:\/\/(?:www\.)?dennishilk\.com)?\/(?:de\/)?linux-fix-lab(?:\/|[?#"'])/i,path.slice(root.length+1));
 });

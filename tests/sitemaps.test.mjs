@@ -3,11 +3,13 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import test from "node:test";
 import { hardwarePublication } from "../scripts/hardware-integration.mjs";
+import { gamingPublication } from "../scripts/gaming-integration.mjs";
 
 const root = new URL("../", import.meta.url);
 const siteRoot = root.pathname;
 const hardwareSitemapActive = hardwarePublication(siteRoot).sitemapActive;
 const hardwareNames = hardwareSitemapActive ? ["sitemap-linux-hardware-explorer.xml"] : [];
+const gamingNames = gamingPublication(siteRoot).sitemapActive ? ["sitemap-linux-gaming-repair.xml"] : [];
 const base = "https://www.dennishilk.com";
 
 const sitemapMain = readFileSync(new URL("sitemap.xml", root), "utf8");
@@ -20,7 +22,7 @@ const sitemapBlog = readFileSync(new URL("sitemap-blog.xml", root), "utf8");
 const sitemapFixLab = readFileSync(new URL("sitemap-linux-fix-lab.xml", root), "utf8");
 const sitemapIndex = readFileSync(new URL("sitemap-index.xml", root), "utf8");
 const robots = readFileSync(new URL("robots.txt", root), "utf8");
-const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco, sitemapBlog, sitemapFixLab, ...hardwareNames.map(name => readFileSync(new URL(name, root), "utf8"))];
+const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco, sitemapBlog, sitemapFixLab, ...[...hardwareNames, ...gamingNames].map(name => readFileSync(new URL(name, root), "utf8"))];
 
 const excludedHtml = new Set([
   "404.html",
@@ -165,6 +167,7 @@ test("all advertised sitemap files use a valid sitemap envelope", () => {
     ["sitemap-cisco-doom.xml", sitemapCisco],
     ["sitemap-blog.xml", sitemapBlog],
     ["sitemap-linux-fix-lab.xml", sitemapFixLab],
+    ...[...hardwareNames, ...gamingNames].map(name => [name, readFileSync(new URL(name, root), "utf8")]),
   ]) assertWellFormedEnvelope(name, xml);
   assert.match(sitemapImages, /xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1"/);
 });
@@ -178,7 +181,7 @@ test("robots.txt advertises every maintained sitemap", () => {
     "sitemap-images.xml",
     "sitemap-cisco-doom.xml",
     "sitemap-blog.xml",
-    "sitemap-linux-fix-lab.xml", ...hardwareNames,
+    "sitemap-linux-fix-lab.xml", ...hardwareNames, ...gamingNames,
     "sitemap-index.xml",
   ]) assert.ok(robots.includes(`Sitemap: ${base}/${name}`), `robots.txt missing ${name}`);
 });
@@ -188,7 +191,7 @@ test("one sitemap index discovers every maintained sitemap", () => {
   assert.ok(sitemapIndex.trimEnd().endsWith("</sitemapindex>"));
   const names = [
     "sitemap.xml", "sitemap-de.xml", "sitemap-internet-observers.xml",
-    "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml", "sitemap-blog.xml", "sitemap-linux-fix-lab.xml", ...hardwareNames,
+    "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml", "sitemap-blog.xml", "sitemap-linux-fix-lab.xml", ...hardwareNames, ...gamingNames,
   ];
   assert.deepEqual(locs(sitemapIndex).sort(), names.map(name => `${base}/${name}`).sort());
 });
