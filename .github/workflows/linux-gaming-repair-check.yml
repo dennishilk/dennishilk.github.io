@@ -1,0 +1,51 @@
+name: Linux Gaming Repair Center checks
+on:
+  pull_request:
+    paths:
+      - 'linux-gaming-repair/**'
+      - 'de/linux-gaming-repair/**'
+      - 'assets/linux-gaming-repair/**'
+      - 'content/linux-gaming-repair/**'
+      - 'docs/linux-gaming-repair/**'
+      - 'scripts/*gaming*.mjs'
+      - 'scripts/build-linux-fix-lab.mjs'
+      - 'scripts/build-linux-hardware-explorer.mjs'
+      - 'scripts/*seo.mjs'
+      - 'tests/linux-gaming-repair*'
+      - 'tests/support/gaming*'
+      - 'package.json'
+      - '.github/workflows/linux-gaming-repair-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'linux-gaming-repair/**'
+      - 'de/linux-gaming-repair/**'
+      - 'assets/linux-gaming-repair/**'
+      - 'content/linux-gaming-repair/**'
+      - 'docs/linux-gaming-repair/**'
+      - 'scripts/*gaming*.mjs'
+      - 'scripts/build-linux-fix-lab.mjs'
+      - 'scripts/build-linux-hardware-explorer.mjs'
+      - 'scripts/*seo.mjs'
+      - 'tests/linux-gaming-repair*'
+      - 'tests/support/gaming*'
+      - 'package.json'
+      - '.github/workflows/linux-gaming-repair-check.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run build:gaming-repair
+      - run: npm run test:gaming-repair
+      - run: npm run test:fix-lab
+      - run: npm run test:hardware-explorer
+      - run: node --test tests/homepage-featured-projects.test.mjs tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
+      - run: npm run test:seo
+      - name: Generated files must be current
+        run: git diff --exit-code -- linux-gaming-repair de/linux-gaming-repair content/linux-gaming-repair/generated-manifest.json content/linux-gaming-repair/integration.json assets/linux-gaming-repair/catalog.js linux-fix-lab de/linux-fix-lab linux-hardware-explorer de/linux-hardware-explorer content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml content/linux-hardware-explorer/generated-manifest.json content/linux-hardware-explorer/prepared-launch-sitemap.xml robots.txt 'sitemap*.xml'

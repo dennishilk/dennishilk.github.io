@@ -1,11 +1,13 @@
 import { hardwarePublication } from './hardware-integration.mjs';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { gamingPublication } from './gaming-integration.mjs';
+import { existsSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 import vm from "node:vm";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://www.dennishilk.com";
 const hardwareSitemapActive = hardwarePublication(root).sitemapActive;
+const gamingSitemapActive = gamingPublication(root).sitemapActive;
 // Fail closed: the unlisted live test is excluded until a separately approved launch.
 const labPublicationFile = join(root, "content/linux-fix-lab/publication.json");
 const labPublication = existsSync(labPublicationFile) ? JSON.parse(readFileSync(labPublicationFile, "utf8")) : {};
@@ -15,6 +17,7 @@ const sitemapNames = [
   "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml",
   "sitemap-blog.xml", ...(labSitemapActive ? ["sitemap-linux-fix-lab.xml"] : []),
   ...(hardwareSitemapActive ? ["sitemap-linux-hardware-explorer.xml"] : []),
+  ...(gamingSitemapActive ? ["sitemap-linux-gaming-repair.xml"] : []),
 ];
 
 const i18nFiles = [
@@ -137,6 +140,7 @@ function isMuseumMirror(source) {
 function isIndexable(file, source = readFileSync(file, "utf8")) {
   const path = rel(file);
   if (/^(?:de\/)?linux-hardware-explorer\//.test(path) && !hardwareSitemapActive) return false;
+  if (/^(?:de\/)?linux-gaming-repair\//.test(path) && !gamingSitemapActive) return false;
   if (technicalPages.has(path) || legacyAliases.has(path) || hasNoindex(source)) return false;
   if (path.startsWith("de/") && isMuseumMirror(source)) {
     const counterpart = germanSourceFile(file);
@@ -398,6 +402,7 @@ function imagesFor(file) {
 
 function sitemapOwner(path) {
   const basePath = path.startsWith("de/") ? path.slice("de/".length) : path;
+  if (basePath.startsWith("linux-gaming-repair/")) return "sitemap-linux-gaming-repair.xml";
   if (basePath.startsWith("linux-hardware-explorer/")) return "sitemap-linux-hardware-explorer.xml";
   if (basePath.startsWith("linux-fix-lab/")) return "sitemap-linux-fix-lab.xml";
   if (basePath.startsWith("blog/")) return "sitemap-blog.xml";
@@ -480,6 +485,13 @@ function synchronizeSitemaps() {
       if (/^\/(?:de\/)?linux-hardware-explorer\//.test(path) && /^\d{4}-\d{2}-\d{2}$/.test(page.lastmod)) lastmods.set(`${origin}${path}`, page.lastmod);
     }
   }
+  const gamingManifest = join(root, "content/linux-gaming-repair/generated-manifest.json");
+  if (gamingSitemapActive && existsSync(gamingManifest)) {
+    const manifest = JSON.parse(readFileSync(gamingManifest, "utf8"));
+    for (const [path, page] of Object.entries(manifest.pages || {})) {
+      if (/^\/(?:de\/)?linux-gaming-repair\//.test(path) && /^\d{4}-\d{2}-\d{2}$/.test(page.lastmod)) lastmods.set(`${origin}${path}`, page.lastmod);
+    }
+  }
   const groups = new Map(sitemapNames.map(name => [name, []]));
 
   for (const file of files) groups.get(sitemapOwner(rel(file))).push(file);
@@ -519,6 +531,19 @@ function synchronizeSitemaps() {
     const robotsFile = join(root, "robots.txt"), source = readFileSync(robotsFile, "utf8");
     const advertisement = `Sitemap: ${origin}/sitemap-linux-hardware-explorer.xml`;
     if (source.split(/\r?\n/).includes(advertisement)) writeFileSync(robotsFile, source.split(/\r?\n/).filter(line => line !== advertisement).join("\n"));
+  }
+  if (existsSync(join(root, "robots.txt"))) {
+    const robotsFile = join(root, "robots.txt"), source = readFileSync(robotsFile, "utf8");
+    const advertisement = `Sitemap: ${origin}/sitemap-linux-gaming-repair.xml`;
+    if (gamingSitemapActive && !source.split(/\r?\n/).includes(advertisement)) {
+      writeFileSync(robotsFile, source.replace(/\s*$/, "") + "\n" + advertisement + "\n");
+    } else if (!gamingSitemapActive && source.split(/\r?\n/).includes(advertisement)) {
+      writeFileSync(robotsFile, source.split(/\r?\n/).filter(line => line !== advertisement).join("\n"));
+    }
+  }
+  if (!gamingSitemapActive && existsSync(join(root, "sitemap-linux-gaming-repair.xml"))) {
+    // Review-mode copies must not retain a formerly advertised public sitemap.
+    unlinkSync(join(root, "sitemap-linux-gaming-repair.xml"));
   }
 }
 

@@ -18,6 +18,35 @@ technical documentation, editorial material, and literary work.
   cryptography, communications, and malware history.
 - **Linux and systems experiments** — browser-based terminal exercises,
   installation labs, Debian server experiments, and supporting utilities.
+- **Linux diagnostic ecosystem** — [Linux Fix Lab](https://www.dennishilk.com/linux-fix-lab/),
+  [Hardware & Driver Explorer](https://www.dennishilk.com/linux-hardware-explorer/)
+  and [Linux Gaming Repair Center](https://www.dennishilk.com/linux-gaming-repair/)
+  connect system evidence, hardware context and game-specific troubleshooting.
+
+## Linux Gaming Repair Center
+
+The bilingual static application inspects gaming logs in a browser-local Worker,
+walks through distinct launch, GPU, stutter and peripheral failure paths, and
+builds reversible Steam launch options. It does not upload reports or promise
+game compatibility. Exported summaries omit raw log excerpts and private paths.
+
+English: `/linux-gaming-repair/`; German: `/de/linux-gaming-repair/`.
+The reviewed article source is in `content/linux-gaming-repair/articles.mjs`;
+engines and frontend are in `assets/linux-gaming-repair/`.
+
+```sh
+npm run build:gaming-repair
+npm run test:gaming-repair
+npm run test:fix-lab
+npm run test:hardware-explorer
+npm run test:seo
+```
+
+The gaming build also regenerates the two related diagnostic projects and
+sitemaps. Generated HTML is committed so deployment needs no Node runtime.
+Dennis deploys the repository to Worldnode manually; these scripts do not
+connect to or modify that server. See `docs/linux-gaming-repair/REVIEW.md`
+for validation evidence and remaining limits.
 
 ## The Lost Administrator
 
