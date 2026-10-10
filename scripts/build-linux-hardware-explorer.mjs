@@ -40,6 +40,7 @@ export function validateCatalog(profiles, problems = loadProblems()) {
     if (!['required', 'conditional', 'device-dependent', 'none-documented'].includes(p.firmware.state)) throw new Error(`Unknown firmware policy ${p.id}`);
     for (const lang of ['en', 'de']) if (!p.firmware.explanation[lang]) throw new Error(`Missing firmware explanation ${p.id}/${lang}`);
     for (const id of p.ids) {
+      if (id.identityLevel && !['exact', 'family'].includes(id.identityLevel)) throw new Error(`Invalid identity level ${p.id}`);
       if (!['pci', 'usb'].includes(id.bus) || !/^[a-f0-9]{4}$/.test(id.vendor) || !/^[a-f0-9]{4}$/.test(id.device)) throw new Error(`Invalid identity ${p.id}`);
       for (const key of ['subvendor', 'subdevice']) if (id[key] && !/^[a-f0-9]{4}$/.test(id[key])) throw new Error(`Invalid subsystem qualifier ${p.id}`);
       if (id.pciClass && !/^[a-f0-9]{6}$/.test(id.pciClass)) throw new Error(`Invalid PCI class qualifier ${p.id}`);

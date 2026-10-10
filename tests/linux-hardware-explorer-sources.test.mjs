@@ -21,7 +21,7 @@ for (const item of fixture.cases) test(`independent upstream identity fixture: $
   }
 });
 test('source audit is complete and all immutable Linux references use the documented snapshot', () => {
-  assert.equal(audit.profileCount, 154); assert.equal(audit.resources.length, 267);
+  assert.equal(audit.profileCount, 155); assert.equal(audit.resources.length, 269);
   for (const resource of audit.resources) { assert.equal(resource.status, 200); assert.equal(resource.error, undefined); assert.match(resource.sha256, /^[a-f0-9]{64}$/); }
   for (const p of profiles.values()) for (const source of p.sources) if (source.url.startsWith('https://github.com/torvalds/linux/blob/')) assert.ok(source.url.includes(fixture.snapshot));
 });

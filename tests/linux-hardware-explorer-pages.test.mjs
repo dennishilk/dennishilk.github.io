@@ -14,11 +14,11 @@ const root = new URL('../', import.meta.url), read = path => readFileSync(new UR
 const profiles = loadProfiles(), problemMap = new Map(loadProblems().map(p => [p.id, p]));
 const manifest = JSON.parse(read('content/linux-hardware-explorer/generated-manifest.json'));
 const state = hardwarePublication(root.pathname), today = new Date().toISOString().slice(0, 10);
-test('catalog has 154 substantive profiles, 122 numeric and 32 explicit contexts in twelve categories', () => {
-  validateCatalog(profiles); assert.equal(profiles.length, 154); assert.equal(profiles.filter(p => p.ids.length).length, 122);
-  assert.equal(Object.keys(catalog.categories).length, 12); assert.equal(new Set(profiles.map(p => p.id)).size, 154);
+test('catalog has 155 substantive profiles, 123 numeric and 32 explicit contexts in twelve categories', () => {
+  validateCatalog(profiles); assert.equal(profiles.length, 155); assert.equal(profiles.filter(p => p.ids.length).length, 123);
+  assert.equal(Object.keys(catalog.categories).length, 12); assert.equal(new Set(profiles.map(p => p.id)).size, 155);
   assert.deepEqual(profiles.map(p => p.id), catalog.profiles.map(p => p.id));
-  assert.equal(Object.keys(manifest.pages).length, 330); assert.equal(manifest.localizedDevicePages, 308); assert.equal(manifest.knowledgePages, 20);
+  assert.equal(Object.keys(manifest.pages).length, 332); assert.equal(manifest.localizedDevicePages, 310); assert.equal(manifest.knowledgePages, 20);
 });
 test('activation is fail-closed and unsupported combinations cannot index navigation or sitemap', () => {
   assert.deepEqual(publicationState({ phase: 'review', allowIndexing: false }), { phase: 'review', robots: 'noindex,follow', sitemapActive: false, integrationActive: false });
@@ -79,8 +79,8 @@ test('all 18 distinct workflows are reachable and have specific evidence plus ex
 });
 test('prepared sitemap covers each canonical page once, with truthful dates and reciprocal languages', () => {
   const xml = read('content/linux-hardware-explorer/prepared-launch-sitemap.xml');
-  const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(m => m[1]); assert.equal(entries.length, 330);
-  const urls = entries.map(e => e.match(/<loc>([^<]+)<\/loc>/)[1]); assert.equal(new Set(urls).size, 330);
+  const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(m => m[1]); assert.equal(entries.length, 332);
+  const urls = entries.map(e => e.match(/<loc>([^<]+)<\/loc>/)[1]); assert.equal(new Set(urls).size, 332);
   for (const e of entries) { const url = e.match(/<loc>([^<]+)<\/loc>/)[1], path = new URL(url).pathname;
     assert.ok(manifest.pages[path]); assert.ok(e.includes(`<lastmod>${manifest.pages[path].lastmod}</lastmod>`));
     for (const lang of ['en', 'de', 'x-default']) assert.ok(e.includes(`hreflang="${lang}"`));
@@ -101,12 +101,12 @@ test('short PCI class remains contextual while complete ProgIf can satisfy an AH
   let parsed = parseHardwareReport('01:00.0 SATA controller [0106]: Marvell [1b4b:9123] (prog-if 01 [AHCI 1.0])');
   assert.equal(parsed.devices[0].classCode, '010601'); assert.equal(identifyDevices(parsed, catalog)[0].coverage, 'curated-id');
   parsed = parseHardwareReport('01:00.0 USB controller [0c03]: Unknown [ffff:1234]');
-  assert.equal(identifyDevices(parsed, catalog)[0].coverage, 'context-only'); assert.ok(identifyDevices(parsed, catalog)[0].ambiguous);
+  assert.equal(identifyDevices(parsed, catalog)[0].coverage, 'unknown'); assert.equal(identifyDevices(parsed, catalog)[0].contexts.length, 0);
 });
 test('USB composite classes select Bluetooth only with the complete HCI interface triplet', () => {
   const raw = 'Bus 001 Device 002: ID ffff:1234 Composite\n bDeviceClass 0\n bInterfaceClass 224\n bInterfaceSubClass 1\n bInterfaceProtocol 1';
-  assert.ok(identifyDevices(parseHardwareReport(raw), catalog)[0].matches.some(m => m.profileId === 'bluetooth-usb-hci-class'));
-  assert.equal(identifyDevices(parseHardwareReport(raw.replace('bInterfaceProtocol 1', 'bInterfaceProtocol 2')), catalog)[0].matches.some(m => m.profileId === 'bluetooth-usb-hci-class'), false);
+  assert.ok(identifyDevices(parseHardwareReport(raw), catalog)[0].contexts.some(m => m.profileId === 'bluetooth-usb-hci-class'));
+  assert.equal(identifyDevices(parseHardwareReport(raw.replace('bInterfaceProtocol 1', 'bInterfaceProtocol 2')), catalog)[0].contexts.some(m => m.profileId === 'bluetooth-usb-hci-class'), false);
 });
 test('conflicting unbound versus bound observations cannot silently overwrite one another', () => {
   const parsed = parseHardwareReport('01:00.0 Network [0280]: Intel [8086:2723]\n Kernel driver in use: iwlwifi\nSlot: 01:00.0\nDriver: unbound');

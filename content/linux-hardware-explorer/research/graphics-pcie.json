@@ -920,7 +920,8 @@
         "amdgpu"
       ],
       "pciClasses": [],
-      "usbClasses": []
+      "usbClasses": [],
+      "autoContext": false
     },
     "drivers": [
       {
@@ -3422,7 +3423,8 @@
         "060400",
         "060401"
       ],
-      "usbClasses": []
+      "usbClasses": [],
+      "autoContext": false
     },
     "drivers": [
       {
@@ -3576,7 +3578,8 @@
         "060400",
         "060401"
       ],
-      "usbClasses": []
+      "usbClasses": [],
+      "autoContext": false
     },
     "drivers": [
       {
@@ -5035,6 +5038,160 @@
         "kind": "documentation",
         "claim": "Read-only sleep-mode inspection is separated from tests that actually enter suspend.",
         "retrieved": "2026-10-10"
+      }
+    ],
+    "reviewed": "2026-10-10"
+  },
+  {
+    "id": "amd-navi44",
+    "category": "amd-graphics",
+    "name": {
+      "en": "AMD Navi 44 — RX 9050 / RX 9060 XT family",
+      "de": "AMD Navi 44 — RX-9050-/RX-9060-XT-Familie"
+    },
+    "summary": {
+      "en": "Verified Navi 44 chip-family ID; the reported RX model and board remain separate observations.",
+      "de": "Belegte Navi-44-Chipfamilien-ID; gemeldetes RX-Modell und Platine bleiben getrennte Befunde."
+    },
+    "identity": {
+      "en": "The versioned pci.ids entry maps PCI 1002:7590 to Navi 44 [Radeon RX 9050 / 9060 XT]. This is a chip-family match, not an exact retail model or board match. Subsystem 148c:2437 and revision c0 are reported observations only: the checked entry does not identify that board. Missing or different subsystem data does not invalidate the chip-family ID. No memory size, power limit or board specifications are inferred.",
+      "de": "Der versionierte pci.ids-Eintrag ordnet PCI 1002:7590 Navi 44 [Radeon RX 9050 / 9060 XT] zu. Dies ist ein Chipfamilien-Treffer, kein exakter Verkaufsmodell- oder Platinentreffer. Subsystem 148c:2437 und Revision c0 bleiben gemeldete Befunde: Der geprüfte Eintrag identifiziert diese Platine nicht. Fehlende oder andere Subsystemdaten widerlegen die Chipfamilien-ID nicht. Speichergröße, Leistungsgrenze und Platinenspezifikationen werden nicht abgeleitet."
+    },
+    "driverNotes": {
+      "en": "AMDGPU is the relevant kernel graphics driver. The checked Linux snapshot uses AMD display-class CHIP_IP_DISCOVERY fallbacks rather than a literal 7590 product row. AMD documents RX 9060 XT as RDNA4/gfx1200, but this does not identify every board carrying the shared PCI ID. Kernel driver in use is reported binding; candidate modules, initialization and stable operation are separate facts. Legacy SI/CIK radeon selection parameters do not apply to this profile.",
+      "de": "AMDGPU ist der relevante Kernel-Grafiktreiber. Der geprüfte Linux-Snapshot verwendet AMD-Displayklassen-Fallbacks mit CHIP_IP_DISCOVERY statt einer wörtlichen 7590-Produktzeile. AMD dokumentiert RX 9060 XT als RDNA4/gfx1200; dies identifiziert nicht jede Platine mit dieser gemeinsamen PCI-ID. Kernel driver in use meldet Bindung; Modulkandidaten, Initialisierung und stabiler Betrieb sind getrennte Befunde. Alte SI-/CIK-Parameter zur radeon-Auswahl gehören nicht zu diesem Profil."
+    },
+    "limitations": {
+      "en": "Chip identity and reported binding do not establish successful firmware loading, display initialization or operational stability. A ring timeout, PCIe error and lost device require separate evidence. Do not infer an exact PowerColor model or reproduce a hard-lock from a catalog entry.",
+      "de": "Chipidentität und gemeldete Bindung bestätigen weder erfolgreiche Firmwareladung noch Displayinitialisierung oder Betriebsstabilität. Ring-Timeout, PCIe-Fehler und verlorenes Gerät erfordern getrennte Belege. Leite weder ein genaues PowerColor-Modell noch einen reproduzierten Hard-Lock aus einem Katalogeintrag ab."
+    },
+    "bus": "pci",
+    "ids": [
+      {
+        "bus": "pci",
+        "vendor": "1002",
+        "device": "7590",
+        "identityLevel": "family"
+      }
+    ],
+    "match": {
+      "modules": [
+        "amdgpu"
+      ],
+      "pciClasses": [],
+      "usbClasses": []
+    },
+    "drivers": [
+      {
+        "module": "amdgpu",
+        "role": "kernel",
+        "evidence": "documentation"
+      }
+    ],
+    "firmware": {
+      "state": "required",
+      "patterns": [],
+      "explanation": {
+        "en": "AMDGPU uses host firmware selected by the discovered IP blocks and running kernel. No per-board file list is established by this PCI ID. Inspect the exact initialization requests and loading errors; neither older Radeon firmware nor both GC 12.0 paths should be prescribed from a shared driver name. The versioned GC 12.0 source documents firmware declarations, not a complete Navi 44 package manifest.",
+        "de": "AMDGPU verwendet Host-Firmware, ausgewählt anhand erkannter IP-Blöcke und laufendem Kernel. Diese PCI-ID belegt keine vollständige Dateiliste für die Platine. Prüfe konkrete Initialisierungsanforderungen und Ladefehler; weder alte Radeon-Firmware noch beide GC-12.0-Pfade dürfen aus einem gemeinsamen Treibernamen empfohlen werden. Der versionierte GC-12.0-Quelltext dokumentiert Firmwaredeklarationen, kein vollständiges Navi-44-Paketmanifest."
+      }
+    },
+    "checkpoints": [
+      {
+        "command": "lspci -nnk -s BDF",
+        "label": {
+          "en": "Read the numeric PCI identity and binding",
+          "de": "Numerische PCI-Identität und Bindung lesen"
+        },
+        "interpretation": {
+          "en": "Replace BDF with the address of the AMD IP-discovery display function. No sudo is normally required for this summary. The numeric vendor/device pair is the evidence for identity; “Kernel driver in use” is evidence of the current binding. A “Kernel modules” list is only a list of candidates.",
+          "de": "Ersetze BDF durch die Adresse der AMD IP-discovery-Grafikfunktion. Für diese Übersicht ist normalerweise kein sudo nötig. Das numerische Hersteller-/Gerätepaar belegt die Identität; „Kernel driver in use“ belegt die aktuelle Bindung. „Kernel modules“ nennt lediglich Kandidaten."
+        },
+        "elevated": false
+      },
+      {
+        "command": "readlink /sys/bus/pci/devices/BDF/driver",
+        "label": {
+          "en": "Confirm the owner of this PCI function",
+          "de": "Besitzer dieser PCI-Funktion prüfen"
+        },
+        "interpretation": {
+          "en": "Use the full domain:bus:slot.function address in BDF, for example the form shown by lspci -D. This read-only symlink normally needs no elevated privileges. Its last component names the bound driver. An absent link can also mean an unbound, removed or guest-assigned function; it does not prove that no Linux driver exists.",
+          "de": "Verwende für BDF die vollständige Adresse domain:bus:slot.function, wie sie lspci -D ausgibt. Das lesende Auswerten des Links braucht normalerweise keine erhöhten Rechte. Die letzte Pfadkomponente nennt den gebundenen Treiber. Ein fehlender Link kann auch eine ungebundene, entfernte oder einem Gast zugewiesene Funktion bedeuten und beweist nicht, dass es keinen Linux-Treiber gibt."
+        },
+        "elevated": false
+      },
+      {
+        "command": "lspci -vv -s BDF",
+        "label": {
+          "en": "Read PCIe link capability and negotiated status",
+          "de": "PCIe-Fähigkeit und ausgehandelten Link lesen"
+        },
+        "interpretation": {
+          "en": "Compare LnkCap with LnkSta on this function and its upstream ports. A lower link rate is an observation, not a proved crash cause. Full capability access may require administrator rights.",
+          "de": "Vergleiche LnkCap und LnkSta dieser Funktion und ihrer Upstream-Ports. Eine niedrigere Linkrate ist ein Befund, keine bewiesene Absturzursache. Vollständige Capability-Daten können Administratorrechte erfordern."
+        },
+        "elevated": true
+      },
+      {
+        "command": "journalctl -b -k --no-pager --grep='amdgpu|firmware|AER|PCIe Bus Error'",
+        "label": {
+          "en": "Read initialization, firmware and GPU/PCIe errors",
+          "de": "Initialisierung, Firmware und GPU-/PCIe-Fehler lesen"
+        },
+        "interpretation": {
+          "en": "Correlate addresses and timestamps with this device. Successful binding alone does not prove initialization. Firmware requests and ring, VM or PCIe errors are distinct observations; absence of a final log does not identify the cause. Review private data before sharing.",
+          "de": "Vergleiche Adressen und Zeitpunkte mit diesem Gerät. Bindung allein bestätigt keine Initialisierung. Firmwareanforderungen, Ring-, VM- und PCIe-Fehler sind getrennte Befunde; eine fehlende letzte Logmeldung identifiziert keine Ursache. Prüfe private Daten vor dem Teilen."
+        },
+        "elevated": true
+      }
+    ],
+    "fixLab": [
+      "amdgpu-missing-firmware",
+      "amdgpu-ring-timeout",
+      "amdgpu-vm-page-fault",
+      "kernel-pcie-aer-errors"
+    ],
+    "sources": [
+      {
+        "title": "Versioned PCI ID database: Navi 44",
+        "url": "https://github.com/pciutils/pciids/blob/3452638d16a34aa3d6e427d21e4cd0bae0fb884e/pci.ids",
+        "kind": "identification-data",
+        "claim": "1002:7590 names Navi 44 with shared RX 9050 / 9060 XT models; 148c:2437 is not mapped in this entry.",
+        "retrieved": "2026-10-10",
+        "locator": "lines 4258–4262"
+      },
+      {
+        "title": "AMD ROCm 6.4.2 GPU architecture specifications",
+        "url": "https://rocm.docs.amd.com/en/docs-6.4.2/reference/gpu-arch-specs.html",
+        "kind": "documentation",
+        "claim": "RX 9060 XT is documented as RDNA4/gfx1200; not a PCI subsystem/board identity.",
+        "retrieved": "2026-10-10",
+        "locator": "Radeon RX 9060 XT row"
+      },
+      {
+        "title": "Linux amdgpu IP-discovery fallback",
+        "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c",
+        "kind": "source-code",
+        "claim": "Checked manufacturer/display-class fallback entries, not an exact modern Radeon ID.",
+        "retrieved": "2026-10-10",
+        "locator": "lines 2193–2206"
+      },
+      {
+        "title": "Linux graphics-IP discovery",
+        "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c",
+        "kind": "source-code",
+        "claim": "GC IP 12.0.0 and 12.0.1 select gfx_v12_0_ip_block.",
+        "retrieved": "2026-10-10",
+        "locator": "lines 2772–2774"
+      },
+      {
+        "title": "Linux GC 12.0 firmware declarations",
+        "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c",
+        "kind": "source-code",
+        "claim": "Checked the literal 12.0.0 PFP and 12.0.1 RLC-kicker MODULE_FIRMWARE strings.",
+        "retrieved": "2026-10-10",
+        "locator": "lines 73–83"
       }
     ],
     "reviewed": "2026-10-10"

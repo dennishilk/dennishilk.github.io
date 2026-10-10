@@ -95,7 +95,7 @@ test('unknown-bus identifiers cannot become exact product evidence', () => {
 });
 test('driver/class context never certifies a specific hardware family', () => {
   const d = parseHardwareReport('01:00.0 Network controller: unnamed\n Kernel driver in use: iwlwifi').devices[0];
-  const r = identifyDevices({ devices: [d] }, catalog)[0]; assert.equal(r.coverage, 'context-only'); assert.equal(r.matches[0].reason, 'reported-driver-context'); assert.equal(r.ambiguous, true);
+  const r = identifyDevices({ devices: [d] }, catalog)[0]; assert.equal(r.coverage, 'unknown'); assert.equal(r.matches.length, 0); assert.equal(r.boundDriver, 'iwlwifi');
 });
 test('firmware log failures are counts of observations, never an asserted package diagnosis', () => {
   const p = parseHardwareReport('Direct firmware load for example/file.bin failed with error -2'); assert.equal(p.firmwareObservations, 1); assert.equal(p.devices.length, 0);
