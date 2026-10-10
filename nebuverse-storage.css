@@ -1,5 +1,5 @@
 .traffic-card.nebuverse-storage { grid-column:span 8; min-width:0; }
-.nebuverse-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:.75rem; margin-bottom:.75rem; }
+.nebuverse-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:.75rem; margin-bottom:.75rem; padding:0; }
 .nebuverse-storage h2 { margin-bottom:.45rem; }
 .nebuverse-instance { color:#dffdf3; display:inline-block; font-size:1rem; font-weight:700; text-decoration:none; }
 .nebuverse-instance:hover { color:var(--accent); }
