@@ -1,0 +1,49 @@
+.hardware-main { max-width: 1160px; }
+.hardware-workbench { background: var(--surface, #121b26); border: 1px solid #29384b; border-radius: 14px; padding: clamp(1rem, 3vw, 1.7rem); }
+.hardware-workbench > label { display: block; font-weight: 600; margin-bottom: .65rem; }
+.hardware-workbench textarea { display: block; width: 100%; min-height: 190px; resize: vertical; background: #080f18; color: #e9eef5; border: 1px solid #40516a; border-radius: 9px; padding: .9rem; font: .92rem/1.6 ui-monospace, monospace; }
+.hardware-workbench textarea[readonly] { margin-top: 1rem; }
+.hardware-workbench input[type=file] { max-width: 100%; white-space: normal; }
+.hardware-profile-list, .hardware-knowledge { list-style: none; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hardware-profile-list > li, .hardware-knowledge > li { min-width: 0; padding: 1.35rem; background: #121b26; border: 1px solid #29384b; border-radius: 12px; }
+.hardware-profile-list h3, .hardware-knowledge h3 { margin: .45rem 0 .7rem; }
+.hardware-profile-list .category { color: #93dfc1; font-size: .83rem; }
+.hardware-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; color: #a9b7c8; font-size: .87rem; }
+.hardware-facts { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 3fr); gap: .55rem 1rem; }
+.hardware-facts dt { color: #a9b7c8; }
+.hardware-facts dd { margin: 0; overflow-wrap: anywhere; }
+.hardware-facts code { display: inline-block; margin: .1rem .4rem .1rem 0; }
+.hardware-device { margin: 1.3rem 0; padding: 1.2rem; border: 1px solid #40516a; border-radius: 12px; background: #0b131e; }
+.hardware-device h3 { margin-top: 0; }
+.hardware-badge { display: inline-block; border: 1px solid #467d8e; border-radius: 7px; color: #b1e6f7; padding: .35rem .65rem; font-size: .9rem; }
+.hardware-tabs { display: flex; gap: .35rem; flex-wrap: wrap; margin: 1rem 0; }
+.hardware-tabs [role=tab] { min-height: 44px; padding: .65rem .8rem; border: 1px solid #40516a; border-radius: 7px; background: #131e2b; color: #e9eef5; cursor: pointer; font: inherit; }
+.hardware-tabs [aria-selected=true] { border-color: #76d2fa; background: #173245; color: #b5ecff; }
+.hardware-device [role=tabpanel] { min-width: 0; overflow-wrap: anywhere; }
+.hardware-command { margin: 1rem 0; }
+.hardware-command pre { max-width: 100%; overflow-x: auto; padding: 1rem; background: #080f18; color: #e9eef5; border: 1px solid #29384b; border-radius: 8px; }
+.hardware-command button { margin-top: .5rem; }
+.hardware-sources { padding-left: 1.25rem; }
+.hardware-sources li { margin: 1rem 0; overflow-wrap: anywhere; }
+.hardware-sources p { margin: .3rem 0; color: #a9b7c8; }
+.hardware-share-dialog { width: min(620px, calc(100% - 2rem)); max-height: calc(100vh - 2rem); overflow: auto; border: 1px solid #40516a; border-radius: 14px; padding: 1.5rem; background: #121b26; color: #e9eef5; }
+.hardware-share-dialog::backdrop { background: #000b; }
+.hardware-share-dialog label { display: block; margin: .8rem 0; }
+.hardware-share-dialog input, .hardware-share-dialog textarea { width: 100%; padding: .7rem; background: #080f18; color: #e9eef5; border: 1px solid #40516a; border-radius: 7px; font: inherit; }
+.hardware-share-dialog textarea { min-height: 100px; }
+.hardware-share-dialog .lab-actions { flex-wrap: wrap; }
+.hardware-share-dialog a, .hardware-share-dialog button, .hardware-main a, .article-main button { overflow-wrap: anywhere; }
+.hardware-main [hidden], .hardware-share-dialog [hidden] { display: none !important; }
+.hardware-workbench :focus-visible, .hardware-share-dialog :focus-visible, .hardware-device :focus-visible { outline: 3px solid #76d2fa; outline-offset: 3px; }
+@media (max-width: 650px) {
+  .hardware-profile-list, .hardware-knowledge { grid-template-columns: 1fr; }
+  .hardware-facts { grid-template-columns: 1fr; gap: .3rem; }
+  .hardware-facts dd { margin-bottom: .65rem; }
+  .hardware-device { padding: 1rem .8rem; }
+  .hardware-tabs [role=tab] { flex: 1 1 30%; font-size: .88rem; }
+  .hardware-workbench .lab-controls { display: flex; flex-direction: column; align-items: stretch; }
+  .hardware-workbench .lab-actions > button { flex: 1 1 160px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hardware-main *, .hardware-share-dialog * { scroll-behavior: auto; transition: none; animation: none; }
+}

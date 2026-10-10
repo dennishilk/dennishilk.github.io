@@ -1,0 +1,26 @@
+name: Linux Hardware Explorer checks
+on:
+  pull_request:
+    paths: ['linux-hardware-explorer/**', 'de/linux-hardware-explorer/**', 'content/linux-hardware-explorer/**', 'assets/linux-hardware-explorer/**', 'assets/linux-fix-lab/**', 'scripts/*hardware*.mjs', 'scripts/audit-hardware-sources.py', 'docs/linux-hardware-explorer/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/*seo.mjs', 'tests/linux-hardware-explorer*', 'tests/support/hardware-dom.mjs', 'tests/fixtures/hardware-source-evidence.json', 'package.json', '.github/workflows/linux-hardware-explorer-check.yml']
+  push:
+    branches: [main]
+    paths: ['linux-hardware-explorer/**', 'de/linux-hardware-explorer/**', 'content/linux-hardware-explorer/**', 'assets/linux-hardware-explorer/**', 'assets/linux-fix-lab/**', 'scripts/*hardware*.mjs', 'scripts/audit-hardware-sources.py', 'docs/linux-hardware-explorer/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/*seo.mjs', 'tests/linux-hardware-explorer*', 'tests/support/hardware-dom.mjs', 'tests/fixtures/hardware-source-evidence.json', 'package.json', '.github/workflows/linux-hardware-explorer-check.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run build:hardware-explorer
+      - run: npm run test:hardware-explorer
+      - run: npm run test:fix-lab
+      - run: node --test tests/homepage-featured-projects.test.mjs tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
+      - run: npm run test:seo
+      - name: Generated files must be current
+        run: git diff --exit-code -- linux-hardware-explorer de/linux-hardware-explorer content/linux-hardware-explorer/generated-manifest.json content/linux-hardware-explorer/integration.json content/linux-hardware-explorer/prepared-launch-sitemap.xml assets/linux-hardware-explorer/catalog.js assets/linux-hardware-explorer/workflows.js linux-fix-lab de/linux-fix-lab content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml robots.txt 'sitemap*.xml'
+      - name: Verify approval gates in an isolated copy
+        run: npm run test:hardware-release

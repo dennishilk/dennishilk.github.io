@@ -99,7 +99,7 @@ export function validateInstance(value) {
 export function shareIntent(service, { url, message = '', instance = '' }) {
   const canonical = new URL(url);
   if (canonical.origin !== SITE_ORIGIN || canonical.search
-    || !/^\/(?:de\/)?linux-fix-lab\/(?:[a-z0-9-]+\/)?$/.test(canonical.pathname)
+    || !/^\/(?:de\/)?linux-(?:fix-lab|hardware-explorer)\/(?:[a-z0-9-]+\/)?$/.test(canonical.pathname)
     || (canonical.hash && !/^#[a-z][a-z0-9-]*$/.test(canonical.hash))) throw new TypeError('invalid-share-url');
   let target;
   if (service === 'mastodon') {

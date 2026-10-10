@@ -1,0 +1,2470 @@
+{
+  "schemaVersion": 1,
+  "profilesByProblem": {
+    "amdgpu-missing-firmware": [
+      {
+        "id": "amd-tahiti",
+        "name": {
+          "en": "AMD Tahiti / Southern Islands",
+          "de": "AMD Tahiti / Southern Islands"
+        }
+      },
+      {
+        "id": "amd-bonaire",
+        "name": {
+          "en": "AMD Bonaire / Sea Islands",
+          "de": "AMD Bonaire / Sea Islands"
+        }
+      },
+      {
+        "id": "amd-polaris10",
+        "name": {
+          "en": "AMD Polaris 10",
+          "de": "AMD Polaris 10"
+        }
+      },
+      {
+        "id": "amd-vega10",
+        "name": {
+          "en": "AMD Vega 10",
+          "de": "AMD Vega 10"
+        }
+      },
+      {
+        "id": "amd-navi10",
+        "name": {
+          "en": "AMD Navi 10",
+          "de": "AMD Navi 10"
+        }
+      },
+      {
+        "id": "amd-sienna-cichlid",
+        "name": {
+          "en": "AMD Sienna Cichlid graphics family",
+          "de": "AMD-Sienna-Cichlid-Grafikfamilie"
+        }
+      },
+      {
+        "id": "amd-renoir",
+        "name": {
+          "en": "AMD Renoir integrated graphics",
+          "de": "AMD Renoir integrierte Grafik"
+        }
+      },
+      {
+        "id": "amd-gc12-ip-discovery",
+        "name": {
+          "en": "AMD GC 12.0 IP-discovery graphics context",
+          "de": "AMD-Grafikkontext GC 12.0 mit IP-Discovery"
+        }
+      }
+    ],
+    "amdgpu-ring-timeout": [
+      {
+        "id": "amd-tahiti",
+        "name": {
+          "en": "AMD Tahiti / Southern Islands",
+          "de": "AMD Tahiti / Southern Islands"
+        }
+      },
+      {
+        "id": "amd-bonaire",
+        "name": {
+          "en": "AMD Bonaire / Sea Islands",
+          "de": "AMD Bonaire / Sea Islands"
+        }
+      },
+      {
+        "id": "amd-polaris10",
+        "name": {
+          "en": "AMD Polaris 10",
+          "de": "AMD Polaris 10"
+        }
+      },
+      {
+        "id": "amd-vega10",
+        "name": {
+          "en": "AMD Vega 10",
+          "de": "AMD Vega 10"
+        }
+      },
+      {
+        "id": "amd-navi10",
+        "name": {
+          "en": "AMD Navi 10",
+          "de": "AMD Navi 10"
+        }
+      },
+      {
+        "id": "amd-sienna-cichlid",
+        "name": {
+          "en": "AMD Sienna Cichlid graphics family",
+          "de": "AMD-Sienna-Cichlid-Grafikfamilie"
+        }
+      },
+      {
+        "id": "amd-renoir",
+        "name": {
+          "en": "AMD Renoir integrated graphics",
+          "de": "AMD Renoir integrierte Grafik"
+        }
+      },
+      {
+        "id": "amd-gc12-ip-discovery",
+        "name": {
+          "en": "AMD GC 12.0 IP-discovery graphics context",
+          "de": "AMD-Grafikkontext GC 12.0 mit IP-Discovery"
+        }
+      }
+    ],
+    "mesa-software-rendering": [
+      {
+        "id": "amd-tahiti",
+        "name": {
+          "en": "AMD Tahiti / Southern Islands",
+          "de": "AMD Tahiti / Southern Islands"
+        }
+      },
+      {
+        "id": "amd-bonaire",
+        "name": {
+          "en": "AMD Bonaire / Sea Islands",
+          "de": "AMD Bonaire / Sea Islands"
+        }
+      },
+      {
+        "id": "amd-polaris10",
+        "name": {
+          "en": "AMD Polaris 10",
+          "de": "AMD Polaris 10"
+        }
+      },
+      {
+        "id": "amd-vega10",
+        "name": {
+          "en": "AMD Vega 10",
+          "de": "AMD Vega 10"
+        }
+      },
+      {
+        "id": "amd-navi10",
+        "name": {
+          "en": "AMD Navi 10",
+          "de": "AMD Navi 10"
+        }
+      },
+      {
+        "id": "amd-sienna-cichlid",
+        "name": {
+          "en": "AMD Sienna Cichlid graphics family",
+          "de": "AMD-Sienna-Cichlid-Grafikfamilie"
+        }
+      },
+      {
+        "id": "amd-renoir",
+        "name": {
+          "en": "AMD Renoir integrated graphics",
+          "de": "AMD Renoir integrierte Grafik"
+        }
+      },
+      {
+        "id": "intel-ivy-bridge-gt2-mobile",
+        "name": {
+          "en": "Intel Ivy Bridge GT2 mobile",
+          "de": "Intel Ivy Bridge GT2 mobil"
+        }
+      },
+      {
+        "id": "intel-haswell-gt2-desktop",
+        "name": {
+          "en": "Intel Haswell GT2 desktop",
+          "de": "Intel Haswell GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-broadwell-gt2-ult",
+        "name": {
+          "en": "Intel Broadwell GT2 ULT",
+          "de": "Intel Broadwell GT2 ULT"
+        }
+      },
+      {
+        "id": "intel-skylake-gt2-desktop",
+        "name": {
+          "en": "Intel Skylake GT2 desktop",
+          "de": "Intel Skylake GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-ice-lake-graphics",
+        "name": {
+          "en": "Intel Ice Lake graphics",
+          "de": "Intel Ice-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-tiger-lake-graphics",
+        "name": {
+          "en": "Intel Tiger Lake graphics",
+          "de": "Intel Tiger-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-alder-lake-p-graphics",
+        "name": {
+          "en": "Intel Alder Lake-P graphics",
+          "de": "Intel Alder-Lake-P-Grafik"
+        }
+      },
+      {
+        "id": "intel-dg2-g10-desktop",
+        "name": {
+          "en": "Intel DG2 G10 desktop graphics",
+          "de": "Intel DG2-G10-Desktopgrafik"
+        }
+      },
+      {
+        "id": "virtual-virtio-gpu-modern",
+        "name": {
+          "en": "Virtio GPU over modern PCI",
+          "de": "Virtio-GPU über modernes PCI"
+        }
+      }
+    ],
+    "hybrid-gpu-selection": [
+      {
+        "id": "amd-bonaire",
+        "name": {
+          "en": "AMD Bonaire / Sea Islands",
+          "de": "AMD Bonaire / Sea Islands"
+        }
+      },
+      {
+        "id": "amd-renoir",
+        "name": {
+          "en": "AMD Renoir integrated graphics",
+          "de": "AMD Renoir integrierte Grafik"
+        }
+      },
+      {
+        "id": "intel-ivy-bridge-gt2-mobile",
+        "name": {
+          "en": "Intel Ivy Bridge GT2 mobile",
+          "de": "Intel Ivy Bridge GT2 mobil"
+        }
+      },
+      {
+        "id": "intel-haswell-gt2-desktop",
+        "name": {
+          "en": "Intel Haswell GT2 desktop",
+          "de": "Intel Haswell GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-broadwell-gt2-ult",
+        "name": {
+          "en": "Intel Broadwell GT2 ULT",
+          "de": "Intel Broadwell GT2 ULT"
+        }
+      },
+      {
+        "id": "intel-skylake-gt2-desktop",
+        "name": {
+          "en": "Intel Skylake GT2 desktop",
+          "de": "Intel Skylake GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-ice-lake-graphics",
+        "name": {
+          "en": "Intel Ice Lake graphics",
+          "de": "Intel Ice-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-tiger-lake-graphics",
+        "name": {
+          "en": "Intel Tiger Lake graphics",
+          "de": "Intel Tiger-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-alder-lake-p-graphics",
+        "name": {
+          "en": "Intel Alder Lake-P graphics",
+          "de": "Intel Alder-Lake-P-Grafik"
+        }
+      },
+      {
+        "id": "intel-dg2-g10-desktop",
+        "name": {
+          "en": "Intel DG2 G10 desktop graphics",
+          "de": "Intel DG2-G10-Desktopgrafik"
+        }
+      }
+    ],
+    "amdgpu-vm-page-fault": [
+      {
+        "id": "amd-vega10",
+        "name": {
+          "en": "AMD Vega 10",
+          "de": "AMD Vega 10"
+        }
+      },
+      {
+        "id": "amd-gc12-ip-discovery",
+        "name": {
+          "en": "AMD GC 12.0 IP-discovery graphics context",
+          "de": "AMD-Grafikkontext GC 12.0 mit IP-Discovery"
+        }
+      }
+    ],
+    "displayport-link-training": [
+      {
+        "id": "amd-navi10",
+        "name": {
+          "en": "AMD Navi 10",
+          "de": "AMD Navi 10"
+        }
+      }
+    ],
+    "kernel-pcie-aer-errors": [
+      {
+        "id": "amd-sienna-cichlid",
+        "name": {
+          "en": "AMD Sienna Cichlid graphics family",
+          "de": "AMD-Sienna-Cichlid-Grafikfamilie"
+        }
+      },
+      {
+        "id": "amd-gc12-ip-discovery",
+        "name": {
+          "en": "AMD GC 12.0 IP-discovery graphics context",
+          "de": "AMD-Grafikkontext GC 12.0 mit IP-Discovery"
+        }
+      },
+      {
+        "id": "pcie-root-port-context",
+        "name": {
+          "en": "PCIe root-port context",
+          "de": "PCIe-Root-Port-Kontext"
+        }
+      },
+      {
+        "id": "pcie-switch-port-context",
+        "name": {
+          "en": "PCIe switch-port context",
+          "de": "PCIe-Switch-Port-Kontext"
+        }
+      },
+      {
+        "id": "pcie-rcec-context",
+        "name": {
+          "en": "PCIe Root Complex Event Collector",
+          "de": "PCIe Root Complex Event Collector"
+        }
+      },
+      {
+        "id": "cxl-type3-memory-context",
+        "name": {
+          "en": "CXL Type-3 memory-device context",
+          "de": "CXL-Type-3-Speichergerätekontext"
+        }
+      },
+      {
+        "id": "intel-vmd-server-domain",
+        "name": {
+          "en": "Intel VMD separate PCI domain",
+          "de": "Intel VMD mit eigener PCI-Domain"
+        }
+      },
+      {
+        "id": "intel-vmd-client-domain",
+        "name": {
+          "en": "Intel client VMD controller",
+          "de": "Intel-Client-VMD-Controller"
+        }
+      },
+      {
+        "id": "lsi-sas2008",
+        "name": {
+          "en": "LSI SAS2008",
+          "de": "LSI SAS2008"
+        }
+      },
+      {
+        "id": "lsi-sas3008",
+        "name": {
+          "en": "LSI/Broadcom SAS3008",
+          "de": "LSI/Broadcom SAS3008"
+        }
+      },
+      {
+        "id": "broadcom-sas3416",
+        "name": {
+          "en": "Broadcom/LSI SAS3416",
+          "de": "Broadcom/LSI SAS3416"
+        }
+      },
+      {
+        "id": "lsi-megaraid-fusion-005b",
+        "name": {
+          "en": "LSI/Broadcom MegaRAID Fusion function (005b)",
+          "de": "LSI-/Broadcom-MegaRAID-Fusion-Funktion (005b)"
+        }
+      },
+      {
+        "id": "adaptec-aac-0285-family",
+        "name": {
+          "en": "Adaptec AAC RAID family (0285)",
+          "de": "Adaptec AAC-RAID-Familie (0285)"
+        }
+      }
+    ],
+    "kernel-suspend-aborted": [
+      {
+        "id": "amd-renoir",
+        "name": {
+          "en": "AMD Renoir integrated graphics",
+          "de": "AMD Renoir integrierte Grafik"
+        }
+      },
+      {
+        "id": "amd-pmc-platform-context",
+        "name": {
+          "en": "AMD PMC platform sleep context",
+          "de": "AMD-PMC-Plattformkontext für Suspend"
+        }
+      },
+      {
+        "id": "usb-pci-xhci-controller",
+        "name": {
+          "en": "PCI XHCI host-controller class",
+          "de": "PCI-XHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-pci-ehci-controller",
+        "name": {
+          "en": "PCI EHCI host-controller class",
+          "de": "PCI-EHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-pci-ohci-controller",
+        "name": {
+          "en": "PCI OHCI host-controller class",
+          "de": "PCI-OHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-pci-uhci-controller",
+        "name": {
+          "en": "PCI UHCI host-controller class",
+          "de": "PCI-UHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-hub-class",
+        "name": {
+          "en": "USB hub class",
+          "de": "USB-Hubklasse"
+        }
+      },
+      {
+        "id": "usb-video-class-uvc",
+        "name": {
+          "en": "USB Video Class camera interfaces",
+          "de": "USB-Video-Class-Kamerainterfaces"
+        }
+      },
+      {
+        "id": "input-usb-hid-class",
+        "name": {
+          "en": "USB HID keyboard and pointer transport",
+          "de": "USB-HID-Transport für Tastatur und Zeiger"
+        }
+      },
+      {
+        "id": "input-i2c-hid-transport",
+        "name": {
+          "en": "HID over I2C touchpad and touchscreen transport",
+          "de": "HID-over-I2C-Transport für Touchpad und Touchscreen"
+        }
+      },
+      {
+        "id": "input-i8042-ps2-transport",
+        "name": {
+          "en": "i8042 / PS2 keyboard and pointer transport",
+          "de": "i8042-/PS2-Transport für Tastatur und Zeiger"
+        }
+      },
+      {
+        "id": "input-logitech-unifying-c52b",
+        "name": {
+          "en": "Logitech Unifying receiver identity 046d:c52b",
+          "de": "Logitech-Unifying-Empfängerkennung 046d:c52b"
+        }
+      },
+      {
+        "id": "input-hid-multitouch-family",
+        "name": {
+          "en": "HID multitouch protocol family",
+          "de": "HID-Multitouch-Protokollfamilie"
+        }
+      },
+      {
+        "id": "input-alps-ps2-touchpad",
+        "name": {
+          "en": "ALPS PS2 touchpad protocol family",
+          "de": "ALPS-PS2-Touchpad-Protokollfamilie"
+        }
+      }
+    ],
+    "nvidia-nouveau-driver-conflict": [
+      {
+        "id": "nvidia-gtx-750-ti",
+        "name": {
+          "en": "NVIDIA GeForce GTX 750 Ti reference",
+          "de": "NVIDIA GeForce GTX 750 Ti – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gtx-980",
+        "name": {
+          "en": "NVIDIA GeForce GTX 980 reference",
+          "de": "NVIDIA GeForce GTX 980 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gtx-1080",
+        "name": {
+          "en": "NVIDIA GeForce GTX 1080 reference",
+          "de": "NVIDIA GeForce GTX 1080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gt-1030",
+        "name": {
+          "en": "NVIDIA GeForce GT 1030 reference",
+          "de": "NVIDIA GeForce GT 1030 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-2080",
+        "name": {
+          "en": "NVIDIA GeForce RTX 2080 reference",
+          "de": "NVIDIA GeForce RTX 2080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-3080",
+        "name": {
+          "en": "NVIDIA GeForce RTX 3080 reference",
+          "de": "NVIDIA GeForce RTX 3080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-4090",
+        "name": {
+          "en": "NVIDIA GeForce RTX 4090 reference",
+          "de": "NVIDIA GeForce RTX 4090 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-5090",
+        "name": {
+          "en": "NVIDIA GeForce RTX 5090 reference",
+          "de": "NVIDIA GeForce RTX 5090 – Referenz"
+        }
+      }
+    ],
+    "nvidia-driver-library-mismatch": [
+      {
+        "id": "nvidia-gtx-750-ti",
+        "name": {
+          "en": "NVIDIA GeForce GTX 750 Ti reference",
+          "de": "NVIDIA GeForce GTX 750 Ti – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gtx-980",
+        "name": {
+          "en": "NVIDIA GeForce GTX 980 reference",
+          "de": "NVIDIA GeForce GTX 980 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gtx-1080",
+        "name": {
+          "en": "NVIDIA GeForce GTX 1080 reference",
+          "de": "NVIDIA GeForce GTX 1080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gt-1030",
+        "name": {
+          "en": "NVIDIA GeForce GT 1030 reference",
+          "de": "NVIDIA GeForce GT 1030 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-2080",
+        "name": {
+          "en": "NVIDIA GeForce RTX 2080 reference",
+          "de": "NVIDIA GeForce RTX 2080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-3080",
+        "name": {
+          "en": "NVIDIA GeForce RTX 3080 reference",
+          "de": "NVIDIA GeForce RTX 3080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-4090",
+        "name": {
+          "en": "NVIDIA GeForce RTX 4090 reference",
+          "de": "NVIDIA GeForce RTX 4090 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-5090",
+        "name": {
+          "en": "NVIDIA GeForce RTX 5090 reference",
+          "de": "NVIDIA GeForce RTX 5090 – Referenz"
+        }
+      }
+    ],
+    "nvidia-gpu-fallen-off-bus": [
+      {
+        "id": "nvidia-gtx-750-ti",
+        "name": {
+          "en": "NVIDIA GeForce GTX 750 Ti reference",
+          "de": "NVIDIA GeForce GTX 750 Ti – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gtx-980",
+        "name": {
+          "en": "NVIDIA GeForce GTX 980 reference",
+          "de": "NVIDIA GeForce GTX 980 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gtx-1080",
+        "name": {
+          "en": "NVIDIA GeForce GTX 1080 reference",
+          "de": "NVIDIA GeForce GTX 1080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-gt-1030",
+        "name": {
+          "en": "NVIDIA GeForce GT 1030 reference",
+          "de": "NVIDIA GeForce GT 1030 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-2080",
+        "name": {
+          "en": "NVIDIA GeForce RTX 2080 reference",
+          "de": "NVIDIA GeForce RTX 2080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-3080",
+        "name": {
+          "en": "NVIDIA GeForce RTX 3080 reference",
+          "de": "NVIDIA GeForce RTX 3080 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-4090",
+        "name": {
+          "en": "NVIDIA GeForce RTX 4090 reference",
+          "de": "NVIDIA GeForce RTX 4090 – Referenz"
+        }
+      },
+      {
+        "id": "nvidia-rtx-5090",
+        "name": {
+          "en": "NVIDIA GeForce RTX 5090 reference",
+          "de": "NVIDIA GeForce RTX 5090 – Referenz"
+        }
+      }
+    ],
+    "intel-gpu-hang": [
+      {
+        "id": "intel-ivy-bridge-gt2-mobile",
+        "name": {
+          "en": "Intel Ivy Bridge GT2 mobile",
+          "de": "Intel Ivy Bridge GT2 mobil"
+        }
+      },
+      {
+        "id": "intel-haswell-gt2-desktop",
+        "name": {
+          "en": "Intel Haswell GT2 desktop",
+          "de": "Intel Haswell GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-broadwell-gt2-ult",
+        "name": {
+          "en": "Intel Broadwell GT2 ULT",
+          "de": "Intel Broadwell GT2 ULT"
+        }
+      },
+      {
+        "id": "intel-skylake-gt2-desktop",
+        "name": {
+          "en": "Intel Skylake GT2 desktop",
+          "de": "Intel Skylake GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-ice-lake-graphics",
+        "name": {
+          "en": "Intel Ice Lake graphics",
+          "de": "Intel Ice-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-tiger-lake-graphics",
+        "name": {
+          "en": "Intel Tiger Lake graphics",
+          "de": "Intel Tiger-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-alder-lake-p-graphics",
+        "name": {
+          "en": "Intel Alder Lake-P graphics",
+          "de": "Intel Alder-Lake-P-Grafik"
+        }
+      },
+      {
+        "id": "intel-dg2-g10-desktop",
+        "name": {
+          "en": "Intel DG2 G10 desktop graphics",
+          "de": "Intel DG2-G10-Desktopgrafik"
+        }
+      }
+    ],
+    "vulkan-driver-discovery": [
+      {
+        "id": "intel-ivy-bridge-gt2-mobile",
+        "name": {
+          "en": "Intel Ivy Bridge GT2 mobile",
+          "de": "Intel Ivy Bridge GT2 mobil"
+        }
+      },
+      {
+        "id": "intel-haswell-gt2-desktop",
+        "name": {
+          "en": "Intel Haswell GT2 desktop",
+          "de": "Intel Haswell GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-broadwell-gt2-ult",
+        "name": {
+          "en": "Intel Broadwell GT2 ULT",
+          "de": "Intel Broadwell GT2 ULT"
+        }
+      },
+      {
+        "id": "intel-skylake-gt2-desktop",
+        "name": {
+          "en": "Intel Skylake GT2 desktop",
+          "de": "Intel Skylake GT2 Desktop"
+        }
+      },
+      {
+        "id": "intel-ice-lake-graphics",
+        "name": {
+          "en": "Intel Ice Lake graphics",
+          "de": "Intel Ice-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-tiger-lake-graphics",
+        "name": {
+          "en": "Intel Tiger Lake graphics",
+          "de": "Intel Tiger-Lake-Grafik"
+        }
+      },
+      {
+        "id": "intel-alder-lake-p-graphics",
+        "name": {
+          "en": "Intel Alder Lake-P graphics",
+          "de": "Intel Alder-Lake-P-Grafik"
+        }
+      },
+      {
+        "id": "intel-dg2-g10-desktop",
+        "name": {
+          "en": "Intel DG2 G10 desktop graphics",
+          "de": "Intel DG2-G10-Desktopgrafik"
+        }
+      },
+      {
+        "id": "virtual-virtio-gpu-modern",
+        "name": {
+          "en": "Virtio GPU over modern PCI",
+          "de": "Virtio-GPU über modernes PCI"
+        }
+      }
+    ],
+    "kernel-iommu-dma-fault": [
+      {
+        "id": "pcie-root-port-context",
+        "name": {
+          "en": "PCIe root-port context",
+          "de": "PCIe-Root-Port-Kontext"
+        }
+      },
+      {
+        "id": "pcie-switch-port-context",
+        "name": {
+          "en": "PCIe switch-port context",
+          "de": "PCIe-Switch-Port-Kontext"
+        }
+      },
+      {
+        "id": "pcie-rcec-context",
+        "name": {
+          "en": "PCIe Root Complex Event Collector",
+          "de": "PCIe Root Complex Event Collector"
+        }
+      },
+      {
+        "id": "cxl-type3-memory-context",
+        "name": {
+          "en": "CXL Type-3 memory-device context",
+          "de": "CXL-Type-3-Speichergerätekontext"
+        }
+      },
+      {
+        "id": "amd-secure-processor-pci",
+        "name": {
+          "en": "AMD Secure Processor / CCP PCI function",
+          "de": "AMD-Secure-Processor-/CCP-PCI-Funktion"
+        }
+      }
+    ],
+    "boot-root-uuid-missing": [
+      {
+        "id": "intel-vmd-server-domain",
+        "name": {
+          "en": "Intel VMD separate PCI domain",
+          "de": "Intel VMD mit eigener PCI-Domain"
+        }
+      },
+      {
+        "id": "intel-vmd-client-domain",
+        "name": {
+          "en": "Intel client VMD controller",
+          "de": "Intel-Client-VMD-Controller"
+        }
+      }
+    ],
+    "kernel-module-unknown-symbol": [
+      {
+        "id": "intel-sunrise-point-mei",
+        "name": {
+          "en": "Intel Sunrise Point MEI function",
+          "de": "Intel-Sunrise-Point-MEI-Funktion"
+        }
+      },
+      {
+        "id": "virtual-virtio-vsock-modern",
+        "name": {
+          "en": "Virtio socket transport over modern PCI",
+          "de": "Virtio-Socket-Transport über modernes PCI"
+        }
+      }
+    ],
+    "network-ethernet-carrier": [
+      {
+        "id": "intel-82540em",
+        "name": {
+          "en": "Intel 82540EM",
+          "de": "Intel 82540EM"
+        }
+      },
+      {
+        "id": "intel-82574l",
+        "name": {
+          "en": "Intel 82574L",
+          "de": "Intel 82574L"
+        }
+      },
+      {
+        "id": "intel-i217-lm",
+        "name": {
+          "en": "Intel I217-LM",
+          "de": "Intel I217-LM"
+        }
+      },
+      {
+        "id": "intel-i210-copper",
+        "name": {
+          "en": "Intel I210 copper",
+          "de": "Intel I210 (Kupfer)"
+        }
+      },
+      {
+        "id": "intel-i350-copper",
+        "name": {
+          "en": "Intel I350 copper",
+          "de": "Intel I350 (Kupfer)"
+        }
+      },
+      {
+        "id": "intel-i225-lm",
+        "name": {
+          "en": "Intel I225-LM",
+          "de": "Intel I225-LM"
+        }
+      },
+      {
+        "id": "intel-82599-sfp",
+        "name": {
+          "en": "Intel 82599 SFP family",
+          "de": "Intel 82599 SFP-Familie"
+        }
+      },
+      {
+        "id": "intel-x550-t",
+        "name": {
+          "en": "Intel X550-T",
+          "de": "Intel X550-T"
+        }
+      },
+      {
+        "id": "intel-700-sfp-1572",
+        "name": {
+          "en": "Intel 700-series SFP function (1572)",
+          "de": "Intel Ethernet der 700er-Serie, SFP-Funktion (1572)"
+        }
+      },
+      {
+        "id": "intel-e810-c-qsfp",
+        "name": {
+          "en": "Intel E810-C QSFP function",
+          "de": "Intel E810-C QSFP-Funktion"
+        }
+      },
+      {
+        "id": "realtek-rtl8168-family",
+        "name": {
+          "en": "Realtek RTL8168 family",
+          "de": "Realtek RTL8168-Familie"
+        }
+      },
+      {
+        "id": "realtek-rtl8125-family",
+        "name": {
+          "en": "Realtek RTL8125 family",
+          "de": "Realtek RTL8125-Familie"
+        }
+      },
+      {
+        "id": "realtek-rtl8126-family",
+        "name": {
+          "en": "Realtek RTL8126 family",
+          "de": "Realtek RTL8126-Familie"
+        }
+      },
+      {
+        "id": "broadcom-bcm5720",
+        "name": {
+          "en": "Broadcom BCM5720",
+          "de": "Broadcom BCM5720"
+        }
+      },
+      {
+        "id": "broadcom-bcm57711",
+        "name": {
+          "en": "Broadcom/QLogic BCM57711",
+          "de": "Broadcom/QLogic BCM57711"
+        }
+      },
+      {
+        "id": "broadcom-bcm57414",
+        "name": {
+          "en": "Broadcom BCM57414 NetXtreme-E",
+          "de": "Broadcom BCM57414 NetXtreme-E"
+        }
+      },
+      {
+        "id": "mellanox-connectx3",
+        "name": {
+          "en": "Mellanox ConnectX-3 / MT27500 family",
+          "de": "Mellanox ConnectX-3 / MT27500-Familie"
+        }
+      },
+      {
+        "id": "mellanox-connectx4",
+        "name": {
+          "en": "Mellanox ConnectX-4 family",
+          "de": "Mellanox ConnectX-4-Familie"
+        }
+      },
+      {
+        "id": "aquantia-aqc107",
+        "name": {
+          "en": "Aquantia/Marvell AQC107",
+          "de": "Aquantia/Marvell AQC107"
+        }
+      },
+      {
+        "id": "marvell-88e8056",
+        "name": {
+          "en": "Marvell Yukon 88E8056",
+          "de": "Marvell Yukon 88E8056"
+        }
+      },
+      {
+        "id": "realtek-rtl8153-usb",
+        "name": {
+          "en": "Realtek RTL8153 USB Ethernet family",
+          "de": "Realtek RTL8153 USB-Ethernet-Familie"
+        }
+      },
+      {
+        "id": "asix-ax88179-usb",
+        "name": {
+          "en": "ASIX AX88179 USB Ethernet",
+          "de": "ASIX AX88179 USB-Ethernet"
+        }
+      },
+      {
+        "id": "virtual-virtio-net-modern",
+        "name": {
+          "en": "Virtio network function over modern PCI",
+          "de": "Virtio-Netzwerkfunktion über modernes PCI"
+        }
+      }
+    ],
+    "network-driver-watchdog": [
+      {
+        "id": "intel-82540em",
+        "name": {
+          "en": "Intel 82540EM",
+          "de": "Intel 82540EM"
+        }
+      },
+      {
+        "id": "intel-82574l",
+        "name": {
+          "en": "Intel 82574L",
+          "de": "Intel 82574L"
+        }
+      },
+      {
+        "id": "intel-i217-lm",
+        "name": {
+          "en": "Intel I217-LM",
+          "de": "Intel I217-LM"
+        }
+      },
+      {
+        "id": "intel-i210-copper",
+        "name": {
+          "en": "Intel I210 copper",
+          "de": "Intel I210 (Kupfer)"
+        }
+      },
+      {
+        "id": "intel-i350-copper",
+        "name": {
+          "en": "Intel I350 copper",
+          "de": "Intel I350 (Kupfer)"
+        }
+      },
+      {
+        "id": "intel-i225-lm",
+        "name": {
+          "en": "Intel I225-LM",
+          "de": "Intel I225-LM"
+        }
+      },
+      {
+        "id": "intel-82599-sfp",
+        "name": {
+          "en": "Intel 82599 SFP family",
+          "de": "Intel 82599 SFP-Familie"
+        }
+      },
+      {
+        "id": "intel-x550-t",
+        "name": {
+          "en": "Intel X550-T",
+          "de": "Intel X550-T"
+        }
+      },
+      {
+        "id": "intel-700-sfp-1572",
+        "name": {
+          "en": "Intel 700-series SFP function (1572)",
+          "de": "Intel Ethernet der 700er-Serie, SFP-Funktion (1572)"
+        }
+      },
+      {
+        "id": "intel-e810-c-qsfp",
+        "name": {
+          "en": "Intel E810-C QSFP function",
+          "de": "Intel E810-C QSFP-Funktion"
+        }
+      },
+      {
+        "id": "realtek-rtl8168-family",
+        "name": {
+          "en": "Realtek RTL8168 family",
+          "de": "Realtek RTL8168-Familie"
+        }
+      },
+      {
+        "id": "realtek-rtl8125-family",
+        "name": {
+          "en": "Realtek RTL8125 family",
+          "de": "Realtek RTL8125-Familie"
+        }
+      },
+      {
+        "id": "realtek-rtl8126-family",
+        "name": {
+          "en": "Realtek RTL8126 family",
+          "de": "Realtek RTL8126-Familie"
+        }
+      },
+      {
+        "id": "broadcom-bcm5720",
+        "name": {
+          "en": "Broadcom BCM5720",
+          "de": "Broadcom BCM5720"
+        }
+      },
+      {
+        "id": "broadcom-bcm57711",
+        "name": {
+          "en": "Broadcom/QLogic BCM57711",
+          "de": "Broadcom/QLogic BCM57711"
+        }
+      },
+      {
+        "id": "broadcom-bcm57414",
+        "name": {
+          "en": "Broadcom BCM57414 NetXtreme-E",
+          "de": "Broadcom BCM57414 NetXtreme-E"
+        }
+      },
+      {
+        "id": "mellanox-connectx3",
+        "name": {
+          "en": "Mellanox ConnectX-3 / MT27500 family",
+          "de": "Mellanox ConnectX-3 / MT27500-Familie"
+        }
+      },
+      {
+        "id": "mellanox-connectx4",
+        "name": {
+          "en": "Mellanox ConnectX-4 family",
+          "de": "Mellanox ConnectX-4-Familie"
+        }
+      },
+      {
+        "id": "aquantia-aqc107",
+        "name": {
+          "en": "Aquantia/Marvell AQC107",
+          "de": "Aquantia/Marvell AQC107"
+        }
+      },
+      {
+        "id": "marvell-88e8056",
+        "name": {
+          "en": "Marvell Yukon 88E8056",
+          "de": "Marvell Yukon 88E8056"
+        }
+      },
+      {
+        "id": "realtek-rtl8153-usb",
+        "name": {
+          "en": "Realtek RTL8153 USB Ethernet family",
+          "de": "Realtek RTL8153 USB-Ethernet-Familie"
+        }
+      },
+      {
+        "id": "asix-ax88179-usb",
+        "name": {
+          "en": "ASIX AX88179 USB Ethernet",
+          "de": "ASIX AX88179 USB-Ethernet"
+        }
+      }
+    ],
+    "storage-sata-crc-errors": [
+      {
+        "id": "generic-pci-ahci",
+        "name": {
+          "en": "Generic PCI AHCI SATA controller",
+          "de": "Allgemeiner PCI-AHCI-SATA-Controller"
+        }
+      },
+      {
+        "id": "intel-cpt-ahci",
+        "name": {
+          "en": "Intel CPT AHCI function (1c02)",
+          "de": "Intel CPT-AHCI-Funktion (1c02)"
+        }
+      },
+      {
+        "id": "amd-sb700-sb800-ahci",
+        "name": {
+          "en": "AMD/ATI SB700/SB800 AHCI family",
+          "de": "AMD-/ATI-SB700-/SB800-AHCI-Familie"
+        }
+      },
+      {
+        "id": "jmicron-jmb362",
+        "name": {
+          "en": "JMicron JMB362 SATA function",
+          "de": "JMicron JMB362-SATA-Funktion"
+        }
+      },
+      {
+        "id": "silicon-image-sii3112",
+        "name": {
+          "en": "Silicon Image SiI3112 family",
+          "de": "Silicon Image SiI3112-Familie"
+        }
+      },
+      {
+        "id": "silicon-image-sii3132",
+        "name": {
+          "en": "Silicon Image SiI3132",
+          "de": "Silicon Image SiI3132"
+        }
+      },
+      {
+        "id": "marvell-88se912x-ahci",
+        "name": {
+          "en": "Marvell 88SE912x AHCI function (9123)",
+          "de": "Marvell 88SE912x-AHCI-Funktion (9123)"
+        }
+      },
+      {
+        "id": "asmedia-asm1061-1062",
+        "name": {
+          "en": "ASMedia ASM1061/ASM1062 family",
+          "de": "ASMedia ASM1061-/ASM1062-Familie"
+        }
+      },
+      {
+        "id": "via-vt6421",
+        "name": {
+          "en": "VIA VT6421",
+          "de": "VIA VT6421"
+        }
+      },
+      {
+        "id": "nvidia-mcp55-sata2",
+        "name": {
+          "en": "NVIDIA MCP55 SATA function (037f)",
+          "de": "NVIDIA MCP55-SATA-Funktion (037f)"
+        }
+      },
+      {
+        "id": "promise-pdc2037x-3376",
+        "name": {
+          "en": "Promise PDC2037x family (3376)",
+          "de": "Promise PDC2037x-Familie (3376)"
+        }
+      },
+      {
+        "id": "usb-attached-scsi-uas",
+        "name": {
+          "en": "USB Attached SCSI interfaces",
+          "de": "USB-Attached-SCSI-Interfaces"
+        }
+      }
+    ],
+    "storage-uncorrectable-sectors": [
+      {
+        "id": "generic-pci-ahci",
+        "name": {
+          "en": "Generic PCI AHCI SATA controller",
+          "de": "Allgemeiner PCI-AHCI-SATA-Controller"
+        }
+      },
+      {
+        "id": "intel-cpt-ahci",
+        "name": {
+          "en": "Intel CPT AHCI function (1c02)",
+          "de": "Intel CPT-AHCI-Funktion (1c02)"
+        }
+      },
+      {
+        "id": "amd-sb700-sb800-ahci",
+        "name": {
+          "en": "AMD/ATI SB700/SB800 AHCI family",
+          "de": "AMD-/ATI-SB700-/SB800-AHCI-Familie"
+        }
+      },
+      {
+        "id": "jmicron-jmb362",
+        "name": {
+          "en": "JMicron JMB362 SATA function",
+          "de": "JMicron JMB362-SATA-Funktion"
+        }
+      },
+      {
+        "id": "silicon-image-sii3112",
+        "name": {
+          "en": "Silicon Image SiI3112 family",
+          "de": "Silicon Image SiI3112-Familie"
+        }
+      },
+      {
+        "id": "silicon-image-sii3132",
+        "name": {
+          "en": "Silicon Image SiI3132",
+          "de": "Silicon Image SiI3132"
+        }
+      },
+      {
+        "id": "marvell-88se912x-ahci",
+        "name": {
+          "en": "Marvell 88SE912x AHCI function (9123)",
+          "de": "Marvell 88SE912x-AHCI-Funktion (9123)"
+        }
+      },
+      {
+        "id": "asmedia-asm1061-1062",
+        "name": {
+          "en": "ASMedia ASM1061/ASM1062 family",
+          "de": "ASMedia ASM1061-/ASM1062-Familie"
+        }
+      },
+      {
+        "id": "via-vt6421",
+        "name": {
+          "en": "VIA VT6421",
+          "de": "VIA VT6421"
+        }
+      },
+      {
+        "id": "nvidia-mcp55-sata2",
+        "name": {
+          "en": "NVIDIA MCP55 SATA function (037f)",
+          "de": "NVIDIA MCP55-SATA-Funktion (037f)"
+        }
+      },
+      {
+        "id": "promise-pdc2037x-3376",
+        "name": {
+          "en": "Promise PDC2037x family (3376)",
+          "de": "Promise PDC2037x-Familie (3376)"
+        }
+      },
+      {
+        "id": "usb-mass-storage-bulk-only",
+        "name": {
+          "en": "USB mass storage: Bulk-Only Transport",
+          "de": "USB-Massenspeicher: Bulk-Only Transport"
+        }
+      },
+      {
+        "id": "virtual-virtio-scsi-modern",
+        "name": {
+          "en": "Virtio SCSI adapter over modern PCI",
+          "de": "Virtio-SCSI-Adapter über modernes PCI"
+        }
+      }
+    ],
+    "storage-nvme-controller-reset": [
+      {
+        "id": "generic-pci-nvme",
+        "name": {
+          "en": "Generic PCI NVMe controller",
+          "de": "Allgemeiner PCI-NVMe-Controller"
+        }
+      }
+    ],
+    "storage-nvme-idle-resume": [
+      {
+        "id": "generic-pci-nvme",
+        "name": {
+          "en": "Generic PCI NVMe controller",
+          "de": "Allgemeiner PCI-NVMe-Controller"
+        }
+      }
+    ],
+    "io-pressure-writeback-latency": [
+      {
+        "id": "lsi-sas2008",
+        "name": {
+          "en": "LSI SAS2008",
+          "de": "LSI SAS2008"
+        }
+      },
+      {
+        "id": "lsi-sas3008",
+        "name": {
+          "en": "LSI/Broadcom SAS3008",
+          "de": "LSI/Broadcom SAS3008"
+        }
+      },
+      {
+        "id": "broadcom-sas3416",
+        "name": {
+          "en": "Broadcom/LSI SAS3416",
+          "de": "Broadcom/LSI SAS3416"
+        }
+      },
+      {
+        "id": "lsi-megaraid-fusion-005b",
+        "name": {
+          "en": "LSI/Broadcom MegaRAID Fusion function (005b)",
+          "de": "LSI-/Broadcom-MegaRAID-Fusion-Funktion (005b)"
+        }
+      },
+      {
+        "id": "adaptec-aac-0285-family",
+        "name": {
+          "en": "Adaptec AAC RAID family (0285)",
+          "de": "Adaptec AAC-RAID-Familie (0285)"
+        }
+      },
+      {
+        "id": "virtio-block-context",
+        "name": {
+          "en": "Virtio block device context",
+          "de": "Kontext für virtio-Blockgeräte"
+        }
+      },
+      {
+        "id": "virtual-virtio-scsi-modern",
+        "name": {
+          "en": "Virtio SCSI adapter over modern PCI",
+          "de": "Virtio-SCSI-Adapter über modernes PCI"
+        }
+      }
+    ],
+    "virtual-machine-vcpu-contention": [
+      {
+        "id": "virtio-block-context",
+        "name": {
+          "en": "Virtio block device context",
+          "de": "Kontext für virtio-Blockgeräte"
+        }
+      }
+    ],
+    "kernel-module-vermagic": [
+      {
+        "id": "usb-pci-xhci-controller",
+        "name": {
+          "en": "PCI XHCI host-controller class",
+          "de": "PCI-XHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-pci-ehci-controller",
+        "name": {
+          "en": "PCI EHCI host-controller class",
+          "de": "PCI-EHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-pci-ohci-controller",
+        "name": {
+          "en": "PCI OHCI host-controller class",
+          "de": "PCI-OHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-pci-uhci-controller",
+        "name": {
+          "en": "PCI UHCI host-controller class",
+          "de": "PCI-UHCI-Hostcontrollerklasse"
+        }
+      },
+      {
+        "id": "usb-ftdi-6001",
+        "name": {
+          "en": "FTDI USB serial identity 0403:6001",
+          "de": "FTDI USB-Serial-Kennung 0403:6001"
+        }
+      },
+      {
+        "id": "usb-cp210x-ea60",
+        "name": {
+          "en": "Silicon Labs default USB serial identity 10c4:ea60",
+          "de": "Silicon Labs Standard USB-Serial-Kennung 10c4:ea60"
+        }
+      },
+      {
+        "id": "virtual-virtio-console-modern",
+        "name": {
+          "en": "Virtio console and ports over modern PCI",
+          "de": "Virtio-Konsole und Ports über modernes PCI"
+        }
+      }
+    ],
+    "storage-usb-uas-resets": [
+      {
+        "id": "usb-mass-storage-bulk-only",
+        "name": {
+          "en": "USB mass storage: Bulk-Only Transport",
+          "de": "USB-Massenspeicher: Bulk-Only Transport"
+        }
+      },
+      {
+        "id": "usb-attached-scsi-uas",
+        "name": {
+          "en": "USB Attached SCSI interfaces",
+          "de": "USB-Attached-SCSI-Interfaces"
+        }
+      }
+    ],
+    "audio-alsa-card-missing": [
+      {
+        "id": "audio-intel-cougar-point-hda",
+        "name": {
+          "en": "Intel Cougar Point HDA controller",
+          "de": "Intel-Cougar-Point-HDA-Controller"
+        }
+      },
+      {
+        "id": "audio-amd-x570-hda",
+        "name": {
+          "en": "AMD HDA controller identity 1022:1487",
+          "de": "AMD-HDA-Controllerkennung 1022:1487"
+        }
+      },
+      {
+        "id": "audio-usb-audio-class",
+        "name": {
+          "en": "USB Audio Class PCM interfaces",
+          "de": "USB-Audio-Class-PCM-Interfaces"
+        }
+      },
+      {
+        "id": "audio-ensoniq-es1371",
+        "name": {
+          "en": "Ensoniq ES1371 AudioPCI family",
+          "de": "Ensoniq-ES1371-AudioPCI-Familie"
+        }
+      },
+      {
+        "id": "audio-intel-ich-ac97",
+        "name": {
+          "en": "Intel 82801AA AC97 controller",
+          "de": "Intel-82801AA-AC97-Controller"
+        }
+      },
+      {
+        "id": "virtual-virtio-sound-modern",
+        "name": {
+          "en": "Virtio sound over modern PCI",
+          "de": "Virtio-Sound über modernes PCI"
+        }
+      }
+    ],
+    "audio-spdif-profile": [
+      {
+        "id": "audio-intel-cougar-point-hda",
+        "name": {
+          "en": "Intel Cougar Point HDA controller",
+          "de": "Intel-Cougar-Point-HDA-Controller"
+        }
+      },
+      {
+        "id": "audio-amd-x570-hda",
+        "name": {
+          "en": "AMD HDA controller identity 1022:1487",
+          "de": "AMD-HDA-Controllerkennung 1022:1487"
+        }
+      },
+      {
+        "id": "audio-realtek-alc892-codec",
+        "name": {
+          "en": "Realtek ALC892 HDA codec family",
+          "de": "Realtek-ALC892-HDA-Codecfamilie"
+        }
+      },
+      {
+        "id": "audio-creative-emu10k1",
+        "name": {
+          "en": "Creative EMU10K1 PCI audio family",
+          "de": "Creative-EMU10K1-PCI-Audiofamilie"
+        }
+      },
+      {
+        "id": "audio-cmedia-cm8738",
+        "name": {
+          "en": "C-Media CM8738 PCI audio family",
+          "de": "C-Media-CM8738-PCI-Audiofamilie"
+        }
+      }
+    ],
+    "audio-microphone-capture-route": [
+      {
+        "id": "audio-intel-cougar-point-hda",
+        "name": {
+          "en": "Intel Cougar Point HDA controller",
+          "de": "Intel-Cougar-Point-HDA-Controller"
+        }
+      },
+      {
+        "id": "audio-amd-x570-hda",
+        "name": {
+          "en": "AMD HDA controller identity 1022:1487",
+          "de": "AMD-HDA-Controllerkennung 1022:1487"
+        }
+      },
+      {
+        "id": "audio-realtek-alc892-codec",
+        "name": {
+          "en": "Realtek ALC892 HDA codec family",
+          "de": "Realtek-ALC892-HDA-Codecfamilie"
+        }
+      },
+      {
+        "id": "audio-usb-audio-class",
+        "name": {
+          "en": "USB Audio Class PCM interfaces",
+          "de": "USB-Audio-Class-PCM-Interfaces"
+        }
+      }
+    ],
+    "audio-default-output-muted": [
+      {
+        "id": "audio-realtek-alc892-codec",
+        "name": {
+          "en": "Realtek ALC892 HDA codec family",
+          "de": "Realtek-ALC892-HDA-Codecfamilie"
+        }
+      },
+      {
+        "id": "audio-hda-hdmi-display-codec",
+        "name": {
+          "en": "HDA HDMI/DisplayPort audio codecs",
+          "de": "HDA-HDMI-/DisplayPort-Audiocodecs"
+        }
+      },
+      {
+        "id": "audio-ensoniq-es1371",
+        "name": {
+          "en": "Ensoniq ES1371 AudioPCI family",
+          "de": "Ensoniq-ES1371-AudioPCI-Familie"
+        }
+      },
+      {
+        "id": "audio-creative-emu10k1",
+        "name": {
+          "en": "Creative EMU10K1 PCI audio family",
+          "de": "Creative-EMU10K1-PCI-Audiofamilie"
+        }
+      },
+      {
+        "id": "audio-cmedia-cm8738",
+        "name": {
+          "en": "C-Media CM8738 PCI audio family",
+          "de": "C-Media-CM8738-PCI-Audiofamilie"
+        }
+      },
+      {
+        "id": "audio-intel-ich-ac97",
+        "name": {
+          "en": "Intel 82801AA AC97 controller",
+          "de": "Intel-82801AA-AC97-Controller"
+        }
+      }
+    ],
+    "audio-hdmi-eld-missing": [
+      {
+        "id": "audio-hda-hdmi-display-codec",
+        "name": {
+          "en": "HDA HDMI/DisplayPort audio codecs",
+          "de": "HDA-HDMI-/DisplayPort-Audiocodecs"
+        }
+      }
+    ],
+    "audio-usb-rate-clock": [
+      {
+        "id": "audio-usb-audio-class",
+        "name": {
+          "en": "USB Audio Class PCM interfaces",
+          "de": "USB-Audio-Class-PCM-Interfaces"
+        }
+      }
+    ],
+    "audio-session-device-access": [
+      {
+        "id": "audio-usb-midi-class",
+        "name": {
+          "en": "USB MIDI streaming interfaces",
+          "de": "USB-MIDI-Streaming-Interfaces"
+        }
+      }
+    ],
+    "network-dhcp-no-lease": [
+      {
+        "id": "virtual-virtio-net-modern",
+        "name": {
+          "en": "Virtio network function over modern PCI",
+          "de": "Virtio-Netzwerkfunktion über modernes PCI"
+        }
+      }
+    ],
+    "network-dns-stub-resolution": [
+      {
+        "id": "virtual-virtio-net-modern",
+        "name": {
+          "en": "Virtio network function over modern PCI",
+          "de": "Virtio-Netzwerkfunktion über modernes PCI"
+        }
+      }
+    ],
+    "memory-pressure-reclaim-stalls": [
+      {
+        "id": "virtual-virtio-balloon-modern",
+        "name": {
+          "en": "Virtio memory balloon over modern PCI",
+          "de": "Virtio-Speicherballon über modernes PCI"
+        }
+      }
+    ],
+    "swap-thrashing-latency": [
+      {
+        "id": "virtual-virtio-balloon-modern",
+        "name": {
+          "en": "Virtio memory balloon over modern PCI",
+          "de": "Virtio-Speicherballon über modernes PCI"
+        }
+      }
+    ],
+    "acl-mask-restricts-access": [
+      {
+        "id": "virtual-virtio-9p-modern",
+        "name": {
+          "en": "Virtio 9P filesystem transport over modern PCI",
+          "de": "Virtio-9P-Dateisystemtransport über modernes PCI"
+        }
+      }
+    ],
+    "boot-fstab-emergency": [
+      {
+        "id": "virtual-virtio-9p-modern",
+        "name": {
+          "en": "Virtio 9P filesystem transport over modern PCI",
+          "de": "Virtio-9P-Dateisystemtransport über modernes PCI"
+        }
+      }
+    ],
+    "xorg-no-screens-found": [
+      {
+        "id": "virtual-virtio-gpu-modern",
+        "name": {
+          "en": "Virtio GPU over modern PCI",
+          "de": "Virtio-GPU über modernes PCI"
+        }
+      }
+    ],
+    "audio-pipewire-user-service": [
+      {
+        "id": "virtual-virtio-sound-modern",
+        "name": {
+          "en": "Virtio sound over modern PCI",
+          "de": "Virtio-Sound über modernes PCI"
+        }
+      }
+    ],
+    "audio-pipewire-xruns": [
+      {
+        "id": "virtual-virtio-sound-modern",
+        "name": {
+          "en": "Virtio sound over modern PCI",
+          "de": "Virtio-Sound über modernes PCI"
+        }
+      }
+    ],
+    "network-wifi-rfkill": [
+      {
+        "id": "wifi-intel-7265",
+        "name": {
+          "en": "Intel Wireless 7265 family",
+          "de": "Intel-Wireless-7265-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-8265",
+        "name": {
+          "en": "Intel 8265 / 8275 PCIe family",
+          "de": "Intel-8265-/8275-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-9260",
+        "name": {
+          "en": "Intel Wireless-AC 9260 family",
+          "de": "Intel-Wireless-AC-9260-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-ax200",
+        "name": {
+          "en": "Intel AX200 PCIe family",
+          "de": "Intel-AX200-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-ax210",
+        "name": {
+          "en": "Intel AX210 PCIe family",
+          "de": "Intel-AX210-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-be200",
+        "name": {
+          "en": "Intel BE200-class PCIe family",
+          "de": "Intel-BE200-PCIe-Familienkontext"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8723be",
+        "name": {
+          "en": "Realtek RTL8723BE",
+          "de": "Realtek RTL8723BE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8821ce",
+        "name": {
+          "en": "Realtek RTL8821CE",
+          "de": "Realtek RTL8821CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8822ce",
+        "name": {
+          "en": "Realtek RTL8822CE",
+          "de": "Realtek RTL8822CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8852be",
+        "name": {
+          "en": "Realtek RTL8852BE",
+          "de": "Realtek RTL8852BE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8852ce",
+        "name": {
+          "en": "Realtek RTL8852CE",
+          "de": "Realtek RTL8852CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8822bu",
+        "name": {
+          "en": "Realtek RTL8822BU USB family",
+          "de": "Realtek-RTL8822BU-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-atheros-ath9k-002b",
+        "name": {
+          "en": "Atheros ath9k PCIe family (168c:002b)",
+          "de": "Atheros-ath9k-PCIe-Familie (168c:002b)"
+        }
+      },
+      {
+        "id": "wifi-atheros-ar9271-usb",
+        "name": {
+          "en": "Atheros AR9271 USB family",
+          "de": "Atheros-AR9271-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qca6174",
+        "name": {
+          "en": "Qualcomm Atheros QCA6174 family",
+          "de": "Qualcomm-Atheros-QCA6174-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qca6390",
+        "name": {
+          "en": "Qualcomm QCA6390 PCIe family",
+          "de": "Qualcomm-QCA6390-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-wcn6855",
+        "name": {
+          "en": "Qualcomm WCN6855 PCIe family",
+          "de": "Qualcomm-WCN6855-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qcn9274",
+        "name": {
+          "en": "Qualcomm QCN9274 PCIe family",
+          "de": "Qualcomm-QCN9274-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7601u",
+        "name": {
+          "en": "MediaTek MT7601U USB family",
+          "de": "MediaTek-MT7601U-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7612u",
+        "name": {
+          "en": "MediaTek MT7612U / MT76x2 USB family",
+          "de": "MediaTek-MT7612U-/MT76x2-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7921-pcie",
+        "name": {
+          "en": "MediaTek MT7921 PCIe family",
+          "de": "MediaTek-MT7921-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7922-pcie",
+        "name": {
+          "en": "MediaTek MT7922 PCIe family",
+          "de": "MediaTek-MT7922-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7925-pcie",
+        "name": {
+          "en": "MediaTek MT7925 PCIe family",
+          "de": "MediaTek-MT7925-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7921-usb",
+        "name": {
+          "en": "MediaTek MT7921 USB family",
+          "de": "MediaTek-MT7921-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm4313",
+        "name": {
+          "en": "Broadcom BCM4313 / BCMA Wi-Fi family",
+          "de": "Broadcom-BCM4313-/BCMA-WLAN-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm43602",
+        "name": {
+          "en": "Broadcom BCM43602 PCIe FullMAC family",
+          "de": "Broadcom-BCM43602-PCIe-FullMAC-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm4356",
+        "name": {
+          "en": "Broadcom BCM4356 PCIe FullMAC family",
+          "de": "Broadcom-BCM4356-PCIe-FullMAC-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm43236-usb",
+        "name": {
+          "en": "Broadcom BCM43236 USB FullMAC family",
+          "de": "Broadcom-BCM43236-USB-FullMAC-Familie"
+        }
+      }
+    ],
+    "network-wifi-firmware-missing": [
+      {
+        "id": "wifi-intel-7265",
+        "name": {
+          "en": "Intel Wireless 7265 family",
+          "de": "Intel-Wireless-7265-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-8265",
+        "name": {
+          "en": "Intel 8265 / 8275 PCIe family",
+          "de": "Intel-8265-/8275-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-9260",
+        "name": {
+          "en": "Intel Wireless-AC 9260 family",
+          "de": "Intel-Wireless-AC-9260-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-ax200",
+        "name": {
+          "en": "Intel AX200 PCIe family",
+          "de": "Intel-AX200-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-ax210",
+        "name": {
+          "en": "Intel AX210 PCIe family",
+          "de": "Intel-AX210-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-be200",
+        "name": {
+          "en": "Intel BE200-class PCIe family",
+          "de": "Intel-BE200-PCIe-Familienkontext"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8723be",
+        "name": {
+          "en": "Realtek RTL8723BE",
+          "de": "Realtek RTL8723BE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8821ce",
+        "name": {
+          "en": "Realtek RTL8821CE",
+          "de": "Realtek RTL8821CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8822ce",
+        "name": {
+          "en": "Realtek RTL8822CE",
+          "de": "Realtek RTL8822CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8852be",
+        "name": {
+          "en": "Realtek RTL8852BE",
+          "de": "Realtek RTL8852BE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8852ce",
+        "name": {
+          "en": "Realtek RTL8852CE",
+          "de": "Realtek RTL8852CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8822bu",
+        "name": {
+          "en": "Realtek RTL8822BU USB family",
+          "de": "Realtek-RTL8822BU-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-atheros-ar9271-usb",
+        "name": {
+          "en": "Atheros AR9271 USB family",
+          "de": "Atheros-AR9271-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qca6174",
+        "name": {
+          "en": "Qualcomm Atheros QCA6174 family",
+          "de": "Qualcomm-Atheros-QCA6174-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qca6390",
+        "name": {
+          "en": "Qualcomm QCA6390 PCIe family",
+          "de": "Qualcomm-QCA6390-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-wcn6855",
+        "name": {
+          "en": "Qualcomm WCN6855 PCIe family",
+          "de": "Qualcomm-WCN6855-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qcn9274",
+        "name": {
+          "en": "Qualcomm QCN9274 PCIe family",
+          "de": "Qualcomm-QCN9274-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7601u",
+        "name": {
+          "en": "MediaTek MT7601U USB family",
+          "de": "MediaTek-MT7601U-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7612u",
+        "name": {
+          "en": "MediaTek MT7612U / MT76x2 USB family",
+          "de": "MediaTek-MT7612U-/MT76x2-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7921-pcie",
+        "name": {
+          "en": "MediaTek MT7921 PCIe family",
+          "de": "MediaTek-MT7921-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7922-pcie",
+        "name": {
+          "en": "MediaTek MT7922 PCIe family",
+          "de": "MediaTek-MT7922-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7925-pcie",
+        "name": {
+          "en": "MediaTek MT7925 PCIe family",
+          "de": "MediaTek-MT7925-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7921-usb",
+        "name": {
+          "en": "MediaTek MT7921 USB family",
+          "de": "MediaTek-MT7921-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm4313",
+        "name": {
+          "en": "Broadcom BCM4313 / BCMA Wi-Fi family",
+          "de": "Broadcom-BCM4313-/BCMA-WLAN-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm43602",
+        "name": {
+          "en": "Broadcom BCM43602 PCIe FullMAC family",
+          "de": "Broadcom-BCM43602-PCIe-FullMAC-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm4356",
+        "name": {
+          "en": "Broadcom BCM4356 PCIe FullMAC family",
+          "de": "Broadcom-BCM4356-PCIe-FullMAC-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm43236-usb",
+        "name": {
+          "en": "Broadcom BCM43236 USB FullMAC family",
+          "de": "Broadcom-BCM43236-USB-FullMAC-Familie"
+        }
+      }
+    ],
+    "network-wifi-authentication": [
+      {
+        "id": "wifi-intel-7265",
+        "name": {
+          "en": "Intel Wireless 7265 family",
+          "de": "Intel-Wireless-7265-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-8265",
+        "name": {
+          "en": "Intel 8265 / 8275 PCIe family",
+          "de": "Intel-8265-/8275-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-9260",
+        "name": {
+          "en": "Intel Wireless-AC 9260 family",
+          "de": "Intel-Wireless-AC-9260-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-ax200",
+        "name": {
+          "en": "Intel AX200 PCIe family",
+          "de": "Intel-AX200-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-ax210",
+        "name": {
+          "en": "Intel AX210 PCIe family",
+          "de": "Intel-AX210-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-intel-be200",
+        "name": {
+          "en": "Intel BE200-class PCIe family",
+          "de": "Intel-BE200-PCIe-Familienkontext"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8723be",
+        "name": {
+          "en": "Realtek RTL8723BE",
+          "de": "Realtek RTL8723BE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8821ce",
+        "name": {
+          "en": "Realtek RTL8821CE",
+          "de": "Realtek RTL8821CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8822ce",
+        "name": {
+          "en": "Realtek RTL8822CE",
+          "de": "Realtek RTL8822CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8852be",
+        "name": {
+          "en": "Realtek RTL8852BE",
+          "de": "Realtek RTL8852BE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8852ce",
+        "name": {
+          "en": "Realtek RTL8852CE",
+          "de": "Realtek RTL8852CE"
+        }
+      },
+      {
+        "id": "wifi-realtek-rtl8822bu",
+        "name": {
+          "en": "Realtek RTL8822BU USB family",
+          "de": "Realtek-RTL8822BU-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-atheros-ath9k-002b",
+        "name": {
+          "en": "Atheros ath9k PCIe family (168c:002b)",
+          "de": "Atheros-ath9k-PCIe-Familie (168c:002b)"
+        }
+      },
+      {
+        "id": "wifi-atheros-ar9271-usb",
+        "name": {
+          "en": "Atheros AR9271 USB family",
+          "de": "Atheros-AR9271-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qca6174",
+        "name": {
+          "en": "Qualcomm Atheros QCA6174 family",
+          "de": "Qualcomm-Atheros-QCA6174-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qca6390",
+        "name": {
+          "en": "Qualcomm QCA6390 PCIe family",
+          "de": "Qualcomm-QCA6390-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-wcn6855",
+        "name": {
+          "en": "Qualcomm WCN6855 PCIe family",
+          "de": "Qualcomm-WCN6855-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-qualcomm-qcn9274",
+        "name": {
+          "en": "Qualcomm QCN9274 PCIe family",
+          "de": "Qualcomm-QCN9274-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7601u",
+        "name": {
+          "en": "MediaTek MT7601U USB family",
+          "de": "MediaTek-MT7601U-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7612u",
+        "name": {
+          "en": "MediaTek MT7612U / MT76x2 USB family",
+          "de": "MediaTek-MT7612U-/MT76x2-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7921-pcie",
+        "name": {
+          "en": "MediaTek MT7921 PCIe family",
+          "de": "MediaTek-MT7921-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7922-pcie",
+        "name": {
+          "en": "MediaTek MT7922 PCIe family",
+          "de": "MediaTek-MT7922-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7925-pcie",
+        "name": {
+          "en": "MediaTek MT7925 PCIe family",
+          "de": "MediaTek-MT7925-PCIe-Familie"
+        }
+      },
+      {
+        "id": "wifi-mediatek-mt7921-usb",
+        "name": {
+          "en": "MediaTek MT7921 USB family",
+          "de": "MediaTek-MT7921-USB-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm4313",
+        "name": {
+          "en": "Broadcom BCM4313 / BCMA Wi-Fi family",
+          "de": "Broadcom-BCM4313-/BCMA-WLAN-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm43602",
+        "name": {
+          "en": "Broadcom BCM43602 PCIe FullMAC family",
+          "de": "Broadcom-BCM43602-PCIe-FullMAC-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm4356",
+        "name": {
+          "en": "Broadcom BCM4356 PCIe FullMAC family",
+          "de": "Broadcom-BCM4356-PCIe-FullMAC-Familie"
+        }
+      },
+      {
+        "id": "wifi-broadcom-bcm43236-usb",
+        "name": {
+          "en": "Broadcom BCM43236 USB FullMAC family",
+          "de": "Broadcom-BCM43236-USB-FullMAC-Familie"
+        }
+      }
+    ],
+    "audio-bluetooth-headset-profile": [
+      {
+        "id": "bluetooth-usb-hci-class",
+        "name": {
+          "en": "USB Bluetooth HCI transport class",
+          "de": "USB-Bluetooth-HCI-Transportklasse"
+        }
+      },
+      {
+        "id": "bluetooth-intel-usb-0032",
+        "name": {
+          "en": "Intel USB Bluetooth family (8087:0032)",
+          "de": "Intel-USB-Bluetooth-Familie (8087:0032)"
+        }
+      },
+      {
+        "id": "bluetooth-realtek-rtl8761bu-usb",
+        "name": {
+          "en": "Realtek RTL8761BU-class USB Bluetooth",
+          "de": "Realtek-RTL8761BU-USB-Bluetooth-Familie"
+        }
+      },
+      {
+        "id": "bluetooth-mediatek-usb-0608",
+        "name": {
+          "en": "MediaTek USB Bluetooth family (0e8d:0608)",
+          "de": "MediaTek-USB-Bluetooth-Familie (0e8d:0608)"
+        }
+      },
+      {
+        "id": "bluetooth-broadcom-bcm20702b0-usb",
+        "name": {
+          "en": "Broadcom BCM20702B0-class USB Bluetooth",
+          "de": "Broadcom-BCM20702B0-USB-Bluetooth-Familie"
+        }
+      },
+      {
+        "id": "bluetooth-atheros-ar3011-loader",
+        "name": {
+          "en": "Atheros AR3011 USB firmware-loader family",
+          "de": "Atheros-AR3011-USB-Firmware-Loader"
+        }
+      },
+      {
+        "id": "bluetooth-atheros-ar3012-loader",
+        "name": {
+          "en": "Atheros AR3012 USB patch/sysconfig family",
+          "de": "Atheros-AR3012-USB-Patch-/Sysconfig-Familie"
+        }
+      },
+      {
+        "id": "bluetooth-uart-h4-context",
+        "name": {
+          "en": "Bluetooth H4 UART transport context",
+          "de": "Bluetooth-H4-UART-Transportkontext"
+        }
+      },
+      {
+        "id": "bluetooth-uart-h5-context",
+        "name": {
+          "en": "Bluetooth H5 three-wire UART context",
+          "de": "Bluetooth-H5-Drei-Draht-UART-Kontext"
+        }
+      },
+      {
+        "id": "bluetooth-qualcomm-uart-context",
+        "name": {
+          "en": "Qualcomm Bluetooth UART family context",
+          "de": "Qualcomm-Bluetooth-UART-Familienkontext"
+        }
+      },
+      {
+        "id": "bluetooth-broadcom-uart-context",
+        "name": {
+          "en": "Broadcom Bluetooth UART family context",
+          "de": "Broadcom-Bluetooth-UART-Familienkontext"
+        }
+      },
+      {
+        "id": "bluetooth-sdio-hci-context",
+        "name": {
+          "en": "Bluetooth SDIO HCI transport context",
+          "de": "Bluetooth-SDIO-HCI-Transportkontext"
+        }
+      }
+    ]
+  }
+}

@@ -10,7 +10,11 @@ test('an isolated rebuild is deterministic and removing an entry removes its gen
   const fixture=await mkdtemp(join(tmpdir(),'lfl-build-'));t.after(()=>rm(fixture,{recursive:true,force:true}));
   for(const dir of ['scripts','content','assets/linux-fix-lab'])await mkdir(join(fixture,dir),{recursive:true});
   await cp(new URL('scripts/build-linux-fix-lab.mjs',root),join(fixture,'scripts/build-linux-fix-lab.mjs'));
+  await cp(new URL('scripts/hardware-integration.mjs',root),join(fixture,'scripts/hardware-integration.mjs'));
   await cp(new URL('content/linux-fix-lab',root),join(fixture,'content/linux-fix-lab'),{recursive:true});
+  // Publication state is part of generated Lab HTML once contextual integration is approved.
+  await mkdir(join(fixture,'content/linux-hardware-explorer'),{recursive:true});
+  for(const name of ['publication.json','integration.json'])await cp(new URL('content/linux-hardware-explorer/'+name,root),join(fixture,'content/linux-hardware-explorer',name));
   const run=()=>spawnSync(process.execPath,['scripts/build-linux-fix-lab.mjs'],{cwd:fixture,encoding:'utf8'});
   const first=run();assert.equal(first.status,0,first.stderr);
   const manifest=await readFile(join(fixture,'content/linux-fix-lab/generated-manifest.json'),'utf8');
@@ -27,6 +31,7 @@ test('an isolated rebuild is deterministic and removing an entry removes its gen
 test('existing sitemap generator adds, removes and excludes localized Lab pages without duplicate ownership',async t=> {
   const fixture=await mkdtemp(join(tmpdir(),'lfl-sitemap-'));t.after(()=>rm(fixture,{recursive:true,force:true}));
   await mkdir(join(fixture,'scripts'));await cp(new URL('scripts/sync-seo.mjs',root),join(fixture,'scripts/sync-seo.mjs'));
+  await cp(new URL('scripts/hardware-integration.mjs',root),join(fixture,'scripts/hardware-integration.mjs'));
   const paths=['/linux-fix-lab/first-problem/','/de/linux-fix-lab/erstes-problem/'];
   const alternate=`<link rel="alternate" hreflang="en" href="${origin}${paths[0]}"><link rel="alternate" hreflang="de" href="${origin}${paths[1]}">`;
   for(const [index,path]of paths.entries()){await mkdir(join(fixture,path.slice(1)),{recursive:true});await writeFile(join(fixture,path.slice(1),'index.html'),`<html lang="${index?'de':'en'}"><head><title>Fixture</title>${alternate}</head><body><h1>Fixture</h1></body></html>`);}
