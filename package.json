@@ -6,6 +6,9 @@
     "test:seo": "node scripts/audit-seo.mjs",
     "test:novel": "node --test tests/lost-administrator-novel.test.mjs",
     "build:fix-lab": "node scripts/build-linux-fix-lab.mjs && node scripts/sync-seo.mjs --sitemaps-only",
-    "test:fix-lab": "node --test tests/linux-fix-lab*.test.mjs"
+    "test:fix-lab": "node --test tests/linux-fix-lab*.test.mjs",
+    "build:hardware-explorer": "node scripts/build-linux-hardware-explorer.mjs && node scripts/build-linux-fix-lab.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:hardware-explorer": "node --test tests/linux-hardware-explorer*.test.mjs",
+    "test:hardware-release": "node scripts/check-hardware-release.mjs"
   }
 }

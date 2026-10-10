@@ -1,0 +1,489 @@
+{
+  "schemaVersion": 1,
+  "reviewed": "2026-10-10",
+  "snapshot": "3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0",
+  "method": "Golden numeric facts and driver associations inspected in pinned upstream tables / official versioned NVIDIA README. Synthetic observed records; no hardware execution.",
+  "cases": [
+    {
+      "profileId": "amd-polaris10",
+      "observed": {
+        "bus": "pci",
+        "vendor": "1002",
+        "device": "67df"
+      },
+      "driverCandidates": [
+        "amdgpu"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c",
+          "resourceSha256": "eb8f18a3abbe50f51d43acc9aac61da44cd1da1dcf26e6994c15f3c1b5abfe3f",
+          "line": 2042,
+          "claim": "1002:67df maps to CHIP_POLARIS10; no subsystem or retail-board inference."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c",
+          "resourceSha256": "861a8fdd98745ae8b9bf4d500322b82306d4e10e98bf1d356bc8ba7e8870a37e",
+          "line": 803,
+          "claim": "Checked the named family MODULE_FIRMWARE declarations and firmware initialization path."
+        }
+      ]
+    },
+    {
+      "profileId": "nvidia-rtx-4090",
+      "observed": {
+        "bus": "pci",
+        "vendor": "10de",
+        "device": "2684"
+      },
+      "driverCandidates": [
+        "nouveau",
+        "nvidia"
+      ],
+      "evidence": [
+        {
+          "url": "https://download.nvidia.com/XFree86/Linux-x86_64/580.95.05/README/supportedchips.html",
+          "resourceSha256": "ae4f87a4984120e8478b5c4c14dd9d2cdfdfc0e5508c2d92e217cf4a84f4fed3",
+          "line": 4935,
+          "claim": "Checked the unqualified 2684 row labelled NVIDIA GeForce RTX 4090; NVIDIA vendor number 10de is independently defined in Linux pci_ids.h."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/nouveau/nouveau_drm.c",
+          "resourceSha256": "288261cfcef0c9a2b32cd03cffde5d1946c4b206d8686a454be1718d13b2d108",
+          "line": null,
+          "claim": "Nouveau matches NVIDIA vendor display-class devices via PCI_ANY_ID, not a literal per-product recognition table."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/linux/pci_ids.h",
+          "resourceSha256": "020fac001871c0f8441c1294f787231fb6cfbf2c55915ca8f918262e2db4487c",
+          "line": null,
+          "claim": "PCI_VENDOR_ID_NVIDIA is 0x10de."
+        }
+      ]
+    },
+    {
+      "profileId": "intel-tiger-lake-graphics",
+      "observed": {
+        "bus": "pci",
+        "vendor": "8086",
+        "device": "9a49"
+      },
+      "driverCandidates": [
+        "i915",
+        "xe"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/drm/intel/pciids.h",
+          "resourceSha256": "102d8f821c9464ad17c0160535a4e3811f49609f199f1b6d7268050d71d8e8f0",
+          "line": 628,
+          "claim": "Checked 0x9a49 within INTEL_TGL_IDS; family metadata only, no retail-SKU inference."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/i915/i915_pci.c",
+          "resourceSha256": "faf891f17e233c24c183338e798c8867a4e0f7afced17c7f342e988fbc38dbf1",
+          "line": null,
+          "claim": "Checked the consuming platform macro and i915 device-info pointer for INTEL_TGL_IDS."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/gpu/drm/xe/xe_pci.c",
+          "resourceSha256": "061f949a3c7859c5813ed22bb4306b7b6af3492ed344f44fb128b4ee160dd19a",
+          "line": null,
+          "claim": "Checked the corresponding TGL/ADLP/DG2 platform macro; table inclusion is not proof of the default probe policy."
+        }
+      ]
+    },
+    {
+      "profileId": "wifi-intel-ax200",
+      "observed": {
+        "bus": "pci",
+        "vendor": "8086",
+        "device": "2723"
+      },
+      "driverCandidates": [
+        "iwlwifi"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/intel/iwlwifi/pcie/drv.c#L489",
+          "resourceSha256": "989cec8da7463839de06d79693dfded9b5c1a2db5972b29dcffce1432825f2b9",
+          "line": 489,
+          "claim": "Checked the 2723 PCI entry and associated family/name selection; subsystem and radio selectors may refine it."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/intel/iwlwifi/cfg/22000.c",
+          "resourceSha256": "fda65f1449a6bb20a7e586628ab0261286f651839621c98bbd40584018c3a76e",
+          "line": null,
+          "claim": "Checked the declared family firmware prefix; examples are not proof of runtime loading."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/intel/iwlwifi/cfg/rf-hr.c#L55",
+          "resourceSha256": "07b5e6eb19d3afe2bef0867f9cc665e133c861c6c9c3ce4d80924d5b64c9e1af",
+          "line": 55,
+          "claim": "Checked the AX200 radio family name."
+        }
+      ]
+    },
+    {
+      "profileId": "wifi-intel-7265",
+      "observed": {
+        "bus": "pci",
+        "vendor": "8086",
+        "device": "095a",
+        "subsystemDevice": "5010"
+      },
+      "driverCandidates": [
+        "iwlwifi"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/intel/iwlwifi/pcie/drv.c#L339",
+          "resourceSha256": "989cec8da7463839de06d79693dfded9b5c1a2db5972b29dcffce1432825f2b9",
+          "line": 339,
+          "claim": "Checked the 095a PCI entry and associated family/name selection; subsystem and radio selectors may refine it."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/intel/iwlwifi/cfg/7000.c",
+          "resourceSha256": "a77d56b57b0417508276b24b7ad21a10dec3efb8163c90f3c2da64841d1d2f9d",
+          "line": null,
+          "claim": "Checked the declared family firmware prefix; examples are not proof of runtime loading."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/linux/pci_ids.h#L2696",
+          "resourceSha256": "020fac001871c0f8441c1294f787231fb6cfbf2c55915ca8f918262e2db4487c",
+          "line": 2696,
+          "claim": "Checked PCI_VENDOR_ID_INTEL is 8086."
+        }
+      ]
+    },
+    {
+      "profileId": "wifi-qualcomm-qcn9274",
+      "observed": {
+        "bus": "pci",
+        "vendor": "17cb",
+        "device": "1109"
+      },
+      "driverCandidates": [
+        "ath12k_wifi7"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/ath/ath12k/wifi7/pci.c",
+          "resourceSha256": "da602c1e7210a710be9eb84f3f08379f956fcf50101ae3c83a40ce52626c3113",
+          "line": 20,
+          "claim": "Checked the curated 17cb:1109 table entry and the hardware selection path."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/wireless/ath/ath12k/wifi7/hw.c",
+          "resourceSha256": "f6affef51b23c7225f601c2acbc1a4e0a70628574750bdefdeea486a659f3520",
+          "line": null,
+          "claim": "Checked the documented family implementation or firmware directory definitions."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/linux/pci_ids.h#L2421",
+          "resourceSha256": "020fac001871c0f8441c1294f787231fb6cfbf2c55915ca8f918262e2db4487c",
+          "line": 2421,
+          "claim": "Checked the 17cb vendor macro used by this PCI table."
+        }
+      ]
+    },
+    {
+      "profileId": "realtek-rtl8125-family",
+      "observed": {
+        "bus": "pci",
+        "vendor": "10ec",
+        "device": "8125"
+      },
+      "driverCandidates": [
+        "r8169"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/ethernet/realtek/r8169_main.c#L245",
+          "resourceSha256": "318a06c27e43a1da82db01a3ff203a09f2d1790d2ffd1852833a1777568b284c",
+          "line": 245,
+          "claim": "The exact 8125 table entry and MAC/firmware examples are present."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/ethernet/realtek/Kconfig#L97",
+          "resourceSha256": "d5c8d10202baa2964fcf0d8c93f766123e1298a07b83c2d2e9f78bce8f092115",
+          "line": 97,
+          "claim": "The config documents RTL8125 2.5-gigabit support in r8169."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/ethernet/realtek/r8169_firmware.c#L214",
+          "resourceSha256": "24f9397bab187dbdcf20918e86740081e2c44934b0427ca7902fa7ac773fa1b9",
+          "line": 214,
+          "claim": "The helper handles requested firmware blobs."
+        }
+      ]
+    },
+    {
+      "profileId": "asix-ax88179-usb",
+      "observed": {
+        "bus": "usb",
+        "vendor": "0b95",
+        "device": "1790",
+        "usbInterfaceTriplets": [
+          "ff:ff:00"
+        ]
+      },
+      "driverCandidates": [
+        "ax88179_178a"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/usb/ax88179_178a.c#L1884",
+          "resourceSha256": "fa49b818e1051cf13e765792a8a386aa828e4ac9bd516f16c2b134c6edf6a6c8",
+          "line": 1884,
+          "claim": "The exact USB pair is qualified by vendor-specific interface ff/ff/00."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/net/usb/Kconfig#L198",
+          "resourceSha256": "70d5c60c8c2dc9eb62ee0358b82f8f1f4d081c4f55025ee307d8e179fc18e899",
+          "line": 198,
+          "claim": "The ASIX configuration describes the AX88179/178A driver family."
+        }
+      ]
+    },
+    {
+      "profileId": "marvell-88se912x-ahci",
+      "observed": {
+        "bus": "pci",
+        "vendor": "1b4b",
+        "device": "9123",
+        "classCode": "010601"
+      },
+      "driverCandidates": [
+        "ahci"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/ata/ahci.c#L1443",
+          "resourceSha256": "bd0a2a7faf387e0f26ca1b936dee7a032b137dd353c3b91e80f4d01532bee444",
+          "line": 1443,
+          "claim": "The 9123 entry has an 88se9128 comment and full AHCI class qualification."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/linux/pci_ids.h#L1692",
+          "resourceSha256": "020fac001871c0f8441c1294f787231fb6cfbf2c55915ca8f918262e2db4487c",
+          "line": 1692,
+          "claim": "The extended Marvell PCI vendor constant is 1b4b."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/Documentation/driver-api/libata.rst#L12",
+          "resourceSha256": "be626e4354f8b1b8af864f14297920b4eac7966d735806ff0b91ec4bc5f9380e",
+          "line": 12,
+          "claim": "libata provides ATA transports and SCSI-to-ATA translation; a controller and its attached device are separate identities."
+        }
+      ]
+    },
+    {
+      "profileId": "audio-creative-emu10k1",
+      "observed": {
+        "bus": "pci",
+        "vendor": "1102",
+        "device": "0002"
+      },
+      "driverCandidates": [
+        "snd_emu10k1"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/sound/pci/emu10k1/emu10k1.c#L61",
+          "resourceSha256": "689bfa3575638bda4618a8b88544a2731e37e45233400968f826e39a324bf8a2",
+          "line": 61,
+          "claim": "Checked exact 1102:0002 table entry and relevant driver configuration."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/Documentation/sound/alsa-configuration.rst#L732",
+          "resourceSha256": "335fe76e86f5a07a5304cfadff595dd461fb446e42dddba6e80c739139b2c34a",
+          "line": 732,
+          "claim": "ALSA configuration documentation describes this driver family and its routing/options."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/linux/pci_ids.h#L1413",
+          "resourceSha256": "020fac001871c0f8441c1294f787231fb6cfbf2c55915ca8f918262e2db4487c",
+          "line": 1413,
+          "claim": "Resolved vendor and device constants where the ID entry uses symbols."
+        }
+      ]
+    },
+    {
+      "profileId": "usb-cp210x-ea60",
+      "observed": {
+        "bus": "usb",
+        "vendor": "10c4",
+        "device": "ea60"
+      },
+      "driverCandidates": [
+        "cp210x"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/usb/serial/cp210x.c#L170",
+          "resourceSha256": "131becd92f8917b1a28eea8ebd38be07e493d5b126d3adbe848a46d81e5553f1",
+          "line": 170,
+          "claim": "Checked the exact 10c4:ea60 entry and serial-interface registration."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/Documentation/usb/usb-serial.rst#L314",
+          "resourceSha256": "89924054bf8ecbd5539c4bd21ec23b66636c170c7435cc14768cbe64c0ea4cfe",
+          "line": 314,
+          "claim": "Documentation establishes USB serial devices and tty associations."
+        }
+      ]
+    },
+    {
+      "profileId": "bluetooth-intel-usb-0032",
+      "observed": {
+        "bus": "usb",
+        "vendor": "8087",
+        "device": "0032"
+      },
+      "driverCandidates": [
+        "btusb",
+        "btintel"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/bluetooth/btusb.c#L501",
+          "resourceSha256": "6d3d641ea15cc84834ec1becd3cd1860ec578be6b12ec92c5a06706f2e4678b6",
+          "line": 501,
+          "claim": "Checked 8087:0032 selects BTUSB_INTEL_COMBINED."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/bluetooth/btintel.c#L2062",
+          "resourceSha256": "b1eee607e4d99f5e7d7ec0d95ccefea6368a79ce20c0fb82d65be0d635db1d22",
+          "line": 2062,
+          "claim": "Checked version-based SFI/DDC filename construction and firmware loading."
+        },
+        {
+          "url": "https://github.com/bluez/bluez/blob/master/doc/bluetoothctl.rst",
+          "resourceSha256": "937ac0e9a4a371db6c709cffc417187553804ea72076ca9571f82fb76eb474cd",
+          "line": null,
+          "claim": "list enumerates controllers; show reads adapter properties through the BlueZ daemon. These queries do not start discovery or pair devices."
+        }
+      ]
+    },
+    {
+      "profileId": "input-xbox360-wired-028e",
+      "observed": {
+        "bus": "usb",
+        "vendor": "045e",
+        "device": "028e"
+      },
+      "driverCandidates": [
+        "xpad"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/input/joystick/xpad.c#L123",
+          "resourceSha256": "19dd00fc4b0341ef18575a87b9b3fbd5f809e4588ff2909e2c357af2f2358517",
+          "line": 123,
+          "claim": "Checked the exact device-information record and separate vendor/interface binding macros."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/Documentation/input/devices/xpad.rst#L2",
+          "resourceSha256": "77c77fac8dc9eb1f10d3b7a0b19139f37e69035c29c6580a2187f5a182e380ff",
+          "line": 2,
+          "claim": "Driver documentation establishes the Xbox-compatible controller family; no unsupported feature promise was taken from it."
+        }
+      ]
+    },
+    {
+      "profileId": "intel-ich9-smbus",
+      "observed": {
+        "bus": "pci",
+        "vendor": "8086",
+        "device": "2930"
+      },
+      "driverCandidates": [
+        "i2c_i801"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/i2c/busses/i2c-i801.c",
+          "resourceSha256": "752d89228a166ec26ee11ccebe094896b8ded3600df9da3b998b825bf98b80d0",
+          "line": 30,
+          "claim": "Checked the 8086:2930 constant/table pair and host-adapter registration path."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/Documentation/i2c/busses/i2c-i801.rst",
+          "resourceSha256": "cbe1305fd41232899dcf612922e09ec655421f1d28e6465f742b9c49a652c266",
+          "line": null,
+          "claim": "Checked host/client separation and documented platform/adapter constraints."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/linux/pci_ids.h",
+          "resourceSha256": "020fac001871c0f8441c1294f787231fb6cfbf2c55915ca8f918262e2db4487c",
+          "line": 2910,
+          "claim": "Checked vendor 8086 and selected SMBus constant 2930."
+        }
+      ]
+    },
+    {
+      "profileId": "lsi-sas2008",
+      "observed": {
+        "bus": "pci",
+        "vendor": "1000",
+        "device": "0072"
+      },
+      "driverCandidates": [
+        "mpt3sas"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h#L542",
+          "resourceSha256": "4e184f79f5691b72b3f421cb0a486a6b0d91049c0f429d4ff1366b17aab10321",
+          "line": 542,
+          "claim": "The numeric device constant resolves MPI2_MFGPAGE_DEVID_SAS2008 to 0072; the same header defines the LSI vendor."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/scsi/mpt3sas/mpt3sas_scsih.c#L13870",
+          "resourceSha256": "939e85a516d30081ca0dedbd27d781d004a0f95150ba1cddb867c0e4bbc2464d",
+          "line": 13870,
+          "claim": "The PCI table includes the exact MPI2_MFGPAGE_DEVID_SAS2008 physical-function entry."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/scsi/mpt3sas/Makefile#L3",
+          "resourceSha256": "ece2343290e886fabbcc267b21c9d3e6fc0086319159084b57f0564686b5f1d2",
+          "line": 3,
+          "claim": "The driver object is built as mpt3sas.o."
+        }
+      ]
+    },
+    {
+      "profileId": "virtual-virtio-net-modern",
+      "observed": {
+        "bus": "pci",
+        "vendor": "1af4",
+        "device": "1041"
+      },
+      "driverCandidates": [
+        "virtio_pci",
+        "virtio_net"
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/virtio/virtio_pci_common.c#L665",
+          "resourceSha256": "de48d1c1c37bcc062624c400489bf91917f4c1740806034ccedd1eb48e712ec7",
+          "line": 665,
+          "claim": "PCI transport table matches the Red Hat/Qumranet vendor; this is not a function-driver table."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/drivers/virtio/virtio_pci_modern_dev.c#L250",
+          "resourceSha256": "3382268afb5b1b6a3f1368dcb70cc17e99c178cf39a9de148f428e582c5a75d7",
+          "line": 250,
+          "claim": "The modern PCI transport explicitly computes the virtio type as PCI DID minus 0x1040; transitional devices instead use subsystem_device."
+        },
+        {
+          "url": "https://github.com/torvalds/linux/blob/3857c2fe5449541e24afc5efdb0f81a8a8f9a3a0/include/uapi/linux/virtio_ids.h#L32",
+          "resourceSha256": "1e93d93cec19c79ee1ab77b377cafda051dd9f4ae9920523c5c39ad5ec16bb26",
+          "line": 32,
+          "claim": "Checked the named virtio type constant NET=1; combined with the checked modern mapping, PCI DID is 1041."
+        }
+      ]
+    }
+  ]
+}

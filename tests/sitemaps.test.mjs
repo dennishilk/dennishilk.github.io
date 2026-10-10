@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import test from "node:test";
+import { hardwarePublication } from "../scripts/hardware-integration.mjs";
 
 const root = new URL("../", import.meta.url);
 const siteRoot = root.pathname;
+const hardwareSitemapActive = hardwarePublication(siteRoot).sitemapActive;
+const hardwareNames = hardwareSitemapActive ? ["sitemap-linux-hardware-explorer.xml"] : [];
 const base = "https://www.dennishilk.com";
 
 const sitemapMain = readFileSync(new URL("sitemap.xml", root), "utf8");
@@ -17,7 +20,7 @@ const sitemapBlog = readFileSync(new URL("sitemap-blog.xml", root), "utf8");
 const sitemapFixLab = readFileSync(new URL("sitemap-linux-fix-lab.xml", root), "utf8");
 const sitemapIndex = readFileSync(new URL("sitemap-index.xml", root), "utf8");
 const robots = readFileSync(new URL("robots.txt", root), "utf8");
-const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco, sitemapBlog, sitemapFixLab];
+const allSitemaps = [sitemapMain, sitemapDe, sitemapInternet, sitemapTechnology, sitemapImages, sitemapCisco, sitemapBlog, sitemapFixLab, ...hardwareNames.map(name => readFileSync(new URL(name, root), "utf8"))];
 
 const excludedHtml = new Set([
   "404.html",
@@ -175,7 +178,7 @@ test("robots.txt advertises every maintained sitemap", () => {
     "sitemap-images.xml",
     "sitemap-cisco-doom.xml",
     "sitemap-blog.xml",
-    "sitemap-linux-fix-lab.xml",
+    "sitemap-linux-fix-lab.xml", ...hardwareNames,
     "sitemap-index.xml",
   ]) assert.ok(robots.includes(`Sitemap: ${base}/${name}`), `robots.txt missing ${name}`);
 });
@@ -185,7 +188,7 @@ test("one sitemap index discovers every maintained sitemap", () => {
   assert.ok(sitemapIndex.trimEnd().endsWith("</sitemapindex>"));
   const names = [
     "sitemap.xml", "sitemap-de.xml", "sitemap-internet-observers.xml",
-    "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml", "sitemap-blog.xml", "sitemap-linux-fix-lab.xml",
+    "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml", "sitemap-blog.xml", "sitemap-linux-fix-lab.xml", ...hardwareNames,
   ];
   assert.deepEqual(locs(sitemapIndex).sort(), names.map(name => `${base}/${name}`).sort());
 });
@@ -305,4 +308,21 @@ test("bilingual sitemap alternates never point at missing local routes", () => {
   for (const xml of allSitemaps) {
     for (const url of alternateLinks(xml)) assert.ok(existsSync(publicUrlToPath(url)), `hreflang alternate points to missing file: ${url}`);
   }
+});
+
+
+test("Hardware Explorer dedicated sitemap activates only with the approved publication gate", () => {
+  const actual = existsSync(new URL("sitemap-linux-hardware-explorer.xml", root));
+  if (!hardwareSitemapActive) {
+    assert.equal(sitemapIndex.includes("sitemap-linux-hardware-explorer.xml"), false);
+    assert.equal(robots.includes("sitemap-linux-hardware-explorer.xml"), false);
+    return;
+  }
+  assert.equal(actual, true);
+  const xml = readFileSync(new URL("sitemap-linux-hardware-explorer.xml", root), "utf8");
+  assertWellFormedEnvelope("sitemap-linux-hardware-explorer.xml", xml);
+  const pages = locs(xml);
+  const manifest = JSON.parse(readFileSync(new URL("content/linux-hardware-explorer/generated-manifest.json", root), "utf8"));
+  assert.deepEqual(pages.sort(), Object.keys(manifest.pages).map(path => base + path).sort());
+  for (const url of pages) assert.match(url, /^https:\/\/www\.dennishilk\.com\/(?:de\/)?linux-hardware-explorer\//);
 });

@@ -1,9 +1,11 @@
+import { hardwarePublication } from './hardware-integration.mjs';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 import vm from "node:vm";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://www.dennishilk.com";
+const hardwareSitemapActive = hardwarePublication(root).sitemapActive;
 // Fail closed: the unlisted live test is excluded until a separately approved launch.
 const labPublicationFile = join(root, "content/linux-fix-lab/publication.json");
 const labPublication = existsSync(labPublicationFile) ? JSON.parse(readFileSync(labPublicationFile, "utf8")) : {};
@@ -12,6 +14,7 @@ const sitemapNames = [
   "sitemap.xml", "sitemap-de.xml", "sitemap-internet-observers.xml",
   "sitemap-technology-observers.xml", "sitemap-images.xml", "sitemap-cisco-doom.xml",
   "sitemap-blog.xml", ...(labSitemapActive ? ["sitemap-linux-fix-lab.xml"] : []),
+  ...(hardwareSitemapActive ? ["sitemap-linux-hardware-explorer.xml"] : []),
 ];
 
 const i18nFiles = [
@@ -133,6 +136,7 @@ function isMuseumMirror(source) {
 
 function isIndexable(file, source = readFileSync(file, "utf8")) {
   const path = rel(file);
+  if (/^(?:de\/)?linux-hardware-explorer\//.test(path) && !hardwareSitemapActive) return false;
   if (technicalPages.has(path) || legacyAliases.has(path) || hasNoindex(source)) return false;
   if (path.startsWith("de/") && isMuseumMirror(source)) {
     const counterpart = germanSourceFile(file);
@@ -394,6 +398,7 @@ function imagesFor(file) {
 
 function sitemapOwner(path) {
   const basePath = path.startsWith("de/") ? path.slice("de/".length) : path;
+  if (basePath.startsWith("linux-hardware-explorer/")) return "sitemap-linux-hardware-explorer.xml";
   if (basePath.startsWith("linux-fix-lab/")) return "sitemap-linux-fix-lab.xml";
   if (basePath.startsWith("blog/")) return "sitemap-blog.xml";
   if (ciscoRoutes.has(path)) return "sitemap-cisco-doom.xml";
@@ -468,6 +473,13 @@ function synchronizeSitemaps() {
       if (/^\/(?:de\/)?linux-fix-lab\//.test(path) && /^\d{4}-\d{2}-\d{2}$/.test(page.lastmod)) lastmods.set(`${origin}${path}`, page.lastmod);
     }
   }
+  const hardwareManifest = join(root, "content/linux-hardware-explorer/generated-manifest.json");
+  if (hardwareSitemapActive && existsSync(hardwareManifest)) {
+    const manifest = JSON.parse(readFileSync(hardwareManifest, "utf8"));
+    for (const [path, page] of Object.entries(manifest.pages || {})) {
+      if (/^\/(?:de\/)?linux-hardware-explorer\//.test(path) && /^\d{4}-\d{2}-\d{2}$/.test(page.lastmod)) lastmods.set(`${origin}${path}`, page.lastmod);
+    }
+  }
   const groups = new Map(sitemapNames.map(name => [name, []]));
 
   for (const file of files) groups.get(sitemapOwner(rel(file))).push(file);
@@ -497,6 +509,16 @@ function synchronizeSitemaps() {
     const robotsFile = join(root, "robots.txt"), source = readFileSync(robotsFile, "utf8");
     const advertisement = `Sitemap: ${origin}/sitemap-linux-fix-lab.xml`;
     if (!source.split(/\r?\n/).includes(advertisement)) writeFileSync(robotsFile, source.replace(/\s*$/, "") + "\n" + advertisement + "\n");
+  }
+  if (hardwareSitemapActive && existsSync(join(root, "robots.txt"))) {
+    const robotsFile = join(root, "robots.txt"), source = readFileSync(robotsFile, "utf8");
+    const advertisement = `Sitemap: ${origin}/sitemap-linux-hardware-explorer.xml`;
+    if (!source.split(/\r?\n/).includes(advertisement)) writeFileSync(robotsFile, source.replace(/\s*$/, "") + "\n" + advertisement + "\n");
+  }
+  if (!hardwareSitemapActive && existsSync(join(root, "robots.txt"))) {
+    const robotsFile = join(root, "robots.txt"), source = readFileSync(robotsFile, "utf8");
+    const advertisement = `Sitemap: ${origin}/sitemap-linux-hardware-explorer.xml`;
+    if (source.split(/\r?\n/).includes(advertisement)) writeFileSync(robotsFile, source.split(/\r?\n/).filter(line => line !== advertisement).join("\n"));
   }
 }
 

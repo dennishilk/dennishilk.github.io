@@ -1,0 +1,1337 @@
+{
+  "schemaVersion": 1,
+  "publication": {
+    "phase": "public-launch",
+    "robots": "index,follow,max-image-preview:large",
+    "sitemapActive": true,
+    "integrationActive": true
+  },
+  "profileCount": 154,
+  "numericProfiles": 122,
+  "contextProfiles": 32,
+  "localizedDevicePages": 308,
+  "knowledgePages": 20,
+  "workflowCount": 18,
+  "pages": {
+    "/linux-hardware-explorer/": {
+      "hash": "8164b3c19208403dad9cc74b7a5db833ffbe2e0219d3af08a49651ee6e861256",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-tahiti/": {
+      "hash": "8814951fa10ff13a160e285be2167e6ad651934916aeee968fd00062df46e19c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-bonaire/": {
+      "hash": "efbd7e82715bc58f423ab97b718ef0447fe194f462b08e2f2f63c5c2ef7c48e0",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-polaris10/": {
+      "hash": "5950a38675a8f8ba58c5c82342dfb6b73ae67afcb6573256863801d801fdd321",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-vega10/": {
+      "hash": "37864588935eee29abc46c9c62b0dda81715ba1f68d8e1cbfa2ba2d459342daa",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-navi10/": {
+      "hash": "a022473509c9eb6e6e3de5c438f6cb49115f21181ba562740b19e300be48ec85",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-sienna-cichlid/": {
+      "hash": "6c6cf64366de3c898442c92b6e59076cb363ad66b166a8b5400a68b20a1ae32a",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-renoir/": {
+      "hash": "0d38bd020d62db6f6199985030e860cb29a18a2fbe42fa7b420fb62626796261",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-gc12-ip-discovery/": {
+      "hash": "70bf28ffd608a48a448f92d4b738145f42524caa9cf64a409e9f88c83405187e",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-gtx-750-ti/": {
+      "hash": "2b04d3b639a81653011ab36be5f13c346d9717f714dc0d631026c109847e61bd",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-gtx-980/": {
+      "hash": "c1881d086a190c4e4061e08d1c0c2179bb174af06ce22d34159f32d7e62e748e",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-gtx-1080/": {
+      "hash": "d84654d9ed91855ce3a04ee9557afee19ca1a61aecb2054086ff0bc41f150f68",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-gt-1030/": {
+      "hash": "7d28da5cd418877d4d0e461cc0802de3e3153c0db2efb0a2fad9dee6bb0644a4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-rtx-2080/": {
+      "hash": "5c1a79d8ffce404ef0b93f544b28661a40ce0f13e6602641965b759d9db1e9f1",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-rtx-3080/": {
+      "hash": "fc17dca245eb6e6e3e5e68953e80b87d6223b77bd4b5768367ec7fa76d839209",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-rtx-4090/": {
+      "hash": "280aac0e99cfbcd6eacd57252c43e21498b1d5baa0717754de63e9e8ee6c71ca",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-rtx-5090/": {
+      "hash": "bb7cc2242121157b0602ad5c3ec1a7287db666daf369d402d00639ce137a4bb8",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-ivy-bridge-gt2-mobile/": {
+      "hash": "8f171a4955d172b6953f9a1bb1459e98475af698c964e7b894cb7ddc3af91f73",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-haswell-gt2-desktop/": {
+      "hash": "23caa4d5eceeca0431160bc7262d56d1c1b03d2df0290059e6d62fa9c146b8f4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-broadwell-gt2-ult/": {
+      "hash": "6b0c6d8e9d225e1de80f577cdf920bf5b473ed0aa508c2c55c16f39a220c06db",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-skylake-gt2-desktop/": {
+      "hash": "4588ee1c4e5e3133ee1e0511c81e8091c9385820b623db3448b95b5f75ba3695",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-ice-lake-graphics/": {
+      "hash": "f5201f8514d1776c7a02abcb3268c3b18eb0e50bbff4d104d37c0451bc38f7f6",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-tiger-lake-graphics/": {
+      "hash": "43efc1589fc659da581b2cd9012316224b7a8e6541b63b36e24a9e4eb5e2f50f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-alder-lake-p-graphics/": {
+      "hash": "026a2c58e123de66f6a24a2042077c5052b82eb63e3d2f2139d33f7992c23a43",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-dg2-g10-desktop/": {
+      "hash": "ac7ba0971fb1ace3747ed5de2bad3104ea491ccb4c49f3e67c90dc95f136963e",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/pcie-root-port-context/": {
+      "hash": "ce280ca02c8df82458cfa5deefbd24946c36ebb93f52c1e609ca4f8c7394bc90",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/pcie-switch-port-context/": {
+      "hash": "3270daa62efe1f589d1f7f46ca8324e249936177a89ccff108fc32f2d3799166",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/pcie-rcec-context/": {
+      "hash": "e7f7c220ab4979825ceb7f2f68d97c511440bed581d7a54a7c5c0e4cbaaee287",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/cxl-type3-memory-context/": {
+      "hash": "9735180fc27a659205aa54e730e742092337229ac4ae8330893d60678fb4dd2c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-vmd-server-domain/": {
+      "hash": "d363ccc5eb1ea24c9d3420960b11478c4bc06ee53ba718262ce42f8c74926966",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-vmd-client-domain/": {
+      "hash": "5e6df0825e953a9f3b92e8896beec28193766233d9e94bf76dcd716d1bc0c6b4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-ich9-smbus/": {
+      "hash": "aaf4a53025dbb152a3efb782ef86d772347e039900bc8a48962b4a2fb135b437",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-kaby-lake-pch-h-smbus/": {
+      "hash": "4b079e50eecb7f04f0413299fe85f860c20df942e4668b3f320151423c06632d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-kerncz-smbus/": {
+      "hash": "017b14faefd02c979b18c6ebdd2daf1135eeb65a252c327ff5e5d74e5d6f0d56",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-sunrise-point-mei/": {
+      "hash": "548c8a7e0f2bddedb5308fbea0c1a1e5c2ab4281836b2b4fd74470b1bb993c0f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-secure-processor-pci/": {
+      "hash": "dd03979debee0d2cf71ecd6238f3ad8e5b0a0dec9103284bedb29082be361c78",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-pmc-platform-context/": {
+      "hash": "5d5fb280df44f63643b2f2fa393e466491c60d743b4a349fb4fd0f81a11a5bba",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-82540em/": {
+      "hash": "b8dc9d2c1ea899bf3525ce35fae85bd660db9da5974542db6308e6911cb2f0a5",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-82574l/": {
+      "hash": "f110537574611630d35a0bbc3dd893cc68067b31a5b3e9f3fdf932101f6cda7f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-i217-lm/": {
+      "hash": "d1702a903c915f76786f677722e3f93120be25acfa9f29bd0a02e3354b851713",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-i210-copper/": {
+      "hash": "0b13d387de112a2dd3487d355316c3c0e9ab9d4c21dd992842d5b92d18a11af2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-i350-copper/": {
+      "hash": "dd6140d9e09d0dc111ba85a5b53cc17c01311db1ccb5b4001dd96ec214da6297",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-i225-lm/": {
+      "hash": "5e539ecef89528ab36ea61b23575132da9901672f5699845167b4d8ffbec8693",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-82599-sfp/": {
+      "hash": "b50b933b7cafbe7a35a14a151007791602fd951a53c65e98327c35dce934e894",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-x550-t/": {
+      "hash": "99253e4198ed4e76523b2c706fee335b2e78ae319c90076e0b4e63aa014527c6",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-700-sfp-1572/": {
+      "hash": "abc97da8dcf628e4643f485b963c8a2c1f39a97779189b467a7081a03a01b23a",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-e810-c-qsfp/": {
+      "hash": "eebc5ce4c530a29e90cc36b5f4ef98d578819c3c0b8d7ad37d478cc6685b6c83",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/realtek-rtl8168-family/": {
+      "hash": "1d67ad8dc9d1870bb6d3d986de19ac161c0634b85197976ae6b487df4841e340",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/realtek-rtl8125-family/": {
+      "hash": "6bbe71623510a5f4c0b4bf35e4c28b34a8d6a3df03b8e5facb54248f17aead66",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/realtek-rtl8126-family/": {
+      "hash": "9fb4aeab12f709e9d5089b373b347db918e6a096da9edc0ea5aa7eb7c3174f27",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/broadcom-bcm5720/": {
+      "hash": "47528096fa0db2a44249d5f4c43675024b7acef206745d9ad624c03496b064f3",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/broadcom-bcm57711/": {
+      "hash": "2f70faef099bf380fb69b1f98215ac68aa28d72858c7c742dbec86f6673a1842",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/broadcom-bcm57414/": {
+      "hash": "0e07684e81c796812fea80f98aed2d55939b07d7b397529d7c01858e45c69715",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/mellanox-connectx3/": {
+      "hash": "cb0d9791f411148b830cb526b37f764d5e3fa2cc8a1ccf5cf922b494b6e3a6e0",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/mellanox-connectx4/": {
+      "hash": "b8e8ea4ab8ca77675abf50ebf185585363151e1d208b8d4b4f3479373967c723",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/aquantia-aqc107/": {
+      "hash": "e3ab5682950028537d335be1ecf162a6af0a015d00dd24cfac1978857a62f035",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/marvell-88e8056/": {
+      "hash": "805094624a2ad134d36ebffbd2fa2779739731c423ba583ef9fba52a6a7625f7",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/realtek-rtl8153-usb/": {
+      "hash": "d744522159327a922aad6ebf7af9d4ebc3a4dc7e39799dca52c6330583a141fc",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/asix-ax88179-usb/": {
+      "hash": "3313a91375746f2f50478670618f7ba4ed778bb8f5f01784e6bab94af49a0b6f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/generic-pci-ahci/": {
+      "hash": "cd59b10a4088483e39219e8cf74a445e55abfe0caead991c3b5f7cb313c0e8bf",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/generic-pci-nvme/": {
+      "hash": "a7c3edbba16e93f6f668e327d7b34beff03c9dd457187a6b1cb1d45a943af5bd",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/intel-cpt-ahci/": {
+      "hash": "4733e7f5c07f8036eea343825e7a81b9b2cc13a27be840dbfa584f040084100c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/amd-sb700-sb800-ahci/": {
+      "hash": "31e5daf9d81f8bbb348dc1cc4a1b412c3ddecb8b1c1aaf806040aeffa22ceff5",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/jmicron-jmb362/": {
+      "hash": "ee436d540a2161b58f52677ebc59092bb8853e10a8566b5254745ac7177dd4d4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/silicon-image-sii3112/": {
+      "hash": "2d0c43cdd7a1176981e62da0f623911f5b1727ce5b1c63d0108e7e0d65b9a289",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/silicon-image-sii3132/": {
+      "hash": "21eb39e8bcba9a907b7a1f119e023992a1cbedda7ffb595d92da53d2797755a8",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/marvell-88se912x-ahci/": {
+      "hash": "10340d3145e8d0a21e173eb5a3869c6bcf3c3baf7a6748a4180305677f1c6919",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/asmedia-asm1061-1062/": {
+      "hash": "7124bf6fff05e7f590703f1b2e2d5e7e8e660967a44ccaac9d62981abb1f0934",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/via-vt6421/": {
+      "hash": "d88edfef7b69f7077c2e520e1bfedbf46aed266ea731b35569ed17abf239752f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/nvidia-mcp55-sata2/": {
+      "hash": "2405560e165e19d6e357a063a6b41e14c84df56402c926e93b434102aee5b865",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/promise-pdc2037x-3376/": {
+      "hash": "9eb8cfe7e260d0d70665940c8fd1ce08a8f34f27e1dc851d68f9359005dfe2f1",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/lsi-sas2008/": {
+      "hash": "d11fcd02a4e703be39fd0e716d7d64b435c3e76724984fd3fad0ea8ac1fe028d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/lsi-sas3008/": {
+      "hash": "d7e8e1ed831aa7957af6ac147f47146d0e9b61c2049b3dc847211d2f817682ca",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/broadcom-sas3416/": {
+      "hash": "64373ab3fa86350b90fc3cfd360961e7d67403f692206031f25af1870f9099d4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/lsi-megaraid-fusion-005b/": {
+      "hash": "d3e5fbcd2660ae87064ed3e0d6a512e4810e1e1c8e585a635858c4df9436cf7d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/adaptec-aac-0285-family/": {
+      "hash": "1716094a293d74a0313b1036bb8052c6235520b248719ad877d3e4570a684a54",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtio-block-context/": {
+      "hash": "a656489659bc84334931698ea44a37038686d894229661cf9703ebb43a070b5e",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-pci-xhci-controller/": {
+      "hash": "b772d70f34beb2d6200881d45739283b1892182d7e86137a0f80778ec4cc1cbe",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-pci-ehci-controller/": {
+      "hash": "897c5121a7a493ebe16101d003eb6b0ecbd6fbd55ac8217aea2a99edeefb27a4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-pci-ohci-controller/": {
+      "hash": "08202d5c627c1ab0ee1e0e4c22d96e3e42a5ecf6569eb922c7af11d567877417",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-pci-uhci-controller/": {
+      "hash": "4caedda44a5e11bae356e78261e3078c075a599e340285396db8ae5cc1933b1d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-hub-class/": {
+      "hash": "603c5e4f819c0ae7aa6a9e50d69cede78f2f6224188220be5e0f712f44203e27",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-video-class-uvc/": {
+      "hash": "1242c924b0d6bf1e62dcdd105e22259d89055b86e14e3bbf74389d3b7282dff2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-mass-storage-bulk-only/": {
+      "hash": "7144be601557f535275635955c9afc1f6826d5c64879684479074d0475d48583",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-attached-scsi-uas/": {
+      "hash": "47d5e239bd6cc0a8968c204efb8be10b60c2a22246d259ef998df703ee43a0cd",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-ftdi-6001/": {
+      "hash": "894ba65aff02bbc48f79a0b7a45bb557c9129b9871a821721dd549e42f7076e7",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-cp210x-ea60/": {
+      "hash": "7069a963d9983645e88164e73a009d7b8a591dabf028d3c92d64436f77f370ba",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-intel-cougar-point-hda/": {
+      "hash": "7b9a95914b355398a4a83a041357e7bfa9b9a0d878e5a859f0d69f081d7d4d6d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-amd-x570-hda/": {
+      "hash": "d7db6d897688e4b7c21e57a2a90ea9481cc98ceed755843cfe66bf9f0710d080",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-realtek-alc892-codec/": {
+      "hash": "25e0acc8856a51980cafbfdaac18e6b8bf3df1b85188414f96864e5bca2c2ba1",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-hda-hdmi-display-codec/": {
+      "hash": "01ed9c6f71bce7d429fa6378ee680f78e902102b0d4563641a931399d5b104eb",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-usb-audio-class/": {
+      "hash": "e761b8e19c283a131f8609f42edd67bcbb1c3abf5244dfe2dfec8caa4495f963",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-usb-midi-class/": {
+      "hash": "5c63e364d02a84d8827c17e771c9a8868f264a587ba52fd2a4132e37a8ee1e27",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-ensoniq-es1371/": {
+      "hash": "c993d81b4ed69feb4ffcf31a56381a8cc4f8e05a1f9ddda5e444f5f13d1edc63",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-creative-emu10k1/": {
+      "hash": "02467e9d7a05a73c156e7ded4296bdb8ac5bd5def2cb43300780ec0a558fd856",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-cmedia-cm8738/": {
+      "hash": "ab1716318e90af728c1c49f5833642c23add5706e0cc5263c1e4463c1dde7b52",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/audio-intel-ich-ac97/": {
+      "hash": "d09dfc7435de6b9788bfb48454eb18d41ad7840c056f80caae767e4939c90551",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-usb-hid-class/": {
+      "hash": "288836055ff4384f24efca3d00b050243a001b9270aaa26e825be1d7baae6234",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-i2c-hid-transport/": {
+      "hash": "9cada043598d07a7dec43aa985d5a12f727b492e520f30a4ce314016b032f6fc",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-i8042-ps2-transport/": {
+      "hash": "0cec5046ce3fdc0947d6de08bb319665f0ae619691c17baad9da3ea84aad10a7",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-logitech-unifying-c52b/": {
+      "hash": "c8b92b0182bb3e96aa5d7ffb27a6eb32b05348b799981b4b4d5e85248d6c2149",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-wacom-intuos4-b9/": {
+      "hash": "4b168d321137c5393c7e3c8a42fe4b51eec160fdaa563b270a721e2252b3fe59",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-hid-multitouch-family/": {
+      "hash": "2e6f9ff5dee56d14e2bc7ed453bcede26d127524dbdb1e6708ad84bc95652ed0",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-alps-ps2-touchpad/": {
+      "hash": "2f5a3a1f5bb1a460e6ce5ede288950bbb06147e8970d4e80c50dbb9e78fe88d2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/input-xbox360-wired-028e/": {
+      "hash": "5f0c92d6ff14db7693e23ba68455cf4e285b5747433c5fc24cdd1e682a960df1",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-net-modern/": {
+      "hash": "22ed53c0dac252e7b3ef9575cc9e410ccc960f3f158fc0503753058ee49c5c09",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-console-modern/": {
+      "hash": "7ff1aef9efb97fea36c8333cef0c391759ee3ac781f1a534f4a2da985def0d53",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-rng-modern/": {
+      "hash": "a570fb67afdb062ab1475ca8e9b63c26900bfd0e3a6d63c796c71dee84d7672c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-balloon-modern/": {
+      "hash": "7edf82e0f2db2b26f980b3c7f8c0f902d4236a09b9e38bd9f2e3ea507c13ab72",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-scsi-modern/": {
+      "hash": "a6b5588da4fb8c35034b1b2c8f941b8d21b745e95a123d97611791ade1857604",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-9p-modern/": {
+      "hash": "69c441e6b7a6b3bf80a8dc2f8ad6f6c15644022d36f703d3d8d9f8edcb91f924",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-gpu-modern/": {
+      "hash": "b59fda27468052b6e00c0c8d3422aabda054ede771beb9ae9ef4ac596a598113",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-input-modern/": {
+      "hash": "166dd290fe610729a36f6d5c67a20342eb322ee464eedcd5b7796e502bbf7767",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-vsock-modern/": {
+      "hash": "78d9c451f9330fc14cc2b1bbc993a073604e11e496c812bcd51fe89b6b728bd9",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/virtual-virtio-sound-modern/": {
+      "hash": "e74bd1f0f65edfb10f7682dded65dea1bfa14db936a0f4eccd9eb69c5bb96ed3",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-intel-7265/": {
+      "hash": "de5165477788a732a615257179bc8e7e85b37e6687bf875344d1c5b47d3f2290",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-intel-8265/": {
+      "hash": "01af58309bd2a2be693362c28cee6f2787a9977403c07458d48ac73a403fbc96",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-intel-9260/": {
+      "hash": "653a25fbeeb49d00c4f14d98db0bf380b42e26b88f65803f636b72018b94dd7c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-intel-ax200/": {
+      "hash": "202a9b1ce7399e8a1b66ee728a5513ccadb1dbececabd1ff562d0ccc415c708c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-intel-ax210/": {
+      "hash": "9494a623e86319c35f124e07e8325fa6a01d81bc43b834cfd00b43fecc78ed36",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-intel-be200/": {
+      "hash": "95fe90a9e0b5814e596d2be2db4fb23de8a5baa92829d25128173b4daf3dfd6f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-realtek-rtl8723be/": {
+      "hash": "881936b6865a64a069c09eebf25aca89488ee9fb0631f3b8908ccd1ec89647e2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-realtek-rtl8821ce/": {
+      "hash": "3a1634b843aeb393b4cd6d598719ba2a550884d86ed68b919c8ffd500255f44b",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-realtek-rtl8822ce/": {
+      "hash": "61d0953be2bb8e8f957b229915c346501e9d46f733c62b5a52762c7c16a2c216",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-realtek-rtl8852be/": {
+      "hash": "48ea4ad0d2a1639c416c2b529794c56d30ffccdeb99580cdbff3502600a55695",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-realtek-rtl8852ce/": {
+      "hash": "aef14b29a8f25f7ff033e09855a910f4f1304d3ab36866309c52e19318c4ee6d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-realtek-rtl8822bu/": {
+      "hash": "9aef65ffa535de2a3ec644ec6a4f48587358a269fd83887b7c589d10c93a92b0",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-atheros-ath9k-002b/": {
+      "hash": "91ca5dc41be3b89a9883cebc18800a05ee0314cf58f98cd76afa360b3da8bba0",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-atheros-ar9271-usb/": {
+      "hash": "e8cae72ab1664a94a7f4425d14afeb5141dc9a2f5b38df9fa6aeadd309b9374f",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-qualcomm-qca6174/": {
+      "hash": "91bfb6fd75f27ef3dc756c040f7115bd4c14a4db8a3c2b5fc7d35f3c10422f7b",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-qualcomm-qca6390/": {
+      "hash": "393d48a207698b4058d8439310e61b032fd69f7fb6b9e425e75980571969e6b8",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-qualcomm-wcn6855/": {
+      "hash": "2c8b31cadf521d55fbf091eb8ac407c994f5450ecb9587dc428b3a4aca1baa8b",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-qualcomm-qcn9274/": {
+      "hash": "fde67f5d98fa2b11302d174e3db7f2a88563b409c581d3e9a4dd1e0d27bd83c2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-mediatek-mt7601u/": {
+      "hash": "b3ad95da986a708dd4f3f2b7ce8e75a48581b08a1006ab45077df7b6f9158387",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-mediatek-mt7612u/": {
+      "hash": "93763fa940ec985e374832b89301cb75a8a5fe60396df8e0918be2d5b5cf49b2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-mediatek-mt7921-pcie/": {
+      "hash": "0b45c0d0fddec07dd4713647d36910973d9f2a74f0e4c74c8360adc6d50b1bde",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-mediatek-mt7922-pcie/": {
+      "hash": "6413d4cd9879c0ae8f971ef34bc1728c9d53b76c2d8e91d11a8314357bae38ee",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-mediatek-mt7925-pcie/": {
+      "hash": "e180cd01750341fbb9a7bbe87f72d1ee8a2a4caed90c911a6cb21e199f66766b",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-mediatek-mt7921-usb/": {
+      "hash": "5666c6ebb44b6035d39b0df593ea269dc1357dd9e0bf5953c594a9d9ec2c3c46",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-broadcom-bcm4313/": {
+      "hash": "e9837fddfcbcc18a75210c34cbdd9bbb8ef1e905f9d0e9479b01c1f278c48b4d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-broadcom-bcm43602/": {
+      "hash": "840fc6d52c1add402df36057ff6a6332449566f6c7f64a4f13555588c23ee8d9",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-broadcom-bcm4356/": {
+      "hash": "016328a65d972762d887f7d7dbf02b0f0a5cd4e0bf2ff295fadab545a92443f8",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/wifi-broadcom-bcm43236-usb/": {
+      "hash": "47ccaa88fc0f924406c4a566bd6f048fff08be666ef3a5ddc0ce5eb1f37a347d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-usb-hci-class/": {
+      "hash": "c779464472309df68171e95e434cbe159e73d91c2598acc5f84fc4f5519c17b3",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-intel-usb-0032/": {
+      "hash": "73fcb8a1f534748de30aabe54b68b3997462d3f31887e5373a46b8b60c8a81ea",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-realtek-rtl8761bu-usb/": {
+      "hash": "9380cf72574e423f1652d9cac46f37b500835e09f8c144a1f30b594a139fe1e4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-mediatek-usb-0608/": {
+      "hash": "614aa47e79c2c9a17547690f3910a1c282cb5d0d2b5367665d87c493fa474d65",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-broadcom-bcm20702b0-usb/": {
+      "hash": "5b57d0e1937b83076a4d6d19331c1400ce3cb074fdfe9e1859211c3cb1d7c4ed",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-atheros-ar3011-loader/": {
+      "hash": "f4afc85c2789e84aadd8f238847fdc42d9832ed76932fc144081ff5bd0d044e5",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-atheros-ar3012-loader/": {
+      "hash": "34c4f983f2127fafbb7a92efab2e56a051816ac8c6ad0a93cb12a48bbae3d44c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-uart-h4-context/": {
+      "hash": "9daa346ef09925630164c0a97da75958bd28e746f1d85a9e4298e8b4b6409c26",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-uart-h5-context/": {
+      "hash": "339a22f8aa988883b4b64775ae2b0ac8c4cfe9867bd70616a0db802a4232b099",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-qualcomm-uart-context/": {
+      "hash": "b115f5cc30882cac20475b54f9e4c29c215c07c011f0b5b09a269f1df7fd2624",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-broadcom-uart-context/": {
+      "hash": "58eb5214b8b19f4c001638ede92daa91e6009801e4696977a71f6758daae6de2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/bluetooth-sdio-hci-context/": {
+      "hash": "1e70aff2a9cbda0382de2aaff6212eb437dc7aeb554a668ed9e9eecf16f26d9c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/driver-binding/": {
+      "hash": "88b6f2cf5eeb9887f83d4a1161ea186589acba72a3560d0c3fecdb2f22c9d996",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/kernel-modules/": {
+      "hash": "041327380f0f511fe6ec1b1425c0f4773012af0303de51bc5d33a7669cc4a3af",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/firmware-loading/": {
+      "hash": "21dbaa3dd6d0673be6a479684d1cf524c1abef374d5f439124d5ca55ff64daf2",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/modalias-matching/": {
+      "hash": "a6e8fe03de0eef83f7c33d3791ac3bf9ba4d5fd481ba967dff58d718a6add1db",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/graphics-driver-stack/": {
+      "hash": "ceb7ebb0a0143fbafe9732fe0697f71c692e40c21b938b1a6359b6ce925c526d",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/usb-interface-binding/": {
+      "hash": "4f625d2d9cc909952eae39d7f994f27778e1db380c6b20161944a9c90ced88f4",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/pcie-topology/": {
+      "hash": "d9288c1adaf1985a8bdcca96c01dfc4c425ae4dd425260ceb4ed80892f4e2e04",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/evidence-and-coverage/": {
+      "hash": "5c1998653940be4d07b7e52aa2017c0e89d90ad6e8d0fdf67bc5743b3cacc417",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/distribution-firmware/": {
+      "hash": "18057ce4c2ccb4c71d3606956634f7f88a06a6f4fae19bfd21b281b04741618c",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-hardware-explorer/privacy-and-sharing/": {
+      "hash": "e35b94ff6bf52f70896ce841bb3dfacef5fc95a34e76545439d01a6c1d3f4f82",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/": {
+      "hash": "aa8f8fb297711b945cbfddcc062a6a12fcd92a3a1d08acb92de0635d5678e14e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-tahiti/": {
+      "hash": "0c50bccc60389da5252a2a714f0e7271b57fbe26f8ac59d540ec305052d2a3b8",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-bonaire/": {
+      "hash": "04db7c55bbf0f4b5299a99828c12892b904c95761a809036a23dd8ed281cce22",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-polaris10/": {
+      "hash": "fbc4e747bfe162fc264a7b74e0516c4893618261f3d136722b293ad0eab32ac5",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-vega10/": {
+      "hash": "be95c6ca5df445fb33a8af181f40d76097780cfcd332b88bf85f982fe81f17fd",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-navi10/": {
+      "hash": "39b3a74fa179f50e260fa6c1c705bf074c17a5982bf5fd089b1ccb59a5b2b84f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-sienna-cichlid/": {
+      "hash": "5151214f4f849a176b8f4a462e0dfb8e28626978673fafffa7c2c6b270d02d67",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-renoir/": {
+      "hash": "e159e67b44745bd661fe6bbbf26dd1b559e2b36091ddd755d3d177d19360f796",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-gc12-ip-discovery/": {
+      "hash": "89ab30c33d915d2a3d7535b2bb6f6e3a6c76fe0c6ba2c343f8129aaafe201cf9",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-gtx-750-ti/": {
+      "hash": "08a6347757edb530657e4da0114d7edd8b30a2836bee8b4292c520c4e343d8a9",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-gtx-980/": {
+      "hash": "0a3c3cd24fca65f368e853aae26f6e8c1919ae53cdee6d5fe96b5cf0c40a6fe5",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-gtx-1080/": {
+      "hash": "e81cfd399259ab1b3931348609f8ab515c32f5e1fd980a3eab3a968496751d33",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-gt-1030/": {
+      "hash": "a1623e1040226b976a8dddc7c8060c18b0937633d3687c52e66ef830117f9922",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-rtx-2080/": {
+      "hash": "b8670ae25a1c8015380e451b68453718e2926889b614b3d93a18c23ebc6b5e53",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-rtx-3080/": {
+      "hash": "79c72568a6b5c66b94077b8aae48ca472923f4910d58e993b387b22858324126",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-rtx-4090/": {
+      "hash": "0baa6491059233779dbe7ff04027d8876c7e8b931422ed60d3c66c049203ba7b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-rtx-5090/": {
+      "hash": "50d423d2fcac7353dc752bdaafd3a6e17db807efb3f12b516c5072db595485a7",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-ivy-bridge-gt2-mobile/": {
+      "hash": "552a0378a79978da44960541d65c34cf1addbe00e52364f5b84bc26c55c28a8b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-haswell-gt2-desktop/": {
+      "hash": "b751821b5a45716dc2d49e8eab5ba24eae542592455be6387c16588064410b8b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-broadwell-gt2-ult/": {
+      "hash": "74d9d94a943ebf798145a59b8c865b25fea2126c09c225fcc2b4a1899f01613b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-skylake-gt2-desktop/": {
+      "hash": "ceb4d58d972ce2b1185d85961eff774b4fe0983686e914157083171c53de72ff",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-ice-lake-graphics/": {
+      "hash": "08fed3ea6fbe3ad547df40baa9be7d0006874e2edcb0a202af8d969807700043",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-tiger-lake-graphics/": {
+      "hash": "1533d4c124f472aab16d0d5cf68bb999d2d90ffb6e3557ede31061e75efd0cb0",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-alder-lake-p-graphics/": {
+      "hash": "3d84c22915fbf59e71af703c2571312b777963d7ed4739f752774a8dcc87c3a9",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-dg2-g10-desktop/": {
+      "hash": "4035fe7ef0794cb5486daef0fe88fbe99ebdecc542c3abba0d47e46f9ad166ff",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/pcie-root-port-context/": {
+      "hash": "54097f926ce78acd7786156936ed1bfb26045c886df202ecd8e53fe70a7b9b63",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/pcie-switch-port-context/": {
+      "hash": "19d662b72f16fe54247487d438b293b01eedfe9b6408fe6badb1af06ff10d613",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/pcie-rcec-context/": {
+      "hash": "91ff3b96cb1e205c1a3e3c4d7a12f880f133fdbc5a403e06b9456757d12b781d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/cxl-type3-memory-context/": {
+      "hash": "15c82f38d0b13f10873d3fbfc8766ec39eb9fdbf2f8342bbd6d4a6d63d070627",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-vmd-server-domain/": {
+      "hash": "673f578b12194e9c1a4a986d45962cdea6532d1529a6e1123f97db332de19938",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-vmd-client-domain/": {
+      "hash": "cbaaff50693c79c3142cea267f23bca7c28dc8cd372111a459f2a765e7a927db",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-ich9-smbus/": {
+      "hash": "18b4ecce47008cf40bd770051daa9ef793cd7755e0b4d2b89825ed28db0d191e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-kaby-lake-pch-h-smbus/": {
+      "hash": "ad17e7a0c33834864d18dbd4f2c6b4a029591a9b7a069b2950d137f3e730f164",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-kerncz-smbus/": {
+      "hash": "b29cb2b962254e4aaee303ac28a38446d161cc4eef781735e521f7e5812ea3d2",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-sunrise-point-mei/": {
+      "hash": "058b0da880a504ac2182fe370800c685c5e6be44ae74e69ac37dfbdad39e84a5",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-secure-processor-pci/": {
+      "hash": "8fed5f9658f65432c6ac57479f1ca6f8fc0b5953e1f076b7b570446c9de3ee0d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-pmc-platform-context/": {
+      "hash": "5e8c958981e9822a3c4ba3a0d4f649c49bd02514e9a3ac61d9db4403f7bd6f06",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-82540em/": {
+      "hash": "64f71ff511dd1d342073454afc37f91aec7249b87613445f48c0e022eae0ca46",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-82574l/": {
+      "hash": "6e83e3d2363d7b7d38eeb19a2fa9e05ec0a0c90e497d24cfc741f651a8c1d57a",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-i217-lm/": {
+      "hash": "ff161730340737d98d9ce36819f74e2d208b948ada6cce37a5abb946a2810d3e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-i210-copper/": {
+      "hash": "015273f09f1ff6e1358c9d674da55ecfe50963f8c863dfeb4c9836c2cc869f8f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-i350-copper/": {
+      "hash": "1048931d3159dd5d357ee43a8806b0a1e17149781523c7149c64dfafaf929b0f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-i225-lm/": {
+      "hash": "28b878b2e3774d26c6063d048c949066dc57813c79dbe4ca25b1cdda3c2cb2fd",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-82599-sfp/": {
+      "hash": "7219b09372959912cb951395fa8e70c93b983812c606e479428c763896f769de",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-x550-t/": {
+      "hash": "26486096e160ad8b2c366af877d3db0a70315ed955e3a05fe0f7db76d4f9f0e1",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-700-sfp-1572/": {
+      "hash": "388804328da1ceb7226e6d40bd0da4e96b96239e621b94511129b80308e8543d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-e810-c-qsfp/": {
+      "hash": "1f31b8f2ed1a379428c565e086e7444f1018c42af5b39040eddeeaa7af72cea3",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/realtek-rtl8168-family/": {
+      "hash": "a945d3c37c0cb2799d7b7337177597acbe38491fa101394282e7c1ef3e05b32e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/realtek-rtl8125-family/": {
+      "hash": "d724e31e6d20d34e8bb3445782de061d2c5e2c0228820015065611583729bbf0",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/realtek-rtl8126-family/": {
+      "hash": "57e168c766684192a7a9b5a578dfacd1f9e1d5370647953929405ca99674bb75",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/broadcom-bcm5720/": {
+      "hash": "8800d21b3802e125b3775c1d0ab663f50202a3b0af1a0b094967fc628db8172c",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/broadcom-bcm57711/": {
+      "hash": "c39fd32e8a04debc2cfc0ee1a8b3238cb85ab073b0dcaab885df49cd8a453827",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/broadcom-bcm57414/": {
+      "hash": "e68cca4cba4938f74a5237ff6388eaf9a5aee1ab1406268e64e9fbb2aac06ee1",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/mellanox-connectx3/": {
+      "hash": "76bcd975aa20a784be741b53b380eed3dd1ca8ddddc8a68dec2f36e1fa3075cb",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/mellanox-connectx4/": {
+      "hash": "d6046889940fb1e1419e03d15e8157993698e616e7167d02593b31167978c941",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/aquantia-aqc107/": {
+      "hash": "a502a5cbde20177ba06574e9d8e94d260019f4b490aa3f8c06d1ad8fa47b4441",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/marvell-88e8056/": {
+      "hash": "18f686592b73edff2d7d9a83c3003d47cf756bda6d1fde02614cc6e11385a2b5",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/realtek-rtl8153-usb/": {
+      "hash": "1fc630cb7bb40ba1bb20302a3bf415f61a1c9def6c93de1a71d7e7e9a65b7192",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/asix-ax88179-usb/": {
+      "hash": "d951ff046194d3bf7f1a6b473a7983a4200cf1d1e788dcbfa209772257f96e9e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/generic-pci-ahci/": {
+      "hash": "ce74b2e8190548920ae51aae0746c7907b48365039cf610ca075f53618fcd063",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/generic-pci-nvme/": {
+      "hash": "eadc45fdfa2a200bfe805694366e151889327ef39739afca2aafc3a8cb5af151",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/intel-cpt-ahci/": {
+      "hash": "a3ae277a4ec589d3d926fe5ee2d661bfa877787a495481c45f5d050358297380",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/amd-sb700-sb800-ahci/": {
+      "hash": "f69471fe4a967fa903ce13e9a49ffc84be5475ff0187e220c433a0b1d0109b78",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/jmicron-jmb362/": {
+      "hash": "7c68e85b456c55887d35b90bbb7ee673224c8be3473f44e98e164bb354fe77d5",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/silicon-image-sii3112/": {
+      "hash": "37edadc5c22ebab20e030c2bf1b2081b5bea074f5f784e34e23797efc1133a2d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/silicon-image-sii3132/": {
+      "hash": "74770279f7e497cee6a8bd42e54afccf823c4e533dd514cdd0bceee153be2a38",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/marvell-88se912x-ahci/": {
+      "hash": "3777f9a7a41f4315415825d9e4b448495ed93c48c446ed069ff450998cdb1e48",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/asmedia-asm1061-1062/": {
+      "hash": "270d45424c2ee8e6555b6cfa6260352e10f59a8df4d5cf29863a9a6d58a71ab4",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/via-vt6421/": {
+      "hash": "7a0577c31214310bf2b0b86fc1906ef82e3cc364a390abb4dc4381d29a65288d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/nvidia-mcp55-sata2/": {
+      "hash": "3b3e583db77c415756e36dbd338d5a676f7dd3cb81fdee0859d24bca96463a0f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/promise-pdc2037x-3376/": {
+      "hash": "dbf1cf404fd3797afe7077a37b0f87e26d66937462a81f9ce31204b2c55fdeba",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/lsi-sas2008/": {
+      "hash": "02ecd8cb1b052d059ccdb5d6a8b9fc5d24f881a55d27dcdf991fb79961365b2b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/lsi-sas3008/": {
+      "hash": "9b204764e3a1ad9d4046b2e69b719ee10c151b1570c9c44cc8c47386a5c185ae",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/broadcom-sas3416/": {
+      "hash": "225146b8e1292ddd84f63e5003db1081c73b8b3737b0314a1fde029e8b5fca97",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/lsi-megaraid-fusion-005b/": {
+      "hash": "007bd73ee8ea2ed71d611f031e162d2e9c1159abf7bdd3b0710e2d6ad9ea54ac",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/adaptec-aac-0285-family/": {
+      "hash": "4d7be00a24f87d594c7d64d8e16c9a58f2c41c2bb4c4358b4395b35cb5c9d00c",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtio-block-context/": {
+      "hash": "61625fd5358f3fabf2de5e86ffe35fb635d14f14455cf8095117dfb42efd1b51",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-pci-xhci-controller/": {
+      "hash": "a48269b6542698788ca55fae9b0d60ecd549f254fd5cd9b938fe769b3994791f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-pci-ehci-controller/": {
+      "hash": "ff79127ea36993f6218e72ef89d89bff26ec0921f9ad3d17a293da41f58f7cb2",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-pci-ohci-controller/": {
+      "hash": "6e7fd04fc3444796bef266c389a73c9e0dbe5cdea028b88709dccf485cc7d426",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-pci-uhci-controller/": {
+      "hash": "49fcf0b651842658a79bffa55e5b188bb1f9262132134b43be1f65c48cadcfe3",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-hub-class/": {
+      "hash": "0120129ce44d91e7b679ce54e7efc12a5278d57c58aa7be2f99f489aaf6a3e30",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-video-class-uvc/": {
+      "hash": "689dbc49980d02736724d869c2079f0903ea8181eb07b1d05246ee01617ed5e1",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-mass-storage-bulk-only/": {
+      "hash": "de65e0227d15dfc82e3b7a1e660bb72ab08fc13d6ab3050886dee2b2074e2d3a",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-attached-scsi-uas/": {
+      "hash": "bd4531a7ca818f2c8ee7bba27a838499864c363bdd8c300938d0db323ccd4e80",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-ftdi-6001/": {
+      "hash": "b3643e971255ee29b176a37f8db4b56d5d6b3408039ce02245e8e68c0d655019",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-cp210x-ea60/": {
+      "hash": "3837b583d0b90f195ec131f4efebc544a71d5d2c1bf52ea99790698504ba9d28",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-intel-cougar-point-hda/": {
+      "hash": "3807680fbf3798c54c51fae02ef40d0f2b3a39881c546471a4816baa36866280",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-amd-x570-hda/": {
+      "hash": "eb68c18769c4db0d54e031a79afc54ebd34ba9d9c447b34c0120c2b09ee1cb29",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-realtek-alc892-codec/": {
+      "hash": "79dd9484c47cae609e1b5e61895bae643bdf41fd7417a05f9cad857eba2e0837",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-hda-hdmi-display-codec/": {
+      "hash": "b62bb30bc3df5c95d9223b3618b922c9789ad5df7791022ea58debb2d5a321d1",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-usb-audio-class/": {
+      "hash": "b57a2996b4ee2d7b60a1c041804b33604f31127c1fa9e0e283abcb4967392957",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-usb-midi-class/": {
+      "hash": "ee80d0c36cec3a3411068cda2bee58e6a0920e1307cd1752fd11ec8d9bc1e5e6",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-ensoniq-es1371/": {
+      "hash": "3584c65090079e8d37d9e641fbd30b41af80967142490a3e885a6c0c72af4ec4",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-creative-emu10k1/": {
+      "hash": "996d24598e16df2950715695da4ff1fd248f7f683d7028224f50df23febbe1b5",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-cmedia-cm8738/": {
+      "hash": "29a8f832cb0369f52c149fbbf222a775a81a21c241243860f8f0d6ecb77bbc46",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/audio-intel-ich-ac97/": {
+      "hash": "1c19630109687377f8b0bcd2f875136b0f4137f50e1844117226d322952e81b6",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-usb-hid-class/": {
+      "hash": "3af8e3cf95c8280b115847a325937266e480d80be30dc20d14994ce61ca15dbb",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-i2c-hid-transport/": {
+      "hash": "ce0b8c9d8c3394d39b7bc916028b9bfe93b385e51af8034dc485580c60347e69",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-i8042-ps2-transport/": {
+      "hash": "6904f088951ebe3fc8b7ffb730412626e4968c826152e2c02f11a437c0720da6",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-logitech-unifying-c52b/": {
+      "hash": "d02ea72dbc65fcbdfe237f5f4801154690b5e86187f21072f95a6dfa4e26eff6",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-wacom-intuos4-b9/": {
+      "hash": "c11494bb854e721648e730a226214387d6bf0ff69a2f6e99f1341c08ba92bb65",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-hid-multitouch-family/": {
+      "hash": "8026bdb614a82a90eea130997bbe2a3f82260a3d15c74602e3e10cf9d44df130",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-alps-ps2-touchpad/": {
+      "hash": "3680652cbc087fdda75082961b4e41c680791d2b6a23c417415bac8b9dca5313",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/input-xbox360-wired-028e/": {
+      "hash": "c0f48b18c6b0f4e78bc3f302d8800de7bbb113cd53a2630ac12ffa5438b9fedb",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-net-modern/": {
+      "hash": "5ba3b9e72c1c7e96d2365830bf18569a7ac0d9c3ed4fcdfb3fd6f109ca542862",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-console-modern/": {
+      "hash": "84bdf6a6414744e34947376dc8a6e4ae210ddd76ae7da52dae1fe80b6c4ca522",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-rng-modern/": {
+      "hash": "2b583345485004d3490f41940d9ba9c8d9a75ca11b6517bf44b5c0464a7c1a38",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-balloon-modern/": {
+      "hash": "e2d014a9d619c353ffec68e1a7a65bc4844b75c931ce1fa3aeb090758bba972d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-scsi-modern/": {
+      "hash": "26eefc9d6bd5c7f8fb424320e26a51ca5befc4d6490943679f292e8289fa937a",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-9p-modern/": {
+      "hash": "d51d1df6d857cc5e7ede050c75abf2ded1066bd88dbf0675bf242669e6944cbe",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-gpu-modern/": {
+      "hash": "3864d102bc6a63ad36fac77cd99f391c2e99d8e1ee09b64ce1667133c1ae2449",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-input-modern/": {
+      "hash": "5fd352c11b065f3617c9e21fb7bd7c194b83f3da1286e563f88c457a6dec04db",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-vsock-modern/": {
+      "hash": "b585ad6bc42753d7f244104a5f006de1dc172fdb645e54e2a08f9974b691248d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/virtual-virtio-sound-modern/": {
+      "hash": "0cf4df765157130f6852476394d51de9649d92b916bb6bf66d53e15d4370d24d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-intel-7265/": {
+      "hash": "3b9089e5ab5c23f0feb35c2069c0c33c973e944493cd191d16c84bfedc60b7dc",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-intel-8265/": {
+      "hash": "8c33676612064e46bd024a68e56219f137f9840c1c7f515c9c188e1263384d58",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-intel-9260/": {
+      "hash": "9ac2453f5480ce20b05306976e774b7c89b2e927822091c93bc882fda68ef209",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-intel-ax200/": {
+      "hash": "dc21de87e5b24fbd3755e7568de3599cd3bebfc37f1191f67f1415a70a53a125",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-intel-ax210/": {
+      "hash": "372ff2d632a289d3bfcb32743587ee79b8ab6d75a2f4e1176288861f5dfa8fa2",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-intel-be200/": {
+      "hash": "bf6ab7413cb91071b96f19174c7f4f7fe2a8099df5f6f29b2b46100f57f052dd",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-realtek-rtl8723be/": {
+      "hash": "5115c2371d3b00fb09c2dd015c76f4cb7dd606990393bce8ebd59d957eeff0dd",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-realtek-rtl8821ce/": {
+      "hash": "f1d3b7c18c85038283ca26a1286d95251cc1f2dc2b7cb81439f19d0736d7c811",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-realtek-rtl8822ce/": {
+      "hash": "a3c37542a3bce4cff549b125e2ec4a9435af736884b145ccacb0e4de9bc37828",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-realtek-rtl8852be/": {
+      "hash": "6642fcb5fba4c1ac93ef2c330317e79f0da70758bb5b607693d5d333931b843e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-realtek-rtl8852ce/": {
+      "hash": "f54b517376e7120fe1664ad0693cab302847b6d89431aeb53f92caf5928d6d2b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-realtek-rtl8822bu/": {
+      "hash": "d03f99a1f822e3d11153483841d7797c83ed3defd1557e164cef5ef054954bc0",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-atheros-ath9k-002b/": {
+      "hash": "118d721e927e8b9fc766b884eee8df37e9a7b7ecb76adc05531046db73a66b59",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-atheros-ar9271-usb/": {
+      "hash": "c7a7fc1a2c6ae44655efa1e1d35a1171c59c7ff0770c9d885485bdddef0f8c29",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-qualcomm-qca6174/": {
+      "hash": "9cfbbe510fdae78bd9b544fa8428b1426f7b41a2f9617f74c4c2e01aa2707ac2",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-qualcomm-qca6390/": {
+      "hash": "a2e9a63c1bcc6b048c8bafb113f925face22b9112994c594fcd30450b710d14c",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-qualcomm-wcn6855/": {
+      "hash": "7f2015ea43e079d3c732e8a59c12f67c6bf5385de73158f073cd007cabf50c52",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-qualcomm-qcn9274/": {
+      "hash": "80b70d982cc0b2286e0e40433422898221ce4139ce7ca8c244a076f8f4d4ff3b",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-mediatek-mt7601u/": {
+      "hash": "7c110ca4d5ea8dde1e0ab63b7f055e6d969608c4dfc95e2ebe332d40db9e413e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-mediatek-mt7612u/": {
+      "hash": "794c0486484ef6dbbfd0f38e3bf1c465357c1346b2699f7b46265a887ba7621c",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-mediatek-mt7921-pcie/": {
+      "hash": "a03133f93660b98aecd75064e71ec929d372e82c24b77c7a8a1f46f92f1b8f31",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-mediatek-mt7922-pcie/": {
+      "hash": "ffdca22ee888c9fd5e4a5c52a2a699f87cdb223a52bd61e600723b1dc5735069",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-mediatek-mt7925-pcie/": {
+      "hash": "c7912d84a88cb60c5d3e5c12cd413a127d2067704222cabdaa5fee516f97353e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-mediatek-mt7921-usb/": {
+      "hash": "ca4a980c3caa0a2a1f66c7ec76b95ac94248ef18ef929246716cf5486a3213ce",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-broadcom-bcm4313/": {
+      "hash": "89aca5acfb7fca055ce7b35a19794c498645360736babde76f0eff102fe93ade",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-broadcom-bcm43602/": {
+      "hash": "3cb53cc73f077ab45754059cbd6fdfa66d1fd6b980921e6f1a0d5eed1b7d0246",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-broadcom-bcm4356/": {
+      "hash": "3db98b1ee88c092b3f8d4e6489bd50ff58dec4bd7f6ff8d8b906c140cd3915ed",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/wifi-broadcom-bcm43236-usb/": {
+      "hash": "4bd53f9defb4be14cf14a3d522075590593bb00182ff0806537041354bc7e233",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-usb-hci-class/": {
+      "hash": "fbb491e10002d72cb32b8fa0e121fce49070e4435fa8a1a6fa634cda99110536",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-intel-usb-0032/": {
+      "hash": "c372946fd14e95ec4b86f682998b3efb9488773b0f8b1cc5ab43b97fb279a356",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-realtek-rtl8761bu-usb/": {
+      "hash": "caeb351665392cf5a3cbd42002507e73049b5c2ba1a1b79ec32143bdb3850bc3",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-mediatek-usb-0608/": {
+      "hash": "0bbea68688c99353fc8e71b92bef969e9533cf7d56162ed856c1a64537780f25",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-broadcom-bcm20702b0-usb/": {
+      "hash": "6fd85d6a72ee19877b882789dd77b0c4a6b58bbd0a82d9c04012d5fd58ea7c73",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-atheros-ar3011-loader/": {
+      "hash": "645e03b6e55fdcab7945a69d1e7a135f5c300e60d4ce83098889d49cac6de22c",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-atheros-ar3012-loader/": {
+      "hash": "0002398dc410ff7e3d4dcf7a70b5235a1673d687b55080007bf392f43f6216e6",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-uart-h4-context/": {
+      "hash": "ef0fe7bf0b7dd663862958a0bcd19e49c3eb59d31cf24d7ba577e11cbb0beebd",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-uart-h5-context/": {
+      "hash": "fdfe28ecf07411c49e952c4b078a525d2682ff7796319bee6ab85b9f8d60222f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-qualcomm-uart-context/": {
+      "hash": "7144b77757df68e0b2fb13a6001755931aa9466091a7a1b78b5cb39da82117c1",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-broadcom-uart-context/": {
+      "hash": "689aec0f8fd235277586008853a59362160f4baf5e07467e9aadd609da947620",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/bluetooth-sdio-hci-context/": {
+      "hash": "ef02132741ab40ed4da21427fde77e7647b01d27c01a12ded25dac9a5c4d226d",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/driver-binding/": {
+      "hash": "e64983405c4140610862985b3814239e89ab45cb09ba213554ea6dac2b58229f",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/kernel-modules/": {
+      "hash": "c293c598df2bf47722940be30c6447e9d7d22061a46966cba4e63a40d44fe2be",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/firmware-loading/": {
+      "hash": "3a974619a7e38be9a78fdf548a52131fa9f31e47ea5bb568514799ae62314b73",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/modalias-matching/": {
+      "hash": "8b381a65d9002428537eff9c880e887567feb5487add346992f899577a563a68",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/graphics-driver-stack/": {
+      "hash": "e912ac7b08ab2b9a00ee38e23440581cb82a8e36c217a39b5cc0ba03146e534e",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/usb-interface-binding/": {
+      "hash": "1e7bbf8f10f6f64ee1f8f8b12171e22acd7e2a75e5a1ec1e394d2948e764cc56",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/pcie-topology/": {
+      "hash": "7b422a87140f80e8466c30ef08bfdf33a68ac160945c7620479a4b609d0f14a6",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/evidence-and-coverage/": {
+      "hash": "f4c37b2f380073630c280a7c1c7fa0bd64e1e93224f9efabb4cc961206188eed",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/distribution-firmware/": {
+      "hash": "ff90a46d02450556a3bae874099e1c84d2bf1ccd244ebbd14040ca0ae7996216",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-hardware-explorer/privacy-and-sharing/": {
+      "hash": "17ea9f6f5dfbc42dcfbdef8d75cde293e051782bb3a79e0fad01fc013853e4d6",
+      "lastmod": "2026-10-10"
+    }
+  }
+}

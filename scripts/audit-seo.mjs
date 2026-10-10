@@ -1,8 +1,10 @@
+import { hardwarePublication } from './hardware-integration.mjs';
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const origin = "https://www.dennishilk.com";
+const hardwareSitemapActive = hardwarePublication(root).sitemapActive;
 // Fail closed: the unlisted live test is excluded until a separately approved launch.
 const labPublicationFile = join(root, "content/linux-fix-lab/publication.json");
 const labPublication = existsSync(labPublicationFile) ? JSON.parse(readFileSync(labPublicationFile, "utf8")) : {};
@@ -15,6 +17,7 @@ const sitemapNames = [
   "sitemap-images.xml",
   "sitemap-cisco-doom.xml",
   "sitemap-blog.xml", ...(labSitemapActive ? ["sitemap-linux-fix-lab.xml"] : []),
+  ...(hardwareSitemapActive ? ["sitemap-linux-hardware-explorer.xml"] : []),
 ];
 
 const technicalPages = new Set([
@@ -120,6 +123,7 @@ function germanSourceFile(file) {
 
 function isIndexable(file, source) {
   const path = rel(file);
+  if (/^(?:de\/)?linux-hardware-explorer\//.test(path) && !hardwareSitemapActive) return false;
   if (technicalPages.has(path) || legacyAliases.has(path) || hasNoindex(source)) return false;
   if (path.startsWith("de/") && isMuseumMirror(source)) {
     const counterpart = germanSourceFile(file);
