@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "editorialReview": "2026-10-10",
+  "disclaimer": {
+    "en": "Curated technical questions, not ranked Google search volumes or verified individual fixes.",
+    "de": "Redaktionell ausgewählte Technikfragen, keine Rangliste gemessener Google-Suchen oder individuell bewiesene Lösungen."
+  },
+  "questions": [
+    {
+      "id": "nvidia-module-missing-after-kernel-update",
+      "question": {
+        "en": "NVIDIA driver vanished after a kernel update?",
+        "de": "NVIDIA-Treiber nach einem Kernel-Update verschwunden?"
+      },
+      "answer": {
+        "en": "First determine whether the module exists for the booted kernel. A missing file is not the same as a Secure Boot rejection.",
+        "de": "Prüfe zuerst, ob das Modul für den gestarteten Kernel vorhanden ist. Eine fehlende Datei ist kein Secure-Boot-Signaturfehler."
+      }
+    },
+    {
+      "id": "ubuntu-apt-phased-updates-held-back",
+      "question": {
+        "en": "Why does Ubuntu keep back updates?",
+        "de": "Warum hält Ubuntu Pakete bei Updates zurück?"
+      },
+      "answer": {
+        "en": "Phased rollouts are expected for some updates; explicit holds or dependency conflicts require different diagnostics.",
+        "de": "Gestaffelte Updates können normal sein; ausdrückliche Sperren und Abhängigkeitskonflikte verlangen andere Prüfungen."
+      }
+    },
+    {
+      "id": "wayland-screen-sharing-portal-fails",
+      "question": {
+        "en": "Why is screen sharing black on Wayland?",
+        "de": "Warum bleibt die Bildschirmfreigabe unter Wayland schwarz?"
+      },
+      "answer": {
+        "en": "Check the ScreenCast portal, its desktop backend and PipeWire stream before blaming a graphics driver.",
+        "de": "Prüfe ScreenCast-Portal, Desktop-Backend und PipeWire-Stream, bevor du den Grafiktreiber verdächtigst."
+      }
+    },
+    {
+      "id": "usb-autosuspend-resume-disconnect",
+      "question": {
+        "en": "USB webcam or controller disappears after sleep?",
+        "de": "USB-Kamera oder Controller verschwindet nach Standby?"
+      },
+      "answer": {
+        "en": "Correlate real bus disconnects with runtime power state; cable, hub and port power can look similar.",
+        "de": "Zeitgleiche USB-Trennungen mit Energiezuständen abgleichen; Kabel, Hub und Port-Strom können ähnlich wirken."
+      }
+    },
+    {
+      "id": "amdgpu-ring-timeout",
+      "question": {
+        "en": "Does an AMDGPU ring timeout mean broken hardware?",
+        "de": "Bedeutet ein AMDGPU-Ring-Timeout defekte Hardware?"
+      },
+      "answer": {
+        "en": "No. The recorded scheduler timeout is a symptom; graphics userspace, kernel, firmware and PCIe require separate evidence.",
+        "de": "Nein. Ein Scheduler-Timeout ist ein Symptom; Userspace, Kernel, Firmware und PCIe brauchen getrennte Belege."
+      }
+    },
+    {
+      "id": "network-wifi-authentication",
+      "question": {
+        "en": "Wi-Fi connects, then drops during authentication?",
+        "de": "WLAN verbindet sich und bricht bei der Anmeldung ab?"
+      },
+      "answer": {
+        "en": "Compare authentication and association errors with firmware and access-point behavior before resetting network settings.",
+        "de": "Anmelde- und Assoziierungsfehler mit Firmware und Access Point vergleichen, bevor Netzwerkeinstellungen zurückgesetzt werden."
+      }
+    },
+    {
+      "id": "network-vpn-split-dns",
+      "question": {
+        "en": "VPN connected but internal DNS fails?",
+        "de": "VPN verbunden, aber internes DNS funktioniert nicht?"
+      },
+      "answer": {
+        "en": "Per-link DNS routing can differ from the default resolver; distinguish lookup failures from inaccessible networks.",
+        "de": "DNS-Routing je Netzwerkverbindung kann vom Standardresolver abweichen; Namensauflösung und Netzreichweite trennen."
+      }
+    },
+    {
+      "id": "audio-pipewire-user-service",
+      "question": {
+        "en": "Why is there no sound after Linux login?",
+        "de": "Warum gibt es nach dem Linux-Login keinen Ton?"
+      },
+      "answer": {
+        "en": "Check the user-session PipeWire service, output device and application routing without deleting audio configuration.",
+        "de": "PipeWire-Dienst in der Benutzersitzung, Ausgabegerät und App-Routing prüfen, ohne Audiokonfiguration zu löschen."
+      }
+    },
+    {
+      "id": "nix-flake-untracked-source",
+      "question": {
+        "en": "Why does a Nix flake ignore a local file?",
+        "de": "Warum berücksichtigt eine Nix-Flake eine lokale Datei nicht?"
+      },
+      "answer": {
+        "en": "A Git-based flake source can exclude untracked files; identify the evaluated source before changing system configuration.",
+        "de": "Eine Git-basierte Flake-Quelle kann unversionierte Dateien ausschließen; erst die ausgewertete Quelle prüfen."
+      }
+    },
+    {
+      "id": "boot-fstab-emergency",
+      "question": {
+        "en": "Why does Linux boot into emergency mode?",
+        "de": "Warum startet Linux im Emergency Mode?"
+      },
+      "answer": {
+        "en": "Start with failed mount units and fstab references; avoid blindly changing UUIDs or formatting a volume.",
+        "de": "Mit gescheiterten Mount-Units und fstab-Einträgen beginnen; UUIDs nicht blind ändern und keine Datenträger formatieren."
+      }
+    },
+    {
+      "id": "storage-sata-crc-errors",
+      "question": {
+        "en": "Does SATA BadCRC mean the SSD is broken?",
+        "de": "Bedeutet SATA BadCRC, dass die SSD kaputt ist?"
+      },
+      "answer": {
+        "en": "CRC/link events point to the SATA transport path, not automatically to NAND failure. Compare cable, port and time-correlated resets.",
+        "de": "CRC-/Link-Meldungen betreffen zunächst den SATA-Übertragungsweg, nicht automatisch NAND. Kabel, Port und Resets zeitlich vergleichen."
+      }
+    },
+    {
+      "id": "nvidia-module-signature-rejected",
+      "question": {
+        "en": "Why won't Secure Boot load an NVIDIA module?",
+        "de": "Warum lädt Secure Boot das NVIDIA-Modul nicht?"
+      },
+      "answer": {
+        "en": "An existing module can be refused by signature enforcement. Distinguish rejected trust from a module that was never built.",
+        "de": "Ein vorhandenes Modul kann wegen Signaturregeln abgewiesen werden. Vertrauensfehler und nie gebautes Modul unterscheiden."
+      }
+    }
+  ]
+}

@@ -1756,5 +1756,145 @@
         }
       }
     ]
+  },
+  {
+    "category": "desktop",
+    "id": "wayland-screen-sharing-portal-fails",
+    "slug": {
+      "en": "wayland-screen-sharing-portal-fails",
+      "de": "wayland-bildschirmfreigabe-portal-fehler"
+    },
+    "title": {
+      "en": "Screen sharing fails on Wayland despite working desktop video",
+      "de": "Bildschirmfreigabe unter Wayland funktioniert nicht"
+    },
+    "summary": {
+      "en": "A working Wayland desktop does not guarantee ScreenCast portal access. Check the session, portal backend and PipeWire stream separately.",
+      "de": "Ein funktionierender Wayland-Desktop garantiert keine ScreenCast-Freigabe. Sitzung, Portal-Backend und PipeWire-Stream getrennt prüfen."
+    },
+    "environment": {
+      "en": "Wayland desktop sessions including KDE Plasma, GNOME and wlroots compositors; browsers, meetings and Flatpak applications may use XDG Desktop Portal and PipeWire.",
+      "de": "Wayland-Sitzungen mit KDE Plasma, GNOME oder wlroots-Compositor; Browser, Meetings und Flatpak-Apps können XDG Desktop Portal und PipeWire nutzen."
+    },
+    "symptoms": {
+      "en": [
+        "A video-call or streaming app sees no screen or produces a black screen while regular desktop windows work.",
+        "The portal picker is missing, declines the request or returns no capture stream even though the microphone works."
+      ],
+      "de": [
+        "Eine Video- oder Streaming-App zeigt keinen Bildschirm oder nur Schwarz, obwohl Desktopfenster normal funktionieren.",
+        "Der Portal-Auswahldialog fehlt, lehnt ab oder liefert keinen Capture-Stream, obwohl das Mikrofon funktioniert."
+      ]
+    },
+    "causes": [
+      {
+        "en": "The selected XDG desktop portal backend may not implement the ScreenCast interface or may be mismatched to the active desktop session.",
+        "de": "Das ausgewählte XDG-Portal-Backend bietet die ScreenCast-Schnittstelle möglicherweise nicht an oder passt nicht zur aktiven Sitzung."
+      },
+      {
+        "en": "The application, portal frontend, compositor and PipeWire stream are independent components. A denied consent prompt or missing PipeWire source does not prove a graphics driver error.",
+        "de": "Anwendung, Portal-Frontend, Compositor und PipeWire-Stream sind unabhängige Komponenten. Abgelehnte Freigabe oder fehlende PipeWire-Quelle beweisen keinen Grafiktreiberfehler."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "read-session-type",
+        "command": "echo \"$XDG_SESSION_TYPE\"",
+        "explanation": {
+          "en": "Read the reported login session type; do not assume the browser uses the same capture path.",
+          "de": "Gemeldeten Sitzungstyp anzeigen; der Browser muss nicht denselben Capture-Pfad verwenden."
+        },
+        "interpretation": {
+          "en": "wayland identifies the session context, not the actual availability of a ScreenCast portal.",
+          "de": "wayland beschreibt den Sitzungskontext, nicht die tatsächliche Verfügbarkeit des ScreenCast-Portals."
+        }
+      },
+      {
+        "id": "read-current-desktop",
+        "command": "echo \"$XDG_CURRENT_DESKTOP\"",
+        "explanation": {
+          "en": "Inspect the desktop identifier used when selecting portal backends.",
+          "de": "Desktopkennung anzeigen, die für die Portal-Backend-Auswahl verwendet wird."
+        },
+        "interpretation": {
+          "en": "An incorrect identifier can select a backend that does not implement the required interface.",
+          "de": "Eine unpassende Kennung kann ein Backend ohne benötigte Schnittstelle auswählen."
+        }
+      },
+      {
+        "id": "inspect-portal-services",
+        "command": "systemctl --user status xdg-desktop-portal.service",
+        "explanation": {
+          "en": "Read the user-session portal frontend status; backend services may have separate names.",
+          "de": "Status des Portal-Frontends in der Benutzersitzung lesen; Backends haben oft eigene Dienstnamen."
+        },
+        "interpretation": {
+          "en": "An active frontend does not establish that the ScreenCast backend or PipeWire capture succeeded.",
+          "de": "Ein aktives Frontend belegt weder das passende ScreenCast-Backend noch einen funktionierenden PipeWire-Stream."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "identify-portal-implementation",
+        "title": {
+          "en": "Match the portal ScreenCast backend to the desktop session",
+          "de": "ScreenCast-Portal-Backend passend zur Sitzung prüfen"
+        },
+        "body": {
+          "en": "Inspect the desktop's portal backend selection and its advertised interfaces. For KDE use the distribution's KDE portal integration, for GNOME its corresponding backend, and for wlroots an appropriate supported implementation. The portal configuration can choose a dedicated ScreenCast backend independently of the file chooser. Confirm the implementation supports the requested source type before changing anything.",
+          "de": "Portal-Backend-Auswahl und angebotene Schnittstellen des Desktops prüfen. Für KDE die zur Distribution passende KDE-Integration, für GNOME deren Backend und für wlroots eine unterstützte Implementierung verwenden. ScreenCast kann über eine eigene Portal-Konfiguration unabhängig vom Dateidialog ausgewählt werden. Vor Änderungen prüfen, ob der Backend-Typ die angefragte Quelle unterstützt."
+        },
+        "precautions": {
+          "en": "Do not indiscriminately install and activate every portal backend; competing defaults can make diagnosis harder.",
+          "de": "Nicht wahllos alle Portal-Backends gleichzeitig aktivieren; konkurrierende Standards erschweren die Diagnose."
+        },
+        "rollback": {
+          "en": "Restore the saved portal configuration and default desktop session values if a controlled change does not help.",
+          "de": "Gesicherte Portal-Konfiguration und Desktop-Sitzungswerte zurückstellen, falls ein Vergleich keine Besserung bringt."
+        }
+      },
+      {
+        "id": "separate-consent-stream",
+        "title": {
+          "en": "Distinguish user consent, PipeWire stream and application capture",
+          "de": "Zustimmung, PipeWire-Stream und Anwendungserfassung trennen"
+        },
+        "body": {
+          "en": "Repeat the same share request with one known working portal client and record whether a source picker appears, the request is denied or a stream starts but remains black. Applications should not require global screen access merely to repair a portal-selection problem. ScreenCast uses PipeWire streams and the caller may still fail to display frames after permission succeeds.",
+          "de": "Denselben Freigabeversuch mit einem bekannten Portal-Client wiederholen und notieren, ob eine Quellenauswahl erscheint, abgelehnt wird oder ein Stream zwar startet, aber schwarz bleibt. Für ein Portal-Auswahlproblem sollte keine globale Bildschirmberechtigung notwendig sein. ScreenCast verwendet PipeWire-Streams; auch nach erfolgreicher Zustimmung kann die Anwendung das Bild noch falsch darstellen."
+        },
+        "precautions": {
+          "en": "Screen capture is privacy-sensitive. Do not share unredacted diagnostic recordings or automatically grant persistent consent.",
+          "de": "Bildschirmaufnahme ist sensibel. Keine ungeschwärzten Diagnoseaufnahmen teilen oder dauerhaft pauschale Freigaben erteilen."
+        },
+        "rollback": {
+          "en": "Close the temporary share session, revoke its grant if needed and restore the application's previous source selection.",
+          "de": "Testfreigabe beenden, Berechtigung bei Bedarf widerrufen und ursprüngliche Quellenauswahl wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "XDG Desktop Portal: ScreenCast interface",
+        "url": "https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.ScreenCast.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "XDG Desktop Portal: backend selection",
+        "url": "https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "XDG Desktop Portal: desktop integration and backends",
+        "url": "https://flatpak.github.io/xdg-desktop-portal/docs/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "logPatterns": [],
+    "reviewed": "2026-10-10"
   }
 ]

@@ -28,7 +28,7 @@ test('an isolated rebuild is deterministic and removing an entry removes its gen
   const removed=entries.find(item=>item.id==='hybrid-gpu-selection');assert.ok(removed);
   await writeFile(file,JSON.stringify(entries.filter(item=>item.id!==removed.id)));assert.equal(run().status,0);
   const changed=JSON.parse(await readFile(join(fixture,'content/linux-fix-lab/generated-manifest.json'),'utf8'));
-  assert.equal(changed.problemCount,149);assert.equal(changed.localizedProblemPages,298);
+  assert.equal(changed.problemCount,153);assert.equal(changed.localizedProblemPages,306);
   for(const lang of ['en','de']){const route=`${lang==='de'?'de/':''}linux-fix-lab/${removed.slug[lang]}/index.html`;await assert.rejects(readFile(join(fixture,route)) ,{code:'ENOENT'});}
 });
 test('existing sitemap generator adds, removes and excludes localized Lab pages without duplicate ownership',async t=> {

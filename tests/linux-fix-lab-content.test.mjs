@@ -10,14 +10,14 @@ const problems=loadProblems();
 const trees=JSON.parse(readFileSync(resolve(root,'content/linux-fix-lab/assistants.json'),'utf8'));
 const bilingual=(value,label)=>{for(const lang of ['en','de'])assert.ok(typeof value?.[lang]==='string'&&value[lang].trim().length>1,`${label}: missing ${lang}`);};
 
-test('launch inventory has 150 distinct problems across all 12 categories',()=> {
-  assert.equal(problems.length,150);
-  assert.equal(new Set(problems.map(problem=>problem.id)).size,150);
+test('expanded inventory has 154 distinct problems across all 12 categories',()=> {
+  assert.equal(problems.length,154);
+  assert.equal(new Set(problems.map(problem=>problem.id)).size,154);
   assert.deepEqual(new Set(problems.map(problem=>problem.category)),new Set(Object.keys(categories)));
   for(const lang of ['en','de']) {
-    assert.equal(new Set(problems.map(problem=>problem.slug[lang])).size,150);
-    assert.equal(new Set(problems.map(problem=>problem.title[lang])).size,150);
-    assert.equal(new Set(problems.map(problem=>problem.summary[lang])).size,150);
+    assert.equal(new Set(problems.map(problem=>problem.slug[lang])).size,154);
+    assert.equal(new Set(problems.map(problem=>problem.title[lang])).size,154);
+    assert.equal(new Set(problems.map(problem=>problem.summary[lang])).size,154);
   }
 });
 
@@ -91,3 +91,18 @@ for(const tree of trees)test(`${tree.id}: meaningful reachable bilingual decisio
   assert.ok(questions>=2&&terminals>=3);
 });
 test('18 distinct assistants are available',()=>assert.equal(trees.length,18));
+
+test('featured symptom questions lead to real bilingual guides without search-volume claims',()=> {
+  const faq=JSON.parse(readFileSync(resolve(root,'content/linux-fix-lab/featured-questions.json'),'utf8'));
+  assert.equal(faq.schemaVersion,1);
+  assert.equal(faq.questions.length,12);
+  assert.equal(new Set(faq.questions.map(item=>item.id)).size,12);
+  assert.ok(!/search volumes/i.test(faq.disclaimer.de));
+  for(const item of faq.questions) {
+    assert.ok(problems.some(problem=>problem.id===item.id),item.id);
+    for(const lang of ['en','de']) {
+      assert.ok(item.question[lang].length>20);
+      assert.ok(item.answer[lang].length>35);
+    }
+  }
+});

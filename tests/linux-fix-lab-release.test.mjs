@@ -15,12 +15,12 @@ test('the approved public launch is indexable and advertises exactly one complet
   assert.equal(publication.phase,'public-launch');assert.equal(publication.allowIndexing,true);assert.equal(publication.activateSitemap,true);
   const manifest=JSON.parse(read('content/linux-fix-lab/generated-manifest.json'));
   assert.deepEqual(manifest.publication,{phase:'public-launch',robots:'index,follow,max-image-preview:large',sitemapActive:true});
-  assert.equal(Object.keys(manifest.pages).length,302);
+  assert.equal(Object.keys(manifest.pages).length,310);
   assert.equal(existsSync(resolve(root,'sitemap-linux-fix-lab.xml')),true);
   const origin='https://www.dennishilk.com',sitemapUrl=origin+'/sitemap-linux-fix-lab.xml';
   const urls=[...read('sitemap-linux-fix-lab.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]);
   assert.deepEqual(urls.sort(),Object.keys(manifest.pages).map(path=>origin+path).sort());
-  assert.equal(new Set(urls).size,302);
+  assert.equal(new Set(urls).size,310);
   assert.equal(read('robots.txt').split(/\r?\n/).filter(line=>line==='Sitemap: '+sitemapUrl).length,1);
   assert.equal(read('sitemap-index.xml').split(sitemapUrl).length-1,1);
   for(const path of readdirSync(root).filter(name=>/^sitemap.*\.xml$/.test(name)&&!['sitemap-index.xml','sitemap-linux-fix-lab.xml'].includes(name)))assert.doesNotMatch(read(path),/linux-fix-lab/);
