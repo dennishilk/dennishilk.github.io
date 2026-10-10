@@ -1,3 +1,4 @@
+import { expansionArticles } from './expansion.mjs';
 // Original bilingual guides. The review date records a source check, not a reproduced fix.
 const reviewed = '2026-10-10';
 const text = (en, de) => ({ en, de });
@@ -487,4 +488,5 @@ export const articles = [
     sources: [refs.wpctl, refs.pwtop],
     fixLab: ['audio-default-output-muted', 'audio-pipewire-user-service', 'audio-pipewire-xruns'], hardware: ['audio-usb-audio-class', 'audio-hda-hdmi-display-codec'],
   },
+  ...expansionArticles,
 ];

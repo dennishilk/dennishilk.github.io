@@ -31,9 +31,9 @@ test('build is deterministic, preserves lastmod and records public route hashes'
   const first = build();
   const second = build();
   assert.deepEqual(second, first);
-  assert.equal(first.articleCount, 13);
+  assert.equal(first.articleCount, 23);
   assert.equal(first.assistantCount, 6);
-  assert.equal(Object.keys(first.pages).length, 28);
+  assert.equal(Object.keys(first.pages).length, 48);
   for (const [path, page] of Object.entries(first.pages)) {
     const text = read(path.slice(1) + 'index.html');
     assert.equal(page.hash, createHash('sha256').update(text).digest('hex'));

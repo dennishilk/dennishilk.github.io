@@ -8,6 +8,7 @@ const expectedIds = [
   'proton-startup', 'vulkan-initialization', 'dxvk-no-device', 'vulkan-32-bit',
   'wrong-gpu', 'amdgpu-ring-timeout', 'nvidia-mismatch', 'vkd3d-startup',
   'shader-stutter', 'movement-freezes', 'controller-input', 'steam-deck-startup', 'proton-audio',
+  'steam-runtime-pressure-vessel', 'steam-flatpak-permissions', 'steam-library-mount', 'steam-ntfs-proton-prefix', 'proton-prefix-recovery', 'lutris-game-launch', 'heroic-login-failures', 'multiplayer-anticheat-limit', 'gamescope-wayland-output', 'steam-update-download',
 ];
 const article = id => articles.find(item => item.id === id);
 const prose = (id, lang) => article(id).sections.map(item => item.body[lang]).join('\n');
@@ -21,7 +22,7 @@ const bilingual = (value, label) => {
   }
 };
 
-test('knowledge base has the thirteen requested canonical IDs without duplicates', () => {
+test('knowledge base preserves original IDs and includes distinct reviewed expansion guides', () => {
   assert.deepEqual(articles.map(item => item.id), expectedIds);
   assert.equal(new Set(articles.map(item => item.id)).size, articles.length);
 });
@@ -73,11 +74,11 @@ test('all Fix Lab and Hardware links resolve against existing canonical catalogs
 
 test('references identify primary projects or their official documentation', () => {
   const officialHosts = new Set([
-    'docs.kernel.org', 'docs.mesa3d.org', 'download.nvidia.com', 'wiki.nixos.org',
+    'docs.flatpak.org', 'docs.kernel.org', 'docs.mesa3d.org', 'download.nvidia.com', 'wiki.nixos.org',
     'partner.steamgames.com', 'help.steampowered.com', 'pipewire.pages.freedesktop.org', 'docs.pipewire.org',
   ]);
   const projectOwners = new Set([
-    'ValveSoftware', 'GloriousEggroll', 'KhronosGroup', 'doitsujin', 'HansKristian-Work',
+    'lutris', 'Heroic-Games-Launcher', 'Open-Wine-Components', 'ValveSoftware', 'GloriousEggroll', 'KhronosGroup', 'doitsujin', 'HansKristian-Work',
     'GPUOpen-Drivers', 'NVIDIA', 'sysstat', 'flightlessmango',
   ]);
   for (const item of articles) for (const source of item.sources) {

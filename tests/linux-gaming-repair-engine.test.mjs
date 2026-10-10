@@ -166,10 +166,58 @@ const cases = {
     positive: ['game[234]: segfault at 0 ip 0000 sp 0000 error 4 in game[0000]', 'systemd-coredump: Process 234 (game) of user 1000 dumped core.'],
     negative: ['systemd-coredump: core dump storage enabled', 'game process started'],
   },
+  'steam-disk-write': {
+    positive: ["Steam: Disk write error while updating game"],
+    negative: ["Steam: disk write operations succeeded","Steam: disk space sufficient"],
+  },
+  'steam-corrupt-update': {
+    positive: ["Steam: Corrupt update files while patching"],
+    negative: ["Steam: Update files verified successfully","Steam: cache contains update files"],
+  },
+  'steam-library-noexec': {
+    positive: ["steamapps/common/game: execve: Permission denied"],
+    negative: ["steamapps/common/game: execution finished successfully","Permission denied opening a browser profile"],
+  },
+  'steam-library-readonly': {
+    positive: ["steamapps/common: write failed: Read-only file system","compatdata/42: write error: EROFS"],
+    negative: ["steamapps library mounted read-write","compatdata/42 is a read-only test fixture"],
+  },
+  'flatpak-steam-access': {
+    positive: ["flatpak: Steam: permission denied accessing library"],
+    negative: ["flatpak Steam filesystem access enabled","flatpak Steam permissions documented"],
+  },
+  'pressure-vessel-namespace': {
+    positive: ["pressure-vessel-wrap[123]: E: Failed to create new namespace"],
+    negative: ["pressure-vessel: namespace created successfully","pressure-vessel: namespace support enabled"],
+  },
+  'pressure-vessel-runtime-missing': {
+    positive: ["Steam Linux Runtime: error: required runtime not found"],
+    negative: ["Steam Linux Runtime: runtime located","Steam Linux Runtime: runtime is not missing"],
+  },
+  'legendary-authentication': {
+    positive: ["Legendary: ERROR: Authentication failed"],
+    negative: ["Legendary: Authentication successful","Legendary login token refresh is enabled"],
+  },
+  'heroic-legendary-start': {
+    positive: ["Heroic: failed to start Legendary process"],
+    negative: ["Heroic: started Legendary process","Heroic: Legendary runner selected"],
+  },
+  'wine-loader-status-c0000135': {
+    positive: ["wine: loader error c0000135: STATUS_DLL_NOT_FOUND"],
+    negative: ["wine: status c0000135 is a documented possible code","Proton: DLL load completed"],
+  },
+  'wine-loader-status-c000007b': {
+    positive: ["wine: loader error c000007b: STATUS_INVALID_IMAGE_FORMAT"],
+    negative: ["Wine: c000007b documentation only","Wine: game executable loaded"],
+  },
+  'dxvk-shader-cache-write': {
+    positive: ["DXVK: Failed to write shader cache"],
+    negative: ["DXVK: Loaded shader cache successfully","DXVK: Shader cache disabled by configuration"],
+  },
 };
 
 test('every public signature has an independently authored positive/negative pair and bilingual metadata', () => {
-  assert.equal(PATTERNS.length, 40);
+  assert.equal(PATTERNS.length, 52);
   assert.equal(new Set(PATTERNS.map(pattern => pattern.id)).size, PATTERNS.length);
   assert.equal(new Set(PATTERNS.map(pattern => pattern.category)).size, PATTERNS.length);
   assert.deepEqual(Object.keys(cases).sort(), PATTERNS.map(pattern => pattern.id).sort());
