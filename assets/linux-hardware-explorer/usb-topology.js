@@ -4,7 +4,7 @@ const CLASS={
  'human interface device':'03',hid:'03',hub:'09','mass storage':'08',massstorage:'08',audio:'01',
  'communications':'02','communications and cdc control':'02',cdc:'02',data:'0a',
  'wireless':'e0','wireless controller':'e0','vendor specific class':'ff','vendor specific':'ff',
- 'per interface':'00'
+ 'per interface':'00',video:'0e',printer:'07',imaging:'06'
 };
 const cleanDriver=x=>/^[a-z0-9_.-]{1,64}$/i.test(x)&&!['none','unbound','unknown'].includes(x.toLowerCase())?x:null;
 function blank(bus,dev){
@@ -15,12 +15,20 @@ function blank(bus,dev){
 function appendInterface(d,number){
  d.usbInterfaces||=[];
  let target=d.usbInterfaces.find(i=>i.number===number);
- if(!target){target={number,classCode:null,subClass:null,protocol:null,binding:'unreported',driver:null};d.usbInterfaces.push(target);}
+ if(!target){target={number,classCode:null,subClass:null,protocol:null,binding:'unreported',driver:null,reportedClassLabel:null,reportedClassEvidence:null};d.usbInterfaces.push(target);}
  return target;
 }
 function addClass(i,label){
- const code=CLASS[label.trim().toLowerCase()];
- if(code&&!i.classCode)i.classCode=code;
+ // lsusb -t reports class names, not numeric subclass or protocol descriptors.
+ const reported=label.trim().replace(/[\u0000-\u001f\u007f\u202a-\u202e]/g,'').slice(0,80);
+ if(!reported)return;
+ i.reportedClassLabel=reported;
+ i.reportedClassEvidence='lsusb -t';
+ const code=CLASS[reported.toLowerCase()];
+ if(code){
+  if(i.classCode&&i.classCode!==code)i.classConflict=true;
+  else i.classCode=code;
+ }
 }
 const setNumeric=(i,key,str)=>{
  const decimal=/^(?:0x[0-9a-f]+|\d+)$/i.test(str)?(/^0x/i.test(str)?Number.parseInt(str.slice(2),16):Number(str)):NaN;
@@ -67,7 +75,7 @@ export function correlateUsbReports(parsed,raw){
   // Never borrow the previous root bus across a new root line with unknown syntax.
   if(/^\s*\/:/.test(line)){bus=null;continue;}
   if(!bus)continue;
-  const m=line.match(/\bDev\s+(\d{1,3}),\s*If\s+(\d{1,3}),\s*Class=([^,]{1,80}),\s*Driver=([^,\s]{1,80})/i);
+  const m=line.match(/\bDev\s+(\d{1,3}),\s*If\s+(\d{1,3}),\s*Class=([^,]{1,80}),\s*Driver=([^,\s]{0,80})/i);
   if(!m)continue;
   const num=Number(m[2]);if(num>255)continue;
   const d=ensure(bus,m[1].padStart(3,'0'));if(!d)continue;

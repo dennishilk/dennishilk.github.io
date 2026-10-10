@@ -1,4 +1,5 @@
 import { LocalAnalysis } from './controller.js';
+import { usbInterfacePresentation } from './usb-presentation.js';
 import { LIMITS, filterProfiles, publicSummary, redactHardwareReport, canonicalPublicUrl, contextHash, validPublicContext, matchReason, deviceSources, landingPath, profilePath } from './core.js';
 import { shareIntent, moveAssistant } from '../linux-fix-lab/core.js';
 
@@ -94,7 +95,7 @@ function profileLinks(result, limit = 8) {
 const VENDORS = { pci: { '1002': 'AMD', '10de': 'NVIDIA', '8086': 'Intel', '1022': 'AMD', '10ec': 'Realtek', '14e4': 'Broadcom', '168c': 'Qualcomm Atheros', '17cb': 'Qualcomm', '1b21': 'ASMedia', '1b4b': 'Marvell', '15ad': 'VMware', '1af4': 'Virtio' },
   usb: { '046d': 'Logitech', '0bda': 'Realtek', '8087': 'Intel', '0a12': 'Cambridge Silicon Radio', '0b95': 'ASIX', '0e8d': 'MediaTek', '1d6b': 'Linux Foundation' } };
 function deviceCard(result) {
-  const d = result.device, verified = result.matches.filter(m => ['exact-id', 'family-id'].includes(m.reason)).map(m => profiles.get(m.profileId)).filter(Boolean);
+  const d = result.device, interfaceView = d.bus === 'usb' ? usbInterfacePresentation(d, language) : null, verified = result.matches.filter(m => ['exact-id', 'family-id'].includes(m.reason)).map(m => profiles.get(m.profileId)).filter(Boolean);
   const matched = verified.length === 1 ? verified : []; // Never expand an arbitrary winner from ambiguous identities.
   const card = el('article', '', 'hardware-device');
   const identity = d.vendor && d.device ? `${d.bus.toUpperCase()} ${d.vendor}:${d.device}` : t('Identity incomplete', 'Identität unvollständig');
@@ -104,6 +105,19 @@ function deviceCard(result) {
   card.append(el('h3', heading));
   if (!matched.length && d.bus === 'usb' && d.reportedLabel) card.append(el('p', t('Name supplied by pasted report (unverified)', 'Name aus eingefügtem Bericht (ungeprüft)'), 'lab-muted'));
   card.append(el('p', identity, 'lab-muted'));
+  if (interfaceView) {
+    card.append(el('p', interfaceView.headline, 'lab-muted'));
+    const overviewRows = el('ul', '', 'hardware-interface-summary');
+    for (const group of interfaceView.groups.slice(0, 12)) {
+      const detail = group.binding === 'reported-bound' ? group.driver :
+        group.binding === 'reported-unbound' ? t('No driver reported', 'Ohne Treiber gemeldet') :
+        group.binding === 'conflicting' ? t('Conflicting reports', 'Widersprüchliche Angaben') :
+        t('Binding not reported', 'Bindung nicht gemeldet');
+      overviewRows.append(el('li', group.label + ' ' + group.range + ': ' + detail));
+    }
+    if (interfaceView.groups.length > 12) overviewRows.append(el('li', t('More interfaces in Driver tab', 'Weitere Schnittstellen im Treiber-Tab')));
+    card.append(overviewRows);
+  }
   card.append(el('p', ['curated-id', 'curated-family'].includes(result.coverage) ? t('Curated identity evidence; operation untested', 'Kuratierter Identitätsbeleg; Funktion ungeprüft') :
     result.matches.length ? t('Candidate context; exact product not established', 'Möglicher Kontext; exaktes Produkt nicht belegt') : t('Unknown to this curated catalog', 'In diesem kuratierten Katalog unbekannt'), 'hardware-badge'));
   const panels = new Map(), tabs = el('div', '', 'hardware-tabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', t('Device information', 'Geräteinformationen'));
@@ -164,7 +178,12 @@ function deviceCard(result) {
       link(t('Driver binding', 'Treiberbindung'), profilePath('driver-binding', language)), link(t('Firmware loading evidence', 'Firmware-Ladebefunde'), profilePath('firmware-loading', language))); overview.append(details);
   }
   if (!matched.length) overview.append(el('p', t('Keep the numeric ID and read upstream or distribution evidence. No catalog match does not mean unsupported hardware.', 'Behalte die numerische ID und prüfe Upstream- oder Distributionsbelege. Ein fehlender Katalogtreffer bedeutet keine fehlende Unterstützung.')));
-  const driver = panels.get('driver'); driver.append(el('p', bindingLabel(result.binding), 'hardware-badge'));
+  const driver = panels.get('driver');
+  const bindingStatus = interfaceView ? interfaceView.status :
+    d.rootHub && d.hostControllerDriver ?
+      t('Host-controller driver reported by lsusb -t', 'Hostcontroller-Treiber durch lsusb -t gemeldet') :
+      bindingLabel(result.binding);
+  driver.append(el('p', bindingStatus, 'hardware-badge'));
   driver.append(el('p', result.binding === 'reported-bound' ? t('Bound according to the supplied report; initialization and operational stability are not established.', 'Gebunden laut übermitteltem Bericht; Initialisierung und Betriebsstabilität sind nicht bestätigt.') : t('Initialization and operational stability are not established.', 'Initialisierung und Betriebsstabilität sind nicht bestätigt.')));
   if (result.boundDriver) driver.append(el('p', `${t('Reported bound driver', 'Gemeldeter gebundener Treiber')}: ${result.boundDriver}`));
   if (d.reportedModules.length) driver.append(el('p', `${t('Input module candidates (not proof of loading)', 'Modulkandidaten der Eingabe (kein Ladenachweis)')}: ${d.reportedModules.join(', ')}`));
@@ -172,7 +191,14 @@ function deviceCard(result) {
   if (d.rootHub && d.hostControllerDriver) driver.append(el('p', `${t('Reported host-controller driver', 'Gemeldeter Hostcontroller-Treiber')}: ${d.hostControllerDriver} (lsusb -t). ${t('Not a USB interface binding or verified functionality.', 'Keine USB-Schnittstellenbindung und kein Funktionsnachweis.')}`));
   if (d.interfaceBindings?.length) {
     const list = el('ul');
-    for (const item of d.interfaceBindings) list.append(el('li', `${t('Interface', 'Schnittstelle')} ${item.number}: ${item.binding === 'reported-bound' ? item.driver : item.binding === 'conflicting' ? t('Contradictory observations', 'Widersprüchliche Beobachtungen') : t('Reported unbound', 'Als ungebunden gemeldet')} (lsusb -t)`));
+    for (const item of d.interfaceBindings) {
+      const evidence = d.usbInterfaces?.find(i => i.number === item.number);
+      const name = evidence?.reportedClassLabel ? ' · ' + t('reported class', 'gemeldete Klasse') + ': ' + evidence.reportedClassLabel : '';
+      list.append(el('li', t('Interface', 'Schnittstelle') + ' ' + item.number + name + ': ' +
+        (item.binding === 'reported-bound' ? item.driver :
+          item.binding === 'conflicting' ? t('Contradictory observations', 'Widersprüchliche Beobachtungen') :
+          t('Reported unbound', 'Als ungebunden gemeldet')) + ' (lsusb -t)'));
+    }
     driver.append(el('h4', t('Observed USB interface bindings', 'Beobachtete USB-Schnittstellenbindungen')), list);
   }
   const kernel = result.kernelEvidence;
@@ -184,6 +210,21 @@ function deviceCard(result) {
       for (const item of kernel.candidates) list.append(el('li', `${item.module} · ${item.kind === 'builtin' ? t('Built-in alias', 'Alias eines eingebauten Treibers') : t('Loadable-module alias', 'Alias eines ladbaren Moduls')}${item.bus === 'hid' ? ' · HID' : ''}${item.interfaceNumber === null ? '' : ` · ${t('Interface', 'Schnittstelle')} ${item.interfaceNumber}`}`));
       driver.append(list);
     } else driver.append(el('p', t('No matching alias in this kernel build or insufficient identifiers. That does not establish unsupported hardware.', 'Kein passender Alias in diesem Kernelbuild oder unvollständige Kennungen. Das belegt keine fehlende Unterstützung.')));
+    if (d.bus === 'usb' && d.interfaceBindings?.length) {
+      const normalized = name => name.replaceAll('-', '_').toLowerCase();
+      const observed = [...new Set(d.interfaceBindings.filter(i => i.binding === 'reported-bound' && i.driver).map(i => i.driver))];
+      const unmatched = observed.filter(name => !kernel.candidates.some(candidate => normalized(candidate.module) === normalized(name)));
+      if (unmatched.length) {
+        const needsDescriptors = d.usbInterfaces?.some(i => i.binding === 'reported-bound' && (!i.subClass || !i.protocol));
+        driver.append(el('p', (needsDescriptors ?
+          t('Some observed drivers have no independent alias match: lsusb -t does not include USB interface subclass and protocol. ',
+            'Einige gemeldete Treiber haben keinen unabhängigen Alias-Treffer: lsusb -t enthält keine USB-Schnittstellenunterklasse und kein Protokoll. ') :
+          t('Some observed drivers are not matched independently by this kernel index. ',
+            'Einige gemeldete Treiber wurden von diesem Kernelindex nicht unabhängig erkannt. ')) +
+          t('Observed bindings remain valid report evidence; no alias match is fabricated.',
+            'Gemeldete Bindungen bleiben gültige Berichtsbefunde; es wird kein Alias-Treffer erfunden.'), 'lab-muted'));
+      }
+    }
     if (kernel.truncated) driver.append(el('p', t('Additional candidates omitted; refine with an exact sysfs modalias.', 'Weitere Kandidaten ausgeblendet; mit genauem sysfs-Modalias präzisieren.')));
   } else if (kernel?.state === 'index-unavailable') driver.append(el('p', t('Public kernel index could not be loaded; curated profiles and reported bindings remain usable.', 'Öffentlicher Kernelindex konnte nicht geladen werden; kuratierte Profile und gemeldete Bindungen bleiben verwendbar.')));
   driver.append(el('p', t('The same public index files are fetched for every report. Your hardware IDs do not determine request URLs; normal page requests remain visible to the web server.', 'Für jeden Bericht werden dieselben öffentlichen Indexdateien geladen. Hardware-IDs bestimmen keine Anfrage-URLs; normale Seitenabrufe bleiben für den Webserver sichtbar.'), 'lab-muted'));
