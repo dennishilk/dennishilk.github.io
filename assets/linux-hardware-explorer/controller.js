@@ -1,6 +1,6 @@
 // Browser-independent lifecycle: one local Worker, no report persistence or network calls.
 export class LocalAnalysis {
-  constructor({ createWorker, onResult, onError, schedule = setTimeout, cancel = clearTimeout, timeout = 15000 }) {
+  constructor({ createWorker, onResult, onError, schedule = (callback, delay) => setTimeout(callback, delay), cancel = timer => clearTimeout(timer), timeout = 15000 }) {
     Object.assign(this, { createWorker, onResult, onError, schedule, cancel, timeout });
     this.generation = 0; this.worker = null; this.timer = null;
   }
