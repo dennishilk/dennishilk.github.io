@@ -10,10 +10,9 @@ const SCANNER_PATH = /(?:wp-admin|wp-login|xmlrpc\.php|\.env|phpmyadmin|cgi-bin|
 const BOT_UA = /bot|crawler|spider|slurp|bingpreview|facebookexternalhit|preview|monitor|uptime|curl|wget|python-requests|go-http-client|httpclient|headless/i;
 const SCANNER_UA = /zgrab|masscan|nmap|nikto|sqlmap|acunetix|nessus|openvas|dirbuster|gobuster|wpscan|botnet|scanner/i;
 const SUCCESS = new Set([200, 201, 202, 203, 204, 206, 301, 302, 303, 304, 307, 308]);
-// This is intentionally exact: traffic.html only polls this generated payload.  A
-// direct browser navigation is still a normal request, but the polling request is
-// not useful observation data.  Bot and scanner classification takes precedence.
-const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json']);
+// Exact generated observer payloads are internal polling noise. The traffic
+// document remains a normal page request. Bots and scanners take precedence.
+const OBSERVER_INTERNAL_PATHS = new Set(['/data/site-traffic.json', '/data/nebuverse/storage.json']);
 const TOP_PAGE_EXCLUDED_PATHS = new Set([
   '/impressum.html',
   '/datenschutzerklaerung.html',
