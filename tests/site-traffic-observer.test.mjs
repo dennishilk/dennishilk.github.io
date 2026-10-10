@@ -143,6 +143,25 @@ test('traffic dashboard navigation remains a pageview while its polling payload 
   assert.equal(payload.top_paths.some(row => row.path === '/data/site-traffic.json'), true);
 });
 
+test('storage snapshot polling is internal noise while bots and scanners remain observable', () => {
+  const baseline = buildTrafficPayload([line({ at, path: '/traffic.html' })], { now });
+  const polled = buildTrafficPayload([
+    line({ at, path: '/traffic.html' }),
+    line({ ip: '8.8.8.8', at, path: '/data/nebuverse/storage.json?t=123' }),
+    line({ ip: '8.8.4.4', at, method: 'HEAD', path: '/data/nebuverse/storage.json' }),
+  ], { now });
+  for (const field of ['human_requests_today', 'pageviews_today', 'requests_total', 'estimated_unique_visitors']) {
+    assert.equal(polled[field], baseline[field], field);
+  }
+  assert.equal(polled.live_requests.some(request => request.path.includes('nebuverse')), false);
+  const machines = buildTrafficPayload([
+    line({ ip: '9.9.9.9', at, path: '/data/nebuverse/storage.json', ua: 'Googlebot/2.1' }),
+    line({ ip: '9.9.9.8', at, path: '/data/nebuverse/storage.json', ua: 'zgrab/0.x' }),
+  ], { now });
+  assert(machines.live_requests.some(request => request.kind === 'BOT'));
+  assert(machines.live_requests.some(request => request.kind === 'SCANNER'));
+});
+
 test('traffic frontend has no all-time pageview baseline', async () => {
   const { readFile } = await import('node:fs/promises');
   const source = await readFile(new URL('../traffic.html', import.meta.url), 'utf8');

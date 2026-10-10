@@ -3,6 +3,10 @@
 /data/
 /state/
 
+# Python collector/test bytecode
+__pycache__/
+*.py[cod]
+
 # Hourly generated Wiesmoor weather latest payload
 world-observer/dashboard/latest/wiesmoor-weather.json
 
