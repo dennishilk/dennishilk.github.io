@@ -23,7 +23,8 @@ export class LocalAnalysis {
         if (event.data?.id !== id) return;
         finish(event.data.error || null, event.data.result);
       };
-      worker.onerror = event => { event.preventDefault?.(); finish('worker-unavailable'); };
+      // Keep the browser's native module/Worker error visible for diagnosis.
+      worker.onerror = () => { finish('worker-unavailable'); };
       this.timer = this.schedule(() => finish('analysis-timeout'), this.timeout);
       worker.postMessage({ id, report, format });
     } catch { this.clear(); this.onError('worker-unavailable'); }
