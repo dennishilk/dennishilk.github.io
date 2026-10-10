@@ -1916,5 +1916,145 @@
     ],
     "reviewed": "2026-10-09",
     "logPatterns": []
+  },
+  {
+    "category": "packages",
+    "id": "ubuntu-apt-phased-updates-held-back",
+    "slug": {
+      "en": "ubuntu-apt-phased-updates-held-back",
+      "de": "ubuntu-apt-zurueckgehaltene-pakete-phased-updates"
+    },
+    "title": {
+      "en": "Ubuntu APT keeps packages back during phased updates",
+      "de": "Ubuntu APT hält Pakete durch Phased Updates zurück"
+    },
+    "summary": {
+      "en": "Ubuntu may stage updates across devices. Check whether an APT hold is normal phasing or a dependency conflict before forcing an upgrade.",
+      "de": "Ubuntu verteilt Updates in Wellen. Prüfe, ob APT-Pakete wegen Phasing oder eines Abhängigkeitskonflikts zurückhält, statt ein Upgrade zu erzwingen."
+    },
+    "environment": {
+      "en": "Ubuntu releases with APT staged/phased updates; Debian or third-party repositories may use other mechanisms. This guide does not assume every kept-back package is phased.",
+      "de": "Ubuntu-Versionen mit gestaffelter APT-Verteilung; Debian und Fremdquellen können andere Mechanismen haben. Nicht jedes zurückgehaltene Paket ist von Phasing betroffen."
+    },
+    "symptoms": {
+      "en": [
+        "apt upgrade says that one or more packages have been kept back despite an otherwise healthy package system.",
+        "Different Ubuntu computers receive the same proposed non-security update at different times."
+      ],
+      "de": [
+        "apt upgrade meldet zurückgehaltene Pakete, obwohl die übrige Paketverwaltung normal funktioniert.",
+        "Verschiedene Ubuntu-Rechner erhalten dieselbe angebotene Nicht-Sicherheitsaktualisierung zu unterschiedlichen Zeiten."
+      ]
+    },
+    "causes": [
+      {
+        "en": "Ubuntu can stage an update to a subset of machines until sufficient rollout confidence is established.",
+        "de": "Ubuntu kann ein Update zunächst nur an einen Teil der Rechner verteilen, bis ausreichend Sicherheit über dessen Stabilität besteht."
+      },
+      {
+        "en": "A package may instead be held explicitly, require a new dependency, conflict with another package or come from a mismatched repository; the banner alone does not identify phasing.",
+        "de": "Ein Paket kann stattdessen ausdrücklich gehalten sein, neue Abhängigkeiten benötigen, mit einem anderen Paket kollidieren oder aus einer unpassenden Quelle stammen; die Meldung allein beweist kein Phasing."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "inspect-upgradable-packages",
+        "command": "apt list --upgradable",
+        "explanation": {
+          "en": "List eligible upgrade candidates without installing them.",
+          "de": "Aktualisierungskandidaten ohne Installation auflisten."
+        },
+        "interpretation": {
+          "en": "The list does not by itself tell why a particular candidate has been held back.",
+          "de": "Die Liste erklärt nicht automatisch, warum einzelne Kandidaten zurückgehalten werden."
+        }
+      },
+      {
+        "id": "inspect-explicit-holds",
+        "command": "apt-mark showhold",
+        "explanation": {
+          "en": "List explicitly pinned held packages without changing the hold state.",
+          "de": "Explizit gehaltene Pakete ohne Änderung der Sperre auflisten."
+        },
+        "interpretation": {
+          "en": "An explicit hold is separate from Ubuntu's phased update scheduling.",
+          "de": "Eine ausdrückliche Paketsperre ist von Ubuntus gestaffelter Verteilung unabhängig."
+        }
+      },
+      {
+        "id": "inspect-package-policy",
+        "command": "apt-cache policy PACKAGENAME",
+        "explanation": {
+          "en": "Replace PACKAGENAME with one held-back package; read installed and candidate versions and repository origins.",
+          "de": "PACKAGENAME durch ein zurückgehaltenes Paket ersetzen; installierte Versionen, Kandidaten und Quellen prüfen."
+        },
+        "interpretation": {
+          "en": "Policy can expose version and origin differences; combine with Ubuntu's phased-update metadata and apt messages.",
+          "de": "Policy zeigt Versionen und Quellen; zusammen mit Phased-Update-Metadaten und APT-Meldungen auswerten."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "respect-phased-rollout",
+        "title": {
+          "en": "Wait for a routine staged rollout when it is actually identified",
+          "de": "Bei belegtem Phased Update die reguläre Verteilung abwarten"
+        },
+        "body": {
+          "en": "If the candidate is genuinely phased, the normal action for a personal workstation is to let APT take the update when it becomes eligible. This is an Ubuntu safety mechanism, not evidence of a broken package database. Check normal scheduled update results later instead of repeatedly trying force flags.",
+          "de": "Ist der Kandidat tatsächlich gestaffelt, sollte man auf einem normalen Arbeitsplatzrechner warten, bis APT das Update regulär zulässt. Das ist eine Ubuntu-Sicherheitsfunktion, kein Beleg für eine defekte Paketdatenbank. Spätere reguläre Updates prüfen statt wiederholt Force-Flags auszuprobieren."
+        },
+        "precautions": {
+          "en": "Security updates are not phased according to Ubuntu's documentation; diagnose an apparently held security update separately.",
+          "de": "Sicherheitsupdates werden laut Ubuntu-Dokumentation nicht gestaffelt; scheinbar zurückgehaltene Sicherheitsupdates gesondert untersuchen."
+        },
+        "rollback": {
+          "en": "No configuration change is required; keep the default phased-update policy.",
+          "de": "Keine Konfigurationsänderung nötig; die Standardrichtlinie beibehalten."
+        }
+      },
+      {
+        "id": "separate-dependency-hold",
+        "title": {
+          "en": "Investigate real holds, dependency changes and repository mixing",
+          "de": "Echte Sperren, Abhängigkeiten und Fremdquellen untersuchen"
+        },
+        "body": {
+          "en": "If no phased rollout applies, inspect explicit holds, installed candidate versions, package origins and APT's planned transaction before accepting changes. Avoid forcing a specific package upgrade in isolation when it would remove essential desktop or kernel dependencies. A partial or interrupted dpkg transaction belongs to a different Fix Lab guide.",
+          "de": "Ist keine gestaffelte Verteilung beteiligt, explizite Sperren, Versionskandidaten, Paketquellen und geplante APT-Änderungen prüfen. Kein einzelnes Upgrade erzwingen, wenn dadurch wichtige Desktop- oder Kernelabhängigkeiten entfernt würden. Eine unterbrochene dpkg-Transaktion ist ein anderer Fehlerfall."
+        },
+        "precautions": {
+          "en": "Do not indiscriminately disable phased updates or combine packages from incompatible release suites.",
+          "de": "Phased Updates nicht pauschal abschalten und keine Pakete unpassender Release-Zweige mischen."
+        },
+        "rollback": {
+          "en": "Leave pinning and holds unchanged until their purpose is documented; revert only a targeted modification with the original policy recorded.",
+          "de": "Pinning und Sperren unverändert lassen, bis ihr Zweck geklärt ist; nur dokumentierte Einzeländerungen rückgängig machen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ubuntu: apt upgrade and phased updates explained",
+        "url": "https://documentation.ubuntu.com/server/explanation/software/about-apt-upgrade-and-phased-updates/index.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Ubuntu APT manual: package policy and installed versions",
+        "url": "https://manpages.ubuntu.com/manpages/noble/man8/apt-cache.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Ubuntu APT manual: apt-mark and holds",
+        "url": "https://manpages.ubuntu.com/manpages/noble/man8/apt-mark.8.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "logPatterns": [],
+    "reviewed": "2026-10-10"
   }
 ]

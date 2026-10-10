@@ -33,7 +33,7 @@ for(const problem of problems)for(const lang of ['en','de'])test(`${problemPath(
 for(const lang of ['en','de'])test(`${lang} landing: complete static search list and labeled functional controls`,()=> {
   const source=sourceFor(landingPath(lang));
   assert.ok(source.includes('name="robots" content="index,follow,max-image-preview:large"'));
-  assert.equal((source.match(/data-problem="/g)||[]).length,150);
+  assert.equal((source.match(/data-problem="/g)||[]).length,154);
   assert.equal((source.match(/data-assistant="/g)||[]).length,18);
   assert.equal(new Set(ids(source)).size,ids(source).length);
   for(const id of ['problem-search','problem-category','log-input','log-file'])assert.ok(source.includes(`for="${id}"`));
@@ -44,13 +44,20 @@ for(const lang of ['en','de'])test(`${lang} landing: complete static search list
   const data=JSON.parse(source.match(/<script id="assistant-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);
   for(const tree of data)for(const node of Object.values(tree.nodes))for(const guide of node.guides||[])for(const locale of ['en','de'])assert.ok(existsSync(resolve(root,guide.path[locale].slice(1),'index.html')));
   for(const problem of problems)assert.ok(source.includes(`href="${problemPath(problem,lang)}"`));
+  assert.ok(source.includes('id="popular-questions"'),'the static answer hub is present');
+  const featured=JSON.parse(readFileSync(resolve(root,'content/linux-fix-lab/featured-questions.json'),'utf8'));
+  for(const q of featured.questions) {
+    const guide=problems.find(item=>item.id===q.id);
+    assert.ok(source.includes(q.question[lang].replaceAll("'",'&#39;')),q.id);
+    assert.ok(source.includes(`href="${problemPath(guide,lang)}"`),q.id);
+  }
 });
 
-test('inactive launch sitemap is prepared for both landings and 300 pages with reciprocal alternates and real build dates',()=> {
+test('inactive launch sitemap is prepared for both landings and 308 pages with reciprocal alternates and real build dates',()=> {
   const source=readFileSync(resolve(root,'content/linux-fix-lab/prepared-launch-sitemap.xml'),'utf8');
   const urls=[...source.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]);
   const expected=['en','de'].flatMap(lang=>[origin+landingPath(lang),...problems.map(problem=>origin+problemPath(problem,lang))]);
-  assert.equal(urls.length,302);assert.deepEqual(urls.sort(),expected.sort());assert.equal(new Set(urls).size,302);
+  assert.equal(urls.length,310);assert.deepEqual(urls.sort(),expected.sort());assert.equal(new Set(urls).size,310);
   const manifest=JSON.parse(readFileSync(resolve(root,'content/linux-fix-lab/generated-manifest.json'),'utf8'));
   for(const [entry]of source.matchAll(/<url>[\s\S]*?<\/url>/g)) {
     const url=entry.match(/<loc>([^<]+)<\/loc>/)[1],page=sourceFor(new URL(url).pathname);

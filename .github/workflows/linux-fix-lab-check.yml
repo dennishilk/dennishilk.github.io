@@ -6,7 +6,7 @@ on:
     branches: [main]
     paths: ['index.html', 'de/index.html', 'robots.txt', 'sitemap*.xml', 'linux-fix-lab/**', 'de/linux-fix-lab/**', 'content/linux-fix-lab/**', 'assets/linux-fix-lab/**', 'scripts/build-linux-fix-lab.mjs', 'scripts/sync-seo.mjs', 'tests/linux-fix-lab*.test.mjs', 'tests/homepage-featured-projects.test.mjs', 'tests/sitemaps.test.mjs', 'scripts/gaming-integration.mjs', 'content/linux-gaming-repair/publication.json', 'content/linux-gaming-repair/integration.json', 'package.json', '.github/workflows/linux-fix-lab-check.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -17,7 +17,18 @@ jobs:
           node-version: '22'
       - run: npm run build:fix-lab
       - run: npm run test:fix-lab
+      - run: npm run test:gaming-repair
+      - run: npm run test:hardware-explorer
       - run: node --test tests/homepage-featured-projects.test.mjs tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
       - run: npm run test:seo
-      - name: Generated pages and sitemap must be current
+      - name: Verify generated files on pull requests
+        if: github.event_name == 'pull_request'
         run: git diff --exit-code -- linux-fix-lab de/linux-fix-lab assets/linux-fix-lab/catalog.js content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml robots.txt 'sitemap*.xml'
+      - name: Commit validated generated Fix Lab pages and sitemap on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git add -- linux-fix-lab de/linux-fix-lab assets/linux-fix-lab/catalog.js content/linux-fix-lab/generated-manifest.json content/linux-fix-lab/prepared-launch-sitemap.xml robots.txt 'sitemap*.xml'
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix-lab: publish validated bilingual answers and sitemap'
+            git push origin HEAD:main
+          fi

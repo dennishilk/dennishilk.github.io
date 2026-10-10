@@ -1815,5 +1815,139 @@
     ],
     "reviewed": "2026-10-09",
     "logPatterns": []
+  },
+  {
+    "category": "kernel",
+    "id": "usb-autosuspend-resume-disconnect",
+    "slug": {
+      "en": "usb-autosuspend-resume-disconnect",
+      "de": "usb-geraet-verschwindet-nach-energiesparen"
+    },
+    "title": {
+      "en": "USB device disappears after idle or resume",
+      "de": "USB-Gerät verschwindet nach Leerlauf oder Aufwachen"
+    },
+    "summary": {
+      "en": "A USB device that vanishes after idle may have resume, cabling or hub trouble. Correlate runtime power state with bus events before changing settings.",
+      "de": "Verschwindet ein USB-Gerät nach Leerlauf, können Resume, Kabel oder Hub ursächlich sein. Energiezustand und Busereignisse getrennt prüfen."
+    },
+    "environment": {
+      "en": "USB HID devices, webcams, controllers and other peripherals on Linux systems with runtime USB power management; do not apply storage-specific UAS assumptions to every USB class.",
+      "de": "USB-HID, Kameras, Controller und weitere Geräte unter Linux mit USB-Laufzeit-Energiemanagement; UAS-Speicherprobleme nicht auf alle USB-Klassen übertragen."
+    },
+    "symptoms": {
+      "en": [
+        "A connected USB mouse, keyboard, camera or gamepad disappears after inactivity or a suspend/resume cycle.",
+        "The kernel journal logs a USB disconnect/reconnect, failed reset or descriptor read error near the user's observed failure."
+      ],
+      "de": [
+        "USB-Maus, Tastatur, Kamera oder Gamepad verschwindet nach Leerlauf oder einer Suspend-/Resume-Phase.",
+        "Im Kernel-Journal tauchen zeitnah USB-Trennung, fehlgeschlagener Reset oder Descriptor-Lesefehler auf."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A device or driver may handle autosuspend or autoresume incorrectly, particularly when remote wakeup behaves differently from expectations.",
+        "de": "Ein Gerät oder Treiber kann Autosuspend oder Autoresume fehlerhaft behandeln, besonders wenn Remote Wakeup nicht wie erwartet funktioniert."
+      },
+      {
+        "en": "A marginal cable, hub, port power or failing peripheral may produce the same disconnect messages independently of autosuspend. An event after resume does not uniquely identify energy management.",
+        "de": "Schwaches Kabel, Hub, Port-Stromversorgung oder ein defektes Gerät können dieselben Trennmeldungen unabhängig von Autosuspend auslösen. Ein Fehler nach Resume beweist keine Energiesparursache."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "enumerate-usb-topology",
+        "command": "lsusb -t",
+        "explanation": {
+          "en": "Read connected USB devices and interface drivers before and after the failure.",
+          "de": "Angeschlossene USB-Geräte und Schnittstellentreiber vor und nach dem Fehler anzeigen."
+        },
+        "interpretation": {
+          "en": "A device missing after failure must first be identified by physical connection, bus and interface rather than a guessed sysfs number.",
+          "de": "Ein nach dem Fehler fehlendes Gerät zuerst über Anschluss, Bus und Schnittstelle identifizieren, nicht über eine geratene sysfs-Nummer."
+        }
+      },
+      {
+        "id": "inspect-usb-journal",
+        "command": "journalctl -k -b --no-pager --grep='usb|xhci|reset'",
+        "explanation": {
+          "en": "Read USB/xHCI messages from the current boot; correlate their timestamps with the actual disconnect.",
+          "de": "USB-/xHCI-Meldungen des aktuellen Bootvorgangs lesen und zeitlich mit der Trennung abgleichen."
+        },
+        "interpretation": {
+          "en": "USB reset or descriptor errors alone cannot distinguish a defective cable from a resume bug.",
+          "de": "USB-Reset- oder Descriptorfehler unterscheiden kein defektes Kabel von einem Resume-Bug."
+        }
+      },
+      {
+        "id": "read-device-power-mode",
+        "command": "cat /sys/bus/usb/devices/1-2/power/control",
+        "explanation": {
+          "en": "Example sysfs path only. Replace 1-2 with the confirmed USB device path; do not assume this bus address exists.",
+          "de": "Nur ein Beispielpfad. 1-2 durch den tatsächlich identifizierten USB-Pfad ersetzen; die Busadresse muss nicht existieren."
+        },
+        "interpretation": {
+          "en": "auto permits runtime autosuspend; on prevents it for this device. Neither state proves that a suspend occurred.",
+          "de": "auto erlaubt Autosuspend, on verhindert ihn für dieses Gerät. Keiner dieser Zustände beweist einen tatsächlich ausgeführten Suspend."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "compare-physical-link",
+        "title": {
+          "en": "Check a direct connection before changing power policy",
+          "de": "Direkte Verbindung vor Änderung des Energiemanagements prüfen"
+        },
+        "body": {
+          "en": "Record whether the same peripheral fails through a hub and on a direct known-good port or cable, without changing the driver or system power profile. Check power and data cables where removable. Compare kernel messages, device ID and time-to-failure. If direct connection solves it, this narrows the transport path but cannot on its own prove that autosuspend never mattered.",
+          "de": "Prüfen, ob dasselbe Gerät über einen Hub und direkt an einem verlässlich funktionierenden Port oder Kabel ausfällt; Treiber und System-Energieprofil dabei unverändert lassen. Austauschbare Strom- und Datenkabel kontrollieren. Kernelmeldungen, Gerätekennung und Fehlerzeit vergleichen. Funktioniert die Direktverbindung, grenzt das den Übertragungsweg ein, schließt Autosuspend aber nicht vollständig aus."
+        },
+        "precautions": {
+          "en": "Do not repeatedly power-cycle a mounted USB storage device with outstanding writes; avoid losing access to critical input devices.",
+          "de": "Eingehängte USB-Datenträger nicht bei aktiven Schreibvorgängen hart zurücksetzen; wichtige Eingabegeräte nicht leichtfertig verlieren."
+        },
+        "rollback": {
+          "en": "Reconnect to the original port or hub if it was stable, keeping notes of both paths.",
+          "de": "Bei stabilem Ausgangszustand zum ursprünglichen Port oder Hub zurückkehren und beide Wege dokumentieren."
+        }
+      },
+      {
+        "id": "scope-runtime-pm",
+        "title": {
+          "en": "Compare a single device's runtime PM with a reversible setting",
+          "de": "Laufzeit-PM nur für ein Gerät und rücknehmbar vergleichen"
+        },
+        "body": {
+          "en": "If event timing consistently follows autosuspend, an administrator can make one carefully scoped temporary test by setting that confirmed device's power/control to on, preserving its old value. The documented kernel interface accepts on and auto; this is a targeted hypothesis test, not a universal tuning recommendation. Do not change usbcore's global default and do not unbind a hub or critical device.",
+          "de": "Folgt der Fehler nachvollziehbar dem Autosuspend, kann ein Administrator testweise nur beim sicher identifizierten Gerät power/control auf on setzen und den bisherigen Wert notieren. Die Kernel-Schnittstelle kennt on und auto; das ist ein gezielter Vergleich, kein universeller Tuning-Tipp. Weder den globalen usbcore-Standard ändern noch Hubs oder kritische Geräte abkoppeln."
+        },
+        "precautions": {
+          "en": "This setting may increase power use and may be reset by replugging. Avoid changing a remote keyboard or storage controller without backup access.",
+          "de": "Das kann mehr Strom verbrauchen und nach Neuanschluss zurückgesetzt werden. Entfernte Tastaturen und Speichercontroller nur mit alternativer Zugriffsmöglichkeit prüfen."
+        },
+        "rollback": {
+          "en": "Restore the recorded power/control value (usually auto or on) for that exact device when the comparison is done.",
+          "de": "Den zuvor notierten power/control-Wert (meist auto oder on) für genau dieses Gerät nach dem Vergleich wiederherstellen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Linux kernel: USB runtime power management",
+        "url": "https://docs.kernel.org/driver-api/usb/power-management.html",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Linux kernel: USB host controllers and userspace diagnosis",
+        "url": "https://docs.kernel.org/usb/usbmon.html",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "logPatterns": [],
+    "reviewed": "2026-10-10"
   }
 ]

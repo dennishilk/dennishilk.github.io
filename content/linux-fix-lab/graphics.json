@@ -2047,5 +2047,168 @@
         }
       }
     ]
+  },
+  {
+    "category": "graphics",
+    "id": "nvidia-module-missing-after-kernel-update",
+    "slug": {
+      "en": "nvidia-module-missing-after-kernel-update",
+      "de": "nvidia-modul-fehlt-nach-kernel-update"
+    },
+    "title": {
+      "en": "NVIDIA module missing after a kernel update",
+      "de": "NVIDIA-Modul fehlt nach einem Kernel-Update"
+    },
+    "summary": {
+      "en": "After a kernel upgrade, the NVIDIA kernel module may be absent even though driver packages exist. Check the booted kernel and module packaging first.",
+      "de": "Nach einem Kernel-Update kann das NVIDIA-Modul fehlen, obwohl Treiberpakete installiert sind. Zuerst Kernel und Modulpakete abgleichen."
+    },
+    "environment": {
+      "en": "Ubuntu and related distributions using packaged NVIDIA kernel modules or DKMS; Fedora uses a different akmods packaging path. Applies only when evidence actually names a missing module.",
+      "de": "Ubuntu und verwandte Distributionen mit paketierten NVIDIA-Modulen oder DKMS; Fedora nutzt einen anderen akmods-Weg. Nur bei belegtem Modulfehler anwenden."
+    },
+    "symptoms": {
+      "en": [
+        "The desktop falls back to a basic display or the display manager fails after an update.",
+        "modprobe reports that the NVIDIA module cannot be found for the running kernel; nvidia-smi may also fail."
+      ],
+      "de": [
+        "Nach einem Update startet der Desktop mit einfacher Anzeige oder der Display-Manager scheitert.",
+        "modprobe meldet, dass das NVIDIA-Modul für den laufenden Kernel nicht vorhanden ist; nvidia-smi kann ebenfalls scheitern."
+      ]
+    },
+    "causes": [
+      {
+        "en": "A precompiled NVIDIA module package may be missing for the kernel ABI that actually booted, even though an older version remains installed.",
+        "de": "Ein vorgefertigtes NVIDIA-Modulpaket kann für die tatsächlich gestartete Kernel-ABI fehlen, obwohl eine ältere Version installiert ist."
+      },
+      {
+        "en": "A DKMS build may not have completed for that kernel because headers or build dependencies were missing. This differs from Secure Boot rejecting an existing unsigned module.",
+        "de": "Ein DKMS-Build kann wegen fehlender Kernel-Header oder Build-Abhängigkeiten unvollständig sein. Das ist etwas anderes als die Ablehnung eines vorhandenen unsignierten Moduls durch Secure Boot."
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "identify-running-kernel",
+        "command": "uname -r",
+        "explanation": {
+          "en": "Read the currently running kernel release without installing packages.",
+          "de": "Aktuell gestartete Kernelversion ohne Paketänderung anzeigen."
+        },
+        "interpretation": {
+          "en": "A packaged NVIDIA module must match this kernel, not just the newest installed kernel.",
+          "de": "Das NVIDIA-Modul muss zu diesem Kernel passen, nicht nur zum neuesten installierten Kernel."
+        }
+      },
+      {
+        "id": "locate-nvidia-kmod",
+        "command": "modinfo -n nvidia",
+        "explanation": {
+          "en": "Ask kmod for the module file resolved against the current kernel; no module is loaded by this check.",
+          "de": "kmod nach dem Modulpfad für den laufenden Kernel fragen; dieser Befehl lädt kein Modul."
+        },
+        "interpretation": {
+          "en": "A missing-path failure supports a module availability problem. A path by itself does not establish a successful load or correct userspace version.",
+          "de": "Ein fehlender Pfad stützt ein Modulpaketproblem. Ein gefundener Pfad beweist weder erfolgreiches Laden noch passende Userspace-Version."
+        }
+      },
+      {
+        "id": "inspect-dkms-status",
+        "command": "dkms status",
+        "explanation": {
+          "en": "Use only where DKMS is installed; on Ubuntu a precompiled module can exist without a DKMS entry.",
+          "de": "Nur nutzen, wenn DKMS installiert ist; auf Ubuntu kann ein vorgefertigtes Modul ohne DKMS-Eintrag existieren."
+        },
+        "interpretation": {
+          "en": "Built/installed records refer to particular kernel versions. No DKMS entry does not prove the NVIDIA stack is broken.",
+          "de": "Build-/Installationsstatus beziehen sich auf einzelne Kernelversionen. Kein DKMS-Eintrag beweist keinen NVIDIA-Fehler."
+        }
+      }
+    ],
+    "solutions": [
+      {
+        "id": "match-kernel-package",
+        "title": {
+          "en": "Compare installed kernel ABI and matching module package",
+          "de": "Kernel-ABI und passendes Modulpaket vergleichen"
+        },
+        "body": {
+          "en": "On Ubuntu, inspect the installed linux-modules-nvidia package for the active driver branch and exact kernel ABI using the distribution package manager. Check whether the release uses precompiled modules or a DKMS workflow before proposing any package action. Prefer Canonical's supported driver installer and an exact branch match instead of downloading random .run installers.",
+          "de": "Auf Ubuntu das installierte linux-modules-nvidia-Paket für die aktive Treiberreihe und die konkrete Kernel-ABI mit der Paketverwaltung vergleichen. Vor Änderungen klären, ob vorgefertigte Module oder DKMS vorgesehen sind. Den unterstützten Ubuntu-Installationsweg und passende Treiberserien bevorzugen, keine beliebigen .run-Installer."
+        },
+        "precautions": {
+          "en": "Keep the previously working boot entry available; do not purge all graphics packages based on a failed nvidia-smi alone.",
+          "de": "Vorher funktionierenden Kernel-Starteintrag behalten; nicht wegen einer einzelnen nvidia-smi-Meldung pauschal alle Grafikpakete löschen."
+        },
+        "rollback": {
+          "en": "Boot the previously working kernel if needed; undo only a precisely identified package change.",
+          "de": "Bei Bedarf den zuvor funktionierenden Kernel starten; nur gezielte Paketänderungen zurücknehmen."
+        }
+      },
+      {
+        "id": "distinguish-signature-rejection",
+        "title": {
+          "en": "Check Secure Boot separately from missing modules",
+          "de": "Secure Boot getrennt vom fehlenden Modul prüfen"
+        },
+        "body": {
+          "en": "If modinfo finds a module but loading still fails, examine journal messages and its signer before treating it as absent. Ubuntu Secure Boot validates third-party module signatures; an existing module rejected by trust policy calls for a signing or MOK investigation, not reinstallation of arbitrary libraries. A module that does not exist for the booted kernel cannot be made present merely by disabling Secure Boot.",
+          "de": "Findet modinfo ein Modul, scheitert aber dessen Laden, zuerst Journal und Signatur prüfen. Ubuntu prüft im Secure-Boot-Betrieb Signaturen von Drittmodulen; ein vorhandenes, wegen Vertrauensregeln abgelehntes Modul verlangt eine MOK-/Signaturdiagnose, keine willkürliche Neuinstallation. Ein für den laufenden Kernel fehlendes Modul entsteht nicht durch Abschalten von Secure Boot."
+        },
+        "precautions": {
+          "en": "Never make disabling Secure Boot the default repair; it changes a security boundary.",
+          "de": "Secure Boot nicht standardmäßig ausschalten; das verändert eine Sicherheitsgrenze."
+        },
+        "rollback": {
+          "en": "Keep the original Secure Boot configuration and use the distribution's documented MOK process only if signed modules are the established issue.",
+          "de": "Secure-Boot-Konfiguration beibehalten und den dokumentierten MOK-Weg nur bei belegtem Signaturproblem nutzen."
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "Ubuntu: install and match NVIDIA kernel modules",
+        "url": "https://ubuntu.com/server/docs/nvidia-drivers-installation/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Ubuntu: DKMS build and Secure Boot boundaries",
+        "url": "https://ubuntu.com/desktop/docs/en/latest/how-to/graphics/build-your-own-nvidia-modules-using-the-dkms-package/",
+        "kind": "official",
+        "evidence": "documentation"
+      },
+      {
+        "title": "Ubuntu: UEFI Secure Boot and module signing",
+        "url": "https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/",
+        "kind": "official",
+        "evidence": "documentation"
+      }
+    ],
+    "logPatterns": [
+      {
+        "id": "nvidia-module-not-found-for-kernel",
+        "all": [
+          "modprobe: FATAL:",
+          "Module nvidia not found in directory"
+        ],
+        "sample": "modprobe: FATAL: Module nvidia not found in directory /lib/modules/7.0.0-30-generic",
+        "negative": [
+          "modprobe: INFO: Module nvidia loaded successfully",
+          "NVRM: API mismatch: the client has version 595 but module 590",
+          "modprobe: FATAL: Module otherdriver not found in directory /lib/modules/7.0.0-30-generic"
+        ],
+        "severity": "error",
+        "explanation": {
+          "en": "kmod could not locate the NVIDIA module for the currently selected kernel module tree.",
+          "de": "kmod konnte im gewählten Kernel-Modulbaum kein NVIDIA-Modul finden."
+        },
+        "significance": {
+          "en": "Check the running kernel and matching module package before diagnosing signatures, hardware or Vulkan.",
+          "de": "Laufenden Kernel und passendes Modulpaket vor Signatur-, Hardware- oder Vulkanverdacht prüfen."
+        }
+      }
+    ],
+    "reviewed": "2026-10-10"
   }
 ]
