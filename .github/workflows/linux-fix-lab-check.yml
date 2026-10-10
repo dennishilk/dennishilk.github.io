@@ -17,6 +17,8 @@ jobs:
           node-version: '22'
       - run: npm run build:fix-lab
       - run: npm run test:fix-lab
+      - run: npm run test:gaming-repair
+      - run: npm run test:hardware-explorer
       - run: node --test tests/homepage-featured-projects.test.mjs tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs
       - run: npm run test:seo
       - name: Verify generated files on pull requests
