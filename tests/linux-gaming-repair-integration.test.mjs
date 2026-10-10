@@ -17,10 +17,10 @@ const locs = xml => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match
 test('approved gaming launch has its own complete bilingual sitemap with preserved build dates', () => {
   assert.deepEqual(gamingPublication(root), { approved: true, sitemapActive: true, integrationActive: true });
   const built = manifest(), xml = read('sitemap-linux-gaming-repair.xml');
-  assert.equal(built.articleCount, 13);
-  assert.equal(Object.keys(built.pages).length, 28);
+  assert.equal(built.articleCount, 23);
+  assert.equal(Object.keys(built.pages).length, 48);
   assert.deepEqual(locs(xml).sort(), Object.keys(built.pages).map(path => origin + path).sort());
-  assert.equal(new Set(locs(xml)).size, 28);
+  assert.equal(new Set(locs(xml)).size, 48);
   for (const entry of xml.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
     const url = locs(entry[1])[0], page = built.pages[new URL(url).pathname];
     assert.ok(entry[1].includes(`<lastmod>${page.lastmod}</lastmod>`));
