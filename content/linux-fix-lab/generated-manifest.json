@@ -5,13 +5,13 @@
     "robots": "index,follow,max-image-preview:large",
     "sitemapActive": true
   },
-  "problemCount": 150,
-  "localizedProblemPages": 300,
-  "patternCount": 163,
+  "problemCount": 154,
+  "localizedProblemPages": 308,
+  "patternCount": 164,
   "assistantCount": 18,
   "pages": {
     "/linux-fix-lab/": {
-      "hash": "351ed3ac8d89c7712870de64cfede9fc41fa7fc939f11394d8d7dd321b4db583",
+      "hash": "21546ea5803173f3ebe94d4cfc439de2f387c51cfa5b6388de266ddd74f4b167",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/amdgpu-ring-timeout/": {
@@ -35,7 +35,7 @@
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/nvidia-module-signature-rejected/": {
-      "hash": "603fc9c0e519c1a5eed2f9797bb6e8b56c39c317e67b9e10b6955af21a66649c",
+      "hash": "9c5fac8c54e7be84806a0cba158dc9af6c1d488c6af62cd0b38b2124e8c41cdf",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/nvidia-nouveau-driver-conflict/": {
@@ -63,11 +63,15 @@
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/displayport-link-training/": {
-      "hash": "1903c0defbe5f0fa8b70d6ac36002cb2ff3b0592e7ae12508f44549ab3cc06ed",
+      "hash": "8f360bec207491cae887830086ebe76b40d2a76aa0687827e825dec7a7b8002d",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/intel-gpu-hang/": {
       "hash": "c2c1b56f7070cb1c0725e56f87d3a1f29dc2198f5d5a986d0635288f31165456",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-fix-lab/nvidia-module-missing-after-kernel-update/": {
+      "hash": "1d309e6aeec1cd8718d9b1b557178c6893af632895b4c5ba1b9abd4e7d038d0a",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/kernel-null-pointer-oops/": {
@@ -95,7 +99,7 @@
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/kernel-iommu-dma-fault/": {
-      "hash": "019bc0ada69dda4525877ae00459471e9cb9aebb637619f91ecb54e0827df186",
+      "hash": "e291a40b96e6ef92629a1b8c30c53bbe823e4696c49bf126d8f9a82bcac2f62b",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/kernel-module-vermagic/": {
@@ -107,7 +111,7 @@
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/kernel-suspend-aborted/": {
-      "hash": "035a7c955f7ac10b9d648d5b00d77c6fa320ac1f3aa3e30c2ec89727c42056d6",
+      "hash": "6f92c8128d7bfdab783edbd9293c1d827b4bd36f40c9e51d69823dbbc33a6fe2",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/kernel-hard-lockup/": {
@@ -116,6 +120,10 @@
     },
     "/linux-fix-lab/kernel-microcode-loading/": {
       "hash": "3d96b4b12610df7d93508558d5a35177f14b236ebb5b64e62b51ecf60ee69713",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-fix-lab/usb-autosuspend-resume-disconnect/": {
+      "hash": "d0ae5033eb924e9fb6f2cf46318737823e5a5074231b445a8f8d2444ba33a630",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/boot-fstab-emergency/": {
@@ -419,7 +427,11 @@
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/polkit-authentication-agent-missing/": {
-      "hash": "402d109ec91d1a4905501d9141c83237a74ad51ad5743e13d38b6d658e8114c8",
+      "hash": "2f0a893e0ccd262f68e260962669ccbf05da63accaa6c3f25e4df5126b4c1ea5",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-fix-lab/wayland-screen-sharing-portal-fails/": {
+      "hash": "1d3dee551007439d15e532a5d80b1811f4c3852be1f2ccba8351b5626a76fddf",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/apt-dpkg-lock-busy/": {
@@ -468,6 +480,10 @@
     },
     "/linux-fix-lab/flatpak-file-access-restricted/": {
       "hash": "c1ed28deb6bac394a5cc9ef080977ae004e7875ad03e43523dd1940de36e5213",
+      "lastmod": "2026-10-10"
+    },
+    "/linux-fix-lab/ubuntu-apt-phased-updates-held-back/": {
+      "hash": "860eb337fdbe7387076cffcf47c6d02f2638e5a9555ac6a07322a1a853e379e7",
       "lastmod": "2026-10-10"
     },
     "/linux-fix-lab/systemd-exec-launch-failure/": {
@@ -615,7 +631,7 @@
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/": {
-      "hash": "34c8fbe38c8d4f0ee324adad1423ff856fdfbb04d362fb196a380b60cabd37d7",
+      "hash": "d45fb255c95e80fe11b64f535f3a1b2dc9fa8ecd01030cf93381262aa86f09cc",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/amdgpu-ring-zeitueberschreitung/": {
@@ -639,7 +655,7 @@
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/nvidia-modulsignatur-abgelehnt/": {
-      "hash": "db066ae6465b7f4d0b2ea1429438f04c7aa4dca98b5329e524a85530f9246925",
+      "hash": "c2c68b62ea8ff349c8853df5dfc9ec7b12295b503810a13e33ca6591fe1e1424",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/nvidia-nouveau-treiberkonflikt/": {
@@ -667,11 +683,15 @@
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/displayport-linktraining/": {
-      "hash": "a4f1f4c4257b8150376ca0839104a9bbb471037e7c7b60759c2ed88596cd9c03",
+      "hash": "5eb9c5d6f63eff910f0425b9a1c7ab7dc6f8838f6be6c95def39bfbe882c496d",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/intel-gpu-haenger/": {
       "hash": "91a3b901a2fa8f771e09976139e2ac72c5b7a0a84e07d3cad1cb1baa709d0e17",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-fix-lab/nvidia-modul-fehlt-nach-kernel-update/": {
+      "hash": "3478d94b465d30cbdb77937f15f83c1768fa630313aea4179ce76eedd107d6b6",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/kernel-nullzeiger-oops/": {
@@ -699,7 +719,7 @@
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/kernel-iommu-dma-fehler/": {
-      "hash": "5c3b99de1ea92e2bea356cfdc3c54c5e04dad05b416cf9d818276f467916a096",
+      "hash": "7dc7c693b26aa34475de8b73a6f52722844c6f8b8972e94a90cd4c8fab6defab",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/kernel-modul-vermagic/": {
@@ -711,7 +731,7 @@
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/kernel-suspend-abgebrochen/": {
-      "hash": "66815c2a067ccc35375c7ae100b02c4ba5888e1f614d34a27b0aaea2d59d4a1e",
+      "hash": "d12157f693caabf9992d5f6a28e801a8be3fca0ac27571c1d895569cdd46a95c",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/kernel-hardlockup/": {
@@ -720,6 +740,10 @@
     },
     "/de/linux-fix-lab/kernel-microcode-laden/": {
       "hash": "a60f2733112f2f36263ac635dcc05344afd761ea07ef45a6ac8e5464a4d583b1",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-fix-lab/usb-geraet-verschwindet-nach-energiesparen/": {
+      "hash": "79a073be3b7f99cd8d04c0ff0bd45ff3c8efbadd6161d18b47e823d3dc339141",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/boot-fstab-notfallmodus/": {
@@ -1023,7 +1047,11 @@
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/polkit-anmeldeagent-fehlt/": {
-      "hash": "110d69c9de02d484659162052f684215da3328e62a3a6159f9073df4ab0936ca",
+      "hash": "1855105369c6469e4d55b419dae521acd83fcfb12ce677252b6e6bd4319536fb",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-fix-lab/wayland-bildschirmfreigabe-portal-fehler/": {
+      "hash": "f349439888ce997d73e35ca9b7ca6a655cb467497651b41338b66c641b438c5e",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/apt-dpkg-sperre-belegt/": {
@@ -1072,6 +1100,10 @@
     },
     "/de/linux-fix-lab/flatpak-dateizugriff-begrenzt/": {
       "hash": "36b44600e7d1152e1dda98dcf196e7d58deedf1ca76581e0ad753f6cd93cf2a9",
+      "lastmod": "2026-10-10"
+    },
+    "/de/linux-fix-lab/ubuntu-apt-zurueckgehaltene-pakete-phased-updates/": {
+      "hash": "77f4a0ccfc4bff90fa957d6289afecc889beab25ab0ae243c282f80db1edffc3",
       "lastmod": "2026-10-10"
     },
     "/de/linux-fix-lab/systemd-programmstart-fehlgeschlagen/": {
