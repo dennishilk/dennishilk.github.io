@@ -257,14 +257,14 @@ if ($('hardware-report')) {
       const text = await file.text(); if (epoch !== privateEpoch) return;
       if (text.length > LIMITS.characters) { $('hardware-parse-status').textContent = t(...errors['too-large']); return; }
       $('hardware-report').value = text; $('hardware-report').focus();
-      $('hardware-parse-status').textContent = t('File read locally. Choose Identify locally to analyse it.', 'Datei lokal gelesen. Wähle Lokal erkennen für die Analyse.');
+      $('hardware-parse-status').textContent = t('File read locally. Choose Analyse input to analyse it.', 'Datei lokal gelesen. Wähle Eingabe analysieren für die Analyse.');
     } catch { if (epoch === privateEpoch) $('hardware-parse-status').textContent = t('Local file could not be read.', 'Lokale Datei konnte nicht gelesen werden.'); }
   });
   $('hardware-clear').addEventListener('click', () => { clearPrivate({ notice: true }); $('hardware-report').focus(); });
   $('hardware-sample').addEventListener('click', () => {
     clearPrivate(); $('hardware-format').value = 'auto';
     $('hardware-report').value = '01:00.0 VGA compatible controller [0300]: Synthetic AMD family [1002:73df] (rev c1)\n\tKernel driver in use: amdgpu\n\tKernel modules: amdgpu\n02:00.0 Network controller [0280]: Synthetic Intel Wi-Fi [8086:2723]\n\tKernel modules: iwlwifi\nBus 001 Device 004: ID 8087:0026 Synthetic Bluetooth\namdgpu: Direct firmware load for amdgpu/example.bin failed with error -2';
-    $('hardware-parse-status').textContent = t('Synthetic parser fixture, not a hardware test. Choose Identify locally.', 'Synthetisches Parserbeispiel, kein Hardwaretest. Wähle Lokal erkennen.'); $('hardware-report').focus();
+    $('hardware-parse-status').textContent = t('Synthetic parser fixture, not a hardware test. Choose Analyse input.', 'Synthetisches Parserbeispiel, kein Hardwaretest. Wähle Eingabe analysieren.'); $('hardware-report').focus();
   });
   $('hardware-copy-summary').addEventListener('click', () => copy(summary()));
   $('hardware-download-summary').addEventListener('click', () => {
