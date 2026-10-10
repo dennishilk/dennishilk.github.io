@@ -1,5 +1,5 @@
 import { LocalAnalysis } from './controller.js';
-import { usbInterfacePresentation } from './usb-presentation.js';
+import { usbInterfacePresentation, usbClassContextLine } from './usb-presentation.js';
 import { LIMITS, filterProfiles, publicSummary, redactHardwareReport, canonicalPublicUrl, contextHash, validPublicContext, matchReason, deviceSources, landingPath, profilePath } from './core.js';
 import { shareIntent, moveAssistant } from '../linux-fix-lab/core.js';
 
@@ -154,17 +154,7 @@ function deviceCard(result) {
   if (result.usbClassContext?.length) {
     const section = el('div'); section.append(el('h4', t('USB interface class context', 'USB-Schnittstellenklassen')));
     const list = el('ul');
-    const explanations = {
-      '03': t('HID transport only; a specialized HID driver is not established.', 'Nur HID-Transport; kein bestimmter HID-Spezialtreiber belegt.'),
-      '09': t('Hub-class behavior via the USB core, not a generated module alias.', 'Hub-Klassenverhalten durch den USB-Kern, kein generierter Modulalias.'),
-      '08': t('Mass storage; precise driver matching may require subclass and protocol.', 'Massenspeicher; genaue Treibersuche benötigt ggf. Unterklasse und Protokoll.'),
-      '01': t('USB audio; exact driver may depend on interface qualifiers.', 'USB-Audio; genauer Treiber kann von Schnittstellenmerkmalen abhängen.'),
-      '02': t('CDC communications; subclass and protocol matter.', 'CDC-Kommunikation; Unterklasse und Protokoll sind wichtig.'),
-      '0a': t('CDC data interface; a paired control interface may be required.', 'CDC-Datenschnittstelle; eine passende Steuerschnittstelle kann nötig sein.'),
-      'e0': t('Wireless controller; qualifiers and runtime matter.', 'Funkcontroller; Zusatzmerkmale und Laufzeitbefund sind wichtig.'),
-      'ff': t('Vendor-specific; specialized RGB, LCD, fan and other features are not established.', 'Herstellerspezifisch; RGB, LCD, Lüfter und andere Sonderfunktionen sind nicht bestätigt.')
-    };
-    for (const item of result.usbClassContext) list.append(el('li', `${t('Interface', 'Schnittstelle')} ${item.number} · ${item.classCode}: ${explanations[item.classCode]}`));
+    for (const item of result.usbClassContext) list.append(el('li', usbClassContextLine(item, language)));
     section.append(list); overview.append(section);
   }
   if (d.rootHub) overview.append(el('p', t('USB root hub: host-controller context, not an ordinary external peripheral.', 'USB-Root-Hub: Hostcontroller-Kontext, kein gewöhnliches externes USB-Gerät.')));

@@ -154,7 +154,8 @@ export function usbClassContext(d){
    '0a':'USB CDC data interface (paired control interface may be required)',
    'e0':'USB wireless-controller class (subclass/protocol needed)',
    'ff':'Vendor-specific interface (class does not identify features)' })[cls];
-  if(name&&!groups.has(i.number)){groups.set(i.number,true);list.push({number:i.number,classCode:cls,explanation:name});}
+  // Preserve unknown but valid USB class codes for explicit UI fallback.
+  if(!groups.has(i.number)){groups.set(i.number,true);list.push({number:i.number,classCode:cls,explanation:name||'Unrecognized USB class; no driver inferred'});}
  }
  return list;
 }

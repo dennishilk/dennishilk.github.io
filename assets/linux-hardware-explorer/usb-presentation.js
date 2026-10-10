@@ -4,6 +4,42 @@ const names={ '01':'Audio','03':'HID','08':'Mass storage','09':'Hub','0e':'Video
  '07':'Printer','06':'Imaging'};
 const german={ '08':'Massenspeicher','02':'CDC-Kommunikation','0a':'CDC-Daten',
  'e0':'Funk','ff':'Herstellerspezifisch','07':'Drucker','06':'Bildverarbeitung'};
+// One source for visible USB class labels and explanations. Unknown or incomplete
+// descriptor values must never render as `undefined` or be guessed from a driver.
+const CLASS_EXPLANATIONS={
+ '03': ['HID transport only; a specialized HID driver is not established.',
+        'Nur HID-Transport; kein bestimmter HID-Spezialtreiber belegt.'],
+ '09': ['Hub-class behavior via the USB core, not a generated module alias.',
+        'Hub-Klassenverhalten durch den USB-Kern, kein generierter Modulalias.'],
+ '08': ['Mass storage; precise driver matching may require subclass and protocol.',
+        'Massenspeicher; genaue Treibersuche benötigt ggf. Unterklasse und Protokoll.'],
+ '01': ['USB audio; exact driver may depend on interface qualifiers.',
+        'USB-Audio; genauer Treiber kann von Schnittstellenmerkmalen abhängen.'],
+ '0e': ['USB video; UVC alias matching may require interface subclass and protocol.',
+        'USB-Video; ein UVC-Alias-Treffer kann Schnittstellenunterklasse und Protokoll erfordern.'],
+ '02': ['CDC communications; subclass and protocol matter.',
+        'CDC-Kommunikation; Unterklasse und Protokoll sind wichtig.'],
+ '0a': ['CDC data interface; a paired control interface may be required.',
+        'CDC-Datenschnittstelle; eine passende Steuerschnittstelle kann nötig sein.'],
+ 'e0': ['Wireless controller; qualifiers and runtime matter.',
+        'Funkcontroller; Zusatzmerkmale und Laufzeitbefund sind wichtig.'],
+ 'ff': ['Vendor-specific; specialized RGB, LCD, fan and other features are not established.',
+        'Herstellerspezifisch; RGB, LCD, Lüfter und andere Sonderfunktionen sind nicht bestätigt.']
+};
+export function usbClassContextLine(item,language='en'){
+ const de=language==='de';
+ const code=typeof item?.classCode==='string'&&/^[0-9a-f]{2}$/i.test(item.classCode)
+  ? item.classCode.toLowerCase() : null;
+ const number=Number.isInteger(item?.number)&&item.number>=0&&item.number<=255
+  ? String(item.number) : '?';
+ const prefix=(de?'Schnittstelle ':'Interface ')+number+' · ';
+ if(!code)return prefix+(de?'Unbekannte USB-Klasse (ungültiger oder fehlender Code)':'Unknown USB class (invalid or missing code)');
+ const label=(de&&german[code])||names[code];
+ if(!label)return prefix+(de?'Unbekannte USB-Klasse':'Unknown USB class')+' (0x'+code.toUpperCase()+')';
+ const detail=CLASS_EXPLANATIONS[code]?.[de?1:0]||
+  (de?'Die Klasse allein belegt keinen bestimmten Treiber.':'Class alone does not establish a specific driver.');
+ return prefix+label+' (0x'+code.toUpperCase()+'): '+detail;
+}
 const safeDriver=d=>typeof d==='string'&&/^[a-z0-9_.-]{1,64}$/i.test(d)?d:null;
 function displayRange(numbers){
  if(numbers.length===1)return String(numbers[0]);
