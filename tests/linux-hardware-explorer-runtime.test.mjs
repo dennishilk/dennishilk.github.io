@@ -166,3 +166,16 @@ test('public article supports sharing with no identification workbench or Worker
   assert.equal(doc.querySelector('dialog').querySelector('input').value, 'https://www.dennishilk.com' + path);
   assert.equal(env.languageLink.href, '/linux-hardware-explorer/wifi-intel-ax200/');
 });
+
+test('default browser timers are called without binding them to the controller', () => {
+  const originalSet = globalThis.setTimeout, originalClear = globalThis.clearTimeout;
+  const calls = [];
+  globalThis.setTimeout = function () { assert.equal(this, undefined); calls.push('set'); return 17; };
+  globalThis.clearTimeout = function (id) { assert.equal(this, undefined); assert.equal(id, 17); calls.push('clear'); };
+  try {
+    const errors = [];
+    const control = new LocalAnalysis({ createWorker: () => ({ postMessage() {}, terminate() {} }), onResult() {}, onError: error => errors.push(error) });
+    control.run('pci:8086:2723'); control.clear();
+    assert.deepEqual(errors, []); assert.deepEqual(calls, ['set', 'clear']);
+  } finally { globalThis.setTimeout = originalSet; globalThis.clearTimeout = originalClear; }
+});
