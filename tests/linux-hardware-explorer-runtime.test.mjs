@@ -115,7 +115,7 @@ test('catalog filtering keeps search text private and supports category, ID and 
   doc.getElementById('hardware-search').value = '8086:2723'; await doc.getElementById('hardware-search').dispatch('input');
   const visible = doc.getElementById('hardware-profile-list').children.filter(n => !n.hidden);
   assert.equal(visible.length, 1); assert.equal(visible[0].dataset.profile, 'wifi-intel-ax200'); assert.equal(env.location.href.includes('2723'), false);
-  await doc.getElementById('hardware-search-reset').click(); assert.equal(doc.getElementById('hardware-profile-list').children.filter(n => !n.hidden).length, 154);
+  await doc.getElementById('hardware-search-reset').click(); assert.equal(doc.getElementById('hardware-profile-list').children.filter(n => !n.hidden).length, 155);
 });
 test('clipboard failure produces selected local text, then clear removes it', async t => {
   const env = await app(t, { clipboard: { writeText: async () => { throw Error('denied'); } } }), doc = env.document;
@@ -178,4 +178,18 @@ test('default browser timers are called without binding them to the controller',
     control.run('pci:8086:2723'); control.clear();
     assert.deepEqual(errors, []); assert.deepEqual(calls, ['set', 'clear']);
   } finally { globalThis.setTimeout = originalSet; globalThis.clearTimeout = originalClear; }
+});
+
+for (const language of ['de','en']) test(`Cthulhu focused card, tabs, sources and deep links in ${language}`, async t => {
+ const env=await app(t,{language}),doc=env.document;
+ const raw='55:00.0 VGA compatible controller [0300]: AMD Navi 44 [Radeon RX 9060 XT] [1002:7590] (rev c0)\n Subsystem: PowerColor [148c:2437]\n Kernel driver in use: amdgpu\n Kernel modules: amdgpu';
+ doc.getElementById('hardware-report').value=raw;await doc.getElementById('hardware-analyse').click();complete(env,raw);
+ const root=doc.getElementById('hardware-results'),card=root.querySelectorAll('article')[0],text=card.textContent;
+ assert.ok(text.includes('AMD Navi 44'));assert.ok(text.includes('148c:2437'));assert.ok(text.includes('amdgpu'));
+ assert.equal(/Tahiti|Bonaire|Polaris|Vega 10|Sienna Cichlid|si_support|cik_support/.test(text),false);
+ assert.ok(text.includes('lspci -vv -s 0000:55:00.0'));assert.equal(card.querySelectorAll('button').filter(n=>n.getAttribute('role')==='tab').length,6);
+ const references=card.querySelectorAll('a').filter(n=>n.href?.startsWith('https://'));
+ assert.equal(new Set(references.map(n=>n.href)).size,references.length);
+ const deep=card.querySelectorAll('a').filter(n=>n.href?.includes('linux-fix-lab/')&&n.href.includes('#'));assert.ok(deep.length>=4);for(const a of deep)assert.equal(a.href.startsWith('/de/'),language==='de');
+ const details=card.querySelectorAll('details');assert.ok(details.some(n=>n.textContent.includes(language==='de'?'Allgemeine AMDGPU':'General AMDGPU')));for(const d of details)assert.notEqual(d.open,true);
 });

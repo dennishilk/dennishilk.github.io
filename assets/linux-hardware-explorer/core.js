@@ -252,28 +252,28 @@ function idMatch(d, id) {
     if (!d.usbInterfaceTriplets.length) partial = true;
     else if (!d.usbInterfaceTriplets.includes(id.usbInterface)) return null;
   }
-  return partial ? 'needs-subsystem-or-revision' : d.bus === 'unknown' ? 'id-with-unconfirmed-bus' : 'exact-id';
+  return partial ? 'needs-subsystem-or-revision' : d.bus === 'unknown' ? 'id-with-unconfirmed-bus' : id.identityLevel === 'family' ? 'family-id' : 'exact-id';
 }
 export function identifyDevices(parsed, catalog) {
   const profiles = catalog.profiles || [];
   return parsed.devices.map(d => {
-    let matches = profiles.flatMap(p => (p.ids || []).map(id => idMatch(d, id)).filter(Boolean).map(reason => ({ profileId: p.id, reason })));
-    const exact = matches.filter(m => m.reason === 'exact-id'); if (exact.length) matches = exact;
-    if (!matches.length) {
-      for (const p of profiles) {
-        const modules = p.match?.modules || [];
-        const driver = d.boundDriver && modules.some(m => normalizeModule(m) === normalizeModule(d.boundDriver));
-        const pciClass = d.bus === 'pci' && d.classCode && (p.match?.pciClasses || []).some(c => d.classCode.startsWith(c.toLowerCase()) || c.toLowerCase().startsWith(d.classCode));
-        const usbClass = d.bus === 'usb' && (p.match?.usbClasses || []).some(c => d.classCode === c.toLowerCase() || d.usbInterfaceClasses.includes(c.toLowerCase()) ||
-          [d.usbDeviceClassTriplet, ...d.usbInterfaceTriplets].some(value => value && (value === c.toLowerCase() || value.startsWith(c.toLowerCase() + ':'))));
-        if (driver || pciClass || usbClass) matches.push({ profileId: p.id, reason: driver ? 'reported-driver-context' : 'device-class-context' });
-      }
-    }
+    const identities = profiles.flatMap(p => (p.ids || []).map(id => idMatch(d, id)).filter(Boolean).map(reason => ({ profileId: p.id, reason })));
+    const exact = identities.filter(m => m.reason === 'exact-id');
+    const family = identities.filter(m => m.reason === 'family-id');
+    let matches = exact.length ? exact : family.length ? family : identities;
     matches = [...new Map(matches.map(m => [m.profileId, m])).values()];
-    const matched = matches.map(m => profiles.find(p => p.id === m.profileId));
+    // Context never establishes identity. Only explicitly class-scoped profiles without
+    // product IDs can supply it; a shared bound or candidate module is insufficient.
+    const contexts = profiles.filter(p => !p.ids.length && p.match?.autoContext !== false).filter(p => {
+      const pci = d.bus === 'pci' && d.classCode && (p.match?.pciClasses || []).some(c => d.classCode.startsWith(c.toLowerCase()));
+      const usb = d.bus === 'usb' && (p.match?.usbClasses || []).some(c =>
+        [d.usbDeviceClassTriplet, ...d.usbInterfaceTriplets].some(v => v && (v === c.toLowerCase() || v.startsWith(c.toLowerCase() + ':'))));
+      return pci || usb;
+    }).map(p => ({ profileId: p.id, reason: 'device-class-context' }));
+    const matched = matches.filter(m => ['exact-id', 'family-id'].includes(m.reason)).map(m => profiles.find(p => p.id === m.profileId));
     const candidates = [...new Set(matched.flatMap(p => p.drivers.filter(x => x.role === 'kernel').map(x => x.module)))];
-    return { device: d, matches, coverage: matches.some(m => m.reason === 'exact-id') ? 'curated-id' : matches.length ? 'context-only' : 'unknown',
-      ambiguous: matches.length > 1 || matches.some(m => m.reason !== 'exact-id'), candidateDrivers: candidates,
+    return { device: d, matches, contexts, coverage: exact.length ? 'curated-id' : family.length ? 'curated-family' : matches.length ? 'context-only' : 'unknown',
+      ambiguous: matches.length > 1 || matches.some(m => !['exact-id', 'family-id'].includes(m.reason)), candidateDrivers: candidates,
       binding: d.binding, boundDriver: d.boundDriver,
       boundMatchesCandidate: d.boundDriver && candidates.length ? candidates.some(n => normalizeModule(n) === normalizeModule(d.boundDriver)) : null };
   });
@@ -319,7 +319,8 @@ export function publicSummary(results, catalog, language = 'en', { includeIds = 
 
 export function matchReason(reason, language = 'en') {
   const labels = {
-    'exact-id': ['Curated numeric identity', 'Kuratierte numerische Identität'],
+    'exact-id': ['Verified catalog ID and required conditions; product specifications not inferred', 'Belegte Katalog-ID und erforderliche Bedingungen; keine abgeleiteten Produktspezifikationen'],
+    'family-id': ['Verified chip-family ID; retail board and reported model not independently verified', 'Belegte Chipfamilien-ID; Verkaufsplatine und gemeldetes Modell nicht unabhängig bestätigt'],
     'needs-subsystem-or-revision': ['Additional subsystem, revision or class evidence needed', 'Zusätzlicher Subsystem-, Revisions- oder Klassenbefund nötig'],
     'id-with-unconfirmed-bus': ['Bus type not confirmed', 'Bustyp nicht bestätigt'],
     'reported-driver-context': ['Reported driver context; no exact product identification', 'Gemeldeter Treiberkontext; keine exakte Produkterkennung'],
@@ -350,4 +351,15 @@ export function validPublicContext(input, catalog, workflows = []) {
 export function contextHash(input, catalog, workflows) {
   const params = new URLSearchParams(validPublicContext(input, catalog, workflows));
   return params.size ? '#explorer?' + params.toString() : '';
+}
+
+// Deduplicate canonical resource URLs, never their human-readable titles.
+export function deviceSources(profiles) {
+  const seen = new Set();
+  return profiles.flatMap(p => p.sources || []).filter(source => {
+    const url = new URL(source.url); url.hash = '';
+    for (const key of [...url.searchParams.keys()]) if (key.startsWith('utm_')) url.searchParams.delete(key);
+    url.searchParams.sort(); const canonical = url.href;
+    if (seen.has(canonical)) return false; seen.add(canonical); return true;
+  });
 }

@@ -1,6 +1,6 @@
 # Source provenance and attribution
 
-The 154 profiles contain original bilingual explanations and selected numeric
+The 155 profiles contain original bilingual explanations and selected numeric
 identity facts. No PCI/USB database was bulk imported, and no upstream driver
 source tree, firmware binary, proprietary driver or installation package is
 redistributed by this feature.
@@ -31,3 +31,5 @@ not reports from tested hardware.
 Source review establishes the evidence described in each profile. It does not
 establish a minimum supported kernel, complete firmware package, all OEM board
 variants, operational success or compatibility certification.
+
+Navi 44 identity uses the versioned PCI ID Project snapshot 3452638d16a34aa3d6e427d21e4cd0bae0fb884e. Selected factual identifiers are referenced, not a copied database. RX 9050 / RX 9060 XT share the checked identifier; PowerColor board identity is not asserted. AMD architecture context uses the versioned ROCm 6.4.2 documentation.

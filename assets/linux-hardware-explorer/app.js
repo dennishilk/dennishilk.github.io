@@ -1,5 +1,5 @@
 import { LocalAnalysis } from './controller.js';
-import { LIMITS, filterProfiles, publicSummary, redactHardwareReport, canonicalPublicUrl, contextHash, validPublicContext, matchReason, landingPath, profilePath } from './core.js';
+import { LIMITS, filterProfiles, publicSummary, redactHardwareReport, canonicalPublicUrl, contextHash, validPublicContext, matchReason, deviceSources, landingPath, profilePath } from './core.js';
 import { shareIntent, moveAssistant } from '../linux-fix-lab/core.js';
 
 // Public article pages need command copying and sharing, not the entire device database.
@@ -94,14 +94,16 @@ function profileLinks(result, limit = 8) {
 const VENDORS = { pci: { '1002': 'AMD', '10de': 'NVIDIA', '8086': 'Intel', '1022': 'AMD', '10ec': 'Realtek', '14e4': 'Broadcom', '168c': 'Qualcomm Atheros', '17cb': 'Qualcomm', '1b21': 'ASMedia', '1b4b': 'Marvell', '15ad': 'VMware', '1af4': 'Virtio' },
   usb: { '046d': 'Logitech', '0bda': 'Realtek', '8087': 'Intel', '0a12': 'Cambridge Silicon Radio', '0b95': 'ASIX', '0e8d': 'MediaTek', '1d6b': 'Linux Foundation' } };
 function deviceCard(result) {
-  const d = result.device, matched = result.matches.map(m => profiles.get(m.profileId)).filter(Boolean);
+  const d = result.device, verified = result.matches.filter(m => ['exact-id', 'family-id'].includes(m.reason)).map(m => profiles.get(m.profileId)).filter(Boolean);
+  const matched = verified.length === 1 ? verified : []; // Never expand an arbitrary winner from ambiguous identities.
   const card = el('article', '', 'hardware-device');
   const identity = d.vendor && d.device ? `${d.bus.toUpperCase()} ${d.vendor}:${d.device}` : t('Identity incomplete', 'Identität unvollständig');
-  card.append(el('h3', `${t('Device', 'Gerät')} ${d.index + 1} · ${identity}`));
-  card.append(el('p', result.coverage === 'curated-id' ? t('Curated identity evidence; operation untested', 'Kuratierter Identitätsbeleg; Funktion ungeprüft') :
+  card.append(el('h3', matched.length === 1 ? local(matched[0].name) : `${t('Device', 'Gerät')} ${d.index + 1} · ${identity}`));
+  card.append(el('p', identity, 'lab-muted'));
+  card.append(el('p', ['curated-id', 'curated-family'].includes(result.coverage) ? t('Curated identity evidence; operation untested', 'Kuratierter Identitätsbeleg; Funktion ungeprüft') :
     result.matches.length ? t('Candidate context; exact product not established', 'Möglicher Kontext; exaktes Produkt nicht belegt') : t('Unknown to this curated catalog', 'In diesem kuratierten Katalog unbekannt'), 'hardware-badge'));
   const panels = new Map(), tabs = el('div', '', 'hardware-tabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', t('Device information', 'Geräteinformationen'));
-  const labels = [['overview', t('Overview', 'Überblick')], ['driver', t('Driver', 'Treiber')], ['firmware', 'Firmware'], ['diagnostics', t('Diagnostics', 'Diagnose')], ['issues', t('Known issues', 'Fehlerhilfen')], ['references', t('References', 'Quellen')]];
+  const labels = [['overview', t('Overview', 'Überblick')], ['driver', t('Driver', 'Treiber')], ['firmware', 'Firmware'], ['diagnostics', t('Diagnostics', 'Diagnose')], ['issues', t('Troubleshooting', 'Fehlerhilfen')], ['references', t('Sources', 'Quellen')]];
   function activate(index, focus = false) {
     [...tabs.children].forEach((tab, i) => { tab.setAttribute('aria-selected', String(i === index)); tab.tabIndex = i === index ? 0 : -1; panels.get(labels[i][0]).hidden = i !== index; });
     if (focus) tabs.children[index].focus();
@@ -130,9 +132,19 @@ function deviceCard(result) {
   if (d.bdf || d.usbAddress) fact(facts, t('Local bus address (excluded from export)', 'Lokale Busadresse (im Export weggelassen)'), d.bdf || d.usbAddress);
   if (d.usbInterfaceTriplets.length) fact(facts, t('USB interface classes', 'USB-Schnittstellenklassen'), d.usbInterfaceTriplets.join(', '));
   overview.append(facts, el('p', t('A device label, chipset family and marketed product are different facts. Detection does not establish successful initialization or use.', 'Gerätebezeichnung, Chipfamilie und Verkaufsprodukt sind verschiedene Angaben. Erkennung bestätigt weder erfolgreiche Initialisierung noch Nutzung.')));
-  overview.append(profileLinks(result));
+  overview.append(profileLinks(result, 3));
+  if (verified.length > 1) overview.append(el('p', t('Several verified catalog profiles share this identity. No generation-specific recommendations are expanded; inspect their qualifications manually.', 'Mehrere belegte Katalogprofile teilen diese Identität. Generationenspezifische Empfehlungen werden nicht ausgeklappt; prüfe ihre Bedingungen von Hand.')));
+  if (result.contexts?.length) {
+    const details = el('details'); details.append(el('summary', t('General class information (not identity)', 'Allgemeine Klasseninformationen (keine Identität)')), profileLinks({ matches: result.contexts }, 3)); overview.append(details);
+  }
+  if (result.boundDriver) {
+    const details = el('details'); details.append(el('summary', result.boundDriver === 'amdgpu' ? t('General AMDGPU information', 'Allgemeine AMDGPU-Informationen') : t('General driver information', 'Allgemeine Treiberinformationen')),
+      el('p', t('A shared driver name does not identify a device generation. Binding does not establish initialization or operational stability.', 'Ein gemeinsamer Treibername identifiziert keine Gerätegeneration. Bindung bestätigt weder Initialisierung noch Betriebsstabilität.')),
+      link(t('Driver binding', 'Treiberbindung'), profilePath('driver-binding', language)), link(t('Firmware loading evidence', 'Firmware-Ladebefunde'), profilePath('firmware-loading', language))); overview.append(details);
+  }
   if (!matched.length) overview.append(el('p', t('Keep the numeric ID and read upstream or distribution evidence. No catalog match does not mean unsupported hardware.', 'Behalte die numerische ID und prüfe Upstream- oder Distributionsbelege. Ein fehlender Katalogtreffer bedeutet keine fehlende Unterstützung.')));
   const driver = panels.get('driver'); driver.append(el('p', bindingLabel(result.binding), 'hardware-badge'));
+  driver.append(el('p', result.binding === 'reported-bound' ? t('Bound according to the supplied report; initialization and operational stability are not established.', 'Gebunden laut übermitteltem Bericht; Initialisierung und Betriebsstabilität sind nicht bestätigt.') : t('Initialization and operational stability are not established.', 'Initialisierung und Betriebsstabilität sind nicht bestätigt.')));
   if (result.boundDriver) driver.append(el('p', `${t('Reported bound driver', 'Gemeldeter gebundener Treiber')}: ${result.boundDriver}`));
   if (d.reportedModules.length) driver.append(el('p', `${t('Input module candidates (not proof of loading)', 'Modulkandidaten der Eingabe (kein Ladenachweis)')}: ${d.reportedModules.join(', ')}`));
   if (result.candidateDrivers.length) driver.append(el('p', `${t('Catalog driver/module candidates', 'Treiber-/Modulkandidaten des Katalogs')}: ${result.candidateDrivers.join(', ')}`));
@@ -150,16 +162,15 @@ function deviceCard(result) {
   diagnostics.append(el('p', t('Read-only checks, never executed here. Replace uppercase placeholders manually. Output can contain private identifiers; elevated access may be needed for logs and full descriptors.', 'Lesende Prüfungen; hier wird nichts ausgeführt. Ersetze Großbuchstaben-Platzhalter von Hand. Ausgaben können private Kennungen enthalten; Logs und vollständige Deskriptoren können erhöhte Rechte benötigen.')));
   for (const p of matched.slice(0, 4)) for (const check of p.checkpoints) {
     if (seenCommands.has(check.command)) continue; seenCommands.add(check.command);
-    diagnostics.append(el('h4', local(check.label)), command(check.command), el('p', (check.elevated ? t('Elevated access may be needed. ', 'Erhöhte Rechte können nötig sein. ') : '') + local(check.interpretation)));
+    diagnostics.append(el('h4', local(check.label)), command(d.bus === 'pci' && d.bdf ? check.command.replaceAll('BDF', d.bdf) : check.command), el('p', (check.elevated ? t('Elevated access may be needed. ', 'Erhöhte Rechte können nötig sein. ') : '') + local(check.interpretation)));
   }
   if (!matched.length) diagnostics.append(command(d.bus === 'usb' ? 'lsusb -t' : 'lspci -nnk'), command('journalctl -b -k --no-pager'));
   const issues = panels.get('issues'); issues.append(el('p', t('Related guides describe possible observation paths, not confirmed defects in your device.', 'Passende Anleitungen beschreiben mögliche Befundwege, keine bestätigten Fehler deines Geräts.')));
   for (const p of matched.slice(0, 8)) issues.append(el('h4', local(p.name)), el('p', local(p.limitations)));
   issues.append(guideList(matched.flatMap(p => p.fixLab)), link(t('Choose a diagnostic workflow', 'Diagnoseweg wählen'), '#hardware-assistants'));
-  const references = panels.get('references'), sourceUrls = new Set(), sourceList = el('ul');
-  for (const p of matched.slice(0, 8)) for (const source of p.sources) {
-    if (sourceUrls.has(source.url)) continue; sourceUrls.add(source.url);
-    const row = el('li'), a = link(source.title, source.url); a.rel = 'noreferrer'; row.append(a); sourceList.append(row);
+  const references = panels.get('references'), sourceList = el('ul');
+  for (const source of deviceSources(matched)) {
+    const row = el('li'), a = link(source.title, source.url); a.rel = 'noreferrer'; row.append(a, el('span', ` · ${({'source-code': t('Source code', 'Quellcode'), 'identification-data': t('Identification database', 'Kennungsdatenbank'), documentation: t('Documentation', 'Dokumentation')}[source.kind] || t('Upstream evidence', 'Upstream-Beleg'))}`, 'lab-muted')); sourceList.append(row);
   }
   references.append(el('p', t('Source review is editorial verification, not a reproduced hardware test. Read each candidate profile for qualifiers and evidence scope.', 'Quellenprüfung ist redaktionelle Prüfung, kein reproduzierter Hardwaretest. Lies die Kandidatenprofile für Bedingungen und Belegumfang.')), sourceList);
   card.append(tabs, ...panels.values()); activate(0); return card;

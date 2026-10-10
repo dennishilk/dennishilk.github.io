@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "reviewed": "2026-10-10",
   "method": "Direct HTTPS; immutable GitHub blob resources inspected via raw.githubusercontent.com",
-  "profileCount": 154,
+  "profileCount": 155,
   "resources": [
     {
       "url": "https://archlinux.org/packages/core/any/linux-firmware/",
@@ -2141,6 +2141,21 @@
       "cached": true,
       "sha256": "8b6e98bf79516d034318fc58e34647b5ca18e2533ea9abca1a2b2566ff9935d3",
       "bytes": 48788
+    },
+    {
+      "url": "https://github.com/pciutils/pciids/blob/3452638d16a34aa3d6e427d21e4cd0bae0fb884e/pci.ids",
+      "fetchUrl": "https://raw.githubusercontent.com/pciutils/pciids/3452638d16a34aa3d6e427d21e4cd0bae0fb884e/pci.ids",
+      "status": 200,
+      "sha256": "25b626586086220f2804d7b11275a5652dac94eceacce216448ab5e5220aace1",
+      "bytes": 1671651,
+      "method": "Git blob from shallow clone at the recorded commit"
+    },
+    {
+      "url": "https://rocm.docs.amd.com/en/docs-6.4.2/reference/gpu-arch-specs.html",
+      "fetchUrl": "https://rocm.docs.amd.com/en/docs-6.4.2/reference/gpu-arch-specs.html",
+      "status": 200,
+      "sha256": "3b8ea3e4f8d0ff2b501c3be584f6137965adc8241d1c6116bb1cbc89666d9f23",
+      "bytes": 58700
     }
   ]
 }
