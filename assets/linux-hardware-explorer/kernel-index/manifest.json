@@ -1,0 +1,70 @@
+{
+  "schema": 2,
+  "generatedFrom": "kernel-build-module-aliases",
+  "kernelRelease": "6.12.107+deb13-amd64",
+  "source": {
+    "modulesAlias": {
+      "label": "Debian 13 linux-image-6.12.107+deb13-amd64 build metadata",
+      "sha256": "73e4a296d0d2b1c90d45fc73a7a29585ab367157da6f843aec2156c67d4164ff",
+      "bytes": 1375150
+    },
+    "kernelConfig": {
+      "label": "Debian 13 linux-image-6.12.107+deb13-amd64 build metadata",
+      "sha256": "9b460f1003db4d417288e9c14caecfa14245dab07186df948fef0f3661e38ceb",
+      "bytes": 283337
+    },
+    "modulesBuiltinModinfo": {
+      "label": "Debian 13 linux-image-6.12.107+deb13-amd64 build metadata",
+      "sha256": "3cade706e4d71972fbfd806b630fd0dbec2f5bb4a71bc292fb1c23a592bc2e3d",
+      "bytes": 59643
+    }
+  },
+  "buses": [
+    "pci",
+    "usb",
+    "hid"
+  ],
+  "downloadPolicy": "always-fetch-fixed-three-bus-files",
+  "sourceCoverage": "Loadable module aliases, plus only built-in aliases actually present in the optional NUL-delimited built-in metadata; no absent aliases fabricated.",
+  "semantics": "Build-specific possible candidates only; not an installed, loaded, bound or functional-device claim. Missing alias is not proof of unsupported hardware.",
+  "counts": {
+    "aliasFileRows": 19068,
+    "builtinRows": 0,
+    "duplicateRows": 12,
+    "ambiguousPatterns": 559,
+    "invalidRows": 0,
+    "unsupportedBusRows": 8331,
+    "total": 19056,
+    "byBus": {
+      "pci": 9539,
+      "usb": 8571,
+      "hid": 946
+    }
+  },
+  "files": {
+    "pci": {
+      "name": "pci.json",
+      "sha256": "ee2e3a59232983fb206febdacf2c210cfd33fc0ce24522082fe23d4d641b62f6",
+      "bytes": 704919,
+      "aliases": 9539,
+      "generic": 18,
+      "vendors": 320
+    },
+    "usb": {
+      "name": "usb.json",
+      "sha256": "2cf8e57bde203f9127b3b8f799e3a2160d56ecc00297f2731fc154b82fa6899d",
+      "bytes": 647566,
+      "aliases": 8571,
+      "generic": 58,
+      "vendors": 889
+    },
+    "hid": {
+      "name": "hid.json",
+      "sha256": "2c4f307220ff77379c21df23e316e222f80ac4a98727c481350821a98d1c5ed6",
+      "bytes": 71371,
+      "aliases": 946,
+      "generic": 6,
+      "vendors": 151
+    }
+  }
+}

@@ -37,13 +37,15 @@ export function parseModalias(value) {
   if (m && m.slice(1, 5).every(n => n.startsWith('0000'))) {
     const d = device('sysfs', 'pci'); setPair(d, m[1].slice(4), m[2].slice(4));
     d.subsystemVendor = m[3].slice(4).toLowerCase(); d.subsystemDevice = m[4].slice(4).toLowerCase();
-    d.classCode = m.slice(5).join('').toLowerCase(); return d;
+    d.classCode = m.slice(5).join('').toLowerCase(); d.modalias = v; return d;
   }
   m = v.match(/^usb:v([a-f0-9]{4})p([a-f0-9]{4})d([a-f0-9]{4})dc([a-f0-9]{2})dsc([a-f0-9]{2})dp([a-f0-9]{2})ic([a-f0-9]{2})isc([a-f0-9]{2})ip([a-f0-9]{2})in([a-f0-9]{2})$/i);
   if (m) {
     const d = device('sysfs', 'usb'); setPair(d, m[1], m[2]); d.revision = m[3].toLowerCase();
     d.classCode = m[4].toLowerCase(); d.usbInterfaceClasses = [m[7].toLowerCase()];
-    d.usbInterfaceTriplets = [m.slice(7, 10).join(':').toLowerCase()]; d.usbDeviceClassTriplet = m.slice(4, 7).join(':').toLowerCase(); return d;
+    d.usbInterfaceTriplets = [m.slice(7, 10).join(':').toLowerCase()]; d.usbDeviceClassTriplet = m.slice(4, 7).join(':').toLowerCase();
+    d.usbInterfaces = [{ number: parseInt(m[10], 16), classCode: m[7].toLowerCase(), subClass: m[8].toLowerCase(), protocol: m[9].toLowerCase(), modalias: v }];
+    d.modalias = v; return d;
   }
   return null; // Wildcard module aliases are not observed device identifiers.
 }
@@ -200,7 +202,8 @@ function mergeDevices(items) {
     if ((same.boundDriver && item.boundDriver && normalizeModule(same.boundDriver) !== normalizeModule(item.boundDriver)) ||
       (same.binding === 'reported-bound' && item.binding === 'unbound') || (same.binding === 'unbound' && item.binding === 'reported-bound')) { same.binding = 'conflicting'; same.boundDriver = null; }
     else if (same.binding !== 'conflicting' && item.binding !== 'unreported') { same.binding = item.binding; same.boundDriver = item.boundDriver; }
-    for (const key of ['vendor', 'device', 'classCode', 'subsystemVendor', 'subsystemDevice', 'revision', 'reportedLabel']) if (!same[key] && item[key]) same[key] = item[key];
+    for (const key of ['vendor', 'device', 'classCode', 'subsystemVendor', 'subsystemDevice', 'revision', 'reportedLabel', 'modalias']) if (!same[key] && item[key]) same[key] = item[key];
+    same.usbInterfaces = [...(same.usbInterfaces || []), ...(item.usbInterfaces || [])];
     same.reportedModules.push(...item.reportedModules); same.usbInterfaceClasses.push(...item.usbInterfaceClasses); same.usbInterfaceTriplets.push(...item.usbInterfaceTriplets); same.origins.push(...item.origins);
   }
   return out.map((d, index) => ({ ...d, index, origins: [...new Set(d.origins)], reportedModules: [...new Set(d.reportedModules)], usbInterfaceClasses: [...new Set(d.usbInterfaceClasses)], usbInterfaceTriplets: [...new Set(d.usbInterfaceTriplets)] }));
