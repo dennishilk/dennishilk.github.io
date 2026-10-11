@@ -48,3 +48,6 @@
 .ct-crosslink a{font-weight:700}
 @media(max-width:720px){.ct-gallery{grid-template-columns:1fr}.ct-stat-grid{grid-template-columns:1fr}.ct-demo{padding:1rem}.ct-gallery img{aspect-ratio:auto}}
 @media(prefers-reduced-motion:reduce){.ct-demo *, .ct-switches *{transition:none!important}}
+
+/* The archived box photograph is upside down in the file. Rotate only the article image, not its caption or the museum original. */
+.ct-hellhound-photo > img { transform: rotate(180deg); }

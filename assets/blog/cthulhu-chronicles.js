@@ -21,8 +21,8 @@ if(type==='crash'){
       en:'Earlier Linux tests: symptoms varied widely by game. These observations do not establish a single root cause.'
     },
     low:{
-      de:'112 W: Die Leistungsbegrenzung verringerte damals manche Hardlocks, war aber kein zuverlässiger Fix. Stalls blieben und nicht jeder Crash verschwand.',
-      en:'112 W: Limiting power prevented some hardlocks but was not a reliable fix. Stalls remained and not every crash was avoided.'
+      de:'112 W: Teilweise weniger Hardlocks, aber kein zuverlässiger Fix. Arma 3 stürzte weiterhin hart ab; Quake RTX verlor das Bild, während Spiel und LocalSend weiterliefen; Black Flag Resynced zeigte noch Blackouts nach etwa 3–10 Minuten.',
+      en:'112 W: Fewer hardlocks in some tests, but no reliable fix. Arma 3 still hard-crashed; Quake RTX lost video while the game and LocalSend kept running; Black Flag Resynced still had blackouts after roughly 3–10 minutes.'
     },
     current:{
       de:'Mesa 26.2.4, 160 W: In insgesamt ungefähr zehn Stunden Gaming nur ein beobachteter Hardcrash (Black Flag Resynced). Das ist ein Praxisergebnis, kein nachgewiesener Mesa-Patch.',
@@ -33,10 +33,10 @@ if(type==='crash'){
   const state=q('[data-state]');
   const info=q('[data-info]');
   const matrix={
-    stalker:{early:['Stalls + hardlocks','Stalls + hardlocks'],low:['Stalls remain','Stalls remain'],current:['2 h stable at 160 W','2 h stabil bei 160 W']},
-    arma:{early:['Hardlock entering the world','Hardlock beim Weltbeitritt'],low:['Not confirmed','Nicht bestätigt'],current:['~1 h: weapons + helicopter','~1 h: Waffen + Hubschrauber']},
-    quake:{early:['Display lost; game and LocalSend kept running','Bild weg; Spiel und LocalSend liefen'],low:['Not confirmed','Nicht bestätigt'],current:['No display loss in retest','Kein Bildausfall im Nachtest']},
-    blackflag:{early:['Hard crash after minutes','Hardcrash nach Minuten'],low:['Not confirmed','Nicht bestätigt'],current:['One hard crash after ~2 h','Ein Hardcrash nach ~2 h']},
+    stalker:{early:['Stalls + hardlocks','Stalls + hardlocks'],low:['Stalls remained','Stalls blieben bestehen'],current:['2 h stable at 160 W','2 h stabil bei 160 W']},
+    arma:{early:['Hardlock entering the world','Hardlock beim Weltbeitritt'],low:['Still hard-crashed when entering the world','Weiterhin Hardcrash beim Weltbeitritt'],current:['~1 h: weapons + helicopter','~1 h: Waffen + Hubschrauber']},
+    quake:{early:['Display lost; game and LocalSend kept running','Bild weg; Spiel und LocalSend liefen'],low:['Display gone; game and LocalSend kept running','Bild weg; Spiel und LocalSend liefen weiter'],current:['No display loss in retest','Kein Bildausfall im Nachtest']},
+    blackflag:{early:['Hard crash after minutes','Hardcrash nach Minuten'],low:['Intermittent blackouts after ~3–10 min','Teils Blackouts nach ca. 3–10 Min.'],current:['One hard crash after ~2 h','Ein Hardcrash nach ~2 h']},
     sata:{early:['ata2 BadCRC/link resets, independent lead','ata2 BadCRC/Link-Resets, separate Spur'],low:['Drive relocation did not fix hardlocks','Laufwerkswechsel löste Hardlocks nicht'],current:['Cable/port tests still pending','Kabel-/Porttests noch offen']}
   };
   const lang=root.getAttribute('lang')==='de'?'de':'en';
