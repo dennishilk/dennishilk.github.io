@@ -1,0 +1,47 @@
+/* Mission 01 — packet journey, inherits the blog's dark system-font theme. */
+.packet-lab{margin:34px 0 40px;padding:24px;background:radial-gradient(circle at 80% -10%,#16465870,transparent 45%),#0e1925;border:1px solid #335268;border-radius:16px;box-shadow:0 16px 45px #0003;font-size:15px;line-height:1.6}
+.packet-lab .lab-kicker{color:#8fdddb;font:12px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;margin:0 0 8px}
+.packet-lab h3{font-size:24px;line-height:1.25;color:#ecf7ff;margin:0 0 12px}
+.packet-lab .lab-description{color:#b8cbdc;margin:0 0 20px;font-size:15px}
+.packet-lab .packet-switch{display:none;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.packet-lab.is-ready .packet-switch{display:flex}
+.packet-lab button{font:inherit;cursor:pointer;min-height:42px}
+.packet-lab button:focus-visible{outline:3px solid #90dcff;outline-offset:3px}
+.packet-switch button{border:1px solid #426076;background:#142637;color:#d7e8f2;border-radius:8px;padding:8px 12px;font-size:13px}
+.packet-switch button[aria-pressed="true"]{background:#17505c;border-color:#83d9d4;color:#f2ffff}
+.packet-network{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr);gap:5px;align-items:center;padding:20px 10px;background:repeating-linear-gradient(0deg,transparent 0 28px,#23384a50 29px),#0b1722;border:1px solid #2a4153;border-radius:12px}
+.packet-node{min-width:0;border:1px solid #3d5c72;background:#122738;border-radius:10px;padding:16px 8px;text-align:center;transition:background .18s,border-color .18s}
+.packet-node strong{display:block;color:#eef8ff;font-size:14px;line-height:1.35}
+.packet-node small{display:block;color:#aac3d1;font-size:12px;line-height:1.3;margin-top:6px}
+.packet-node .node-icon{display:block;font-size:24px;margin-bottom:5px}
+.packet-node.is-lit{border-color:#7bddd3;background:#183c40;box-shadow:0 0 0 2px #49cbbb26}
+.packet-wire{text-align:center;color:#77cddd;font-size:24px;position:relative}
+.packet-lab.is-ready .packet-node.is-lit + .packet-wire{color:#a7f5e4}
+.packet-stages{display:none;grid-template-columns:repeat(9,minmax(0,1fr));gap:5px;padding:0;list-style:none;margin:21px 0 14px}
+.packet-lab.is-ready .packet-stages{display:grid}
+.packet-stages li{min-width:0;margin:0;padding:0}
+.packet-stages button{width:100%;font:12px ui-monospace,monospace;min-height:40px;border:1px solid #344b5e;background:#152538;color:#b8c7d7;border-radius:6px}
+.packet-stages button[aria-current="step"]{border-color:#8de3de;background:#225358;color:white}
+.packet-stages button.is-past{background:#1b3b43;border-color:#4c827f}
+.packet-detail{padding:20px;background:#111f2f;border:1px solid #355368;border-radius:10px;min-height:178px}
+.packet-detail .packet-counter{color:#8de3de;font:12px ui-monospace,monospace;margin:0 0 8px}
+.packet-detail h4{color:#f0f8ff;font-size:19px;margin:0 0 9px;line-height:1.35}
+.packet-detail p{color:#c3d3e1;font-size:15px;margin:0 0 10px;line-height:1.65}
+.packet-detail pre{background:#09141f;padding:12px 14px;border-radius:6px;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;color:#a6f1d1;font:12px/1.6 ui-monospace,monospace;max-height:160px;overflow:auto;margin:12px 0 0}
+.packet-controls{display:none;justify-content:space-between;align-items:center;gap:12px;margin-top:16px}
+.packet-lab.is-ready .packet-controls{display:flex}
+.packet-controls button{background:#183c4d;color:#eefcff;border:1px solid #527d8a;padding:9px 14px;border-radius:8px}
+.packet-controls button:disabled{opacity:.45;cursor:not-allowed}
+.packet-controls button[data-action="next"]{background:#7bddd3;border-color:#7bddd3;color:#0b2028;font-weight:700}
+.packet-controls .packet-progress{color:#a9c4d4;font:12px ui-monospace,monospace;text-align:center}
+.packet-lab .lab-note{color:#9bb7c7;font-size:12px;margin:17px 0 0}
+.article-copy .mission-summary{border-left:3px solid #79d5d0;background:#13282e;padding:16px 20px;margin:24px 0 30px;font-size:16px;color:#d9f0ee}
+.article-copy .mission-faq details{padding:16px 0;border-bottom:1px solid var(--line)}
+.article-copy .mission-faq summary{font-weight:650;cursor:pointer;color:var(--text);font-size:17px}
+.article-copy .mission-faq p{font-size:16px;margin:13px 0 2px}
+.article-copy .mission-source-list{font-size:15px;padding-left:22px}
+.article-copy .mission-source-list li{margin-bottom:11px}
+.article-copy code{overflow-wrap:anywhere}
+@media(max-width:650px){.packet-lab{padding:16px 12px}.packet-network{grid-template-columns:1fr;gap:6px}.packet-wire{transform:rotate(90deg);font-size:20px;line-height:14px}.packet-node{padding:10px}.packet-node .node-icon{display:inline;margin-right:8px;font-size:19px}.packet-node strong{display:inline}.packet-node small{display:block}.packet-stages{grid-template-columns:repeat(5,minmax(0,1fr))}.packet-controls{flex-wrap:wrap}.packet-controls button{flex:1}.packet-controls .packet-progress{order:-1;flex-basis:100%}.packet-detail{padding:16px}}
+@media(prefers-reduced-motion:reduce){.packet-node{transition:none}}
+@media print{.packet-lab .packet-switch,.packet-lab .packet-controls,.packet-lab .packet-stages{display:none!important}.packet-lab{break-inside:avoid}.article-sidebar{display:none}}
