@@ -1,7 +1,7 @@
-import { WORKER_SOURCE } from './worker-source.js?v=20261013-lists-1';
-import { RangeLedger, candidateAt, createPhases } from './search.js?v=20261013-lists-1';
+import { WORKER_SOURCE } from './worker-source.js?v=20261013-bud-1';
+import { RangeLedger, candidateAt, createPhases, dictionaryRangePhase } from './search.js?v=20261013-bud-1';
 import { hashHex, hexWords } from './sha256.js';
-import { GpuSha256, GpuFailure, gpuFailureDetails } from './gpu.js?v=20261013-lists-1';
+import { GpuSha256, GpuFailure, gpuFailureDetails } from './gpu.js?v=20261013-bud-1';
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 export class WorkerClient {
   constructor(kind,source=WORKER_SOURCE) {
@@ -20,7 +20,7 @@ export class WorkerClient {
     });
   }
   async initialize(){const result=await this.rpc('initialize',{kind:this.kind},20000);this.info={...result.info,execution:this.kind==='gpu'?'worker':undefined};this.stage='ready';return this;}
-  batch(phase,start,count,target){this.busy=true;this.activity='checking';return this.rpc('batch',{phase,start:BigInt(start).toString(),count,target}).catch(error=>{error.engine=this.kind;throw error;}).finally(()=>{this.busy=false;this.activity='idle';});}
+  batch(phase,start,count,target){this.busy=true;this.activity='checking';return this.rpc('batch',{phase:dictionaryRangePhase(phase,start,count),start:BigInt(start).toString(),count,target}).catch(error=>{error.engine=this.kind;throw error;}).finally(()=>{this.busy=false;this.activity='idle';});}
   fail(error){for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(error);}this.pending.clear();}
   close(){
     if(this.closed)return;this.closed=true;this.busy=false;this.activity='idle';this.fail(new Error('Compute worker closed'));
@@ -44,7 +44,7 @@ export class MainThreadGpuClient {
     if(this.closed)throw new GpuFailure('cancelled','execution','GPU client is closed');
     const started=performance.now();this.busy=true;this.activity='encoding';let encoded=null,targetWords=null;
     try{
-      const prepared=await this.encoder.rpc('encode',{phase,start:BigInt(start).toString(),count});
+      const prepared=await this.encoder.rpc('encode',{phase:dictionaryRangePhase(phase,start,count),start:BigInt(start).toString(),count});
       encoded=new Uint32Array(prepared.buffer);
       if(prepared.count!==count||encoded.length!==count*16)throw new Error('Incomplete encoded candidate range');
       if(this.closed)throw new GpuFailure('cancelled','execution','GPU client is closed');

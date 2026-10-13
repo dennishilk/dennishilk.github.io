@@ -1,5 +1,5 @@
-import {normalizeConfig,createPhases,DICTIONARIES,DICTIONARY_COUNTS,WORDLIST_SOURCES,BLIND_LIMITS,dictionaryBases} from './search.js?v=20261013-lists-1';
-import {makeEngines,probeGPU,benchmark,CrackSession} from './coordinator.js?v=20261013-lists-1';
+import {normalizeConfig,createPhases,DICTIONARIES,DICTIONARY_COUNTS,WORDLIST_SOURCES,BLIND_LIMITS,dictionaryBases,initializeDictionaryVariants} from './search.js?v=20261013-bud-1';
+import {makeEngines,probeGPU,benchmark,CrackSession} from './coordinator.js?v=20261013-bud-1';
 const de=document.documentElement.lang==='de',locale=de?'de-DE':'en-US';
 const text=de?{
   idle:'BEREIT',preparing:'VORBEREITUNG',calibrating:'LEISTUNG WIRD GEMESSEN',ready:'MESSUNG ABGESCHLOSSEN',running:'SUCHE LÄUFT',pausing:'WIRD PAUSIERT',paused:'PAUSIERT',verifying:'TREFFER WIRD GEPRÜFT',success:'PASSWORT GEFUNDEN',exhausted:'NICHT GEFUNDEN',stopped:'GESTOPPT',error:'FEHLER',
@@ -29,6 +29,7 @@ const text=de?{
 const $=id=>document.getElementById(id),number=new Intl.NumberFormat(locale),short=new Intl.NumberFormat(locale,{maximumFractionDigits:0});
 const settings=['mode','workers','german','english','common','brute'];
 const busyStates=['preparing','calibrating','running','pausing','paused','verifying'];
+let dictionariesReady=false;
 let state='idle',session=null,snapshot=null,engines=[],calibration=null,calibrationKey=null,estimateBefore=null,operation=0,revealed=false,phases=[],message=null;
 let gpuCapability={available:false,path:'none',code:'checking',diagnostics:{}},probeSequence=0,probeEngines=[];
 function duration(seconds){
@@ -87,7 +88,7 @@ function render(){
   for(const id of settings)$(id).disabled=busy;
   $('password').disabled=busy;$('intensity').disabled=['preparing','calibrating'].includes(state);
   const methods=$('german').checked||$('english').checked||$('common').checked||$('brute').checked;
-  const canStart=methods&&!busy&&Boolean(crypto?.subtle)&&Boolean($('password').value)&&($('mode').value==='cpu'||gpuCapability.available);
+  const canStart=dictionariesReady&&methods&&!busy&&Boolean(crypto?.subtle)&&Boolean($('password').value)&&($('mode').value==='cpu'||gpuCapability.available);
   $('start').disabled=!canStart;$('pause').disabled=state!=='running';$('resume').disabled=state!=='paused';$('stop').disabled=!busy;
   let c=null;try{c=config();}catch{}
   if(!busy)$('workers').disabled=$('mode').value==='gpu';
@@ -100,7 +101,7 @@ function render(){
   $('selected-methods').textContent=$('config-summary').textContent;
   $('method-help').textContent=methods?(de?'Feste Kandidatenfolge. Dein Passwort verändert weder Wörter noch Reihenfolge oder Grenzen.':'Fixed candidate sequence. Your password changes neither vocabulary, ordering nor limits.'):(de?'Aktiviere mindestens eine Suchmethode.':'Enable at least one search method.');
   $('intensity-value').textContent=$('intensity').value+'%';
-  const title=text[state]||text.idle,detail=message||text[state+'Detail']|| (state==='success'?text.found:state==='exhausted'?text.outside:state==='stopped'?text.cancelled:text.failed);
+  const title=text[state]||text.idle,detail=(!dictionariesReady&&state==='idle'?(de?'Wörterbuchindizes werden lokal vorbereitet …':'Preparing local dictionary indexes …'):message)||text[state+'Detail']|| (state==='success'?text.found:state==='exhausted'?text.outside:state==='stopped'?text.cancelled:text.failed);
   if($('status').textContent!==title)$('status').textContent=title;
   if($('status-detail').textContent!==detail)$('status-detail').textContent=detail;
   const announcement=title+'. '+detail;if($('announcement').textContent!==announcement)$('announcement').textContent=announcement;
@@ -180,6 +181,7 @@ function cancel(reset=false){
 function showDashboard(){$('dashboard').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});$('dashboard').focus({preventScroll:true});}
 function runtimeGpuFailure(failure){gpuCapability={...gpuCapability,available:false,code:failure.code,runtimeFailure:{code:failure.code,stage:failure.stage,message:failure.message,engine:failure.engine,details:failure.details||null}};renderGpu();}
 async function prepare(){
+  if(!dictionariesReady)return;
   const epoch=++operation;clearReveal();session?.clear();session=null;snapshot=null;engines=[];let target=null;const created=[];
   try{
     if(!$('password').value){setState('idle',text.enter);return;}if(!crypto?.subtle)throw new Error(text.secure);
@@ -231,5 +233,10 @@ for(const language of ['de','en','common']){
   $('method-'+language+'-size').textContent=number.format(meta.total)+(de?' Basiseinträge':' base entries');
   $('source-'+language).href=WORDLIST_SOURCES[language].url;
 }
-refreshConfig();refreshGpu();
+for(const label of document.querySelectorAll('[data-year-range]'))label.textContent=BLIND_LIMITS.yearMin+'–'+BLIND_LIMITS.yearMax;
+refreshConfig();
+message=de?'Wörterbuchindizes werden lokal vorbereitet …':'Preparing local dictionary indexes …';render();
+initializeDictionaryVariants().then(()=>{dictionariesReady=true;message=null;render();refreshGpu();}).catch(()=>{
+  setState('error',de?'Wörterbuchindizes konnten nicht geladen werden. Bitte neu laden und einen aktuellen Browser mit gzip-Unterstützung (DecompressionStream) verwenden.':'Dictionary indexes could not be loaded. Reload and use a current browser with gzip support (DecompressionStream).');
+});
 setInterval(()=>{if(session&&['running','pausing','paused','verifying'].includes(state))snapshot=session.snapshot();if(busyStates.includes(state))render();},150);

@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 const base=new URL('../assets/password-cracking-lab/',import.meta.url),check=process.argv.includes('--check');
 const manifest=JSON.parse(readFileSync(new URL('wordlists/sources.json',base),'utf8'));
 let source='// Generated from pinned wordlists/ snapshots. See sources.json.\n';
-for(const file of ['LICENSE-english-SCOWL.txt','LICENSE-english-Hunspell.txt','LICENSE-common-MIT.txt'])source+='/* '+file+'\n'+readFileSync(new URL('wordlists/'+file,base),'utf8').replaceAll('*/','* /')+'*/\n';
+for(const file of ['LICENSE-english-SCOWL.txt','LICENSE-english-Hunspell.txt','LICENSE-common-MIT.txt','LICENSE-ESDB80.txt','LICENSE-SSA.txt'])source+='/* '+file+'\n'+readFileSync(new URL('wordlists/'+file,base),'utf8').replaceAll('*/','* /')+'*/\n';
 for(const [id,name] of [['de','german'],['en','english'],['common','common']]){
   const raw=readFileSync(new URL('wordlists/'+name+'.txt',base),'utf8');
   if(createHash('sha256').update(raw).digest('hex')!==manifest[id].bundledSha256)throw new Error('Wordlist snapshot checksum mismatch: '+id);

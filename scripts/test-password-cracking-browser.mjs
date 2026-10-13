@@ -45,6 +45,30 @@ try{
   });
   console.log('Actual WebGPU adapter: '+JSON.stringify(gpu.info)+'; physical GPU verified: '+!gpu.info.software);
   pass('real browser WGSL SHA-256 agrees with CPU on '+gpu.vectors+' vectors and exact indices above 2^53');
+  const dictionaryGpu=await page.evaluate(async()=>{
+    const {GpuSha256}=await import('/assets/password-cracking-lab/gpu.js');
+    const {initializeDictionaryVariants,createPhases,dictionaryBases,dictionaryRangePhase,candidateAt}=await import('/assets/password-cracking-lab/search.js');
+    const {hashHex,hexWords}=await import('/assets/password-cracking-lab/sha256.js');
+    await initializeDictionaryVariants();const gpu=await GpuSha256.create({allowSoftware:true});let checked=0;
+    try{
+      for(const language of ['de','en','common']){
+        const phases=createPhases({german:language==='de',english:language==='en',common:language==='common'});
+        for(const phase of phases)for(const start of [0n,53n,phase.count-72n]){
+          const target=candidateAt(phase,start+35n),result=await gpu.batch(dictionaryRangePhase(phase,start,72),start,72,hexWords(hashHex(target)));
+          if(result.match!==35)throw new Error('Packed dictionary shader disagreement: '+language);checked+=72;
+        }
+        const phase=phases[1],bases=dictionaryBases(true,true,language),base=language==='common'?'Budspencer':'Dragon';
+        let index=0;for(const value of bases){if(value===base)break;index++;}if(index===bases.length)throw new Error('Missing test base');
+        for(const year of [1984,1999,2000,2026,2035]){
+          const offset=BigInt(index)*BigInt(phase.yearMax-phase.yearMin+1)+BigInt(year-phase.yearMin);
+          const result=await gpu.batch(dictionaryRangePhase(phase,offset,1),offset,1,hexWords(hashHex(base+year)));
+          if(result.match!==0)throw new Error('Year-boundary shader disagreement');checked++;
+        }
+      }
+      return checked;
+    }finally{gpu.dispose();}
+  });
+  pass('software WebGPU hashes '+dictionaryGpu+' packed dictionary candidates at range/phase/year boundaries (physical GPU unverified)');
   const compatibility=await page.evaluate(async()=>{
     const {GpuSha256}=await import('/assets/password-cracking-lab/gpu.js');
     const {createPhases}=await import('/assets/password-cracking-lab/search.js');
@@ -118,13 +142,13 @@ try{
       pass(lang+': no-method validation, independent English selection and verified recovery/reveal/hide/reset');
       await methods(page,{german:true,english:false});await page.locator('#password').fill('sommer2024');await context.setOffline(true);
       let requests=0;const count=request=>{if(/^https?:/.test(request.url()))requests++;};page.on('request',count);
-      await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='success');assert.equal(requests,0);await page.locator('#reveal').click();assert.equal(await page.locator('#recovered').textContent(),'sommer2024');assert.ok((await page.locator('#result-strategy').textContent()).includes('2000–2035'));
+      await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='success');assert.equal(requests,0);await page.locator('#reveal').click();assert.equal(await page.locator('#recovered').textContent(),'sommer2024');assert.ok((await page.locator('#result-strategy').textContent()).includes('1984–2035'));
       page.off('request',count);await context.setOffline(false);await page.locator('#reset').click();
       const packets=await page.evaluate(()=>window.workerPackets.filter(p=>p.action==='batch'));assert.ok(packets.length);for(const p of packets){assert.deepEqual(Object.keys(p).sort(),['action','count','id','phase','start','target']);assert.ok(/^[a-f0-9]{64}$/.test(p.target));}
       pass(lang+': real blind German year recovery offline with hash-only worker messages');
       await methods(page,{german:false,english:false,brute:true});await page.locator('#password').fill('a');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='success');await page.locator('#reveal').click();assert.equal(await page.locator('#recovered').textContent(),'a');assert.ok((await page.locator('#result-strategy').textContent()).includes('Brute'));
       assert.equal(await page.locator('#mode option[value=gpu]').evaluate(el=>el.disabled),true);assert.ok((await page.locator('#gpu-capability').textContent()).includes(lang==='de'?'Softwareadapter':'software adapter'));await page.locator('.hardware-panel .details-link').click();assert.equal(await page.locator('#gpu-diagnostics').evaluate(el=>el.open),true);assert.ok(JSON.parse(await page.locator('#gpu-raw').textContent()).diagnostics);
-      await page.locator('#reset').click();await methods(page,{german:false,english:false,common:true});await page.locator('#password').fill('outside-🔐');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='exhausted');const commonCount=await page.evaluate(async()=>{const {dictionaryBases}=await import('/assets/password-cracking-lab/search.js');return (BigInt(dictionaryBases(true,true,'common').length)*147n).toLocaleString(document.documentElement.lang==='de'?'de-DE':'en-US');});assert.equal(await page.locator('#checked').textContent(),commonCount);assert.equal(await page.locator('#reveal').isVisible(),false);
+      await page.locator('#reset').click();await methods(page,{german:false,english:false,common:true});await page.locator('#password').fill('outside-🔐');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='exhausted');const commonCount=await page.evaluate(async()=>{const {dictionaryBases,BLIND_LIMITS}=await import('/assets/password-cracking-lab/search.js');return (BigInt(dictionaryBases(true,true,'common').length)*BigInt(111+BLIND_LIMITS.yearMax-BLIND_LIMITS.yearMin+1)).toLocaleString(document.documentElement.lang==='de'?'de-DE':'en-US');});assert.equal(await page.locator('#checked').textContent(),commonCount);assert.equal(await page.locator('#reveal').isVisible(),false);
       pass(lang+': real fixed-charset brute recovery, software diagnostics and complete dictionary exhaustion');
     }
     const fallbackContext=await browser.newContext(),fallback=await fallbackContext.newPage();fallback.setDefaultTimeout(120000);fallback.on('pageerror',error=>errors.push(error.message));

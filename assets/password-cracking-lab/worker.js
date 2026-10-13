@@ -1,5 +1,5 @@
 import { createSha256, hashHex, hexWords, equalDigest, encodeAsciiBlock } from './sha256.js';
-import { CandidateCursor } from './search.js?v=20261013-lists-1';
+import { CandidateCursor } from './search.js?v=20261013-bud-1';
 import { GpuSha256, gpuFailureDetails } from './gpu.js';
 let backend=null,gpu=null;const sha=createSha256();
 globalThis.onmessage=async event=>{

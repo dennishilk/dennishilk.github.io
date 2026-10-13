@@ -1,4 +1,4 @@
-import { EXTERNAL_DE, EXTERNAL_EN, EXTERNAL_COMMON, WORDLIST_SOURCES } from './wordlists-data.js?v=20261013-lists-1';
+import { EXTERNAL_DE, EXTERNAL_EN, EXTERNAL_COMMON, WORDLIST_SOURCES } from './wordlists-data.js?v=20261013-bud-1';
 export { WORDLIST_SOURCES };
 // Original, locally bundled teaching vocabulary; no password dumps or remote
 // lists. Fixed word-pair patterns below are deliberately part of the vocabulary.

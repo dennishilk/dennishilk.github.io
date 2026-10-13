@@ -1,6 +1,10 @@
-import { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS, WORDLIST_SOURCES } from './dictionary.js?v=20261013-lists-1';
+import {wordForms} from './transformations.js';
+import {packedView,initializeDictionaryVariants,dictionaryIndexStats} from './packed-dictionary.js?v=20261013-bud-1';
+export {initializeDictionaryVariants,dictionaryIndexStats};
+import { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS, WORDLIST_SOURCES } from './dictionary.js?v=20261013-bud-1';
 export { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS, WORDLIST_SOURCES };
-export const BLIND_LIMITS=Object.freeze({maximumLength:24,suffixDigits:2,yearMin:2000,yearMax:2035});
+export function yearRange(year=new Date().getUTCFullYear()){if(!Number.isInteger(year))throw new Error('Invalid calendar year');return {yearMin:1984,yearMax:Math.min(9999,Math.max(2035,year))};}
+export const BLIND_LIMITS=Object.freeze({maximumLength:24,suffixDigits:2,...yearRange()});
 export const BLIND_CHARSET='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'+String.fromCharCode(...Array.from({length:95},(_,i)=>i+32).filter(c=>!((c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122))));
 export const SETS=Object.freeze({digits:'0123456789',lower:'abcdefghijklmnopqrstuvwxyz',upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',symbols:'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'});
 function integer(value,fallback,min=1,max=24) {const n=Number(value??fallback);if(!Number.isInteger(n)||n<min||n>max)throw new Error('Invalid search length');return n;}
@@ -19,17 +23,16 @@ export function normalizeConfig(input={}) {
   const charset=Object.entries(SETS).filter(([key])=>flags[key]).map(([,value])=>value).join('');
   if((strategy==='brute'||strategy==='smart')&&!charset)throw new Error('Select at least one character set');
   const years=dictionaryMode&&input.years===true;
-  const yearMin=years?integer(input.yearMin,2000,1900,2099):2000,yearMax=years?integer(input.yearMax,2035,1900,2099):2035;if(yearMin>yearMax)throw new Error('Minimum year exceeds maximum');
+  const yearMin=years?integer(input.yearMin,BLIND_LIMITS.yearMin,1900,9999):BLIND_LIMITS.yearMin,yearMax=years?integer(input.yearMax,BLIND_LIMITS.yearMax,1900,9999):BLIND_LIMITS.yearMax;if(yearMin>yearMax)throw new Error('Minimum year exceeds maximum');
   return {strategy,min,max,numericMax:strategy==='smart'?integer(input.numericMax,6):6,suffix:dictionaryMode?integer(input.suffix,4,0,4):0,variants:input.variants!==false,leet:dictionaryMode&&input.leet===true,years,yearMin,yearMax,...flags,charset};
 }
 const dictionaryCache=new Map();
 export function dictionaryBases(variants=false,leet=false,language=null){
   if(language!==null&&!DICTIONARIES[language])throw new Error('Unknown dictionary language');
   const key=String(language)+':'+String(variants)+':'+String(leet);if(dictionaryCache.has(key))return dictionaryCache.get(key);
-  const entries=new Set(),classic={a:'4',e:'3',i:'1',o:'0',s:'5',t:'7'},symbols={a:'@',i:'!',o:'0',s:'$'};
-  for(const word of (language?DICTIONARIES[language]:DICTIONARY)){const forms=leet?[word,word.replace(/[aeiost]/g,c=>classic[c]),word.replace(/[aios]/g,c=>symbols[c])]:[word];
-    for(const form of forms){entries.add(form);if(variants){entries.add(form[0].toUpperCase()+form.slice(1));entries.add(form.toUpperCase());}}
-  }
+  if(language!==null&&variants&&leet&&typeof packedView==='function'){const view=packedView(language);if(view)return view;}
+  const entries=new Set();
+  for(const word of (language?DICTIONARIES[language]:DICTIONARY))for(const form of wordForms(word,variants,leet))entries.add(form);
   const result=Object.freeze([...entries]);dictionaryCache.set(key,result);return result;
 }
 function dictionaryRadix(p){return p.yearMin===undefined?10n**BigInt(p.suffixDigits):BigInt(p.yearMax-p.yearMin+1);}
@@ -73,10 +76,18 @@ export function candidateAt(p,index) {
   const radix=BigInt(p.charset.length);let value=n,text='';
   for(let i=0;i<p.length;i++){text=p.charset[Number(value%radix)]+text;value/=radix;}return text;
 }
+export function dictionaryRangePhase(p,start,count){
+  if(p.kind!=='dictionary'||!p.language)return p;
+  const n=BigInt(start),last=n+BigInt(count)-1n;if(!Number.isInteger(count)||count<1||count>65536||n<0n||last>=p.count)throw new Error('Invalid dictionary range');
+  const radix=dictionaryRadix(p),first=Number(n/radix),end=Number(last/radix)+1;
+  if(!Number.isSafeInteger(first)||!Number.isSafeInteger(end))throw new Error('Dictionary base index exceeds exact range');
+  const bases=dictionaryBases(p.variants,p.leet,p.language);
+  return {...p,baseOffset:first,rangeBases:bases.slice(first,end)};
+}
 export class CandidateCursor {
   constructor(p,start=0n) {
-    this.phase=p;this.index=BigInt(start);this.bases=p.kind==='dictionary'?dictionaryBases(p.variants,p.leet,p.language??null):null;this.radix=p.kind==='dictionary'?dictionaryRadix(p):BigInt(p.charset.length);
-    if(this.bases){this.wordIndex=Number(this.index/this.radix);this.suffixIndex=Number(this.index%this.radix);this.suffixCount=Number(this.radix);}
+    this.phase=p;this.index=BigInt(start);this.bases=p.kind==='dictionary'?(p.rangeBases??dictionaryBases(p.variants,p.leet,p.language??null)):null;this.radix=p.kind==='dictionary'?dictionaryRadix(p):BigInt(p.charset.length);
+    if(this.bases){this.wordIndex=Number(this.index/this.radix)-(p.baseOffset??0);this.suffixIndex=Number(this.index%this.radix);this.suffixCount=Number(this.radix);}
     if(!this.bases){this.digits=new Uint8Array(p.length);let n=this.index;for(let i=p.length-1;i>=0;i--){this.digits[i]=Number(n%this.radix);n/=this.radix;}}
   }
   next() {

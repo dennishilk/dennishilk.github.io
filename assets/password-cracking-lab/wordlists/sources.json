@@ -2,34 +2,153 @@
   "de": {
     "sourceEntries": 685829,
     "eligibleUnique": 664872,
-    "selected": 100000,
-    "limit": 100000,
+    "selected": 211155,
+    "limit": 210000,
     "sourceSha256": "20095928ca70974fb5d86e44f10181cee16e2831b0d4b1a4ddd12c261aebc5e9",
     "url": "https://github.com/enz/german-wordlist/blob/1071d87d9535b57b80ec076c699f2578a28ee9dc/words",
     "revision": "1071d87d9535b57b80ec076c699f2578a28ee9dc",
     "license": "CC0-1.0",
-    "selection": "ASCII transliteration; letters only, 1–20; deduplicate, order by length then ASCII lexicographic, first 100000",
-    "bundledSha256": "e58b839dcdfa7cd7576cfbfdfd1352ae72772d7dde0e8d116b232ed785685a20"
+    "selection": "Preserve previous bundled leading segment; append first 210000 eligible source words by length/alphabet and curated German/IT themes",
+    "bundledSha256": "4a61d73b2bba2f3d725705c84b4138f2813bbc44fdd2950404f784e337016922",
+    "baselineSelected": 100000,
+    "newUnique": 111155,
+    "datasets": [
+      {
+        "sourceEntries": 685829,
+        "eligibleUnique": 664872,
+        "selected": 100000,
+        "limit": 100000,
+        "sourceSha256": "20095928ca70974fb5d86e44f10181cee16e2831b0d4b1a4ddd12c261aebc5e9",
+        "url": "https://github.com/enz/german-wordlist/blob/1071d87d9535b57b80ec076c699f2578a28ee9dc/words",
+        "revision": "1071d87d9535b57b80ec076c699f2578a28ee9dc",
+        "license": "CC0-1.0",
+        "selection": "ASCII transliteration; letters only, 1–20; deduplicate, order by length then ASCII lexicographic, first 100000",
+        "bundledSha256": "e58b839dcdfa7cd7576cfbfdfd1352ae72772d7dde0e8d116b232ed785685a20"
+      },
+      {
+        "url": "https://github.com/enz/german-wordlist/blob/1071d87d9535b57b80ec076c699f2578a28ee9dc/words",
+        "sourceSha256": "20095928ca70974fb5d86e44f10181cee16e2831b0d4b1a4ddd12c261aebc5e9",
+        "selected": 210000,
+        "limit": 210000,
+        "license": "CC0-1.0"
+      },
+      {
+        "url": "/assets/password-cracking-lab/wordlists/curated-themes.json",
+        "sourceSha256": "c8ad556ac09cd2fe564cb2a814e8a95851c5d6aef2b806fdac66772f852a2481",
+        "license": "CC0-1.0",
+        "categories": {
+          "de_compounds": 223,
+          "de_colloquial": 105,
+          "en_compounds_slang": 173,
+          "it_culture": 1036,
+          "popculture": 390,
+          "games_music": 535,
+          "password_themes": 968
+        },
+        "selection": "For the explicitly listed pop-culture/game/music names only: lowercase original, joined form, and normalized hyphenated form. No Cartesian name products."
+      }
+    ]
   },
   "en": {
     "sourceEntries": 47551,
-    "selected": 107888,
+    "selected": 247640,
     "sourceSha256": "ab012ae86ce4b46b60db5b150869288de9c4a87bc747911764e582125b1b961e",
     "affixSha256": "526e1dc32d1c0e8806dd72809c017b5546f2104b08b9424a4c47311aca526cca",
-    "url": "https://github.com/en-wl/wordlist/releases/download/rel-2026.02.25/hunspell-en_US-2026.02.25.zip",
+    "url": "https://github.com/en-wl/wordlist/tree/7e99edab8e32f9f9ea2b15f249ca8d4d67237410",
     "revision": "rel-2026.02.25",
     "license": "SCOWL permission notice (Kevin Atkinson) and Hunspell affix notice (Geoff Kuenning)",
-    "selection": "en_US headwords with only their explicit prefix/suffix flags and allowed cross-products expanded; numeric compound-only entries omitted; lowercase ASCII transliteration including apostrophes and hyphens; 1–20 characters; deduplicate and order by length then ASCII lexicographic",
-    "bundledSha256": "204ef345eaf124d25f9a4f8ac0701a1a2c93544439328f0e46e5a69eda5ec74d"
+    "selection": "Preserve baseline, append ESDB80 eligible vocabulary and curated conversational/IT themes",
+    "bundledSha256": "d24c2859f02fddd8077b0f8c42e53b7fa7abcf617e0df57962c9811dab0eaa7f",
+    "baselineSelected": 107888,
+    "newUnique": 139752,
+    "datasets": [
+      {
+        "sourceEntries": 47551,
+        "selected": 107888,
+        "sourceSha256": "ab012ae86ce4b46b60db5b150869288de9c4a87bc747911764e582125b1b961e",
+        "affixSha256": "526e1dc32d1c0e8806dd72809c017b5546f2104b08b9424a4c47311aca526cca",
+        "url": "https://github.com/en-wl/wordlist/releases/download/rel-2026.02.25/hunspell-en_US-2026.02.25.zip",
+        "revision": "rel-2026.02.25",
+        "license": "SCOWL permission notice (Kevin Atkinson) and Hunspell affix notice (Geoff Kuenning)",
+        "selection": "en_US headwords with only their explicit prefix/suffix flags and allowed cross-products expanded; numeric compound-only entries omitted; lowercase ASCII transliteration including apostrophes and hyphens; 1–20 characters; deduplicate and order by length then ASCII lexicographic",
+        "bundledSha256": "204ef345eaf124d25f9a4f8ac0701a1a2c93544439328f0e46e5a69eda5ec74d"
+      },
+      {
+        "url": "https://github.com/en-wl/wordlist/tree/7e99edab8e32f9f9ea2b15f249ca8d4d67237410",
+        "revision": "7e99edab8e32f9f9ea2b15f249ca8d4d67237410",
+        "sourceSha256": "aa0e0c121bffb7f35a4e0d15dd1f9e4a5c5a41f8d1c6506a6168b8cc0832289e",
+        "selected": 246841,
+        "license": "SCOWL permission notice and upstream source notices; see LICENSE-ESDB80.txt",
+        "command": "./scowl word-list 80 A,B,Z,C 5 --deaccent --wo-usage-notes=offensive-1,offensive-2",
+        "selection": "Size <=80, US/GB/CA spellings, variants <=5; source-tagged offensive categories omitted; lower ASCII letters/apostrophes/hyphens 1–20; deduplicate; valid current vocabulary includes less frequent words."
+      },
+      {
+        "url": "/assets/password-cracking-lab/wordlists/curated-themes.json",
+        "sourceSha256": "c8ad556ac09cd2fe564cb2a814e8a95851c5d6aef2b806fdac66772f852a2481",
+        "license": "CC0-1.0",
+        "categories": {
+          "de_compounds": 223,
+          "de_colloquial": 105,
+          "en_compounds_slang": 173,
+          "it_culture": 1036,
+          "popculture": 390,
+          "games_music": 535,
+          "password_themes": 968
+        },
+        "selection": "For the explicitly listed pop-culture/game/music names only: lowercase original, joined form, and normalized hyphenated form. No Cartesian name products."
+      }
+    ]
   },
   "common": {
     "sourceEntries": 10001,
-    "selected": 10001,
+    "selected": 26485,
     "sourceSha256": "68782d6a4a19a4768d5f15dd66bd534e7a33055cc755411e33f16d18c50fdcce",
     "url": "https://github.com/danielmiessler/SecLists/blob/3a5f62f0e18a1b8a36b25399aff0077f3706e5af/Passwords/Common-Credentials/10k-most-common.txt",
     "revision": "3a5f62f0e18a1b8a36b25399aff0077f3706e5af",
     "license": "MIT",
-    "selection": "Printable ASCII, 1–20; preserve exact source spelling and order; deduplicate. Published test list, not a claim about current password prevalence.",
-    "bundledSha256": "68782d6a4a19a4768d5f15dd66bd534e7a33055cc755411e33f16d18c50fdcce"
+    "selection": "Preserve existing public test-list baseline; append curated theme aliases and aggregated public given-name statistics; no new leaked credentials",
+    "bundledSha256": "3ac6ec4adcd88e14afd61a253b86d8d596c7487e52c4f87ef451f51356f4e835",
+    "baselineSelected": 10001,
+    "newUnique": 16484,
+    "datasets": [
+      {
+        "sourceEntries": 10001,
+        "selected": 10001,
+        "sourceSha256": "68782d6a4a19a4768d5f15dd66bd534e7a33055cc755411e33f16d18c50fdcce",
+        "url": "https://github.com/danielmiessler/SecLists/blob/3a5f62f0e18a1b8a36b25399aff0077f3706e5af/Passwords/Common-Credentials/10k-most-common.txt",
+        "revision": "3a5f62f0e18a1b8a36b25399aff0077f3706e5af",
+        "license": "MIT",
+        "selection": "Printable ASCII, 1–20; preserve exact source spelling and order; deduplicate. Published test list, not a claim about current password prevalence.",
+        "bundledSha256": "68782d6a4a19a4768d5f15dd66bd534e7a33055cc755411e33f16d18c50fdcce"
+      },
+      {
+        "url": "/assets/password-cracking-lab/wordlists/curated-themes.json",
+        "sourceSha256": "c8ad556ac09cd2fe564cb2a814e8a95851c5d6aef2b806fdac66772f852a2481",
+        "license": "CC0-1.0",
+        "categories": {
+          "de_compounds": 223,
+          "de_colloquial": 105,
+          "en_compounds_slang": 173,
+          "it_culture": 1036,
+          "popculture": 390,
+          "games_music": 535,
+          "password_themes": 968
+        },
+        "selection": "For the explicitly listed pop-culture/game/music names only: lowercase original, joined form, and normalized hyphenated form. No Cartesian name products."
+      },
+      {
+        "url": "https://www.ssa.gov/oact/babynames/limits.html",
+        "downloadUrl": "https://www.ssa.gov/oact/babynames/names.zip",
+        "sourceSha256": "cd78e975ed7bb358e018dd62fbe14ced89295e9581c49172ca4eedcb011b3724",
+        "period": [
+          1880,
+          2025
+        ],
+        "selected": 15000,
+        "minimumAggregatedBirthCount": 690,
+        "license": "U.S. federal government statistical data; public domain in the United States (17 USC 105)",
+        "selection": "Top 15000 distinct ASCII first names by summed national birth counts, all included annual files; alphabetical tie-break. No individuals, dates of birth or credentials."
+      }
+    ]
   }
 }
