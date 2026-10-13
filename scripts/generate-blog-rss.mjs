@@ -47,12 +47,13 @@ function build(settings) {
     if (!/^[a-z0-9-]+$/.test(slug)) throw new Error("Unexpected article slug: " + slug);
     const path = resolve(root, settings.directory, slug, "index.html");
     const data = loadJsonLd(readFileSync(path, "utf8"), path);
-    const article = data["@graph"]?.find(node => node["@type"] === "BlogPosting");
-    if (!article || article.url !== entry.url || article.inLanguage !== settings.language)
+    const article = data["@type"] === "BlogPosting" ? data : data["@graph"]?.find(node => node["@type"] === "BlogPosting");
+    const articleURL = article?.url || (typeof article?.mainEntityOfPage === "string" ? article.mainEntityOfPage : article?.mainEntityOfPage?.["@id"]);
+    if (!article || articleURL !== entry.url || article.inLanguage !== settings.language)
       throw new Error("BlogPosting URL/language mismatch: " + path);
     if (!article.headline || !article.description || !article.datePublished || !article.dateModified)
       throw new Error("Incomplete metadata: " + path);
-    return { url: article.url, title: article.headline, description: article.description,
+    return { url: articleURL, title: article.headline, description: article.description,
       published: isoDate(article.datePublished, path),
       modified: isoDate(article.dateModified, path), category: article.articleSection || "" };
   });

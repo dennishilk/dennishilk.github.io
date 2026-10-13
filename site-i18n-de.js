@@ -534,8 +534,11 @@ window.DennisSiteI18nDE = {
         "Modem & Acoustic Coupler Lab": "Modem- & Akustikkoppler-Labor",
         "Malware History Lab": "Malware-Geschichtslabor",
         "Cryptography Lab": "Kryptografie-Labor",
+        "Real CPU / WebGPU / Hybrid Experiment": "Echtes CPU- / WebGPU- / Hybrid-Experiment",
+        "Generate real candidates and compare SHA-256 hashes using your own CPU, WebGPU or both. Invented passwords only; all computation stays in your browser.": "Erzeuge echte Kandidaten und vergleiche SHA-256-Hashes mit deiner CPU, WebGPU oder beiden. Nur erfundene Passwörter; alle Berechnungen bleiben in deinem Browser.",
         "Ancient Origins – Future": "Antike Ursprünge – Zukunft"
-      }
+      },
+      html: { "[data-password-lab-link]": "<a data-password-lab class=\"card-button\" href=\"/de/museum/password-cracking-lab/\">PASSWORD CRACKING LAB ÖFFNEN →</a>" }
     },
 
     "/museum/linux-terminal-academy/": {
