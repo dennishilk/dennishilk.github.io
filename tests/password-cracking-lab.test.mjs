@@ -146,6 +146,8 @@ for(const language of ['en','de']){
     const slug='how-fast-can-your-computer-crack-a-password',route=prefix+'blog/'+slug+'/',html=readFileSync(new URL('../'+route+'index.html',import.meta.url),'utf8');
     assert.match(html,new RegExp('<html lang="'+language+'"'));assert.ok(html.includes('href="/'+prefix+'museum/password-cracking-lab/"'));assert.match(html,/\/blog\/blog\.css/);
     const data=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1])['@graph'][0];assert.equal(data.inLanguage,language);assert.ok(data.wordCount>1500);assert.equal(data.url,'https://www.dennishilk.com/'+route);
+    const suffixSpace=createPhases({strategy:'dictionary',variants:false,leet:false,years:false,suffix:4}).reduce((n,p)=>n+p.count,0n);
+    assert.ok(html.includes(new Intl.NumberFormat(language==='de'?'de-DE':'en-US').format(suffixSpace)),'Published dictionary-space example must match the actual configuration');
     const index=readFileSync(new URL('../'+prefix+'blog/index.html',import.meta.url),'utf8'),feed=readFileSync(new URL('../'+prefix+'blog/feed.xml',import.meta.url),'utf8');assert.ok(index.includes(data.url));assert.ok(index.includes('id="password-cracking-guide"'));assert.ok(feed.includes(data.url));
     const sitemap=readFileSync(new URL('../sitemap-blog.xml',import.meta.url),'utf8');assert.ok(sitemap.includes(data.url));
   });

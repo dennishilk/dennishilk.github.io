@@ -151,5 +151,5 @@ searches on Cthulhu after manually deploying Worldnode. The application does
 not deploy the server or require unsafe flags, a console, NixOS changes or
 developer-only adapter settings for normal controls.
 
-Final acceptance: 72 automated tests and 23 Chrome 154 browser checks passed,
-plus five Chrome 141 engine checks. The SEO audit reports zero errors.
+Final acceptance: 72 automated tests and 23 browser checks each in Chrome 154
+and Chrome 141 passed. The SEO audit reports zero errors.
