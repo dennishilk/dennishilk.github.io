@@ -140,6 +140,34 @@ function render(){
   $('result-message').textContent=state==='success'?text.found:state==='exhausted'?text.outside:state==='stopped'?text.cancelled:text.failed;
   $('reveal').hidden=state!=='success';$('result-details').hidden=state!=='success';
   if(state==='success'&&s?.result){$('result-strategy').textContent=phaseName(s.result.phase);$('result-engine').textContent=s.result.engine.toUpperCase();$('result-before').textContent=estimateBefore===null?text.unknown:duration(estimateBefore);}
+  // Presentation uses the same verified snapshots and capability result as the engines.
+  $('hardware-cpu').closest('article').dataset.active=String(activeCpu>0);
+  $('hardware-gpu').closest('article').dataset.active=String(Boolean(activeGpu));
+  $('hardware-hybrid').closest('article').dataset.active=String(activeCpu>0&&Boolean(activeGpu));
+  $('hardware-cpu').textContent=$('cpu-activity').textContent;
+  $('hardware-workers').textContent=$('mode').value==='gpu'?text.notSelected:$('workers').value+(de?' konfigurierte Worker':' configured workers');
+  $('hardware-cpu-rate').textContent=$('cpu-rate').textContent;
+  $('hardware-gpu-rate').textContent=$('gpu-rate').textContent;
+  $('hardware-gpu').textContent=gpuCapability.code==='checking'?text.checking:gpuCapability.available?(de?'Verfügbar':'Available'):text.unavailable;
+  $('hardware-gpu-summary').textContent=gpuSummary();
+  $('hardware-hybrid').textContent=gpuCapability.code==='checking'?text.checking:gpuCapability.available?(de?'Verfügbar':'Available'):text.unavailable;
+  $('hardware-hybrid-summary').textContent=gpuCapability.available?(de?'CPU-Worker und WebGPU teilen getrennte Suchbereiche.':'CPU workers and WebGPU share distinct search ranges.'):(de?'Benötigt einen nutzbaren WebGPU-Adapter. CPU-Suche bleibt verfügbar.':'Requires a usable WebGPU adapter. CPU search remains available.');
+  const journey=$('phase-journey');
+  const groups=[];
+  phases.forEach((p,index)=>{
+    const key=p.kind==='dictionary'?(p.yearMin!==undefined?'years':p.suffixDigits>0?'suffix':'dictionary'):p.kind;
+    if(groups.at(-1)?.key===key)groups.at(-1).indices.push(index);else groups.push({key,indices:[index]});
+  });
+  const current=s?.strategy?.phaseIndex;
+  const journeyData=groups.map(group=>{
+    const done=Boolean(s?.phaseChecked)&&group.indices.every(index=>s.phaseChecked[index]===s.phases[index].count);
+    return {label:group.key==='suffix'?(de?'Wörter + Ziffern':'Words + digits'):group.key==='years'?(de?'Wörter + Jahre':'Words + years'):text[group.key],state:done?'complete':group.indices.includes(current)?(state==='running'?'active':state):'waiting'};
+  });
+  const signature=JSON.stringify(journeyData);
+  if(journey.dataset.signature!==signature){
+    journey.dataset.signature=signature;journey.replaceChildren();
+    journeyData.forEach((item,index)=>{const li=document.createElement('li');li.dataset.state=item.state;li.textContent=String(index+1).padStart(2,'0')+' / '+item.label;li.setAttribute('aria-label',item.label+' · '+(text[item.state]||item.state));if(item.state==='active')li.setAttribute('aria-current','step');journey.append(li);});
+  }
   renderGpu();
 }
 function refreshConfig(){try{phases=createPhases(config());drawRows();render();}catch(error){phases=[];drawRows();setState('idle',errorMessage(error));}}
@@ -188,6 +216,7 @@ for(const id of settings)$(id).addEventListener('change',()=>{
 $('password').addEventListener('input',()=>{if(!busyStates.includes(state)){session?.clear();session=null;snapshot=null;clearReveal();setState('idle');refreshConfig();}});
 $('intensity').addEventListener('input',()=>{if(session&&['running','paused','pausing'].includes(state))session.intensity=Number($('intensity').value);else{calibration=null;calibrationKey=null;}render();});
 $('start').addEventListener('click',()=>prepare(true));$('measure').addEventListener('click',()=>prepare(false));$('pause').addEventListener('click',()=>session?.pause());$('resume').addEventListener('click',()=>session?.resume());$('stop').addEventListener('click',()=>{if(session)session.stop();else cancel(false);});$('reset').addEventListener('click',()=>cancel(true));$('gpu-retry').addEventListener('click',refreshGpu);
+document.querySelector('.details-link').addEventListener('click',()=>{$('gpu-diagnostics').open=true;});
 $('reveal').addEventListener('click',()=>{if(state!=='success'||!snapshot?.result)return;revealed=!revealed;$('recovered').textContent=revealed?snapshot.result.candidate:'';$('reveal').textContent=revealed?text.hide:text.reveal;});
 document.querySelectorAll('[data-example]').forEach(button=>button.addEventListener('click',()=>{
   cancel(true);const example=button.dataset.example;$('password').value=example;
