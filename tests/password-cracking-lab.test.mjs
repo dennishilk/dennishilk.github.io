@@ -5,20 +5,21 @@ import {Worker as NativeWorker} from 'node:worker_threads';
 import {readFileSync,existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {createSha256,hashHex,digestHex,encodeAsciiBlock} from '../assets/password-cracking-lab/sha256.js';
-import {DICTIONARY,SETS,createPhases,candidateAt,CandidateCursor,RangeLedger} from '../assets/password-cracking-lab/search.js';
-import {CrackSession,benchmark,verifyCandidate,probeGPU} from '../assets/password-cracking-lab/coordinator.js';
+import {DICTIONARY,DICTIONARY_META,dictionaryBases,SETS,createPhases,candidateAt,CandidateCursor,RangeLedger} from '../assets/password-cracking-lab/search.js';
+import {CrackSession,benchmark,verifyCandidate,probeGPU,selectGpuBackend} from '../assets/password-cracking-lab/coordinator.js';
+import {classifyAdapter,GpuFailure} from '../assets/password-cracking-lab/gpu.js';
 import {WORKER_SOURCE} from '../assets/password-cracking-lab/worker-source.js';
 const reference=text=>createHash('sha256').update(text).digest('hex');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 globalThis.crypto??=webcrypto;
 class CpuWorker {
-  constructor(){this.kind='cpu';this.sequence=0;this.pending=new Map();this.sent=[];this.closed=false;
+  constructor(kind='cpu'){this.kind=kind;this.sequence=0;this.pending=new Map();this.sent=[];this.closed=false;
     this.worker=new NativeWorker("const {parentPort}=require('node:worker_threads');globalThis.postMessage=data=>parentPort.postMessage(data);parentPort.on('message',data=>globalThis.onmessage({data}));\n"+WORKER_SOURCE,{eval:true});
     this.worker.on('message',result=>{const p=this.pending.get(result.id);if(!p)return;this.pending.delete(result.id);result.ok?p.resolve(result):p.reject(new Error(result.error));});
     this.worker.on('error',error=>{for(const p of this.pending.values())p.reject(error);this.pending.clear();});
   }
   rpc(action,data={}){const id=++this.sequence;this.sent.push({id,action,...data});return new Promise((resolve,reject)=>{this.pending.set(id,{resolve,reject});this.worker.postMessage({id,action,...data});});}
-  async initialize(){await this.rpc('initialize',{kind:'cpu'});return this;}
+  async initialize(){await this.rpc('initialize',{kind:this.kind});return this;}
   batch(phase,start,count,target){return this.rpc('batch',{phase,start:String(start),count,target});}
   close(){if(!this.closed){this.closed=true;for(const p of this.pending.values())p.reject(new Error('Worker closed'));this.pending.clear();this.worker.terminate();}}
 }
@@ -34,10 +35,19 @@ test('numeric enumeration includes leading zeroes and exact fixed-length spaces'
   const cursor=new CandidateCursor(phases[1],98n);assert.equal(cursor.next(),'98');assert.equal(cursor.next(),'99');assert.throws(()=>cursor.next());
 });
 test('dictionary variants and numerical suffixes are fixed independently of the target',()=>{
-  assert.equal(DICTIONARY.length,64);assert.equal(new Set(DICTIONARY).size,64);assert.equal(SETS.symbols.length,32);
+  assert.ok(DICTIONARY.length>=3000);assert.equal(new Set(DICTIONARY).size,DICTIONARY.length);assert.equal(SETS.symbols.length,32);
+  assert.equal(DICTIONARY_META.individualWords+DICTIONARY_META.wordPairs,DICTIONARY_META.total);assert.equal(DICTIONARY_META.total,DICTIONARY.length);assert.ok(DICTIONARY.every(word=>/^[a-z0-9]{1,20}$/.test(word)));
   const phases=createPhases({strategy:'dictionary',suffix:4,variants:false});assert.equal(candidateAt(phases[4],12482n),'katharina2482');
   assert.equal(candidateAt(phases[1],10n),'katharina0');assert.equal(candidateAt(createPhases({strategy:'dictionary',suffix:0,variants:true})[0],4n),'Katharina');
-  assert.equal(phases.reduce((n,p)=>n+p.count,0n),64n*11111n);
+  assert.equal(phases.reduce((n,p)=>n+p.count,0n),BigInt(DICTIONARY.length)*11111n);
+});
+test('case and both selected leetspeak transformations are uniquely and exactly enumerated',()=>{
+  for(const [variants,leet] of [[false,false],[true,false],[false,true],[true,true]]){const bases=dictionaryBases(variants,leet);assert.equal(new Set(bases).size,bases.length);assert.ok(bases.every(word=>word.length<=20&&/^[\x20-\x7e]+$/.test(word)));const p=createPhases({strategy:'dictionary',suffix:0,variants,leet})[0];assert.equal(p.count,BigInt(bases.length));}
+  assert.ok(dictionaryBases(false,true).includes('p455w0rd'));assert.ok(dictionaryBases(false,true).includes('p@$$w0rd'));assert.ok(dictionaryBases(true,true).includes('P@$$W0RD'));
+});
+test('optional years form a separate finite phase and include exact inclusive endpoints',()=>{
+  const phases=createPhases({strategy:'dictionary',suffix:0,variants:false,years:true,yearMin:2000,yearMax:2002}),p=phases[1];assert.equal(phases.length,2);assert.equal(p.count,BigInt(DICTIONARY.length)*3n);assert.equal(candidateAt(p,0n),'password2000');assert.equal(candidateAt(p,2n),'password2002');assert.equal(candidateAt(p,3n),'katharina2000');
+  const cursor=new CandidateCursor(p,2n);assert.equal(cursor.next(),'password2002');assert.equal(cursor.next(),'katharina2000');assert.equal(candidateAt(p,p.count-1n),DICTIONARY.at(-1)+'2002');assert.throws(()=>createPhases({strategy:'dictionary',years:true,yearMin:2030,yearMax:2000}));
 });
 test('brute-force character selection and smart ordering disclose real finite phases',()=>{
   const p=createPhases({strategy:'brute',min:1,max:2,digits:false,lower:false,upper:false,symbols:true});assert.equal(p[0].count,32n);assert.equal(p[1].count,1024n);
@@ -61,7 +71,16 @@ test('real production CPU worker recovers 123 by hashing only the allocated cand
 });
 test('real dictionary enumeration from index zero recovers katharina2482',async()=>{
   const worker=await new CpuWorker().initialize(),session=new CrackSession({config:{strategy:'dictionary',suffix:4,variants:false},target:hashHex('katharina2482'),engines:[worker],intensity:100});
-  try{const result=await session.start();assert.equal(result.state,'success');assert.equal(result.result.candidate,'katharina2482');assert.ok(result.checked>7104n);assert.equal(result.result.phase.suffixDigits,4);}finally{worker.close();}
+  try{const result=await session.start();assert.equal(result.state,'success');assert.equal(result.result.candidate,'katharina2482');assert.ok(result.checked>=BigInt(DICTIONARY.length)*1111n+12483n);assert.equal(result.result.phase.suffixDigits,4);}finally{worker.close();}
+});
+test('real CPU workers recover year and leetspeak examples without target-derived vocabulary',async()=>{
+  for(const [target,config] of [['katharina2002',{strategy:'dictionary',suffix:0,variants:false,years:true,yearMin:2000,yearMax:2002}],['p@$$w0rd',{strategy:'dictionary',suffix:0,variants:false,leet:true}]]){
+    const worker=await new CpuWorker().initialize(),session=new CrackSession({config,target:hashHex(target),engines:[worker],intensity:100});try{const r=await session.start();assert.equal(r.state,'success');assert.equal(r.result.candidate,target);}finally{worker.close();}
+  }
+});
+test('GPU preparation worker receives only a range and generates exact padded blocks',async()=>{
+  const worker=await new CpuWorker('encoder').initialize(),phase=createPhases({strategy:'dictionary',suffix:0,variants:false,leet:true,years:true,yearMin:2024,yearMax:2024})[1];
+  try{const result=await worker.rpc('encode',{phase,start:'0',count:71}),encoded=new Uint32Array(result.buffer);assert.equal(result.count,71);assert.equal(encoded.length,71*16);for(let i=0;i<71;i++)assert.deepEqual(encoded.subarray(i*16,i*16+16),encodeAsciiBlock(candidateAt(phase,BigInt(i))));const packet=worker.sent.at(-1);assert.deepEqual(Object.keys(packet).sort(),['action','count','id','phase','start']);}finally{worker.close();}
 });
 test('a target outside the selected space reports exhaustion, never security',async()=>{
   const worker=await new CpuWorker().initialize(),session=new CrackSession({config:{strategy:'numeric',min:1,max:1},target:hashHex('not-a-digit'),engines:[worker]});
@@ -89,6 +108,20 @@ test('benchmark counts actual measured batches and uses a common wall-time windo
   assert.equal(r.checked,3*(4096+8192));assert.equal(r.combined,r.checked*1000/r.ms);assert.ok(Math.abs(r.cpu+r.gpu-r.combined)<1e-8);
 });
 test('unsupported WebGPU is explicitly unavailable',async()=>{const r=await probeGPU();assert.equal(r.available,false);assert.match(r.reason,/Worker|WebGPU|unavailable|not defined/);});
+test('software detection does not misclassify a hardware driver merely containing the word software',()=>{
+  assert.equal(classifyAdapter({isFallbackAdapter:false},{description:'AMD Software Driver',vendor:'AMD',architecture:'RDNA4'}).software,false);
+  for(const description of ['SwiftShader','Mesa llvmpipe','lavapipe','Software rasterizer'])assert.equal(classifyAdapter({}, {description}).software,true);
+  assert.equal(classifyAdapter({}, {isFallbackAdapter:true,description:'Hidden adapter'}).software,true);
+});
+test('GPU architecture selection preserves Worker-first execution and independently tries the main context',async()=>{
+  const events=[],factory=(path,fail=false)=>()=>({kind:'gpu',gpuInterface:!fail,info:{description:path,software:false},async initialize(){events.push(path);if(fail)throw new GpuFailure('interface-unavailable','interface','Worker WebGPU is unavailable');return this;},close(){events.push('close-'+path);}});
+  const fallback=await selectGpuBackend({mainInterface:true,workerFactory:factory('worker',true),mainFactory:factory('main')});assert.equal(fallback.path,'main');assert.equal(fallback.diagnostics.worker.code,'interface-unavailable');assert.equal(fallback.diagnostics.main.stage,'ready');fallback.engine.close();
+  events.length=0;const worker=await selectGpuBackend({mainInterface:true,workerFactory:factory('worker'),mainFactory:factory('main')});assert.equal(worker.path,'worker');assert.deepEqual(events,['worker']);worker.engine.close();
+});
+test('precise adapter failures in both execution contexts remain unavailable rather than CPU fallback',async()=>{
+  const failing=()=>({gpuInterface:true,async initialize(){throw new GpuFailure('adapter-unavailable','adapter','No adapter returned');},close(){}});
+  const r=await probeGPU({mainInterface:true,workerFactory:failing,mainFactory:failing});assert.equal(r.available,false);assert.equal(r.code,'adapter-unavailable');assert.equal(r.diagnostics.main.stage,'adapter');assert.equal(r.diagnostics.worker.stage,'adapter');
+});
 test('bundles match source and have no runtime imports, fetches or storage',()=>{
   const result=spawnSync(process.execPath,['scripts/build-password-cracking-worker.mjs','--check'],{cwd:new URL('../',import.meta.url),encoding:'utf8'});assert.equal(result.status,0,result.stderr+result.stdout);
   assert.doesNotMatch(WORKER_SOURCE,/^\s*(?:import|export)\s/m);assert.doesNotMatch(WORKER_SOURCE,/\b(?:fetch|XMLHttpRequest|localStorage|sessionStorage)\s*\(/);
@@ -103,7 +136,7 @@ for(const language of ['en','de']){
     for(const alt of ['en','de','x-default'])assert.ok(html.includes('hreflang="'+alt+'"'));
     assert.match(html,/connect-src 'none'/);assert.match(html,/form-action 'none'/);assert.doesNotMatch(html,/<form\b/i);
     assert.match(html,/YOUR PASSWORD NEVER LEAVES YOUR BROWSER|DEIN PASSWORT VERLÄSST NIEMALS DEINEN BROWSER/);
-    const scripts=Array.from(html.matchAll(/<script[^>]*src="([^"]+)"/g),m=>m[1]);assert.deepEqual(scripts,['/assets/js/language-toggle.js?v=20261006','/assets/password-cracking-lab/ui.js']);
+    const scripts=Array.from(html.matchAll(/<script[^>]*src="([^"]+)"/g),m=>m[1]);assert.deepEqual(scripts.map(src=>src.split('?')[0]),['/assets/js/language-toggle.js','/assets/password-cracking-lab/ui.js']);assert.match(scripts[1],/\?v=/);
     for(const src of [...scripts,...Array.from(html.matchAll(/<link[^>]*href="(\/[^"?#]+)(?:\?[^"#]*)?"/g),m=>m[1])])assert.equal(existsSync(new URL('..'+src.split('?')[0],import.meta.url)),true,src);
     const ui=readFileSync(new URL('../assets/password-cracking-lab/ui.js',import.meta.url),'utf8');assert.doesNotMatch(ui,/\b(?:fetch|XMLHttpRequest|localStorage|sessionStorage|sendBeacon)\s*\(/);
     const css=readFileSync(new URL('../assets/password-cracking-lab/lab.css',import.meta.url),'utf8');assert.doesNotMatch(css,/@import|https?:\/\//);assert.match(css,/prefers-reduced-motion/);
@@ -113,6 +146,8 @@ for(const language of ['en','de']){
     const slug='how-fast-can-your-computer-crack-a-password',route=prefix+'blog/'+slug+'/',html=readFileSync(new URL('../'+route+'index.html',import.meta.url),'utf8');
     assert.match(html,new RegExp('<html lang="'+language+'"'));assert.ok(html.includes('href="/'+prefix+'museum/password-cracking-lab/"'));assert.match(html,/\/blog\/blog\.css/);
     const data=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1])['@graph'][0];assert.equal(data.inLanguage,language);assert.ok(data.wordCount>1500);assert.equal(data.url,'https://www.dennishilk.com/'+route);
+    const suffixSpace=createPhases({strategy:'dictionary',variants:false,leet:false,years:false,suffix:4}).reduce((n,p)=>n+p.count,0n);
+    assert.ok(html.includes(new Intl.NumberFormat(language==='de'?'de-DE':'en-US').format(suffixSpace)),'Published dictionary-space example must match the actual configuration');
     const index=readFileSync(new URL('../'+prefix+'blog/index.html',import.meta.url),'utf8'),feed=readFileSync(new URL('../'+prefix+'blog/feed.xml',import.meta.url),'utf8');assert.ok(index.includes(data.url));assert.ok(index.includes('id="password-cracking-guide"'));assert.ok(feed.includes(data.url));
     const sitemap=readFileSync(new URL('../sitemap-blog.xml',import.meta.url),'utf8');assert.ok(sitemap.includes(data.url));
   });
