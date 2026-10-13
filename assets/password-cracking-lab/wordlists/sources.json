@@ -1,0 +1,35 @@
+{
+  "de": {
+    "sourceEntries": 685829,
+    "eligibleUnique": 664872,
+    "selected": 100000,
+    "limit": 100000,
+    "sourceSha256": "20095928ca70974fb5d86e44f10181cee16e2831b0d4b1a4ddd12c261aebc5e9",
+    "url": "https://github.com/enz/german-wordlist/blob/1071d87d9535b57b80ec076c699f2578a28ee9dc/words",
+    "revision": "1071d87d9535b57b80ec076c699f2578a28ee9dc",
+    "license": "CC0-1.0",
+    "selection": "ASCII transliteration; letters only, 1–20; deduplicate, order by length then ASCII lexicographic, first 100000",
+    "bundledSha256": "e58b839dcdfa7cd7576cfbfdfd1352ae72772d7dde0e8d116b232ed785685a20"
+  },
+  "en": {
+    "sourceEntries": 47551,
+    "selected": 107888,
+    "sourceSha256": "ab012ae86ce4b46b60db5b150869288de9c4a87bc747911764e582125b1b961e",
+    "affixSha256": "526e1dc32d1c0e8806dd72809c017b5546f2104b08b9424a4c47311aca526cca",
+    "url": "https://github.com/en-wl/wordlist/releases/download/rel-2026.02.25/hunspell-en_US-2026.02.25.zip",
+    "revision": "rel-2026.02.25",
+    "license": "SCOWL permission notice (Kevin Atkinson) and Hunspell affix notice (Geoff Kuenning)",
+    "selection": "en_US headwords with only their explicit prefix/suffix flags and allowed cross-products expanded; numeric compound-only entries omitted; lowercase ASCII transliteration including apostrophes and hyphens; 1–20 characters; deduplicate and order by length then ASCII lexicographic",
+    "bundledSha256": "204ef345eaf124d25f9a4f8ac0701a1a2c93544439328f0e46e5a69eda5ec74d"
+  },
+  "common": {
+    "sourceEntries": 10001,
+    "selected": 10001,
+    "sourceSha256": "68782d6a4a19a4768d5f15dd66bd534e7a33055cc755411e33f16d18c50fdcce",
+    "url": "https://github.com/danielmiessler/SecLists/blob/3a5f62f0e18a1b8a36b25399aff0077f3706e5af/Passwords/Common-Credentials/10k-most-common.txt",
+    "revision": "3a5f62f0e18a1b8a36b25399aff0077f3706e5af",
+    "license": "MIT",
+    "selection": "Printable ASCII, 1–20; preserve exact source spelling and order; deduplicate. Published test list, not a claim about current password prevalence.",
+    "bundledSha256": "68782d6a4a19a4768d5f15dd66bd534e7a33055cc755411e33f16d18c50fdcce"
+  }
+}

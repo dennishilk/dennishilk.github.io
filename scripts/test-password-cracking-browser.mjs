@@ -98,13 +98,13 @@ try{
       window.workerPackets=[];const Original=window.Worker;
       window.Worker=class extends Original{postMessage(data,...args){window.workerPackets.push(structuredClone(data));return super.postMessage(data,...args);}};
     });
-    const methods=async(surface,{german=true,english=true,brute=false}={})=>{
-      for(const [id,checked] of Object.entries({german,english,brute}))await surface.locator('#'+id).setChecked(checked);
+    const methods=async(surface,{german=true,english=true,common=false,brute=false}={})=>{
+      for(const [id,checked] of Object.entries({german,english,common,brute}))await surface.locator('#'+id).setChecked(checked);
     };
     for(const lang of ['en','de']){
       await page.goto(base+(lang==='de'?'/de':'')+'/museum/password-cracking-lab/');await page.waitForFunction(()=>window.passwordLabReady===true);
       assert.equal(await page.locator('html').getAttribute('lang'),lang);
-      assert.equal(await page.locator('input[type=checkbox]').count(),3);assert.equal(await page.locator('[data-example],#advanced-options,#strategy,#min,#max,#measure').count(),0);
+      assert.equal(await page.locator('input[type=checkbox]').count(),4);assert.equal(await page.locator('[data-example],#advanced-options,#strategy,#min,#max,#measure').count(),0);
       assert.equal(await page.locator('#german').isChecked(),true);assert.equal(await page.locator('#english').isChecked(),true);assert.equal(await page.locator('#brute').isChecked(),false);
       for(const width of [320,390,768,1024,1440]){await page.setViewportSize({width,height:950});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,lang+' overflow at '+width);}
       await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement!==document.body),true);
@@ -124,7 +124,7 @@ try{
       pass(lang+': real blind German year recovery offline with hash-only worker messages');
       await methods(page,{german:false,english:false,brute:true});await page.locator('#password').fill('a');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='success');await page.locator('#reveal').click();assert.equal(await page.locator('#recovered').textContent(),'a');assert.ok((await page.locator('#result-strategy').textContent()).includes('Brute'));
       assert.equal(await page.locator('#mode option[value=gpu]').evaluate(el=>el.disabled),true);assert.ok((await page.locator('#gpu-capability').textContent()).includes(lang==='de'?'Softwareadapter':'software adapter'));await page.locator('.hardware-panel .details-link').click();assert.equal(await page.locator('#gpu-diagnostics').evaluate(el=>el.open),true);assert.ok(JSON.parse(await page.locator('#gpu-raw').textContent()).diagnostics);
-      await page.locator('#reset').click();await methods(page,{german:false,english:true});await page.locator('#password').fill('outside-🔐');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='exhausted');assert.equal(await page.locator('#checked').textContent(),lang==='de'?'3.455.382':'3,455,382');assert.equal(await page.locator('#reveal').isVisible(),false);
+      await page.locator('#reset').click();await methods(page,{german:false,english:false,common:true});await page.locator('#password').fill('outside-🔐');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='exhausted');const commonCount=await page.evaluate(async()=>{const {dictionaryBases}=await import('/assets/password-cracking-lab/search.js');return (BigInt(dictionaryBases(true,true,'common').length)*147n).toLocaleString(document.documentElement.lang==='de'?'de-DE':'en-US');});assert.equal(await page.locator('#checked').textContent(),commonCount);assert.equal(await page.locator('#reveal').isVisible(),false);
       pass(lang+': real fixed-charset brute recovery, software diagnostics and complete dictionary exhaustion');
     }
     const fallbackContext=await browser.newContext(),fallback=await fallbackContext.newPage();fallback.setDefaultTimeout(120000);fallback.on('pageerror',error=>errors.push(error.message));

@@ -1,5 +1,5 @@
-import { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS } from './dictionary.js?v=20261013-blind-1';
-export { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS };
+import { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS, WORDLIST_SOURCES } from './dictionary.js?v=20261013-lists-1';
+export { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS, WORDLIST_SOURCES };
 export const BLIND_LIMITS=Object.freeze({maximumLength:24,suffixDigits:2,yearMin:2000,yearMax:2035});
 export const BLIND_CHARSET='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'+String.fromCharCode(...Array.from({length:95},(_,i)=>i+32).filter(c=>!((c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122))));
 export const SETS=Object.freeze({digits:'0123456789',lower:'abcdefghijklmnopqrstuvwxyz',upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',symbols:'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'});
@@ -7,9 +7,9 @@ function integer(value,fallback,min=1,max=24) {const n=Number(value??fallback);i
 export function normalizeConfig(input={}) {
   const strategy=input.strategy??'blind';
   if(strategy==='blind'){
-    const german=input.german!==false,english=input.english!==false,brute=input.brute===true;
-    if(!german&&!english&&!brute)throw new Error('Select at least one search method');
-    return {strategy,german,english,brute};
+    const german=input.german!==false,english=input.english!==false,common=input.common===true,brute=input.brute===true;
+    if(!german&&!english&&!common&&!brute)throw new Error('Select at least one search method');
+    return {strategy,german,english,common,brute};
   }
   // Legacy explicit configurations are retained for engine benchmarks and fixtures.
   if(!['smart','numeric','dictionary','brute'].includes(strategy))throw new Error('Unknown strategy');
@@ -42,7 +42,7 @@ function phase(kind,data) {
 export function createPhases(input) {
   const c=normalizeConfig(input),phases=[];
   if(c.strategy==='blind'){
-    const languages=['de','en'].filter(language=>c[language==='de'?'german':'english']);
+    const languages=['common','de','en'].filter(language=>c[language==='de'?'german':language==='en'?'english':'common']);
     // Every selected base phase precedes every suffix phase. Ordering is fixed.
     for(const language of languages)phases.push(phase('dictionary',{language,variants:true,leet:true,suffixDigits:0}));
     for(const language of languages)phases.push(phase('dictionary',{language,variants:true,leet:true,suffixDigits:4,yearMin:BLIND_LIMITS.yearMin,yearMax:BLIND_LIMITS.yearMax}));

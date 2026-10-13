@@ -1,7 +1,7 @@
-import { WORKER_SOURCE } from './worker-source.js?v=20261013-blind-1';
-import { RangeLedger, candidateAt, createPhases } from './search.js?v=20261013-blind-1';
+import { WORKER_SOURCE } from './worker-source.js?v=20261013-lists-1';
+import { RangeLedger, candidateAt, createPhases } from './search.js?v=20261013-lists-1';
 import { hashHex, hexWords } from './sha256.js';
-import { GpuSha256, GpuFailure, gpuFailureDetails } from './gpu.js?v=20261013-blind-1';
+import { GpuSha256, GpuFailure, gpuFailureDetails } from './gpu.js?v=20261013-lists-1';
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 export class WorkerClient {
   constructor(kind,source=WORKER_SOURCE) {

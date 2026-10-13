@@ -1,6 +1,6 @@
-import { SHADER_SOURCE } from './shader-source.js?v=20261013-blind-1';
+import { SHADER_SOURCE } from './shader-source.js?v=20261013-lists-1';
 import { encodeAsciiBlock, hexWords, digestHex, hashHex } from './sha256.js';
-import { CandidateCursor } from './search.js?v=20261013-blind-1';
+import { CandidateCursor } from './search.js?v=20261013-lists-1';
 export class GpuFailure extends Error {
   constructor(code,stage,message,details=null){super(message);this.name='GpuFailure';this.code=code;this.stage=stage;this.details=details;}
 }
