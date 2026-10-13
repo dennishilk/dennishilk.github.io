@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash,webcrypto} from 'node:crypto';
 import {Worker as NativeWorker} from 'node:worker_threads';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {createSha256,hashHex,digestHex,encodeAsciiBlock} from '../assets/password-cracking-lab/sha256.js';
 import {DICTIONARY,SETS,createPhases,candidateAt,CandidateCursor,RangeLedger} from '../assets/password-cracking-lab/search.js';
@@ -94,3 +94,26 @@ test('bundles match source and have no runtime imports, fetches or storage',()=>
   assert.doesNotMatch(WORKER_SOURCE,/^\s*(?:import|export)\s/m);assert.doesNotMatch(WORKER_SOURCE,/\b(?:fetch|XMLHttpRequest|localStorage|sessionStorage)\s*\(/);
   assert.match(readFileSync(new URL('../assets/password-cracking-lab/sha256.wgsl',import.meta.url),'utf8'),/@compute/);
 });
+for(const language of ['en','de']){
+  const prefix=language==='de'?'de/':'';
+  test(language+': independent lab route, metadata, local dependencies and privacy protections',()=>{
+    const route=prefix+'museum/password-cracking-lab/',html=readFileSync(new URL('../'+route+'index.html',import.meta.url),'utf8');
+    assert.match(html,new RegExp('<html lang="'+language+'"'));
+    assert.ok(html.includes('href="https://www.dennishilk.com/'+route+'"'));
+    for(const alt of ['en','de','x-default'])assert.ok(html.includes('hreflang="'+alt+'"'));
+    assert.match(html,/connect-src 'none'/);assert.match(html,/form-action 'none'/);assert.doesNotMatch(html,/<form\b/i);
+    assert.match(html,/YOUR PASSWORD NEVER LEAVES YOUR BROWSER|DEIN PASSWORT VERLÄSST NIEMALS DEINEN BROWSER/);
+    const scripts=Array.from(html.matchAll(/<script[^>]*src="([^"]+)"/g),m=>m[1]);assert.deepEqual(scripts,['/assets/js/language-toggle.js?v=20261006','/assets/password-cracking-lab/ui.js']);
+    for(const src of [...scripts,...Array.from(html.matchAll(/<link[^>]*href="(\/[^"?#]+)(?:\?[^"#]*)?"/g),m=>m[1])])assert.equal(existsSync(new URL('..'+src.split('?')[0],import.meta.url)),true,src);
+    const ui=readFileSync(new URL('../assets/password-cracking-lab/ui.js',import.meta.url),'utf8');assert.doesNotMatch(ui,/\b(?:fetch|XMLHttpRequest|localStorage|sessionStorage|sendBeacon)\s*\(/);
+    const css=readFileSync(new URL('../assets/password-cracking-lab/lab.css',import.meta.url),'utf8');assert.doesNotMatch(css,/@import|https?:\/\//);assert.match(css,/prefers-reduced-motion/);
+    const schema=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);assert.equal(schema['@graph'][0].inLanguage,language);assert.equal(schema['@graph'][0]['@type'],'WebApplication');
+  });
+  test(language+': original blog metadata, localized calls to action, RSS and sitemaps agree',()=>{
+    const slug='how-fast-can-your-computer-crack-a-password',route=prefix+'blog/'+slug+'/',html=readFileSync(new URL('../'+route+'index.html',import.meta.url),'utf8');
+    assert.match(html,new RegExp('<html lang="'+language+'"'));assert.ok(html.includes('href="/'+prefix+'museum/password-cracking-lab/"'));assert.match(html,/\/blog\/blog\.css/);
+    const data=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1])['@graph'][0];assert.equal(data.inLanguage,language);assert.ok(data.wordCount>1500);assert.equal(data.url,'https://www.dennishilk.com/'+route);
+    const index=readFileSync(new URL('../'+prefix+'blog/index.html',import.meta.url),'utf8'),feed=readFileSync(new URL('../'+prefix+'blog/feed.xml',import.meta.url),'utf8');assert.ok(index.includes(data.url));assert.ok(index.includes('id="password-cracking-guide"'));assert.ok(feed.includes(data.url));
+    const sitemap=readFileSync(new URL('../sitemap-blog.xml',import.meta.url),'utf8');assert.ok(sitemap.includes(data.url));
+  });
+}

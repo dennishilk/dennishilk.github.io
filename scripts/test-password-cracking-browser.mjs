@@ -20,7 +20,8 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base=`http://127.0.0.1:${server.address().port}`;
 const browser=await chromium.launch({executablePath:process.env.PASSWORD_LAB_BROWSER||'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--enable-unsafe-webgpu','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-const context=await browser.newContext(),page=await context.newPage(),errors=[];let passed=0;
+const context=await browser.newContext(),page=await context.newPage(),errors=[],httpRequests=[];let passed=0;
+page.on('request',request=>{if(/^https?:/.test(request.url()))httpRequests.push(request.url());});
 page.on('pageerror',error=>errors.push(error.message));const pass=message=>{passed++;console.log('PASS '+message);};
 try{
   await page.goto(base+'/__password_lab_test__');
@@ -34,6 +35,9 @@ try{
       if(result.match!==2||vectors.some((v,i)=>digestHex(result.digests.subarray(i*8,i*8+8))!==hashHex(v)))throw new Error('GPU digest disagreement');
       const phase=createPhases({strategy:'numeric',min:24,max:24})[0],start=9007199254740993n,target=hashHex(candidateAt(phase,start+77n));
       const big=await engine.batch(phase,start,4096,hexWords(target));if(big.match!==77)throw new Error('GPU index above 2^53 is incorrect');
+      const noMatch=await engine.batch(phase,start,71,hexWords(hashHex('outside')));if(noMatch.match!==null)throw new Error('GPU reported a stale or false match');
+      const duplicates=new Uint32Array(65*16);for(let i=0;i<65;i++)encodeAsciiBlock(i===7||i===64?'abc':'other'+i,duplicates,i*16);
+      const first=await engine.compute(duplicates,65,hexWords(hashHex('abc')));if(first.match!==7)throw new Error('GPU atomic first-match result is incorrect');
       return {info:engine.info,vectors:vectors.length};
     }finally{engine.dispose();}
   });
@@ -70,12 +74,13 @@ try{
       await page.locator('#reveal').click();assert.equal(await page.locator('#recovered').textContent(),'123');await page.locator('#reset').click();assert.equal(await page.locator('#recovered').textContent(),'');
       pass(lang+': real CPU recovery, cleared input, explicit reveal and reset erasure');
       await page.locator('[data-example="katharina2482"]').click();await context.setOffline(true);
-      let requests=0;const countRequest=()=>requests++;page.on('request',countRequest);
+      let requests=0;const countRequest=request=>{if(/^https?:/.test(request.url()))requests++;};page.on('request',countRequest);
       await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='success');await page.locator('#reveal').click();assert.equal(await page.locator('#recovered').textContent(),'katharina2482');assert.equal(requests,0);
       page.off('request',countRequest);await context.setOffline(false);
       const packets=await page.evaluate(()=>window.workerPackets.filter(p=>p.action==='batch'));assert.ok(packets.length>0);for(const p of packets){assert.deepEqual(Object.keys(p).sort(),['action','count','id','phase','start','target']);assert.ok(/^[a-f0-9]{64}$/.test(p.target));}
       pass(lang+': offline dictionary recovery makes no HTTP requests or plaintext worker messages');
-      await page.locator('#reset').click();await page.locator('#strategy').selectOption('numeric');await page.locator('#min').fill('1');await page.locator('#max').fill('1');await page.locator('#password').fill('outside');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='exhausted');assert.equal(await page.locator('#checked').textContent(),'10');
+      await page.locator('#reset').click();await page.locator('#strategy').selectOption('numeric');await page.locator('#min').fill('24');await page.locator('#max').fill('1');await page.locator('#password').fill('outside');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='error');assert.ok((await page.locator('#status').innerText()).includes(lang==='de'?'Bitte prüfe':'Check lengths'));
+      await page.locator('#min').fill('1');await page.locator('#password').fill('outside');await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.state==='exhausted');assert.equal(await page.locator('#checked').textContent(),'10');
       assert.equal(await page.locator('#mode option[value="gpu"]').evaluate(el=>el.disabled),true);assert.equal(await page.locator('#mode option[value="hybrid"]').evaluate(el=>el.disabled),true);
       pass(lang+': exact exhaustion and honestly disabled software GPU modes');
     }
@@ -93,6 +98,14 @@ try{
       assert.ok(await page.locator('a[href="'+prefix+'/museum/password-cracking-lab/"]').count());
     }
     pass('native bilingual blog layouts, readable articles and lab links');
+    const museum=await context.newPage();
+    await museum.route('**/*',route=>new URL(route.request().url()).origin===base?route.continue():route.abort());
+    await museum.addInitScript(()=>localStorage.setItem('dennishilk-language','de'));
+    for(const path of ['/museum/','/de/museum/cryptography-lab/','/de/museum/cryptography-lab/password-graveyard/']){
+      await museum.goto(base+path);await museum.waitForFunction(()=>document.documentElement.lang==='de'&&document.querySelector('[data-password-lab]')?.getAttribute('href')==='/de/museum/password-cracking-lab/');
+      assert.equal(await museum.locator('[data-password-lab]').count(),1);assert.ok((await museum.locator('[data-password-lab]').innerText()).includes('ÖFFNEN'));
+    }
+    await museum.close();pass('live German Museum and both mirrored Crypto routes link to the independent German lab');
   }
-  assert.deepEqual(errors,[]);console.log('Browser acceptance: '+passed+' checks passed; software execution is distinct from physical GPU verification.');
+  assert.deepEqual(errors,[]);assert.ok(httpRequests.every(url=>new URL(url).origin===base),'Initial assets must stay on the same host');console.log('Browser acceptance: '+passed+' checks passed; software execution is distinct from physical GPU verification.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

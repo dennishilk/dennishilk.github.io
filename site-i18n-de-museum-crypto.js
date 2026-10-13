@@ -40,6 +40,10 @@
   addPrefix("/museum/cryptography-lab/", {
     text: {
       "← CRYPTOGRAPHY LAB": "← KRYPTOGRAFIE-LABOR",
+      "REAL LOCAL COMPUTATION": "ECHTE LOKALE BERECHNUNG",
+      "YOUR PASSWORD. YOUR HARDWARE. YOUR PRIVACY.": "DEIN PASSWORT. DEINE HARDWARE. DEINE PRIVATSPHÄRE.",
+      "Generate real candidates and compare SHA-256 hashes using your own CPU, WebGPU or both. Invented passwords only; all computation stays in your browser.": "Erzeuge echte Kandidaten und vergleiche SHA-256-Hashes mit deiner CPU, WebGPU oder beiden. Nur erfundene Passwörter; alle Berechnungen bleiben in deinem Browser.",
+      "Explore real local SHA-256 guessing in the separate Password Cracking Lab.": "Entdecke echte lokale SHA-256-Passwortsuchen im eigenständigen Password Cracking Lab.",
       "AVAILABLE": "VERFÜGBAR",
       "BROWSER-ONLY EDUCATIONAL EXHIBIT": "DIDAKTISCHE AUSSTELLUNG NUR IM BROWSER",
       "BROWSER-ONLY · EDUCATIONAL": "NUR IM BROWSER · DIDAKTISCH",
@@ -80,6 +84,7 @@
       "PUBLIC KEY": "ÖFFENTLICHER SCHLÜSSEL",
       "PRIVATE KEY": "PRIVATER SCHLÜSSEL",
     },
+    html: { "[data-password-lab-link]": "<a data-password-lab class=\"card-button\" href=\"/de/museum/password-cracking-lab/\">PASSWORD CRACKING LAB ÖFFNEN →</a>" },
     attributes: {
       "Exhibit navigation": "Ausstellungsnavigation",
       "Continue through planned exhibits": "Durch die Ausstellungen weitergehen",

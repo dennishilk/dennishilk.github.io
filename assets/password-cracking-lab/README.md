@@ -41,18 +41,31 @@ every other engine stopped at precisely the matching candidate.
 
 ```sh
 node scripts/build-password-cracking-worker.mjs --check
-node --test tests/password-cracking-lab.test.mjs
-PASSWORD_LAB_BROWSER=/path/to/chrome node scripts/test-password-cracking-browser.mjs --engines-only
+node --test tests/password-cracking-lab.test.mjs tests/blog-rss.test.mjs tests/museum-bilingual-coverage.test.mjs tests/cryptography-labs-04-08.test.js tests/museum-seo.test.mjs tests/sitemaps.test.mjs tests/seo-localization.test.mjs
+node scripts/audit-seo.mjs
+PASSWORD_LAB_BROWSER=/path/to/chrome node scripts/test-password-cracking-browser.mjs
 ```
 
 The browser engine tests execute the production WGSL with real WebGPU buffers,
-143 digest vectors, a range above 2^53, and concurrent CPU + WebGPU workers
-confirming exactly 100,000 separate attempts. They use an explicit test-only
+143 digest vectors, a range above 2^53, atomic first-match and outside-space
+checks, and concurrent CPU + WebGPU workers confirming exactly 100,000
+separate attempts. They use an explicit test-only
 software-adapter permission. The normal worker never grants that permission:
 software WebGPU is disabled in the visitor UI rather than called physical GPU
 computation. The available verification browser was Chrome Headless Shell
 141.0.7390.54 with SwiftShader. This is real shader execution, **not physical
 GPU hardware verification**.
+
+The complete acceptance runner also checks both independent language pages,
+320/390/768/1440px layouts, explicit local reveal and reset, offline dictionary
+recovery without HTTP requests, actual symbol brute-force recovery, repeated
+fresh calibration, reset during pending target hashing, a real search lasting
+more than 30 seconds, pause/resume/stop, native blog layouts and live German
+Museum link translation. Initial lab dependencies are all same-origin. The
+only shared runtime script is the existing language control; it reads language
+controls and preference keys, never password inputs. The separate lab CSS uses
+bundled fonts rather than the site's external font import. Static route tests
+also enforce `connect-src 'none'` and `form-action 'none'`.
 
 On Dennis's Cthulhu workstation, manually verify GPU adapter detection, real
 GPU and Hybrid modes, counts, pause/resume and sustained searches after the
