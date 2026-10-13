@@ -6,8 +6,8 @@ const catalog = fs.readFileSync('museum/index.html', 'utf8');
 const exhibit = fs.readFileSync('museum/linux-game-install/index.html', 'utf8');
 const lab = fs.readFileSync('museum/linux-game-install/lab.html', 'utf8');
 
-assert.match(catalog, /museum-card-linux-game[\s\S]*?museum-status available[\s\S]*?AVAILABLE/);
-assert.match(catalog, /museum-card-linux-game[\s\S]*?ENTER SYSTEM/);
+assert.match(catalog, /museum-card-linux-game[^>]*data-status="available"/);
+assert.match(catalog, /museum-card-linux-game[^>]*href="\/museum\/linux-game-install\/"/);
 assert.match(exhibit, /museum-status available">AVAILABLE/);
 assert.match(exhibit, /INSTALL AND RUN →/);
 assert.doesNotMatch(exhibit, /PLANNED|OpenTTD|CREDITS\.md|Licensing and runtime decision notes/i);

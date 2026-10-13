@@ -10,7 +10,7 @@ const museum = await readFile(new URL('../museum/index.html', import.meta.url), 
 test('company identity and available catalog route remain production framed', () => {
   assert.match(page, /Chesapeake Signal Tech/); assert.match(museum, /fictional shared UNIX environment/);
   assert.doesNotMatch(page, /university/i); assert.doesNotMatch(page, /novel|The Lost Administrator|fictional character|Easter egg/i);
-  assert.match(page, /PLANNED EXHIBIT/); assert.match(museum, /museum-status available">AVAILABLE[\s\S]{0,500}UNIX Time Sharing Center[\s\S]{0,500}href="\/museum\/unix-time-sharing-center\/">ENTER SYSTEM/);
+  assert.match(page, /PLANNED EXHIBIT/); assert.match(museum, /museum-card-unix-center[^>]*href="\/museum\/unix-time-sharing-center\/"[^>]*data-status="available"[\s\S]*?UNIX Time Sharing Center/);
 });
 
 test('static fallback and canonical session pool use company account names', () => {

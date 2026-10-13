@@ -107,9 +107,9 @@ test("museum card stays second after WOPR and before PC XT with approved copy", 
   assert.ok(wopr >= 0 && wopr < card && card < ibm);
   const segment = museum.slice(card, ibm);
   assert.match(segment, /Commodore 64 Programming Lab/);
-  assert.match(segment, /Interactive BASIC learning lab/);
-  assert.match(segment, /START PROGRAMMING/);
-  assert.match(segment, /museum-status available">AVAILABLE/);
+  assert.match(segment, /Write BASIC/);
+  assert.match(segment, /href="\/museum\/c64\/"/);
+  assert.match(segment, /data-status="available"/);
   assert.equal((museum.match(/museum-card-c64/g) || []).length, 1);
 });
 
@@ -140,13 +140,12 @@ test("both sitemaps contain the reciprocal language pair", () => {
   assert.match(sitemapDe, /<loc>https:\/\/www\.dennishilk\.com\/de\/museum\/c64\/<\/loc>[\s\S]*hreflang="en" href="https:\/\/www\.dennishilk\.com\/museum\/c64\/"/);
 });
 
-test("supporting HTML is crawlable and the Home Computing Lab supplies one incoming link", () => {
+test("supporting HTML is crawlable and the museum catalog supplies an incoming link", () => {
   for (const id of ["basic", "screen-colors", "petscii", "sprites", "sound", "accuracy", "sources"]) {
     assert.match(en, new RegExp('id="' + id + '"'));
     assert.match(de, new RegExp('id="' + id + '"'));
   }
-  const homeLab = read("museum/home-computing-lab/index.html");
-  assert.match(homeLab, /Program a 1982 Commodore 64 in the interactive BASIC lab/);
+  assert.match(museum, /href="\/museum\/c64\/"/);
 });
 
 test("all local C64 page assets exist on both route variants", () => {

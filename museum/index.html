@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="stylesheet" href="/style.css?v=60">
   <script defer src="/stars.js"></script>
-  <script src="https://kit.fontawesome.com/a4e1d5c0d4.js" crossorigin="anonymous"></script>
+
   <meta property="og:title" content="Interactive Computer Museum – Apollo DSKY, Linux Labs &amp; Retro Computing">
   <meta property="og:description" content="Interactive browser exhibits spanning Apollo DSKY, Linux learning labs, C64 BASIC, modems, BBS, DOS, UNIX and real computing systems.">
   <meta property="og:url" content="https://www.dennishilk.com/museum/">
@@ -56,199 +56,50 @@
 
 <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
 <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+<link rel="stylesheet" href="/assets/museum-catalog/catalog.css?v=20261013-1">
+<script defer src="/assets/museum-catalog/catalog.js?v=20261013-1"></script>
 </head>
-<body>
-<canvas id="stars"></canvas>
-<div class="content museum-page">
-  <header class="dashboard-header wo-page-header museum-hero">
-    <div class="button-group wo-site-nav museum-site-nav"><div class="buttons"><a href="/">Home</a></div></div>
-    <p class="museum-status open">OPEN</p>
-    <h1><span class="prompt">root@nebunix:~$</span> <span class="name">Computer Museum</span></h1>
-    <p class="observer-hero">Interactive recreations of iconic computers,<br>terminals and control systems from computing history.</p>
-    <p class="museum-tagline">Boot. Explore. Learn.</p>
-  </header>
-  <main>
-    <section class="observer-notice museum-notice" aria-labelledby="museum-context-title">
-      <h2 id="museum-context-title">Important context</h2>
-      <p>These exhibits are independently created educational simulations. No proprietary ROM images, operating-system files or original software are distributed.</p>
-      <p>They are inspired by historically significant or fictional computer interfaces and are not exact archival emulations unless explicitly stated.</p>
-    </section>
-    <section class="museum-featured" aria-labelledby="featured-experience-title">
-      <p class="museum-section-label">Featured experience</p>
-      <article class="museum-card museum-card-lost-administrator museum-featured-card">
-        <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-        <div class="museum-featured-content">
-          <div>
-            <h2 id="featured-experience-title">The Lost Administrator</h2>
-            <dl class="museum-meta"><div><dt>Type</dt><dd>Ongoing Novel &amp; Interactive Story Experience</dd></div></dl>
-          </div>
-          <div class="museum-featured-details" aria-label="Story details"><span>ONGOING NOVEL</span><span>INTERACTIVE WORKSTATION</span></div>
-        </div>
-        <a class="card-button" href="/lost-administrator/">ENTER THE STORY <span aria-hidden="true">→</span></a>
-      </article>
-    </section>
-
-    <section class="museum-behind" aria-labelledby="behind-museum-title">
-      <p class="museum-section-label">Behind the Museum</p>
-      <article class="museum-card museum-card-author-lab">
-        <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span><span class="museum-real-systems">REAL SYSTEMS</span></div>
-        <div class="museum-behind-content">
-          <div>
-            <h2 id="behind-museum-title">The Author's Computing Lab</h2>
-            <p>The real computers and infrastructure behind this website and museum — connecting a Windows 98 workstation, modern Linux, a private homelab and the remote systems serving the project.</p>
-          </div>
-          <p class="museum-behind-path">WINDOWS 98 <span aria-hidden="true">→</span> LINUX <span aria-hidden="true">→</span> HOMELAB <span aria-hidden="true">→</span> WORLDNODE</p>
-        </div>
-        <a class="card-button" href="/museum/home-computing-lab/">EXPLORE THE REAL SETUP <span aria-hidden="true">→</span></a>
-      </article>
-    </section>
-
-    <section class="museum-experiments" aria-labelledby="interactive-experiments-title">
-      <p class="museum-section-label" id="interactive-experiments-title">Interactive Experiments</p>
-      <div class="museum-grid">
-        <article class="museum-card">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Try a Debian Server</h3>
-          <dl class="museum-meta"><div><dt>Type</dt><dd>Interactive Linux Experiment</dd></div></dl>
-          <p>Explore a safe Debian-style Linux system in the browser and investigate its shell and fictional filesystem freely.</p>
-          <a class="card-button" href="/museum/debian-server-experiment/">TRY DEBIAN SERVER <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="museum-card">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>BBS System</h3>
-          <dl class="museum-meta"><div><dt>Type</dt><dd>Multi-node Bulletin Board Simulation</dd></div></dl>
-          <a class="card-button" href="/museum/bbs-system/">CALL THE BBS <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="museum-card">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Linux Terminal Academy</h3>
-          <dl class="museum-meta"><div><dt>Type</dt><dd>Interactive Linux Learning Environment</dd></div></dl>
-          <p>Learn Linux commands, files, permissions, processes, pipes and system recovery in eight safe browser-only labs.</p>
-          <a class="card-button" href="/museum/linux-terminal-academy/">LEARN LINUX IN BROWSER <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="museum-card museum-card-failure-lab">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Failure Lab</h3>
-          <dl class="museum-meta"><div><dt>Type</dt><dd>Interactive Linux Failure Simulator</dd></div></dl>
-          <a class="card-button" href="/museum/failure-lab/">ENTER FAILURE LAB <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="museum-card museum-card-unix-center">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>UNIX Time Sharing Center</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>July 2026</dd></div><div><dt>Type</dt><dd>Shared Multi-User UNIX Host</dd></div></dl>
-          <a class="card-button" href="/museum/unix-time-sharing-center/">ENTER SYSTEM</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="museum-collection" aria-labelledby="interactive-computing-title">
-      <h2 id="interactive-computing-title">Interactive Computing</h2>
-      <div class="museum-grid">
-        <article class="museum-card museum-card-wopr">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>WOPR</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1983-inspired fictional system</dd></div><div><dt>Type</dt><dd>Interactive terminal simulation</dd></div></dl>
-          <a class="card-button" href="/wopr/">ENTER SYSTEM</a>
-        </article>
-        <article class="museum-card museum-card-c64">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Commodore 64 Programming Lab</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1982</dd></div><div><dt>Type</dt><dd>Interactive BASIC learning lab</dd></div></dl>
-          <a class="card-button" href="/museum/c64/">START PROGRAMMING</a>
-        </article>
-        <article class="museum-card museum-card-ibm">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>PC XT Command Desk</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>Inspired by classic DOS PCs</dd></div><div><dt>Type</dt><dd>Educational DOS environment</dd></div></dl>
-          <a class="card-button" href="/museum/ibm-pc-xt/">ENTER SYSTEM</a>
-        </article>
-        <article class="museum-card museum-card-linux-game">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Install a Game under Linux</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1990s–Present</dd></div><div><dt>Type</dt><dd>Linux Package Management / Interactive Software</dd></div></dl>
-          <a class="card-button" href="/museum/linux-game-install/">ENTER SYSTEM</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="museum-collection" aria-labelledby="systems-interfaces-title">
-      <h2 id="systems-interfaces-title">Systems &amp; Interfaces</h2>
-      <div class="museum-grid">
-        <article class="museum-card museum-card-dsky">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Apollo DSKY</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1960s Apollo Program</dd></div><div><dt>Type</dt><dd>Guidance computer interface</dd></div></dl>
-          <p>Explore an interactive recreation of the Display and Keyboard interface used to communicate with the Apollo Guidance Computer.</p>
-          <a class="card-button" href="/museum/apollo-dsky/">EXPLORE APOLLO DSKY <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="museum-card museum-card-bios">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>BIOS Setup Utility</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>Late 1980s – Late 1990s</dd></div><div><dt>Type</dt><dd>Educational BIOS environment</dd></div></dl>
-          <a class="card-button" href="/museum/bios-setup/">ENTER SETUP</a>
-        </article>
-        <article class="museum-card museum-card-dos">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>DOS Setup Utility</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1989 – 1998 inspired</dd></div><div><dt>Type</dt><dd>Educational software setup</dd></div></dl>
-          <a class="card-button" href="/museum/dos-setup/">START SETUP</a>
-        </article>
-        <article class="museum-card museum-card-crt-terminal">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>CRT Remote Terminal</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1970s–1980s</dd></div><div><dt>Type</dt><dd>Text Terminal / Remote Computing</dd></div></dl>
-          <a class="card-button" href="/museum/crt-remote-terminal/">CONNECT TERMINAL</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="museum-collection" aria-labelledby="networks-security-learning-title">
-      <h2 id="networks-security-learning-title">Networks, Security &amp; Learning</h2>
-      <div class="museum-grid">
-        <article class="museum-card museum-card-telephone">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Telephone Exchange Operator</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1930s–1950s</dd></div><div><dt>Type</dt><dd>Communications / Switching</dd></div></dl>
-          <a class="card-button" href="/museum/telephone-exchange/">ENTER EXCHANGE <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="museum-card museum-card-modem">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Modem &amp; Acoustic Coupler Lab</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1960s – Present</dd></div><div><dt>Type</dt><dd>Data Communications Lab</dd></div></dl>
-          <a class="card-button" href="/museum/modem-lab/">ENTER LAB</a>
-        </article>
-        <article class="museum-card museum-card-malware">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Malware History Lab</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>1970s – Present</dd></div><div><dt>Type</dt><dd>Computer Security History</dd></div></dl>
-          <a class="card-button" href="/museum/malware-history/">ENTER EXHIBIT</a>
-        </article>
-        <article class="museum-card museum-card-cryptography" data-password-lab-card>
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Password Cracking Lab</h3>
-          <dl class="museum-meta"><div><dt>Type</dt><dd>Real CPU / WebGPU / Hybrid Experiment</dd></div></dl>
-          <p>Generate real candidates and compare SHA-256 hashes using your own CPU, WebGPU or both. Invented passwords only; all computation stays in your browser.</p>
-          <p data-password-lab-link><a data-password-lab class="card-button" href="/museum/password-cracking-lab/">OPEN PASSWORD CRACKING LAB →</a></p>
-        </article>
-        <article class="museum-card museum-card-cryptography">
-          <div class="museum-card-top"><span class="museum-status available">AVAILABLE</span></div>
-          <h3>Cryptography Lab</h3>
-          <dl class="museum-meta"><div><dt>Era</dt><dd>Ancient Origins – Future</dd></div><div><dt>Type</dt><dd>Cryptography History &amp; Learning</dd></div></dl>
-          <a class="card-button" href="/museum/cryptography-lab/">ENTER LAB</a>
-        </article>
-      </div>
-    </section>
-
-
-  </main>
-  <footer>
-    <div class="nebby-terminal-line"><picture>
-<source srcset="../assets/generated/images/nebby.webp" type="image/webp">
-<img src="/nebby.png" class="nebby" alt="Nebby mascot">
-</picture><span class="coffee-text">&gt; museum catalog --status<span class="cursor"></span></span></div>
-    <p class="museum-easter-egg"><a href="/wordpress-nope.html">sudo find / -name wordpress</a></p>
-    <p class="footer-links">© 2026 Dennis Hilk — <a href="/impressum.html">Impressum</a> · <a href="/datenschutzerklaerung.html">Datenschutz</a></p>
-  </footer>
-</div>
-</body>
-</html>
+<body class="museum-catalog-page">
+<canvas id="stars" aria-hidden="true"></canvas>
+<a class="catalog-skip" href="#exhibits">Skip to exhibits</a>
+<div class="museum-index">
+<header class="catalog-header" data-site-i18n-skip>
+<nav class="catalog-breadcrumb" aria-label="Breadcrumb"><a href="/" data-en="Home" data-de="Startseite">Home</a><span aria-hidden="true">/</span><span>museum</span><span class="catalog-open"><span  data-en="OPEN · IN YOUR BROWSER" data-de="GEÖFFNET · IN DEINEM BROWSER">OPEN · IN YOUR BROWSER</span></span></nav>
+<p class="catalog-prompt">root@nebunix:~$ <span>ls museum/</span></p>
+<h1>Computer Museum<span class="catalog-cursor" aria-hidden="true">_</span></h1>
+<p class="catalog-tagline" data-en="Boot. Explore. Learn." data-de="Booten. Erkunden. Lernen.">Boot. Explore. Learn.</p><p class="catalog-intro" data-en="18 interactive exhibits. From Apollo and BASIC to Linux, networks and cryptography." data-de="18 interaktive Ausstellungen. Von Apollo und BASIC bis Linux, Netzwerken und Kryptografie.">18 interactive exhibits. From Apollo and BASIC to Linux, networks and cryptography.</p>
+</header>
+<main data-site-i18n-skip>
+<section class="catalog-specials" aria-label="More to explore">
+<a class="catalog-special story museum-card-lost-administrator" href="/lost-administrator/"><span class="special-kicker" data-en="STORY EXPERIENCE" data-de="STORY-ERLEBNIS">STORY EXPERIENCE</span><strong>The Lost Administrator</strong><span class="special-description" data-en="A completed novel &amp; an interactive workstation." data-de="Ein abgeschlossener Roman &amp; eine interaktive Workstation.">A completed novel &amp; an interactive workstation.</span><span class="special-arrow" aria-hidden="true">↗</span></a>
+<a class="catalog-special lab museum-card-author-lab" href="/museum/home-computing-lab/"><span class="special-kicker" data-en="BEHIND THE MUSEUM" data-de="HINTER DEM MUSEUM">BEHIND THE MUSEUM</span><strong  data-en="The Author’s Computing Lab" data-de="Das Computerlabor des Autors">The Author’s Computing Lab</strong><span class="special-description" data-en="Real hardware. Windows 98, Linux, homelab &amp; Worldnode." data-de="Echte Hardware. Windows 98, Linux, Homelab &amp; Worldnode.">Real hardware. Windows 98, Linux, homelab &amp; Worldnode.</span><span class="special-arrow" aria-hidden="true">↗</span></a>
+</section>
+<section id="exhibits" class="catalog-collection" aria-labelledby="catalog-title" tabindex="-1">
+<div class="catalog-section-head"><h2 id="catalog-title" data-en="Explore the collection" data-de="Die Sammlung erkunden">Explore the collection</h2><p id="catalog-count" role="status" aria-live="polite">18 exhibits</p></div>
+<div class="catalog-controls" hidden>
+<div class="catalog-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg><label for="catalog-search" class="sr-only" data-en="Search exhibits" data-de="Ausstellungen durchsuchen">Search exhibits</label><input id="catalog-search" type="search" placeholder="Search titles, topics or eras…" autocomplete="off" aria-controls="catalog-grid"><button id="catalog-clear" type="button" hidden aria-label="Clear search">×</button></div>
+<div class="catalog-filters" role="group" aria-label="Filter by topic"><button type="button" data-filter="all" aria-pressed="true"><span  data-en="All exhibits" data-de="Alle Ausstellungen">All exhibits</span><span class="filter-count">18</span></button><button type="button" data-filter="retro" aria-pressed="false"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span><span class="filter-count">7</span></button><button type="button" data-filter="linux" aria-pressed="false"><span  data-en="Linux &amp; terminal" data-de="Linux &amp; Terminal">Linux &amp; terminal</span><span class="filter-count">4</span></button><button type="button" data-filter="network" aria-pressed="false"><span  data-en="Networks &amp; communication" data-de="Netzwerke &amp; Kommunikation">Networks &amp; communication</span><span class="filter-count">4</span></button><button type="button" data-filter="security" aria-pressed="false"><span  data-en="Security &amp; cryptography" data-de="Sicherheit &amp; Kryptografie">Security &amp; cryptography</span><span class="filter-count">3</span></button></div></div><div id="catalog-grid" class="catalog-grid">
+<a class="catalog-card museum-card-wopr" href="/wopr/" data-category="retro" data-status="available" data-keywords="wargames joshua film game"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">01</span></div><h3  data-en="WOPR" data-de="WOPR">WOPR</h3><p  data-en="Explore a fictional command terminal inspired by WarGames." data-de="Erkunde ein fiktives Kommandoterminal, inspiriert von WarGames.">Explore a fictional command terminal inspired by WarGames.</p><div class="catalog-card-foot"><span  data-en="1983 · Fictional" data-de="1983 · Fiktiv">1983 · Fictional</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-c64" href="/museum/c64/" data-category="retro" data-status="available" data-keywords="commodore programming programmieren basic learning" data-native-de="/de/museum/c64/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">02</span></div><h3  data-en="Commodore 64 Programming Lab" data-de="Commodore 64 Programmierlabor">Commodore 64 Programming Lab</h3><p  data-en="Write BASIC, run your programs and discover the C64." data-de="Schreibe BASIC, starte deine Programme und entdecke den C64.">Write BASIC, run your programs and discover the C64.</p><div class="catalog-card-foot"><span  data-en="1982 · BASIC" data-de="1982 · BASIC">1982 · BASIC</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-ibm" href="/museum/ibm-pc-xt/" data-category="retro" data-status="available" data-keywords="ibm msdos microsoft pc computer" data-native-de="/de/museum/ibm-pc-xt/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">03</span></div><h3  data-en="PC XT Command Desk" data-de="PC XT Command Desk">PC XT Command Desk</h3><p  data-en="Discover DOS commands and a classic PC environment." data-de="Entdecke DOS-Befehle und eine klassische PC-Umgebung.">Discover DOS commands and a classic PC environment.</p><div class="catalog-card-foot"><span  data-en="DOS · PC XT" data-de="DOS · PC XT">DOS · PC XT</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-dsky" href="/museum/apollo-dsky/" data-category="retro" data-status="available" data-keywords="nasa moon mond agc space guidance" data-native-de="/de/museum/apollo-dsky/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">04</span></div><h3  data-en="Apollo DSKY" data-de="Apollo DSKY">Apollo DSKY</h3><p  data-en="Explore the display and keyboard of an Apollo guidance computer." data-de="Erkunde Anzeige und Tastatur des Apollo-Leitrechners.">Explore the display and keyboard of an Apollo guidance computer.</p><div class="catalog-card-foot"><span  data-en="1960s · Spaceflight" data-de="1960er · Raumfahrt">1960s · Spaceflight</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-bios" href="/museum/bios-setup/" data-category="retro" data-status="available" data-keywords="bios boot firmware settings einstellungen" data-native-de="/de/museum/bios-setup/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">05</span></div><h3  data-en="BIOS Setup Utility" data-de="BIOS Setup Utility">BIOS Setup Utility</h3><p  data-en="Navigate a classic BIOS and explore its settings." data-de="Navigiere durch ein klassisches BIOS und erkunde seine Einstellungen.">Navigate a classic BIOS and explore its settings.</p><div class="catalog-card-foot"><span  data-en="1980s–1990s · Firmware" data-de="1980er–1990er · Firmware">1980s–1990s · Firmware</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-dos" href="/museum/dos-setup/" data-category="retro" data-status="available" data-keywords="dos install software sound config" data-native-de="/de/museum/dos-setup/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">06</span></div><h3  data-en="DOS Setup Utility" data-de="DOS Setup Utility">DOS Setup Utility</h3><p  data-en="Step through a retro software setup in the browser." data-de="Erkunde ein Retro-Software-Setup im Browser.">Step through a retro software setup in the browser.</p><div class="catalog-card-foot"><span  data-en="1989–1998 · Setup" data-de="1989–1998 · Setup">1989–1998 · Setup</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-crt-terminal" href="/museum/crt-remote-terminal/" data-category="retro" data-status="available" data-keywords="crt remote terminal green screen monitor" data-native-de="/de/museum/crt-remote-terminal/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Retro systems" data-de="Retro-Systeme">Retro systems</span></span><span class="catalog-number" aria-hidden="true">07</span></div><h3  data-en="CRT Remote Terminal" data-de="CRT Remote Terminal">CRT Remote Terminal</h3><p  data-en="Connect to a remote system through a classic text terminal." data-de="Verbinde dich über ein klassisches Textterminal mit einem entfernten System.">Connect to a remote system through a classic text terminal.</p><div class="catalog-card-foot"><span  data-en="1970s–1980s · Terminal" data-de="1970er–1980er · Terminal">1970s–1980s · Terminal</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-debian" href="/museum/debian-server-experiment/" data-category="linux" data-status="available" data-keywords="debian linux server shell files dateien" data-native-de="/de/museum/debian-server-experiment/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Linux &amp; terminal" data-de="Linux &amp; Terminal">Linux &amp; terminal</span></span><span class="catalog-number" aria-hidden="true">08</span></div><h3  data-en="Try a Debian Server" data-de="Debian-Server ausprobieren">Try a Debian Server</h3><p  data-en="Investigate a safe shell and fictional Linux filesystem." data-de="Erkunde eine sichere Shell und ein fiktives Linux-Dateisystem.">Investigate a safe shell and fictional Linux filesystem.</p><div class="catalog-card-foot"><span  data-en="Linux · Sandbox" data-de="Linux · Sandbox">Linux · Sandbox</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-linux-academy" href="/museum/linux-terminal-academy/" data-category="linux" data-status="available" data-keywords="linux learn lernen commands befehle permissions terminal"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Linux &amp; terminal" data-de="Linux &amp; Terminal">Linux &amp; terminal</span></span><span class="catalog-number" aria-hidden="true">09</span></div><h3  data-en="Linux Terminal Academy" data-de="Linux Terminal Academy">Linux Terminal Academy</h3><p  data-en="Learn commands, permissions and recovery in eight hands-on labs." data-de="Lerne Befehle, Rechte und Systemrettung in acht praktischen Laboren.">Learn commands, permissions and recovery in eight hands-on labs.</p><div class="catalog-card-foot"><span  data-en="Linux · 8 labs" data-de="Linux · 8 Labore">Linux · 8 labs</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-failure-lab" href="/museum/failure-lab/" data-category="linux" data-status="available" data-keywords="linux failure debug repair reparatur fehler simulator" data-native-de="/de/museum/failure-lab/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Linux &amp; terminal" data-de="Linux &amp; Terminal">Linux &amp; terminal</span></span><span class="catalog-number" aria-hidden="true">10</span></div><h3  data-en="Failure Lab" data-de="Failure Lab">Failure Lab</h3><p  data-en="Break a simulated Linux system, diagnose it and repair it." data-de="Beschädige ein simuliertes Linux-System, finde den Fehler und repariere es.">Break a simulated Linux system, diagnose it and repair it.</p><div class="catalog-card-foot"><span  data-en="Linux · Troubleshooting" data-de="Linux · Fehlersuche">Linux · Troubleshooting</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-linux-game" href="/museum/linux-game-install/" data-category="linux" data-status="available" data-keywords="linux game spiel install packages apt nebu strike" data-native-de="/de/museum/linux-game-install/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Linux &amp; terminal" data-de="Linux &amp; Terminal">Linux &amp; terminal</span></span><span class="catalog-number" aria-hidden="true">11</span></div><h3  data-en="Install a Game under Linux" data-de="Ein Spiel unter Linux installieren">Install a Game under Linux</h3><p  data-en="Practice package management and start a browser game." data-de="Übe Paketverwaltung und starte ein Browserspiel.">Practice package management and start a browser game.</p><div class="catalog-card-foot"><span  data-en="Linux · Packages" data-de="Linux · Pakete">Linux · Packages</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-bbs" href="/museum/bbs-system/" data-category="network" data-status="available" data-keywords="bbs mailbox bulletin board dialup modem messages nachrichten" data-native-de="/de/museum/bbs-system/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Networks &amp; communication" data-de="Netzwerke &amp; Kommunikation">Networks &amp; communication</span></span><span class="catalog-number" aria-hidden="true">12</span></div><h3  data-en="BBS System" data-de="BBS System">BBS System</h3><p  data-en="Dial in, read messages and discover the world before the web." data-de="Wähle dich ein, lies Nachrichten und entdecke die Welt vor dem Web.">Dial in, read messages and discover the world before the web.</p><div class="catalog-card-foot"><span  data-en="Dial-up · Community" data-de="Einwahl · Community">Dial-up · Community</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-unix-center" href="/museum/unix-time-sharing-center/" data-category="network" data-status="available" data-keywords="unix time sharing multiuser host server" data-native-de="/de/museum/unix-time-sharing-center/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Networks &amp; communication" data-de="Netzwerke &amp; Kommunikation">Networks &amp; communication</span></span><span class="catalog-number" aria-hidden="true">13</span></div><h3  data-en="UNIX Time Sharing Center" data-de="UNIX Time Sharing Center">UNIX Time Sharing Center</h3><p  data-en="Explore a fictional shared UNIX environment with multiple users." data-de="Erkunde eine fiktive gemeinsame UNIX-Umgebung mit mehreren Nutzern.">Explore a fictional shared UNIX environment with multiple users.</p><div class="catalog-card-foot"><span  data-en="UNIX · Multi-user" data-de="UNIX · Mehrbenutzer">UNIX · Multi-user</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-telephone" href="/museum/telephone-exchange/" data-category="network" data-status="available" data-keywords="telephone phone exchange switching telefon vermittlung" data-native-de="/de/museum/telephone-exchange/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Networks &amp; communication" data-de="Netzwerke &amp; Kommunikation">Networks &amp; communication</span></span><span class="catalog-number" aria-hidden="true">14</span></div><h3  data-en="Telephone Exchange Operator" data-de="Telefonvermittlung">Telephone Exchange Operator</h3><p  data-en="Connect callers and operate a classic telephone switchboard." data-de="Verbinde Anrufer und bediene eine klassische Telefonvermittlung.">Connect callers and operate a classic telephone switchboard.</p><div class="catalog-card-foot"><span  data-en="1930s–1950s · Telephone" data-de="1930er–1950er · Telefon">1930s–1950s · Telephone</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-modem" href="/museum/modem-lab/" data-category="network" data-status="available" data-keywords="modem acoustic akustik dialup sound internet networking" data-native-de="/de/museum/modem-lab/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Networks &amp; communication" data-de="Netzwerke &amp; Kommunikation">Networks &amp; communication</span></span><span class="catalog-number" aria-hidden="true">15</span></div><h3  data-en="Modem &amp; Acoustic Coupler Lab" data-de="Modem- &amp; Akustikkoppler-Labor">Modem &amp; Acoustic Coupler Lab</h3><p  data-en="Discover dial-up connections, modem signals and data transfer." data-de="Entdecke Einwahlverbindungen, Modemsignale und Datenübertragung.">Discover dial-up connections, modem signals and data transfer.</p><div class="catalog-card-foot"><span  data-en="1960s–today · Data" data-de="1960er–heute · Daten">1960s–today · Data</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-malware" href="/museum/malware-history/" data-category="security" data-status="available" data-keywords="malware virus security sicherheit history geschichte" data-native-de="/de/museum/malware-history/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Security &amp; cryptography" data-de="Sicherheit &amp; Kryptografie">Security &amp; cryptography</span></span><span class="catalog-number" aria-hidden="true">16</span></div><h3  data-en="Malware History Lab" data-de="Malware-Geschichtslabor">Malware History Lab</h3><p  data-en="Trace computer security history through safe learning simulations." data-de="Erkunde Computersicherheitsgeschichte in sicheren Lernsimulationen.">Trace computer security history through safe learning simulations.</p><div class="catalog-card-foot"><span  data-en="1970s–today · History" data-de="1970er–heute · Geschichte">1970s–today · History</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-cryptography" href="/museum/password-cracking-lab/" data-category="security" data-status="available" data-keywords="password passwort cracking hash gpu radeon dictionary woerterbuch wörterbuch" data-native-de="/de/museum/password-cracking-lab/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Security &amp; cryptography" data-de="Sicherheit &amp; Kryptografie">Security &amp; cryptography</span></span><span class="catalog-number" aria-hidden="true">17</span></div><h3  data-en="Password Cracking Lab" data-de="Password Cracking Lab">Password Cracking Lab</h3><p  data-en="Compare real SHA-256 searches on your CPU, GPU or both." data-de="Vergleiche echte SHA-256-Suchen auf deiner CPU, GPU oder beiden.">Compare real SHA-256 searches on your CPU, GPU or both.</p><div class="catalog-card-foot"><span  data-en="CPU · GPU · Hybrid" data-de="CPU · GPU · Hybrid">CPU · GPU · Hybrid</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+<a class="catalog-card museum-card-crypto-history" href="/museum/cryptography-lab/" data-category="security" data-status="available" data-keywords="cryptography kryptografie crypto cipher encryption verschluesselung enigma caesar" data-native-de="/de/museum/cryptography-lab/"><div class="catalog-card-meta"><span class="catalog-topic"><span  data-en="Security &amp; cryptography" data-de="Sicherheit &amp; Kryptografie">Security &amp; cryptography</span></span><span class="catalog-number" aria-hidden="true">18</span></div><h3  data-en="Cryptography Lab" data-de="Kryptografie-Labor">Cryptography Lab</h3><p  data-en="Explore ciphers, cryptographic history and interactive puzzles." data-de="Erkunde Chiffren, Kryptografiegeschichte und interaktive Rätsel.">Explore ciphers, cryptographic history and interactive puzzles.</p><div class="catalog-card-foot"><span  data-en="Ciphers · Learning" data-de="Chiffren · Lernen">Ciphers · Learning</span><span class="catalog-enter" aria-hidden="true">↗</span></div></a>
+</div><div id="catalog-empty" class="catalog-empty" hidden><h3  data-en="Nothing here yet. Try another search." data-de="Hier ist noch nichts. Probiere eine andere Suche.">Nothing here yet. Try another search.</h3><p  data-en="Search a different title or topic, or show the full collection." data-de="Suche nach einem anderen Titel oder Thema, oder zeige die ganze Sammlung.">Search a different title or topic, or show the full collection.</p><button id="catalog-reset" type="button" data-en="Show all exhibits" data-de="Alle Ausstellungen zeigen">Show all exhibits</button></div>
+</section>
+<details class="catalog-context"><summary  data-en="About these learning simulations" data-de="Über diese Lernsimulationen">About these learning simulations</summary><p  data-en="These exhibits are independently created educational simulations. No proprietary ROM images, operating-system files or original software are distributed. Historically significant and fictional interfaces are recreated for learning; these are not exact archival emulations unless explicitly stated." data-de="Diese Ausstellungen sind unabhängig erstellte Lernsimulationen. Es werden keine proprietären ROM-Abbilder, Betriebssystemdateien oder Originalprogramme verbreitet. Historisch bedeutende und fiktive Oberflächen werden zum Lernen nachgebildet; sie sind keine exakten Archiv-Emulationen, sofern dies nicht ausdrücklich angegeben ist.">These exhibits are independently created educational simulations. No proprietary ROM images, operating-system files or original software are distributed. Historically significant and fictional interfaces are recreated for learning; these are not exact archival emulations unless explicitly stated.</p></details>
+</main>
+<footer class="catalog-footer" data-site-i18n-skip><div class="catalog-nebby"><picture><source srcset="/assets/generated/images/nebby.webp" type="image/webp"><img src="/nebby.png" width="64" height="72" alt="Nebby mascot" loading="lazy"></picture><span>&gt; museum catalog --explore<span class="cursor" aria-hidden="true"></span></span></div><p><a href="/wordpress-nope.html" class="catalog-easter-egg">sudo find / -name wordpress</a></p><p>© 2026 Dennis Hilk · <a href="/impressum.html" data-en="Legal notice" data-de="Impressum">Legal notice</a> · <a href="/datenschutzerklaerung.html" data-en="Privacy" data-de="Datenschutz">Privacy</a></p></footer>
+</div></body></html>
