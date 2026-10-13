@@ -1,5 +1,5 @@
-import {normalizeConfig,createPhases,DICTIONARIES,DICTIONARY_COUNTS,BLIND_LIMITS,dictionaryBases} from './search.js?v=20261013-blind-1';
-import {makeEngines,probeGPU,benchmark,CrackSession} from './coordinator.js?v=20261013-blind-1';
+import {normalizeConfig,createPhases,DICTIONARIES,DICTIONARY_COUNTS,WORDLIST_SOURCES,BLIND_LIMITS,dictionaryBases} from './search.js?v=20261013-lists-1';
+import {makeEngines,probeGPU,benchmark,CrackSession} from './coordinator.js?v=20261013-lists-1';
 const de=document.documentElement.lang==='de',locale=de?'de-DE':'en-US';
 const text=de?{
   idle:'BEREIT',preparing:'VORBEREITUNG',calibrating:'LEISTUNG WIRD GEMESSEN',ready:'MESSUNG ABGESCHLOSSEN',running:'SUCHE LÄUFT',pausing:'WIRD PAUSIERT',paused:'PAUSIERT',verifying:'TREFFER WIRD GEPRÜFT',success:'PASSWORT GEFUNDEN',exhausted:'NICHT GEFUNDEN',stopped:'GESTOPPT',error:'FEHLER',
@@ -27,7 +27,7 @@ const text=de?{
   gpuCodes:{'interface-unavailable':'WebGPU is unavailable in this browser context.','adapter-unavailable':'WebGPU is present, but Chrome did not provide a usable adapter.','adapter-request-failed':'The GPU adapter request failed.','software-adapter':'Only a software adapter was detected. GPU and Hybrid remain disabled.','device-creation-failed':'The adapter could not provide a GPU device.','shader-compilation-failed':'The SHA-256 shader could not compile.','pipeline-creation-failed':'The GPU compute pipeline could not be created.','selftest-failed':'The GPU SHA-256 self-test failed.','initialization-timeout':'GPU initialization did not respond in time.','preparation-worker-failed':'The GPU candidate preparation worker could not start.','worker-unavailable':'The GPU worker could not start.','device-lost':'The GPU device was lost. The run has ended.','execution-failed':'GPU computation failed.','initialization-failed':'GPU initialization failed.'}
 };
 const $=id=>document.getElementById(id),number=new Intl.NumberFormat(locale),short=new Intl.NumberFormat(locale,{maximumFractionDigits:0});
-const settings=['mode','workers','german','english','brute'];
+const settings=['mode','workers','german','english','common','brute'];
 const busyStates=['preparing','calibrating','running','pausing','paused','verifying'];
 let state='idle',session=null,snapshot=null,engines=[],calibration=null,calibrationKey=null,estimateBefore=null,operation=0,revealed=false,phases=[],message=null;
 let gpuCapability={available:false,path:'none',code:'checking',diagnostics:{}},probeSequence=0,probeEngines=[];
@@ -39,10 +39,10 @@ function duration(seconds){
   if(seconds<31557600)return new Intl.NumberFormat(locale,{maximumFractionDigits:1}).format(seconds/86400)+(de?' Tage':' days');
   const years=seconds/31557600;return (years<1e8?new Intl.NumberFormat(locale,{maximumFractionDigits:1}).format(years):years.toExponential(2))+' '+text.yearsUnit;
 }
-function config(){return normalizeConfig({german:$('german').checked,english:$('english').checked,brute:$('brute').checked});}
+function config(){return normalizeConfig({german:$('german').checked,english:$('english').checked,common:$('common').checked,brute:$('brute').checked});}
 function phaseName(p){
   if(p.kind!=='dictionary')return text[p.kind]+' · '+p.length+' '+text.chars;
-  const details=[p.language?(p.language==='de'?(de?'Deutsches Wörterbuch':'German dictionary'):(de?'Englisches Wörterbuch':'English dictionary')):text.dictionary,p.variants?text.variants:text.original];if(p.leet)details.push(text.leet);
+  const details=[p.language?(p.language==='common'?(de?'Typische Passwörter & IT':'Common passwords & IT'):p.language==='de'?(de?'Deutsches Wörterbuch':'German dictionary'):(de?'Englisches Wörterbuch':'English dictionary')):text.dictionary,p.variants?text.variants:text.original];if(p.leet)details.push(text.leet);
   details.push(p.yearMin===undefined?p.suffixDigits+' '+text.suffix:p.yearMin+'–'+p.yearMax+' '+text.years);return details.join(' · ');
 }
 function setState(value,reason=null){state=value;message=reason;document.body.dataset.state=value;render();}
@@ -86,12 +86,13 @@ function render(){
   const busy=busyStates.includes(state),terminal=['success','exhausted','stopped','error'].includes(state);
   for(const id of settings)$(id).disabled=busy;
   $('password').disabled=busy;$('intensity').disabled=['preparing','calibrating'].includes(state);
-  const methods=$('german').checked||$('english').checked||$('brute').checked;
+  const methods=$('german').checked||$('english').checked||$('common').checked||$('brute').checked;
   const canStart=methods&&!busy&&Boolean(crypto?.subtle)&&Boolean($('password').value)&&($('mode').value==='cpu'||gpuCapability.available);
   $('start').disabled=!canStart;$('pause').disabled=state!=='running';$('resume').disabled=state!=='paused';$('stop').disabled=!busy;
   let c=null;try{c=config();}catch{}
   if(!busy)$('workers').disabled=$('mode').value==='gpu';
   const selected=[];
+  if(c?.common)selected.push(de?'Typische Passwörter & IT':'Common passwords & IT');
   if(c?.german)selected.push(de?'Deutsches Wörterbuch':'German dictionary');
   if(c?.english)selected.push(de?'Englisches Wörterbuch':'English dictionary');
   if(c?.brute)selected.push('Brute Force · ASCII 1–'+BLIND_LIMITS.maximumLength);
@@ -126,6 +127,8 @@ function render(){
   const inactive=terminal?(state==='stopped'?text.stopped:state==='error'?text.error:text.done):state==='paused'?text.paused:state==='running'?text.resting:text.cpuReady;
   $('cpu-activity').textContent=$('mode').value==='gpu'?text.notSelected:activeCpu?activeCpu+' '+text.cpuActive:inactive;
   $('gpu-activity').textContent=$('mode').value==='cpu'?text.notSelected:activeGpu?(gpuActivity==='encoding'?text.gpuEncoding:text.gpuDispatch):gpuCapability.available?inactive:text.unavailable;
+  $('cpu-live-rate').textContent=$('cpu-rate').textContent;$('gpu-live-rate').textContent=$('gpu-rate').textContent;
+  $('cpu-live-metric').hidden=$('mode').value==='gpu';$('gpu-live-metric').hidden=$('mode').value==='cpu'||!gpuCapability.available;
   $('cpu-chip').dataset.active=String(activeCpu>0);$('gpu-chip').dataset.active=String(Boolean(activeGpu));
   $('active-gpu-path').textContent=s?.gpuPath?(s.gpuPath==='main'?text.mainPath:text.workerPath):text.notSelected;
   if(s?.phaseChecked)for(const row of $('phase-rows').children){
@@ -160,7 +163,7 @@ function render(){
   const current=s?.strategy?.phaseIndex;
   const journeyData=groups.map(group=>{
     const done=Boolean(s?.phaseChecked)&&group.indices.every(index=>s.phaseChecked[index]===s.phases[index].count);
-    return {label:(group.language?group.language.toUpperCase()+' · ':'')+(group.kind==='suffix'?(de?'Wörter + Ziffern':'Words + digits'):group.kind==='years'?(de?'Wörter + Jahre':'Words + years'):text[group.kind]),state:done?'complete':group.indices.includes(current)?(state==='running'?'active':state):'waiting'};
+    return {label:(group.language?(group.language==='common'?'IT':group.language.toUpperCase())+' · ':'')+(group.kind==='suffix'?(de?'Wörter + Ziffern':'Words + digits'):group.kind==='years'?(de?'Wörter + Jahre':'Words + years'):text[group.kind]),state:done?'complete':group.indices.includes(current)?(state==='running'?'active':state):'waiting'};
   });
   const signature=JSON.stringify(journeyData);
   if(journey.dataset.signature!==signature){
@@ -219,12 +222,14 @@ $('reveal').addEventListener('click',()=>{if(state!=='success'||!snapshot?.resul
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='running'){session.pause();message=text.hiddenTab;render();}});
 window.addEventListener('pagehide',()=>{operation++;probeSequence++;session?.clear();[...engines,...probeEngines].forEach(e=>e.close());$('password').value='';clearReveal();});
 const useful=Math.max(1,Math.min(8,(navigator.hardwareConcurrency||2)-1));$('workers').max=useful;$('workers').value=Math.min(4,useful);
-for(const language of ['de','en']){
+for(const language of ['de','en','common']){
   const meta=DICTIONARY_COUNTS[language];
   $('dictionary-'+language+'-size').textContent=number.format(meta.total);
   $('dictionary-'+language+'-words').textContent=number.format(meta.individualWords);
   $('dictionary-'+language+'-pairs').textContent=number.format(meta.wordPairs);
   $('dictionary-'+language+'-variants').textContent=number.format(dictionaryBases(true,true,language).length);
+  $('method-'+language+'-size').textContent=number.format(meta.total)+(de?' Basiseinträge':' base entries');
+  $('source-'+language).href=WORDLIST_SOURCES[language].url;
 }
 refreshConfig();refreshGpu();
 setInterval(()=>{if(session&&['running','pausing','paused','verifying'].includes(state))snapshot=session.snapshot();if(busyStates.includes(state))render();},150);

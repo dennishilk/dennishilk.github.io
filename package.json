@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build:password-cracking": "node scripts/build-password-cracking-worker.mjs",
+    "build:password-cracking": "node scripts/build-password-cracking-wordlists.mjs && node scripts/build-password-cracking-worker.mjs",
     "test:password-cracking": "node --test tests/password-cracking-lab.test.mjs",
     "test:password-cracking:browser": "node scripts/test-password-cracking-browser.mjs",
     "build:novel": "node scripts/build-lost-administrator-novel.mjs",

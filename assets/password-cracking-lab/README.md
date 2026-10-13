@@ -101,29 +101,55 @@ when the suite cannot launch. Dennis manages Worldnode deployment manually.
 ## Mission 03.3 — current public interface and blind search
 
 The public interface has
-only password, compute mode, three method checkboxes, worker count, intensity
+only password, compute mode, four method checkboxes, worker count, intensity
 and Start/Pause/Resume/Stop/Reset. Start calibrates automatically. No preset
 buttons, numeric shortcut, target-derived lengths or character selections.
 
 `normalizeConfig()` defaults to `{strategy:'blind', german:true, english:true,
-brute:false}`. No-method configurations are rejected. The UI passes only the
-three explicit method flags. Legacy strategies remain solely for internal
+common:false, brute:false}`. No-method configurations are rejected. The UI passes only the
+four explicit method flags. Legacy strategies remain solely for internal
 engine benchmarks and regression fixtures; the public UI does not expose them.
 
-The separate collections are editorially split in `LANGUAGE_WORD_GROUPS`:
-German: 2,712 base entries = 1,191 words + 1,521 adjective/noun combinations.
-English: 2,795 = 1,283 words + 1,512 combinations. Names, place names and
-international technology terms are intentionally shared. Anatomy vocabulary
-is documented alongside the other categories. No target is ever inserted.
-Locale does not choose a collection. Each language has its own deterministic
-transformation cache: 22,401 DE / 23,506 EN unique transformed bases.
+The collections retain the teaching vocabulary and add pinned, locally bundled
+sources. German imports the shortest 100,000 eligible entries from
+`enz/german-wordlist` (CC0), ordered by length then ASCII lexicographic.
+English imports eligible headwords from SCOWL/ESDB's official US Hunspell
+release 2026.02.25, with explicit affix flags expanded at build time. Both use lowercase ASCII
+transliteration (ä/ö/ü/ß → ae/oe/ue/ss, diacritics stripped), letters plus English apostrophes/hyphens,
+1–20 characters. The selected German subset is not the complete source.
+Common/IT imports SecLists `10k-most-common.txt` (10,001 actual source entries)
+with exact ASCII spelling and source order, plus fixed IT vocabulary. It is a
+published test list, not a current empirical popularity ranking. Defaults
+remain DE/EN on, Common/IT and Brute Force off.
 
-Order: all selected base collections (DE then EN), years 2000–2035 in the same
-language order, one-digit suffixes, two-digit suffixes, optional brute force.
-Fixed case and both leetspeak mappings remain; numeric suffixes include leading
-zeroes. Each phase is internally unique. Different collections and phases may
-overlap; counters report actual hash checks, not globally unique passwords.
-DE totals 3,292,947 checks; EN totals 3,455,382; both total 6,748,329.
+Counts after merging and deduplication:
+
+| Collection | Bases | Individual entries | Pairs | Transformed bases | Full hash checks |
+|---|---:|---:|---:|---:|---:|
+| DE | 102,091 | 100,570 | 1,521 | 828,629 | 121,808,463 |
+| EN | 109,573 | 108,064 | 1,509 | 908,433 | 133,539,651 |
+| Common/IT | 10,253 | 10,253 | 0 | 77,598 | 11,406,906 |
+
+Order: selected base collections (Common/IT, DE, EN), years 2000–2035 in the
+same collection order, one-digit suffixes, two-digit suffixes, optional brute
+force. Fixed case and both leetspeak mappings remain. Each phase is internally
+unique; cross-phase/list overlaps are actual hash checks. Source revisions,
+raw and filtered checksums, transformations, selection limits and license
+copies live in `wordlists/`. Imported text snapshots rebuild without network:
+
+```sh
+node scripts/build-password-cracking-wordlists.mjs --check
+npm run build:password-cracking
+```
+
+For a deliberate source update, download the pinned original `german.txt`,
+`english.dic`, `common.txt`, their license files and `versions.json` into a
+local folder matching the import script's documented names, then run
+`scripts/import-password-cracking-wordlists.py --sources-dir /path/to/folder`.
+The raw snapshots are developer inputs; the public page requests no wordlist
+URLs. All candidate data is preloaded in the self-contained Worker bundle.
+Larger lists increase load time and per-worker memory as well as search cost.
+The application never downloads or adapts words based on entered plaintext.
 
 Brute force includes all 95 printable ASCII characters: lowercase, uppercase,
 digits, then space and symbols in ASCII order. Every length 1–24 is fully
@@ -137,7 +163,7 @@ Verified-match time includes independent verification, excludes calibration
 and paused time. CPU/GPU shaders, exact shared range accounting, software
 adapter rejection, fallback paths, diagnostics and local-only privacy remain.
 
-Current automated coverage adds all seven checkbox combinations, deterministic
+Current automated coverage adds all fifteen checkbox combinations, deterministic
 plans despite misleading plaintext/locale/configuration fields, language
 separation, full printable ASCII, counts above 2^53, unique per-phase bases,
 real blind CPU recovery from zero and a real worker check at A1h5's expensive

@@ -5,7 +5,7 @@ import {Worker as NativeWorker} from 'node:worker_threads';
 import {readFileSync,existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {createSha256,hashHex,digestHex,encodeAsciiBlock} from '../assets/password-cracking-lab/sha256.js';
-import {DICTIONARY,DICTIONARY_META,dictionaryBases,DICTIONARIES,DICTIONARY_COUNTS,BLIND_LIMITS,BLIND_CHARSET,normalizeConfig,SETS,createPhases,candidateAt,CandidateCursor,RangeLedger} from '../assets/password-cracking-lab/search.js';
+import {DICTIONARY,DICTIONARY_META,dictionaryBases,DICTIONARIES,DICTIONARY_COUNTS,WORDLIST_SOURCES,BLIND_LIMITS,BLIND_CHARSET,normalizeConfig,SETS,createPhases,candidateAt,CandidateCursor,RangeLedger} from '../assets/password-cracking-lab/search.js';
 import {CrackSession,benchmark,verifyCandidate,probeGPU,selectGpuBackend} from '../assets/password-cracking-lab/coordinator.js';
 import {classifyAdapter,GpuFailure} from '../assets/password-cracking-lab/gpu.js';
 import {WORKER_SOURCE} from '../assets/password-cracking-lab/worker-source.js';
@@ -154,14 +154,14 @@ for(const language of ['en','de']){
 }
 
 test('blind default has two explicit language dictionaries and no numeric shortcut',()=>{
-  assert.deepEqual(normalizeConfig(),{strategy:'blind',german:true,english:true,brute:false});
+  assert.deepEqual(normalizeConfig(),{strategy:'blind',german:true,english:true,common:false,brute:false});
   const p=createPhases({});assert.deepEqual(p.map(x=>x.language),['de','en','de','en','de','en','de','en']);
   assert.ok(p.every(x=>x.kind==='dictionary'));assert.throws(()=>createPhases({german:false,english:false,brute:false}),/at least one search method/);
-  assert.deepEqual(normalizeConfig({german:false,english:false,brute:true,min:1,max:1,charset:'0',password:'123',length:3}),{strategy:'blind',german:false,english:false,brute:true});
+  assert.deepEqual(normalizeConfig({german:false,english:false,brute:true,min:1,max:1,charset:'0',password:'123',length:3}),{strategy:'blind',german:false,english:false,common:false,brute:true});
 });
 test('language dictionaries contain actual separate vocabulary and exact documented counts',()=>{
   for(const language of ['de','en']){
-    const entries=DICTIONARIES[language],meta=DICTIONARY_COUNTS[language];assert.equal(new Set(entries).size,entries.length);assert.equal(meta.total,entries.length);assert.equal(meta.individualWords+meta.wordPairs,meta.total);assert.ok(entries.every(w=>/^[a-z0-9]{1,20}$/.test(w)));
+    const entries=DICTIONARIES[language],meta=DICTIONARY_COUNTS[language];assert.equal(new Set(entries).size,entries.length);assert.equal(meta.total,entries.length);assert.equal(meta.individualWords+meta.wordPairs,meta.total);assert.ok(entries.every(w=>/^[\x20-\x7e]{1,20}$/.test(w)));
     const bases=dictionaryBases(true,true,language);assert.equal(new Set(bases).size,bases.length);assert.ok(bases.every(w=>w.length<=20));
   }
   assert.ok(DICTIONARIES.de.includes('sommer'));assert.ok(!DICTIONARIES.en.includes('sommer'));
@@ -170,10 +170,10 @@ test('language dictionaries contain actual separate vocabulary and exact documen
   assert.ok(DICTIONARIES.de.includes('blauerkater'));assert.ok(DICTIONARIES.en.includes('bluecat'));
 });
 test('all checkbox combinations select only their deterministic phases, independent of target and locale',()=>{
-  for(const german of [false,true])for(const english of [false,true])for(const brute of [false,true]){
-    if(!german&&!english&&!brute)continue;
-    const config={german,english,brute},a=createPhases({...config,password:'penis',locale:'de'}),b=createPhases({...config,password:'A1h5',locale:'en',min:4,max:4,digits:true});
-    assert.deepEqual(a,b);assert.equal(a.some(p=>p.language==='de'),german);assert.equal(a.some(p=>p.language==='en'),english);assert.equal(a.some(p=>p.kind==='brute'),brute);
+  for(const german of [false,true])for(const english of [false,true])for(const common of [false,true])for(const brute of [false,true]){
+    if(!german&&!english&&!common&&!brute)continue;
+    const config={german,english,common,brute},a=createPhases({...config,password:'penis',locale:'de'}),b=createPhases({...config,password:'A1h5',locale:'en',min:4,max:4,digits:true});
+    assert.deepEqual(a,b);assert.equal(a.some(p=>p.language==='de'),german);assert.equal(a.some(p=>p.language==='en'),english);assert.equal(a.some(p=>p.kind==='brute'),brute);assert.equal(a.some(p=>p.language==='common'),common);
     for(const p of a){const start=0n,last=p.count-1n;assert.equal(candidateAt(p,start),candidateAt(b[a.indexOf(p)],start));assert.equal(candidateAt(p,last),candidateAt(b[a.indexOf(p)],last));}
   }
 });
@@ -257,9 +257,9 @@ test('both actual UI modules validate methods and run genuine workers without ta
   }
 });
 
-test('blind dictionary-only search genuinely exhausts all phases for an uncovered mixed target',async()=>{
-  const config={german:false,english:true,brute:false},worker=await new CpuWorker().initialize(),s=new CrackSession({config,target:hashHex('A1h5'),engines:[worker],intensity:100});
-  try{const result=await s.start();assert.equal(result.state,'exhausted');assert.equal(result.result,null);assert.equal(result.checked,3455382n);assert.equal(result.frontier,result.total);assert.equal(result.total,result.checked);assert.ok(result.phaseChecked.every((count,i)=>count===result.phases[i].count));}finally{worker.close();}
+test('common/IT-only search genuinely exhausts all phases for an uncovered Unicode target',async()=>{
+  const config={german:false,english:false,common:true,brute:false},worker=await new CpuWorker().initialize(),s=new CrackSession({config,target:hashHex('outside-🔐'),engines:[worker],intensity:100});
+  try{const result=await s.start();assert.equal(result.state,'exhausted');assert.equal(result.result,null);assert.equal(result.checked,BigInt(dictionaryBases(true,true,'common').length)*147n);assert.equal(result.frontier,result.total);assert.equal(result.total,result.checked);assert.ok(result.phaseChecked.every((count,i)=>count===result.phases[i].count));}finally{worker.close();}
 });
 
 test('production worker hashes 24-character brute-force candidates at exact boundary ranges',async()=>{
@@ -270,4 +270,19 @@ test('production worker hashes 24-character brute-force candidates at exact boun
     result=await worker.batch(phase,phase.count-2n,2,hashHex('~'.repeat(24)));assert.equal(result.match,1);assert.equal(result.count,2);
     const start=9007199254740993n;result=await worker.batch(phase,start,2,hashHex(candidateAt(phase,start+1n)));assert.equal(result.match,1);
   }finally{worker.close();}
+});
+
+test('expanded snapshots are pinned, checksum verified, reproducible and locally licensed',()=>{
+  const result=spawnSync(process.execPath,['scripts/build-password-cracking-wordlists.mjs','--check'],{cwd:new URL('../',import.meta.url),encoding:'utf8'});assert.equal(result.status,0,result.stderr+result.stdout);
+  assert.equal(WORDLIST_SOURCES.de.selected,100000);assert.ok(WORDLIST_SOURCES.en.selected>40000);assert.equal(WORDLIST_SOURCES.common.selected,10001);
+  for(const language of ['de','en','common'])assert.match(WORDLIST_SOURCES[language].bundledSha256,/^[a-f0-9]{64}$/);
+  for(const file of ['LICENSE-german-CC0.txt','LICENSE-english-SCOWL.txt','LICENSE-common-MIT.txt'])assert.ok(readFileSync(new URL('../assets/password-cracking-lab/wordlists/'+file,import.meta.url),'utf8').length>1000);
+  assert.ok(DICTIONARIES.de.length>100000);assert.ok(DICTIONARIES.en.length>45000);assert.ok(DICTIONARIES.common.length>10000);
+  assert.ok(DICTIONARIES.de.includes('ratte'));assert.ok(DICTIONARIES.en.includes('abbreviation'));assert.ok(DICTIONARIES.common.includes('123456'));assert.ok(DICTIONARIES.common.includes('admin'));assert.ok(DICTIONARIES.common.includes('kernel'));
+  assert.match(WORKER_SOURCE,/Copyright 2000-2026 by Kevin Atkinson/);assert.match(WORKER_SOURCE,/Copyright \(c\) 2018 Daniel Miessler/);
+});
+test('optional common/IT collection retains exact strings and deduplicates each phase',async()=>{
+  const bases=dictionaryBases(true,true,'common');assert.equal(new Set(bases).size,bases.length);assert.ok(bases.every(w=>/^[\x20-\x7e]{1,20}$/.test(w)));
+  const config={german:false,english:false,common:true,brute:false},phases=createPhases(config);assert.ok(phases.every(p=>p.language==='common'));assert.equal(candidateAt(phases[0],0n),readFileSync(new URL('../assets/password-cracking-lab/wordlists/common.txt',import.meta.url),'utf8').split('\n')[0]);
+  const worker=await new CpuWorker().initialize(),session=new CrackSession({config,target:hashHex('123456'),engines:[worker],intensity:100});try{const result=await session.start();assert.equal(result.state,'success');assert.equal(result.result.phase.language,'common');assert.equal(result.result.candidate,'123456');}finally{worker.close();}
 });

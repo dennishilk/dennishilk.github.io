@@ -1,3 +1,5 @@
+import { EXTERNAL_DE, EXTERNAL_EN, EXTERNAL_COMMON, WORDLIST_SOURCES } from './wordlists-data.js?v=20261013-lists-1';
+export { WORDLIST_SOURCES };
 // Original, locally bundled teaching vocabulary; no password dumps or remote
 // lists. Fixed word-pair patterns below are deliberately part of the vocabulary.
 // ASCII spelling (ae/oe/ue/ss), at most 20 bytes, leaves room for 4 suffix digits.
@@ -196,13 +198,15 @@ export const LANGUAGE_WORD_GROUPS=Object.freeze({
   ])
 });
 function languageDictionary(language){
-  const entries=new Set(LANGUAGE_WORD_GROUPS[language].flat());
+  const entries=new Set([...LANGUAGE_WORD_GROUPS[language].flat(),...(language==='de'?EXTERNAL_DE:EXTERNAL_EN)]);
   const individualWords=entries.size;
   for(const pattern of WORD_PAIR_PATTERNS.filter(p=>p.language===language))for(const prefix of pattern.prefixes)for(const noun of pattern.nouns){const word=prefix+noun;if(word.length<=20)entries.add(word);}
   const values=Object.freeze([...entries]);
-  if(!values.every(word=>/^[a-z0-9]{1,20}$/.test(word)))throw new Error('Invalid language dictionary');
+  if(!values.every(word=>/^[\x20-\x7e]{1,20}$/.test(word)))throw new Error('Invalid language dictionary');
   return {values,meta:Object.freeze({total:values.length,individualWords,wordPairs:values.length-individualWords,maximumBaseLength:20,ascii:true})};
 }
 const germanCollection=languageDictionary('de'),englishCollection=languageDictionary('en');
-export const DICTIONARIES=Object.freeze({de:germanCollection.values,en:englishCollection.values});
-export const DICTIONARY_COUNTS=Object.freeze({de:germanCollection.meta,en:englishCollection.meta});
+const commonEntries=Object.freeze([...new Set([...EXTERNAL_COMMON,...WORD_GROUPS.technology,...WORD_GROUPS.priority])]);
+const commonMeta=Object.freeze({total:commonEntries.length,individualWords:commonEntries.length,wordPairs:0,maximumBaseLength:20,ascii:true});
+export const DICTIONARIES=Object.freeze({de:germanCollection.values,en:englishCollection.values,common:commonEntries});
+export const DICTIONARY_COUNTS=Object.freeze({de:germanCollection.meta,en:englishCollection.meta,common:commonMeta});
