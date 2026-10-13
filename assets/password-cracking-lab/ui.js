@@ -1,5 +1,5 @@
-import {normalizeConfig,createPhases,SETS,DICTIONARY,DICTIONARY_META,dictionaryBases} from './search.js?v=20261013-compat-1';
-import {makeEngines,probeGPU,benchmark,CrackSession} from './coordinator.js?v=20261013-compat-1';
+import {normalizeConfig,createPhases,DICTIONARIES,DICTIONARY_COUNTS,BLIND_LIMITS,dictionaryBases} from './search.js?v=20261013-blind-1';
+import {makeEngines,probeGPU,benchmark,CrackSession} from './coordinator.js?v=20261013-blind-1';
 const de=document.documentElement.lang==='de',locale=de?'de-DE':'en-US';
 const text=de?{
   idle:'BEREIT',preparing:'VORBEREITUNG',calibrating:'LEISTUNG WIRD GEMESSEN',ready:'MESSUNG ABGESCHLOSSEN',running:'SUCHE LÄUFT',pausing:'WIRD PAUSIERT',paused:'PAUSIERT',verifying:'TREFFER WIRD GEPRÜFT',success:'PASSWORT GEFUNDEN',exhausted:'NICHT GEFUNDEN',stopped:'GESTOPPT',error:'FEHLER',
@@ -12,7 +12,7 @@ const text=de?{
   cpuReady:'Bereit',notSelected:'Nicht ausgewählt',cpuActive:'aktive CPU-Worker',resting:'Zwischen den Batches',gpuEncoding:'Kandidaten werden vorbereitet',gpuDispatch:'GPU-Batch wird geprüft',done:'Abgeschlossen',available:'Verfügbar',unavailable:'Nicht verfügbar',notChecked:'Nicht geprüft',present:'Vorhanden',absent:'Nicht vorhanden',
   mainPath:'Hauptthread + Vorbereitungs-Worker',workerPath:'WebGPU im Worker',pathNone:'CPU verfügbar · GPU deaktiviert',checking:'GPU-Unterstützung wird geprüft …',gpuWorker:'GPU verfügbar — ',gpuMain:'GPU verfügbar über den kompatiblen Hauptthread-Modus — ',softwareTest:'WebGPU-Testpfad mit Softwareadapter — ',
   dictionarySummary:'feste Wörter und Wortkombinationen',derived:'eindeutige Wortvarianten',baseWords:'Einzelwörter',wordPairs:'Feste Wortkombinationen',configured:'Konfiguriert',disabledGpu:'Für diesen Modus fehlt ein nutzbarer GPU-Pfad. CPU bleibt auswählbar.',initialization:'Initialisierung',interface:'WebGPU-API',adapter:'Adapter',device:'Gerät',shader:'Shader',pipeline:'Compute-Pipeline',selftest:'SHA-256-Selbsttest',execution:'Berechnung',
-  gpuCodes:{'interface-unavailable':'WebGPU ist in diesem Browserkontext nicht verfügbar.','adapter-unavailable':'WebGPU ist vorhanden, aber Chrome stellt keinen nutzbaren Adapter bereit.','adapter-request-failed':'Die GPU-Adapteranfrage ist fehlgeschlagen.','software-adapter':'Es wurde nur ein Softwareadapter erkannt. GPU und Hybrid bleiben deaktiviert.','device-creation-failed':'Der Adapter konnte kein GPU-Gerät bereitstellen.','shader-compilation-failed':'Der SHA-256-Shader konnte nicht übersetzt werden.','pipeline-creation-failed':'Die GPU-Compute-Pipeline konnte nicht erstellt werden.','selftest-failed':'Der GPU-Selbsttest ist fehlgeschlagen.','initialization-timeout':'Die GPU-Initialisierung hat nicht rechtzeitig geantwortet.','preparation-worker-failed':'Der Vorbereitungs-Worker für GPU-Kandidaten konnte nicht starten.','worker-unavailable':'Der GPU-Worker konnte nicht starten.','device-lost':'Das GPU-Gerät wurde verloren. Der Lauf wurde beendet.','execution-failed':'Die GPU-Berechnung ist fehlgeschlagen.','initialization-failed':'Die GPU-Initialisierung ist fehlgeschlagen.'}
+  gpuCodes:{'interface-unavailable':'WebGPU ist in diesem Browserkontext nicht verfügbar.','adapter-unavailable':'WebGPU ist vorhanden, aber der Browser stellt keinen nutzbaren Adapter bereit.','adapter-request-failed':'Die GPU-Adapteranfrage ist fehlgeschlagen.','software-adapter':'Es wurde nur ein Softwareadapter erkannt. GPU und Hybrid bleiben deaktiviert.','device-creation-failed':'Der Adapter konnte kein GPU-Gerät bereitstellen.','shader-compilation-failed':'Der SHA-256-Shader konnte nicht übersetzt werden.','pipeline-creation-failed':'Die GPU-Compute-Pipeline konnte nicht erstellt werden.','selftest-failed':'Der GPU-Selbsttest ist fehlgeschlagen.','initialization-timeout':'Die GPU-Initialisierung hat nicht rechtzeitig geantwortet.','preparation-worker-failed':'Der Vorbereitungs-Worker für GPU-Kandidaten konnte nicht starten.','worker-unavailable':'Der GPU-Worker konnte nicht starten.','device-lost':'Das GPU-Gerät wurde verloren. Der Lauf wurde beendet.','execution-failed':'Die GPU-Berechnung ist fehlgeschlagen.','initialization-failed':'Die GPU-Initialisierung ist fehlgeschlagen.'}
 }:{
   idle:'READY',preparing:'PREPARING',calibrating:'MEASURING PERFORMANCE',ready:'MEASUREMENT COMPLETE',running:'SEARCHING',pausing:'PAUSING',paused:'PAUSED',verifying:'VERIFYING MATCH',success:'PASSWORD FOUND',exhausted:'NOT FOUND',stopped:'STOPPED',error:'ERROR',
   idleDetail:'Choose an invented password and start your experiment.',preparingDetail:'Preparing the local target hash and compute engines.',calibratingDetail:'Real measurement batches are running. The attack counter stays at zero.',readyDetail:'The measurement is complete. You can start the search now.',runningDetail:'Your computer is checking real candidates against the local SHA-256 hash.',pausingDetail:'Already assigned batches are being completed.',pausedDetail:'The session is retained. Resume continues with the same range ledger.',verifyingDetail:'SHA-256 and Web Crypto independently confirm the matching candidate.',successDetail:'Your computer confirmed a matching candidate.',exhaustedDetail:'The selected search space is fully checked — without a match.',stoppedDetail:'The compute engines have ended. Confirmed attempts remain visible.',errorDetail:'This run ended because a calculation failed.',
@@ -27,7 +27,7 @@ const text=de?{
   gpuCodes:{'interface-unavailable':'WebGPU is unavailable in this browser context.','adapter-unavailable':'WebGPU is present, but Chrome did not provide a usable adapter.','adapter-request-failed':'The GPU adapter request failed.','software-adapter':'Only a software adapter was detected. GPU and Hybrid remain disabled.','device-creation-failed':'The adapter could not provide a GPU device.','shader-compilation-failed':'The SHA-256 shader could not compile.','pipeline-creation-failed':'The GPU compute pipeline could not be created.','selftest-failed':'The GPU SHA-256 self-test failed.','initialization-timeout':'GPU initialization did not respond in time.','preparation-worker-failed':'The GPU candidate preparation worker could not start.','worker-unavailable':'The GPU worker could not start.','device-lost':'The GPU device was lost. The run has ended.','execution-failed':'GPU computation failed.','initialization-failed':'GPU initialization failed.'}
 };
 const $=id=>document.getElementById(id),number=new Intl.NumberFormat(locale),short=new Intl.NumberFormat(locale,{maximumFractionDigits:0});
-const settings=['strategy','mode','workers','min','max','numeric-max','suffix','variants','leet','years','year-min','year-max','digits','lower','upper','symbols'];
+const settings=['mode','workers','german','english','brute'];
 const busyStates=['preparing','calibrating','running','pausing','paused','verifying'];
 let state='idle',session=null,snapshot=null,engines=[],calibration=null,calibrationKey=null,estimateBefore=null,operation=0,revealed=false,phases=[],message=null;
 let gpuCapability={available:false,path:'none',code:'checking',diagnostics:{}},probeSequence=0,probeEngines=[];
@@ -39,10 +39,10 @@ function duration(seconds){
   if(seconds<31557600)return new Intl.NumberFormat(locale,{maximumFractionDigits:1}).format(seconds/86400)+(de?' Tage':' days');
   const years=seconds/31557600;return (years<1e8?new Intl.NumberFormat(locale,{maximumFractionDigits:1}).format(years):years.toExponential(2))+' '+text.yearsUnit;
 }
-function config(){return normalizeConfig({strategy:$('strategy').value,min:$('min').value,max:$('max').value,numericMax:$('numeric-max').value,suffix:$('suffix').value,variants:$('variants').checked,leet:$('leet').checked,years:$('years').checked,yearMin:$('year-min').value,yearMax:$('year-max').value,...Object.fromEntries(Object.keys(SETS).map(key=>[key,$(key).checked]))});}
+function config(){return normalizeConfig({german:$('german').checked,english:$('english').checked,brute:$('brute').checked});}
 function phaseName(p){
   if(p.kind!=='dictionary')return text[p.kind]+' · '+p.length+' '+text.chars;
-  const details=[text.dictionary,p.variants?text.variants:text.original];if(p.leet)details.push(text.leet);
+  const details=[p.language?(p.language==='de'?(de?'Deutsches Wörterbuch':'German dictionary'):(de?'Englisches Wörterbuch':'English dictionary')):text.dictionary,p.variants?text.variants:text.original];if(p.leet)details.push(text.leet);
   details.push(p.yearMin===undefined?p.suffixDigits+' '+text.suffix:p.yearMin+'–'+p.yearMax+' '+text.years);return details.join(' · ');
 }
 function setState(value,reason=null){state=value;message=reason;document.body.dataset.state=value;render();}
@@ -50,6 +50,7 @@ function errorMessage(error){
   if(error.code&&text.gpuCodes[error.code])return text.gpuCodes[error.code];
   const reason=error.message||String(error);
   if(/Minimum year exceeds/.test(reason))return text.invalidYear;
+  if(/Select at least one search method/.test(reason))return de?'Aktiviere mindestens eine Suchmethode.':'Enable at least one search method.';
   if(/Invalid search length|Minimum length exceeds|Select at least one|Unknown strategy/.test(reason))return text.invalid;
   if(/Invalid CPU worker count/.test(reason))return text.workersInvalid;return reason;
 }
@@ -85,21 +86,18 @@ function render(){
   const busy=busyStates.includes(state),terminal=['success','exhausted','stopped','error'].includes(state);
   for(const id of settings)$(id).disabled=busy;
   $('password').disabled=busy;$('intensity').disabled=['preparing','calibrating'].includes(state);
-  const canStart=!busy&&Boolean(crypto?.subtle)&&Boolean($('password').value)&&($('mode').value==='cpu'||gpuCapability.available);
-  $('start').disabled=!canStart;$('measure').disabled=!canStart;$('pause').disabled=state!=='running';$('resume').disabled=state!=='paused';$('stop').disabled=!busy;
-  document.querySelectorAll('[data-example]').forEach(button=>button.disabled=busy);
+  const methods=$('german').checked||$('english').checked||$('brute').checked;
+  const canStart=methods&&!busy&&Boolean(crypto?.subtle)&&Boolean($('password').value)&&($('mode').value==='cpu'||gpuCapability.available);
+  $('start').disabled=!canStart;$('pause').disabled=state!=='running';$('resume').disabled=state!=='paused';$('stop').disabled=!busy;
   let c=null;try{c=config();}catch{}
-  if(c){
-    const dict=c.strategy==='dictionary'||c.strategy==='smart',brute=c.strategy==='brute'||c.strategy==='smart';
-    $('length-settings').hidden=!['numeric','brute','smart'].includes(c.strategy);$('dictionary-settings').hidden=!dict;$('brute-settings').hidden=!brute;$('smart-settings').hidden=c.strategy!=='smart';
-    for(const id of ['min-label','max-label'])$(id).textContent=c.strategy==='smart'?(de?(id==='min-label'?'Brute Force: Mindestlänge':'Brute Force: Höchstlänge'):(id==='min-label'?'Brute force: minimum length':'Brute force: maximum length')):(de?(id==='min-label'?'Mindestlänge':'Höchstlänge'):(id==='min-label'?'Minimum length':'Maximum length'));
-    if(!busy){$('workers').disabled=$('mode').value==='gpu';$('year-min').disabled=!c.years;$('year-max').disabled=!c.years;}
-    $('charset').textContent=c.strategy==='numeric'?SETS.digits:brute?c.charset:de?'ASCII-Wörter · ae / oe / ue / ss':'ASCII words · ae / oe / ue / ss';
-    const summary=[text[c.strategy]];
-    if(c.strategy==='numeric'||c.strategy==='brute')summary.push(c.min+'–'+c.max+' '+text.chars);else if(c.strategy==='smart')summary.push(text.brute+' '+c.min+'–'+c.max+' '+text.chars);
-    if(dict){summary.push(number.format(DICTIONARY.length)+' '+text.dictionarySummary);if(c.variants)summary.push(text.variants);if(c.leet)summary.push(text.leet);if(c.years)summary.push(c.yearMin+'–'+c.yearMax);summary.push('0–'+c.suffix+' '+text.suffix);}
-    $('config-summary').textContent=summary.join(' · ');$('dictionary-derived').textContent=number.format(dictionaryBases(c.variants,c.leet).length);
-  }
+  if(!busy)$('workers').disabled=$('mode').value==='gpu';
+  const selected=[];
+  if(c?.german)selected.push(de?'Deutsches Wörterbuch':'German dictionary');
+  if(c?.english)selected.push(de?'Englisches Wörterbuch':'English dictionary');
+  if(c?.brute)selected.push('Brute Force · ASCII 1–'+BLIND_LIMITS.maximumLength);
+  $('config-summary').textContent=selected.join(' → ')||(de?'Aktiviere mindestens eine Suchmethode.':'Enable at least one search method.');
+  $('selected-methods').textContent=$('config-summary').textContent;
+  $('method-help').textContent=methods?(de?'Feste Kandidatenfolge. Dein Passwort verändert weder Wörter noch Reihenfolge oder Grenzen.':'Fixed candidate sequence. Your password changes neither vocabulary, ordering nor limits.'):(de?'Aktiviere mindestens eine Suchmethode.':'Enable at least one search method.');
   $('intensity-value').textContent=$('intensity').value+'%';
   const title=text[state]||text.idle,detail=message||text[state+'Detail']|| (state==='success'?text.found:state==='exhausted'?text.outside:state==='stopped'?text.cancelled:text.failed);
   if($('status').textContent!==title)$('status').textContent=title;
@@ -139,7 +137,7 @@ function render(){
   $('result').hidden=!terminal;$('result').className='result '+state;$('result-title').textContent=title;
   $('result-message').textContent=state==='success'?text.found:state==='exhausted'?text.outside:state==='stopped'?text.cancelled:text.failed;
   $('reveal').hidden=state!=='success';$('result-details').hidden=state!=='success';
-  if(state==='success'&&s?.result){$('result-strategy').textContent=phaseName(s.result.phase);$('result-engine').textContent=s.result.engine.toUpperCase();$('result-before').textContent=estimateBefore===null?text.unknown:duration(estimateBefore);}
+  if(state==='success'&&s?.result){$('result-time').textContent=duration(s.elapsed/1000);$('result-strategy').textContent=phaseName(s.result.phase);$('result-engine').textContent=s.result.engine.toUpperCase();$('result-before').textContent=estimateBefore===null?text.unknown:duration(estimateBefore);}
   // Presentation uses the same verified snapshots and capability result as the engines.
   $('hardware-cpu').closest('article').dataset.active=String(activeCpu>0);
   $('hardware-gpu').closest('article').dataset.active=String(Boolean(activeGpu));
@@ -155,13 +153,14 @@ function render(){
   const journey=$('phase-journey');
   const groups=[];
   phases.forEach((p,index)=>{
-    const key=p.kind==='dictionary'?(p.yearMin!==undefined?'years':p.suffixDigits>0?'suffix':'dictionary'):p.kind;
-    if(groups.at(-1)?.key===key)groups.at(-1).indices.push(index);else groups.push({key,indices:[index]});
+    const kind=p.kind==='dictionary'?(p.yearMin!==undefined?'years':p.suffixDigits>0?'suffix':'dictionary'):p.kind;
+    const key=(p.language||'')+':'+kind;
+    if(groups.at(-1)?.key===key)groups.at(-1).indices.push(index);else groups.push({key,kind,language:p.language,indices:[index]});
   });
   const current=s?.strategy?.phaseIndex;
   const journeyData=groups.map(group=>{
     const done=Boolean(s?.phaseChecked)&&group.indices.every(index=>s.phaseChecked[index]===s.phases[index].count);
-    return {label:group.key==='suffix'?(de?'Wörter + Ziffern':'Words + digits'):group.key==='years'?(de?'Wörter + Jahre':'Words + years'):text[group.key],state:done?'complete':group.indices.includes(current)?(state==='running'?'active':state):'waiting'};
+    return {label:(group.language?group.language.toUpperCase()+' · ':'')+(group.kind==='suffix'?(de?'Wörter + Ziffern':'Words + digits'):group.kind==='years'?(de?'Wörter + Jahre':'Words + years'):text[group.kind]),state:done?'complete':group.indices.includes(current)?(state==='running'?'active':state):'waiting'};
   });
   const signature=JSON.stringify(journeyData);
   if(journey.dataset.signature!==signature){
@@ -175,9 +174,9 @@ function cancel(reset=false){
   operation++;engines.forEach(e=>e.close());engines=[];session?.clear();session=null;snapshot=null;clearReveal();estimateBefore=null;$('password').value='';
   if(reset){calibration=null;calibrationKey=null;}setState(reset?'idle':'stopped');refreshConfig();
 }
-function showDashboard(){if(innerWidth<950)$('dashboard').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+function showDashboard(){$('dashboard').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});$('dashboard').focus({preventScroll:true});}
 function runtimeGpuFailure(failure){gpuCapability={...gpuCapability,available:false,code:failure.code,runtimeFailure:{code:failure.code,stage:failure.stage,message:failure.message,engine:failure.engine,details:failure.details||null}};renderGpu();}
-async function prepare(startAttack){
+async function prepare(){
   const epoch=++operation;clearReveal();session?.clear();session=null;snapshot=null;engines=[];let target=null;const created=[];
   try{
     if(!$('password').value){setState('idle',text.enter);return;}if(!crypto?.subtle)throw new Error(text.secure);
@@ -186,15 +185,14 @@ async function prepare(startAttack){
     const key=JSON.stringify({c,mode,workers,intensity,gpuPath:gpuCapability.path});phases=createPhases(c);drawRows();setState('preparing');showDashboard();
     let plaintext=$('password').value;const bytes=new TextEncoder().encode(plaintext);plaintext='';let digest;
     try{digest=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));target=Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');}finally{bytes.fill(0);digest?.fill(0);}
-    if(epoch!==operation)return;if(startAttack)$('password').value='';
+    if(epoch!==operation)return;$('password').value='';
     const ready=await makeEngines(mode,workers,{gpuPath:gpuCapability.path,onCreated:engine=>{created.push(engine);if(epoch===operation)engines.push(engine);else engine.close();}});
     if(epoch!==operation){ready.forEach(e=>e.close());return;}engines=ready;
     const gpu=engines.find(e=>e.kind==='gpu');if(gpu)gpuCapability={...gpuCapability,...gpu.info,path:gpu.info.execution,available:true,code:null,diagnostics:{...gpuCapability.diagnostics,...Object.fromEntries(Object.entries(gpu.diagnostics||{}).filter(([,detail])=>detail.stage!=='not-tested'))}};
-    if(!startAttack||!calibration||calibrationKey!==key){
+    if(!calibration||calibrationKey!==key){
       setState('calibrating');const measured=await benchmark(engines,createPhases({strategy:'numeric',min:6,max:6})[0],target,intensity);
       if(epoch!==operation)return;calibration=measured;calibrationKey=key;
     }
-    if(!startAttack){engines.forEach(e=>e.close());engines=[];target=null;setState('ready');return;}
     estimateBefore=Number(phases.reduce((n,p)=>n+p.count,0n))/calibration.combined;
     session=new CrackSession({config:c,target,engines,intensity,onUpdate:value=>{
       if(epoch!==operation)return;snapshot=value;state=value.state;message=null;document.body.dataset.state=state;
@@ -215,22 +213,18 @@ for(const id of settings)$(id).addEventListener('change',()=>{
 });
 $('password').addEventListener('input',()=>{if(!busyStates.includes(state)){session?.clear();session=null;snapshot=null;clearReveal();setState('idle');refreshConfig();}});
 $('intensity').addEventListener('input',()=>{if(session&&['running','paused','pausing'].includes(state))session.intensity=Number($('intensity').value);else{calibration=null;calibrationKey=null;}render();});
-$('start').addEventListener('click',()=>prepare(true));$('measure').addEventListener('click',()=>prepare(false));$('pause').addEventListener('click',()=>session?.pause());$('resume').addEventListener('click',()=>session?.resume());$('stop').addEventListener('click',()=>{if(session)session.stop();else cancel(false);});$('reset').addEventListener('click',()=>cancel(true));$('gpu-retry').addEventListener('click',refreshGpu);
-document.querySelector('.details-link').addEventListener('click',()=>{$('gpu-diagnostics').open=true;});
+$('start').addEventListener('click',()=>prepare());$('pause').addEventListener('click',()=>session?.pause());$('resume').addEventListener('click',()=>session?.resume());$('stop').addEventListener('click',()=>{if(session)session.stop();else cancel(false);});$('reset').addEventListener('click',()=>cancel(true));$('gpu-retry').addEventListener('click',refreshGpu);
+document.querySelector('.hardware-panel .details-link').addEventListener('click',()=>{$('gpu-diagnostics').open=true;});
 $('reveal').addEventListener('click',()=>{if(state!=='success'||!snapshot?.result)return;revealed=!revealed;$('recovered').textContent=revealed?snapshot.result.candidate:'';$('reveal').textContent=revealed?text.hide:text.reveal;});
-document.querySelectorAll('[data-example]').forEach(button=>button.addEventListener('click',()=>{
-  cancel(true);const example=button.dataset.example;$('password').value=example;
-  $('years').checked=false;$('leet').checked=false;$('variants').checked=false;
-  if(example==='katharina2482'){$('strategy').value='dictionary';$('suffix').value='4';}
-  else if(example==='katharina2024'){$('strategy').value='dictionary';$('suffix').value='0';$('years').checked=true;$('year-min').value='2000';$('year-max').value='2035';}
-  else if(example==='p@$$w0rd'){$('strategy').value='dictionary';$('suffix').value='0';$('leet').checked=true;}
-  else if(example==='123!'){$('strategy').value='brute';$('min').value='1';$('max').value='4';$('digits').checked=true;$('lower').checked=false;$('upper').checked=false;$('symbols').checked=true;}
-  else{$('strategy').value='numeric';$('min').value='1';$('max').value='3';}
-  refreshConfig();$('password').focus();
-}));
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='running'){session.pause();message=text.hiddenTab;render();}});
 window.addEventListener('pagehide',()=>{operation++;probeSequence++;session?.clear();[...engines,...probeEngines].forEach(e=>e.close());$('password').value='';clearReveal();});
 const useful=Math.max(1,Math.min(8,(navigator.hardwareConcurrency||2)-1));$('workers').max=useful;$('workers').value=Math.min(4,useful);
-$('dictionary-size').textContent=number.format(DICTIONARY_META.total);$('dictionary-words').textContent=number.format(DICTIONARY_META.individualWords);$('dictionary-pairs').textContent=number.format(DICTIONARY_META.wordPairs);
+for(const language of ['de','en']){
+  const meta=DICTIONARY_COUNTS[language];
+  $('dictionary-'+language+'-size').textContent=number.format(meta.total);
+  $('dictionary-'+language+'-words').textContent=number.format(meta.individualWords);
+  $('dictionary-'+language+'-pairs').textContent=number.format(meta.wordPairs);
+  $('dictionary-'+language+'-variants').textContent=number.format(dictionaryBases(true,true,language).length);
+}
 refreshConfig();refreshGpu();
 setInterval(()=>{if(session&&['running','pausing','paused','verifying'].includes(state))snapshot=session.snapshot();if(busyStates.includes(state))render();},150);

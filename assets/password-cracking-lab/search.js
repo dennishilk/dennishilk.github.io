@@ -1,9 +1,18 @@
-import { DICTIONARY, DICTIONARY_META } from './dictionary.js?v=20261013-compat-1';
-export { DICTIONARY, DICTIONARY_META };
+import { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS } from './dictionary.js?v=20261013-blind-1';
+export { DICTIONARY, DICTIONARY_META, DICTIONARIES, DICTIONARY_COUNTS };
+export const BLIND_LIMITS=Object.freeze({maximumLength:24,suffixDigits:2,yearMin:2000,yearMax:2035});
+export const BLIND_CHARSET='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'+String.fromCharCode(...Array.from({length:95},(_,i)=>i+32).filter(c=>!((c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122))));
 export const SETS=Object.freeze({digits:'0123456789',lower:'abcdefghijklmnopqrstuvwxyz',upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',symbols:'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'});
 function integer(value,fallback,min=1,max=24) {const n=Number(value??fallback);if(!Number.isInteger(n)||n<min||n>max)throw new Error('Invalid search length');return n;}
 export function normalizeConfig(input={}) {
-  const strategy=input.strategy??'smart';if(!['smart','numeric','dictionary','brute'].includes(strategy))throw new Error('Unknown strategy');
+  const strategy=input.strategy??'blind';
+  if(strategy==='blind'){
+    const german=input.german!==false,english=input.english!==false,brute=input.brute===true;
+    if(!german&&!english&&!brute)throw new Error('Select at least one search method');
+    return {strategy,german,english,brute};
+  }
+  // Legacy explicit configurations are retained for engine benchmarks and fixtures.
+  if(!['smart','numeric','dictionary','brute'].includes(strategy))throw new Error('Unknown strategy');
   const dictionaryMode=strategy==='dictionary'||strategy==='smart';
   const min=strategy==='dictionary'?1:integer(input.min,1),max=strategy==='dictionary'?24:integer(input.max,4);if(min>max)throw new Error('Minimum length exceeds maximum');
   const flags=Object.fromEntries(Object.keys(SETS).map(k=>[k,Boolean(input[k]??(k==='digits'||k==='lower'))]));
@@ -14,10 +23,11 @@ export function normalizeConfig(input={}) {
   return {strategy,min,max,numericMax:strategy==='smart'?integer(input.numericMax,6):6,suffix:dictionaryMode?integer(input.suffix,4,0,4):0,variants:input.variants!==false,leet:dictionaryMode&&input.leet===true,years,yearMin,yearMax,...flags,charset};
 }
 const dictionaryCache=new Map();
-export function dictionaryBases(variants=false,leet=false){
-  const key=String(variants)+':'+String(leet);if(dictionaryCache.has(key))return dictionaryCache.get(key);
+export function dictionaryBases(variants=false,leet=false,language=null){
+  if(language!==null&&!DICTIONARIES[language])throw new Error('Unknown dictionary language');
+  const key=String(language)+':'+String(variants)+':'+String(leet);if(dictionaryCache.has(key))return dictionaryCache.get(key);
   const entries=new Set(),classic={a:'4',e:'3',i:'1',o:'0',s:'5',t:'7'},symbols={a:'@',i:'!',o:'0',s:'$'};
-  for(const word of DICTIONARY){const forms=leet?[word,word.replace(/[aeiost]/g,c=>classic[c]),word.replace(/[aios]/g,c=>symbols[c])]:[word];
+  for(const word of (language?DICTIONARIES[language]:DICTIONARY)){const forms=leet?[word,word.replace(/[aeiost]/g,c=>classic[c]),word.replace(/[aios]/g,c=>symbols[c])]:[word];
     for(const form of forms){entries.add(form);if(variants){entries.add(form[0].toUpperCase()+form.slice(1));entries.add(form.toUpperCase());}}
   }
   const result=Object.freeze([...entries]);dictionaryCache.set(key,result);return result;
@@ -26,11 +36,20 @@ function dictionaryRadix(p){return p.yearMin===undefined?10n**BigInt(p.suffixDig
 function dictionarySuffix(p,index){return p.yearMin===undefined?(p.suffixDigits?String(index).padStart(p.suffixDigits,'0'):''):String(p.yearMin+Number(index));}
 function phase(kind,data) {
   const result={kind,...data};
-  result.count=kind==='dictionary'?BigInt(dictionaryBases(data.variants,data.leet).length)*dictionaryRadix(result):BigInt(data.charset.length)**BigInt(data.length);
+  result.count=kind==='dictionary'?BigInt(dictionaryBases(data.variants,data.leet,data.language??null).length)*dictionaryRadix(result):BigInt(data.charset.length)**BigInt(data.length);
   return result;
 }
 export function createPhases(input) {
   const c=normalizeConfig(input),phases=[];
+  if(c.strategy==='blind'){
+    const languages=['de','en'].filter(language=>c[language==='de'?'german':'english']);
+    // Every selected base phase precedes every suffix phase. Ordering is fixed.
+    for(const language of languages)phases.push(phase('dictionary',{language,variants:true,leet:true,suffixDigits:0}));
+    for(const language of languages)phases.push(phase('dictionary',{language,variants:true,leet:true,suffixDigits:4,yearMin:BLIND_LIMITS.yearMin,yearMax:BLIND_LIMITS.yearMax}));
+    for(let width=1;width<=BLIND_LIMITS.suffixDigits;width++)for(const language of languages)phases.push(phase('dictionary',{language,variants:true,leet:true,suffixDigits:width}));
+    if(c.brute)for(let length=1;length<=BLIND_LIMITS.maximumLength;length++)phases.push(phase('brute',{charset:BLIND_CHARSET,length}));
+    let offset=0n;for(const p of phases){p.offset=offset;offset+=p.count;}return phases;
+  }
   const numbers=(start,end)=>{for(let n=start;n<=end;n++)phases.push(phase('numeric',{charset:SETS.digits,length:n}));};
   const words=(suffix)=>phases.push(phase('dictionary',{variants:c.variants,leet:c.leet,suffixDigits:suffix}));
   const years=()=>{if(c.years)phases.push(phase('dictionary',{variants:c.variants,leet:c.leet,suffixDigits:4,yearMin:c.yearMin,yearMax:c.yearMax}));};
@@ -48,7 +67,7 @@ export function createPhases(input) {
 export function candidateAt(p,index) {
   const n=BigInt(index);if(n<0n||n>=BigInt(p.count))throw new RangeError('Candidate index outside phase');
   if(p.kind==='dictionary') {
-    const radix=dictionaryRadix(p),bases=dictionaryBases(p.variants,p.leet);
+    const radix=dictionaryRadix(p),bases=dictionaryBases(p.variants,p.leet,p.language??null);
     return bases[Number(n/radix)]+dictionarySuffix(p,n%radix);
   }
   const radix=BigInt(p.charset.length);let value=n,text='';
@@ -56,7 +75,7 @@ export function candidateAt(p,index) {
 }
 export class CandidateCursor {
   constructor(p,start=0n) {
-    this.phase=p;this.index=BigInt(start);this.bases=p.kind==='dictionary'?dictionaryBases(p.variants,p.leet):null;this.radix=p.kind==='dictionary'?dictionaryRadix(p):BigInt(p.charset.length);
+    this.phase=p;this.index=BigInt(start);this.bases=p.kind==='dictionary'?dictionaryBases(p.variants,p.leet,p.language??null):null;this.radix=p.kind==='dictionary'?dictionaryRadix(p):BigInt(p.charset.length);
     if(this.bases){this.wordIndex=Number(this.index/this.radix);this.suffixIndex=Number(this.index%this.radix);this.suffixCount=Number(this.radix);}
     if(!this.bases){this.digits=new Uint8Array(p.length);let n=this.index;for(let i=p.length-1;i>=0;i--){this.digits[i]=Number(n%this.radix);n/=this.radix;}}
   }

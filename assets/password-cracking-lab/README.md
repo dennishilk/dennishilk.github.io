@@ -57,47 +57,14 @@ Primary background: [Chrome troubleshooting](https://developer.chrome.com/docs/w
 [WorkerNavigator.gpu](https://developer.mozilla.org/en-US/docs/Web/API/WorkerNavigator/gpu)
 and the [WebGPU specification](https://www.w3.org/TR/webgpu/).
 
-## Vocabulary and exact search spaces
-
-The bundled, self-authored vocabulary has **4,850 unique base entries**:
-**1,817 individual words** and **3,033 fixed word-pair patterns**. Categories
-include German/English words, generic names, seasons, months, animals, nature,
-places, hobbies and technology. Pairing rules and source categories are
-explicit in dictionary.js; pairs are not claimed to be independent dictionary
-lexemes. There are no breach dumps, real-account password lists, downloaded
-wordlists or target-derived entries.
-
-Bases are lowercase ASCII, 1–20 characters; German transliterations use
-ae/oe/ue/ss. Optional title case/uppercase yield 14,549 unique forms. Optional
-whole-word leetspeak applies two fixed mappings, not every substitution mix:
-
-- `a→4, e→3, i→1, o→0, s→5, t→7`
-- `a→@, i→!, o→0, s→$`
-
-Leetspeak alone yields 14,166 forms; both options yield 40,621. Word variants
-are deduplicated before exact counting. Optional years use an inclusive,
-configurable range within 1900–2099; the UI starts at 2000–2035. Numeric suffix
-widths are 0–4, including leading zeroes. Four-digit additions keep candidates
-within the existing 24-character limit. Original entries plus suffix widths
-0–4, without years or other variants, total **53,888,350**. Original words plus
-years 2000–2035 without numeric suffixes yield **179,450** total candidates.
-
-Dictionary order: words, selected years, selected suffix widths. Smart order:
-words, short numbers, years, suffixes, longer numbers, selected brute force.
-Bounds and exact phases are inspectable. Phases can repeat values (a year may
-also be a four-digit suffix), but indexed ranges within a phase are never
-allocated twice or skipped. Original UTF-8 input is hashed exactly: accented
-input is not silently converted to ASCII. Exhaustion covers only the selected
-space and never proves password safety.
-
 ## Measurements, controls and privacy
 
 Calibration uses an uncounted warm-up, then three measured batches per engine.
 All contributions use the same measured wall-time window, including intensity
-rests. Each Measure click runs fresh batches and never advances the attack
-counter. Live rates use confirmed counts in a common rolling one-second
-window. Elapsed attack time excludes initialization, calibration, pauses and
-final independent verification. JavaScript SHA-256 and Web Crypto both verify
+rests. Start automatically calibrates when necessary without advancing the
+attack counter. Live rates use confirmed counts in a common rolling one-second
+window. Elapsed attack time excludes initialization, calibration and pauses, but
+includes final independent verification. JavaScript SHA-256 and Web Crypto both verify
 a match before success. Counters include whole completed batches rather than
 pretending all engines stopped exactly at the matching candidate.
 
@@ -123,33 +90,57 @@ node scripts/audit-seo.mjs
 PASSWORD_LAB_BROWSER=/path/to/chrome node scripts/test-password-cracking-browser.mjs
 ```
 
-Engine tests execute production WGSL using real WebGPU buffers: 143 vectors,
-exact indices above 2^53, atomic first-match and outside-space checks. CPU +
-GPU workers and main-thread GPU Hybrid each confirm exactly 100,000 distinct
-attempts. Real shader compilation failure and native device destruction retain
-precise reasons. A test-only adapter-request override returns null for the two
-core requests, then executes the real shader through the compatibility request.
-Shader answers are never mocked.
+The browser suite runs production WGSL with explicit test-only software adapter
+permission. Ordinary-page tests reject software adapters. A private delivery
+override checks the genuine main-thread GPU fallback and responsive Hybrid UI.
+Rendering checks cover both languages at 320/390/768/1024/1440px. Software shader
+execution must never be described as verification on a physical RX 9060 XT.
+Browser checks require an installed browser; no browser success is claimed
+when the suite cannot launch. Dennis manages Worldnode deployment manually.
 
-Acceptance covers EN/DE, 320/390/768/1440px, keyboard access, prominent outcomes,
-explicit reveal/reset, offline dictionary recovery without HTTP or plaintext
-worker messages, real year/leet/symbol recovery, relevant editable controls,
-fresh repeated calibration and reset during pending hashing. Separate real CPU
-and main-thread GPU Hybrid UI searches last over 30 seconds and pause/resume/
-stop correctly. Articles, Museum integration, SEO, RSS and sitemaps are checked.
+## Mission 03.3 — current public interface and blind search
 
-Available browsers: Chrome Headless Shell **141.0.7390.54** and **154.0.8037.92**,
-using **SwiftShader**. Explicit unsafe flags/software permission occur only in
-the test harness; normal-page tests keep GPU/Hybrid disabled for software.
-Worker interface removal and software permission in private main-path UI tests
-are delivery overrides confined to testing; metadata remains software=true.
-This is real shader execution, **not physical GPU verification** or proof of
-RX 9060 XT support.
+The public interface has
+only password, compute mode, three method checkboxes, worker count, intensity
+and Start/Pause/Resume/Stop/Reset. Start calibrates automatically. No preset
+buttons, numeric shortcut, target-derived lengths or character selections.
 
-Dennis should verify adapter detection, genuine GPU/Hybrid and sustained
-searches on Cthulhu after manually deploying Worldnode. The application does
-not deploy the server or require unsafe flags, a console, NixOS changes or
-developer-only adapter settings for normal controls.
+`normalizeConfig()` defaults to `{strategy:'blind', german:true, english:true,
+brute:false}`. No-method configurations are rejected. The UI passes only the
+three explicit method flags. Legacy strategies remain solely for internal
+engine benchmarks and regression fixtures; the public UI does not expose them.
 
-Final acceptance: 72 automated tests and 23 browser checks each in Chrome 154
-and Chrome 141 passed. The SEO audit reports zero errors.
+The separate collections are editorially split in `LANGUAGE_WORD_GROUPS`:
+German: 2,712 base entries = 1,191 words + 1,521 adjective/noun combinations.
+English: 2,795 = 1,283 words + 1,512 combinations. Names, place names and
+international technology terms are intentionally shared. Anatomy vocabulary
+is documented alongside the other categories. No target is ever inserted.
+Locale does not choose a collection. Each language has its own deterministic
+transformation cache: 22,401 DE / 23,506 EN unique transformed bases.
+
+Order: all selected base collections (DE then EN), years 2000–2035 in the same
+language order, one-digit suffixes, two-digit suffixes, optional brute force.
+Fixed case and both leetspeak mappings remain; numeric suffixes include leading
+zeroes. Each phase is internally unique. Different collections and phases may
+overlap; counters report actual hash checks, not globally unique passwords.
+DE totals 3,292,947 checks; EN totals 3,455,382; both total 6,748,329.
+
+Brute force includes all 95 printable ASCII characters: lowercase, uppercase,
+digits, then space and symbols in ASCII order. Every length 1–24 is fully
+enumerated before moving to the next. Total is sum(95**n, n=1..24), computed
+with BigInt. This includes the acceptance example sommer2024, but does not
+promise it can realistically be reached. Dictionary bases remain ASCII,
+maximum length 20; year additions can reach 24. Input is hashed as exact UTF-8;
+Unicode input is not converted into searchable ASCII.
+
+Verified-match time includes independent verification, excludes calibration
+and paused time. CPU/GPU shaders, exact shared range accounting, software
+adapter rejection, fallback paths, diagnostics and local-only privacy remain.
+
+Current automated coverage adds all seven checkbox combinations, deterministic
+plans despite misleading plaintext/locale/configuration fields, language
+separation, full printable ASCII, counts above 2^53, unique per-phase bases,
+real blind CPU recovery from zero and a real worker check at A1h5's expensive
+brute-force index. That last range test does not claim to have exhaustively
+searched every preceding candidate. Browser UI acceptance has been updated
+for the simplified interface; results must be reported from an actual run.

@@ -1,7 +1,7 @@
-import { WORKER_SOURCE } from './worker-source.js?v=20261013-compat-1';
-import { RangeLedger, candidateAt, createPhases } from './search.js?v=20261013-compat-1';
+import { WORKER_SOURCE } from './worker-source.js?v=20261013-blind-1';
+import { RangeLedger, candidateAt, createPhases } from './search.js?v=20261013-blind-1';
 import { hashHex, hexWords } from './sha256.js';
-import { GpuSha256, GpuFailure, gpuFailureDetails } from './gpu.js?v=20261013-compat-1';
+import { GpuSha256, GpuFailure, gpuFailureDetails } from './gpu.js?v=20261013-blind-1';
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 export class WorkerClient {
   constructor(kind,source=WORKER_SOURCE) {
@@ -154,7 +154,7 @@ export class CrackSession {
   settle(){
     if(this.stats.some(s=>s.active))return;
     if(this.state==='verifying'&&!this.verifying) {
-      this.verifying=true;this.freezeTime();const token=this.token;
+      this.verifying=true;const token=this.token;
       this.verify(this.result.candidate,this.target).then(valid=>{if(token!==this.token)return;if(!valid)this.finish('error','Independent candidate verification failed');else this.finish('success');}).catch(error=>{if(token===this.token)this.finish('error',error.message);});return;
     }
     if(this.state==='pausing'){this.freezeTime();this.state='paused';this.update();}

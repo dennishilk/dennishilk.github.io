@@ -171,3 +171,38 @@ const originalWords=dictionaryEntries.size;
 for(const pattern of WORD_PAIR_PATTERNS)for(const prefix of pattern.prefixes)for(const noun of pattern.nouns){const word=prefix+noun;if(word.length<=20)dictionaryEntries.add(word);}
 export const DICTIONARY=Object.freeze([...dictionaryEntries]);
 export const DICTIONARY_META=Object.freeze({total:DICTIONARY.length,individualWords:originalWords,wordPairs:DICTIONARY.length-originalWords,languages:['en','de'],maximumBaseLength:20,ascii:true});
+
+// Language collections are explicit editorial choices, never inferred from the
+// target or UI locale. International names, place names and computing terms are
+// shared intentionally. Mixed historical groups are split at documented words.
+const splitAt=(group,word)=>{const i=group.indexOf(word);if(i<0)throw new Error('Missing vocabulary boundary');return [group.slice(0,i),group.slice(i)];};
+const [englishTech,germanTech]=splitAt(WORD_GROUPS.technology,'netwerk');
+const [englishHobbies,germanHobbies]=splitAt(WORD_GROUPS.hobbies,'lesen');
+const [englishAnimals,remainingNature]=splitAt(WORD_GROUPS.nature,'fuchs');
+const [germanAnimals,plants]=splitAt(remainingNature,'tulip');
+const [englishPlants,remainingPlants]=splitAt(plants,'tulpe');
+const [germanPlants,englishPlantTail]=splitAt(remainingPlants,'moss');
+export const LANGUAGE_WORD_GROUPS=Object.freeze({
+  de:Object.freeze([
+    WORD_GROUPS.german,WORD_GROUPS.names,WORD_GROUPS.places,englishTech,germanTech,germanHobbies,germanAnimals,germanPlants,
+    words('katharina hallo willkommen passwort geheim liebe sonne garten urlaub blume katze hund berlin hamburg bremen sommer winter herbst fruehling januar februar maerz april mai juni juli august september oktober november dezember montag dienstag mittwoch donnerstag freitag samstag sonntag wochenstart silvester weihnachten ostern neujahr advent halloween karneval'),
+    words('koerper kopf auge ohr nase mund hand arm bein fuss herz haut penis')
+  ]),
+  en:Object.freeze([
+    WORD_GROUPS.english,WORD_GROUPS.names,WORD_GROUPS.places,englishTech,englishHobbies,englishAnimals,englishPlants,englishPlantTail,
+    words('password welcome dragon monkey sunshine football letmein freedom secret summer winter autumn spring coffee chocolate computer internet keyboard penguin linux debian ubuntu arch nixos terminal museum nebby nebunix nebu dennis alexander michael sandra julia thomas martin anna sophie andreas music guitar star moon planet rocket matrix wizard castle rainbow'),
+    words('january february march april may june july august september october november december monday tuesday wednesday thursday friday saturday sunday wintertime summertime springtime autumntime christmas easter newyear advent halloween carnival'),
+    words('body head eye ear nose mouth hand arm leg foot heart skin penis')
+  ])
+});
+function languageDictionary(language){
+  const entries=new Set(LANGUAGE_WORD_GROUPS[language].flat());
+  const individualWords=entries.size;
+  for(const pattern of WORD_PAIR_PATTERNS.filter(p=>p.language===language))for(const prefix of pattern.prefixes)for(const noun of pattern.nouns){const word=prefix+noun;if(word.length<=20)entries.add(word);}
+  const values=Object.freeze([...entries]);
+  if(!values.every(word=>/^[a-z0-9]{1,20}$/.test(word)))throw new Error('Invalid language dictionary');
+  return {values,meta:Object.freeze({total:values.length,individualWords,wordPairs:values.length-individualWords,maximumBaseLength:20,ascii:true})};
+}
+const germanCollection=languageDictionary('de'),englishCollection=languageDictionary('en');
+export const DICTIONARIES=Object.freeze({de:germanCollection.values,en:englishCollection.values});
+export const DICTIONARY_COUNTS=Object.freeze({de:germanCollection.meta,en:englishCollection.meta});
