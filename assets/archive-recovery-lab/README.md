@@ -160,3 +160,32 @@ Node tests, **44/44** original Password Cracking Lab tests; both browser suites
 passed. The recovery browser capture recorded **129 static GET requests,
 0 private transmissions and 0 exceptions**. Site-wide SEO audit: **0 errors**.
 These are test-environment results, not a benchmark of Dennis's workstation.
+
+## Mission 04.1 — visual clarity pass
+
+The archive lab now follows the companion lab's information hierarchy: a full-width
+live dashboard first, a separate guided file/search configuration next, the local
+sample creator directly underneath, then collapsed hardware diagnostics and
+educational details. The companion lab and ZIP/search engines are unchanged.
+
+The dashboard shows the selected dictionaries/brute force, blind/prior-knowledge
+mode, actual pending CPU worker activity and the current phases. A compact
+journey groups word variants, years, numeric suffixes and brute force. The full
+phase ledger shows confirmed/total counts and completed, active, paused, matched,
+partially checked or upcoming states. Allocation never counts as completion; a
+verified match does not pretend that unvisited phases were exhausted. Live context
+remains tied to that run, while the configuration can prepare the next search.
+
+The success box separates the password/reveal/copy controls, individual downloads,
+whole-ZIP download, matching strategy/method/CPU worker, confirmed attempts,
+active time to independently verified match and ZIP encryption metadata. Private
+filenames continue to be rendered only as text. No new network/storage behavior
+or runtime dependencies were introduced.
+
+Validation: 27 archive/presentation Node tests; 24 museum Node tests; EN/DE archive
+browser tests for all controls, local demo/file input, both download paths, exact
+recovery/exhaustion, selected/active methods and real phase statuses; mobile phase
+readability, offline replay, zero browser errors and zero private transmissions.
+Museum browser regression and site-wide SEO audit also passed. The original
+Password Cracking Lab's runtime/pages/styles and the archive cryptographic engine,
+search scheduler, workers and bundled ZIP dependency are unchanged.
