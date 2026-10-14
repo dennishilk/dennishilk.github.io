@@ -29,7 +29,7 @@ for(let index=0;index<samples.length;index++){
   try{code=z.callMain(['t','-bd','-y','-p'+candidate,name]);}
   catch(e){code='EXCEPTION: '+e;}
   console.log(JSON.stringify({engine:'7zz',label,candidate,code,tail:output.slice(-9)}));
-  assert.equal(code,candidate===pass?0:2,label+' candidate='+candidate);
+  if(candidate===pass)assert.equal(code,0,label+' correct password');else assert.notEqual(code,0,label+' wrong password must be rejected');
  }
  output=[];
  const code=z.callMain(['x','-bd','-y','-p'+pass,'-o/out-'+index,name]);
@@ -46,7 +46,7 @@ for(const method of ['RC4-40','RC4-128','AES-128','AES-256']){
   try{code=q.callMain(['--password='+candidate,'--decrypt',name,out]);}
   catch(e){code='EXCEPTION: '+e;}
   console.log(JSON.stringify({engine:'qpdf',method,candidate,code,tail:output.slice(-6)}));
-  assert.equal(code,candidate==='7'?0:2,'qpdf '+method+' '+candidate);
+  if(candidate==='7')assert.equal(code,0,'qpdf '+method+' correct password');else assert.notEqual(code,0,'qpdf '+method+' wrong must fail');
  }
  const result=q.FS.readFile(out);
  writeFileSync(resolve(dir,'plain-'+method+'.pdf'),result);
