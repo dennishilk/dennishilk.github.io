@@ -12,7 +12,20 @@ const phaseName=p=>p.kind==='dictionary'?`${({common:say('Common & IT','Häufig 
 function download(blob,name){const u=URL.createObjectURL(blob);urls.add(u);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>{URL.revokeObjectURL(u);urls.delete(u);},60000);}
 function cleanupUrls(){for(const u of urls)URL.revokeObjectURL(u);urls.clear();}
 function busy(){return preparing||run&&!run.closed;}
-function controls(){const locked=Boolean(busy());for(const id of ['file','remove','mode','de','en','common','brute','min','max','lower','upper','digits','symbols','workers','load-demo'])$(id).disabled=locked||(id==='remove'&&!file)||(id==='load-demo'&&!sample);$('start').disabled=locked||!info?.supported;$('pause').disabled=run?.state!=='running';$('resume').disabled=run?.state!=='paused';$('stop').disabled=!locked||run?.state==='stopping';refreshSelection();}
+function authorized(){return $('authorized').checked;}
+function requireAuthorization(){
+ if(authorized())return true;
+ status(say('CONFIRM AUTHORIZATION','BERECHTIGUNG BESTÄTIGEN'),
+  say('Confirm that you have the right to access this file before selecting it or starting recovery.',
+      'Bestätige zuerst, dass du zum Zugriff auf diese Datei berechtigt bist.'));
+ return false;
+}
+function controls(){const locked=Boolean(busy());for(const id of ['file','remove','mode','de','en','common','brute','min','max','lower','upper','digits','symbols','workers','load-demo'])$(id).disabled=locked||(id==='remove'&&!file)||(id==='load-demo'&&!sample);
+ $('authorized').disabled=locked;
+ $('file').disabled=locked||!authorized();
+ $('load-demo').disabled=locked||!authorized()||!sample;
+ $('drop').dataset.authorizationRequired=String(!authorized());
+ $('start').disabled=locked||!authorized()||!info?.supported;$('pause').disabled=run?.state!=='running';$('resume').disabled=run?.state!=='paused';$('stop').disabled=!locked||run?.state==='stopping';refreshSelection();}
 function status(message,detail=''){text('status',message);text('status-detail',detail);}
 function clearResult(){result=null;$('result').hidden=true;$('recovered').value='';$('recovered').type='password';$('reveal').setAttribute('aria-pressed','false');$('downloads').replaceChildren();$('result-summary').textContent='';for(const id of ['result-strategy','result-method','result-engine','result-checks','result-time','result-format','verification-time','download-count'])text(id,'');$('reveal').textContent=say('Show password','Passwort anzeigen');cleanupUrls();}
 function clearSearch(){document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';run?.dispose();run=null;runConfig=null;phaseRun=null;lastViewState=null;preparing=false;clearResult();text('rate-label',say('Measured attempts / second','Gemessene Versuche / Sekunde'));for(const id of ['checked','rate','average','elapsed','space','remaining','phase'])$(id).textContent='—';$('progress').value=0;$('progress-label').textContent='0%';rateSample={elapsed:0,checked:0n};currentRate=0;paintPhases(true);refreshSelection();}
@@ -30,7 +43,9 @@ function inspectOther(blob,format){
   w.postMessage({type:'inspect',blob,format});
  });
 }
-async function select(selected){if(busy())return;const id=++token;clearSearch();file=selected;info=null;metadata([]);controls();if(!selected){status(say('READY','BEREIT'));return;}status(say('READING HEADER','HEADER EINLESEN'));
+async function select(selected){if(busy())return;
+ if(selected&&!requireAuthorization()){$('file').value='';return;}
+ const id=++token;clearSearch();file=selected;info=null;metadata([]);controls();if(!selected){status(say('READY','BEREIT'));return;}status(say('READING HEADER','HEADER EINLESEN'));
  try{
  const detected=await inspect(selected);
  if(id!==token)return;
@@ -86,7 +101,7 @@ function draw(s){
  if(s.state==='stopped')text('status-detail',say('Search stopped. Confirmed checks are retained; restart begins a fresh search.','Suche gestoppt. Bestätigte Versuche bleiben sichtbar; ein neuer Start beginnt von vorn.'));
  controls();
 }
-$('start').addEventListener('click',async()=>{if(busy()||!info?.supported)return;const id=++token;clearSearch();preparing=true;controls();status(states.starting,say('Preparing the shared dictionary indexes locally…','Gemeinsame Wörterbuchindizes werden lokal vorbereitet…'));
+$('start').addEventListener('click',async()=>{if(busy()||!info?.supported||!requireAuthorization())return;const id=++token;clearSearch();preparing=true;controls();status(states.starting,say('Preparing the shared dictionary indexes locally…','Gemeinsame Wörterbuchindizes werden lokal vorbereitet…'));
  try{const c=config();runConfig=c;refreshSelection();const phases=await preparePhases(c);if(id!==token)return;if(!phases.length)throw Error(say('The search has no candidates.','Die Suche hat keine Kandidaten.'));
   preparing=false;run=new SearchRun(file,phases,Number($('workers').value),{progress:draw,error:code=>{status(states.error,errors[code]??errors.verification);controls();},result:data=>{
    result=data;$('result').hidden=false;$('allzip').hidden=info?.format==='PDF';$('recovered').value=data.password;$('status-detail').textContent=say('Every file passed independent extraction and integrity checks.','Jede Datei bestand die unabhängige Entschlüsselung und Integritätsprüfung.');
@@ -97,14 +112,27 @@ $('start').addEventListener('click',async()=>{if(busy()||!info?.supported)return
   }},info.format);$('status-detail').textContent='';paintPhases(true);await run.start();if(document.hidden)run.pause();
  }catch(e){if(id!==token)return;preparing=false;status(states.error,e.message);controls();}
 });
+$('authorized').addEventListener('change',()=>{
+ if(!authorized()){
+  ++token;file=null;info=null;$('file').value='';
+  clearSearch();metadata([]);
+  status(say('CONFIRM AUTHORIZATION','BERECHTIGUNG BESTÄTIGEN'),
+   say('Confirm your right to access the file before choosing it.',
+       'Bestätige deine Berechtigung, bevor du eine Datei auswählst.'));
+ }else if(!file){
+  status(say('READY','BEREIT'),say('Authorization confirmed. Choose your file.',
+   'Berechtigung bestätigt. Wähle jetzt deine Datei.'));
+ }
+ controls();
+});
 $('file').addEventListener('change',()=>select($('file').files[0]??null));
-for(const type of ['dragenter','dragover'])$('drop').addEventListener(type,e=>{e.preventDefault();if(!busy())$('drop').classList.add('dragging');});
+for(const type of ['dragenter','dragover'])$('drop').addEventListener(type,e=>{e.preventDefault();if(!busy()&&authorized())$('drop').classList.add('dragging');});
 $('drop').addEventListener('dragleave',()=>$('drop').classList.remove('dragging'));
-$('drop').addEventListener('drop',e=>{e.preventDefault();$('drop').classList.remove('dragging');if(busy())return;if(e.dataTransfer.files.length!==1){status(states.error,say('Select exactly one file.','Wähle genau eine Datei.'));return;}select(e.dataTransfer.files[0]);});
+$('drop').addEventListener('drop',e=>{e.preventDefault();$('drop').classList.remove('dragging');if(busy()||!requireAuthorization())return;if(e.dataTransfer.files.length!==1){status(states.error,say('Select exactly one file.','Wähle genau eine Datei.'));return;}select(e.dataTransfer.files[0]);});
 $('remove').addEventListener('click',()=>{$('file').value='';select(null);});
 $('mode').addEventListener('change',()=>{$('known-settings').hidden=$('mode').value!=='known';$('blind-note').hidden=$('mode').value!=='blind';});
 $('pause').addEventListener('click',()=>run?.pause());$('resume').addEventListener('click',()=>{if(!document.hidden){$('status-detail').textContent='';run?.resume();}});$('stop').addEventListener('click',()=>{if(preparing){++token;preparing=false;status(states.stopped);controls();}else run?.stop();});
-$('reset').addEventListener('click',()=>{++token;clearSearch();file=null;info=null;sample=null;$('file').value='';$('demo-password').value='';$('load-demo').disabled=true;$('download-demo').disabled=true;$('demo-status').textContent=say('No sample created yet.','Noch kein Beispiel erzeugt.');metadata([]);status(say('READY','BEREIT'),say('Choose your ZIP below, select methods, then start the local search.','Wähle unten deine ZIP, lege die Methoden fest und starte die lokale Suche.'));document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';controls();});
+$('reset').addEventListener('click',()=>{++token;clearSearch();file=null;info=null;sample=null;$('authorized').checked=false;$('file').value='';$('demo-password').value='';$('load-demo').disabled=true;$('download-demo').disabled=true;$('demo-status').textContent=say('No sample created yet.','Noch kein Beispiel erzeugt.');metadata([]);status(say('READY','BEREIT'),say('Choose your ZIP below, select methods, then start the local search.','Wähle unten deine ZIP, lege die Methoden fest und starte die lokale Suche.'));document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';controls();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)run?.pause();});window.addEventListener('pagehide',()=>{run?.dispose();cleanupUrls();});
 $('reveal').addEventListener('click',()=>{const show=$('recovered').type==='password';$('recovered').type=show?'text':'password';$('reveal').setAttribute('aria-pressed',String(show));$('reveal').textContent=show?say('Hide password','Passwort verbergen'):say('Show password','Passwort anzeigen');});
 $('copy').addEventListener('click',async()=>{if(!result)return;try{await navigator.clipboard.writeText(result.password);$('status-detail').textContent=say('Password copied locally.','Passwort lokal kopiert.');}catch{$('status-detail').textContent=say('Clipboard unavailable. Reveal the password and copy it manually.','Zwischenablage nicht verfügbar. Zeige das Passwort an und kopiere es manuell.');}});
