@@ -18,8 +18,8 @@ let output=[];
 const opts={print:x=>output.push('OUT '+x),printErr:x=>output.push('ERR '+x)};
 const z=await SevenZip({...opts,locateFile:name=>new URL('../assets/archive-recovery-lab/vendor/'+name,import.meta.url).pathname,noInitialRun:true});
 const samples=[
- ['RAR4',readFileSync(resolve(dir,'test-v4.rar')),'nika'],
- ['RAR5',readFileSync(resolve(dir,'test-v5.rar')),'nika'],
+ ['RAR4',readFileSync(resolve(dir,'test-v4.rar')),'junrar'],
+ ['RAR5',readFileSync(resolve(dir,'test-v5.rar')),'junrar'],
  ['7Z',readFileSync(resolve(dir,'encrypted.7z')),'7']];
 for(let index=0;index<samples.length;index++){
  const [label,data,pass]=samples[index],name='/test-'+index+(index===2?'.7z':'.rar');
