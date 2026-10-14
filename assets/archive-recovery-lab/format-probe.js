@@ -35,6 +35,8 @@ async function rar4(blob) {
  const h = await read(blob, 7, 13), v = view(h);
  if (h[2] !== 0x73 || v.getUint16(5, true) < 13 ||
   7 + v.getUint16(5, true) > blob.size) fail();
+ const full = await read(blob, 7, v.getUint16(5, true));
+ if ((crc32(full.subarray(2)) & 65535) !== v.getUint16(0, true)) fail();
  const flags = v.getUint16(3, true);
  return {format: 'RAR4', supported: false, headerEncrypted: Boolean(flags & 0x80),
   volume: Boolean(flags & 1), detail: 'rar4-main',
@@ -48,7 +50,8 @@ async function rar5(blob) {
  if (size < 2 || size > 1024 * 1024 || 8 + at + size > blob.size) fail();
  let type; [type, at] = vint(b, at);
  let flags; [flags, at] = vint(b, at);
- if (![1, 4].includes(type) || at > start + size) fail();
+ if (![1, 4].includes(type) || at > start + size || start + size > b.length ||
+  crc32(b.subarray(4, start + size)) !== view(b).getUint32(0, true)) fail();
  let volume = false;
  if (type === 1) {
   if (flags & 1) [, at] = vint(b, at);
