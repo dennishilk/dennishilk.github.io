@@ -17,8 +17,28 @@ function status(message,detail=''){text('status',message);text('status-detail',d
 function clearResult(){result=null;$('result').hidden=true;$('recovered').value='';$('recovered').type='password';$('reveal').setAttribute('aria-pressed','false');$('downloads').replaceChildren();$('result-summary').textContent='';for(const id of ['result-strategy','result-method','result-engine','result-checks','result-time','result-format','verification-time','download-count'])text(id,'');$('reveal').textContent=say('Show password','Passwort anzeigen');cleanupUrls();}
 function clearSearch(){document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';run?.dispose();run=null;runConfig=null;phaseRun=null;lastViewState=null;preparing=false;clearResult();text('rate-label',say('Measured attempts / second','Gemessene Versuche / Sekunde'));for(const id of ['checked','rate','average','elapsed','space','remaining','phase'])$(id).textContent='—';$('progress').value=0;$('progress-label').textContent='0%';rateSample={elapsed:0,checked:0n};currentRate=0;paintPhases(true);refreshSelection();}
 function metadata(items){$('metadata').replaceChildren();for(const [key,value] of items){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=key;dd.textContent=value;$('metadata').append(dt,dd);}}
+function inspectOther(blob,format){
+ return new Promise((resolve,reject)=>{
+  const w=new Worker(new URL('./format-worker.js',import.meta.url),{type:'module'});
+  const timeout=setTimeout(()=>{w.terminate();reject(Object.assign(new Error('timeout'),{code:'limits'}));},45000);
+  const end=()=>{clearTimeout(timeout);w.terminate();};
+  w.onerror=()=>{end();reject(Object.assign(new Error('worker'),{code:'worker'}));};
+  w.onmessage=({data})=>{
+   if(data.type==='inspected'){end();resolve(data.info);}
+   if(data.type==='error'){end();reject(Object.assign(new Error(data.code),{code:data.code}));}
+  };
+  w.postMessage({type:'inspect',blob,format});
+ });
+}
 async function select(selected){if(busy())return;const id=++token;clearSearch();file=selected;info=null;metadata([]);controls();if(!selected){status(say('READY','BEREIT'));return;}status(say('READING HEADER','HEADER EINLESEN'));
- try{const found=await inspect(selected);if(id!==token)return;info=found;
+ try{
+ const detected=await inspect(selected);
+ if(id!==token)return;
+ // Only the real local WASM backend may enable a non-ZIP search.
+ const found=detected.format==='ZIP'||detected.format==='UNKNOWN'?detected:
+  await inspectOther(selected,detected.format);
+ if(id!==token)return;
+ info=found;
  metadata([[say('Filename','Dateiname'),selected.name??'local-demo.zip'],[say('File size','Dateigröße'),num(selected.size)+' B'],[say('Container','Container'),found.format]]);
  if(!found.supported){
    let probe;
@@ -43,7 +63,7 @@ async function select(selected){if(busy())return;const id=++token;clearSearch();
    status(say('UNSUPPORTED','NICHT UNTERSTÜTZT'),found.format+': '+say('metadata only; no password testing, extraction or export.','nur Metadaten; keine Passwortprüfung, Entschlüsselung oder Export.'));
    return;
   }
- metadata([[say('Filename','Dateiname'),selected.name??'local-demo.zip'],[say('File size','Dateigröße'),num(selected.size)+' B'],['Container','ZIP'],[say('Encryption','Verschlüsselung'),found.algorithms.join(' + ')],[say('Files / encrypted','Dateien / verschlüsselt'),`${found.entries.length} / ${found.encryptedCount}`],[say('Output size','Ausgabegröße'),num(found.total)+' B'],[say('Filenames','Dateinamen'),say('Visible · not encrypted','Sichtbar · unverschlüsselt')],[say('Extraction','Entpacken'),say('Local, after verified recovery','Lokal, nach bestätigter Wiederherstellung')],[say('Parameters','Parameter'),found.algorithms.some(a=>a.includes('AES'))?'PBKDF2-HMAC-SHA-1 · 1,000 · HMAC-SHA-1-80':'ZipCrypto · CRC-32']]);status(say('READY','BEREIT'),say('Choose your search methods. No password length was inferred.','Wähle deine Suchmethoden. Es wurde keine Passwortlänge abgeleitet.'));
+ metadata([[say('Filename','Dateiname'),selected.name??'local-demo.zip'],[say('File size','Dateigröße'),num(selected.size)+' B'],['Container',found.format],[say('Encryption','Verschlüsselung'),found.algorithms.join(' + ')],[say('Files / encrypted','Dateien / verschlüsselt'),`${found.entries.length} / ${found.encryptedCount}`],[say('Output size','Ausgabegröße'),num(found.total)+' B'],[say('Filenames','Dateinamen'),found.filenamesEncrypted?say('Encrypted with archive headers','Mit Archiv-Headern verschlüsselt'):say('Visible or separately encrypted','Sichtbar oder separat verschlüsselt')],[say('Extraction','Entpacken'),say('Local, after verified recovery','Lokal, nach bestätigter Wiederherstellung')],[say('Parameters','Parameter'),found.format==='ZIP'?(found.algorithms.some(a=>a.includes('AES'))?'PBKDF2-HMAC-SHA-1 · 1,000 · HMAC-SHA-1-80':'ZipCrypto · CRC-32'):say('Format-specific password derivation · local WASM','Formatspezifische Schlüsselableitung · lokales WASM')]]);status(say('READY','BEREIT'),say('Choose your search methods. No password length was inferred.','Wähle deine Suchmethoden. Es wurde keine Passwortlänge abgeleitet.'));
  }catch(e){if(id!==token)return;info=null;status(say('FILE REJECTED','DATEI ABGEWIESEN'),errors[e.code]??errors.malformed);}finally{if(id===token)controls();}
 }
 function config(){const c={german:$('de').checked,english:$('en').checked,common:$('common').checked,brute:$('brute').checked,mode:$('mode').value,min:Number($('min').value),max:Number($('max').value)};for(const k of ['lower','upper','digits','symbols'])c[k]=$(k).checked;if(!c.german&&!c.english&&!c.common&&!c.brute)throw Error(say('Choose at least one search method.','Wähle mindestens eine Suchmethode.'));return c;}
@@ -56,7 +76,7 @@ function draw(s){
  paintPhases();
  if(s.state==='exhausted')text('status-detail',say('All selected candidates were rejected. This does not prove the password is unbreakable.','Alle ausgewählten Kandidaten wurden abgewiesen. Das beweist keine Unknackbarkeit.'));
  if(s.state==='paused')text('status-detail',say('Search paused. Resume explicitly, including after returning to this tab.','Suche pausiert. Setze ausdrücklich fort, auch nach Rückkehr zu diesem Tab.'));
- if(s.state==='running')text('status-detail',say('Your CPU is testing the selected candidates against this ZIP.','Deine CPU prüft die ausgewählten Kandidaten gegen diese ZIP.'));
+ if(s.state==='running')text('status-detail',say('Your CPU is checking candidates against the selected file.','Deine CPU prüft Passwortkandidaten gegen die gewählte Datei.'));
  if(s.state==='verifying')text('status-detail',say('Re-opening the archive and verifying every file independently.','Das Archiv wird erneut geöffnet und jede Datei unabhängig geprüft.'));
  if(s.state==='stopped')text('status-detail',say('Search stopped. Confirmed checks are retained; restart begins a fresh search.','Suche gestoppt. Bestätigte Versuche bleiben sichtbar; ein neuer Start beginnt von vorn.'));
  controls();
@@ -64,12 +84,12 @@ function draw(s){
 $('start').addEventListener('click',async()=>{if(busy()||!info?.supported)return;const id=++token;clearSearch();preparing=true;controls();status(states.starting,say('Preparing the shared dictionary indexes locally…','Gemeinsame Wörterbuchindizes werden lokal vorbereitet…'));
  try{const c=config();runConfig=c;refreshSelection();const phases=await preparePhases(c);if(id!==token)return;if(!phases.length)throw Error(say('The search has no candidates.','Die Suche hat keine Kandidaten.'));
   preparing=false;run=new SearchRun(file,phases,Number($('workers').value),{progress:draw,error:code=>{status(states.error,errors[code]??errors.verification);controls();},result:data=>{
-   result=data;$('result').hidden=false;$('recovered').value=data.password;$('status-detail').textContent=say('Every file passed independent extraction and integrity checks.','Jede Datei bestand die unabhängige Entschlüsselung und Integritätsprüfung.');
+   result=data;$('result').hidden=false;$('allzip').hidden=info?.format==='PDF';$('recovered').value=data.password;$('status-detail').textContent=say('Every file passed independent extraction and integrity checks.','Jede Datei bestand die unabhängige Entschlüsselung und Integritätsprüfung.');
    $('result-summary').textContent=`${phaseName(run.phases[data.phase])}\nCPU Worker ${data.worker} · ${num(data.checked)} ${say('confirmed attempts','bestätigte Versuche')} · ${seconds(data.elapsed)}\n${say('Independent verification','Unabhängige Bestätigung')}: ${seconds(data.verificationMs)}\n${data.algorithms.join(' + ')}`;
-   const matching=run.phases[data.phase];text('result-strategy',phaseName(matching));text('result-method',methodName(matching.kind==='dictionary'?matching.language:'brute')+' · '+modeName(runConfig));text('result-engine',`CPU Worker ${data.worker}`);text('result-checks',num(data.checked));text('result-time',seconds(data.elapsed+data.verificationMs));text('result-format','ZIP · '+data.algorithms.join(' + '));text('verification-time',say('Independent confirmation: ','Unabhängige Bestätigung: ')+seconds(data.verificationMs));
+   const matching=run.phases[data.phase];text('result-strategy',phaseName(matching));text('result-method',methodName(matching.kind==='dictionary'?matching.language:'brute')+' · '+modeName(runConfig));text('result-engine',`CPU Worker ${data.worker}`);text('result-checks',num(data.checked));text('result-time',seconds(data.elapsed+data.verificationMs));text('result-format',info.format+' · '+data.algorithms.join(' + '));text('verification-time',say('Independent confirmation: ','Unabhängige Bestätigung: ')+seconds(data.verificationMs));
    const files=data.files.filter(f=>!f.directory);text('download-count',`(${files.length})`);
    for(const f of files){const button=document.createElement('button'),name=document.createElement('span'),size=document.createElement('span');button.type='button';name.className='download-name';name.textContent=f.name;size.className='download-size';size.textContent=num(f.blob.size)+' B ↓';button.append(name,size);button.addEventListener('click',()=>download(f.blob,f.name.split('/').at(-1)));$('downloads').append(button);}paintPhases(true);controls();
-  }});$('status-detail').textContent='';paintPhases(true);await run.start();if(document.hidden)run.pause();
+  }},info.format);$('status-detail').textContent='';paintPhases(true);await run.start();if(document.hidden)run.pause();
  }catch(e){if(id!==token)return;preparing=false;status(states.error,e.message);controls();}
 });
 $('file').addEventListener('change',()=>select($('file').files[0]??null));
@@ -83,7 +103,7 @@ $('reset').addEventListener('click',()=>{++token;clearSearch();file=null;info=nu
 document.addEventListener('visibilitychange',()=>{if(document.hidden)run?.pause();});window.addEventListener('pagehide',()=>{run?.dispose();cleanupUrls();});
 $('reveal').addEventListener('click',()=>{const show=$('recovered').type==='password';$('recovered').type=show?'text':'password';$('reveal').setAttribute('aria-pressed',String(show));$('reveal').textContent=show?say('Hide password','Passwort verbergen'):say('Show password','Passwort anzeigen');});
 $('copy').addEventListener('click',async()=>{if(!result)return;try{await navigator.clipboard.writeText(result.password);$('status-detail').textContent=say('Password copied locally.','Passwort lokal kopiert.');}catch{$('status-detail').textContent=say('Clipboard unavailable. Reveal the password and copy it manually.','Zwischenablage nicht verfügbar. Zeige das Passwort an und kopiere es manuell.');}});
-$('allzip').addEventListener('click',async()=>{if(!result)return;const data=result;$('allzip').disabled=true;try{const blob=await exportZip(data.files);if(result===data)download(blob,'recovered-files.zip');}catch{$('status-detail').textContent=errors.verification;}finally{$('allzip').disabled=false;}});
+$('allzip').addEventListener('click',async()=>{if(!result||info?.format==='PDF')return;const data=result;$('allzip').disabled=true;try{const blob=await exportZip(data.files);if(result===data)download(blob,'recovered-files.zip');}catch{$('status-detail').textContent=errors.verification;}finally{$('allzip').disabled=false;}});
 $('generate').addEventListener('click',async()=>{const id=token;$('generate').disabled=true;try{const b=await createDemo($('demo-password').value,$('demo-method').value);if(id!==token)return;sample=b;$('demo-password').value='';$('demo-status').textContent=say('Encrypted sample ready. Select it, then choose your search normally.','Verschlüsseltes Beispiel bereit. Wähle es aus und konfiguriere die Suche selbst.');$('download-demo').disabled=false;controls();}catch(e){$('demo-status').textContent=errors[e.code]??errors.verification;}finally{$('generate').disabled=false;}});
 $('load-demo').addEventListener('click',()=>{if(sample)select(new File([sample],'local-demo.zip',{type:'application/zip'}));});$('download-demo').addEventListener('click',()=>{if(sample)download(sample,'local-demo.zip');});
 $('workers').value=String(Math.min(2,Math.max(1,(navigator.hardwareConcurrency??2)-1)));$('cpu-status').textContent=say('CPU Workers · ','CPU-Worker · ')+(navigator.hardwareConcurrency??say('unknown','unbekannt'))+say(' logical processors reported by browser.',' vom Browser gemeldete logische Prozessoren.');
@@ -103,11 +123,11 @@ function refreshSelection(){
  text('methods-label',run?say('Methods used in this search','Methoden dieser Suche'):say('Selected methods','Ausgewählte Methoden'));
  text('live-mode',modeName(c));text('mode-activity',modeName(c)+(c.mode==='known'?say(' · explicit hints',' · eigene Hinweise'):say(' · no assumed length',' · keine angenommene Länge')));
  text('live-file',file?.name??say('No file selected','Keine Datei ausgewählt'));
- text('file-status',info?.supported?'ZIP · '+info.algorithms.join(' + ')+say(' · supported',' · unterstützt'):info?.supported===false?info.format+say(' · recovery unsupported',' · Wiederherstellung nicht unterstützt'):file?say('No supported ZIP is ready.','Keine unterstützte ZIP ist bereit.'):say('Choose a file to begin.','Wähle eine Datei zum Beginnen.'));
+ text('file-status',info?.supported?info.format+' · '+info.algorithms.join(' + ')+say(' · supported',' · unterstützt'):info?.supported===false?info.format+say(' · recovery unsupported',' · Wiederherstellung nicht unterstützt'):file?say('No supported encrypted file is ready.','Keine unterstützte ZIP ist bereit.'):say('Choose a file to begin.','Wähle eine Datei zum Beginnen.'));
  $('file-status').dataset.supported=String(Boolean(info?.supported));
- text('config-summary',`${info?.supported?'ZIP · ':''}CPU · ${$('workers').value} ${say('workers','Worker')} · ${modeName(selection())} · ${selectedKeys(selection()).length} ${say('selected methods','gewählte Methoden')}`);
+ text('config-summary',`${info?.supported?info.format+' · ':''}CPU · ${$('workers').value} ${say('workers','Worker')} · ${modeName(selection())} · ${selectedKeys(selection()).length} ${say('selected methods','gewählte Methoden')}`);
  const state=run?.state,activeWorkers=run?.pending.size??0;
- text('cpu-activity',state==='running'?`${activeWorkers} ${say('workers · ZIP verification','Worker · ZIP-Prüfung')}`:state==='verifying'?say('Fresh Worker · checking every file','Neuer Worker · prüft alle Dateien'):state==='paused'?say('Paused · no new attempts','Pausiert · keine neuen Versuche'):state==='found'?say('Finished · independently verified','Fertig · unabhängig bestätigt'):state==='stopped'||state==='exhausted'?say('Finished · workers released','Beendet · Worker freigegeben'):preparing||state==='starting'?say('Preparing local search','Lokale Suche wird vorbereitet'):`${say('Ready','Bereit')} · ${$('workers').value} ${say('workers selected','Worker gewählt')}`);
+ text('cpu-activity',state==='running'?``${activeWorkers} ${say('workers · local format verification','Worker · lokale Formatprüfung')}``:state==='verifying'?say('Fresh Worker · checking every file','Neuer Worker · prüft alle Dateien'):state==='paused'?say('Paused · no new attempts','Pausiert · keine neuen Versuche'):state==='found'?say('Finished · independently verified','Fertig · unabhängig bestätigt'):state==='stopped'||state==='exhausted'?say('Finished · workers released','Beendet · Worker freigegeben'):preparing||state==='starting'?say('Preparing local search','Lokale Suche wird vorbereitet'):`${say('Ready','Bereit')} · ${$('workers').value} ${say('workers selected','Worker gewählt')}`);
  $('cpu-chip').dataset.active=String(state==='running'||state==='verifying'||state==='draining');text('cpu-live-rate',state==='running'&&currentRate>0?num(Math.round(currentRate)):'—');
  if(!run)paintPhases();
 }
