@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths:
       - 'scripts/test-archive-wasm-browser.mjs'
+      - 'scripts/test-archive-recovery-browser.mjs'
+      - 'museum/archive-recovery-lab/index.html'
+      - 'de/museum/archive-recovery-lab/index.html'
+      - 'assets/archive-recovery-lab/lab.css'
       - '.github/workflows/archive-wasm-browser.yml'
       - 'assets/archive-recovery-lab/format-backend.js'
       - 'assets/archive-recovery-lab/ui.js'
