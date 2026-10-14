@@ -1,0 +1,35 @@
+name: Archive genuine WASM backend acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/archive-wasm-smoke.mjs'
+      - '.github/workflows/archive-wasm-smoke.yml'
+      - 'assets/archive-recovery-lab/vendor/7zz.*'
+      - 'assets/archive-recovery-lab/vendor/qpdf.mjs'
+permissions:
+  contents: read
+jobs:
+  actual-fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install independent test-only generators
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq p7zip-full
+          python -m pip install 'pypdf==5.9.0'
+      - name: Obtain genuine independently-created RAR4 and RAR5 fixtures
+        run: |
+          mkdir -p "$RUNNER_TEMP/archive-wasm-test"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/use-strict/7z-wasm/master/test/test-files/rar/test-v4.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v4.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/use-strict/7z-wasm/master/test/test-files/rar/test-v5.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v5.rar"
+      - name: Execute WASM with real encrypted RAR4 RAR5 7Z and PDF
+        run: node scripts/archive-wasm-smoke.mjs
