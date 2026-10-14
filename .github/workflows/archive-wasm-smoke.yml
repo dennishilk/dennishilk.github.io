@@ -29,7 +29,7 @@ jobs:
       - name: Obtain genuine independently-created RAR4 and RAR5 fixtures
         run: |
           mkdir -p "$RUNNER_TEMP/archive-wasm-test"
-          curl -fsSL --retry 3 https://raw.githubusercontent.com/use-strict/7z-wasm/master/test/test-files/rar/test-v4.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v4.rar"
-          curl -fsSL --retry 3 https://raw.githubusercontent.com/use-strict/7z-wasm/master/test/test-files/rar/test-v5.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v5.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar4-encrypted-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v4.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar5-encrypted-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v5.rar"
       - name: Execute WASM with real encrypted RAR4 RAR5 7Z and PDF
         run: node scripts/archive-wasm-smoke.mjs
