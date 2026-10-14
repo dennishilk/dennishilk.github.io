@@ -117,6 +117,38 @@ try{
  await fileDownload.saveAs(filePath);
  assert.match(readFileSync(filePath,'utf8'),/Encrypted archive test/);
  console.log('FULL_7Z_UI_RECOVERY_AND_DOWNLOAD_SUCCESS');
+ // PDF must use the exact same shared search dashboard and export an actual
+ // password-free PDF, not a ZIP, verified independently after downloading.
+ await page.locator('#reset').click();
+ await page.locator('#file').setInputFiles(resolve(dir,'encrypted-AES-256.pdf'));
+ await page.waitForFunction(()=>!document.getElementById('start').disabled,{},{timeout:45000});
+ await page.locator('#start').click();
+ await page.waitForFunction(()=>!document.getElementById('result').hidden,{},{timeout:90000});
+ assert.equal(await page.locator('#recovered').inputValue(),'7');
+ assert.match(await page.locator('#result-format').innerText(),/PDF Standard Security R6/);
+ assert.equal(await page.locator('#allzip').isVisible(),false);
+ const pdfDownload=page.waitForEvent('download');
+ await page.locator('#downloads button').first().click();
+ const exported=await pdfDownload;
+ const out=resolve(dir,'browser-ui-decrypted.pdf');
+ await exported.saveAs(out);
+ execFileSync('python3',['-c',[
+  'from pypdf import PdfReader',
+  'r=PdfReader('+JSON.stringify(out)+')',
+  'assert not r.is_encrypted',
+  'assert len(r.pages)==1'].join('\n')]);
+ console.log('FULL_PDF_UI_RECOVERY_AND_DOWNLOAD_SUCCESS');
+
+ // Verify that the bilingual route also initializes the same modules and
+ // keeps the existing compact museum-like layout without star animations.
+ await page.goto(origin+'/de/museum/archive-recovery-lab/');
+ await page.waitForFunction(()=>window.archiveRecoveryReady);
+ assert.equal(await page.locator('canvas').count(),0);
+ await page.locator('#file').setInputFiles(resolve(dir,'encrypted.7z'));
+ await page.waitForFunction(()=>!document.getElementById('start').disabled,{},{timeout:45000});
+ assert.match(await page.locator('#file-status').innerText(),/7Z/);
+ console.log('GERMAN_MULTI_FORMAT_UI_READY');
+
  assert.deepEqual(errors,[]);
  assert.ok(requests.every(r=>r.method==='GET'&&new URL(r.url).origin===origin&&!r.body));
  console.log('REAL_BROWSER_WASM_SUCCESS',requests.length,'same-origin GET requests');
