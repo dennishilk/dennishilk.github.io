@@ -83,6 +83,40 @@ try{
     'assert len(r.pages)==1'].join('\n')]);
   }
  }
+ // Exercise the actual shared SearchRun coordinator, result presentation,
+ // individual download and reconstructed ordinary ZIP in a real browser.
+ await page.locator('#reset').click();
+ await page.locator('#file').setInputFiles(resolve(dir,'encrypted.7z'));
+ await page.waitForFunction(()=>!document.getElementById('start').disabled,{},{timeout:45000});
+ for(const id of ['de','en','common'])await page.locator('#'+id).uncheck();
+ await page.locator('#brute').check();
+ await page.locator('#mode').selectOption('known');
+ await page.locator('#min').fill('1');
+ await page.locator('#max').fill('1');
+ for(const id of ['lower','upper','symbols'])await page.locator('#'+id).uncheck();
+ await page.locator('#digits').check();
+ await page.locator('#workers').selectOption('1');
+ await page.locator('#start').click();
+ await page.waitForFunction(()=>!document.getElementById('result').hidden,{},{timeout:90000});
+ assert.equal(await page.locator('#recovered').inputValue(),'7');
+ assert.match(await page.locator('#result-format').innerText(),/7Z/);
+ assert.equal(await page.locator('#allzip').isVisible(),true);
+ const zipDownload=page.waitForEvent('download');
+ await page.locator('#allzip').click();
+ const zip=await zipDownload;const zipPath=resolve(dir,'verified-from-browser.zip');
+ await zip.saveAs(zipPath);
+ execFileSync('python3',['-c',[
+  'from zipfile import ZipFile',
+  'with ZipFile('+JSON.stringify(zipPath)+') as z:',
+  " assert z.testzip() is None",
+  " assert b'Encrypted archive test' in z.read('sample.txt')"].join('\n')]);
+ const individual=page.waitForEvent('download');
+ await page.locator('#downloads button').first().click();
+ const fileDownload=await individual;
+ const filePath=resolve(dir,'browser-sample.txt');
+ await fileDownload.saveAs(filePath);
+ assert.match(readFileSync(filePath,'utf8'),/Encrypted archive test/);
+ console.log('FULL_7Z_UI_RECOVERY_AND_DOWNLOAD_SUCCESS');
  assert.deepEqual(errors,[]);
  assert.ok(requests.every(r=>r.method==='GET'&&new URL(r.url).origin===origin&&!r.body));
  console.log('REAL_BROWSER_WASM_SUCCESS',requests.length,'same-origin GET requests');
