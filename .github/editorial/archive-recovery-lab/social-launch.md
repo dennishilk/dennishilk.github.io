@@ -33,7 +33,7 @@ Alt-Text: Das deutschsprachige Archive Recovery Lab zeigt die unabhängig bestä
 
 My Archive Recovery Lab tests real password candidates locally in your browser. Supported encrypted files can be recovered and downloaded after independent verification — without uploading your private archive. 🐧
 
-CPU by default, plus optional WebGPU/Hybrid for compatible ZIP/RAR5 variants. Read the walkthrough with real screenshots:
+CPU by default, plus optional WebGPU/Hybrid for compatible ZIP/RAR5 variants. Read the full guide:
 
 https://www.dennishilk.com/blog/recover-zip-rar-7z-pdf-password-without-upload/
 
