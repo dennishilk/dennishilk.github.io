@@ -114,8 +114,17 @@ export async function createFormatBackend(blob,format){
  module.FS.writeFile(source,new Uint8Array(await blob.arrayBuffer()));
  const run=args=>statusResult(module,args,collector);
  const check7=password=>{
-  const r=run(['t','-bd','-y','-p'+pwdArg(password),source]);
-  return r.code===0&&/Everything is Ok/i.test(r.output);
+  // For encrypted headers, a successful 'l -slt' proves the password can
+  // decrypt a structurally valid directory WITHOUT decompressing untrusted
+  // file payloads on every candidate. Full 't' happens independently after
+  // a match, only after enforcing declared output limits.
+  if(info?.filenamesEncrypted){
+   const header=run(['l','-slt','-bd','-y','-p'+pwdArg(password),source]);
+   if(header.code!==0)return false;
+   try{return parse7zListing(header.output).files.length>0;}catch{return false;}
+  }
+  const checked=run(['t','-bd','-y','-p'+pwdArg(password),source]);
+  return checked.code===0&&/Everything is Ok/i.test(checked.output);
  };
  const list7=password=>{
   const r=run(['l','-slt','-bd','-y','-p'+pwdArg(password),source]);
@@ -184,7 +193,11 @@ export async function createFormatBackend(blob,format){
   }
   if(!check7(password))fail('independent');
   const listing=list7(password);
-  if(!listing.encrypted)fail('unencrypted');
+  if(!listing.encrypted&&!info.filenamesEncrypted)fail('unencrypted');
+  // Validate sizes and filenames before any payload decompression. One
+  // independently reconstructed worker then tests every CRC and extracts.
+  const test=run(['t','-bd','-y','-p'+pwdArg(password),source]);
+  if(test.code!==0||!/Everything is Ok/i.test(test.output))fail('independent');
   module.FS.mkdir('/out');
   const extracted=run(['x','-bd','-y','-p'+pwdArg(password),'-o/out',source]);
   if(extracted.code!==0||!/Everything is Ok/i.test(extracted.output))fail('independent');
