@@ -7,6 +7,19 @@ const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(
 try{
  await page.goto(origin+'/museum/');await page.waitForFunction(()=>window.museumCatalogReady);await page.evaluate(()=>document.fonts.ready);
  assert.equal(await page.locator('.catalog-card:visible').count(),18);
+ assert.equal(await page.locator('#stars[data-museum-atmosphere=subtle]').count(),1);
+ const atmosphere=await page.evaluate(()=>{const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d'),pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;let colored=0;for(let i=3;i<pixels.length;i+=4)if(pixels[i])colored++;return {colored,pointerEvents:getComputedStyle(canvas).pointerEvents,back:Number(getComputedStyle(canvas).zIndex),front:Number(getComputedStyle(document.querySelector('.museum-index')).zIndex),ratio:canvas.width/innerWidth};});
+ assert.ok(atmosphere.colored>50);assert.equal(atmosphere.pointerEvents,'none');assert.ok(atmosphere.back<atmosphere.front);assert.ok(atmosphere.ratio<=1.251);
+ const originalGeometry=await page.locator('.catalog-card').evaluateAll(nodes=>nodes.map(n=>({x:n.offsetLeft,y:n.offsetTop,width:n.offsetWidth,height:n.offsetHeight})));
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const still=await page.locator('#stars').evaluate(canvas=>canvas.toDataURL());await page.waitForTimeout(180);assert.equal(await page.locator('#stars').evaluate(canvas=>canvas.toDataURL()),still);
+ await page.emulateMedia({reducedMotion:'no-preference'});await page.waitForTimeout(180);
+ assert.deepEqual(await page.locator('.catalog-card').evaluateAll(nodes=>nodes.map(n=>({x:n.offsetLeft,y:n.offsetTop,width:n.offsetWidth,height:n.offsetHeight}))),originalGeometry);
+ for(const [topic,total] of [['retro',7],['linux',4],['network',4],['security',3],['all',18]]){await page.locator('[data-filter='+topic+']').click();assert.equal(await page.locator('.catalog-card:visible').count(),total);}
+ const renderingBudget=await page.evaluate(()=>new Promise(resolve=>{const ctx=document.getElementById('stars').getContext('2d'),original=ctx.clearRect;let draws=0;const tasks=[];const observer=new PerformanceObserver(list=>tasks.push(...list.getEntries().map(entry=>entry.duration)));observer.observe({type:'longtask',buffered:false});ctx.clearRect=function(...args){draws++;return original.apply(this,args);};setTimeout(()=>{ctx.clearRect=original;observer.disconnect();resolve({draws,longTasks:tasks.length,maxTask:Math.max(0,...tasks)});},1050);}));
+ assert.ok(renderingBudget.draws>0&&renderingBudget.draws<=27);assert.equal(renderingBudget.longTasks,0);console.log('Background rendering budget: '+JSON.stringify(renderingBudget));
+ console.log('PASS: visible homepage-style cyan stars, background layering, pointer pass-through, capped DPR, static reduced-motion alternative, unchanged card geometry, all four filters');
+
  for(const width of [320,390,768,1024,1440,2048]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Overflow '+width);}
  await page.setViewportSize({width:1440,height:1050});await page.screenshot({path:qa+'/en-desktop.png',fullPage:true});
  await page.locator('[data-filter=security]').click();assert.equal(await page.locator('.catalog-card:visible').count(),3);await page.locator('#catalog-search').fill('gpu');assert.equal(await page.locator('.catalog-card:visible').count(),1);assert.match(await page.locator('.catalog-card:visible h3').innerText(),/Password/);
@@ -20,6 +33,9 @@ try{
  await page.setViewportSize({width:1440,height:1050});await page.screenshot({path:qa+'/de-desktop.png',fullPage:true});await page.setViewportSize({width:390,height:844});await page.screenshot({path:qa+'/de-mobile.png',fullPage:true});
  await page.locator('.site-language-control:visible').first().click();await page.waitForFunction(()=>document.documentElement.lang==='en');await page.waitForFunction(()=>document.querySelector('#catalog-title').textContent==='Explore the collection');assert.equal(await page.locator('.catalog-card[href="/museum/password-cracking-lab/"]').count(),1);
  await page.setViewportSize({width:1440,height:1050});console.log(JSON.stringify(await page.evaluate(()=>({height:document.documentElement.scrollHeight,cardHeights:[...document.querySelectorAll('.catalog-card')].map(e=>Math.round(e.getBoundingClientRect().height)),font:getComputedStyle(document.body).fontFamily}))))
+ const exhibits=await browser.newContext();const exhibit=await exhibits.newPage();await exhibit.route('**/*',route=>new URL(route.request().url()).origin!==origin?route.abort():route.continue());
+ for(const path of ['/museum/c64/','/museum/cryptography-lab/','/museum/bios-setup/','/museum/password-cracking-lab/']){await exhibit.goto(origin+path,{waitUntil:'domcontentloaded'});await exhibit.waitForTimeout(120);assert.equal(await exhibit.locator('[data-museum-atmosphere]').count(),0);assert.equal(await exhibit.locator('#stars').count(),0,path);}
+ await exhibits.close();
  assert.deepEqual(errors,[]);await page.context().setOffline(true);await page.locator('#catalog-search').fill('c64');assert.equal(await page.locator('.catalog-card:visible').count(),1);await page.locator('#catalog-search').press('Escape');assert.equal(await page.locator('.catalog-card:visible').count(),18);
  const noJS=await browser.newContext({javaScriptEnabled:false});const staticPage=await noJS.newPage();await staticPage.route('**/*',route=>new URL(route.request().url()).origin!==origin?route.abort():route.continue());await staticPage.goto(origin+'/museum/');assert.equal(await staticPage.locator('.catalog-card:visible').count(),18);assert.equal(await staticPage.locator('.catalog-controls').isVisible(),false);await noJS.close();
  console.log('PASS: bilingual filters/search/reset, native-language destinations, offline interaction, no-JS fallback, 12 responsive widths, zero page errors');
