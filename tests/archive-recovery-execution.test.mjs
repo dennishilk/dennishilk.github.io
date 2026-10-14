@@ -7,7 +7,7 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
 class Actor{
  constructor(url){this.gpu=String(url).includes('gpu-worker');this.dead=false;this.paused=false;Actor.all.push(this);}
  postMessage(data){
-  if(data.type==='pause'){this.paused=true;return;}if(data.type==='resume'){this.paused=false;this.work?.();return;}
+  if(data.type==='pause'){if(this.gpu)return;this.paused=true;this.onmessage({data:{type:'paused',epoch:data.epoch}});return;}if(data.type==='resume'){this.paused=false;this.work?.();return;}
   if(data.type==='stop'){this.stopping=true;this.paused=false;this.work?.();return;}
   if(data.type==='init'){setTimeout(()=>{if(!this.dead)this.onmessage({data:Actor.failAt===Actor.all.indexOf(this)+1?{type:'error',code:'wasm-init'}:{type:'ready'}});},2);return;}
   if(data.type==='verify'){setTimeout(()=>{if(!this.dead)this.onmessage({data:{type:'verified',files:[],algorithms:['test']}});},1);return;}
@@ -116,4 +116,13 @@ test('partially initialized configurations fail completely; Reset during startup
 test('production never presents a software WebGPU adapter as hardware acceleration',async()=>{
  let requestedDevice=false;const adapter={info:{architecture:'swiftshader'},requestDevice(){requestedDevice=true;throw Error();}};
  await assert.rejects(ArchiveGpu.create({gpu:{requestAdapter:async()=>adapter}}),e=>e.code==='gpu-software');assert.equal(requestedDevice,false);
+});
+
+test('Pause reports quiescence only after matching CPU epochs and completed GPU work',()=>{
+ const run=new SearchRun(new Blob(),[phase(1000)],2),cpu={},gpu={};run.state='paused';run.pauseEpoch=2;run.roles.set(cpu,'cpu');run.roles.set(gpu,'gpu');run.pending.set(cpu,{id:1});run.pending.set(gpu,{id:2});
+ assert.equal(run.pauseDraining,true);run.message(cpu,{type:'paused',epoch:1});assert.equal(run.pauseAcknowledged.size,0);run.message(cpu,{type:'paused',epoch:2});assert.equal(run.pauseDraining,true);run.pending.delete(gpu);assert.equal(run.pauseDraining,false);
+});
+test('RAR5 preparation mirrors native 127-unit truncation and refuses ambiguous encodings',async()=>{
+ const {rar5Candidate}=await import('../assets/archive-recovery-lab/rar5-gpu.js');assert.equal(rar5Candidate('x'.repeat(128)),'x'.repeat(127));assert.equal(rar5Candidate('a'.repeat(125)+'🔐'),'a'.repeat(125)+'🔐');
+ for(const bad of ['','x'.repeat(257),'a'.repeat(126)+'🔐','\ud800','x\u0000y'])assert.throws(()=>rar5Candidate(bad),e=>e.code==='gpu-rar5-encoding');
 });

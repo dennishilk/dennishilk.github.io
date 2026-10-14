@@ -93,7 +93,7 @@ try{
   await input('test-7z-secret.7z');await supported();
   assert.match(await page.locator('#file-status').innerText(),/AES-256.*ZSTD/);
   const checks=await page.evaluate(async()=>{
-   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48');
+   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48-drain1');
    const b=await createFormatBackend(document.querySelector('#file').files[0],'7Z');
    return {wrong:await b.check('wrong'),good:await b.check('secret')};
   });
@@ -103,7 +103,7 @@ try{
   await page.locator('#workers').selectOption('1');
   await page.locator('#start').click();
   await page.waitForFunction(()=>Number(document.getElementById('checked').textContent.replace(/[^0-9]/g,''))>=4);
-  await page.locator('#pause').click();await page.waitForTimeout(1000);
+  await page.locator('#pause').click();await page.waitForFunction(()=>document.body.dataset.pauseDraining==='false');
   const pausedChecks=await page.locator('#checked').innerText();await page.waitForTimeout(300);
   assert.equal(await page.locator('#checked').innerText(),pausedChecks);
   assert.match(await page.locator('#status').innerText(),/PAUSED|PAUSIERT/);
@@ -117,14 +117,14 @@ try{
   await input('test-pdf-aes256-test9.pdf');await supported();
   // Genuine negative and positive opening-password checks against original R6.
   const direct=await page.evaluate(async()=>{
-   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48');
+   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48-drain1');
    const b=await createFormatBackend(document.querySelector('#file').files[0],'PDF');
    return {revision:b.info.revision,bad:await b.check('wrong'),good:await b.check('test9')};
   });
   assert.deepEqual(direct,{revision:6,bad:false,good:true});
   await known();
   await page.evaluate(async()=>{
-   const {SearchRun}=await import('/assets/archive-recovery-lab/search.js?v=20261014-48');
+   const {SearchRun}=await import('/assets/archive-recovery-lab/search.js?v=20261014-48-drain1');
    const start=SearchRun.prototype.start;
    SearchRun.prototype.start=function(){
     if(this.format==='PDF'){

@@ -1,7 +1,8 @@
+import {rar5Candidate} from './rar5-gpu.js?v=20261014-48-drain1';
 // Dedicated GPU actor; CPU confirmation runs only for cryptographic filter hits.
-import {ArchiveGpu,zipParameters,gpuVariant} from './gpu.js?v=20261014-48';
-import {createFormatBackend} from './format-backend.js?v=20261014-48';
-import {verifier} from './core.js?v=20261014-48';
+import {ArchiveGpu,zipParameters,gpuVariant} from './gpu.js?v=20261014-48-drain1';
+import {createFormatBackend} from './format-backend.js?v=20261014-48-drain1';
+import {verifier} from './core.js?v=20261014-48-drain1';
 let gpu=null,check=null,param=null,stopped=false;
 self.onmessage=async({data})=>{
  if(data.type==='stop'){stopped=true;gpu?.dispose();return;}
@@ -21,7 +22,7 @@ self.onmessage=async({data})=>{
    if(!stopped)self.postMessage({type:'ready',info:gpu.info});return;
   }
   if(data.type==='batch'){
-   const flags=await gpu.compute(data.candidates,param);if(stopped)return;
+   const candidates=param.kind===2?data.candidates.map(rar5Candidate):data.candidates;const flags=await gpu.compute(candidates,param);if(stopped)return;
    let match=null;
    for(let i=0;i<flags.length;i++)if(flags[i]&1){if(await check.check(data.candidates[i])){match=data.candidates[i];break;}if(stopped)return;}
    flags.fill(0);if(!stopped)self.postMessage({type:'done',id:data.id,delta:data.candidates.length,checked:data.candidates.length,match});

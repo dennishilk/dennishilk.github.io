@@ -15,7 +15,7 @@ def keys(password,salt):
  return key,check+hashlib.sha256(check).digest()[:4]
 def encrypt(data,key,iv):
  e=Cipher(algorithms.AES(key),modes.CBC(iv)).encryptor();return e.update(data+bytes((-len(data))%16))+e.finalize()
-password='7';salt=bytes(range(16));key,check=keys(password,salt)
+password=__import__('sys').argv[2] if len(__import__('sys').argv)>2 else '7';salt=bytes(range(16));key,check=keys(password,salt)
 raw=bytes([82,97,114,33,26,7,1,0])+block(v(4)+v(0)+v(0)+v(1)+bytes([15])+salt+check)
 def header(body,n):
  iv=bytes([n])*16;return iv+encrypt(block(body),key,iv)

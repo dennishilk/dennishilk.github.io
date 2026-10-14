@@ -1,11 +1,12 @@
 // Format-specific module worker. No runtime CDN, uploads, storage or logging.
 // ZIP uses the original, separately built classic Worker unchanged.
-import {createFormatBackend} from './format-backend.js?v=20261014-48';
+import {createFormatBackend} from './format-backend.js?v=20261014-48-drain1';
 let engineFormat=null;
 let backend=null,paused=false,stopped=false,wake=null,abort=false;
+let checking=false,pauseEpoch=0;
 const yieldTask=()=>new Promise(r=>setTimeout(r,0));
 self.onmessage=async ({data})=>{
- if(data.type==='pause'){paused=true;return;}
+ if(data.type==='pause'){paused=true;pauseEpoch=data.epoch;if(!checking)self.postMessage({type:'paused',epoch:pauseEpoch});return;}
  if(data.type==='resume'){paused=false;wake?.();wake=null;return;}
  if(data.type==='stop'){stopped=true;paused=false;abort=true;wake?.();wake=null;return;}
  try{
@@ -32,9 +33,9 @@ self.onmessage=async ({data})=>{
    if(!backend)throw new Error('engine not initialized');
    let checked=0,reported=0,match=null;
    for(const candidate of data.candidates){
-    while(paused&&!stopped)await new Promise(resolve=>{wake=resolve;});
+    while(paused&&!stopped){if(checked>reported){self.postMessage({type:'tick',id:data.id,delta:checked-reported});reported=checked;}self.postMessage({type:'paused',epoch:pauseEpoch});await new Promise(resolve=>{wake=resolve;});}
     if(stopped)break;
-    const valid=await backend.check(candidate);
+    let valid;checking=true;try{valid=await backend.check(candidate);}finally{checking=false;}
     if(abort||stopped)break;
     checked++;
     if(valid){match=candidate;break;}

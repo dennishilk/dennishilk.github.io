@@ -15,3 +15,11 @@ export async function rar5Parameters(blob){
   const c=new DataView(check.buffer);return {kind:2,keyBytes:32,header,expected:c.getUint32(0),expected2:c.getUint32(4),iterations:2**log+32,kdfLog:log};
  }catch{return null;}
 }
+// Match the native CLI guard and RAR5's 127 UTF-16-unit preparation. Do not
+// guess the native treatment of a surrogate split at the truncation boundary.
+export function rar5Candidate(password){
+ const fail=()=>{throw Object.assign(new Error('gpu-rar5-encoding'),{code:'gpu-rar5-encoding'});};
+ const wellFormed=s=>{for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);if(c>=0xd800&&c<=0xdbff){const d=s.charCodeAt(++i);if(!(d>=0xdc00&&d<=0xdfff))return false;}else if(c>=0xdc00&&c<=0xdfff)return false;}return true;};
+ if(typeof password!=='string'||!password||/[\x00-\x1f\x7f]/.test(password)||!wellFormed(password)||new TextEncoder().encode(password).length>256)fail();
+ const prepared=password.slice(0,127);if(!wellFormed(prepared))fail();return prepared;
+}

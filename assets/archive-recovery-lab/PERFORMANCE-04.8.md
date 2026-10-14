@@ -48,7 +48,12 @@ UTF-8 password input supports 0–256 bytes in kernels, including SHA-1/SHA-256 
 prehashing for HMAC keys longer than 64 bytes. Self-tests compare empty, Unicode,
 65-byte, 128-byte and 256-byte inputs to WebCrypto, all ZIP AES strengths and RAR5's exact
 additional rounds, including the maximum admitted 65,568-round boundary. Larger GPU candidates cause an explicit error, not fallback.
-Normal candidate dictionaries/order and ASCII brute-force configuration are unchanged.
+RAR5 prepares the first 127 UTF-16 units exactly as the native engine does,
+while retaining the original candidate for CPU confirmation. Inputs exceeding
+the native 256-original-UTF-8-byte CLI guard, malformed Unicode, controls or a
+surrogate split at the truncation boundary cause an explicit encoding error
+rather than a silent rejection. Normal candidate dictionaries/order and ASCII
+brute-force configuration are unchanged.
 
 ## Manual capabilities, failure handling and scheduling
 
@@ -78,8 +83,10 @@ completed-work rates and the combined rate. Startup, final verification and
 paused idle time do not inflate search throughput.
 
 Pause stops new GPU dispatches while an already submitted batch drains; its
-completed checks and remaining active time are included. CPU Workers pause at
-cooperative boundaries. Resume never resubmits a completed range. Stop/Reset
+completed checks and remaining active time are included. CPU Workers acknowledge pause at cooperative boundaries with a generation-tagged
+message. The live dashboard distinguishes draining work from acknowledged
+quiescence, and completed checks are flushed before that acknowledgement.
+A delayed older acknowledgement cannot mark a later pause as complete. Resume never resubmits a completed range. Stop/Reset
 terminate every actor immediately; unreported/in-flight work is discarded from
 counts. Match arbitration cancels pending GPU work if CPU wins, drains native CPU
 actors, then releases all search instances before creating the fresh verifier.
@@ -177,12 +184,13 @@ and [RAR4/5, 7Z Copy/LZMA2/Zstandard and PDF R2/R3/R4/R6 CPU matrix](../../tests
 The latter records 36 admitted/blocked configurations with measured startup and
 active time; all admitted cases completed exactly 16 real rejection checks.
 
-Local release checks: 66 Archive tests, 44 unchanged companion tests, 24 Museum
+Local release checks: 68 Archive tests, 44 unchanged companion tests, 24 Museum
 tests and zero SEO errors. Real Chrome suites cover existing ZIP controls,
 RAR4/5, 7Z, PDF, original Zstandard/PDF files, genuine GPU/Hybrid cryptography,
 DE/EN, real downloads, cached offline operation, and no private transmissions.
 The new GPU suite includes live Hybrid device loss, shader failure, per-format
-KAT failure isolation, mixed-password independent-verification refusal and
+KAT failure isolation, mixed-password independent-verification refusal, explicit
+pause quiescence with a deliberately delayed real GPU batch, and
 software-adapter rejection. Firefox and physical Cthulhu hardware are untested here.
 
 ## Sources, licenses and integrity

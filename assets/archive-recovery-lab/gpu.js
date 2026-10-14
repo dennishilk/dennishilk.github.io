@@ -27,7 +27,7 @@ export class ArchiveGpu{
    engine=new ArchiveGpu(device);
    engine.info={vendor:adapter.info?.vendor??'',architecture:adapter.info?.architecture??'',description:adapter.info?.description??'',fallback:Boolean(adapter.isFallbackAdapter)};
    if(device.limits.maxComputeInvocationsPerWorkgroup<32||device.limits.maxComputeWorkgroupSizeX<32||device.limits.maxComputeWorkgroupsPerDimension<8||device.limits.maxStorageBuffersPerShaderStage<3||device.limits.maxStorageBufferBindingSize<257*4*256)throw gpuError('gpu-capabilities');
-   const code=source??await(await fetch(new URL('./crypto.wgsl?v=20261014-48',import.meta.url))).text();
+   const code=source??await(await fetch(new URL('./crypto.wgsl?v=20261014-48-drain1',import.meta.url))).text();
    try{
     const module=device.createShaderModule({code});const report=await module.getCompilationInfo();
     if(report.messages.some(m=>m.type==='error'))throw gpuError('gpu-shader');

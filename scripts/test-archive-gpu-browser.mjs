@@ -3,8 +3,9 @@ import {createServer} from 'node:http';import {readFileSync,writeFileSync,mkdtem
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright/index.mjs');
 const root=resolve('.'),out=process.env.ARCHIVE_GPU_REPORT??resolve(mkdtempSync(resolve(tmpdir(),'archive-gpu-')),'report.json');
 const rar5Base64=readFileSync(resolve(process.env.RUNNER_TEMP??'/tmp','archive-wasm-test/test-v5.rar')).toString('base64');
+const longFixture=mkdtempSync(resolve(tmpdir(),'archive-rar5-long-'));execFileSync('python3',['scripts/archive-gpu-fixtures.py',longFixture,'x'.repeat(127)]);const rar5LongBase64=readFileSync(resolve(longFixture,'rar5-header-gpu-7.rar')).toString('base64');
 const fixtures=JSON.parse(execFileSync('python3',['scripts/archive-recovery-fixtures.py'],{encoding:'utf8'}));
-const server=createServer((req,res)=>{try{let p=resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!p.startsWith(root+'/'))throw Error();if(statSync(p).isDirectory())p+='/index.html';res.setHeader('content-type',({'.js':'text/javascript','.mjs':'text/javascript','.html':'text/html','.css':'text/css','.wasm':'application/wasm'})[extname(p)]??'application/octet-stream');res.setHeader('cache-control','public,max-age=3600');let data=readFileSync(p);if(p.endsWith('/archive-recovery-lab/gpu.js')&&process.env.ARCHIVE_GPU_HARDWARE!=='1')data=Buffer.from(data.toString().replace('allowSoftware=false','allowSoftware=true'));res.end(data);}catch{res.statusCode=404;res.end();}});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+const server=createServer((req,res)=>{try{let p=resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!p.startsWith(root+'/'))throw Error();if(statSync(p).isDirectory())p+='/index.html';res.setHeader('content-type',({'.js':'text/javascript','.mjs':'text/javascript','.html':'text/html','.css':'text/css','.wasm':'application/wasm'})[extname(p)]??'application/octet-stream');res.setHeader('cache-control','public,max-age=3600');let data=readFileSync(p);if(p.endsWith('/archive-recovery-lab/gpu.js')&&process.env.ARCHIVE_GPU_HARDWARE!=='1')data=Buffer.from(data.toString().replace('allowSoftware=false','allowSoftware=true'));if(p.endsWith('/archive-recovery-lab/gpu-worker.js')&&new URL(req.url,'http://localhost').searchParams.get('drain-delay')==='1200')data=Buffer.from(data.toString().replace('const flags=await gpu.compute(candidates,param);','const flags=await gpu.compute(candidates,param);await new Promise(resolve=>setTimeout(resolve,1200));'));res.end(data);}catch{res.statusCode=404;res.end();}});await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port,browser=await chromium.launch({executablePath:process.env.ARCHIVE_RECOVERY_BROWSER??'/usr/bin/google-chrome',headless:true,args:['--no-sandbox',...(process.env.ARCHIVE_GPU_HARDWARE==='1'?[]:['--enable-unsafe-webgpu','--use-angle=swiftshader','--enable-unsafe-swiftshader'])]}),ctx=await browser.newContext({acceptDownloads:true});
 const page=await ctx.newPage(),requests=[],errors=[];ctx.on('request',r=>requests.push({url:r.url(),method:r.method(),body:r.postData()}));page.on('pageerror',e=>errors.push(e.message));
 const cgroup=name=>{try{return readFileSync('/sys/fs/cgroup/'+name,'utf8').trim();}catch{return null;}};
@@ -54,24 +55,26 @@ try{
    return {vectors:results,collisions,authenticationGate:true,shaderFailure:shader,deviceLoss:loss,adapter:gpu.info};
   }finally{gpu.dispose();}
  },fixtures);
- report.rar5=await page.evaluate(async base64=>{
-  const {ArchiveGpu}=await import('/assets/archive-recovery-lab/gpu.js'),{rar5Parameters}=await import('/assets/archive-recovery-lab/rar5-gpu.js'),{createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48');
+ report.rar5=await page.evaluate(async({base64,longBase64})=>{
+  const {ArchiveGpu}=await import('/assets/archive-recovery-lab/gpu.js'),{rar5Parameters}=await import('/assets/archive-recovery-lab/rar5-gpu.js'),{createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48-drain1');
   const blob=new Blob([Uint8Array.from(atob(base64),c=>c.charCodeAt(0))]),param=await rar5Parameters(blob),gpu=await ArchiveGpu.create();
   try{
    const flags=await gpu.compute(['wrong','junrar','JUNRAR'],param);if(flags.join(',')!=='0,1,0')throw Error('RAR5 GPU flags');
    const backend=await createFormatBackend(blob,'RAR5');if(!backend.info.gpuParameters||await backend.check('wrong')||!await backend.check('junrar'))throw Error('RAR5 CPU mismatch');
    // Real GPU actor and its CPU gate, followed by a fresh native extraction.
-   const run=await new Promise((resolve,reject)=>{const w=new Worker('/assets/archive-recovery-lab/gpu-worker.js?v=20261014-48',{type:'module'});const timer=setTimeout(()=>{w.terminate();reject(Error('RAR5 worker timeout'));},45000);w.onerror=reject;w.onmessage=({data})=>{
-    if(data.type==='ready')w.postMessage({type:'batch',id:1,candidates:['wrong','junrar','JUNRAR']});
+   const actor=(blob,candidates)=>new Promise((resolve,reject)=>{const w=new Worker('/assets/archive-recovery-lab/gpu-worker.js?v=20261014-48-drain1',{type:'module'});const timer=setTimeout(()=>{w.terminate();reject(Error('RAR5 worker timeout'));},45000);w.onerror=reject;w.onmessage=({data})=>{
+    if(data.type==='ready')w.postMessage({type:'batch',id:1,candidates});
     if(data.type==='error'){clearTimeout(timer);w.terminate();reject(Error(data.code));}
     if(data.type==='done'){clearTimeout(timer);w.terminate();resolve(data);}
    };w.postMessage({type:'init',blob,format:'RAR5'});});
+   const run=await actor(blob,['wrong','junrar','JUNRAR']);
    if(run.match!=='junrar'||run.checked!==3)throw Error('RAR5 worker verification');
    const fresh=await createFormatBackend(blob,'RAR5'),{files}=await fresh.recover(run.match);if(files.length!==1||await files[0].blob.text()!=='file1\n')throw Error('RAR5 extraction mismatch');
+   const longBlob=new Blob([Uint8Array.from(atob(longBase64),c=>c.charCodeAt(0))]),longCandidate='x'.repeat(128),longRun=await actor(longBlob,['wrong',longCandidate]);if(longRun.match!==longCandidate)throw Error('RAR5 native truncation mismatch');const longFresh=await createFormatBackend(longBlob,'RAR5');if((await longFresh.recover(longCandidate)).files.length!==1)throw Error('RAR5 long independent gate');
    const {exportZip}=await import('/assets/archive-recovery-lab/core.js');const zip=await exportZip(files);
    return {flags:[...flags],checked:run.checked,independent:true,iterations:param.iterations,zip:Array.from(new Uint8Array(await zip.arrayBuffer()))};
   }finally{gpu.dispose();}
- },rar5Base64);
+ },{base64:rar5Base64,longBase64:rar5LongBase64});
  const rarZip=resolve(tmpdir(),'archive-gpu-rar5-verified.zip');writeFileSync(rarZip,Buffer.from(report.rar5.zip));delete report.rar5.zip;
  execFileSync('python3',['-c',"import zipfile,sys;z=zipfile.ZipFile(sys.argv[1]);assert z.testzip() is None;assert z.read(z.namelist()[0])==b'file1\\n'",rarZip]);
  console.log('PASS genuine RAR5 WGSL, wrong/correct candidates, CPU gate, native extraction and independent ZIP bytes');
@@ -101,13 +104,15 @@ try{
   await ctx.setOffline(true);await page.locator('#start').click();await found();await outputs();await ctx.setOffline(false);
   // Real GPU/Hybrid control lifecycle, with no match in the configured space.
   const long=await page.evaluate(async()=>{const {createDemo}=await import('/assets/archive-recovery-lab/core.js');return Array.from(new Uint8Array(await(await createDemo('99999')).arrayBuffer()));});
+  await page.evaluate(()=>{window.originalArchiveTestWorker=Worker;globalThis.Worker=class extends Worker{constructor(url,options){if(String(url).includes('/gpu-worker.js')){const delayed=new URL(url);delayed.searchParams.set('drain-delay','1200');url=delayed;}super(url,options);}};});
   for(const engine of ['gpu','hybrid']){
    await select(long);await known(4);await page.locator('#engine').selectOption(engine);await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.recoveryState==='running');
    await page.locator('#pause').click();await page.waitForFunction(()=>document.body.dataset.recoveryState==='paused');
    // An in-flight dispatch drains; after that no new work may be submitted.
-   await page.waitForTimeout(800);const paused=await get('checked');await page.waitForTimeout(200);assert.equal(await get('checked'),paused);
+   await page.waitForFunction(()=>document.body.dataset.pauseDraining==='false',{},{timeout:35000});const paused=await get('checked');await page.waitForTimeout(200);assert.equal(await get('checked'),paused);
    await page.locator('#resume').click();await page.waitForFunction(()=>document.body.dataset.recoveryState==='running');await page.locator('#stop').click();await page.waitForFunction(()=>document.body.dataset.recoveryState==='stopped');assert.equal(await page.locator('#result').isHidden(),true);
   }
+  await page.evaluate(()=>{globalThis.Worker=window.originalArchiveTestWorker;delete window.originalArchiveTestWorker;});
   // File change keeps the chosen unavailable mode; explicit CPU choice required.
   await page.locator('#file').setInputFiles('tests/fixtures/archive-recovery/test-7z-secret.7z');await page.waitForFunction(()=>/ZSTD/.test(document.getElementById('file-status').textContent));
   assert.equal(await page.locator('#engine').inputValue(),'hybrid');assert.equal(await page.locator('#engine option[value=gpu]').isDisabled(),true);assert.equal(await page.locator('#start').isDisabled(),true);assert.match(await get('engine-help'),/7Z/);await page.locator('#engine').selectOption('cpu');assert.equal(await page.locator('#start').isEnabled(),true);
@@ -143,7 +148,7 @@ try{
     const r=await recover(blob,'9999');entry.independent=r.files.length===2&&(await r.files[0].blob.text()).includes('Harmless local demonstration');results.push(entry);
    }
   }
-  const {resourcePlan}=await import('/assets/archive-recovery-lab/resources.js'),{createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48');
+  const {resourcePlan}=await import('/assets/archive-recovery-lab/resources.js'),{createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48-drain1');
   const rar=new Blob([Uint8Array.from(atob(rar5Base64),c=>c.charCodeAt(0))]);
   for(const [engine,workers]of[['cpu',2],['cpu',4],['cpu',8],['cpu',16],['gpu',2],['hybrid',2]]){
    const plan=resourcePlan('RAR5',workers,rar.size,{engine});

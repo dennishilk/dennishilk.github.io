@@ -1,7 +1,7 @@
-import {rar5Parameters} from './rar5-gpu.js?v=20261014-48';
+import {rar5Parameters} from './rar5-gpu.js?v=20261014-48-drain1';
 // Format-specific CPU engines. Runs only inside the local module Worker.
 // ZIP keeps its separate, proven worker bundle and algorithm implementation.
-import {safePath,LIMITS} from './core.js?v=20261014-48';
+import {safePath,LIMITS} from './core.js?v=20261014-48-drain1';
 import {probeUnsupportedFormat} from './format-probe.js?v=20261014-47';
 
 export class FormatEngineError extends Error {
