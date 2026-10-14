@@ -54,9 +54,23 @@ try{
     if(bad||!good)throw Error('incorrect password verification');
     const {files}=await backend.recover(pw);
     return {format:type,info:backend.info,files:await Promise.all(files.map(async f=>({name:f.name,bytes:[...new Uint8Array(await f.blob.arrayBuffer())]})))};
-   }catch(e){return {format:type,error:e.code??e.message,stack:e.stack?.slice(0,400)};}
+   }catch(e){
+    let diagnostic=null;
+    if(type==='PDF'){
+     const {default:QPDF}=await import('/assets/archive-recovery-lab/vendor/qpdf.mjs');
+     const output=[];const mod=await QPDF({noInitialRun:true,print:x=>output.push(x),printErr:x=>output.push(x)});
+     mod.FS.writeFile('/debug.pdf',new Uint8Array(await blob.arrayBuffer()));
+     const runs=[];
+     for(const args of [['--show-encryption','/debug.pdf'],['--password=7','--show-encryption','/debug.pdf'],['--password=7','--check','/debug.pdf']]){
+      output.length=0;let code;try{code=mod.callMain(args);}catch(err){code=String(err);}
+      runs.push({args,code,text:output.join('\n').slice(0,1400)});
+     }
+     diagnostic=runs;
+    }
+    return {format:type,error:e.code??e.message,stack:e.stack?.slice(0,400),diagnostic};
+   }
   },password);
-  console.log(JSON.stringify({label,format:output.format,error:output.error,info:output.info,files:output.files?.map(f=>[f.name,f.bytes.length])}));
+  console.log(JSON.stringify({label,format:output.format,error:output.error,diagnostic:output.diagnostic,info:output.info,files:output.files?.map(f=>[f.name,f.bytes.length])}));
   assert.ok(!output.error,label+': '+output.error+' '+output.stack);
   assert.ok(output.files?.length>=1,label+' requires decrypted files');
   if(output.format==='PDF'){
