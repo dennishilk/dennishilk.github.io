@@ -12,7 +12,10 @@ execFileSync('python3',['-c',["from pypdf import PdfWriter","from pathlib import
  "for algo in ['RC4-40','RC4-128','AES-128','AES-256']:",
  " w=PdfWriter();w.add_blank_page(width=300,height=300)",
  " w.encrypt(user_password='7',owner_password='owner-other',algorithm=algo)",
- " with open(p/('encrypted-'+algo+'.pdf'),'wb') as f:w.write(f)"].join('\n')]);
+ " with open(p/('encrypted-'+algo+'.pdf'),'wb') as f:w.write(f)",
+ "owner=PdfWriter();owner.add_blank_page(width=300,height=300)",
+ "owner.encrypt(user_password='',owner_password='7',algorithm='AES-256')",
+ "with open(p/'owner-only.pdf','wb') as f:owner.write(f)"].join('\n')]);
 const server=createServer((req,res)=>{
  try{
   const pathname=new URL(req.url,'http://localhost').pathname;
@@ -83,6 +86,18 @@ try{
     'assert len(r.pages)==1'].join('\n')]);
   }
  }
+ // Owner restrictions without an opening-password lock must NOT be
+ // advertised as a crackable user-password PDF.
+ await page.locator('#file').setInputFiles(resolve(dir,'owner-only.pdf'));
+ const ownerResult=await page.evaluate(async()=>{
+  const blob=document.querySelector('#file').files[0];
+  const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js');
+  try{const backend=await createFormatBackend(blob,'PDF');return {supported:backend.info.supported};}
+  catch(e){return {code:e.code??e.message};}
+ });
+ assert.equal(ownerResult.code,'owner-only');
+ console.log('PDF_PERMISSIONS_ONLY_REJECTED');
+
  // Exercise the actual shared SearchRun coordinator, result presentation,
  // individual download and reconstructed ordinary ZIP in a real browser.
  await page.locator('#reset').click();
