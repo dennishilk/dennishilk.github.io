@@ -1,6 +1,7 @@
 // Format-specific module worker. No runtime CDN, uploads, storage or logging.
 // ZIP uses the original, separately built classic Worker unchanged.
-import {createFormatBackend} from './format-backend.js';
+import {createFormatBackend} from './format-backend.js?v=20261014-47';
+let engineFormat=null;
 let backend=null,paused=false,stopped=false,wake=null,abort=false;
 const yieldTask=()=>new Promise(r=>setTimeout(r,0));
 self.onmessage=async ({data})=>{
@@ -8,6 +9,7 @@ self.onmessage=async ({data})=>{
  if(data.type==='resume'){paused=false;wake?.();wake=null;return;}
  if(data.type==='stop'){stopped=true;paused=false;abort=true;wake?.();wake=null;return;}
  try{
+  if(data.format)engineFormat=data.format;
   if(data.type==='inspect'){
    backend=await createFormatBackend(data.blob,data.format);
    self.postMessage({type:'inspected',info:backend.info});
@@ -41,6 +43,7 @@ self.onmessage=async ({data})=>{
    self.postMessage({type:'done',id:data.id,delta:checked-reported,checked,match});
   }
  }catch(e){
-  if(!stopped)self.postMessage({type:'error',code:e.code??'verification'});
+  if(!stopped)self.postMessage({type:'error',code:e.code??'engine-internal',
+   diagnostic:{operation:data.type,format:engineFormat,stage:data.type,...(e.diagnostic??{})}});
  }
 };

@@ -13,6 +13,7 @@ This release includes tested **browser-local recovery and downloads** for narrow
 | RAR4 / encrypted archive headers (RAR3 crypto) | Signature, real WASM archive inspection | 7-Zip 24.09 WASM CPU, real candidates | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
 | RAR5 / encrypted archive headers | Signature, real WASM archive inspection | 7-Zip 24.09 WASM CPU, real candidates | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
 | 7Z / AES-256 + encrypted headers / LZMA2 | Signature, real WASM archive inspection | Native 7Z-specific AES/KDF via 7-Zip 24.09 WASM | Fresh WASM instance, full archive test and extraction | Individual files + ordinary ZIP |
+| 7Z / AES-256 contents + readable headers / LZMA2 or Copy | Signature + entry encryption metadata | Full archive test for each real candidate | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
 | PDF Standard Security / R2 (RC4-40), R3 (RC4-128), R4 (AES-128), R6 (AES-256) | /Encrypt /R dictionary + qpdf validation | Genuine user-opening-password verification via qpdf WASM | Fresh qpdf pass, unencrypted export, qpdf check and independent pypdf parse | Decrypted PDF |
 
 Supported ZIP compression: Stored (0), Deflate (8). Supported: data descriptors,
@@ -166,7 +167,8 @@ bounded starfield. No star canvas/script is added to either recovery route.
   wrong/correct passwords, real extraction and original bytes.
 - RAR5: independently produced header-encrypted RAR5 test file, real
   password checks and original extracted data.
-- 7Z: independently created AES-256 + encrypted-header LZMA2 archive,
+- 7Z: independently created AES-256 + encrypted-header LZMA2 archive and
+  readable-header AES-256 LZMA2 / Copy archives with real directory entries,
   wrong/correct passwords; both individual and recovered-ZIP downloads
   were reopened independently.
 - PDF: independent pypdf files encrypted with RC4-40 (R2), RC4-128 (R3),
@@ -182,7 +184,8 @@ bounded starfield. No star canvas/script is added to either recovery route.
 - **Unsupported/not guaranteed:** RAR multivolume, SFX, unusual compression
   modes and split sets; PDF non-Standard handlers / XFA-dependent content,
   signatures invalidated by rewriting, some incremental-update variations,
-  untested PDF R5; 7Z exotic codecs or oversized solid dictionaries.
+  untested PDF R5; 7Z exotic codecs (including py7zr Zstandard `04F71101`)
+  or oversized solid dictionaries.
   Arbitrarily long random passwords remain computationally infeasible.
 
 ### Pinned local dependencies, licenses and attribution
@@ -249,3 +252,108 @@ Museum browser regression and site-wide SEO audit also passed. The original
 Password Cracking Lab's runtime/pages/styles and the archive cryptographic engine,
 search scheduler, workers and bundled ZIP dependency are unchanged.
 
+
+## Mission 04.7 — real-file findings and limits (2026-10-14)
+
+The original acceptance files are permanently retained with SHA-256 assertions
+under `tests/fixtures/archive-recovery/`; their README records provenance,
+passwords, algorithms and independently extracted byte hashes. They are public
+sample fixtures supplied for regression tests, not runtime uploads.
+
+### PDF: observed result and unresolved original rejection
+
+The supplied PDF is valid PDF 2.0, Standard Security R6 / V5 / AESV3, AES-256,
+one page, user/opening password `test9`. Native qpdf 11.9.0 checks it without
+warnings; pypdf independently opens it and reads its expected text. The input has
+ordinary indirect objects, a classic xref table and a referenced `/Encrypt`
+dictionary; PDF 2.0 does not by itself make it unsupported. Compared with the
+existing blank pypdf AES-256 fixture, it adds actual page content and PDF 2.0,
+but uses the same supported security revision.
+
+**The reported premature PDF rejection was not reproduced on unchanged main
+`621258db3f391d24d31a61c999e914283186992d`**, in Chrome 134.0.6998.35 or
+155.0.8059.79. The deployed backend file fetched during investigation was
+byte-identical to that checkout. Do not claim an established cause for Dennis's
+specific browser failure, or physical Cthulhu validation.
+
+A separate, reproducible qpdf integration defect was found: the embedded-WASM
+loader attempts `fetch(data:...)`, violating the page's `connect-src 'self'` CSP.
+The fallback allowed this file to work in the tested browsers, so that finding
+alone does **not** explain the original rejection. The minimal local loader patch
+now decodes its already embedded bytes directly, eliminating that attempted fetch
+and CSP console errors without relaxing CSP. `scripts/patch-archive-qpdf.mjs`
+reapplies the pinned integration patch during vendoring; updated SHA-256 sums
+record the resulting local file. No new runtime dependency was added.
+
+### 7Z: exact original remains a codec limitation
+
+The original `test-7z-secret.7z` is valid, with readable headers and a solid
+AES-256-encrypted payload, SHA-256 KDF 2^19 cycles, and **Zstandard extension
+coder `04F71101`**. Independent py7zr extraction with `secret` produces exactly
+three files totaling 728 bytes, with the hashes recorded in the fixture README.
+The bundled 7-Zip 24.09 engine reports `Unsupported Method` even with the correct
+password; it cannot currently recover this original.
+
+Before this change, directory `scripts` was misclassified as a normal file
+because the parser only checked `Folder`, while this 7z listing uses
+`Attributes = D …`. Its child `scripts/py7zr` therefore produced a false
+`duplicate` rejection. After that issue there was a second blocker: an
+unconditional `encryption` rejection for all readable-header archives. Removing
+those two blockers cannot supply the missing Zstandard decoder.
+
+The parser now handles directory attributes correctly and supports tested
+readable-header AES-256 **LZMA2 and Copy** payloads, with wrong-password tests,
+full-content verification and independent extraction. Readable-header inputs must
+include nonempty encrypted data and usable CRCs; empty or checksum-free payloads
+are rejected as unverifiable. Unsupported coder chains
+are detected from actual entry metadata, before search. The original Zstandard
+file now receives a precise bilingual unsupported-codec message and stays
+ineligible for search. This is a **correctly diagnosed remaining limitation**,
+not successful browser recovery of that original. Adding a Zstandard-capable
+7z runtime remains separate work; the current pinned npm runtime has no newer
+published release providing it.
+
+For encrypted headers, a raw WASM exception alone no longer proves encryption.
+The bounded 7z probe parses the AES coder descriptor of the supported inline,
+single-stream encoded-header layout; compressed headers alone do not imply AES.
+Existing encrypted-header LZMA2, RAR4 and RAR5 paths remain regression tested.
+
+### Diagnostics and validation
+
+Distinct codes cover unsupported codecs, unresolved PDF security handlers,
+uninspectable PDF structure, WASM initialization, memory/runtime limits,
+Worker loading, inspection timeout and unexpected engine failures. The existing
+collapsed local diagnostic panel receives only format, stage, operation,
+fixed codec labels and numerical exit status. Raw qpdf output (which may include
+a password), archive listings, filenames, stack traces and file contents are
+never forwarded. No logging, storage, upload, remote API or CSP relaxation was
+added. Start remains disabled on unsupported input and engine failures.
+
+`node scripts/test-archive-real-files-browser.mjs` tests both DE and EN with the
+actual originals: file-input processing, precise original-7Z rejection, real
+PDF password verification/search, fresh verification Worker, decrypted download,
+and an actual offline replay receiving zero test-server requests. Only the PDF
+**test harness** narrows the brute-force alphabet to `tes9` (five characters,
+1,024 possible candidates, 100 real checks through `test9`) to bound CI time.
+It does not mock candidates, engines, success, extraction or downloads. It also
+covers full UI recovery and both downloads for the additional readable-header
+LZMA2/Copy fixtures, and injected initialization/memory/structure failures.
+
+Each original-PDF download is reopened password-free with both pypdf and
+PyMuPDF, checked for one page and expected text, and rendered. Browser request
+and console audits require no private markers, no external requests, no uploads,
+zero ordinary console errors, and no persistent browser storage. Existing ZIP,
+RAR, encrypted-header 7Z and PDF R2/R3/R4/R6 browser regressions remain in place.
+The GitHub Actions browser workflow runs the original-file suite permanently.
+
+No blog index, feed, sitemap, editorial draft, Museum catalog design or
+Password Cracking Lab runtime is changed. Worldnode deployment stays manual.
+
+Local validation for this change: 45 archive Node tests, 44 companion-lab tests,
+24 Museum Node tests, reproducible unchanged ZIP Worker bundle, both existing
+archive browser suites, the original-file browser suite in Chrome 155.0.8059.79,
+Museum browser regression, dependency SHA-256 verification, and the site SEO
+audit (zero validation errors). Original-file browser auditing recorded 306
+same-origin GET-only requests with no private transmissions. Both originals
+also pass independent test-only validation under CI-pinned pypdf 5.9.0 and
+py7zr 1.1.4. The original 7Z remains intentionally unsupported in the app.

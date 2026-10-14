@@ -29,7 +29,7 @@ const server=createServer((req,res)=>{
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port;
-const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
+const browser=await chromium.launch({headless:true,executablePath:process.env.ARCHIVE_RECOVERY_BROWSER||'/usr/bin/google-chrome',args:['--no-sandbox']});
 const ctx=await browser.newContext({acceptDownloads:true});
 const page=await ctx.newPage(),errors=[],requests=[];
 page.on('pageerror',e=>errors.push(e.message));

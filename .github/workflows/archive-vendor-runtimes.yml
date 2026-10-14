@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - scripts/vendor-archive-runtimes.sh
+      - scripts/patch-archive-qpdf.mjs
       - .github/workflows/archive-vendor-runtimes.yml
 
 permissions:

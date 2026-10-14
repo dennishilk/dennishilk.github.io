@@ -74,10 +74,58 @@ async function sevenZip(blob) {
   !size || size > 1024 * 1024 || 32 + offset + size > blob.size) fail();
  const next = await read(blob, 32 + offset, size);
  if (crc32(next) !== v.getUint32(28, true)) fail();
- // EncodedHeader (0x17) may be compressed without encryption. Never infer AES.
- return {format: '7Z', supported: false, headerEncrypted: null, volume: false,
+ // EncodedHeader alone does not prove encryption. Parse the bounded coder
+ // descriptor of the supported single-stream header layout, not a byte scan.
+ const headerEncrypted=encodedHeaderAES(next);
+ return {format: '7Z', supported: false, headerEncrypted, volume: false,
   detail: next[0] === 0x17 ? '7z-encoded' : '7z-plain',
-  encryptionStatus: 'unknown'};
+  encryptionStatus: headerEncrypted===true?'headers-encrypted':'unknown'};
+}
+function encodedHeaderAES(bytes){
+ if(bytes[0]!==0x17)return null;
+ let at=1;
+ const byte=()=>{if(at>=bytes.length)throw Error('truncated');return bytes[at++];};
+ const number=()=>{
+  const first=byte();let value=0n,mask=128;
+  for(let n=0;n<8;n++,mask>>=1){
+   if(!(first&mask)){
+    value|=BigInt(first&(mask-1))<<BigInt(8*n);
+    if(value>BigInt(Number.MAX_SAFE_INTEGER))throw Error('range');
+    return Number(value);
+   }
+   value|=BigInt(byte())<<BigInt(8*n);
+  }
+  if(value>BigInt(Number.MAX_SAFE_INTEGER))throw Error('range');
+  return Number(value);
+ };
+ try{
+  if(byte()!==6)return null; // PackInfo
+  number(); // PackPos
+  if(number()!==1||byte()!==9)return null; // one stream, Size
+  number();
+  if(byte()!==0||byte()!==7||byte()!==11||number()!==1||byte()!==0)return null;
+  // UnpackInfo / Folder / one inline folder. Header compression can add a
+  // simple LZMA coder after AES even when file payloads use LZMA2.
+  const coders=number();if(coders<1||coders>4)return null;
+  let aes=false;
+  for(let n=0;n<coders;n++){
+   const flags=byte(),length=flags&15;
+   if((flags&0xd0)||length<1||length>8||at+length>bytes.length)return null;
+   const id=Array.from(bytes.subarray(at,at+length),b=>b.toString(16).padStart(2,'0')).join('');at+=length;
+   if(!['06f10701','030101','21','00'].includes(id))return null;
+   if(id==='06f10701')aes=true;
+   if(flags&0x20){const size=number();if(size>64||at+size>bytes.length)return null;at+=size;}
+  }
+  const inputs=new Set(),outputs=new Set();
+  for(let n=0;n<coders-1;n++){
+   const input=number(),output=number();
+   if(input>=coders||output>=coders||inputs.has(input)||outputs.has(output))return null;
+   inputs.add(input);outputs.add(output);
+  }
+  if(byte()!==12)return null; // CodersUnpackSize must follow the folder.
+  for(let n=0;n<coders;n++)number();
+  return aes;
+ }catch{return null;}
 }
 async function pdf(blob) {
  if (blob.size < 9) fail();
