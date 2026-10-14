@@ -64,7 +64,7 @@ function pdfRevision(raw){
  const source=objects.at(-1)?.[1]??'';
  if(!/\/Filter\s*\/Standard\b/.test(source)||!/\/O\b/.test(source)||!/\/U\b/.test(source))return null;
  const rev=Number(source.match(/\/R\s+(\d+)\b/)?.[1]);
- return [2,3,4,5,6].includes(rev)?rev:null;
+ return [2,3,4,6].includes(rev)?rev:null;
 }
 
 const pwdArg=password=>{
@@ -143,7 +143,7 @@ export async function createFormatBackend(blob,format){
   if(/File is not encrypted/i.test(raw.output))fail('unencrypted');
   const revision=Number(raw.output.match(/\bR\s*=\s*(\d+)/)?.[1])||
    pdfRevision(new Uint8Array(await blob.arrayBuffer()));
-  if(![2,3,4,5,6].includes(revision))fail('encryption');
+  if(![2,3,4,6].includes(revision))fail('encryption');
   // A PDF requiring only an owner password has an empty user password.
   // Never represent permissions-only protection as a document-opening lock.
   const unlocked=run(['--password=','--check',source]);
