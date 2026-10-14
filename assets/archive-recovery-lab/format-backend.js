@@ -156,6 +156,9 @@ export async function createFormatBackend(blob,format){
   if(r.code===0){
    const listing=parse7zListing(r.output);
    if(!listing.encrypted)fail('unencrypted');
+   // Data-only encryption is not yet covered by independent browser fixtures.
+   // Do not advertise it as a supported release variant merely because it lists.
+   fail('encryption');
    if(/Multivolume\s*=\s*\+|Volumes\s*=\s*[2-9]/i.test(r.output))fail('split');
    info={format,supported:true,algorithms:[format+' encrypted entries'],
     entries:listing.files,encryptedCount:listing.files.filter(f=>f.encrypted).length,
