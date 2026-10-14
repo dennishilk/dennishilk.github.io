@@ -49,6 +49,24 @@ function statusResult(runtime,args,collector){
   return {code:2,output:collector.join('\n'),exception:String(error)};
  }
 }
+
+// PDF Standard Security Handler metadata lives in unencrypted dictionaries.
+// Resolve the referenced /Encrypt object; do not infer revision from the
+// %PDF header or a random /R token in a content stream.
+function pdfRevision(raw){
+ const text=new TextDecoder('latin1').decode(raw);
+ const links=[...text.matchAll(/\/Encrypt\s+(\d+)\s+(\d+)\s+R\b/g)];
+ if(!links.length)return null;
+ const [id,gen]=links.at(-1).slice(1).map(Number);
+ if(!Number.isSafeInteger(id)||!Number.isSafeInteger(gen))return null;
+ const re=new RegExp('(?:^|\\n)\\s*'+id+'\\s+'+gen+'\\s+obj\\b([\\s\\S]*?)\\bendobj\\b','g');
+ const objects=[...text.matchAll(re)];
+ const source=objects.at(-1)?.[1]??'';
+ if(!/\/Filter\s*\/Standard\b/.test(source)||!/\/O\b/.test(source)||!/\/U\b/.test(source))return null;
+ const rev=Number(source.match(/\/R\s+(\d+)\b/)?.[1]);
+ return [2,3,4,5,6].includes(rev)?rev:null;
+}
+
 const pwdArg=password=>{
  if(typeof password!=='string'||!password||new TextEncoder().encode(password).length>256)fail('password');
  if(/[\x00-\x1f\x7f]/.test(password))fail('password');
@@ -114,7 +132,8 @@ export async function createFormatBackend(blob,format){
  if(format==='PDF'){
   const raw=run(['--show-encryption',source]);
   if(/File is not encrypted/i.test(raw.output))fail('unencrypted');
-  const revision=Number(raw.output.match(/\bR\s*=\s*(\d+)/)?.[1]);
+  const revision=Number(raw.output.match(/\bR\s*=\s*(\d+)/)?.[1])||
+   pdfRevision(new Uint8Array(await blob.arrayBuffer()));
   if(![2,3,4,5,6].includes(revision))fail('encryption');
   // A PDF requiring only an owner password has an empty user password.
   // Never represent permissions-only protection as a document-opening lock.
