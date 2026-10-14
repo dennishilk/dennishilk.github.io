@@ -1,0 +1,78 @@
+{
+  "status": "EDITORIAL DRAFT — DO NOT PUBLISH",
+  "asOf": "2026-10-14",
+  "verifiedFromCode": [
+    "Local file selection with authorization checkbox",
+    "CPU workers 1–4 for archive/PDF recovery; no archive WebGPU/Hybrid implementation",
+    "ZIP ZipCrypto and WinZip AES-128/192/256 AE-1/AE-2 Stored/Deflate",
+    "RAR4/RAR5 encrypted header variants, 7Z encrypted header/LZMA2, PDF Standard Security Handler R2/R3/R4/R6 supported paths documented in repo",
+    "Actual recovered-files download controls and independent verification path",
+    "Input limits ZIP 32 MiB; other 8 MiB; 256 entries; 16 MiB/file; 32 MiB total output; ratio max 200:1",
+    "Shared dictionary base count 26652+213096+249223=488971",
+    "Static assets served by website; selected file not uploaded in intended application path"
+  ],
+  "verifiedFromScreenshots": {
+    "german": {
+      "file": "test-zipcrypto-test9.zip",
+      "encryption": "ZipCrypto",
+      "password": "test9",
+      "confirmedAttempts": 11220531,
+      "activeSeconds": 127.2,
+      "displayedAveragePerSecond": 88219,
+      "independentVerificationMs": 24,
+      "winningWorker": 3,
+      "configuredWorkers": 4,
+      "success": "independent verification and download available",
+      "status": "Screenshot verified, author's final benchmark approval pending"
+    },
+    "english": {
+      "file": "local-demo.zip",
+      "encryption": "ZIP-AES-256 AE-2",
+      "password": "test",
+      "confirmedAttempts": 208,
+      "activeMs": 106,
+      "displayedAveragePerSecond": 2416,
+      "independentVerificationMs": 20,
+      "recoveredFiles": 2,
+      "success": "screenshot of independent verification and local file downloads",
+      "status": "Separate run; not comparable to DE run; pending final author approval"
+    }
+  },
+  "unknowns": [
+    "RAR4/5 physical-machine performance",
+    "7Z physical-machine performance",
+    "PDF legacy and AES physical-machine performance",
+    "Recovered/downloaded content validation for RAR4/5,7Z,PDF",
+    "Any additional screenshots or updated conclusions from Dennis",
+    "Final article release date"
+  ],
+  "seo": {
+    "de": {
+      "h1": "ZIP-, RAR-, 7Z- oder PDF-Passwort vergessen? Dateien lokal wiederherstellen",
+      "title": "ZIP-, RAR-, 7Z- & PDF-Passwort wiederherstellen – lokal",
+      "description": "ZIP-, RAR-, 7Z- oder PDF-Passwort vergessen? Anleitung zur kostenlosen lokalen Wiederherstellung im Browser – ohne Datei-Upload und ohne EXE-Installation.",
+      "path": "/de/blog/zip-rar-7z-pdf-passwort-wiederherstellen/"
+    },
+    "en": {
+      "h1": "Forgot Your ZIP, RAR, 7Z or PDF Password? Recover Files Locally Without Uploading",
+      "title": "Recover ZIP, RAR, 7Z & PDF Passwords Locally – No Upload",
+      "description": "Forgot a ZIP, RAR, 7Z or PDF password? Learn how to recover supported encrypted files in your browser, without installing a recovery executable or uploading your archive.",
+      "path": "/blog/recover-zip-rar-7z-pdf-password-without-upload/"
+    }
+  },
+  "imageTarget": "Images optimized and packaged separately for handoff; NOT yet uploaded into GitHub by this commit.",
+  "keywordEvidence": "Search-intent candidate mapping only. No verified paid keyword volume, CTR or ranking claims.",
+  "publicationChecklist": [
+    "Obtain final Dennis approval explicitly",
+    "Verify all physical-machine RAR4/RAR5/7Z/PDF results",
+    "Compare archive output bytes or content checksums from downloaded files",
+    "Reconcile both ZIP benchmark narratives and individual durations",
+    "Add eight optimized images to public article assets during approved publication",
+    "Reuse existing blog shell/header/desktop+mobile TOC/language switch",
+    "Generate final local article HTML with responsive figures and alt text",
+    "Set actual datePublished/dateModified only at publication",
+    "Add BlogPosting and BreadcrumbList JSON-LD, canonical and reciprocal hreflang",
+    "Update blog indexes, feeds and blog sitemap only after approval",
+    "Validate accessibility, mobile layout, internal links and image loading"
+  ]
+}

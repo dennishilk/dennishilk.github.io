@@ -17,6 +17,7 @@
     "test:gaming-repair": "node --test tests/linux-gaming-repair*.test.mjs",
     "test:archive-recovery": "node --test tests/archive-recovery*.test.mjs",
     "test:archive-recovery:browser": "node scripts/test-archive-recovery-browser.mjs",
+    "test:archive-recovery:real-browser": "node scripts/test-archive-real-files-browser.mjs",
     "build:archive-recovery": "node scripts/build-archive-recovery-worker.mjs"
   }
 }

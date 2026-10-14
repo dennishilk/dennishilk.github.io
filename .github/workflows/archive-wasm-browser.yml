@@ -3,15 +3,13 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/test-archive-wasm-browser.mjs'
-      - 'scripts/test-archive-recovery-browser.mjs'
+      - 'scripts/test-archive*.mjs'
+      - 'scripts/verify-archive-real-fixtures.py'
+      - 'tests/fixtures/archive-recovery/**'
       - 'museum/archive-recovery-lab/index.html'
       - 'de/museum/archive-recovery-lab/index.html'
-      - 'assets/archive-recovery-lab/lab.css'
+      - 'assets/archive-recovery-lab/**'
       - '.github/workflows/archive-wasm-browser.yml'
-      - 'assets/archive-recovery-lab/format-backend.js'
-      - 'assets/archive-recovery-lab/ui.js'
-      - 'assets/archive-recovery-lab/format-worker.js'
 permissions:
   contents: read
 jobs:
@@ -30,7 +28,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq p7zip-full
-          python -m pip install 'pypdf==5.9.0' 'cryptography==46.0.4'
+          python -m pip install 'pypdf==5.9.0' 'cryptography==46.0.4' 'py7zr==1.1.4' 'PyMuPDF==1.26.6'
           mkdir -p /tmp/pw "$RUNNER_TEMP/archive-wasm-test"
           npm install --prefix /tmp/pw --no-audit --no-fund --ignore-scripts 'playwright@1.55.0'
           google-chrome --version
@@ -44,6 +42,10 @@ jobs:
         env:
           PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
         run: node scripts/test-archive-wasm-browser.mjs
+      - name: Original Cthulhu acceptance files, precise limitations and offline flow
+        env:
+          PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
+        run: node scripts/test-archive-real-files-browser.mjs
       - name: ZIP regression and EN/DE offline browser tests
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: /tmp/pw/node_modules

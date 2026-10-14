@@ -20,7 +20,7 @@ export class SearchRun{
   try{await Promise.all(Array.from({length:this.workerCount},()=>new Promise((resolve,reject)=>{
    const w=this.newWorker();this.workers.push(w);
    w.onerror=()=>{reject(new Error('worker'));this.error('worker');};
-   w.onmessage=({data})=>{if(data.type==='ready'){resolve();return;}if(data.type==='error'){reject(new Error(data.code));this.error(data.code);return;}this.message(w,data);};w.postMessage({type:'init',blob:this.blob,format:this.format});
+   w.onmessage=({data})=>{if(data.type==='ready'){resolve();return;}if(data.type==='error'){reject(new Error(data.code));this.error(data.code,data.diagnostic);return;}this.message(w,data);};w.postMessage({type:'init',blob:this.blob,format:this.format});
   })));
   if(this.closed)return;this.state='running';this.activeSince=performance.now();for(const w of this.workers)this.dispatch(w);this.emit();
   }catch(e){this.error(e.message);}
@@ -49,18 +49,18 @@ export class SearchRun{
  resume(){if(this.state!=='paused')return;this.state='running';this.activeSince=performance.now();this.workers.forEach(w=>{w.postMessage({type:'resume'});if(!this.pending.has(w))this.dispatch(w);});this.emit();}
  stop(){if(this.closed)return;if(this.state==='verifying'||this.state==='starting'){this.dispose();this.state='stopped';this.emit();return;}this.finishClock();this.state='stopping';this.workers.forEach(w=>w.postMessage({type:'stop'}));this.maybeFinish();this.emit();}
  newWorker(){
-  if(this.format!=='ZIP')return new Worker(new URL('./format-worker.js',import.meta.url),{type:'module'});
+  if(this.format!=='ZIP')return new Worker(new URL('./format-worker.js?v=20261014-47',import.meta.url),{type:'module'});
   const url=URL.createObjectURL(new Blob([WORKER_SOURCE],{type:'text/javascript'}));
   try{return new Worker(url);}finally{URL.revokeObjectURL(url);}
  }
  terminate(){this.workers.forEach(w=>w.terminate());this.workers=[];}
  dispose(){this.closed=true;this.finishClock();this.terminate();this.pending.clear();this.blob=null;}
- error(code){if(this.closed)return;this.dispose();this.state='error';this.events.error?.(code);this.emit();}
+ error(code,diagnostic){if(this.closed)return;this.dispose();this.state='error';this.events.error?.(code,diagnostic);this.emit();}
  verify(){
   const verificationStart=performance.now();
   const w=this.newWorker();this.workers=[w];
   w.onerror=()=>this.error('worker');w.onmessage=({data})=>{
-   if(this.closed)return;if(data.type==='error'){this.error('independent');return;}
+   if(this.closed)return;if(data.type==='error'){this.error(data.code??'independent',data.diagnostic);return;}
    if(data.type==='verified'){this.state='found';this.terminate();this.closed=true;this.emit();this.events.result?.({...this.winner,files:data.files,algorithms:data.algorithms,checked:this.done,elapsed:this.elapsed,verificationMs:performance.now()-verificationStart});this.blob=null;}
   };w.postMessage({type:'verify',blob:this.blob,password:this.winner.password,format:this.format});
  }
