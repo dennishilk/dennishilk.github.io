@@ -39,3 +39,35 @@ node --test tests/museum-catalog.test.mjs
 Optional `MUSEUM_CATALOG_QA_DIR` selects the screenshot directory. Otherwise QA
 images are temporary. The harness aborts external decorative/font requests;
 local bundled fonts and all site scripts remain available.
+
+## A little more universe for Nebby
+
+The overview explicitly opts into the existing homepage `stars.js` perspective
+starfield via `data-museum-atmosphere="subtle"`. A route + body-class + attribute
+guard permits only `/museum/` and its `index.html` alias. Every other non-homepage
+route still removes the decorative canvas before allocating particles or starting
+an animation. No exhibit pages or laboratory implementations are edited.
+
+The homepage keeps its original 200 cyan particles, projection, speed and DPR.
+The overview reuses that renderer with 140 particles (70 below 700 px), slow
+movement, at most 24 draw updates/second (16 on mobile), and DPR capped at 1.25.
+Scoped CSS keeps it behind the existing content, disables pointer events and
+fades it toward the catalog. The body's existing background and card styling
+remain unchanged. No particle library or external assets are added.
+
+Reduced motion draws a static starfield with no animation loop, including when
+the preference changes at runtime. Hidden tabs and page departure cancel the
+loop; visibility/BFCache return resumes one loop only when motion is permitted.
+
+Unit tests cover opt-in isolation, homepage behavior, density, frame limits,
+resize, hidden tabs, page lifecycle and live reduced-motion changes. Browser
+acceptance also checks painted pixels, layering, pointer pass-through, unchanged
+card geometry and a stable reduced-motion canvas. Four representative exhibit
+routes are checked for absent star canvases; all catalog interactions and both
+languages retain their previous checks.
+
+Release validation: 106 targeted regression tests pass; SEO audit has zero
+validation errors. Chrome Headless Shell 141 passes the enhanced bilingual
+responsive browser suite with no page errors. A 1.05-second idle sample produced
+21 decorative draw updates and zero long tasks. This bounded local sample is
+not a hardware-wide benchmark. Desktop/mobile screenshots were inspected.

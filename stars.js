@@ -164,7 +164,12 @@ const canvas = document.getElementById("stars");
 const homepagePaths = new Set(["/", "/index.html", "/de/", "/de/index.html"]);
 const isHomepage = homepagePaths.has(window.location.pathname);
 
-if (!isHomepage || !canvas) {
+// Explicit opt-in: no exhibit or other page can inherit the museum atmosphere.
+const isMuseumCatalog = ["/museum/", "/museum/index.html"].includes(window.location.pathname)
+  && document.body.classList.contains("museum-catalog-page")
+  && canvas?.dataset.museumAtmosphere === "subtle";
+
+if ((!isHomepage && !isMuseumCatalog) || !canvas) {
   canvas?.remove();
 } else {
   const ctx = canvas.getContext("2d");
@@ -172,6 +177,11 @@ if (!isHomepage || !canvas) {
   let height = 0;
   let pixelRatio = 1;
   let stars = [];
+  const reducedMotion = isMuseumCatalog ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  let frame = 0;
+  let lastFrame = 0;
+  const mobile = () => width < 700;
+  const particleCount = () => isMuseumCatalog ? (mobile() ? 70 : 140) : 200;
 
   function makeStar() {
     return {
@@ -185,7 +195,9 @@ if (!isHomepage || !canvas) {
     const bounds = canvas.getBoundingClientRect();
     const nextWidth = bounds.width || document.documentElement.clientWidth;
     const nextHeight = bounds.height || document.documentElement.clientHeight;
-    const nextRatio = window.devicePixelRatio || 1;
+    const nextRatio = isMuseumCatalog
+      ? Math.min(window.devicePixelRatio || 1, 1.25)
+      : (window.devicePixelRatio || 1);
     const scaleX = width ? nextWidth / width : 1;
     const scaleY = height ? nextHeight / height : 1;
 
@@ -201,24 +213,33 @@ if (!isHomepage || !canvas) {
       star.y *= scaleY;
       star.z *= scaleX;
     });
+    if (isMuseumCatalog && stars.length) {
+      stars = stars.slice(0, particleCount());
+      while (stars.length < particleCount()) stars.push(makeStar());
+      if (!document.hidden) draw(false);
+    }
   }
   window.addEventListener("resize", resize);
   window.visualViewport?.addEventListener("resize", resize);
   resize();
 
-  stars = Array.from({ length: 200 }, makeStar);
+  stars = Array.from({ length: particleCount() }, makeStar);
 
-  function animate() {
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, width, height);
-
+  // Same perspective projection and cyan particles as the homepage. Only the
+  // museum adjusts density, speed, origin and rendering frequency.
+  function draw(advance, delta = 1) {
+    if (isMuseumCatalog) ctx.clearRect(0, 0, width, height);
+    else {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+    }
     ctx.fillStyle = "#00b4ff";
     stars.forEach((s) => {
-      s.z -= 2;
+      if (advance) s.z -= isMuseumCatalog ? 0.12 * delta : 2;
       if (s.z <= 0) s.z = width;
       const k = 128.0 / s.z;
       const px = s.x * k + width / 2;
-      const py = s.y * k + height / 2;
+      const py = s.y * k + (isMuseumCatalog ? Math.min(height * 0.35, 270) : height / 2);
       if (px >= 0 && px <= width && py >= 0 && py <= height) {
         const size = (1 - s.z / width) * 2;
         ctx.beginPath();
@@ -226,7 +247,42 @@ if (!isHomepage || !canvas) {
         ctx.fill();
       }
     });
-    requestAnimationFrame(animate);
   }
-  animate();
+
+  function animate(timestamp = 0) {
+    if (isMuseumCatalog && (document.hidden || reducedMotion.matches)) {
+      frame = 0;
+      return;
+    }
+    if (!isMuseumCatalog) {
+      draw(true);
+      requestAnimationFrame(animate);
+      return;
+    }
+    frame = requestAnimationFrame(animate);
+    const interval = 1000 / (mobile() ? 16 : 24);
+    if (lastFrame && timestamp - lastFrame < interval) return;
+    const delta = lastFrame ? Math.min((timestamp - lastFrame) / (1000 / 60), 4) : 1;
+    lastFrame = timestamp;
+    draw(true, delta);
+  }
+
+  if (isMuseumCatalog) {
+    function updateMotion() {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      lastFrame = 0;
+      if (document.hidden) return;
+      draw(false);
+      if (!reducedMotion.matches) frame = requestAnimationFrame(animate);
+    }
+    document.addEventListener("visibilitychange", updateMotion);
+    reducedMotion.addEventListener("change", updateMotion);
+    window.addEventListener("pagehide", () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    });
+    window.addEventListener("pageshow", updateMotion);
+    updateMotion();
+  } else animate();
 }
