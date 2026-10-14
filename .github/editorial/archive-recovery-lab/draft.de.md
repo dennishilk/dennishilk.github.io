@@ -2,7 +2,7 @@
 
 > **REDAKTIONELLER ENTWURF · NICHT VERÖFFENTLICHEN · [FREIGABE DURCH DEN AUTOR AUSSTEHEND]**
 >
-> Technischer Stand: Repository-Review vom 14.10.2026. Für RAR4/RAR5/7Z/PDF fehlen noch die endgültigen Praxistests von Dennis. Das gilt auch für Download-Ergebnisse dieser Varianten.
+> Technischer Stand: 14.10.2026, Mission 04.8 auf `main`. Automatisierte echte Chrome-Tests bestätigten ZIP, RAR4/5, 7Z (einschließlich Zstandard) und PDF R2–R6 sowie geprüfte lokale Downloads. Dennis hat die neue Lab-Version auf Cthulhu als funktionierend bestätigt; zusätzliche formatspezifische Hardware-Benchmarks wurden nicht geliefert.
 
 Altes Backup gefunden, aber das Passwort ist weg? Vielleicht ist es eine ZIP-Datei mit Urlaubsfotos, ein RAR-Archiv aus WinRAR, ein 7z-Backup oder ein PDF, das du selbst vor Jahren verschlüsselt hast. Dann landet man schnell bei zwei wenig attraktiven Vorschlägen: irgendeine ausführbare Datei herunterladen oder das private Dokument bei einem fremden Online-Dienst hochladen.
 
@@ -18,7 +18,7 @@ Anders als eine Passwort-Reset-Funktion eines Online-Kontos kontaktiert das Lab 
 
 Dein Browser erhält die Anwendung als statische Dateien von dennishilk.com: HTML, JavaScript, gemeinsame Wörterbücher und bei Bedarf WebAssembly-Bibliotheken. Danach stellst du der Anwendung über den Datei-Dialog oder Drag & Drop gezielt eine Datei bereit. Die Browser-File- und Blob-APIs erlauben es dem Code, diese lokale Auswahl zu untersuchen, ohne sie automatisch auf einen Server zu senden.
 
-Die Anwendung erkennt zunächst das Archivformat und die vorliegende Verschlüsselung. Sie baut anschließend Kandidaten aus Wörterbüchern, Schreibvarianten, Jahreszahlen, Ziffernanhängen oder einem begrenzten Brute-Force-Suchraum. Ein bis vier **CPU-Web-Worker** prüfen die Vorschläge direkt gegen verschlüsselte Daten beziehungsweise formatspezifische Prüfwerte. Das ist echtes Rechnen, keine dekorative Animation.
+Die Anwendung erkennt zunächst das Archivformat und die vorliegende Verschlüsselung. Sie baut anschließend Kandidaten aus Wörterbüchern, Schreibvarianten, Jahreszahlen, Ziffernanhängen oder einem begrenzten Brute-Force-Suchraum. Standardmäßig prüfen **zwei CPU-Web-Worker** die Vorschläge direkt gegen verschlüsselte Daten beziehungsweise formatspezifische Prüfwerte. Du kannst manuell **1–16 CPU-Worker** auswählen, sofern das Speicherbudget dies zulässt. Auf kompatibler Hardware stehen zusätzlich manuell wählbare **WebGPU- und Hybrid-Modi** bereit: echte GPU-Kryptografie für unterstützte ZIP-ZipCrypto-, ZIP-AES- und eng definierte RAR5-Varianten. RAR4, 7Z und PDF bleiben CPU-basiert. Es gibt keine automatische GPU-Auswahl und keinen heimlichen Rückfall auf CPU. Das ist echtes Rechnen, keine dekorative Animation.
 
 Bei einem vielversprechenden Kandidaten endet die Prüfung nicht mit einem grünen Häkchen. Die Datei wird unabhängig erneut verarbeitet. Entschlüsselung, Extraktion und verfügbare Integritätsprüfungen müssen bestehen. Erst dann zeigt die Oberfläche ein wiederhergestelltes Passwort und – bei unterstützten Ergebnissen – lokale Downloadmöglichkeiten an.
 
@@ -29,12 +29,12 @@ Bei einem vielversprechenden Kandidaten endet die Prüfung nicht mit einem grün
 | Format und Verschlüsselung | Dokumentierter Implementierungsumfang | Stand |
 | --- | --- | --- |
 | ZIP / ZipCrypto | Klassische ZIP-Verschlüsselung, reale Kandidatenprüfung und Integritätskontrolle | **Praxistest mit Erfolg belegt** |
-| ZIP / WinZip AES-128, AES-192, AES-256 | AE-1/AE-2, Stored und Deflate | **Beispielerfolg in EN-Screenshot; weitere Akzeptanzprüfung ausstehend** |
-| RAR4 | Erprobte Varianten mit verschlüsselten Headern | **[VORLÄUFIG – Praxistest ausstehend]** |
-| RAR5 | Erprobte Varianten mit verschlüsselten Headern | **[VORLÄUFIG – Praxistest ausstehend]** |
-| 7Z / AES-256 | Verschlüsselte Header und LZMA2 | **[VORLÄUFIG – Praxistest ausstehend]** |
-| PDF / ältere Verfahren | Standard-Security-Handler R2/RC4-40, R3/RC4-128, R4/AES-128 | **[VORLÄUFIG – Praxistest ausstehend]** |
-| PDF / AES-256 | Dokumentierter Standard-Security-Handler R6/AES-256 | **[VORLÄUFIG – Praxistest ausstehend]** |
+| ZIP / WinZip AES-128, AES-192, AES-256 | AE-1/AE-2, Stored und Deflate; GPU-Prüfung für diese Varianten | **Durch echten Chrome-Downloadtest und GPU-Kryptografie-Tests bestätigt** |
+| RAR4 | Unterstützte Varianten mit verschlüsselten Headern, CPU | **Browser-Akzeptanztest mit Entpacken bestanden** |
+| RAR5 | Unterstützte Header-Varianten; GPU nur bei verifizierbaren Parametern | **Browser-Akzeptanztest und begrenzter GPU-Test bestanden** |
+| 7Z / AES-256 | Unterstützte verschlüsselte Header und Daten mit Copy, LZMA2 und Zstandard, CPU | **Originales Zstandard-Testarchiv vollständig entschlüsselt, Downloads geprüft** |
+| PDF / ältere Verfahren | Unterstützte Standard-Security-Handler R2/RC4-40, R3/RC4-128, R4/AES-128, CPU | **Automatisierte Browser-Tests bestanden** |
+| PDF / AES-256 | Unterstützter Standard-Security-Handler R6/AES-256, CPU | **Original-PDF entschlüsselt, Ausgabe durch zwei PDF-Leser geprüft** |
 
 Unterstützt heißt **nicht**, dass sämtliche denkbaren RAR-, 7z-, ZIP- und PDF-Varianten funktionieren. Mehrteilige Archive, exotische Kompressionsverfahren, andere Verschlüsselungen und nicht getestete PDF-Revisionen können abgewiesen werden. Das Lab unterscheidet zudem das **PDF-Öffnungspasswort** von bloßen Eigentümer-, Druck- oder Kopierbeschränkungen. Ein Dokument, das sich ohne Öffnungspasswort lesen lässt, benötigt keine solche Passwortwiederherstellung.
 
@@ -47,7 +47,7 @@ Die konkreten Grenzen der aktuellen Version: ZIP-Eingaben bis 32 MiB, RAR/7Z/PDF
 3. Wähle **eine** verschlüsselte ZIP-, RAR-, 7z- oder PDF-Datei oder ziehe sie in den markierten Bereich. Prüfe Format- und Verschlüsselungsanzeige.
 4. Aktiviere Suchmethoden. Ein Wörterbuch ist oft der vernünftigste Anfang, wenn du ein menschlich ausgedachtes Passwort vermutest. Für vollständig zufällige Zeichenketten hilft ein Wörterbuch meist wenig.
 5. Nutze **Optionales Vorwissen**, falls du Teile erinnerst: z. B. Länge, bekannte Zeichen oder ein Muster, sofern die Oberfläche diese Eingrenzung anbietet. Blindes Durchprobieren über alle 95 druckbaren ASCII-Zeichen und 1–24 Stellen wird sehr schnell praktisch unbezahlbar.
-6. Lege einen bis vier CPU-Worker fest. Mehr Worker können beschleunigen, binden aber auch Ressourcen.
+6. Starte mit den voreingestellten **zwei CPU-Workern**. Optional kannst du **1–16** auswählen; die Speicherprüfung kann eine zu hohe Anzahl ablehnen. Auf kompatibler Hardware kannst du nach dem GPU-Funktionstest bewusst GPU oder Hybrid wählen. Mehr Worker oder GPU garantieren keine höhere Geschwindigkeit.
 7. Starte die lokale Wiederherstellung und beobachte aktive Phase, bestätigte Versuche und die gemessene Rate. Pause und Fortsetzen sind möglich.
 8. Bei einem Treffer überprüfe die Bestätigung, lasse dir das Passwort anzeigen oder kopiere es. Lade die einzeln extrahierten Dateien beziehungsweise, für unterstützte Archive, eine neu erstellte ZIP-Datei herunter.
 
@@ -72,11 +72,11 @@ Beim dokumentierten Versuch mit der Datei `test-zipcrypto-test9.zip` kam ein eig
 
 Das sind **beobachtete Werte dieser einen Suche**, keine Garantie für andere Dateien. Schon ein anderer Kandidatenrang, eine andere Kompression, ein anderes Verschlüsselungsverfahren oder Hintergrundlast verändern die Zahlen. Die Suchanzeige zählt bestätigte Arbeit; Initialisierung und die abschließende Verifikation sind nicht einfach identisch mit der ausgewiesenen Suchzeit.
 
-**[REDAKTIONELLER VORBEHALT – Dennis bestätigt den finalen Benchmarktext vor der Freigabe.]**
+**Einordnung:** Dieser Screenshot dokumentiert eine einzelne Cthulhu-Messung, keinen reproduzierten Durchschnitt oder eine garantierte Wiederherstellungsdauer.
 
-Die englische Erfolgsabbildung zeigt **einen anderen Lauf**: `local-demo.zip`, ZIP-AES-256 AE-2, das sichtbare Testpasswort `test`, 208 bestätigte Versuche, 106 ms aktive Zeit, 2.416 angezeigte durchschnittliche Versuche/s und zwei wiederherstellbare Dateien. Diese Ergebnisse dürfen **nicht** zu einem einzigen Benchmark mit dem ZipCrypto-Test vermischt werden. **[VORLÄUFIG – EN-Test noch nicht final für Veröffentlichung freigegeben.]**
+Die englische Erfolgsabbildung zeigt **einen anderen Lauf**: `local-demo.zip`, ZIP-AES-256 AE-2, das sichtbare Testpasswort `test`, 208 bestätigte Versuche, 106 ms aktive Zeit, 2.416 angezeigte durchschnittliche Versuche/s und zwei wiederherstellbare Dateien. Diese Ergebnisse dürfen **nicht** zu einem einzigen Benchmark mit dem ZipCrypto-Test vermischt werden. Beide Werte stammen aus unterschiedlichen Tests und sind kein CPU/GPU-Vergleich.
 
-Für RAR4, RAR5, 7Z und verschlüsselte PDFs fehlen die von Dennis ausdrücklich freigegebenen Messwerte. **[PENDING BENCHMARK] [PENDING DOWNLOAD VALIDATION]**
+Für RAR4, RAR5, 7Z und PDF liegen inzwischen bestandene echte Browser-Tests einschließlich verifizierter Downloads vor; das originale Zstandard-7Z und AES-256-PDF wurden separat geprüft. **Formataufgeschlüsselte Cthulhu-Geschwindigkeiten fehlen weiterhin** und werden nicht erfunden. Testhardware mit SwiftShader ist keine reale Radeon-GPU-Messung.
 
 ## 6. Warum nicht jedes Format gleich schnell geprüft werden kann {#verschluesselung}
 
@@ -84,7 +84,7 @@ Ein Passwort ist nicht selbst der Verschlüsselungsschlüssel. Häufig erzeugt e
 
 **ZipCrypto** arbeitet mit einem vergleichsweise günstigen historischen Verfahren. Das Lab kann verdächtige Header-Treffer testen, akzeptiert sie aber nicht ohne richtige Entschlüsselung und CRC-Prüfung. **WinZip AES** benutzt unter anderem PBKDF2-HMAC-SHA-1 zur Schlüsselableitung und prüft weitere Authentisierungsdaten. **RAR5** definiert beispielsweise eine AES-256-Verschlüsselung und eine PBKDF2-basierte Ableitung mit einstellbarem Arbeitsfaktor. **7Z** und moderne **PDF**-Varianten besitzen wiederum eigene Ableitungs- und Verifikationsabläufe.
 
-Aus all dem folgt keine universelle Rangliste »Format X ist immer N-mal langsamer«. Für belastbare Vergleiche bräuchte man gleiche Hardware, vergleichbare Testpasswörter, identische Suchstrategie und eigens gemessene Dateien. Genau deshalb bleibt die zusätzliche Benchmarktabelle noch leer.
+Aus all dem folgt keine universelle Rangliste »Format X ist immer N-mal langsamer«. Für belastbare Vergleiche bräuchte man gleiche Hardware, vergleichbare Testpasswörter, identische Suchstrategie und eigens gemessene Dateien. Die Software-WebGPU-Werte der CI sind keine Radeon-Benchmarks.
 
 ## 7. Warum Wörterbücher und Reihenfolgen wichtig sind {#woerterbuecher}
 
@@ -134,7 +134,7 @@ Eine Schätzung beschreibt die aktuelle Suchraumgröße bei einer gemessenen Rat
 
 ### Kann die Suche meinen PC verlangsamen?
 
-Ja. Die CPU-Worker prüfen echte Kandidaten. Wähle weniger Worker, pausiere oder beende die Suche, wenn du Ressourcen für andere Anwendungen brauchst.
+Ja. CPU-Worker und – bei unterstützten Varianten und manuell gewähltem Modus – WebGPU berechnen echte Kandidaten. Wähle weniger Worker, pausiere oder beende die Suche, wenn du Ressourcen für andere Anwendungen brauchst.
 
 ### Wie bekomme ich die entschlüsselten Dateien?
 
@@ -146,7 +146,7 @@ Dann wurde es innerhalb des gewählten Suchraums nicht bestätigt. Das beweist *
 
 ## 11. Selbst ausprobieren {#ausprobieren}
 
-Wenn du eine eigene Datei mit vergessenem Passwort besitzt, beginne mit einem kleinen, gut eingrenzbaren Suchraum: **[Zum Archive Recovery Lab](/de/museum/archive-recovery-lab/)**. Für das Grundlagenexperiment mit CPU, GPU und einem künstlichen SHA-256-Ziel lohnt sich daneben das [Password Cracking Lab](/de/museum/password-cracking-lab/) und mein Artikel [Wie schnell knackt dein Computer ein Passwort?](/de/blog/how-fast-can-your-computer-crack-a-password/). Das sind zwei unterschiedliche Experimente, die sich gegenseitig gut erklären.
+Wenn du eine eigene Datei mit vergessenem Passwort besitzt, beginne mit einem kleinen, gut eingrenzbaren Suchraum: **[Zum Archive Recovery Lab](/de/museum/archive-recovery-lab/)**. Für das getrennte Grundlagenexperiment mit einem künstlichen SHA-256-Ziel lohnt sich daneben das [Password Cracking Lab](/de/museum/password-cracking-lab/) und mein Artikel [Wie schnell knackt dein Computer ein Passwort?](/de/blog/how-fast-can-your-computer-crack-a-password/). Das sind zwei unterschiedliche Experimente, die sich gegenseitig gut erklären.
 
 **Nur eigene oder ausdrücklich freigegebene Dateien verwenden.**
 
