@@ -37,6 +37,8 @@ try{
   console.log('PASS '+language+': creator, local selection, known search, exact attempts, verification, show/hide/copy, individual/ZIP output, mobile, offline');
  }
  await page.goto(origin+'/museum/archive-recovery-lab/');await ready();
+  assert.equal(await page.locator('#authorized').isChecked(),false);
+  await page.locator('#authorized').check();
  // A default blind dictionary search uses the real shared vocabulary.
  await selected(await createDemo('password','zipcrypto'));await page.locator('#de').uncheck();await page.locator('#en').uncheck();await page.locator('#workers').selectOption('1');await page.locator('#start').click();await found();assert.equal(await page.locator('#checked').innerText(),'1');assert.equal(await page.locator('#recovered').inputValue(),'password');
  // Exhaustion is exact, never a success.
