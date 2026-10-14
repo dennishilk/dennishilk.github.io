@@ -25,7 +25,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq p7zip-full
-          python -m pip install 'pypdf==5.9.0'
+          python -m pip install 'pypdf==5.9.0' 'cryptography==46.0.4'
       - name: Obtain genuine independently-created RAR4 and RAR5 fixtures
         run: |
           mkdir -p "$RUNNER_TEMP/archive-wasm-test"
