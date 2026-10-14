@@ -28,7 +28,7 @@ jobs:
           sudo apt-get install -y -qq p7zip-full
           python -m pip install 'pypdf==5.9.0' 'cryptography==46.0.4'
           mkdir -p /tmp/pw "$RUNNER_TEMP/archive-wasm-test"
-          npm install --prefix /tmp/pw --no-audit --no-fund --ignore-scripts 'playwright-core@1.55.0'
+          npm install --prefix /tmp/pw --no-audit --no-fund --ignore-scripts 'playwright@1.55.0'
           google-chrome --version
       - name: Get real encrypted RAR4 and RAR5 test files
         run: |
@@ -38,3 +38,14 @@ jobs:
         env:
           PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
         run: node scripts/test-archive-wasm-browser.mjs
+      - name: ZIP regression and EN/DE offline browser tests
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: /tmp/pw/node_modules
+          ARCHIVE_RECOVERY_BROWSER: /usr/bin/google-chrome
+        run: node scripts/test-archive-recovery-browser.mjs
+      - name: Museum catalog browser regression
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: /tmp/pw/node_modules
+          MUSEUM_CATALOG_BROWSER: /usr/bin/google-chrome
+        run: node scripts/test-museum-catalog-browser.mjs
+
