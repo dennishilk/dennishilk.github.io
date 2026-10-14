@@ -1,0 +1,167 @@
+diff --git a/C/ZstdDec.c b/C/ZstdDec.c
+index 6ad47eb..9c07c95 100644
+--- a/C/ZstdDec.c
++++ b/C/ZstdDec.c
+@@ -3839,7 +3839,7 @@ SRes ZstdDec_Decode(CZstdDecHandle dec, CZstdDecState *p)
+         if (
+               // winSize_Allocate   // it's relaxed check
+               winSize               // it's more strict check to be compatible with original-zstd
+-            > ((UInt64)1 << MAX_WINDOW_SIZE_LOG))
++            > ((UInt64)1 << 25)) /* Archive Lab: 32 MiB window policy */
+           return SZ_ERROR_UNSUPPORTED; // SZ_ERROR_MEM
+         cycSize = (size_t)winSize_Allocate;
+         if (cycSize != winSize_Allocate)
+diff --git a/CPP/7zip/7zip_gcc.mak b/CPP/7zip/7zip_gcc.mak
+index bcb06a0..2e19081 100644
+--- a/CPP/7zip/7zip_gcc.mak
++++ b/CPP/7zip/7zip_gcc.mak
+@@ -23,9 +23,11 @@ PROGPATH = $(O)/$(PROG)
+ PROGPATH_STATIC = $(O)/$(PROG)s
+ 
+ 
++ifndef EMSCRIPTEN
+ ifneq ($(CC), xlc)
+ CFLAGS_WARN_WALL = -Werror -Wall -Wextra
+ endif
++endif
+ 
+ # for object file
+ # -Wa,-aln=test.s
+@@ -111,7 +113,11 @@ endif
+ 
+ else
+ 
++ifdef EMSCRIPTEN
++LDFLAGS = $(LDFLAGS_STATIC) $(LDFLAGS_EMCC)
++else
+ LDFLAGS = $(LDFLAGS_STATIC)
++endif
+ # -z force-bti
+ # -s is not required for clang, do we need it for GCC ???
+ 
+diff --git a/CPP/7zip/Bundles/Alone7z/makefile.emcc b/CPP/7zip/Bundles/Alone7z/makefile.emcc
+new file mode 100644
+index 0000000..692f138
+--- /dev/null
++++ b/CPP/7zip/Bundles/Alone7z/makefile.emcc
+@@ -0,0 +1,3 @@
++override PROG = 7zr-zstd.es6.js
++ZSTD_OBJS = $O/ZstdDecoder.o $O/ZstdRegister.o $O/ZstdDec.o $O/Xxh64.o
++include ./makefile.gcc
+diff --git a/CPP/7zip/Bundles/Alone7z/makefile.gcc b/CPP/7zip/Bundles/Alone7z/makefile.gcc
+index a31475e..3882021 100644
+--- a/CPP/7zip/Bundles/Alone7z/makefile.gcc
++++ b/CPP/7zip/Bundles/Alone7z/makefile.gcc
+@@ -260,7 +260,7 @@ C_OBJS = \
+   $O/XzCrc64Opt.o \
+ 
+ 
+-OBJS = \
++OBJS = $(ZSTD_OBJS) \
+   $(LZMA_DEC_OPT_OBJS) \
+   $(C_OBJS) \
+   $(MT_OBJS) \
+diff --git a/CPP/7zip/Bundles/Alone7z/post.js b/CPP/7zip/Bundles/Alone7z/post.js
+new file mode 100644
+index 0000000..67c2952
+--- /dev/null
++++ b/CPP/7zip/Bundles/Alone7z/post.js
+@@ -0,0 +1,3 @@
++Module.FS = FS; Module.callMain = callMain;
++// Library calls must return status instead of changing the host Node process exit status.
++quit_ = (_status, error) => { throw error; };
+diff --git a/CPP/7zip/Bundles/Alone7z/pre.js b/CPP/7zip/Bundles/Alone7z/pre.js
+new file mode 100644
+index 0000000..e68be40
+--- /dev/null
++++ b/CPP/7zip/Bundles/Alone7z/pre.js
+@@ -0,0 +1 @@
++Module.noInitialRun = true;
+diff --git a/CPP/7zip/Compress/ZstdDecoder.cpp b/CPP/7zip/Compress/ZstdDecoder.cpp
+index c958475..c30be77 100644
+--- a/CPP/7zip/Compress/ZstdDecoder.cpp
++++ b/CPP/7zip/Compress/ZstdDecoder.cpp
+@@ -58,9 +58,9 @@ Z7_COM7F_IMF(CDecoder::SetOutBufSize(UInt32 , UInt32 size))
+   return S_OK;
+ }
+ 
+-Z7_COM7F_IMF(CDecoder::SetDecoderProperties2(const Byte * /* prop */, UInt32 /* size */))
++Z7_COM7F_IMF(CDecoder::SetDecoderProperties2(const Byte * /* prop */, UInt32 size))
+ {
+-  // if (size != 3 && size != 5) return E_NOTIMPL;
++  if (size != 1 && size != 3 && size != 5) return E_NOTIMPL;
+   return S_OK;
+ }
+ 
+@@ -98,6 +98,7 @@ Z7_COM7F_IMF(CDecoder::ReadUnusedFromInBuf(void *data, UInt32 size, UInt32 *proc
+ 
+ HRESULT CDecoder::Prepare(const UInt64 *outSize)
+ {
++  if (outSize && *outSize > (32u << 20)) return E_OUTOFMEMORY;
+   _inProcessed = 0;
+   _afterDecoding_tempPos = 0;
+   ZstdDecState_Clear(&_state);
+diff --git a/CPP/7zip/Compress/ZstdRegister.cpp b/CPP/7zip/Compress/ZstdRegister.cpp
+new file mode 100644
+index 0000000..ac52ae2
+--- /dev/null
++++ b/CPP/7zip/Compress/ZstdRegister.cpp
+@@ -0,0 +1,7 @@
++// Archive Recovery Lab: bind the existing 7-Zip Zstandard decoder to the 7z extension ID.
++// LGPL-2.1-or-later, matching the surrounding 7-Zip integration.
++#include "StdAfx.h"
++#include "../Common/RegisterCodec.h"
++#include "ZstdDecoder.h"
++REGISTER_CODEC_CREATE(CreateZstd7zDecoder, NCompress::NZstd::CDecoder())
++REGISTER_CODEC_2(Zstd7z, CreateZstd7zDecoder, NULL, 0x04F71101, "ZSTD")
+diff --git a/CPP/Windows/System.cpp b/CPP/Windows/System.cpp
+index 5fa87f3..c52ff09 100644
+--- a/CPP/Windows/System.cpp
++++ b/CPP/Windows/System.cpp
+@@ -8,6 +8,7 @@
+ #if defined(__APPLE__) || defined(__DragonFly__) || \
+     defined(BSD) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+ #include <sys/sysctl.h>
++#elif __EMSCRIPTEN__
+ #else
+ #include <sys/sysinfo.h>
+ #endif
+@@ -262,6 +263,7 @@ bool GetRamSize(size_t &size)
+   #elif defined(__FreeBSD_kernel__) && defined(__GLIBC__)
+   // GNU/kFreeBSD Debian
+   // fixme
++  #elif defined(__EMSCRIPTEN__)
+   #else
+ 
+   struct sysinfo info;
+diff --git a/CPP/Windows/SystemInfo.cpp b/CPP/Windows/SystemInfo.cpp
+index 35846e0..84ee373 100644
+--- a/CPP/Windows/SystemInfo.cpp
++++ b/CPP/Windows/SystemInfo.cpp
+@@ -35,7 +35,9 @@
+ #ifdef Z7_GETAUXV_AVAILABLE
+ // #if defined __has_include
+ // #if __has_include (<sys/auxv.h>)
++#ifndef __EMSCRIPTEN__
+ #include <sys/auxv.h>
++#endif
+ #define USE_HWCAP
+ // #endif
+ // #endif
+@@ -803,6 +805,7 @@ void AddCpuFeatures(AString &s)
+ 
+   #endif
+ 
++  #ifndef __EMSCRIPTEN__
+ 
+   #ifdef AT_HWCAP
+   s.Add_OptSpaced("hwcap:");
+@@ -848,6 +851,8 @@ void AddCpuFeatures(AString &s)
+     }
+   }
+   #endif // AT_HWCAP2
++  
++  #endif // __EMSCRIPTEN__
+   #endif // _AIX
+   #endif // _WIN32
+ }

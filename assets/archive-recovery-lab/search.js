@@ -49,7 +49,7 @@ export class SearchRun{
  resume(){if(this.state!=='paused')return;this.state='running';this.activeSince=performance.now();this.workers.forEach(w=>{w.postMessage({type:'resume'});if(!this.pending.has(w))this.dispatch(w);});this.emit();}
  stop(){if(this.closed)return;if(this.state==='verifying'||this.state==='starting'){this.dispose();this.state='stopped';this.emit();return;}this.finishClock();this.state='stopping';this.workers.forEach(w=>w.postMessage({type:'stop'}));this.maybeFinish();this.emit();}
  newWorker(){
-  if(this.format!=='ZIP')return new Worker(new URL('./format-worker.js?v=20261014-47',import.meta.url),{type:'module'});
+  if(this.format!=='ZIP')return new Worker(new URL('./format-worker.js?v=20261014-471',import.meta.url),{type:'module'});
   const url=URL.createObjectURL(new Blob([WORKER_SOURCE],{type:'text/javascript'}));
   try{return new Worker(url);}finally{URL.revokeObjectURL(url);}
  }

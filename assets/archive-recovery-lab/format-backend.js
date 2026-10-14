@@ -43,10 +43,10 @@ function parse7zListing(raw){
 function validate7zCodecs(listing,format){
  if(format!=='7Z')return;
  for(const entry of listing.files.filter(f=>!f.directory)){
-  // Only explicitly covered 7z coder chains. In particular 04F71101 is
-  // py7zr's Zstandard extension, absent from the pinned 7-Zip decoder.
+  // Only covered 7z coder chains. The local 7zr build registers the existing
+  // upstream Zstandard decoder under extension ID 04F71101 (listed as ZSTD).
   const codecs=entry.method.split(/\s+/).filter(Boolean);
-  if(codecs.some(c=>! /^(?:Copy|LZMA2(?::\d+)?|7zAES(?::\d+)?)$/.test(c)))
+  if(codecs.some(c=>! /^(?:Copy|LZMA2(?::\d+)?|ZSTD|7zAES(?::\d+)?)$/.test(c)))
    fail('archive-codec',{codec:codecs.includes('04F71101')?'zstandard-04f71101':'unsupported'});
   if(entry.encrypted&&!codecs.some(c=>/^7zAES(?::\d+)?$/.test(c)))fail('encryption');
  }
@@ -103,7 +103,7 @@ function collectExtracted(fs,listed,root='/out'){
    const bytes=fs.readFile(path);
    if(bytes.length!==entry.size||bytes.length>LIMITS.entry)fail('malformed');
    total+=bytes.length;if(total>LIMITS.total)fail('limits');
-   files.push({name:rel,directory:false,blob:new Blob([bytes])});
+   files.push({name:rel,directory:false,blob:new Blob([bytes],{type:'application/octet-stream'})});
    expected.delete(rel);
   }
  };
@@ -125,7 +125,9 @@ export async function createFormatBackend(blob,format){
   module=await QPDF({noInitialRun:true,print:log,printErr:log});
   source='/selected.pdf';
  }else{
-  const {default:SevenZip}=await import('./vendor/7zz.es6.js');
+  const {default:SevenZip}=format==='7Z'?
+   await import('./vendor/7zr-zstd.es6.js?v=20261014-471'):
+   await import('./vendor/7zz.es6.js');
   module=await SevenZip({noInitialRun:true,print:log,printErr:log,
    locateFile:name=>new URL('./vendor/'+name,import.meta.url).href});
   source=format==='7Z'?'/selected.7z':'/selected.rar';
@@ -146,6 +148,8 @@ export async function createFormatBackend(blob,format){
    return listing.files.length>0;
   }
   const checked=run(['t','-bd','-y','-p'+pwdArg(password),source]);
+  if(/Unsupported Method/i.test(checked.output))fail('archive-codec');
+  if(/not enough memory|Cannot allocate memory|E_OUTOFMEMORY/i.test(checked.output))fail('limits');
   return checked.code===0&&/Everything is Ok/i.test(checked.output);
  };
  const list7=password=>{
@@ -196,7 +200,16 @@ export async function createFormatBackend(blob,format){
       listing.files.some(f=>!f.directory&&f.encrypted&&!f.hasCRC))fail('unverifiable');
    if(listing.total/blob.size>LIMITS.ratio)fail('limits');
    if(/Multivolume\s*=\s*\+|Volumes\s*=\s*[2-9]/i.test(r.output))fail('split');
-   info={format,supported:true,algorithms:[format+' encrypted entries'],
+   const codecNames=[...new Set(listing.files.filter(f=>!f.directory).flatMap(f=>f.method.split(/\s+/)).filter(c=>/^(ZSTD|Copy|LZMA2(?::\d+)?)$/.test(c)))];
+   if(codecNames.includes('ZSTD')){
+    // Native 7z configures every folder coder before processing its streams.
+    // A deliberately nonmatching probe rejects unsupported codec properties
+    // before Start is enabled. A data/password error is expected here.
+    const capability=run(['t','-bd','-y','-p__invalid_probe_password__',source]);
+    if(/Unsupported Method/i.test(capability.output))fail('archive-codec');
+    if(/not enough memory|Cannot allocate memory|E_OUTOFMEMORY/i.test(capability.output))fail('limits');
+   }
+   info={format,supported:true,algorithms:[format+' AES-256 · '+codecNames.join(' + ')],
     entries:listing.files,encryptedCount:listing.files.filter(f=>f.encrypted).length,
     total:listing.total,filenamesEncrypted:false};
   }else if(/Wrong password|encrypted archive/i.test(r.output)||

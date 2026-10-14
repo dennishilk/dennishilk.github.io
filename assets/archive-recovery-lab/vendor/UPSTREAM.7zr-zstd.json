@@ -1,0 +1,28 @@
+{
+  "name": "Archive Recovery Lab 7zr-zstd",
+  "version": "24.09-zstd-1",
+  "upstream": "https://github.com/ip7z/7zip",
+  "upstreamCommit": "e5431fa6f5505e385c6f9367260717e9c47dc2ee",
+  "emscripten": "4.0.10",
+  "emscriptenCommit": "b7dc6e5747465580df5984e723b9d1f10d8e804b",
+  "platformPatchReference": "https://github.com/use-strict/7z-wasm/tree/521d2cf93f5964f4e77b01049e19f1b29305c454",
+  "codecID": "04F71101",
+  "decoder": "7-Zip 24.09 native NCompress::NZstd::CDecoder / C/ZstdDec.c (2024-06-18)",
+  "limits": {
+    "inputBytes": 8388608,
+    "entryBytes": 16777216,
+    "folderOutputBytes": 33554432,
+    "zstdWindowBytes": 33554432,
+    "maximumWasmMemoryBytes": 268435456
+  },
+  "sha256": {
+    "7zr-zstd.es6.js": "1fc33d27e55c599a6115ca4a7eff226f3e8f1ffab4a6f2efe9017afe76532ff7",
+    "7zr-zstd.es6.wasm": "354318b5b85a17c1ac26dffa5d019557eb726fdac97ad45b78a1c7de9194bdee",
+    "7zr-zstd-source.tar.gz": "52ca34685c08d52a78988d93781a297a74415da29f897b830ea134fc1e2e4702",
+    "7zr-zstd.patch": "0afad1aef7e2baeeacd952bfa9793b5cde93bed2edcb5e0a5ae87fec743409f9",
+    "LICENSE.7zr-zstd": "f52fd39301929f317b0f41e223d09b5c7046cab99eaae8c4e692b5677a64f0b1",
+    "LICENSE.emscripten": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86",
+    "LICENSE.libcxx": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "LICENSE.musl": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af"
+  }
+}

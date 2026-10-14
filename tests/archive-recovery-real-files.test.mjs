@@ -20,12 +20,25 @@ test('actual Cthulhu originals retain their bytes and valid container metadata',
   if(format==='PDF')assert.equal(probe.version,'2.0');
  }
 });
-test('real py7zr Zstandard archive is an unsupported codec, never a duplicate or unencrypted file',async()=>{
- await assert.rejects(createFormatBackend(fixture('test-7z-secret.7z'),'7Z'),e=>{
-  assert.equal(e.code,'archive-codec');
-  assert.deepEqual(e.diagnostic,{format:'7Z',stage:'inspection',codec:'zstandard-04f71101'});
-  return true;
- });
+test('real py7zr AES+Zstandard archive rejects wrong passwords and recovers exact original bytes',async()=>{
+ const blob=fixture('test-7z-secret.7z'),backend=await createFormatBackend(blob,'7Z');
+ assert.equal(backend.info.supported,true);
+ assert.equal(backend.info.filenamesEncrypted,false);
+ assert.equal(backend.info.encryptedCount,3);
+ assert.equal(backend.info.total,728);
+ assert.match(backend.info.algorithms.join(' '),/AES-256.*ZSTD/);
+ for(const bad of ['wrong','Secret','secreu'])assert.equal(await backend.check(bad),false);
+ assert.equal(await backend.check('secret'),true);
+ const fresh=await createFormatBackend(blob,'7Z');
+ await assert.rejects(fresh.recover('wrong'),e=>e.code==='independent');
+ const {files}=await fresh.recover('secret');
+ const expected=JSON.parse(readFileSync(new URL('expected-zstd.json',root),'utf8'));
+ assert.deepEqual(files.map(f=>f.name).sort(),Object.keys(expected).sort());
+ for(const file of files){
+  const bytes=new Uint8Array(await file.blob.arrayBuffer());
+  assert.equal(bytes.length,expected[file.name].size);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),expected[file.name].sha256);
+ }
 });
 for(const name of ['data-only-lzma2.7z','data-only-copy.7z'])test(name+': readable headers, real checks and fresh independent extraction',async()=>{
  const blob=fixture(name),backend=await createFormatBackend(blob,'7Z');
@@ -63,4 +76,33 @@ test('corrupt actual 7Z checksum is rejected before engine startup',async()=>{
 });
 test('original PDF and original Zstandard content are independently readable with their supplied passwords',()=>{
  execFileSync('python3',[new URL('../scripts/verify-archive-real-fixtures.py',import.meta.url).pathname,root.pathname]);
+});
+test('Zstandard payload corruption is never a password match or downloadable result',async()=>{
+ const bytes=new Uint8Array(await fixture('test-7z-secret.7z').arrayBuffer());bytes[32]^=1;
+ const blob=new Blob([bytes]),backend=await createFormatBackend(blob,'7Z');
+ assert.equal(await backend.check('secret'),false);
+ const fresh=await createFormatBackend(blob,'7Z');
+ await assert.rejects(fresh.recover('secret'),e=>e.code==='independent');
+});
+test('Zstandard with encrypted headers uses genuine password verification and extraction',async()=>{
+ const blob=fixture('zstd-header-encrypted.7z'),backend=await createFormatBackend(blob,'7Z');
+ assert.equal(backend.info.filenamesEncrypted,true);
+ assert.equal(await backend.check('wrong'),false);
+ assert.equal(await backend.check('7'),true);
+ const fresh=await createFormatBackend(blob,'7Z');
+ const {files}=await fresh.recover('7');
+ assert.equal(files[0].name,'folder/sample.txt');
+ assert.equal(await files[0].blob.text(),'Independent Zstandard encrypted-header fixture\n');
+});
+for(const [name,code] of [['zstd-unsafe.7z','unsafe-path'],['zstd-over-limit.7z','limits'],
+ ['zstd-unencrypted.7z','unencrypted'],['unsupported-lzma.7z','archive-codec'],
+ ['zstd-invalid-properties.7z','archive-codec']])test(name+': reject before search ('+code+')',async()=>{
+ await assert.rejects(createFormatBackend(fixture(name),'7Z'),e=>e.code===code);
+});
+test('AES-encrypted Zstandard frames cannot request a decoder window above 32 MiB',async()=>{
+ const blob=fixture('zstd-window-limit.7z'),backend=await createFormatBackend(blob,'7Z');
+ // The encrypted frame header only becomes inspectable with its password.
+ await assert.rejects(backend.check('7'),e=>e.code==='archive-codec');
+ const fresh=await createFormatBackend(blob,'7Z');
+ await assert.rejects(fresh.recover('7'),e=>e.code==='archive-codec');
 });

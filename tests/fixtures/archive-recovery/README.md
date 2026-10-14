@@ -26,11 +26,12 @@ The original 7Z contains these independently extracted files:
 | `setup.cfg` | 58 | `ff77878e070c4ba52732b0c847b5a055a7c454731939c3217db4a7fb4a1e7240` |
 | `setup.py` | 559 | `b916eed2a4ee4e48c51a2b51d07d450de0be4dbb83d20e67f6fd166ff7921e49` |
 
-The pinned 7-Zip 24.09 WASM **does not decode this Zstandard extension**.
-Regression success for that original means accurate `archive-codec` rejection,
-no false password result, and no claim that it is damaged or unencrypted.
-Independent py7zr extraction proves that the original itself is valid. It does
-not turn py7zr into an application runtime or imply successful browser recovery.
+Mission 04.7.1 supplies a separate local 7z-only WASM build of 7-Zip 24.09,
+registering its existing native Zstandard decoder under extension `04F71101`.
+This original now recovers all three files with `secret`, using the native AES,
+solid-folder and CRC pipeline. `expected-zstd.json` is the machine-readable
+reference used by Node tests and real browser individual/ZIP download tests.
+The original remains byte-for-byte identical; no replacement fixture is used.
 
 ## Additional independent coverage
 
@@ -44,3 +45,20 @@ coder metadata and existing recovery path. `unencrypted-lzma2.7z` is a negative 
 
 They prove support for readable headers plus encrypted payloads and correct
 `Attributes = D …` directory handling. They **do not replace the original 7Z**.
+
+## Mission 04.7.1 Zstandard safety coverage
+
+`scripts/archive-zstd-fixtures.py` independently creates the additional py7zr
+1.1.4 fixtures with Zstandard and genuine AES-256. Sample password: `7`.
+
+- `zstd-header-encrypted.7z`: encrypted headers, genuine recovery.
+- `zstd-unsafe.7z`: explicit `../escape.txt` path, rejected before search.
+- `zstd-over-limit.7z`: 17 MiB output, rejected before decompression.
+- `zstd-unencrypted.7z`: no encryption; search remains unnecessary.
+- `unsupported-lzma.7z`: outside the validated codec allowlist, still unsupported.
+- `zstd-invalid-properties.7z`: two-byte unsupported properties, rejected before search.
+- `zstd-window-limit.7z`: a genuine encrypted Zstandard frame with a 64 MiB
+  window and tiny output; valid with independent py7zr, rejected by the local
+  decoder's 32 MiB window policy after decryption. No output is released.
+
+These do not replace the primary original archive or its reference hashes.

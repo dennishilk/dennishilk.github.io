@@ -4,6 +4,8 @@ Routes: `/museum/archive-recovery-lab/` and `/de/museum/archive-recovery-lab/`.
 
 This release includes tested **browser-local recovery and downloads** for narrowly validated ZIP, RAR4, RAR5, encrypted 7Z and PDF security revisions. Every claimed supported variant has independent fixtures. Unsupported files and unverified variants must still be rejected. No blog article is included; Worldnode deployment remains manual.
 
+Current Zstandard completion details: [7zr-zstd source, build, licenses and limits](vendor/README.7zr-zstd.md).
+
 ## Support matrix
 
 | Container / encryption | Recognition | Password verification | Independent extraction | Local output |
@@ -12,8 +14,8 @@ This release includes tested **browser-local recovery and downloads** for narrow
 | ZIP / WinZip AES-128, AES-192, AES-256, AE-1 and AE-2 | Yes | PBKDF2-HMAC-SHA-1 (1,000 rounds), password-verification bytes, then authenticated extraction | Fresh parse; HMAC authentication and applicable integrity checks | Individual files + new unencrypted ZIP |
 | RAR4 / encrypted archive headers (RAR3 crypto) | Signature, real WASM archive inspection | 7-Zip 24.09 WASM CPU, real candidates | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
 | RAR5 / encrypted archive headers | Signature, real WASM archive inspection | 7-Zip 24.09 WASM CPU, real candidates | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
-| 7Z / AES-256 + encrypted headers / LZMA2 | Signature, real WASM archive inspection | Native 7Z-specific AES/KDF via 7-Zip 24.09 WASM | Fresh WASM instance, full archive test and extraction | Individual files + ordinary ZIP |
-| 7Z / AES-256 contents + readable headers / LZMA2 or Copy | Signature + entry encryption metadata | Full archive test for each real candidate | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
+| 7Z / AES-256 + encrypted headers / LZMA2 or Zstandard | Signature, real WASM archive inspection | Native 7Z-specific AES/KDF via 7-Zip 24.09 WASM | Fresh WASM instance, full archive test and extraction | Individual files + ordinary ZIP |
+| 7Z / AES-256 contents + readable headers / LZMA2, Copy or Zstandard | Signature + entry encryption metadata | Full archive test for each real candidate | Fresh WASM instance, full test and extraction | Individual files + ordinary ZIP |
 | PDF Standard Security / R2 (RC4-40), R3 (RC4-128), R4 (AES-128), R6 (AES-256) | /Encrypt /R dictionary + qpdf validation | Genuine user-opening-password verification via qpdf WASM | Fresh qpdf pass, unencrypted export, qpdf check and independent pypdf parse | Decrypted PDF |
 
 Supported ZIP compression: Stored (0), Deflate (8). Supported: data descriptors,
@@ -184,8 +186,8 @@ bounded starfield. No star canvas/script is added to either recovery route.
 - **Unsupported/not guaranteed:** RAR multivolume, SFX, unusual compression
   modes and split sets; PDF non-Standard handlers / XFA-dependent content,
   signatures invalidated by rewriting, some incremental-update variations,
-  untested PDF R5; 7Z exotic codecs (including py7zr Zstandard `04F71101`)
-  or oversized solid dictionaries.
+  untested PDF R5; 7Z exotic codecs outside Copy/LZMA2/Zstandard, external Zstandard dictionaries,
+  or oversized solid dictionaries/windows.
   Arbitrarily long random passwords remain computationally infeasible.
 
 ### Pinned local dependencies, licenses and attribution
@@ -253,7 +255,7 @@ Password Cracking Lab's runtime/pages/styles and the archive cryptographic engin
 search scheduler, workers and bundled ZIP dependency are unchanged.
 
 
-## Mission 04.7 — real-file findings and limits (2026-10-14)
+## Mission 04.7 — historical real-file findings (superseded below by 04.7.1)
 
 The original acceptance files are permanently retained with SHA-256 assertions
 under `tests/fixtures/archive-recovery/`; their README records provenance,
@@ -285,7 +287,7 @@ and CSP console errors without relaxing CSP. `scripts/patch-archive-qpdf.mjs`
 reapplies the pinned integration patch during vendoring; updated SHA-256 sums
 record the resulting local file. No new runtime dependency was added.
 
-### 7Z: exact original remains a codec limitation
+### 7Z: the original limitation before Mission 04.7.1
 
 The original `test-7z-secret.7z` is valid, with readable headers and a solid
 AES-256-encrypted payload, SHA-256 KDF 2^19 cycles, and **Zstandard extension
@@ -357,3 +359,78 @@ audit (zero validation errors). Original-file browser auditing recorded 306
 same-origin GET-only requests with no private transmissions. Both originals
 also pass independent test-only validation under CI-pinned pypdf 5.9.0 and
 py7zr 1.1.4. The original 7Z remains intentionally unsupported in the app.
+
+## Mission 04.7.1 — original Zstandard archive recovered
+
+The original `tests/fixtures/archive-recovery/test-7z-secret.7z` now completes
+real password search, fresh independent verification and extraction, individual
+downloads and an ordinary password-free ZIP. Its bytes are unchanged (SHA-256
+`d5ef7c31996ba1a8d00fd3d04aa6d8557aa105bb4f4528821f24e8249332bd7c`).
+All three recovered files total 728 bytes and match the independently recorded
+SHA-256 values in `expected-zstd.json` and the fixture README.
+
+### Actual implementation
+
+7-Zip 24.09 already contains a native Zstandard decoder. The old full WASM build
+lacked its registration for 7z extension method ID `04F71101`. A separately built,
+extraction-only, 7z-only module now registers the existing native decoder under
+that ID (`ZSTD`). The entire native 7z folder pipeline remains responsible for
+AES-256, UTF-16 password/KDF handling, stream bounds, solid substream splitting,
+file CRCs and actual extraction. This is not a standalone decoder bolted onto a
+JavaScript AES or container implementation.
+
+`vendor/7zr-zstd.es6.js` and `vendor/7zr-zstd.es6.wasm` are used only for 7Z.
+RAR keeps its previous `7zz` module; ZIP, PDF and the companion lab are unchanged.
+Readable-header inspection rejects unsupported method chains and native codec
+properties before Start is enabled. Native Zstandard frame windows and folder
+output are limited to 32 MiB, and the new WASM memory is capped at 256 MiB. Existing
+input, entry, total, expansion, path, duplicate and integrity checks remain.
+Binary downloads explicitly use `application/octet-stream` so Chromium preserves
+an extensionless filename such as `py7zr`.
+
+[Exact dependency pins, licenses, complete corresponding source, integrity hashes,
+rebuild instructions and limitations](vendor/README.7zr-zstd.md) accompany the
+module. Upstream is 7-Zip 24.09 commit `e5431fa6f5505e385c6f9367260717e9c47dc2ee`,
+compiled with Emscripten 4.0.10. LGPL-2.1-or-later, public-domain components,
+BSD-3-Clause Zstandard and BSD-2-Clause xxHash notices are preserved, together with
+runtime library notices. The supplied complete modified source archive rebuilt
+**both runtime files byte-for-byte** locally; a dedicated CI workflow repeats it.
+
+### Validation and boundaries
+
+The original-file browser suite now uses the unchanged common dictionary for
+this 7Z: `secret` is its real candidate at index 676, producing **677 completed
+checks** with one CPU Worker. There is no test-only alphabet, candidate injection
+or password shortcut for Zstandard. Both DE and EN test wrong/correct candidates,
+Pause/Resume, the full shared search UI, a fresh verification Worker, all three
+individual downloads, an ordinary ZIP reopened by independent Python `zipfile`,
+exact sizes and SHA-256 values, and a complete offline search/download replay.
+No private requests, third-party runtime assets, uploads or persistent browser
+storage are introduced. The separate PDF test retains its documented bounded
+test alphabet from Mission 04.7; PDF code and nginx configuration are untouched.
+
+Additional genuine py7zr fixtures test Zstandard encrypted headers, payload
+corruption, unsafe paths, oversized output, unencrypted input, unsupported
+properties, a non-allowlisted LZMA chain, and a valid AES-encrypted frame requesting
+a 64 MiB window. That final case is independently readable but deliberately
+outside the 32 MiB window policy; no output is released. An encrypted frame's
+window is only observable after decryption, so a correct candidate outside this
+limit ends with a codec/configuration error instead of being released as success.
+External Zstandard dictionaries and exotic coder chains remain unsupported.
+
+Deployment follow-up supplied by Dennis: nginx's `.mjs` MIME type was corrected;
+the PDF now loads successfully in Firefox and Chrome Incognito. That deployment
+change was performed by Dennis, not by this GitHub-only mission. No blog, Museum
+design, GPU path, worker-count expansion or production-server configuration is
+modified here.
+
+Local Mission 04.7.1 validation: **53 archive Node tests**, 24 Museum Node tests,
+unchanged reproducible ZIP Worker bundle, real WASM smoke checks, the existing
+multi-format browser suite (RAR4/RAR5, 7Z, PDF R2/R3/R4/R6), the existing EN/DE ZIP
+browser suite, and the complete original-file EN/DE browser suite in Chrome
+155.0.8059.79. All passed. The original-file suite recorded 376 same-origin
+GET-only requests, zero uploads/private transmissions and no persistent storage;
+both languages completed full offline Zstandard search and downloads without
+any test-server requests. Dependency hashes and a byte-identical source rebuild
+passed. The SEO audit reported zero validation errors. These are automated
+browser results, not a claim of physical Cthulhu validation.

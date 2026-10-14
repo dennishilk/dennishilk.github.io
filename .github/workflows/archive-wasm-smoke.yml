@@ -6,6 +6,8 @@ on:
       - 'scripts/archive-wasm-smoke.mjs'
       - '.github/workflows/archive-wasm-smoke.yml'
       - 'assets/archive-recovery-lab/vendor/7zz.*'
+      - 'assets/archive-recovery-lab/vendor/7zr-zstd*'
+      - 'tests/fixtures/archive-recovery/**'
       - 'assets/archive-recovery-lab/vendor/qpdf.mjs'
       - 'assets/archive-recovery-lab/format-backend.js'
       - 'assets/archive-recovery-lab/format-worker.js'

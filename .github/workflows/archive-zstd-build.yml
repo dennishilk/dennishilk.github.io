@@ -1,0 +1,20 @@
+name: Archive Zstandard reproducible WASM build
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/archive-recovery-lab/vendor/7zr-zstd*'
+      - 'assets/archive-recovery-lab/vendor/SHA256SUMS.7zr-zstd'
+      - 'scripts/build-archive-7z-zstd.sh'
+      - '.github/workflows/archive-zstd-build.yml'
+permissions:
+  contents: read
+jobs:
+  reproducible-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: emscripten/emsdk:4.0.10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check licenses and hashes, rebuild the supplied complete source
+        run: bash scripts/build-archive-7z-zstd.sh

@@ -7,8 +7,10 @@ import {readFileSync,writeFileSync,mkdtempSync,statSync} from 'node:fs';
 import {resolve,extname} from 'node:path';
 import {tmpdir} from 'node:os';
 import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright/index.mjs');
 const root=resolve('.'),fixtures=resolve(root,'tests/fixtures/archive-recovery');
+const zstdExpected=JSON.parse(readFileSync(resolve(fixtures,'expected-zstd.json'),'utf8'));
 const dir=mkdtempSync(resolve(tmpdir(),'archive-real-browser-'));
 const serverRequests=[];
 const mime={'.js':'text/javascript','.mjs':'text/javascript','.html':'text/html','.css':'text/css','.wasm':'application/wasm'};
@@ -34,7 +36,7 @@ page.on('console',m=>{logs.push(m.text());if(m.type()==='error')errors.push(m.te
 context.on('request',r=>requests.push({url:r.url(),method:r.method(),body:r.postData()}));
 const ready=()=>page.waitForFunction(()=>window.archiveRecoveryReady);
 const supported=()=>page.waitForFunction(()=>!document.getElementById('start').disabled,null,{timeout:45000});
-const found=()=>page.waitForFunction(()=>!document.getElementById('result').hidden,null,{timeout:90000});
+const found=()=>page.waitForFunction(()=>!document.getElementById('result').hidden,null,{timeout:180000});
 const input=name=>page.locator('#file').setInputFiles(resolve(fixtures,name));
 async function known(){
  for(const id of ['de','en','common'])await page.locator('#'+id).uncheck();
@@ -42,6 +44,30 @@ async function known(){
  await page.locator('#min').fill('1');await page.locator('#max').fill('1');
  for(const id of ['lower','upper','symbols'])await page.locator('#'+id).uncheck();
  await page.locator('#digits').check();await page.locator('#workers').selectOption('1');
+}
+async function downloadZstd(label){
+ assert.equal(await page.locator('#recovered').inputValue(),'secret');
+ assert.equal(await page.locator('#checked').innerText(),'677');
+ assert.equal(await page.locator('#downloads button').count(),3);
+ assert.match(await page.locator('#result-format').innerText(),/ZSTD/);
+ for(const button of await page.locator('#downloads button').all()){
+  const name=await button.locator('.download-name').textContent();
+  const pending=page.waitForEvent('download');await button.click();
+  const download=await pending,bytes=readFileSync(await download.path());
+  assert.equal(download.suggestedFilename(),name.split('/').at(-1));
+  assert.equal(bytes.length,zstdExpected[name].size);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),zstdExpected[name].sha256);
+ }
+ const pending=page.waitForEvent('download');await page.locator('#allzip').click();
+ const download=await pending,path=resolve(dir,label+'.zip');await download.saveAs(path);
+ execFileSync('python3',['-c',[
+  'from zipfile import ZipFile','import hashlib,json,sys',
+  'expected=json.loads(sys.stdin.read())','z=ZipFile('+JSON.stringify(path)+')',
+  'assert z.testzip() is None;assert set(z.namelist())==set(expected)',
+  'assert all(not i.flag_bits&1 for i in z.infolist())',
+  'for name,e in expected.items():',
+  ' b=z.read(name);assert len(b)==e["size"];assert hashlib.sha256(b).hexdigest()==e["sha256"]'
+ ].join('\n')],{input:JSON.stringify(zstdExpected)});
 }
 async function downloadPdf(label){
  assert.equal(await page.locator('#recovered').inputValue(),'test9');
@@ -64,27 +90,41 @@ try{
   await page.goto(origin+(language==='de'?'/de':'')+'/museum/archive-recovery-lab/');await ready();
   assert.equal(await page.locator('#file').isDisabled(),true);
   await page.locator('#authorized').check();
-  await input('test-7z-secret.7z');
-  await page.waitForFunction(()=>document.getElementById('status').textContent.includes('NICHT UNTERSTÜTZT')||document.getElementById('status').textContent.includes('UNSUPPORTED VARIANT'));
-  assert.equal(await page.locator('#start').isDisabled(),true);
-  assert.match(await page.locator('#status-detail').innerText(),/Zstandard \(04F71101\)/);
-  assert.match(await page.locator('#file-status').innerText(),/Zstandard/);
-  const diagnostic=JSON.parse(await page.locator('#gpu-diagnostics').textContent()).formatDiagnostic;
-  assert.equal(diagnostic.code,'archive-codec');assert.equal(diagnostic.stage,'inspection');
-  assert.equal(diagnostic.codec,'zstandard-04f71101');
-  assert.equal(await page.locator('#result').isVisible(),false);
-  console.log(language,'ORIGINAL_7Z_PRECISE_CODEC_LIMITATION');
+  await input('test-7z-secret.7z');await supported();
+  assert.match(await page.locator('#file-status').innerText(),/AES-256.*ZSTD/);
+  const checks=await page.evaluate(async()=>{
+   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-471');
+   const b=await createFormatBackend(document.querySelector('#file').files[0],'7Z');
+   return {wrong:await b.check('wrong'),good:await b.check('secret')};
+  });
+  assert.deepEqual(checks,{wrong:false,good:true});
+  for(const id of ['de','en'])await page.locator('#'+id).uncheck();
+  await page.locator('#common').check();await page.locator('#brute').uncheck();
+  await page.locator('#workers').selectOption('1');
+  await page.locator('#start').click();
+  await page.waitForFunction(()=>Number(document.getElementById('checked').textContent.replace(/[^0-9]/g,''))>=4);
+  await page.locator('#pause').click();await page.waitForTimeout(1000);
+  const pausedChecks=await page.locator('#checked').innerText();await page.waitForTimeout(300);
+  assert.equal(await page.locator('#checked').innerText(),pausedChecks);
+  assert.match(await page.locator('#status').innerText(),/PAUSED|PAUSIERT/);
+  await page.locator('#resume').click();await found();await downloadZstd(language+'-original-zstd');
+  console.log(language,'ORIGINAL_ZSTD_FULL_UI_677_REAL_DICTIONARY_CHECKS_VALID_DOWNLOADS');
+  await context.setOffline(true);const zstdNetworkBefore=serverRequests.length;
+  await input('test-7z-secret.7z');await supported();
+  await page.locator('#start').click();await found();await downloadZstd(language+'-offline-zstd');
+  assert.equal(serverRequests.length,zstdNetworkBefore);await context.setOffline(false);
+  console.log(language,'ORIGINAL_ZSTD_FULL_SEARCH_OFFLINE_ZERO_SERVER_REQUESTS');
   await input('test-pdf-aes256-test9.pdf');await supported();
   // Genuine negative and positive opening-password checks against original R6.
   const direct=await page.evaluate(async()=>{
-   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-47');
+   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-471');
    const b=await createFormatBackend(document.querySelector('#file').files[0],'PDF');
    return {revision:b.info.revision,bad:await b.check('wrong'),good:await b.check('test9')};
   });
   assert.deepEqual(direct,{revision:6,bad:false,good:true});
   await known();
   await page.evaluate(async()=>{
-   const {SearchRun}=await import('/assets/archive-recovery-lab/search.js?v=20261014-47');
+   const {SearchRun}=await import('/assets/archive-recovery-lab/search.js?v=20261014-471');
    const start=SearchRun.prototype.start;
    SearchRun.prototype.start=function(){
     if(this.format==='PDF'){
@@ -101,7 +141,7 @@ try{
   // mode. Cached static resources only; the test server receives no requests.
   await context.setOffline(true);const networkBefore=serverRequests.length;
   await input('test-7z-secret.7z');
-  await page.waitForFunction(()=>/UNSUPPORTED VARIANT|NICHT UNTERSTÜTZT/.test(document.getElementById('status').textContent));
+  await supported();
   await input('test-pdf-aes256-test9.pdf');await supported();
   await page.locator('#start').click();await found();await downloadPdf(language+'-offline-original-pdf');
   assert.equal(serverRequests.length,networkBefore);
