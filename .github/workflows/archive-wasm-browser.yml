@@ -34,6 +34,8 @@ jobs:
         run: |
           curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar4-encrypted-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v4.rar"
           curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar5-encrypted-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v5.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar4-password-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/rar4-data-encrypted.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar5-password-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/rar5-data-encrypted.rar"
       - name: Run real Chrome local encrypted recovery tests
         env:
           PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
