@@ -38,6 +38,18 @@ await ctx.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue(
 try{
  await page.goto(origin+'/museum/archive-recovery-lab/');
  await page.waitForFunction(()=>window.archiveRecoveryReady);
+ assert.equal(await page.locator('#authorized').isChecked(),false);
+ assert.equal(await page.locator('#file').isDisabled(),true);
+ // An unapproved drag-and-drop must not inspect the file or enable recovery.
+ await page.evaluate(()=>{
+  const data=new DataTransfer();
+  data.items.add(new File(['%PDF-1.7\\n'],'private.pdf',{type:'application/pdf'}));
+  document.getElementById('drop').dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:data}));
+ });
+ assert.equal(await page.locator('#start').isDisabled(),true);
+ assert.match(await page.locator('#status').innerText(),/CONFIRM AUTHORIZATION/);
+ await page.locator('#authorized').check();
+ assert.equal(await page.locator('#file').isEnabled(),true);
  const cases=[
   ['RAR4',resolve(process.env.RUNNER_TEMP,'archive-wasm-test','test-v4.rar'),'junrar'],
   ['RAR5',resolve(process.env.RUNNER_TEMP,'archive-wasm-test','test-v5.rar'),'junrar'],
@@ -101,6 +113,9 @@ try{
  // Exercise the actual shared SearchRun coordinator, result presentation,
  // individual download and reconstructed ordinary ZIP in a real browser.
  await page.locator('#reset').click();
+ assert.equal(await page.locator('#authorized').isChecked(),false);
+ assert.equal(await page.locator('#file').isDisabled(),true);
+ await page.locator('#authorized').check();
  await page.locator('#file').setInputFiles(resolve(dir,'encrypted.7z'));
  await page.waitForFunction(()=>!document.getElementById('start').disabled,{},{timeout:45000});
  for(const id of ['de','en','common'])await page.locator('#'+id).uncheck();
@@ -135,6 +150,9 @@ try{
  // PDF must use the exact same shared search dashboard and export an actual
  // password-free PDF, not a ZIP, verified independently after downloading.
  await page.locator('#reset').click();
+ assert.equal(await page.locator('#authorized').isChecked(),false);
+ assert.equal(await page.locator('#file').isDisabled(),true);
+ await page.locator('#authorized').check();
  await page.locator('#file').setInputFiles(resolve(dir,'encrypted-AES-256.pdf'));
  await page.waitForFunction(()=>!document.getElementById('start').disabled,{},{timeout:45000});
  await page.locator('#start').click();
@@ -158,6 +176,9 @@ try{
  // keeps the existing compact museum-like layout without star animations.
  await page.goto(origin+'/de/museum/archive-recovery-lab/');
  await page.waitForFunction(()=>window.archiveRecoveryReady);
+ assert.equal(await page.locator('#file').isDisabled(),true);
+ assert.match(await page.locator('#authorization-panel').innerText(),/Berechtigung/);
+ await page.locator('#authorized').check();
  assert.equal(await page.locator('canvas').count(),0);
  await page.locator('#file').setInputFiles(resolve(dir,'encrypted.7z'));
  await page.waitForFunction(()=>!document.getElementById('start').disabled,{},{timeout:45000});
