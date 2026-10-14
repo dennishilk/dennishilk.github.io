@@ -15,7 +15,7 @@ All screenshots © Dennis Hilk. Real original browser captures, **not generated 
 
 ## Figure and encoding conventions
 
-At approved publication move assets under a stable URL such as `/assets/blog/archive-recovery-lab/`, e.g.:
+Published assets are now available under `/assets/blog/archive-recovery-lab/`, e.g.:
 
 ```html
 <figure class="article-figure">
@@ -28,7 +28,7 @@ At approved publication move assets under a stable URL such as `/assets/blog/arc
 </figure>
 ```
 
-Keep images readable: display at native column width or link originals for detailed UI text. Do **not** hardcode a narrower screenshot. Use explicit dimensions to prevent layout shift. For the most prominent first/hero figure, consider eager loading and high fetch priority only if it is truly above the fold. Else lazy-load. The user provided exact original PNGs; optimized WebPs are distributed separately with a SHA-256 manifest. The English ready-state screenshot **must not be mislabeled as an active benchmark**.
+Keep images readable: display at native column width or link originals for detailed UI text. Do **not** hardcode a narrower screenshot. Use explicit dimensions to prevent layout shift. For the most prominent first/hero figure, consider eager loading and high fetch priority only if it is truly above the fold. Else lazy-load. The original PNG screenshots were converted to optimized WebPs and added by Dennis to the public GitHub repository. The English ready-state screenshot **must not be mislabeled as an active benchmark**.
 
 ## Place and captions
 
@@ -37,4 +37,4 @@ Keep images readable: display at native column width or link originals for detai
 - Captions (DE): Suche in Echtzeit: Passwortkandidaten werden auf der CPU geprüft. / Datei und Suchmethoden auswählen – mit ausdrücklicher Berechtigung. / Ein verschlüsseltes Beispiel-ZIP selbst erstellen. / Echter Erfolg auf Cthulhu: Passwort test9 unabhängig bestätigt.
 - Captions (EN): The live dashboard before a recovery starts. / Set up local recovery with the correct file and candidate methods. / Create a genuinely encrypted test ZIP in your browser. / A separate verified AES example with two recovered files.
 
-**GitHub binary integration still outstanding; images were NOT committed in this textual staging batch.**
+**Published:** All eight optimized WebP files are present on GitHub and integrated into the German/English blog articles. The author's `.holdmycat` marker file remains untouched.
