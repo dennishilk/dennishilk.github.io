@@ -1,5 +1,6 @@
 import {phaseView,groupStatus} from './presentation.js';
 import {inspect,createDemo,exportZip,LIMITS} from './core.js';
+import {probeUnsupportedFormat} from './format-probe.js';
 import {preparePhases,SearchRun,BLIND_LIMITS} from './search.js';
 const de=document.documentElement.lang==='de',$=id=>document.getElementById(id),say=(en,german)=>de?german:en;
 const locale=de?'de-DE':'en-US',num=n=>n.toLocaleString(locale),seconds=ms=>ms<1000?Math.round(ms)+' ms':(ms/1000).toLocaleString(locale,{maximumFractionDigits:1})+' s';
@@ -19,7 +20,29 @@ function metadata(items){$('metadata').replaceChildren();for(const [key,value] o
 async function select(selected){if(busy())return;const id=++token;clearSearch();file=selected;info=null;metadata([]);controls();if(!selected){status(say('READY','BEREIT'));return;}status(say('READING HEADER','HEADER EINLESEN'));
  try{const found=await inspect(selected);if(id!==token)return;info=found;
  metadata([[say('Filename','Dateiname'),selected.name??'local-demo.zip'],[say('File size','Dateigröße'),num(selected.size)+' B'],[say('Container','Container'),found.format]]);
- if(!found.supported){status(say('UNSUPPORTED','NICHT UNTERSTÜTZT'),found.format+': '+say('format recognized; encryption, recovery and export are not implemented.','Format erkannt; Verschlüsselungsprüfung, Wiederherstellung und Export sind nicht implementiert.'));return;}
+ if(!found.supported){
+   let probe;
+   try{probe=await probeUnsupportedFormat(selected,found.format);}
+   catch{if(id!==token)return;status(say('FILE REJECTED','DATEI ABGEWIESEN'),say('Damaged or unsupported container header. No password search was started.','Beschädigter oder nicht unterstützter Container-Header. Es wurde keine Passwortsuche gestartet.'));return;}
+   if(id!==token)return;
+   const detail=({
+    'rar4-main':say('RAR4 main header parsed','RAR4-Hauptheader gelesen'),
+    'rar5-main':say('RAR5 main header parsed','RAR5-Hauptheader gelesen'),
+    'rar5-encryption-block':say('RAR5 encryption header found','RAR5-Verschlüsselungsheader erkannt'),
+    '7z-encoded':say('7Z encoded header (encryption not established)','7Z kodierter Header (Verschlüsselung nicht bestätigt)'),
+    '7z-plain':say('7Z ordinary header (encryption not established)','7Z normaler Header (Verschlüsselung nicht bestätigt)'),
+    'pdf-version':say('PDF version header parsed','PDF-Versionsheader gelesen')
+   })[probe.detail]??say('Signature only','Nur Dateisignatur');
+   metadata([[say('Filename','Dateiname'),selected.name??say('Local file','Lokale Datei')],[say('File size','Dateigröße'),num(selected.size)+' B'],[say('Container','Container'),found.format],
+    [say('Header inspection','Headerprüfung'),detail],
+    ...(probe.version?[[say('PDF version','PDF-Version'),probe.version]]:[]),
+    ...(probe.headerEncrypted===true?[[say('Header protection','Header-Schutz'),say('Encrypted archive headers detected','Verschlüsselte Archiv-Header erkannt')]]:[]),
+    ...(probe.volume?[[say('Volumes','Teile'),say('Multi-volume archive detected','Mehrteiliges Archiv erkannt')]]:[]),
+    [say('Password verification','Passwortprüfung'),say('Not implemented for this format','Für dieses Format nicht implementiert')],
+    [say('Recovered downloads','Wiederhergestellte Downloads'),say('Unavailable','Nicht verfügbar')]]);
+   status(say('UNSUPPORTED','NICHT UNTERSTÜTZT'),found.format+': '+say('metadata only; no password testing, extraction or export.','nur Metadaten; keine Passwortprüfung, Entschlüsselung oder Export.'));
+   return;
+  }
  metadata([[say('Filename','Dateiname'),selected.name??'local-demo.zip'],[say('File size','Dateigröße'),num(selected.size)+' B'],['Container','ZIP'],[say('Encryption','Verschlüsselung'),found.algorithms.join(' + ')],[say('Files / encrypted','Dateien / verschlüsselt'),`${found.entries.length} / ${found.encryptedCount}`],[say('Output size','Ausgabegröße'),num(found.total)+' B'],[say('Filenames','Dateinamen'),say('Visible · not encrypted','Sichtbar · unverschlüsselt')],[say('Extraction','Entpacken'),say('Local, after verified recovery','Lokal, nach bestätigter Wiederherstellung')],[say('Parameters','Parameter'),found.algorithms.some(a=>a.includes('AES'))?'PBKDF2-HMAC-SHA-1 · 1,000 · HMAC-SHA-1-80':'ZipCrypto · CRC-32']]);status(say('READY','BEREIT'),say('Choose your search methods. No password length was inferred.','Wähle deine Suchmethoden. Es wurde keine Passwortlänge abgeleitet.'));
  }catch(e){if(id!==token)return;info=null;status(say('FILE REJECTED','DATEI ABGEWIESEN'),errors[e.code]??errors.malformed);}finally{if(id===token)controls();}
 }

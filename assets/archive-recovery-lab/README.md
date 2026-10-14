@@ -11,10 +11,10 @@ No blog article is included. Worldnode deployment remains manual.
 |---|---|---|---|---|
 | ZIP / traditional ZipCrypto | Yes | Real key update + header rejection, then decompression + CRC-32 | Fresh parse; every entry checked | Individual files + new unencrypted ZIP |
 | ZIP / WinZip AES-128, AES-192, AES-256, AE-1 and AE-2 | Yes | PBKDF2-HMAC-SHA-1 (1,000 rounds), password-verification bytes, then authenticated extraction | Fresh parse; HMAC authentication and applicable integrity checks | Individual files + new unencrypted ZIP |
-| RAR4 | Signature only | Not implemented | Not implemented | None |
-| RAR5 | Signature only | Not implemented | Not implemented | None |
-| 7Z | Signature only | Not implemented | Not implemented | None |
-| PDF | Signature only; encryption revision is not inspected | Not implemented | Not implemented | None |
+| RAR4 | Signature + CRC-checked main header; header-encryption and volume flags | Not implemented | Not implemented | None |
+| RAR5 | Signature + CRC-checked first main/encryption header; volume flag when visible | Not implemented | Not implemented | None |
+| 7Z | Signature + checked start/next-header CRCs; plain vs encoded header (not proof of encryption) | Not implemented | Not implemented | None |
+| PDF | Signature and version header only; encryption dictionary/revision not inspected | Not implemented | Not implemented | None |
 
 Supported ZIP compression: Stored (0), Deflate (8). Supported: data descriptors,
 multiple files/directories, small ZIP64 archives. A single common password must
@@ -189,3 +189,54 @@ readability, offline replay, zero browser errors and zero private transmissions.
 Museum browser regression and site-wide SEO audit also passed. The original
 Password Cracking Lab's runtime/pages/styles and the archive cryptographic engine,
 search scheduler, workers and bundled ZIP dependency are unchanged.
+
+## Mission 04.2–04.4 preliminary groundwork (NOT a recovery release)
+
+On October 14, 2026, added `format-probe.js` for **read-only, bounded
+metadata inspection** of non-ZIP files and local bilingual presentation of
+those findings. RAR4 verifies the initial main-header CRC and reports the
+main archive's header-encryption / volume flags. RAR5 verifies the first
+header CRC and differentiates a main header from an archive encryption
+header. 7Z verifies both the start-header and next-header CRCs and identifies
+whether the next header is encoded. **Encoded 7Z headers are not necessarily
+encrypted.** PDF recognizes the file version without attempting to interpret
+the Standard Security Handler or owner/user passwords.
+
+This is explicitly **not** milestone 04.2, 04.3 or 04.4 completion.
+RAR4, RAR5, 7Z and PDF remain unsupported for all password search,
+independent confirmation, extraction and recovered downloads. Their Start
+control remains disabled and the UI does not claim to have tested any
+password. Unsupported formats are distinguished from an exhausted password
+search. The prior ZIP implementation, Password Cracking Lab, Museum layout,
+CSP, Worker source and runtime dependencies are unchanged.
+
+`tests/archive-recovery-format-probe.test.mjs` exercises header flags,
+checksum vectors, truncation, corruption and limits using **synthetic header
+fixtures only**. It does not substitute for independently generated
+encrypted RAR4/RAR5/7Z/PDF files, cryptographic verification, real extraction
+or browser download tests. Those remain necessary before a supported status.
+
+### Backend research and open blockers
+
+- Candidate shared RAR/7Z engine: [7z-wasm 1.2.0](https://github.com/use-strict/7z-wasm)
+  (7-Zip 24.09 based), including a 1,651,931-byte WASM artifact. Upstream
+  explicitly specifies **LGPL 2.1-or-later PLUS the unRAR restriction** for
+  the 7zz JavaScript/WASM binaries. Its license warns that unRAR-derived code
+  must not be used to create a RAR-compatible compressor. No binary has been
+  added or redistributed by this preliminary work. Audit the exact
+  release, license notices, build provenance and resource limits before
+  deciding to ship it.
+- Authoritative format references: [RAR 5 technical note](https://www.rarlab.com/technote.htm),
+  [RAR 1.5–4 specification research](https://github.com/bitplane/rar-research/blob/master/doc/RAR15_40_FORMAT_SPECIFICATION.md).
+- Remaining RAR/7Z engineering: a lawful pinned browser runtime; independent
+  RAR4/RAR5 and encrypted-7Z fixtures; real per-candidate verification;
+  fresh extraction and full CRC/authentication checks; bounded solid decoder
+  memory, decompression output, filenames and downloads.
+- Remaining PDF engineering: safely parse `/Encrypt` and Security Handler
+  revisions, accurately separate user/owner credentials, implement real
+  password checking, and **export a valid password-free PDF** with independent
+  re-open validation. A correct password alone is not release completion.
+- Do **not** promote recognition or these preliminary header tests to
+  encryption-method detection or recoverability. Do not publish the blog
+  article until genuine browser recovery and Cthulhu measurements exist.
+
