@@ -14,6 +14,9 @@
     "test:hardware-explorer": "node --test tests/linux-hardware-explorer*.test.mjs",
     "test:hardware-release": "node scripts/check-hardware-release.mjs",
     "build:gaming-repair": "node scripts/build-linux-gaming-repair.mjs && node scripts/build-linux-hardware-explorer.mjs && node scripts/build-linux-fix-lab.mjs && node scripts/sync-seo.mjs --sitemaps-only",
-    "test:gaming-repair": "node --test tests/linux-gaming-repair*.test.mjs"
+    "test:gaming-repair": "node --test tests/linux-gaming-repair*.test.mjs",
+    "test:archive-recovery": "node --test tests/archive-recovery-lab.test.mjs",
+    "test:archive-recovery:browser": "node scripts/test-archive-recovery-browser.mjs",
+    "build:archive-recovery": "node scripts/build-archive-recovery-worker.mjs"
   }
 }

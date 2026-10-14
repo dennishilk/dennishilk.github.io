@@ -1,7 +1,7 @@
 # Museum directory
 
 Scoped to `/museum/` only. Existing exhibit pages and their applications are unchanged.
-All 18 original exhibit destinations and the story / real-hardware links remain.
+All 19 original exhibit destinations and the story / real-hardware links remain.
 
 The static HTML provides crawlable links and full English fallback. Every catalog
 label also has German copy. The site-wide language control remains responsible
@@ -17,7 +17,7 @@ Fonts reuse the existing locally bundled, licensed JetBrains Mono assets.
 
 Verified in Chrome Headless Shell 141: English/German switching and native-route
 selection; topic/search combinations; empty-state reset and input focus; clear
-and Escape; offline filtering; 18 visible static exhibits without JavaScript;
+and Escape; offline filtering; 19 visible static exhibits without JavaScript;
 no horizontal overflow at 320, 390, 768, 1024, 1440 and 2048 px in both languages;
 zero uncaught page errors. Desktop and mobile screenshots were visually reviewed.
 At 1440 px, all exhibit cards measure 164 px high. Reduced-motion CSS disables
