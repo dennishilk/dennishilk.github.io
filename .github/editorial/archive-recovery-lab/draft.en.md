@@ -2,7 +2,7 @@
 
 > **EDITORIAL DRAFT · NOT PUBLISHED · [AUTHOR APPROVAL REQUIRED]**
 >
-> Technical status: repository review on 14 October 2026. RAR4, RAR5, 7Z and PDF still need Dennis's final physical-machine acceptance results, including downloaded-content checks.
+> Technical status: 14 October 2026, Mission 04.8 on `main`. Real Chrome acceptance tests passed for ZIP, RAR4/5, 7Z including Zstandard, and PDF R2–R6 with independently verified local downloads. Dennis confirmed that the updated lab works on Cthulhu; no additional per-format physical-GPU benchmarks were supplied.
 
 An old backup turns up. The archive is still there, but the password isn't. Maybe it is a ZIP of photographs, a WinRAR file you created years ago, a 7z backup, or a PDF that asks for an opening password. Search for help and you quickly encounter two uncomfortable suggestions: download an unfamiliar password-cracking executable or upload the entire private document to somebody else's website.
 
@@ -18,7 +18,7 @@ This is offline password verification against a selected encrypted file. It does
 
 The website serves static HTML, JavaScript, dictionaries and any WebAssembly dependencies the format-specific engines require. You explicitly provide one local file using the browser's file chooser or drag and drop. The File/Blob APIs let the app read that selection without automatically posting it to a server.
 
-The application identifies the container and its supported encryption variant. A search coordinator then creates password candidates from chosen wordlists, transformations, year suffixes, number suffixes or a specified brute-force space. Between one and four **CPU Web Workers** evaluate candidates using the format's real password-checking procedure. This is measurable local work, not an animated simulation.
+The application identifies the container and its supported encryption variant. A search coordinator then creates password candidates from chosen wordlists, transformations, year suffixes, number suffixes or a specified brute-force space. The default is **two CPU Web Workers**, with a manual **1–16 worker** choice subject to memory admission. Supported ZIP-ZipCrypto, ZIP-AES and a defined RAR5 subset can also perform genuine WebGPU cryptographic checks, in manually selected **GPU or Hybrid** mode on compatible hardware. RAR4, 7Z and PDF stay CPU-only. No automatic GPU selection or silent CPU fallback occurs. This is measurable local work, not an animated simulation.
 
 Finding a plausible header or cryptographic check is not the end. The result goes through a separate confirmation path: the selected archive is parsed afresh, encrypted contents are recovered and extraction/integrity checks are applied. Only after those checks pass does the UI reveal the recovered password and enable the applicable local downloads.
 
@@ -29,12 +29,12 @@ There is a meaningful privacy boundary here: the browser downloads the code and 
 | Type | Currently documented implementation | Evidence status |
 | --- | --- | --- |
 | ZIP / ZipCrypto | Historical ZIP encryption and verified recovery | **Successful real-world screenshot available** |
-| ZIP / WinZip AES-128/192/256 | AE-1/AE-2, Stored and Deflate | **Separate AES sample success pictured; final review pending** |
-| RAR4 | Supported encrypted-header test variants | **[PROVISIONAL — final acceptance test pending]** |
-| RAR5 | Supported encrypted-header test variants | **[PROVISIONAL — final acceptance test pending]** |
-| 7Z / AES-256 | Encrypted headers and LZMA2 variants | **[PROVISIONAL — final acceptance test pending]** |
-| PDF / older encryption | Standard Security Handler R2/RC4-40, R3/RC4-128, R4/AES-128 | **[PROVISIONAL — final acceptance test pending]** |
-| PDF / AES-256 | Documented Standard Security Handler R6/AES-256 | **[PROVISIONAL — final acceptance test pending]** |
+| ZIP / WinZip AES-128/192/256 | AE-1/AE-2, Stored and Deflate; supported GPU checks | **Browser downloads and real cryptographic GPU tests passed** |
+| RAR4 | Supported encrypted-header variants, CPU | **Real Chrome extraction acceptance passed** |
+| RAR5 | Supported encrypted-header variants, narrow GPU-eligible subset | **Browser acceptance and limited GPU tests passed** |
+| 7Z / AES-256 | Supported encrypted-header and data cases with Copy, LZMA2 and Zstandard, CPU | **Original Zstandard archive recovered; output checks passed** |
+| PDF / older encryption | Supported Standard Security Handler R2/RC4-40, R3/RC4-128, R4/AES-128, CPU | **Automated real-browser tests passed** |
+| PDF / AES-256 | Supported Standard Security Handler R6/AES-256, CPU | **Original AES-256 PDF decrypted and validated using two PDF readers** |
 
 The name of a format is **not** a guarantee that every possible archive with that extension works. Multi-volume archives, exotic compression codecs, unverified PDF revisions and unsupported encryption may be rejected. PDF **opening passwords** must also be distinguished from owner/printing/copying restrictions: a PDF that opens without a password does not need the same recovery procedure.
 
@@ -47,7 +47,7 @@ The current version accepts ZIP input up to 32 MiB, and RAR/7Z/PDF input up to 8
 3. Select or drag in **one** encrypted ZIP, RAR, 7Z or PDF. Read the detected format and encryption notes.
 4. Start with appropriate dictionaries if you expect a memorable human-made password. You can also select brute force, but exhaustive combinations become huge.
 5. If you remember something, try the **optional prior-knowledge mode** to narrow the search using characteristics that the interface offers.
-6. Set one to four CPU workers. More workers may increase throughput but consume more of your computer.
+6. Start with the default **two CPU workers**; manually choose **1–16** if the memory admission check allows it. With compatible hardware you can explicitly check GPU support and select GPU or Hybrid for supported formats. More workers or GPU do not guarantee a faster result.
 7. Start the local search. Watch the phase name, confirmed attempts and measured attempts per second. Use pause/resume if needed.
 8. After independent verification, reveal or copy your password. Download recovered individual files, or a newly created ZIP when that operation is supported.
 
@@ -69,11 +69,11 @@ A real ZipCrypto recovery on **Cthulhu**, a NixOS workstation with a **Ryzen 7 5
 | Independent confirmation | 24 ms |
 | Result | Verified recovery and download controls |
 
-**[PROVISIONAL — Dennis to sign off the final benchmark wording.]** This is one run, not a guaranteed ZipCrypto speed. File size, format, password position, selected transformations, implementation and CPU workload all matter. The dashboard's notion of confirmed work is not interchangeable with every wall-clock operation.
+**Scope:** This is one run, not a guaranteed ZipCrypto speed. File size, format, password position, selected transformations, implementation and CPU workload all matter. The dashboard's notion of confirmed work is not interchangeable with every wall-clock operation.
 
-The **English** success screenshot is a **different** demonstration: `local-demo.zip`, ZIP-AES-256 AE-2, example password `test`, 208 confirmed attempts, 106 ms active time, a displayed average of 2,416 attempts/s and two recoverable files. These values are not directly comparable to the German ZipCrypto run. **[PROVISIONAL — English sample results require final editorial approval.]**
+The **English** success screenshot is a **different** demonstration: `local-demo.zip`, ZIP-AES-256 AE-2, example password `test`, 208 confirmed attempts, 106 ms active time, a displayed average of 2,416 attempts/s and two recoverable files. These values are not directly comparable to the German ZipCrypto run. These are separate test observations, not a CPU/GPU speed comparison.
 
-RAR4, RAR5, 7Z and encrypted PDF measurements remain genuinely unknown here. **[PENDING BENCHMARK] [PENDING DOWNLOAD VALIDATION]** The publication will show only what Dennis's further tests establish.
+Automated real-browser acceptance now verifies supported RAR4, RAR5, 7Z and PDF recovery, including real decrypted downloads and the original Zstandard 7Z/AES-256 PDF fixtures. **Per-format Cthulhu speed figures are still unknown**, and SwiftShader correctness checks must not be described as physical Radeon benchmarks.
 
 ## 6. Why encryption types change the search cost {#cryptography}
 
@@ -131,7 +131,7 @@ The estimate describes the chosen search space at an observed rate. It is not a 
 
 ### Can this slow my computer down?
 
-Yes. These are actual CPU checks. Reduce worker count, pause or stop the search to free resources.
+Yes. CPU workers, plus WebGPU in compatible explicitly selected modes, execute genuine cryptographic checks. Reduce worker count, pause or stop the search to free resources.
 
 ### Will I get my original files back?
 
@@ -143,7 +143,7 @@ Stopping or exhausting the configured candidates does **not** prove the password
 
 ## 11. Try the recovery tool {#try-it}
 
-Start small with a file you own and a plausible password pattern: **[Open the Archive Recovery Lab](/museum/archive-recovery-lab/)**. For a different experiment – comparing local CPU, WebGPU and hybrid search against an invented SHA-256 password target – visit the [Password Cracking Lab](/museum/password-cracking-lab/) and read [How Fast Can Your Computer Crack a Password?](/blog/how-fast-can-your-computer-crack-a-password/). The two articles answer different questions.
+Start small with a file you own and a plausible password pattern: **[Open the Archive Recovery Lab](/museum/archive-recovery-lab/)**. For a separate experiment – testing an invented SHA-256 password target – visit the [Password Cracking Lab](/museum/password-cracking-lab/) and read [How Fast Can Your Computer Crack a Password?](/blog/how-fast-can-your-computer-crack-a-password/). The two articles answer different questions.
 
 **Only use files you own or are expressly authorized to access.**
 
