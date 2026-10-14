@@ -1,6 +1,7 @@
+import {rar5Parameters} from './rar5-gpu.js?v=20261014-48';
 // Format-specific CPU engines. Runs only inside the local module Worker.
 // ZIP keeps its separate, proven worker bundle and algorithm implementation.
-import {safePath,LIMITS} from './core.js';
+import {safePath,LIMITS} from './core.js?v=20261014-48';
 import {probeUnsupportedFormat} from './format-probe.js?v=20261014-47';
 
 export class FormatEngineError extends Error {
@@ -221,6 +222,7 @@ export async function createFormatBackend(blob,format){
   else if(/Headers Error|Unexpected end|Is not archive|Can not open/i.test(r.output))fail('malformed');
   else fail('engine-internal',{exitCode:r.code});
  }
+ if(format==='RAR5')info.gpuParameters=await rar5Parameters(blob);
  return {info,async check(password){
   if(format!=='PDF')return check7(password);
   const r=pdfRun(password,['--show-encryption']);

@@ -1,6 +1,6 @@
 // Format-specific module worker. No runtime CDN, uploads, storage or logging.
 // ZIP uses the original, separately built classic Worker unchanged.
-import {createFormatBackend} from './format-backend.js?v=20261014-471';
+import {createFormatBackend} from './format-backend.js?v=20261014-48';
 let engineFormat=null;
 let backend=null,paused=false,stopped=false,wake=null,abort=false;
 const yieldTask=()=>new Promise(r=>setTimeout(r,0));

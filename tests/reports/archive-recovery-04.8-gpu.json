@@ -1,0 +1,608 @@
+{
+  "createdAt": "2026-10-14T14:16:21.792Z",
+  "cgroupCpuMax": "800000 100000",
+  "cgroupMemoryMax": "8589934592",
+  "browser": "155.0.8059.79",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalProcessors": 9,
+  "hostVisibleMemoryBytes": 10451464192,
+  "hardwareGpuRequested": false,
+  "softwareTestOptIn": true,
+  "benchmarks": [
+    {
+      "engine": "cpu",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "zipcrypto",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 15.600000000093132,
+      "initMs": 35.299999999813735,
+      "attemptsPerSecond": 64102.56410218141,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 70,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 4,
+      "selectedWorkerCount": 4,
+      "format": "zipcrypto",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 9.399999999906868,
+      "initMs": 56.8000000002794,
+      "attemptsPerSecond": 106382.97872445825,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 140,
+        "workers": 4
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 8,
+      "selectedWorkerCount": 8,
+      "format": "zipcrypto",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 10.300000000279397,
+      "initMs": 116.29999999981374,
+      "attemptsPerSecond": 97087.37863814311,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 280,
+        "workers": 8
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 16,
+      "selectedWorkerCount": 16,
+      "format": "zipcrypto",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 11.800000000279397,
+      "initMs": 293.29999999981374,
+      "attemptsPerSecond": 84745.76270985782,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 560,
+        "workers": 16
+      },
+      "independent": true
+    },
+    {
+      "engine": "gpu",
+      "workers": 0,
+      "selectedWorkerCount": 2,
+      "format": "zipcrypto",
+      "checked": "1000",
+      "cpuChecked": "0",
+      "gpuChecked": "1000",
+      "elapsedMs": 30.899999999906868,
+      "initMs": 1007.3000000002794,
+      "attemptsPerSecond": 32362.459547023107,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 96,
+        "workers": 0
+      },
+      "independent": true
+    },
+    {
+      "engine": "hybrid",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "zipcrypto",
+      "checked": "1000",
+      "cpuChecked": "744",
+      "gpuChecked": "256",
+      "elapsedMs": 10.200000000186265,
+      "initMs": 1124.1000000000931,
+      "attemptsPerSecond": 98039.2156844842,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 166,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "aes128",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 273.8000000002794,
+      "initMs": 31.100000000093132,
+      "attemptsPerSecond": 3652.3009495945203,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 70,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 4,
+      "selectedWorkerCount": 4,
+      "format": "aes128",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 254,
+      "initMs": 55.299999999813735,
+      "attemptsPerSecond": 3937.007874015748,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 140,
+        "workers": 4
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 8,
+      "selectedWorkerCount": 8,
+      "format": "aes128",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 257,
+      "initMs": 124,
+      "attemptsPerSecond": 3891.0505836575876,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 280,
+        "workers": 8
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 16,
+      "selectedWorkerCount": 16,
+      "format": "aes128",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 268.70000000018626,
+      "initMs": 223.5,
+      "attemptsPerSecond": 3721.622627462995,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 560,
+        "workers": 16
+      },
+      "independent": true
+    },
+    {
+      "engine": "gpu",
+      "workers": 0,
+      "selectedWorkerCount": 2,
+      "format": "aes128",
+      "checked": "1000",
+      "cpuChecked": "0",
+      "gpuChecked": "1000",
+      "elapsedMs": 973.0999999996275,
+      "initMs": 915.7000000001863,
+      "attemptsPerSecond": 1027.6436131953374,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 96,
+        "workers": 0
+      },
+      "independent": true
+    },
+    {
+      "engine": "hybrid",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "aes128",
+      "checked": "1000",
+      "cpuChecked": "744",
+      "gpuChecked": "256",
+      "elapsedMs": 267.29999999981374,
+      "initMs": 860.3999999999069,
+      "attemptsPerSecond": 3741.1148522285703,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 166,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "aes192",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 404.10000000009313,
+      "initMs": 28,
+      "attemptsPerSecond": 2474.6349913382073,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 70,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 4,
+      "selectedWorkerCount": 4,
+      "format": "aes192",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 396.5,
+      "initMs": 55.5,
+      "attemptsPerSecond": 2522.0680958385874,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 140,
+        "workers": 4
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 8,
+      "selectedWorkerCount": 8,
+      "format": "aes192",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 379.39999999990687,
+      "initMs": 116.8000000002794,
+      "attemptsPerSecond": 2635.740643121364,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 280,
+        "workers": 8
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 16,
+      "selectedWorkerCount": 16,
+      "format": "aes192",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 376.70000000018626,
+      "initMs": 251,
+      "attemptsPerSecond": 2654.6323334205085,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 560,
+        "workers": 16
+      },
+      "independent": true
+    },
+    {
+      "engine": "gpu",
+      "workers": 0,
+      "selectedWorkerCount": 2,
+      "format": "aes192",
+      "checked": "1000",
+      "cpuChecked": "0",
+      "gpuChecked": "1000",
+      "elapsedMs": 936.7000000001863,
+      "initMs": 920.2999999998137,
+      "attemptsPerSecond": 1067.5776662750093,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 96,
+        "workers": 0
+      },
+      "independent": true
+    },
+    {
+      "engine": "hybrid",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "aes192",
+      "checked": "1000",
+      "cpuChecked": "704",
+      "gpuChecked": "296",
+      "elapsedMs": 402.29999999981374,
+      "initMs": 877.7000000001863,
+      "attemptsPerSecond": 2485.7071836949117,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 166,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "aes256",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 521.6000000000931,
+      "initMs": 27,
+      "attemptsPerSecond": 1917.1779141100872,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 70,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 4,
+      "selectedWorkerCount": 4,
+      "format": "aes256",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 542.1000000000931,
+      "initMs": 52.1999999997206,
+      "attemptsPerSecond": 1844.6781036705925,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 140,
+        "workers": 4
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 8,
+      "selectedWorkerCount": 8,
+      "format": "aes256",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 579.1000000000931,
+      "initMs": 133.60000000009313,
+      "attemptsPerSecond": 1726.8174753925734,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 280,
+        "workers": 8
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 16,
+      "selectedWorkerCount": 16,
+      "format": "aes256",
+      "checked": "1000",
+      "cpuChecked": "1000",
+      "gpuChecked": "0",
+      "elapsedMs": 573.8999999999069,
+      "initMs": 261.10000000009313,
+      "attemptsPerSecond": 1742.4638438755226,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 560,
+        "workers": 16
+      },
+      "independent": true
+    },
+    {
+      "engine": "gpu",
+      "workers": 0,
+      "selectedWorkerCount": 2,
+      "format": "aes256",
+      "checked": "1000",
+      "cpuChecked": "0",
+      "gpuChecked": "1000",
+      "elapsedMs": 799.1000000000931,
+      "initMs": 909.6000000000931,
+      "attemptsPerSecond": 1251.4078338128938,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 96,
+        "workers": 0
+      },
+      "independent": true
+    },
+    {
+      "engine": "hybrid",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "aes256",
+      "checked": "1000",
+      "cpuChecked": "488",
+      "gpuChecked": "512",
+      "elapsedMs": 361.89999999990687,
+      "initMs": 932.3999999999069,
+      "attemptsPerSecond": 2763.194252556666,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 35,
+        "budgetMiB": 2048,
+        "estimateMiB": 166,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "rar5",
+      "checked": "64",
+      "cpuChecked": "64",
+      "gpuChecked": "0",
+      "elapsedMs": 910.7000000001863,
+      "initMs": 116.5,
+      "attemptsPerSecond": 70.27561216645098,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 4,
+      "selectedWorkerCount": 4,
+      "format": "rar5",
+      "checked": "64",
+      "cpuChecked": "64",
+      "gpuChecked": "0",
+      "elapsedMs": 541,
+      "initMs": 234.39999999990687,
+      "attemptsPerSecond": 118.29944547134934,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      },
+      "independent": true
+    },
+    {
+      "engine": "cpu",
+      "workers": 8,
+      "format": "rar5",
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "engine": "cpu",
+      "workers": 16,
+      "format": "rar5",
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "engine": "gpu",
+      "workers": 0,
+      "selectedWorkerCount": 2,
+      "format": "rar5",
+      "checked": "64",
+      "cpuChecked": "0",
+      "gpuChecked": "64",
+      "elapsedMs": 8192.5,
+      "initMs": 1754.2999999998137,
+      "attemptsPerSecond": 7.81202319194385,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 416,
+        "workers": 0
+      },
+      "independent": true
+    },
+    {
+      "engine": "hybrid",
+      "workers": 2,
+      "selectedWorkerCount": 2,
+      "format": "rar5",
+      "checked": "64",
+      "cpuChecked": "56",
+      "gpuChecked": "8",
+      "elapsedMs": 1107.1000000000931,
+      "initMs": 2092.0999999996275,
+      "attemptsPerSecond": 57.80868936861585,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1062,
+        "workers": 2
+      },
+      "independent": true
+    }
+  ],
+  "adapter": {
+    "vendor": "google",
+    "architecture": "swiftshader",
+    "description": "",
+    "fallback": false
+  },
+  "requests": 354,
+  "privateTransmissions": 0,
+  "pageErrors": []
+}

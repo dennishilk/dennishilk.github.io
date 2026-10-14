@@ -144,3 +144,5 @@
 .archive-lab .phase-current{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.6fr);gap:.3rem .8rem}
 .archive-lab #phase-number{grid-column:2;font-size:.65rem;color:var(--gold);min-width:0;overflow-wrap:normal}
 @media(max-width:700px){.archive-lab .phase-current{grid-template-columns:minmax(0,1fr)}.archive-lab #phase-number{grid-column:1}}
+/* Optional execution controls share the existing compact compute area. */
+.config-cpu select{max-width:100%}.activity-row{flex-wrap:wrap}#engine-help{overflow-wrap:anywhere}#gpu-chip[data-active=true]{border-color:var(--accent,#9ecb87)}

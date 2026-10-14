@@ -1,0 +1,532 @@
+{
+  "browser": "155.0.8059.79",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalProcessors": 9,
+  "cgroupCpuMax": "800000 100000",
+  "cgroupMemoryMax": "8589934592",
+  "note": "Sixteen real rejection checks per accepted configuration, no match. Extraction/download correctness is covered separately by the acceptance browser suites. These short workloads are noisy, not Cthulhu performance.",
+  "results": [
+    {
+      "label": "RAR4 encrypted headers",
+      "format": "RAR4",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 160.79999999981374,
+      "initMs": 223.90000000037253,
+      "attemptsPerSecond": 99.50248756230432,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "RAR4 encrypted headers",
+      "format": "RAR4",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 69.39999999990687,
+      "initMs": 376.20000000018626,
+      "attemptsPerSecond": 230.54755043258604,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "RAR4 encrypted headers",
+      "format": "RAR4",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "RAR4 encrypted headers",
+      "format": "RAR4",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "RAR5 encrypted headers",
+      "format": "RAR5",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 170.89999999990687,
+      "initMs": 154.39999999990687,
+      "attemptsPerSecond": 93.62200117032603,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "RAR5 encrypted headers",
+      "format": "RAR5",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 131.29999999981374,
+      "initMs": 290,
+      "attemptsPerSecond": 121.85833968029473,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "RAR5 encrypted headers",
+      "format": "RAR5",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "RAR5 encrypted headers",
+      "format": "RAR5",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "data-only-copy.7z",
+      "format": "7Z",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 259.10000000009313,
+      "initMs": 82.79999999981374,
+      "attemptsPerSecond": 61.75221922035603,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "data-only-copy.7z",
+      "format": "7Z",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 206.39999999990687,
+      "initMs": 163.39999999990687,
+      "attemptsPerSecond": 77.51937984499621,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "data-only-copy.7z",
+      "format": "7Z",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "data-only-copy.7z",
+      "format": "7Z",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "data-only-lzma2.7z",
+      "format": "7Z",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 318.39999999990687,
+      "initMs": 86.20000000018626,
+      "attemptsPerSecond": 50.25125628142173,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "data-only-lzma2.7z",
+      "format": "7Z",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 196.20000000018626,
+      "initMs": 168.6999999997206,
+      "attemptsPerSecond": 81.54943934752707,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "data-only-lzma2.7z",
+      "format": "7Z",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "data-only-lzma2.7z",
+      "format": "7Z",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "test-7z-secret.7z",
+      "format": "7Z",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 339.3000000002794,
+      "initMs": 376.6999999997206,
+      "attemptsPerSecond": 47.155909224835916,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "test-7z-secret.7z",
+      "format": "7Z",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 118.29999999981374,
+      "initMs": 734.8999999999069,
+      "attemptsPerSecond": 135.24936601880975,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "test-7z-secret.7z",
+      "format": "7Z",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "test-7z-secret.7z",
+      "format": "7Z",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "PDF R6 original",
+      "format": "PDF",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 101.5,
+      "initMs": 181.5,
+      "attemptsPerSecond": 157.63546798029554,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "PDF R6 original",
+      "format": "PDF",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 68.89999999990687,
+      "initMs": 382.70000000018626,
+      "attemptsPerSecond": 232.22060957941403,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "PDF R6 original",
+      "format": "PDF",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "PDF R6 original",
+      "format": "PDF",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "PDF RC4-40",
+      "format": "PDF",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 15.199999999720603,
+      "initMs": 133.40000000037253,
+      "attemptsPerSecond": 1052.6315789667171,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "PDF RC4-40",
+      "format": "PDF",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 10.299999999813735,
+      "initMs": 237,
+      "attemptsPerSecond": 1553.3980582805186,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "PDF RC4-40",
+      "format": "PDF",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "PDF RC4-40",
+      "format": "PDF",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "PDF RC4-128",
+      "format": "PDF",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 15.400000000372529,
+      "initMs": 127.79999999981374,
+      "attemptsPerSecond": 1038.9610389359063,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "PDF RC4-128",
+      "format": "PDF",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 11.300000000279397,
+      "initMs": 229.6999999997206,
+      "attemptsPerSecond": 1415.9292035048136,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "PDF RC4-128",
+      "format": "PDF",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "PDF RC4-128",
+      "format": "PDF",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    },
+    {
+      "label": "PDF AES-128",
+      "format": "PDF",
+      "workers": 2,
+      "checked": "16",
+      "elapsedMs": 18.399999999906868,
+      "initMs": 134.1999999997206,
+      "attemptsPerSecond": 869.5652173957056,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 646,
+        "workers": 2
+      }
+    },
+    {
+      "label": "PDF AES-128",
+      "format": "PDF",
+      "workers": 4,
+      "checked": "16",
+      "elapsedMs": 13,
+      "initMs": 280.70000000018626,
+      "attemptsPerSecond": 1230.7692307692307,
+      "resourcePlan": {
+        "allowed": true,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 1292,
+        "workers": 4
+      }
+    },
+    {
+      "label": "PDF AES-128",
+      "format": "PDF",
+      "workers": 8,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 2584,
+        "workers": 8
+      }
+    },
+    {
+      "label": "PDF AES-128",
+      "format": "PDF",
+      "workers": 16,
+      "blocked": "worker-memory",
+      "resourcePlan": {
+        "allowed": false,
+        "perWorkerMiB": 323,
+        "budgetMiB": 2048,
+        "estimateMiB": 5168,
+        "workers": 16
+      }
+    }
+  ]
+}

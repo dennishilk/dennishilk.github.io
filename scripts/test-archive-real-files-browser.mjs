@@ -93,7 +93,7 @@ try{
   await input('test-7z-secret.7z');await supported();
   assert.match(await page.locator('#file-status').innerText(),/AES-256.*ZSTD/);
   const checks=await page.evaluate(async()=>{
-   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-471');
+   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48');
    const b=await createFormatBackend(document.querySelector('#file').files[0],'7Z');
    return {wrong:await b.check('wrong'),good:await b.check('secret')};
   });
@@ -117,14 +117,14 @@ try{
   await input('test-pdf-aes256-test9.pdf');await supported();
   // Genuine negative and positive opening-password checks against original R6.
   const direct=await page.evaluate(async()=>{
-   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-471');
+   const {createFormatBackend}=await import('/assets/archive-recovery-lab/format-backend.js?v=20261014-48');
    const b=await createFormatBackend(document.querySelector('#file').files[0],'PDF');
    return {revision:b.info.revision,bad:await b.check('wrong'),good:await b.check('test9')};
   });
   assert.deepEqual(direct,{revision:6,bad:false,good:true});
   await known();
   await page.evaluate(async()=>{
-   const {SearchRun}=await import('/assets/archive-recovery-lab/search.js?v=20261014-471');
+   const {SearchRun}=await import('/assets/archive-recovery-lab/search.js?v=20261014-48');
    const start=SearchRun.prototype.start;
    SearchRun.prototype.start=function(){
     if(this.format==='PDF'){

@@ -62,3 +62,11 @@ They prove support for readable headers plus encrypted payloads and correct
   decoder's 32 MiB window policy after decryption. No output is released.
 
 These do not replace the primary original archive or its reference hashes.
+
+
+Mission 04.8 adds `rar5-header-gpu-7.rar`, generated independently by
+`scripts/archive-gpu-fixtures.py` (MIT). Password `7`; AES-256 CBC encrypted
+headers and stored file payload, KDF exponent 15; output `folder/sample.txt` is
+exactly `Independent Python RAR5 AES-256 fixture\n` (40 UTF-8 bytes).
+Fixture SHA-256: `3bf17d254d1e0610a7209e8c8f2b618829b56f8f9742c0e9e37b6e1ea0520e2a`.
+Native 7-Zip 24.09 independently tests/extracts it. No pre-existing fixture changes.

@@ -1,3 +1,12 @@
+# Current execution modes — Mission 04.8
+
+CPU is always the initial engine with exactly two workers. The manual range is
+1–16. Genuine WebGPU/Hybrid now cover ZIP ZipCrypto, ZIP AES-128/192/256 and a
+validated RAR5 encrypted-header subset. Other formats retain CPU recovery.
+See [PERFORMANCE-04.8.md](PERFORMANCE-04.8.md) for the full feasibility matrix,
+resource admission, cryptography, tests, measurements and current limitations.
+Earlier mission notes below describe their historical release states.
+
 # Archive Password Recovery Lab — ZIP / RAR4 / RAR5 / 7Z / PDF
 
 Routes: `/museum/archive-recovery-lab/` and `/de/museum/archive-recovery-lab/`.

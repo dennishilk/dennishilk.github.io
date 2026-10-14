@@ -9,6 +9,7 @@ on:
       - 'tests/fixtures/archive-recovery/**'
       - 'scripts/verify-archive-real-fixtures.py'
       - 'scripts/archive-recovery-fixtures.py'
+      - 'scripts/archive-gpu-fixtures.py'
       - 'scripts/build-archive-recovery-worker.mjs'
       - '.github/workflows/archive-recovery-check.yml'
 
@@ -29,6 +30,9 @@ jobs:
           python-version: '3.12'
       - name: Install test-only fixture dependency
         run: python -m pip install 'cryptography==43.0.3' 'pypdf==5.9.0' 'py7zr==1.1.4'
+      - name: Local GPU source integrity
+        working-directory: assets/archive-recovery-lab
+        run: sha256sum --check SHA256SUMS.gpu
       - name: Archive ZIP and format-probe tests
         run: npm run test:archive-recovery
       - name: Existing Password Cracking Lab regression

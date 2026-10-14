@@ -42,6 +42,11 @@ jobs:
         env:
           PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
         run: node scripts/test-archive-wasm-browser.mjs
+      - name: Real WebGPU cryptography, Hybrid, DE/EN downloads and offline recovery
+        env:
+          PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
+          ARCHIVE_RECOVERY_BROWSER: /usr/bin/google-chrome
+        run: node scripts/test-archive-gpu-browser.mjs
       - name: Original Cthulhu acceptance files, precise limitations and offline flow
         env:
           PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs

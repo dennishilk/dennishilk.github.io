@@ -1,5 +1,5 @@
 import zip from './zip-api.js';
-export const LIMITS=Object.freeze({input:32*1024**2,entry:16*1024**2,total:32*1024**2,entries:256,directory:1024**2,ratio:200,workers:4});
+export const LIMITS=Object.freeze({input:32*1024**2,entry:16*1024**2,total:32*1024**2,entries:256,directory:1024**2,ratio:200,workers:16});
 export class RecoveryError extends Error{constructor(code){super(code);this.code=code;}}
 const fail=code=>{throw new RecoveryError(code);};
 const read=async(blob,start,length)=>{if(!Number.isSafeInteger(start)||start<0||length<0||start+length>blob.size)fail('malformed');return new Uint8Array(await blob.slice(start,start+length).arrayBuffer());};

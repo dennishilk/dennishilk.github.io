@@ -1,7 +1,8 @@
+import {gpuVariant} from './gpu.js?v=20261014-48';
 import {phaseView,groupStatus} from './presentation.js';
-import {inspect,createDemo,exportZip,LIMITS} from './core.js';
-import {probeUnsupportedFormat} from './format-probe.js?v=20261014-471';
-import {preparePhases,SearchRun,BLIND_LIMITS} from './search.js?v=20261014-471';
+import {inspect,createDemo,exportZip,LIMITS} from './core.js?v=20261014-48';
+import {probeUnsupportedFormat} from './format-probe.js?v=20261014-48';
+import {preparePhases,SearchRun,BLIND_LIMITS} from './search.js?v=20261014-48';
 const de=document.documentElement.lang==='de',$=id=>document.getElementById(id),say=(en,german)=>de?german:en;
 const locale=de?'de-DE':'en-US',num=n=>n.toLocaleString(locale),seconds=ms=>ms<1000?Math.round(ms)+' ms':(ms/1000).toLocaleString(locale,{maximumFractionDigits:1})+' s';
 const errors={limits:say('Resource limit exceeded. See the documented size and expansion limits.','Ressourcenlimit überschritten. Beachte die dokumentierten Größen- und Entpacklimits.'),malformed:say('Malformed or inconsistent file structure.','Beschädigte oder widersprüchliche Dateistruktur.'),split:say('Split or multi-volume archives are unsupported.','Mehrteilige Archive werden nicht unterstützt.'),encryption:say('This encryption variant is unsupported.','Diese Verschlüsselungsvariante wird nicht unterstützt.'),compression:say('Only Stored and Deflate compression are supported.','Nur Stored- und Deflate-Kompression werden unterstützt.'),'unsafe-path':say('An unsafe output path was rejected.','Ein unsicherer Ausgabepfad wurde abgewiesen.'),duplicate:say('Duplicate or conflicting output filenames were rejected.','Doppelte oder kollidierende Ausgabenamen wurden abgewiesen.'),symlink:say('Archives containing symbolic links are unsupported.','Archive mit symbolischen Links werden nicht unterstützt.'),unencrypted:say('No encrypted file found; password recovery is unnecessary.','Keine verschlüsselte Datei gefunden; eine Passwortsuche ist nicht nötig.'), 'owner-only':say('This PDF opens without an opening password; owner permissions are not an opening-password lock.','Dieses PDF lässt sich ohne Öffnungspasswort öffnen; Eigentümerrechte sind keine Öffnungspasswort-Sperre.'),'empty-zipcrypto':say('No independently verifiable encrypted payload. Empty ZipCrypto checks cannot prove a password.','Kein unabhängig prüfbarer verschlüsselter Inhalt. Leere ZipCrypto-Dateien können ein Passwort nicht beweisen.'),independent:say('The candidate did not pass independent extraction of every file. No recovered output is released. Check for corruption or different passwords per entry.','Der Kandidat bestand die unabhängige Entschlüsselung aller Dateien nicht. Keine Ausgabe wird freigegeben. Prüfe Dateischäden oder unterschiedliche Passwörter je Eintrag.'),worker:say('A local Worker failed. Reset and try fewer workers.','Ein lokaler Worker ist fehlgeschlagen. Setze zurück und probiere weniger Worker.'),verification:say('Local verification could not finish. See the local diagnostics.','Die lokale Prüfung konnte nicht abgeschlossen werden. Details stehen in der lokalen Diagnose.'),password:say('Enter a nonempty demonstration password, at most 128 UTF-8 bytes.','Gib ein Testpasswort mit 1–128 UTF-8-Bytes ein.')};
@@ -16,6 +17,50 @@ Object.assign(errors,{
  'worker-load':say('The local format Worker could not load. Check that scripts and WASM assets are available.','Der lokale Format-Worker konnte nicht geladen werden. Prüfe, ob Skripte und WASM-Dateien verfügbar sind.'),
  'inspection-timeout':say('Local inspection exceeded its time limit. The file was not classified as damaged.','Die lokale Prüfung hat ihr Zeitlimit überschritten. Die Datei wurde nicht als beschädigt eingestuft.')
 });
+Object.assign(errors,{
+ 'worker-memory':say('This worker configuration exceeds the conservative local memory budget. Select fewer workers manually; your selection was not changed.','Diese Worker-Konfiguration überschreitet das vorsichtige lokale Speicherbudget. Wähle manuell weniger Worker; deine Auswahl wurde nicht geändert.'),
+ 'worker-count':say('Choose an integer from 1 to 16.','Wähle eine ganze Zahl von 1 bis 16.'),
+ 'worker-init-timeout':say('A CPU worker did not initialize in time. Choose fewer workers and retry.','Ein CPU-Worker wurde nicht rechtzeitig bereit. Wähle weniger Worker und versuche es erneut.'),
+ 'gpu-hybrid-space':say('Hybrid needs at least two configured candidates so CPU and GPU can both receive work. Choose CPU or GPU manually.','Hybrid benötigt mindestens zwei konfigurierte Kandidaten, damit CPU und GPU Arbeit erhalten. Wähle CPU oder GPU manuell.'),
+ 'gpu-file-required':say('Choose a supported encrypted file first.','Wähle zuerst eine unterstützte verschlüsselte Datei.'),
+ 'gpu-unchecked':say('Use “Inspect WebGPU availability” below to enable validated GPU modes.','Aktiviere geprüfte GPU-Modi unten mit „WebGPU-Verfügbarkeit prüfen“.'),
+ 'gpu-checking':say('Initializing WebGPU and testing cryptographic kernels…','WebGPU wird initialisiert und die Kryptografie-Kernel werden geprüft…'),
+ 'gpu-interface':say('WebGPU is unavailable in this browser. Select CPU manually.','WebGPU ist in diesem Browser nicht verfügbar. Wähle CPU manuell.'),
+ 'gpu-software':say('Only a software WebGPU adapter is available. Hardware GPU recovery is unavailable; select CPU manually.','Es ist nur ein Software-WebGPU-Adapter verfügbar. Hardware-GPU-Wiederherstellung ist nicht verfügbar; wähle CPU manuell.'),
+ 'gpu-adapter':say('No compatible WebGPU adapter. Select CPU manually.','Kein kompatibler WebGPU-Adapter. Wähle CPU manuell.'),
+ 'gpu-device':say('GPU device initialization failed. Select CPU manually.','GPU-Gerät konnte nicht initialisiert werden. Wähle CPU manuell.'),
+ 'gpu-capabilities':say('This device lacks the required compute or buffer limits.','Dieses Gerät erfüllt die benötigten Compute- oder Puffergrenzen nicht.'),
+ 'gpu-shader':say('GPU shader compilation or pipeline validation failed. Select CPU manually.','GPU-Shader-Kompilierung oder Pipeline-Prüfung fehlgeschlagen. Wähle CPU manuell.'),
+ 'gpu-selftest':say('GPU cryptographic self-tests failed. Select CPU manually.','GPU-Kryptografie-Selbsttests fehlgeschlagen. Wähle CPU manuell.'),
+ 'gpu-timeout':say('GPU initialization timed out. Select CPU manually.','GPU-Initialisierung hat ihr Zeitlimit überschritten. Wähle CPU manuell.'),
+ 'gpu-lost':say('GPU device lost. No CPU fallback was started. Select an execution method manually.','GPU-Gerät verloren. Es wurde kein CPU-Ersatz gestartet. Wähle die Ausführungsmethode manuell.'),
+ 'gpu-execution-timeout':say('A GPU batch exceeded its time limit. No fallback was started; choose an execution method manually.','Ein GPU-Batch hat sein Zeitlimit überschritten. Es wurde kein Ersatz gestartet; wähle die Ausführungsmethode manuell.'),
+ 'verification-timeout':say('Independent verification exceeded its time limit. No recovered output was released.','Die unabhängige Prüfung hat ihr Zeitlimit überschritten. Keine wiederhergestellte Ausgabe wurde freigegeben.'),
+ 'gpu-execution':say('GPU execution failed. Select CPU manually.','GPU-Ausführung fehlgeschlagen. Wähle CPU manuell.'),
+ 'gpu-init':say('The local GPU worker could not initialize. Select CPU manually.','Der lokale GPU-Worker konnte nicht initialisiert werden. Wähle CPU manuell.'),
+ 'gpu-password-length':say('GPU candidates are limited to 256 UTF-8 bytes. Select CPU manually.','GPU-Kandidaten sind auf 256 UTF-8-Bytes begrenzt. Wähle CPU manuell.'),
+ 'gpu-rar4':say('RAR4 GPU is not implemented: its SHA-1/AES verifier requires a separate validated kernel and encrypted-header pipeline.','RAR4-GPU ist nicht implementiert: SHA-1/AES-Prüfung und verschlüsselte Header benötigen einen separat validierten Kernel.'),
+ 'gpu-rar5':say('This RAR5 header is outside the GPU subset: a CRC-valid version-0 encryption record, valid password check and KDF exponent ≤16 are required.','Dieser RAR5-Header liegt außerhalb des GPU-Umfangs: Er benötigt einen CRC-geprüften Version-0-Verschlüsselungseintrag, gültigen Passwortprüfwert und KDF-Exponenten ≤16.'),
+ 'gpu-7z':say('7Z GPU is not implemented: its SHA-256 KDF has no universal password verifier; AES, folder bounds and CRC confirmation need a validated GPU pipeline.','7Z-GPU ist nicht implementiert: Die SHA-256-KDF hat keinen universellen Passwortprüfwert; AES, Folder-Grenzen und CRC-Bestätigung benötigen eine validierte GPU-Pipeline.'),
+ 'gpu-pdf':say('PDF GPU is not implemented: R2/R3/R4 require MD5/RC4 and exact PDF parameters; R6 requires variable SHA-2/AES rounds and password preparation.','PDF-GPU ist nicht implementiert: R2/R3/R4 benötigen MD5/RC4 und exakte PDF-Parameter; R6 benötigt variable SHA-2/AES-Runden und Passwortaufbereitung.')
+});
+let gpuValidated={},gpuFailures={},gpuReady=false,gpuCode=globalThis.navigator?.gpu?'gpu-unchecked':'gpu-interface',gpuProbe=null,gpuTimer=null;
+function cancelGpuProbe(){gpuProbe?.terminate();gpuProbe=null;clearTimeout(gpuTimer);if(gpuCode==='gpu-checking')gpuCode='gpu-unchecked';}
+function engineAvailability(){return gpuVariant(info)??(gpuReady?(gpuValidated[info.format]?null:gpuFailures[info.format]??'gpu-init'):gpuCode);}
+function engineControls(locked=false){
+ const reason=engineAvailability();$('engine').disabled=locked;
+ for(const value of ['gpu','hybrid'])$('engine').querySelector(`[value="${value}"]`).disabled=Boolean(reason);
+ $('workers').disabled=locked||$('engine').value==='gpu';
+ text('engine-help',reason?errors[reason]??errors['gpu-init']:say('GPU cryptographic self-tests passed. Choose CPU, GPU or Hybrid manually; every match is independently CPU-verified.','GPU-Kryptografie-Selbsttests bestanden. Wähle CPU, GPU oder Hybrid manuell; jeder Treffer wird unabhängig per CPU geprüft.'));
+ $('gpu-check').disabled=locked||gpuCode==='gpu-checking';
+}
+async function checkGpu(){
+ if(busy())return;cancelGpuProbe();gpuReady=false;gpuCode='gpu-checking';controls();
+ let w;try{w=new Worker(new URL('./gpu-worker.js?v=20261014-48',import.meta.url),{type:'module'});}catch{gpuCode='gpu-init';controls();return;}gpuProbe=w;
+ const finish=(code,detail)=>{if(gpuProbe!==w)return;cancelGpuProbe();gpuCode=code;gpuReady=code==='ready';gpuValidated=detail?.validated??{};gpuFailures=detail?.failures??{};$('gpu-diagnostics').textContent=JSON.stringify({code,adapter:detail??null,kernels:['ZipCrypto','PBKDF2-HMAC-SHA-1 / ZIP-AES-128/192/256','PBKDF2-HMAC-SHA-256 / RAR5 header check'],formatDiagnostic},null,2);controls();};
+ gpuTimer=setTimeout(()=>finish('gpu-timeout'),45000);
+ w.onerror=()=>finish('gpu-init');w.onmessage=({data})=>{if(data.type==='ready')finish('ready',data.info);else if(data.type==='error')finish(data.code);};try{w.postMessage({type:'probe'});}catch{finish('gpu-init');}
+}
 let formatDiagnostic=null,inspectionFailure=null;
 function reportDiagnostic(code,detail={}){
  formatDiagnostic={code,...detail};
@@ -37,19 +82,19 @@ function requireAuthorization(){
       'Bestätige zuerst, dass du zum Zugriff auf diese Datei berechtigt bist.'));
  return false;
 }
-function controls(){const locked=Boolean(busy());for(const id of ['file','remove','mode','de','en','common','brute','min','max','lower','upper','digits','symbols','workers','load-demo'])$(id).disabled=locked||(id==='remove'&&!file)||(id==='load-demo'&&!sample);
+function controls(){const locked=Boolean(busy());for(const id of ['file','remove','mode','de','en','common','brute','min','max','lower','upper','digits','symbols','workers','engine','load-demo'])$(id).disabled=locked||(id==='remove'&&!file)||(id==='load-demo'&&!sample);
  $('authorized').disabled=locked;
  $('file').disabled=locked||!authorized();
  $('load-demo').disabled=locked||!authorized()||!sample;
  $('drop').dataset.authorizationRequired=String(!authorized());
- $('start').disabled=locked||!authorized()||!info?.supported;$('pause').disabled=run?.state!=='running';$('resume').disabled=run?.state!=='paused';$('stop').disabled=!locked||run?.state==='stopping';refreshSelection();}
+ engineControls(locked);$('start').disabled=locked||!authorized()||!info?.supported||($('engine').value!=='cpu'&&Boolean(engineAvailability()));$('pause').disabled=run?.state!=='running';$('resume').disabled=run?.state!=='paused';$('stop').disabled=!locked||run?.state==='stopping';refreshSelection();}
 function status(message,detail=''){text('status',message);text('status-detail',detail);}
 function clearResult(){result=null;$('result').hidden=true;$('recovered').value='';$('recovered').type='password';$('reveal').setAttribute('aria-pressed','false');$('downloads').replaceChildren();$('result-summary').textContent='';for(const id of ['result-strategy','result-method','result-engine','result-checks','result-time','result-format','verification-time','download-count'])text(id,'');$('reveal').textContent=say('Show password','Passwort anzeigen');cleanupUrls();}
 function clearSearch(){document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';run?.dispose();run=null;runConfig=null;phaseRun=null;lastViewState=null;preparing=false;clearResult();text('rate-label',say('Measured attempts / second','Gemessene Versuche / Sekunde'));for(const id of ['checked','rate','average','elapsed','space','remaining','phase'])$(id).textContent='—';$('progress').value=0;$('progress-label').textContent='0%';rateSample={elapsed:0,checked:0n};currentRate=0;paintPhases(true);refreshSelection();}
 function metadata(items){$('metadata').replaceChildren();for(const [key,value] of items){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=key;dd.textContent=value;$('metadata').append(dt,dd);}}
 function inspectOther(blob,format){
  return new Promise((resolve,reject)=>{
-  const w=new Worker(new URL('./format-worker.js?v=20261014-471',import.meta.url),{type:'module'});
+  const w=new Worker(new URL('./format-worker.js?v=20261014-48',import.meta.url),{type:'module'});
   const timeout=setTimeout(()=>{w.terminate();reject(Object.assign(new Error('timeout'),{code:'inspection-timeout'}));},45000);
   const end=()=>{clearTimeout(timeout);w.terminate();};
   w.onerror=()=>{end();reject(Object.assign(new Error('worker-load'),{code:'worker-load'}));};
@@ -113,20 +158,20 @@ function draw(s){
  paintPhases();
  if(s.state==='exhausted')text('status-detail',say('All selected candidates were rejected. This does not prove the password is unbreakable.','Alle ausgewählten Kandidaten wurden abgewiesen. Das beweist keine Unknackbarkeit.'));
  if(s.state==='paused')text('status-detail',say('Search paused. Resume explicitly, including after returning to this tab.','Suche pausiert. Setze ausdrücklich fort, auch nach Rückkehr zu diesem Tab.'));
- if(s.state==='running')text('status-detail',say('Your CPU is checking candidates against the selected file.','Deine CPU prüft Passwortkandidaten gegen die gewählte Datei.'));
+ if(s.state==='running')text('status-detail',`${run.engine.toUpperCase()} · ${say('Local cryptographic checks against your file.','Lokale kryptografische Prüfung gegen deine Datei.')}`);
  if(s.state==='verifying')text('status-detail',say('Re-opening the archive and verifying every file independently.','Das Archiv wird erneut geöffnet und jede Datei unabhängig geprüft.'));
  if(s.state==='stopped')text('status-detail',say('Search stopped. Confirmed checks are retained; restart begins a fresh search.','Suche gestoppt. Bestätigte Versuche bleiben sichtbar; ein neuer Start beginnt von vorn.'));
  controls();
 }
-$('start').addEventListener('click',async()=>{if(busy()||!info?.supported||!requireAuthorization())return;const id=++token;clearSearch();preparing=true;controls();status(states.starting,say('Preparing the shared dictionary indexes locally…','Gemeinsame Wörterbuchindizes werden lokal vorbereitet…'));
+$('start').addEventListener('click',async()=>{if(busy()||!info?.supported||!requireAuthorization()||($('engine').value!=='cpu'&&engineAvailability()))return;cancelGpuProbe();const id=++token;clearSearch();preparing=true;controls();status(states.starting,say('Preparing the shared dictionary indexes locally…','Gemeinsame Wörterbuchindizes werden lokal vorbereitet…'));
  try{const c=config();runConfig=c;refreshSelection();const phases=await preparePhases(c);if(id!==token)return;if(!phases.length)throw Error(say('The search has no candidates.','Die Suche hat keine Kandidaten.'));
-  preparing=false;run=new SearchRun(file,phases,Number($('workers').value),{progress:draw,error:(code,diagnostic)=>{reportDiagnostic(code,diagnostic);status(states.error,errors[code]??errors.verification);controls();},result:data=>{
+  preparing=false;run=new SearchRun(file,phases,Number($('workers').value),{progress:draw,error:(code,diagnostic)=>{if(code.startsWith('gpu-')){gpuReady=false;gpuCode=code;}reportDiagnostic(code,diagnostic);status(states.error,(errors[code]??errors.verification)+(code==='worker-memory'?` (${diagnostic.estimateMiB} / ${diagnostic.budgetMiB} MiB)` :''));controls();},result:data=>{
    result=data;$('result').hidden=false;$('allzip').hidden=info?.format==='PDF';$('recovered').value=data.password;$('status-detail').textContent=say('Every file passed independent extraction and integrity checks.','Jede Datei bestand die unabhängige Entschlüsselung und Integritätsprüfung.');
-   $('result-summary').textContent=`${phaseName(run.phases[data.phase])}\nCPU Worker ${data.worker} · ${num(data.checked)} ${say('confirmed attempts','bestätigte Versuche')} · ${seconds(data.elapsed)}\n${say('Independent verification','Unabhängige Bestätigung')}: ${seconds(data.verificationMs)}\n${data.algorithms.join(' + ')}`;
-   const matching=run.phases[data.phase];text('result-strategy',phaseName(matching));text('result-method',methodName(matching.kind==='dictionary'?matching.language:'brute')+' · '+modeName(runConfig));text('result-engine',`CPU Worker ${data.worker}`);text('result-checks',num(data.checked));text('result-time',seconds(data.elapsed+data.verificationMs));text('result-format',info.format+' · '+data.algorithms.join(' + '));text('verification-time',say('Independent confirmation: ','Unabhängige Bestätigung: ')+seconds(data.verificationMs));
+   $('result-summary').textContent=`${phaseName(run.phases[data.phase])}\n${data.engine==='gpu'?say('GPU · CPU confirmation','GPU · CPU-Bestätigung'):'CPU Worker '+data.worker} · ${num(data.checked)} ${say('confirmed attempts','bestätigte Versuche')} · ${seconds(data.elapsed)}\n${say('Independent verification','Unabhängige Bestätigung')}: ${seconds(data.verificationMs)}\n${data.algorithms.join(' + ')}`;
+   const matching=run.phases[data.phase];text('result-strategy',phaseName(matching));text('result-method',methodName(matching.kind==='dictionary'?matching.language:'brute')+' · '+modeName(runConfig));text('result-engine',`${data.engine==='gpu'?say('GPU · CPU confirmation','GPU · CPU-Bestätigung'):'CPU Worker '+data.worker}`);text('result-checks',num(data.checked));text('result-time',seconds(data.elapsed+data.verificationMs));text('result-format',info.format+' · '+data.algorithms.join(' + '));text('verification-time',say('Independent confirmation: ','Unabhängige Bestätigung: ')+seconds(data.verificationMs));
    const files=data.files.filter(f=>!f.directory);text('download-count',`(${files.length})`);
    for(const f of files){const button=document.createElement('button'),name=document.createElement('span'),size=document.createElement('span');button.type='button';name.className='download-name';name.textContent=f.name;size.className='download-size';size.textContent=num(f.blob.size)+' B ↓';button.append(name,size);button.addEventListener('click',()=>download(f.blob,f.name.split('/').at(-1)));$('downloads').append(button);}paintPhases(true);controls();
-  }},info.format);$('status-detail').textContent='';paintPhases(true);await run.start();if(document.hidden)run.pause();
+  }},info.format,{engine:$('engine').value});$('status-detail').textContent='';paintPhases(true);await run.start();if(document.hidden)run.pause();
  }catch(e){if(id!==token)return;preparing=false;status(states.error,e.message);controls();}
 });
 $('authorized').addEventListener('change',()=>{
@@ -149,16 +194,17 @@ $('drop').addEventListener('drop',e=>{e.preventDefault();$('drop').classList.rem
 $('remove').addEventListener('click',()=>{$('file').value='';select(null);});
 $('mode').addEventListener('change',()=>{$('known-settings').hidden=$('mode').value!=='known';$('blind-note').hidden=$('mode').value!=='blind';});
 $('pause').addEventListener('click',()=>run?.pause());$('resume').addEventListener('click',()=>{if(!document.hidden){$('status-detail').textContent='';run?.resume();}});$('stop').addEventListener('click',()=>{if(preparing){++token;preparing=false;status(states.stopped);controls();}else run?.stop();});
-$('reset').addEventListener('click',()=>{++token;inspectionFailure=null;reportDiagnostic('none');clearSearch();file=null;info=null;sample=null;$('authorized').checked=false;$('file').value='';$('demo-password').value='';$('load-demo').disabled=true;$('download-demo').disabled=true;$('demo-status').textContent=say('No sample created yet.','Noch kein Beispiel erzeugt.');metadata([]);status(say('READY','BEREIT'),say('Choose your ZIP below, select methods, then start the local search.','Wähle unten deine ZIP, lege die Methoden fest und starte die lokale Suche.'));document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';controls();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)run?.pause();});window.addEventListener('pagehide',()=>{run?.dispose();cleanupUrls();});
+$('reset').addEventListener('click',()=>{cancelGpuProbe();++token;inspectionFailure=null;reportDiagnostic('none');clearSearch();file=null;info=null;sample=null;$('authorized').checked=false;$('file').value='';$('demo-password').value='';$('load-demo').disabled=true;$('download-demo').disabled=true;$('demo-status').textContent=say('No sample created yet.','Noch kein Beispiel erzeugt.');metadata([]);status(say('READY','BEREIT'),say('Choose your ZIP below, select methods, then start the local search.','Wähle unten deine ZIP, lege die Methoden fest und starte die lokale Suche.'));document.body.dataset.state='ready';document.body.dataset.recoveryState='ready';controls();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)run?.pause();});window.addEventListener('pagehide',()=>{cancelGpuProbe();run?.dispose();cleanupUrls();});
 $('reveal').addEventListener('click',()=>{const show=$('recovered').type==='password';$('recovered').type=show?'text':'password';$('reveal').setAttribute('aria-pressed',String(show));$('reveal').textContent=show?say('Hide password','Passwort verbergen'):say('Show password','Passwort anzeigen');});
 $('copy').addEventListener('click',async()=>{if(!result)return;try{await navigator.clipboard.writeText(result.password);$('status-detail').textContent=say('Password copied locally.','Passwort lokal kopiert.');}catch{$('status-detail').textContent=say('Clipboard unavailable. Reveal the password and copy it manually.','Zwischenablage nicht verfügbar. Zeige das Passwort an und kopiere es manuell.');}});
 $('allzip').addEventListener('click',async()=>{if(!result||info?.format==='PDF')return;const data=result;$('allzip').disabled=true;try{const blob=await exportZip(data.files);if(result===data)download(blob,'recovered-files.zip');}catch{$('status-detail').textContent=errors.verification;}finally{$('allzip').disabled=false;}});
 $('generate').addEventListener('click',async()=>{const id=token;$('generate').disabled=true;try{const b=await createDemo($('demo-password').value,$('demo-method').value);if(id!==token)return;sample=b;$('demo-password').value='';$('demo-status').textContent=say('Encrypted sample ready. Select it, then choose your search normally.','Verschlüsseltes Beispiel bereit. Wähle es aus und konfiguriere die Suche selbst.');$('download-demo').disabled=false;controls();}catch(e){$('demo-status').textContent=errors[e.code]??errors.verification;}finally{$('generate').disabled=false;}});
 $('load-demo').addEventListener('click',()=>{if(sample)select(new File([sample],'local-demo.zip',{type:'application/zip'}));});$('download-demo').addEventListener('click',()=>{if(sample)download(sample,'local-demo.zip');});
-$('workers').value=String(Math.min(2,Math.max(1,(navigator.hardwareConcurrency??2)-1)));$('cpu-status').textContent=say('CPU Workers · ','CPU-Worker · ')+(navigator.hardwareConcurrency??say('unknown','unbekannt'))+say(' logical processors reported by browser.',' vom Browser gemeldete logische Prozessoren.');
-$('gpu-diagnostics').textContent=JSON.stringify({cpu:'Worker + ZipCrypto / PBKDF2-HMAC-SHA-1',webgpuInterface:Boolean(navigator.gpu),zipGPU:'algorithm-unsupported',hybrid:'not-implemented',measuredGPUCandidates:0,yearMin:BLIND_LIMITS.yearMin,yearMax:BLIND_LIMITS.yearMax,limits:LIMITS},null,2);
-$('gpu-check').addEventListener('click',async()=>{let adapter=null,code='interface-unavailable';try{if(navigator.gpu){adapter=await navigator.gpu.requestAdapter();code=adapter?'adapter-available-algorithm-unsupported':'adapter-unavailable';}}catch{code='initialization-failed';}$('gpu-diagnostics').textContent=JSON.stringify({code,adapter:adapter?{vendor:adapter.info?.vendor??'',architecture:adapter.info?.architecture??'',description:adapter.info?.description??''}:null,zipGPU:'algorithm-unsupported',hybrid:'not-implemented',measuredGPUCandidates:0,formatDiagnostic},null,2);});
+$('workers').value='2';$('engine').value='cpu';$('cpu-status').textContent=say('CPU Workers · ','CPU-Worker · ')+(navigator.hardwareConcurrency??say('unknown','unbekannt'))+say(' logical processors reported by browser.',' vom Browser gemeldete logische Prozessoren.');
+$('gpu-diagnostics').textContent=JSON.stringify({cpu:'local format engines',code:gpuCode,limits:LIMITS},null,2);
+$('gpu-check').addEventListener('click',checkGpu);
+$('engine').addEventListener('change',()=>{controls();});
 function text(id,value){const node=$(id);if(node.textContent!==String(value))node.textContent=String(value);}
 const methodName=key=>({common:say('Common passwords & IT','Häufige Passwörter & IT'),de:say('German dictionary','Deutsches Wörterbuch'),en:say('English dictionary','Englisches Wörterbuch'),brute:say('Brute force','Bruteforce')})[key];
 const groupNames={words:say('Words & variants','Wörter & Varianten'),years:say('Year suffixes','Jahreszahlen'),numbers:say('Numeric suffixes','Ziffernanhänge'),brute:say('Brute force','Bruteforce')};
@@ -175,10 +221,12 @@ function refreshSelection(){
  text('live-file',file?.name??say('No file selected','Keine Datei ausgewählt'));
  text('file-status',inspectionFailure??(info?.supported?info.format+' · '+info.algorithms.join(' + ')+say(' · supported',' · unterstützt'):info?.supported===false?info.format+say(' · recovery unsupported',' · Wiederherstellung nicht unterstützt'):file?say('No supported encrypted file is ready.','Keine unterstützte verschlüsselte Datei ist bereit.'):say('Choose a file to begin.','Wähle eine Datei zum Beginnen.')));
  $('file-status').dataset.supported=String(Boolean(info?.supported));
- text('config-summary',`${info?.supported?info.format+' · ':''}CPU · ${$('workers').value} ${say('workers','Worker')} · ${modeName(selection())} · ${selectedKeys(selection()).length} ${say('selected methods','gewählte Methoden')}`);
- const state=run?.state,activeWorkers=run?.pending.size??0;
- text('cpu-activity',state==='running'?`${activeWorkers} ${say('workers · local format verification','Worker · lokale Formatprüfung')}`:state==='verifying'?say('Fresh Worker · checking every file','Neuer Worker · prüft alle Dateien'):state==='paused'?say('Paused · no new attempts','Pausiert · keine neuen Versuche'):state==='found'?say('Finished · independently verified','Fertig · unabhängig bestätigt'):state==='stopped'||state==='exhausted'?say('Finished · workers released','Beendet · Worker freigegeben'):preparing||state==='starting'?say('Preparing local search','Lokale Suche wird vorbereitet'):`${say('Ready','Bereit')} · ${$('workers').value} ${say('workers selected','Worker gewählt')}`);
- $('cpu-chip').dataset.active=String(state==='running'||state==='verifying'||state==='draining');text('cpu-live-rate',state==='running'&&currentRate>0?num(Math.round(currentRate)):'—');
+ text('config-summary',`${info?.supported?info.format+' · ':''}${$('engine').value.toUpperCase()} · ${$('engine').value==='gpu'?0:$('workers').value} ${say('CPU search workers','CPU-Suchworker')} · ${modeName(selection())} · ${selectedKeys(selection()).length} ${say('selected methods','gewählte Methoden')}`);
+ const state=run?.state,activeWorkers=run?.snapshot().workers??0;
+ text('cpu-activity',state==='running'&&run.engine==='gpu'?say('On demand · GPU match confirmation','Bei Bedarf · GPU-Treffer bestätigen'):state==='running'?`${[...run.pending.keys()].filter(w=>run.roles.get(w)==='cpu').length} / ${activeWorkers} ${say('CPU workers active / ready','CPU-Worker aktiv / bereit')}`:state==='verifying'?say('Fresh Worker · checking every file','Neuer Worker · prüft alle Dateien'):state==='paused'?say('Paused · no new attempts','Pausiert · keine neuen Versuche'):state==='found'?say('Finished · independently verified','Fertig · unabhängig bestätigt'):state==='stopped'||state==='exhausted'?say('Finished · workers released','Beendet · Worker freigegeben'):preparing||state==='starting'?`${say('Preparing local search','Lokale Suche wird vorbereitet')} · ${activeWorkers}/${$('workers').value} CPU ${say('ready','bereit')}`:`${say('Ready','Bereit')} · ${$('workers').value} ${say('workers selected','Worker gewählt')}`);
+ $('cpu-chip').dataset.active=String(state==='running'||state==='verifying'||state==='draining');text('cpu-live-rate',state==='running'&&run?.elapsed?num(Math.round(Number(run.cpuDone)/(run.elapsed/1000))):'—');
+ text('gpu-live-rate',state==='running'&&run?.elapsed?num(Math.round(Number(run.gpuDone)/(run.elapsed/1000))):'—');
+ text('gpu-activity',state==='running'&&run.engine!=='cpu'?say('GPU cryptography · CPU confirmation','GPU-Kryptografie · CPU-Bestätigung'):say('Optional · select manually','Optional · manuell auswählen'));$('gpu-chip').dataset.active=String(state==='running'&&run.engine!=='cpu');
  if(!run)paintPhases();
 }
 function paintPhases(force=false){
