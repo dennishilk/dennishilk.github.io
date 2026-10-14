@@ -34,6 +34,11 @@ async function select(selected){if(busy())return;const id=++token;clearSearch();
  try{
  const detected=await inspect(selected);
  if(id!==token)return;
+ const minimumHeader={RAR4:20,RAR5:16,'7Z':32,PDF:9}[detected.format];
+ if(minimumHeader&&selected.size<minimumHeader){
+  status(say('FILE REJECTED','DATEI ABGEWIESEN'),say('Damaged or unsupported container header. No password search was started.','Beschädigter oder nicht unterstützter Container-Header. Es wurde keine Passwortsuche gestartet.'));
+  return;
+ }
  // Only the real local WASM backend may enable a non-ZIP search.
  const found=detected.format==='ZIP'||detected.format==='UNKNOWN'?detected:
   await inspectOther(selected,detected.format);
