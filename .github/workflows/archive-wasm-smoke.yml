@@ -7,6 +7,10 @@ on:
       - '.github/workflows/archive-wasm-smoke.yml'
       - 'assets/archive-recovery-lab/vendor/7zz.*'
       - 'assets/archive-recovery-lab/vendor/qpdf.mjs'
+      - 'assets/archive-recovery-lab/format-backend.js'
+      - 'assets/archive-recovery-lab/format-worker.js'
+      - 'assets/archive-recovery-lab/search.js'
+      - 'assets/archive-recovery-lab/ui.js'
 permissions:
   contents: read
 jobs:
