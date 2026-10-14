@@ -3,7 +3,7 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {resolve} from 'node:path';
 import SevenZip from '../assets/archive-recovery-lab/vendor/7zz.es6.js';
-import QPDF from '../assets/archive-recovery-lab/vendor/qpdf.mjs';
+import {createFormatBackend} from '../assets/archive-recovery-lab/format-backend.js';
 const dir=resolve(process.env.RUNNER_TEMP||'/tmp','archive-wasm-test');
 mkdirSync(dir,{recursive:true});
 writeFileSync(resolve(dir,'sample.txt'),'Real encrypted WASM file - Grüße 🔐\n');
@@ -36,22 +36,14 @@ for(let index=0;index<samples.length;index++){
  console.log(JSON.stringify({engine:'7zz',label,operation:'extract',code,tail:output.slice(-5)}));
  assert.equal(code,0);
 }
-for(const method of ['RC4-40','RC4-128','AES-128','AES-256']){
- const pdf=readFileSync(resolve(dir,'encrypted-'+method+'.pdf'));
- const name='/pdf-'+method+'.pdf',out='/out-'+method+'.pdf';output=[];
- const q=await QPDF({...opts,noInitialRun:true});
- q.FS.writeFile(name,pdf);
- for(const candidate of ['wrong','7']){
-  output=[];let code;
-  try{code=q.callMain(['--password='+candidate,'--decrypt',name,out]);}
-  catch(e){code='EXCEPTION: '+e;}
-  console.log(JSON.stringify({engine:'qpdf',method,candidate,code,tail:output.slice(-6)}));
-  if(candidate==='7')assert.equal(code,0,'qpdf '+method+' correct password');else assert.notEqual(code,0,'qpdf '+method+' wrong must fail');
- }
- const result=q.FS.readFile(out);
- writeFileSync(resolve(dir,'plain-'+method+'.pdf'),result);
- execFileSync('python3',['-c',["from pypdf import PdfReader",
- "r=PdfReader("+JSON.stringify(resolve(dir,'plain-'+method+'.pdf'))+")",
- "assert not r.is_encrypted","assert len(r.pages)==1"].join('\n')]);
+for(const [label,data,password] of samples){
+ const backend=await createFormatBackend(new Blob([data]),label);
+ assert.equal(backend.info.supported,true);
+ assert.equal(await backend.check('wrong'),false);
+ assert.equal(await backend.check(password),true);
+ const recovered=await backend.recover(password);
+ assert.ok(recovered.files.length>=1);
+ for(const f of recovered.files)assert.ok(f.blob.size>0&&f.blob.size<=16*1024*1024);
+ console.log('REAL_BACKEND_RECOVERY',label,recovered.files.map(x=>x.name));
 }
 console.log('REAL_WASM_SMOKE_SUCCESS');
