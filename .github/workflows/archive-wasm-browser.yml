@@ -1,0 +1,57 @@
+name: Archive WASM real browser validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/test-archive-wasm-browser.mjs'
+      - 'scripts/test-archive-recovery-browser.mjs'
+      - 'museum/archive-recovery-lab/index.html'
+      - 'de/museum/archive-recovery-lab/index.html'
+      - 'assets/archive-recovery-lab/lab.css'
+      - '.github/workflows/archive-wasm-browser.yml'
+      - 'assets/archive-recovery-lab/format-backend.js'
+      - 'assets/archive-recovery-lab/ui.js'
+      - 'assets/archive-recovery-lab/format-worker.js'
+permissions:
+  contents: read
+jobs:
+  real-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare independent fixtures and browser runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq p7zip-full
+          python -m pip install 'pypdf==5.9.0' 'cryptography==46.0.4'
+          mkdir -p /tmp/pw "$RUNNER_TEMP/archive-wasm-test"
+          npm install --prefix /tmp/pw --no-audit --no-fund --ignore-scripts 'playwright@1.55.0'
+          google-chrome --version
+      - name: Get real encrypted RAR4 and RAR5 test files
+        run: |
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar4-encrypted-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v4.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar5-encrypted-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/test-v5.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar4-password-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/rar4-data-encrypted.rar"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/junrar/junrar/c831d1ed9eccf63083f2d4304149019d43f48c06/src/test/resources/com/github/junrar/password/rar5-password-junrar.rar -o "$RUNNER_TEMP/archive-wasm-test/rar5-data-encrypted.rar"
+      - name: Run real Chrome local encrypted recovery tests
+        env:
+          PLAYWRIGHT_MODULE: /tmp/pw/node_modules/playwright-core/index.mjs
+        run: node scripts/test-archive-wasm-browser.mjs
+      - name: ZIP regression and EN/DE offline browser tests
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: /tmp/pw/node_modules
+          ARCHIVE_RECOVERY_BROWSER: /usr/bin/google-chrome
+        run: node scripts/test-archive-recovery-browser.mjs
+      - name: Museum catalog browser regression
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: /tmp/pw/node_modules
+          MUSEUM_CATALOG_BROWSER: /usr/bin/google-chrome
+        run: node scripts/test-museum-catalog-browser.mjs
+

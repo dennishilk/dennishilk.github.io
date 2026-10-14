@@ -60,6 +60,13 @@
 .archive-lab .config-grid h3{font-size:.85rem;margin:0 0 .9rem;color:var(--bright)}
 .archive-lab .step-number{color:var(--accent);font-size:.69rem;margin-right:.45rem}
 .archive-lab .config-grid>div>label{display:block;font-size:.78rem;margin:.6rem 0 .4rem}
+.archive-lab .archive-authorization{margin:0 0 .85rem;padding:.7rem .85rem;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:5px;background:rgba(0,180,255,.035)}
+.archive-lab .authorization-title{margin:0 0 .45rem;color:var(--bright);font-size:.76rem}
+.archive-lab .authorization-confirm{display:flex;align-items:flex-start;gap:.65rem;font-size:.76rem;line-height:1.65;cursor:pointer}
+.archive-lab .authorization-confirm input{flex:none;min-width:16px;min-height:16px;margin:.23rem 0 0;accent-color:var(--accent)}
+.archive-lab .archive-authorization .help{margin:.45rem 0 0;color:var(--muted);line-height:1.6}
+.archive-lab .drop-zone[data-authorization-required=true]{opacity:.58;border-style:dashed}
+.archive-lab .drop-zone[data-authorization-required=true] input[type=file]::file-selector-button{cursor:not-allowed}
 .archive-lab .drop-zone{padding:.9rem 1rem;border:1px dashed rgba(0,180,255,.55);border-radius:5px;background:rgba(0,180,255,.025)}
 .archive-lab .drop-zone.dragging{border-style:solid;background:rgba(0,180,255,.1)}
 .archive-lab .drop-zone>label{display:block;font-size:.82rem;color:var(--bright)}

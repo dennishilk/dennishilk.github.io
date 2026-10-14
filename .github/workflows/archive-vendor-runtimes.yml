@@ -1,0 +1,39 @@
+name: Vendor static archive recovery runtimes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/vendor-archive-runtimes.sh
+      - .github/workflows/archive-vendor-runtimes.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-vendor-main
+  cancel-in-progress: false
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Vendor exact releases and licenses locally
+        run: bash scripts/vendor-archive-runtimes.sh
+      - name: Commit pinned runtime assets to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/archive-recovery-lab/vendor/
+          if ! git diff --cached --quiet; then
+            git commit -m "archive: vendor pinned offline 7-Zip and qpdf WASM engines with licenses"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
