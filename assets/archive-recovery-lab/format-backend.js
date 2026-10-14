@@ -132,7 +132,7 @@ export async function createFormatBackend(blob,format){
    info={format,supported:true,algorithms:[format+' encrypted entries'],
     entries:listing.files,encryptedCount:listing.files.filter(f=>f.encrypted).length,
     total:listing.total,filenamesEncrypted:false};
-  }else if(/Wrong password|encrypted archive|Headers Error/i.test(r.output)){
+  }else if(/Wrong password|encrypted archive|Headers Error/i.test(r.output)||(format==='7Z'&&r.exception)){
    info={format,supported:true,algorithms:[format+' encrypted headers'],
     entries:[{name:'encrypted headers'}],encryptedCount:1,total:0,filenamesEncrypted:true};
   }else fail('malformed');
