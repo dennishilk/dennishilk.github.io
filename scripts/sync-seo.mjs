@@ -470,6 +470,17 @@ function synchronizeSitemaps() {
       .map(([entry]) => [entry.match(/<loc>([^<]+)<\/loc>/)?.[1], entry.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1]])
       .filter(([url, date]) => url && date);
   }));
+  // New blog URLs inherit their actual editorial date, never the generator run date.
+  // Retain existing sitemap dates and leave non-blog publication systems untouched.
+  for (const file of files.filter(file => /^(?:de\/)?blog\//.test(rel(file)))) {
+    if (lastmods.has(publicUrl(file))) continue;
+    const source = readFileSync(file, "utf8");
+    for (const [, json] of source.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/g)) {
+      const data = JSON.parse(json);
+      const article = (data["@graph"] || [data]).find(node => node["@type"] === "BlogPosting");
+      if (article && /^\d{4}-\d{2}-\d{2}$/.test(article.dateModified)) lastmods.set(publicUrl(file), article.dateModified);
+    }
+  }
   // The static Lab build records real output changes; unchanged builds retain their date.
   const labManifest = join(root, "content/linux-fix-lab/generated-manifest.json");
   if (existsSync(labManifest)) {
