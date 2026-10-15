@@ -3,8 +3,13 @@ import {readFileSync} from 'node:fs';
 const html=readFileSync(new URL('../museum/index.html',import.meta.url),'utf8');
 assert.match(html,/museum-card-lost-administrator[^>]*href="\/lost-administrator\/"/);
 assert.match(html,/museum-card-author-lab[^>]*href="\/museum\/home-computing-lab\/"/);
+const imsai=html.indexOf('museum-card-imsai');
 const wopr=html.indexOf('museum-card-wopr'),c64=html.indexOf('museum-card-c64');
 assert.ok(wopr>html.indexOf('museum-card-author-lab')&&wopr<c64);
 assert.match(html.slice(wopr,c64),/href="\/wopr\/"/);
 assert.match(html.slice(wopr,c64),/data-status="available"/);
 console.log('museum featured story, real lab and WOPR order checks passed');
+
+assert.ok(imsai>html.indexOf('museum-card-author-lab') && imsai<wopr);
+assert.match(html.slice(imsai,wopr),/catalog-number[^>]*>01</);
+assert.match(html.slice(wopr,c64),/catalog-number[^>]*>02</);
