@@ -45,6 +45,15 @@ continuous; actual DPS restrictions are omitted. The procedural crater texture
 and shadow are original illustrations on a flat collision datum. No real
 lunar map, orbit, RCS, slosh, radar errors, abort, ascent or six-axis dynamics.
 
+### Computer experience layout
+
+Selecting experience 02 preserves the DSKY and instruments in the upper cockpit.
+The central landing panel is replaced with the engineering view. The existing
+source viewer moves into that panel; returning to experience 01 restores it to
+the operations row without rebuilding it or resetting the DSKY. Flight physics
+pauses on either switch and resumes only explicitly. On small screens the DSKY
+is immediately above the engineering panel. Long historical notes stay below.
+
 ### DSKY
 
 The annunciator arrangement follows Apollo 11–14 LM drawings: left/right

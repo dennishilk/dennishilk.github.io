@@ -41,10 +41,10 @@ function update(){
  $('flight-status').classList.toggle('success',s.status==='landed');$('flight-status').classList.toggle('failure',s.status==='crashed'||s.status==='out-of-range');
  dskyUpdate();
 }
-function draw(){if(viewport&&visible&&canvasVisible&&!document.hidden&&!$('cockpit').hidden){viewport.draw(flight.state);renderCount++;}}
+function draw(){if(viewport&&visible&&canvasVisible&&!document.hidden&&!$('landing-panel').hidden){viewport.draw(flight.state);renderCount++;}}
 function stopLoop(){if(raf)cancelAnimationFrame(raf);raf=0;last=0;}
 function pause(reason){flight.pause();stopLoop();update();if(reason)log(reason[0],reason[1]);}
-function tick(now){raf=0;if(flight.state.status!=='running'||document.hidden||!visible||$('cockpit').hidden){pause();return;}
+function tick(now){raf=0;if(flight.state.status!=='running'||document.hidden||!visible||$('landing-panel').hidden){pause();return;}
  const dt=last?Math.min((now-last)/1000,.1):0;last=now;
  flight.advance(dt*Number($('sim-speed').value));
  if(now-telemetry>=100){update();telemetry=now;}
@@ -67,8 +67,23 @@ $('dsky-keys').onclick=e=>{const b=e.target.closest('[data-key]');if(b)dskyKey(b
 $('dsky-keys').onkeydown=e=>{if(e.key==='Enter'&&e.target.matches('button'))return;const key=keyboardKey(e);if(key){e.preventDefault();dskyKey(key);}};
 const consoleEl=document.querySelector('.flight-console');consoleEl.tabIndex=0;consoleEl.setAttribute('aria-label',t('Flight console. Focus here for arrow and Space shortcuts.','Flugkonsole. Hier fokussieren für Pfeil- und Leertastenkürzel.'));
 consoleEl.onkeydown=e=>{if(e.target!==consoleEl)return;const s=flight.state;if(['landed','crashed','out-of-range'].includes(s.status))return;if(e.key===' '){e.preventDefault();s.status==='running'?pause():start();return;}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();manual();if(e.key==='ArrowUp')s.throttle=clamp(s.throttle+.01,0,1);if(e.key==='ArrowDown')s.throttle=clamp(s.throttle-.01,0,1);if(e.key==='ArrowLeft')s.angle=clamp(s.angle-1,-40,40);if(e.key==='ArrowRight')s.angle=clamp(s.angle+1,-40,40);update();draw();}};
-const ops=document.querySelector('.operations-grid');ops.before($('engineering'));
-function experience(computer){pause();$('cockpit').hidden=computer;$('engineering').hidden=!computer;$('flight-status').hidden=computer;document.querySelector('.flight-help').hidden=computer;$('land-mode').setAttribute('aria-pressed',String(!computer));$('computer-mode').setAttribute('aria-pressed',String(computer));if(computer)$('engineering').focus();else{$('cockpit').focus();draw();}}
+const ops=document.querySelector('.operations-grid');
+function experience(computer){
+ pause();
+ $('landing-panel').hidden=computer;
+ $('engineering').hidden=!computer;
+ $('cockpit').setAttribute('data-experience',computer?'computer':'landing');
+ $('flight-status').hidden=computer;
+ document.querySelector('.flight-help').hidden=computer;
+ $('land-mode').setAttribute('aria-pressed',String(!computer));
+ $('computer-mode').setAttribute('aria-pressed',String(computer));
+ ops.classList.toggle('computer-operations',computer);
+ // Move the existing viewer, preserving its selected file, IDs and keyboard focus targets.
+ (computer?$('engineering-source'):ops).append($('source-panel'));
+ if(computer){loadSource();$('engineering').focus({preventScroll:true});}
+ else{$('cockpit').focus({preventScroll:true});draw();}
+ $('cockpit').scrollIntoView({block:'start',behavior:motion.matches?'instant':'smooth'});
+}
 $('land-mode').onclick=()=>experience(false);$('computer-mode').onclick=()=>experience(true);
 function historyUpdate(){const idx=Number($('history-event').value),event=events[idx];$('history-detail').replaceChildren();const time=document.createElement('time'),p=document.createElement('p');time.textContent=event.get;p.textContent=event[de?'de':'en'];$('history-detail').append(time,p);$('history-prev').disabled=idx===0;$('history-next').disabled=idx===events.length-1;$('history-event').setAttribute('aria-valuetext',event.get+' '+event[de?'de':'en']);}
 $('history-event').oninput=historyUpdate;$('history-prev').onclick=()=>{$('history-event').value=Number($('history-event').value)-1;historyUpdate();};$('history-next').onclick=()=>{$('history-event').value=Number($('history-event').value)+1;historyUpdate();};$('history-alarm').onclick=()=>{$('alarm-lab').scrollIntoView({behavior:motion.matches?'instant':'smooth'});document.querySelector('[data-alarm="1202"]').focus({preventScroll:true});};
