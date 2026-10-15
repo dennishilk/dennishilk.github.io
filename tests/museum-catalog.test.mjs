@@ -19,3 +19,13 @@ test('directory is progressive and scoped: static links, hidden JS controls, acc
  assert.ok(html.indexOf('museum-card-lost-administrator')<html.indexOf('catalog-grid'));assert.ok(html.indexOf('museum-card-author-lab')<html.indexOf('catalog-grid'));
  const css=readFileSync(new URL('../assets/museum-catalog/catalog.css',import.meta.url),'utf8');assert.match(css,/prefers-reduced-motion/);assert.match(css,/\.museum-catalog-page \[hidden\]/);assert.doesNotMatch(css,/@import|https?:/);
 });
+
+test('Apollo 11 follows Apollo DSKY at 06, retaining all other exhibit order and bilingual destinations',()=>{
+ const names=cards.map(([,name])=>name);
+ assert.deepEqual(names,['museum-card-imsai','museum-card-wopr','museum-card-c64','museum-card-ibm','museum-card-dsky','museum-card-apollo11','museum-card-bios','museum-card-dos','museum-card-crt-terminal','museum-card-debian','museum-card-linux-academy','museum-card-failure-lab','museum-card-linux-game','museum-card-bbs','museum-card-unix-center','museum-card-telephone','museum-card-modem','museum-card-malware','museum-card-cryptography','museum-card-crypto-history','museum-card-archive']);
+ assert.deepEqual(cards.map(([raw])=>raw.match(/class="catalog-number" aria-hidden="true">(\d+)/)[1]),Array.from({length:21},(_,i)=>String(i+1).padStart(2,'0')));
+ assert.equal(Math.floor(names.indexOf('museum-card-dsky')/3),Math.floor(names.indexOf('museum-card-apollo11')/3));
+ const apolloPair=cards.filter(([raw])=>matches({category:'retro',search:normalize(raw)},'apollo','retro'));
+ assert.deepEqual(apolloPair.map(([,name])=>name),['museum-card-dsky','museum-card-apollo11']);
+ for(const [raw,name] of apolloPair){const route=name==='museum-card-dsky'?'apollo-dsky':'apollo-11';assert.ok(raw.includes('href="/museum/'+route+'/"'));assert.ok(raw.includes('data-native-de="/de/museum/'+route+'/"'));}
+});
