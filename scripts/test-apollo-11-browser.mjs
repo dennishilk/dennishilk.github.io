@@ -1,0 +1,33 @@
+/** Optional real-browser acceptance. Requires existing Playwright/Chromium; never downloads browsers. */
+import {createServer} from 'node:http';import {readFile,stat,mkdir,mkdtemp} from 'node:fs/promises';import {tmpdir} from 'node:os';import {fileURLToPath} from 'node:url';import {resolve,extname} from 'node:path';import assert from 'node:assert/strict';
+const root=fileURLToPath(new URL('../',import.meta.url)).replace(/\/$/,''),qa=process.env.APOLLO_QA_DIR||await mkdtemp(resolve(tmpdir(),'apollo-11-qa-'));await mkdir(qa,{recursive:true});
+let playwright;try{playwright=await import('playwright');}catch{if(!process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES)throw Error('Install Playwright in your development environment before this optional browser suite.');playwright=await import(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright/index.mjs');}
+const server=createServer(async(req,res)=>{try{let path=resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!path.startsWith(root+'/'))throw Error('path');if((await stat(path)).isDirectory())path+='/index.html';res.setHeader('content-type',({'.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.html':'text/html','.woff2':'font/woff2','.png':'image/png','.svg':'image/svg+xml','.agc':'text/plain','.md':'text/plain'})[extname(path)]||'application/octet-stream');res.end(await readFile(path));}catch{res.statusCode=404;res.end('404');}});
+let browser;const errors=[],external=[],failed=[];
+try{
+ browser=await playwright.chromium.launch({headless:true,...(process.env.APOLLO_BROWSER?{executablePath:process.env.APOLLO_BROWSER}:{}),args:['--no-sandbox']});
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+ for(const lang of ['en','de']){
+  const context=await browser.newContext({viewport:{width:1440,height:1080},reducedMotion:'reduce'}),page=await context.newPage();
+  page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(r.url()+' '+r.status());});
+  await page.route('**/*',route=>{if(new URL(route.request().url()).origin!==origin){external.push(route.request().url());return route.abort();}return route.continue();});
+  await page.clock.install();await page.goto(origin+(lang==='de'?'/de':'')+'/museum/apollo-11/');await page.waitForFunction(()=>window.apolloReady);await page.evaluate(()=>document.fonts.ready);
+  assert.equal(await page.locator('html').getAttribute('lang'),lang);assert.equal(await page.locator('[data-key]').count(),19);assert.equal(await page.locator('[data-lamp]').count(),12);
+  await page.locator('#dsky-keys').focus();await page.keyboard.type('v16n60e');assert.equal(await page.locator('#r3').getAttribute('data-value'),'+00394');
+  await page.keyboard.type('v35e');assert.equal(await page.locator('.lamp.on').count(),12);await page.keyboard.press('r');assert.equal(await page.locator('.lamp.on').count(),0);await page.keyboard.type('v99n99e');assert.match(await page.locator('#dsky-message').innerText(),/OPR ERR/);await page.keyboard.press('r');
+  await page.locator('#throttle').fill('40');assert.equal(await page.evaluate(()=>window.apolloDiagnostics.snapshot().throttle),.4);await page.locator('#restart').click();
+  await page.locator('#start').click();await page.clock.runFor(2000);const running=await page.evaluate(()=>window.apolloDiagnostics.snapshot());assert.ok(running.t>1.9);assert.ok(running.h<120);
+  await page.locator('#pause').click();const before=await page.evaluate(()=>window.apolloDiagnostics.snapshot()),frames=await page.evaluate(()=>window.apolloDiagnostics.frames());await page.clock.runFor(500);assert.deepEqual(await page.evaluate(()=>window.apolloDiagnostics.snapshot()),before);assert.equal(await page.evaluate(()=>window.apolloDiagnostics.frames()),frames);
+  await page.locator('#pause').click();await page.clock.runFor(500);assert.ok((await page.evaluate(()=>window.apolloDiagnostics.snapshot())).t>before.t);await page.locator('#pause').click();
+  for(const width of [320,390,768,1024,1440,1920,3440]){await page.setViewportSize({width,height:1080});await page.clock.runFor(150);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),lang+' overflow '+width);}
+  await page.setViewportSize({width:1920,height:1080});await page.locator('#cockpit').scrollIntoViewIfNeeded();await page.screenshot({path:qa+'/'+lang+'-desktop.png',fullPage:true});
+  await page.locator('#scenario').selectOption('full');await page.locator('#sim-speed').selectOption('10');await page.locator('#start').click();await page.clock.runFor(31000);assert.equal(await page.evaluate(()=>window.apolloDiagnostics.snapshot().status),'landed');assert.match(await page.locator('#flight-status').innerText(),lang==='de'?/Sichere Landung/:/Safe landing/);
+  await page.locator('#scenario').selectOption('final');await page.locator('#engine-cut').click();await page.locator('#start').click();await page.clock.runFor(3000);assert.equal(await page.evaluate(()=>window.apolloDiagnostics.snapshot().status),'crashed');await page.locator('#restart').click();
+  await page.locator('#source-file').selectOption('EXECUTIVE');await page.waitForFunction(()=>document.querySelector('#source-code').textContent.includes('1202'));assert.match(await page.locator('#source-code').innerText(),/1201/);assert.match(await page.locator('#source-code').innerText(),/1202/);
+  await page.locator('[data-alarm="1202"]').click();assert.match(await page.locator('#alarm-explanation').innerText(),/1202/);await page.locator('#alarm-reset').click();await page.locator('#history-event').fill('6');assert.match(await page.locator('#history-detail').innerText(),/102:42:18/);
+  await page.locator('#computer-mode').click();assert.equal(await page.locator('#engineering').isVisible(),true);assert.equal(await page.evaluate(()=>window.apolloDiagnostics.running()),false);await page.locator('#land-mode').click();assert.equal(await page.locator('#cockpit').isVisible(),true);
+  await page.setViewportSize({width:390,height:844});await page.screenshot({path:qa+'/'+lang+'-mobile.png',fullPage:true});
+  await page.locator('.language').click();await page.waitForFunction(()=>window.apolloReady);assert.equal(await page.locator('html').getAttribute('lang'),lang==='de'?'en':'de');await context.close();
+ }
+ assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(failed,[]);console.log('PASS: real EN/DE keyboard/controls, pause/resume, guided landing, failed landing, lessons, local code, 14 viewport widths, language links, zero page errors or external requests. Screenshots: '+qa);
+}finally{if(browser)await browser.close();if(server.listening)await new Promise(r=>server.close(r));}

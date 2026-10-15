@@ -18,6 +18,9 @@
     "test:archive-recovery": "node --test tests/archive-recovery*.test.mjs",
     "test:archive-recovery:browser": "node scripts/test-archive-recovery-browser.mjs",
     "test:archive-recovery:real-browser": "node scripts/test-archive-real-files-browser.mjs",
-    "build:archive-recovery": "node scripts/build-archive-recovery-worker.mjs"
+    "build:archive-recovery": "node scripts/build-archive-recovery-worker.mjs",
+    "build:apollo": "node scripts/build-apollo-11.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:apollo": "node --test tests/apollo-11-*.test.mjs",
+    "test:apollo:browser": "node scripts/test-apollo-11-browser.mjs"
   }
 }
