@@ -3,10 +3,12 @@ import {Recovery,stages} from './recovery.mjs';
 import {Landscape} from './landscape.mjs';
 const de=document.documentElement.lang==='de',lang=de?'de':'en',t=(en,ger)=>de?ger:en,$=id=>document.getElementById(id);
 const model=new Recovery();let cwd=root,selected=root,terminalCwd=root,denials=0;
+const fileViewer=$('file-viewer');let viewerOpener=null;
 const stageLabels={diagnose:t('diagnose systems','Systeme prüfen'),isolate:t('isolate bypass','Umgehung isolieren'),reboot:t('restart services','Dienste neu starten'),power:t('restore power','Strom wiederherstellen'),communications:t('restore communications','Kommunikation starten'),fences:t('test fence circuits','Zaunkreise prüfen'),doors:t('restore visitor-center door locks','Türverriegelung wiederherstellen')};
 const messages={diagnose:t('Diagnostic complete: maintenance bypass found. Isolate it before restarting.','Diagnose abgeschlossen: Wartungsumgehung gefunden. Vor dem Neustart isolieren.'),isolate:t('Bypass isolated. Safe to restart the fictional control services.','Umgehung isoliert. Die fiktiven Steuerdienste können neu starten.'),reboot:t('Control services restarted. Main power bus remains disconnected.','Steuerdienste neu gestartet. Hauptstrombus noch getrennt.'),power:t('Main power bus online. Communications relay can now start.','Hauptstrombus aktiv. Kommunikationsrelais kann jetzt starten.'),communications:t('Communications relay online. Test circuits A, B and C.','Kommunikationsrelais aktiv. Stromkreise A, B und C prüfen.'),fences:t('All three fence circuits passed. Locate door.control in the 3D filesystem.','Alle drei Zaunkreise geprüft. Suche door.control im 3D-Dateisystem.'),doors:t('Visitor-center door locks restored. SYSTEM SECURED. Recovery complete.','Türverriegelung im Besucherzentrum wiederhergestellt. SYSTEM GESICHERT. Wiederherstellung abgeschlossen.')};
 const landscape=new Landscape($('landscape'),{select:selectNode,open:openNode,label:t('DIRECTORY LANDSCAPE / drag to orbit','VERZEICHNISLANDSCHAFT / Ziehen zum Drehen')});
 function setMode(bonus,focus=false){
+ if(bonus)closeFileViewer(false);
  $('workstation').hidden=bonus;$('bonus').hidden=!bonus;
  $('mode-workstation').setAttribute('aria-pressed',String(!bonus));$('mode-bonus').setAttribute('aria-pressed',String(bonus));
  $('mode-context').textContent=bonus?t('FILM-INSPIRED BONUS · FICTIONAL SYSTEMS','FILMINSPIRIERTER BONUS · FIKTIVE SYSTEME'):t('HISTORICALLY INSPIRED · INDEPENDENT RECONSTRUCTION','HISTORISCH INSPIRIERT · EIGENSTÄNDIGE REKONSTRUKTION');
@@ -31,13 +33,35 @@ function selectNode(node){
  if(node.path===doorPath)model.inspectDoor();
 }
 function navigate(node){if(!node?.children)return;cwd=node;$('pathbar').textContent=cwd.path;$('directory-caption').textContent=cwd.children.length+' '+t('items','Einträge');$('nav-up').disabled=!cwd.parent;$('directory-list').replaceChildren();
- for(const item of cwd.children){const button=document.createElement('button');button.type='button';button.dataset.path=item.path;button.textContent=(item.children?'▰ ':'▤ ')+item.name;const small=document.createElement('small');small.textContent=item.children?item.children.length+' '+t('items','Einträge'):item.size+' B';button.append(small);button.addEventListener('click',()=>selectNode(item));button.addEventListener('dblclick',()=>openNode(item));$('directory-list').append(button);}
+ for(const item of cwd.children){const button=document.createElement('button');button.type='button';button.dataset.path=item.path;button.textContent=(item.children?'▰ ':'▤ ')+item.name;const small=document.createElement('small');small.textContent=item.children?item.children.length+' '+t('items','Einträge'):item.size+' B';button.append(small);button.addEventListener('click',()=>selectNode(item));button.addEventListener('dblclick',()=>openNode(item));button.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();openNode(item);}});$('directory-list').append(button);}
  landscape.setDirectory(cwd);$('zoom').value='100';selectNode(cwd);
 }
-function openNode(node){if(node.children){navigate(node);return;}
- if(node.parent!==cwd)navigate(node.parent);selectNode(node);
- if(node.action==='dennis')lockscreenSequence();else if(node.action==='shark')$('shark-dialog').showModal();
- else {$('inspect-message').textContent=t('File opened in the inspector.','Datei im Inspektor geöffnet.');$('file-content').focus({preventScroll:true});}
+function openFileViewer(node){
+ if(!fileViewer.open||!fileViewer.contains(document.activeElement))viewerOpener=document.activeElement;
+ $('file-viewer-title').textContent=node.name;
+ $('file-viewer-content').textContent=node.content[lang];
+ $('file-viewer-content').scrollTop=0;
+ // A non-modal desktop document, contained by the monitor rather than the top layer.
+ if(!fileViewer.open)fileViewer.show();
+ const monitor=fileViewer.closest('.monitor');
+ const visibleWindow=monitor.getBoundingClientRect().height<=innerHeight?monitor:fileViewer.querySelector('.titlebar');
+ visibleWindow.scrollIntoView({block:'nearest',behavior:'instant'});
+ $('file-viewer-content').focus({preventScroll:true});
+}
+function closeFileViewer(restoreFocus=true){
+ if(!fileViewer.open)return;
+ fileViewer.close();
+ if(restoreFocus){const target=viewerOpener?.isConnected&&viewerOpener.getClientRects().length?viewerOpener:$('landscape');target.focus({preventScroll:true});}
+ viewerOpener=null;
+}
+$('close-file-viewer').addEventListener('click',()=>closeFileViewer());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&fileViewer.open){e.preventDefault();closeFileViewer();}});
+function openNode(node){if(node.children){closeFileViewer(false);navigate(node);return;}
+ selectNode(node);
+ if(node.action==='dennis'||node.action==='shark'){
+  closeFileViewer(false);
+  if(node.action==='dennis')lockscreenSequence();else $('shark-dialog').showModal();
+ }else openFileViewer(node);
 }
 $('open-item').addEventListener('click',()=>openNode(selected));
 $('nav-up').addEventListener('click',()=>{if(cwd.parent)navigate(cwd.parent);});
@@ -70,7 +94,7 @@ function apply(action){const result=model.apply(action);let message;
 }
 for(const b of document.querySelectorAll('[data-action]'))b.addEventListener('click',()=>apply(b.dataset.action));
 $('file-action').addEventListener('click',()=>{
- if(selected.action==='dennis'){lockscreenSequence();return;}if(selected.action==='shark'){$('shark-dialog').showModal();return;}
+ if(selected.action==='dennis'||selected.action==='shark'){openNode(selected);return;}
  const action=selected.action;setMode(true,true);const message=apply(action);$('inspect-message').textContent=message;
 });
 $('locate-module').addEventListener('click',()=>{setMode(false,true);navigate(root);$('file-search').focus();$('inspect-message').textContent=t('Find Physical.Plant → Physical.Security → Visitor.Center → door.control, or search its name.','Suche Physical.Plant → Physical.Security → Visitor.Center → door.control oder nutze die Namenssuche.');});
@@ -96,7 +120,7 @@ $('terminal-form').addEventListener('submit',e=>{e.preventDefault();const raw=$(
   const n=resolvePath(arg||'/park',terminalCwd);if(!n)log(t('Path not found.','Pfad nicht gefunden.'));
   else if(v==='cd'){if(n.children){terminalCwd=n;log(n.path);}else log(t('Not a directory.','Kein Verzeichnis.'));}
   else if(v==='cat'){if(n.children)log(t('Use ls for a directory.','Nutze ls für Verzeichnisse.'));else {log(n.content[lang]);if(n.path===doorPath)model.inspectDoor();}}
-  else {setMode(false,true);navigate(n.children?n:n.parent);openNode(n);}
+  else {setMode(false,true);openNode(n);}
  }
  else log(t('Unknown command. Type help for this bounded museum console.','Unbekannter Befehl. help zeigt die Befehle dieser begrenzten Museumskonsole.'));
 });

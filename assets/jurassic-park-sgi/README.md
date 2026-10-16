@@ -20,6 +20,19 @@ is capped at 1.5. Camera controls: overview, bird's eye, front, drag to orbit/ti
 magnification. Canvas keyboard: arrows select visible objects, Enter opens,
 Backspace goes to the parent. Touch users can use all named controls and the list.
 
+Single clicks select and update the existing inspector. Double-clicking an
+ordinary file, pressing Enter on the canvas or its directory-list button, using
+Read file / Datei lesen, and terminal `open PATH` share one text-viewer path.
+The non-modal document dialog is positioned inside the simulated monitor; it
+renders the complete localized authored text with `textContent` in a read-only,
+scrollable monospace area. Close and Escape restore focus without navigating,
+rebuilding the landscape, resetting the camera/zoom, or clearing the search.
+Tab can leave the document, and page scrolling remains available. Opening a
+file visible in a descendant directory also preserves the current directory;
+opening a directory still navigates normally. Dennis and ocean-monitor files
+retain their special opening actions, and recovery modules retain their separate
+inspection/action controls.
+
 ## Cinematic bonus
 
 The separate fictional recovery scenario uses a deterministic dependency model:
@@ -99,8 +112,21 @@ Browser tests require Playwright from `CODEX_PRIMARY_RUNTIME_NODE_MODULES`.
 They cover both languages, 3D views, keyboard/list/search navigation, recovery
 dependencies, lockscreen order, offline interaction, responsive widths, Canvas
 fallback, static historical notes without JavaScript and page/request errors.
+Viewer regression checks additionally cover every ordinary file's exact EN/DE
+contents, list and canvas double-clicks, both Enter routes, the read button and
+terminal, retained camera/directory/selection/search state with no scene rebuild,
+focus restoration, Escape, safe literal long-text scrolling, desktop containment
+at all seven responsive widths, and reduced-motion use.
 
 ## Acceptance record — 16 October 2026
+
+Mission 09.1: all 67 SGI/museum/blog/sitemap regression tests passed, and the SEO
+audit reported zero errors across 1,031 indexable pages. The expanded Chromium
+151 browser suite passed in English and German, including every ordinary file,
+all file-opening routes, state preservation without rebuilding, both special
+file actions, the complete recovery scenario, seven responsive widths, reduced
+motion, offline use and Canvas fallback. No page or console errors occurred.
+Desktop and mobile viewer screenshots were reviewed.
 
 114 Node tests passed across the SGI, museum/catalog, bilingual coverage,
 sitemaps, SEO generator, IMSAI and Apollo suites. The full SEO audit reported
