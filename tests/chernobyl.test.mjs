@@ -36,7 +36,7 @@ test('localized static exhibit pages, structured data, source links and station 
 });
 test('exhibit and publication rebuilds are deterministic and retain prior publications',()=>{
  const paths=['museum/chernobyl-control-room/index.html','de/museum/chernobyl-kontrollraum/index.html','museum/index.html','blog/index.html','de/blog/index.html'],before=paths.map(read);
- for(const script of ['build-chernobyl','integrate-jurassic-blog','integrate-dual-isa','integrate-chernobyl'])execFileSync(process.execPath,['scripts/'+script+'.mjs'],{cwd:root});assert.deepEqual(paths.map(read),before);
+ for(const script of ['build-chernobyl','integrate-jurassic-blog','integrate-dual-isa','integrate-chernobyl','integrate-storage-media-lab'])execFileSync(process.execPath,['scripts/'+script+'.mjs'],{cwd:root});assert.deepEqual(paths.map(read),before);
 });
 test('both article routes have matching canonicals, alternate exhibit slugs and distribution',()=>{
  const a=JSON.parse(read('content/museum-blog/articles.json')).filter(x=>x.topic==='chernobyl');
