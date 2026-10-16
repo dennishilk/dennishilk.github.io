@@ -1,14 +1,14 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync} from 'node:fs';import {runInNewContext} from 'node:vm';
 const html=readFileSync(new URL('../museum/index.html',import.meta.url),'utf8');const cards=[...html.matchAll(/<a class="catalog-card ([^"]+)"([\s\S]*?)<\/a>/g)];
 const sandbox={};runInNewContext(readFileSync(new URL('../assets/museum-catalog/catalog.js',import.meta.url),'utf8'),sandbox);const {normalize,matches}=sandbox.MuseumCatalog;
-test('all 21 exhibits have unique crawlable existing destinations and complete bilingual copy',()=>{
- assert.equal(cards.length,21);const destinations=new Set(),counts={};
+test('all 22 exhibits have unique crawlable existing destinations and complete bilingual copy',()=>{
+ assert.equal(cards.length,22);const destinations=new Set(),counts={};
  for(const [raw,,rest] of cards){const url=rest.match(/href="([^"]+)"/)[1];assert.ok(!destinations.has(url));destinations.add(url);assert.ok(existsSync(new URL('../'+url.slice(1)+'index.html',import.meta.url)),url);
  const category=rest.match(/data-category="([^"]+)"/)[1];counts[category]=(counts[category]||0)+1;assert.match(raw,/data-status="available"/);assert.match(raw,/<h3 [^>]*data-en="[^"\n]+" data-de="[^"\n]+"/);assert.match(raw,/<p [^>]*data-en="[^"\n]+" data-de="[^"\n]+"/);
  const native=rest.match(/data-native-de="([^"]+)"/);if(native)assert.ok(existsSync(new URL('../'+native[1].slice(1)+'index.html',import.meta.url)));
  }
- assert.deepEqual(counts,{retro:9,linux:4,network:4,security:4});
- for(const url of ['/museum/apollo-11/','/museum/imsai-8080/','/wopr/','/museum/c64/','/museum/ibm-pc-xt/','/museum/apollo-dsky/','/museum/bios-setup/','/museum/dos-setup/','/museum/crt-remote-terminal/','/museum/debian-server-experiment/','/museum/linux-terminal-academy/','/museum/failure-lab/','/museum/linux-game-install/','/museum/bbs-system/','/museum/unix-time-sharing-center/','/museum/telephone-exchange/','/museum/modem-lab/','/museum/malware-history/','/museum/password-cracking-lab/','/museum/cryptography-lab/','/museum/archive-recovery-lab/'])assert.ok(destinations.has(url),url);
+ assert.deepEqual(counts,{retro:10,linux:4,network:4,security:4});
+ for(const url of ['/museum/jurassic-park-sgi/','/museum/apollo-11/','/museum/imsai-8080/','/wopr/','/museum/c64/','/museum/ibm-pc-xt/','/museum/apollo-dsky/','/museum/bios-setup/','/museum/dos-setup/','/museum/crt-remote-terminal/','/museum/debian-server-experiment/','/museum/linux-terminal-academy/','/museum/failure-lab/','/museum/linux-game-install/','/museum/bbs-system/','/museum/unix-time-sharing-center/','/museum/telephone-exchange/','/museum/modem-lab/','/museum/malware-history/','/museum/password-cracking-lab/','/museum/cryptography-lab/','/museum/archive-recovery-lab/'])assert.ok(destinations.has(url),url);
 });
 test('search combines all query terms with topic selection and handles accents, case and punctuation',()=>{
  const entry={category:'security',search:normalize('Kryptografie-Labor cryptography Rätsel SHA-256 Straße')};
@@ -20,11 +20,11 @@ test('directory is progressive and scoped: static links, hidden JS controls, acc
  const css=readFileSync(new URL('../assets/museum-catalog/catalog.css',import.meta.url),'utf8');assert.match(css,/prefers-reduced-motion/);assert.match(css,/\.museum-catalog-page \[hidden\]/);assert.doesNotMatch(css,/@import|https?:/);
 });
 
-test('Apollo 11 follows Apollo DSKY at 06, retaining all other exhibit order and bilingual destinations',()=>{
+test('Apollo 11 follows Apollo DSKY at 07, retaining all other exhibit order and bilingual destinations',()=>{
  const names=cards.map(([,name])=>name);
- assert.deepEqual(names,['museum-card-imsai','museum-card-wopr','museum-card-c64','museum-card-ibm','museum-card-dsky','museum-card-apollo11','museum-card-bios','museum-card-dos','museum-card-crt-terminal','museum-card-debian','museum-card-linux-academy','museum-card-failure-lab','museum-card-linux-game','museum-card-bbs','museum-card-unix-center','museum-card-telephone','museum-card-modem','museum-card-malware','museum-card-cryptography','museum-card-crypto-history','museum-card-archive']);
- assert.deepEqual(cards.map(([raw])=>raw.match(/class="catalog-number" aria-hidden="true">(\d+)/)[1]),Array.from({length:21},(_,i)=>String(i+1).padStart(2,'0')));
- assert.equal(Math.floor(names.indexOf('museum-card-dsky')/3),Math.floor(names.indexOf('museum-card-apollo11')/3));
+ assert.deepEqual(names,['museum-card-imsai','museum-card-wopr','museum-card-sgi','museum-card-c64','museum-card-ibm','museum-card-dsky','museum-card-apollo11','museum-card-bios','museum-card-dos','museum-card-crt-terminal','museum-card-debian','museum-card-linux-academy','museum-card-failure-lab','museum-card-linux-game','museum-card-bbs','museum-card-unix-center','museum-card-telephone','museum-card-modem','museum-card-malware','museum-card-cryptography','museum-card-crypto-history','museum-card-archive']);
+ assert.deepEqual(cards.map(([raw])=>raw.match(/class="catalog-number" aria-hidden="true">(\d+)/)[1]),Array.from({length:22},(_,i)=>String(i+1).padStart(2,'0')));
+ assert.equal(names.indexOf('museum-card-apollo11'),names.indexOf('museum-card-dsky')+1);
  const apolloPair=cards.filter(([raw])=>matches({category:'retro',search:normalize(raw)},'apollo','retro'));
  assert.deepEqual(apolloPair.map(([,name])=>name),['museum-card-dsky','museum-card-apollo11']);
  for(const [raw,name] of apolloPair){const route=name==='museum-card-dsky'?'apollo-dsky':'apollo-11';assert.ok(raw.includes('href="/museum/'+route+'/"'));assert.ok(raw.includes('data-native-de="/de/museum/'+route+'/"'));}

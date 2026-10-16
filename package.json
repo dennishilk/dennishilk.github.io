@@ -21,6 +21,9 @@
     "build:archive-recovery": "node scripts/build-archive-recovery-worker.mjs",
     "build:apollo": "node scripts/build-apollo-11.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:apollo": "node --test tests/apollo-11-*.test.mjs",
-    "test:apollo:browser": "node scripts/test-apollo-11-browser.mjs"
+    "test:apollo:browser": "node scripts/test-apollo-11-browser.mjs",
+    "build:sgi": "node scripts/build-jurassic-park-sgi.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:sgi": "node --test tests/jurassic-park-sgi.test.mjs",
+    "test:sgi:browser": "node scripts/test-jurassic-park-sgi-browser.mjs"
   }
 }
