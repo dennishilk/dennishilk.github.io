@@ -1,5 +1,6 @@
 let drawingID=0;
-export function objectSVG(type='floppy',label='',cut=false){
+// Static page drawings and browser-created drawings must never share fragment IDs.
+export function objectSVG(type='floppy',label='',cut=false,scope='live'){
  drawingID++;
  const defs='<defs><linearGradient id="metal" x2="1" y2="1"><stop stop-color="#e6e4dc"/><stop offset=".5" stop-color="#8b989e"/><stop offset="1" stop-color="#d5d8d4"/></linearGradient><linearGradient id="disc"><stop stop-color="#9ad5d0"/><stop offset=".3" stop-color="#f8dbc3"/><stop offset=".52" stop-color="#d9d5fc"/><stop offset=".75" stop-color="#a8e1d9"/><stop offset="1" stop-color="#f2e9ba"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="9" flood-opacity=".25"/></filter></defs>';
  let shape='';
@@ -17,7 +18,7 @@ export function objectSVG(type='floppy',label='',cut=false){
  shape=`<g transform="rotate(-13 240 170)" filter="url(#shadow)"><rect x="80" y="103" width="310" height="135" rx="13" fill="${type==='ssd'?'#175b4a':'#2e444b'}" stroke="#10252d" stroke-width="3"/><rect x="340" y="121" width="95" height="100" rx="3" fill="url(#metal)"/><path d="M372 138 h34 v15 h-34 M372 187 h34 v15 h-34" fill="#223139"/><rect x="110" y="127" width="158" height="85" rx="4" fill="${cut?'#182229':'#dfddc8'}"/><text x="125" y="176" font-family="monospace" font-size="24" fill="${cut?'#edc389':'#263b44'}">${cut?'NAND':'128 GB'}</text><rect x="284" y="143" width="35" height="55" fill="#101d24"/><path d="M269 144 h15 M269 158 h15 M269 172 h15 M269 186 h15 M319 153 h20 M319 181 h20" stroke="#d4ac56" stroke-width="3"/></g>`;
  }else if(type==='tape')shape=`<rect x="57" y="66" width="366" height="218" rx="18" fill="#b7aa8a" stroke="#283943" stroke-width="5" filter="url(#shadow)"/><rect x="83" y="87" width="313" height="141" rx="12" fill="#dcd7c5"/><circle cx="158" cy="156" r="56" fill="#47322b"/><circle cx="323" cy="156" r="56" fill="#47322b"/><path d="M157 211 H323" stroke="#47322b" stroke-width="8"/><circle cx="158" cy="156" r="22" fill="#e7dfc3"/><circle cx="323" cy="156" r="22" fill="#e7dfc3"/><path d="M136 281 L160 243 H320 L344 281" fill="#9a907b"/>`;
  else if(type==='paper')shape=`<path d="M50 85 H430 V260 H50Z" fill="#e0cb98" stroke="#a4926f" stroke-width="3" filter="url(#shadow)"/>${Array.from({length:45},(_,i)=>`<rect x="${68+(i%15)*23}" y="${108+Math.floor(i/15)*48}" width="9" height="${i%3===0?24:9}" fill="#172a32" opacity=".85"/>`).join('')}`;
- return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="${label.replaceAll('&','&amp;').replaceAll('"','&quot;')}">${defs}${shape}</svg>`.replace(/id="(metal|disc|shadow)"/g,(_,id)=>`id="${id}-${drawingID}"`).replace(/url\(#(metal|disc|shadow)\)/g,(_,id)=>`url(#${id}-${drawingID})`);
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="${label.replaceAll('&','&amp;').replaceAll('"','&quot;')}">${defs}${shape}</svg>`.replace(/id="(metal|disc|shadow)"/g,(_,id)=>`id="${scope}-${id}-${drawingID}"`).replace(/url\(#(metal|disc|shadow)\)/g,(_,id)=>`url(#${scope}-${id}-${drawingID})`);
 }
 export function mechanismSVG(kind,step,lang='en'){
  const de=lang==='de',t=(a,b)=>de?b:a;

@@ -1,6 +1,6 @@
 import {media,localizedMeta} from './media.mjs';
 import {comparisons,examples,parseBytes,countMedia,createArchive,archiveAction} from './model.mjs';
-import {objectSVG,mechanismSVG} from './illustrations.mjs';
+import {objectSVG,mechanismSVG} from './illustrations.mjs?v=12.1';
 import {sources,accessed} from './sources.mjs';
 const de=document.documentElement.lang==='de',L=de?1:0,t=(en,ger)=>de?ger:en,fmt=n=>BigInt(n).toLocaleString(de?'de-DE':'en-US');
 const $=s=>document.querySelector(s),all=s=>[...document.querySelectorAll(s)];
