@@ -57,7 +57,17 @@ function loadMuseumBundles() {
 
 function hasDedicatedGermanFile(file) {
   const relative = path.relative(root, file);
-  return fs.existsSync(path.join(root, "de", relative));
+  if (fs.existsSync(path.join(root, "de", relative))) return true;
+  // Native localized exhibits may use a translated slug rather than /de + EN path.
+  const html = fs.readFileSync(file, "utf8");
+  const alternate = html.match(/<link[^>]*hreflang="de"[^>]*href="([^"]+)"/);
+  if (!alternate) return false;
+  const url = new URL(alternate[1], "https://www.dennishilk.com");
+  if (url.origin !== "https://www.dennishilk.com" || !url.pathname.startsWith("/de/")) return false;
+  const target = sourceFileForRoute(url.pathname);
+  if (!fs.existsSync(target)) return false;
+  const german = fs.readFileSync(target, "utf8");
+  return /<html\s+lang="de"/.test(german) && german.includes('hreflang="en" href="https://www.dennishilk.com' + routeForFile(file) + '"');
 }
 
 function hasSpecificRuntimeCoverage(route, bundle) {
