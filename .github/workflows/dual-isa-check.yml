@@ -1,0 +1,21 @@
+name: Dual-ISA architecture lab checks
+on:
+  push:
+    branches: [main]
+    paths: ['assets/ibm-dual-isa/**', 'museum/ibm-dual-isa/**', 'de/museum/ibm-dual-isa/**', 'content/museum-blog/**', 'scripts/*dual-isa*', 'tests/ibm-dual-isa*', '.github/workflows/dual-isa-check.yml']
+  pull_request:
+    paths: ['assets/ibm-dual-isa/**', 'museum/ibm-dual-isa/**', 'de/museum/ibm-dual-isa/**', 'content/museum-blog/**', 'scripts/*dual-isa*', 'tests/ibm-dual-isa*', '.github/workflows/dual-isa-check.yml']
+permissions:
+  contents: read
+jobs:
+  model-and-publication:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Model, publication, museum and blog regression tests
+        run: node --test tests/ibm-dual-isa*.test.mjs tests/museum-*.test.mjs tests/blog-rss.test.mjs tests/jurassic-blog.test.mjs
+      - name: SEO audit
+        run: node scripts/audit-seo.mjs

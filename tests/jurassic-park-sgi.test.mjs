@@ -32,6 +32,6 @@ test('EN/DE pages and build are reproducible, link to real local assets and have
  }
 });
 test('catalog places SGI third after WOPR without adding a runtime to the overview',()=>{
- const html=read('museum/index.html'),cards=[...html.matchAll(/class="catalog-card ([^"]+)"/g)].map(m=>m[1]);assert.deepEqual(cards.slice(0,4),['museum-card-imsai','museum-card-wopr','museum-card-sgi','museum-card-c64']);assert.equal(cards.length,22);assert.doesNotMatch(html,/jurassic-park-sgi\/ui\.mjs/);
+ const html=read('museum/index.html'),cards=[...html.matchAll(/class="catalog-card ([^"]+)"/g)].map(m=>m[1]);assert.deepEqual(cards.slice(0,4),['museum-card-imsai','museum-card-wopr','museum-card-sgi','museum-card-c64']);assert.equal(cards.length,23);assert.doesNotMatch(html,/jurassic-park-sgi\/ui\.mjs/);
  const preview=readFileSync(new URL('../assets/jurassic-park-sgi/preview.png',import.meta.url));assert.equal(preview.readUInt32BE(16),1200);assert.equal(preview.readUInt32BE(20),630);
 });

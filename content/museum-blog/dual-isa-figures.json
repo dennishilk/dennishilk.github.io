@@ -1,0 +1,88 @@
+{
+  "dual-hero": {
+    "file": "dual-isa-hero-LANG.webp",
+    "width": 1296,
+    "height": 1115,
+    "en": [
+      "Actual English Dual-ISA Processor Lab screenshot with eleven selectable conceptual cores and a technical inspector.",
+      "Real browser capture of this project. The chip arrangement is an original teaching visualization, not an IBM die layout."
+    ],
+    "de": [
+      "Echte deutsche Browseraufnahme des Dual-ISA-Labors mit elf auswählbaren Kernen und technischem Inspektor.",
+      "Echter Screenshot dieses Projekts. Die Chipanordnung ist eine eigene Lehrdarstellung, kein IBM-Die-Layout."
+    ],
+    "hero": true,
+    "dimensions": {
+      "en": [
+        1296,
+        1115
+      ],
+      "de": [
+        1296,
+        1115
+      ]
+    }
+  },
+  "dual-instructions": {
+    "file": "dual-isa-instructions-LANG.webp",
+    "width": 1296,
+    "height": 1119,
+    "en": [
+      "Actual English lab screenshot with IBM Z and Arm source listings, registers, memory and execution trace.",
+      "Real browser capture. Source-listing indices are not machine instruction addresses; the JavaScript interpreters implement a small documented subset."
+    ],
+    "de": [
+      "Echte deutsche Laboraufnahme mit IBM-Z- und Arm-Quelllistings, Registern, Speicher und Ausführungsspur.",
+      "Echter Browser-Screenshot. Listing-Indizes sind keine Maschinenadressen; die JavaScript-Interpreter implementieren eine kleine dokumentierte Teilmenge."
+    ],
+    "dimensions": {
+      "en": [
+        1296,
+        1119
+      ],
+      "de": [
+        1296,
+        1119
+      ]
+    }
+  },
+  "dual-core": {
+    "file": "dual-isa-core-LANG.svg",
+    "width": 1200,
+    "height": 530,
+    "en": [
+      "Two separate software environments connect to one core design supporting IBM Z and Arm.",
+      "Original capability diagram. It does not specify internal decoding, pipelines or cross-ISA calls."
+    ],
+    "de": [
+      "Zwei getrennte Softwareumgebungen und ein Kerndesign mit IBM-Z- und Arm-Unterstützung.",
+      "Eigenes Fähigkeitsdiagramm. Es legt keine interne Decodierung, Pipeline oder ISA-übergreifende Aufrufe fest."
+    ]
+  },
+  "dual-service": {
+    "file": "dual-isa-service-LANG.svg",
+    "width": 1200,
+    "height": 530,
+    "en": [
+      "A Z transaction application exchanges a request and response with a separate Arm Linux service.",
+      "Original service-contract diagram. The rule is deterministic teaching arithmetic, not trained AI or real banking software."
+    ],
+    "de": [
+      "Eine Z-Transaktionsanwendung tauscht Anfrage und Antwort mit einem getrennten Arm-Linux-Service aus.",
+      "Eigenes Schnittstellendiagramm. Die Regel ist deterministische Lehrarithmetik, keine trainierte KI oder echte Banksoftware."
+    ]
+  },
+  "dual-comparison": {
+    "file": "dual-isa-comparison-LANG.svg",
+    "width": 1200,
+    "height": 610,
+    "en": [
+      "Four conceptual arrangements: separate machines, separate core types, software translation and native dual-ISA per core.",
+      "Original topology comparison. Boxes show logical relationships rather than a real semiconductor floorplan; no benchmark ranking is implied."
+    ],
+    "de": [
+      "Vier Konzepte: getrennte Rechner, getrennte Kerntypen, Softwareübersetzung und natives Dual-ISA pro Kern.",
+      "Eigener Topologievergleich. Kästen zeigen logische Beziehungen statt eines echten Halbleiter-Floorplans; keine Benchmark-Rangfolge."
+    ]
+  }
+}

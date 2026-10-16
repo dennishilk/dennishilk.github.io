@@ -1,2 +1,5 @@
 /* Scoped article details; all typography and layout remain in /blog/blog.css. */
 .museum-dsky-detail { max-width:390px; margin-inline:auto; }
+
+/* Long German architecture terms remain readable on narrow screens. */
+.dual-isa-article .article-header h1 { overflow-wrap:anywhere; hyphens:auto; }
