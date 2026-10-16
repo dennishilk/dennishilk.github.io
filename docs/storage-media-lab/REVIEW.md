@@ -40,7 +40,7 @@ Only one main station is active with JS; numbered navigation, previous/next and 
 
 ## Integration and reproducibility
 
-- Museum card with original SVG preview, native German destination, searchable bilingual copy, derived counts/numbering (25 exhibits) and schema reference. Other exhibit designs unchanged.
+- Museum card with text-only presentation (Mission 12.1), native German destination, searchable bilingual copy, derived counts/numbering (25 exhibits) and schema reference. Other exhibit designs unchanged.
 - Both blog indexes, museum-story counts, RSS feeds and standard generated sitemaps updated. Existing publication build commands include the storage integrator so rebuilds retain the new entry.
 - `npm run build:storage` regenerates both exhibit pages, both features and integration/RSS/sitemaps. Source modules, article fragments and committed image assets are kept in the repository; production needs no new runtime or package installation.
 - Catalog regression expectations account for the extra hardware exhibit; the existing Chernobyl publication rebuild test includes the newly required integration step.
@@ -60,3 +60,13 @@ Only one main station is active with JS; numbered navigation, previous/next and 
 The managed environment did not expose the supported control-browser capability. Per the Sites environment guidance, no preview server or alternate browser installation was used. Real desktop/tablet/mobile rendering, keyboard-only use in a browser, spoken screen-reader output, physical touch interactions and audible playback remain unverified. Responsive CSS, semantic controls, focus styling, live regions and reduced-motion rules were implemented and inspected, but this report does not label those browser checks as performed.
 
 Worldnode deployment remains manual. This task changes GitHub `main` only.
+
+
+## Mission 12.1 — catalog and final-station polish
+
+- Removed only the Storage Media Lab card's inline preview image in the shared bilingual catalog and its integration generator. Card title, description, metadata and native German destination are retained.
+- Root cause of the final-station blank graphics: static build-time SVGs and browser-generated gallery/drive SVGs restarted the same ID counter. The final ZIP/USB used `shadow-9`/`shadow-10`; gallery initialization introduced those IDs again. SVG fragment references are document-wide, and station visibility could make a referenced duplicate filter unavailable.
+- Build-time SVG definitions now use the `page-` namespace and client-generated definitions use `live-`, with per-render counters inside each namespace. All gradient and filter references are rewritten together; neither panel nor its artwork was removed. Updated the UI/module URL versions so reloads fetch the corrected generator.
+- Added regression checks for self-contained SVG references, no static/runtime ID collisions over repeated draws and fresh module counters, both preserved final SVGs, and image-free bilingual catalog markup. Actual UI-module tests now include EN/DE direct `#ventoy` initialization on two fresh fixtures and navigation away/back.
+- Final verification: 115 automated tests passed; SEO audit reported 0 errors; `git diff --check` passed. These tests cover the fresh-load lifecycle and underlying SVG references, not real-browser rasterization or a literal browser hard reload. Browser visual inspection remains unavailable in this managed environment.
+- GitHub main only; no Worldnode deployment.
