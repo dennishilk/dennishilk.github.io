@@ -148,3 +148,5 @@ tr:last-child td { border-bottom:0; }
 .feed-link:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 .feed-icon { width:15px; height:15px; flex:none; color:#f5a623; }
 @media(max-width:650px) { .blog-feeds { padding:17px; gap:14px; } .feed-links { width:100%; } }
+
+#dual-isa-story { overflow-wrap:anywhere; hyphens:auto; }

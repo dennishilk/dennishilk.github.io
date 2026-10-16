@@ -25,8 +25,11 @@
     "build:sgi": "node scripts/build-jurassic-park-sgi.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:sgi": "node --test tests/jurassic-park-sgi.test.mjs",
     "test:sgi:browser": "node scripts/test-jurassic-park-sgi-browser.mjs",
-    "build:museum-blog": "node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "build:museum-blog": "node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:museum-blog": "node --test tests/museum-blog.test.mjs tests/blog-rss.test.mjs tests/jurassic-blog.test.mjs",
-    "test:jurassic-blog:browser": "node scripts/test-jurassic-blog-browser.mjs"
+    "test:jurassic-blog:browser": "node scripts/test-jurassic-blog-browser.mjs",
+    "build:dual-isa": "node scripts/build-ibm-dual-isa.mjs && node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:dual-isa": "node --test tests/ibm-dual-isa*.test.mjs",
+    "test:dual-isa:browser": "node scripts/test-ibm-dual-isa-browser.mjs"
   }
 }
