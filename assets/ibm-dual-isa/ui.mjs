@@ -1,3 +1,4 @@
+import {mountStations} from './stations.mjs';
 import {makeCPU,ServiceScenario,ControlledRunner} from './model.mjs';
 const $=id=>document.getElementById(id),de=document.documentElement.lang==='de',t=(a,b)=>de?b:a;
 let selected=0,block=null,kind='add',a=17,b=25;
@@ -7,14 +8,15 @@ const cpu=()=>cores[selected],hex=n=>n.toString(16).padStart(2,'0').toUpperCase(
 const descriptions={
  complex:t('Eleven cores of the same announced design. Each supports IBM Z and Arm natively; these are not two dedicated core clusters.','Elf Kerne desselben angekündigten Designs. Jeder unterstützt IBM Z und Arm nativ; dies sind keine zwei dedizierten Kerncluster.'),
  cache:t('Caches keep frequently needed data close to execution. IBM announces a large cache architecture. Capacities, placement and coherence between software environments are not modeled here.','Caches halten häufig benötigte Daten nahe an der Ausführung. IBM kündigt eine große Cache-Architektur an. Größen, Platzierung und Kohärenz zwischen Softwareumgebungen sind hier nicht modelliert.'),
- ai:t('Announced integrated inference acceleration. Specialized compute can support inference near transactions. The deterministic service rule below is not a trained model and does not execute this accelerator.','Angekündigte integrierte Inferenzbeschleunigung. Spezialisierte Recheneinheiten können Inferenz nahe an Transaktionen unterstützen. Die deterministische Service-Regel unten ist kein trainiertes Modell und führt diesen Beschleuniger nicht aus.'),
+ ai:t('Announced integrated inference acceleration. Specialized compute can support inference near transactions. The deterministic rule in the Application station is not a trained model and does not execute this accelerator.','Angekündigte integrierte Inferenzbeschleunigung. Spezialisierte Recheneinheiten können Inferenz nahe an Transaktionen unterstützen. Die deterministische Regel in der Station Praxis ist kein trainiertes Modell und führt diesen Beschleuniger nicht aus.'),
  dpu:t('A dedicated on-chip data processing unit is announced for I/O acceleration. This block represents its role, not a published queue structure or bandwidth figure.','Eine dedizierte On-Chip-Datenverarbeitungseinheit ist zur I/O-Beschleunigung angekündigt. Der Block zeigt ihre Rolle, keine veröffentlichte Warteschlangenstruktur oder Bandbreite.'),
  io:t('Enterprise I/O connects software to storage and external services. Protocols, isolation and recovery still matter. The service demo performs no external I/O.','Enterprise-I/O verbindet Software mit Speicher und externen Diensten. Protokolle, Isolation und Wiederherstellung bleiben relevant. Die Service-Demo führt keine externe Ein-/Ausgabe aus.')
 };
 function inspect(){
  $('core-details').hidden=!!block;
+ $('selected-core-label').textContent=t('Core ','Kern ')+String(selected+1).padStart(2,'0');
  $('inspector-title').textContent=block?({complex:t('Core complex','Kernkomplex'),cache:t('Cache hierarchy','Cache-Hierarchie'),ai:t('AI inference','KI-Inferenz'),dpu:'I/O DPU',io:'Enterprise I/O'})[block]:t('Core ','Kern ')+String(selected+1).padStart(2,'0');
- $('block-description').textContent=block?descriptions[block]:t('One selected dual-ISA core. The two source interpreters below belong to separate teaching contexts.','Ein gewählter Dual-ISA-Kern. Die beiden Quellinterpreter unten gehören zu getrennten Lehrkontexten.');
+ $('block-description').textContent=block?descriptions[block]:t('One selected dual-ISA core. In the Instructions station, two source interpreters belong to separate teaching contexts.','Ein gewählter Dual-ISA-Kern. In der Station Befehle gehören die beiden Quellinterpreter zu getrennten Lehrkontexten.');
  $('core-workload').textContent=cpu().config.kind==='add'?t('Add / store / load','Addition / Speichern / Laden'):t('Compare / branch','Vergleich / Sprung');
  $('core-state').textContent=runner.running?t('Running / two contexts','Läuft / zwei Kontexte'):cpu().z.halted&&cpu().arm.halted?t('Complete / queue empty','Beendet / Warteschlange leer'):t('Paused / two contexts','Pausiert / zwei Kontexte');
  $('core-count').textContent=cpu().z.count+cpu().arm.count;
@@ -70,4 +72,9 @@ const comparisons={
 function compare(id){const [title,copy,diagram]=comparisons[id];$('compare-title').textContent=title;$('compare-copy').textContent=copy;$('compare-diagram').innerHTML=diagram;for(const b of document.querySelectorAll('[data-compare]'))b.setAttribute('aria-pressed',String(b.dataset.compare===id));}
 for(const b of document.querySelectorAll('[data-compare]'))b.onclick=()=>compare(b.dataset.compare);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();serviceRunner.pause();serviceRender();}});window.addEventListener('pagehide',()=>{runner.pause();serviceRunner.pause();});
-render();serviceRender();compare('native');document.documentElement.dataset.dualIsaReady='true';
+render();serviceRender();compare('native');
+mountStations({
+ onLeave(){runner.pause();serviceRunner.pause();render();serviceRender();},
+ formatPosition:(number,total)=>t(`Station ${number} of ${total}`,`Station ${number} von ${total}`)
+});
+document.documentElement.dataset.dualIsaReady='true';

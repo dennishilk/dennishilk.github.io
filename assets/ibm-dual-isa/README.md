@@ -27,11 +27,19 @@ There are sixteen Z integer registers and thirty-one Arm X registers in each mod
 
 No z/OS instance, full IBM Z emulator, Arm hardware emulator, binary loader, privileged ISA, exception machinery, virtual memory, memory-ordering protocol, operating-system ABI or cycle timing is implemented. This is not a benchmark platform.
 
+## Four stations — Mission 10.1
+
+The default enhanced view opens Architecture only. Instructions, Application and Comparison are independent stations, reached directly through the navigation or Previous/Next links. The navigation progressively enhances ordinary hash anchors into manually activated ARIA tabs. Left/Right and Home/End move focus; Enter/Space selects. Panels expose the matching tab relationships and remain in the DOM. Bottom navigation focuses the new panel heading and brings the station bar into view; tab clicks keep the current view when the bar is already visible. Hash links, browser Back/Forward and reload at a station link select the corresponding panel; `#services` retains its original URL, with `#application` accepted as an alias.
+
+`stations.mjs` owns only presentation and navigation, with no timers or computation state. Its leave callback pauses both existing runners and updates their controls. Switching never resets contexts or starts an interval. The selected core, register/PC/memory/trace values, transaction fields/request/response/phase and selected comparison survive station changes. Reset stays scoped to its original simulation. A page reload or language navigation still creates a fresh lab; there is no account or durable progress storage.
+
+Without JavaScript, all four ordinary sections and their anchor links remain accessible. Research links and full caveats are in an expandable concluding source section, with a concise model disclaimer always visible outside the tabs. The article links and the original bilingual articles remain intact. The smaller hero and core tiles reuse the existing palette, chip styling and typography. Advanced inspector details remain available in native disclosure widgets. The computation source `model.mjs` is unchanged from Mission 10 (SHA-256 `cc701fb4986b6ba9496ec5357dee2a7d2e3f5ffbd5e6bbfb037fc1180ab31d52`).
+
 ## Eleven conceptual cores and allocation
 
 Each selectable tile has independent Z and Arm teaching contexts. One selected-core step advances one instruction in each non-complete context. Other cores retain their state. The pairing makes equivalent programs easy to compare. It does not assert simultaneous issue, resource partitioning, hardware dispatch rules or mixed-ISA execution inside one process. Timeline entries describe teaching events, not clock cycles. The displayed queue denotes two demo contexts, not a real IBM queue depth. Core/block positions, paths, register panels and decorative cell patterns are authored educational graphics, not IBM CAD.
 
-`ControlledRunner` owns one interval and rejects duplicate starts. Pause, reset, core selection, pagehide and hidden-page transitions cancel relevant running work. The CPU and service demonstrations have separate explicit controllers. No continuous animation/render loop, cloud call, banking integration, personal data collection or external runtime dependency exists. Reduced motion disables smooth scrolling; execution only progresses through requested steps/timers. Diagram buttons and DOM listings expose the critical information without relying on graphics.
+`ControlledRunner` owns one interval and rejects duplicate starts. Pause, reset, core selection, pagehide and hidden-page transitions cancel relevant running work. The CPU and service demonstrations have separate explicit controllers. Leaving a station pauses both controllers. No continuous animation/render loop, cloud call, banking integration, personal data collection or external runtime dependency exists. Reduced motion disables smooth scrolling; execution only progresses through requested steps/timers. Diagram buttons and DOM listings expose the critical information without relying on graphics.
 
 ## Service scenario
 
@@ -56,7 +64,7 @@ npm run test:seo
 npm run test:dual-isa:browser
 ```
 
-Browser tests require the `playwright` and `sharp` Node packages. Set `DUAL_ISA_BROWSER` to an installed Chromium/headless-shell executable; the default is the execution environment's `/tmp/headless/chrome-headless-shell-linux64/chrome-headless-shell`. Existing regression browser scripts have their own executable environment variables. These are development dependencies only. Browser script verifies both languages, eleven cores, both branch paths, context retention, controls, service flow, keyboard activation, reduced motion, assets and widths 320/390/768/1440/2048. It blocks off-origin runtime requests. It writes QA screenshots to `/tmp/dual-isa-qa`.
+Browser tests require the `playwright` and `sharp` Node packages. Set `DUAL_ISA_BROWSER` to an installed Chromium/headless-shell executable; the default is the execution environment's `/tmp/headless/chrome-headless-shell-linux64/chrome-headless-shell`. Existing regression browser scripts have their own executable environment variables. These are development dependencies only. Browser script verifies both languages, all four exclusive stations, full tab keyboard behavior, deep links and browser history, eleven cores, both branch paths, state retention, hidden-station timer cancellation, scoped reset, no-JavaScript content access, reduced motion, assets and every station at widths 320/390/768/1440/2048. It blocks off-origin runtime requests. It writes QA screenshots to `/tmp/dual-isa-qa`.
 
 Rebuild screenshots deliberately before rebuilding figure metadata/social cards:
 

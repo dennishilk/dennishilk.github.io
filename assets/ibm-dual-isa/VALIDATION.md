@@ -1,4 +1,18 @@
-# Validation — 2026-10-16
+# Mission 10.1 validation — 2026-10-16
+
+- **100 automated tests passed, 0 failed:** `node --test tests/ibm-dual-isa*.test.mjs tests/museum-*.test.mjs tests/blog-rss.test.mjs tests/jurassic-blog.test.mjs tests/sitemaps.test.mjs tests/seo-localization.test.mjs tests/seo-sitemap-generator.test.mjs`. Includes 23 dual-ISA computation/publication/station checks.
+- **DE/EN Chromium browser acceptance passed:** default Architecture selection; exactly one visible panel; direct navigation to every station; all Previous/Next controls; manual ARIA tabs with arrows, Home/End, Enter/Space and proper focus; deep links, reload, hash navigation and browser Back/Forward; all eleven cores; retained selected core 07 and complete instruction state; retained service fields/request/response/phase and comparison choice; real interval cancellation when leaving CPU/service stations; explicit resume; independent reset; equivalent arithmetic, both branch paths and byte ordering.
+- **Responsive browser checks:** each of the four stations at 320, 390, 768, 1440 and 2048 px in both languages, no horizontal overflow, reduced motion, local assets and zero console/page errors. Initial chip visibility checked at 1440×1000. Actual screenshots inspected on desktop/mobile; QA directory `/tmp/dual-isa-10-1-qa`.
+- **No-JavaScript browser fallback:** all four informational sections and normal anchor links remain visible; research sources expand and the article link stays accessible.
+- **Existing museum catalog browser acceptance passed:** bilingual filters/search/reset, offline and no-JavaScript links, reduced motion and twelve responsive combinations.
+- **SEO audit:** `node scripts/audit-seo.mjs` — zero validation errors.
+- **Scope verification:** `model.mjs` is byte-for-byte unchanged (SHA-256 `cc701fb4986b6ba9496ec5357dee2a7d2e3f5ffbd5e6bbfb037fc1180ab31d52`). Museum catalog, both published articles, their source fragments, existing illustrations, feeds and sitemaps are unchanged. Sources and scientific limitations remain available. The generator remains the HTML source of truth.
+
+This mission uses the same documented educational computation limits. Navigation does not persist progress across a full reload or language change. Chromium headless-shell was exercised; no new Firefox or Safari browser pass is claimed. The earlier optional Apollo mobile-overflow finding below remains outside this exhibit's scope.
+
+---
+
+# Mission 10 original validation — 2026-10-16
 
 ## Executed and passed
 
