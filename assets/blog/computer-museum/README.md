@@ -45,3 +45,53 @@ the SVGs and social images. The script supports the existing
 `CODEX_PRIMARY_RUNTIME_NODE_MODULES` runtime convention. All article assets
 are hosted locally; no CDN, web font, external image runtime or tracking was
 added. WebP files range from about 24 to 68 KiB; social PNGs are about 130–204 KiB.
+
+## Jurassic Park article — 16 October 2026
+
+All five screenshots were freshly captured from the actual local exhibit in
+headless Chromium 151, separately in English and German. No film still or private
+source photo was copied. No runtime or exhibit design was changed for the article.
+
+- `sgi-workstation-{en,de}.webp`: complete monitor, stand, keyboard, mouse and
+  period-inspired case, 1368×1120. 960-pixel variants serve narrower screens.
+- `fsn-landscape-{en,de}.webp`: actual authored `/park` overview, 1049×486.
+- `fsn-power-module-{en,de}.webp`: actual `Power` directory with `mains.control`,
+  1049×486, not a generatively reconstructed screenshot.
+- `jurassic-recovery-{en,de}.webp`: completed local scenario, all six map markers
+  online, 1368×721. This is the original museum schematic, not a film island map.
+- `doctor-nebu-lockscreen-{en,de}.webp`: actual dialog after three access denials,
+  680×498. Includes only the already authorized cartoon asset, not Dennis's photo.
+- `sgi-stack-{en,de}.svg` and `fsn-tree-{en,de}.svg`: original 1200×600 teaching
+  diagrams, not exact SGI circuit diagrams or recovered historical layouts.
+- `jurassic-social-{en,de}.png`: localized 1200×630 editorial compositions using
+  the real complete-workstation captures. These are social cards, not screenshots
+  of a differently arranged application.
+
+The WebP captures preserve natural aspect ratios, use quality 87, and do not
+retouch labels or model values. Figure metadata and captions are in
+`content/museum-blog/jurassic-figures.json`. Reproduce with:
+
+```sh
+SGI_BROWSER=/path/to/chrome node scripts/build-jurassic-blog-visuals.mjs
+npm run build:museum-blog
+npm run test:museum-blog
+SGI_BROWSER=/path/to/chrome npm run test:jurassic-blog:browser
+```
+
+The article's search focus is the informational question “Was the Jurassic Park
+UNIX system real?”. No search-volume or rich-result promises are made. Original
+SGI and Apple documents support technical data; ILM and firsthand production
+interviews support the effects section. Shot-based hardware archaeology is
+identified as such. The personal cinema memory is supplied by Dennis. The exact
+fan repository he used years later is unknown. The raptor and ocean details remain
+observations/jokes, not independently authenticated production claims.
+
+Acceptance for this publication: 67 Node tests passed across article, RSS,
+localization/museum, sitemap and SEO-generator suites. The global SEO audit has
+zero errors across 1,031 indexable pages. Article browser acceptance decoded all
+14 figures, checked natural aspect ratios, desktop/mobile contents navigation,
+reciprocal links, both language switches and seven widths per language with no
+page overflow or request errors. Full SGI acceptance also covers the recovery
+scenario, three-denial lockscreen, polite-word exit, offline behavior and Canvas
+fallback. Its image assertion waits for `decode()` so lazy-loading does not race
+the browser test. No exhibit runtime behavior was changed for publication.

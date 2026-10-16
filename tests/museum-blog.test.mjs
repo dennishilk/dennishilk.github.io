@@ -9,12 +9,12 @@ for(const a of specs){
  const prefix=a.lang==='de'?'de/':'',path=prefix+'blog/'+a.slug+'/index.html',url=origin+'/'+prefix+'blog/'+a.slug+'/';
  test(a.lang+' '+a.topic+': complete article, reciprocal alternates, dates, visible examples and distribution',()=>{
   const html=read(path),graph=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1])['@graph'],article=graph.find(x=>x['@type']==='BlogPosting');
-  assert.equal(article.mainEntityOfPage,url);assert.equal(article.inLanguage,a.lang);assert.equal(article.datePublished,'2026-10-15');assert.equal(article.dateModified,'2026-10-15');assert.ok(article.wordCount>=1800);assert.equal((html.match(/<h1\b/g)||[]).length,1);assert.ok(graph.some(x=>x['@type']==='BreadcrumbList'));
+  assert.equal(article.mainEntityOfPage,url);assert.equal(article.inLanguage,a.lang);assert.equal(article.datePublished,a.date);assert.equal(article.dateModified,a.date);assert.ok(article.wordCount>=1800);assert.equal((html.match(/<h1\b/g)||[]).length,1);assert.ok(graph.some(x=>x['@type']==='BreadcrumbList'));
   const opposite=specs.find(x=>x.topic===a.topic&&x.lang!==a.lang),other=origin+'/'+(opposite.lang==='de'?'de/':'')+'blog/'+opposite.slug+'/';
   assert.ok(html.includes(`hreflang="${opposite.lang}" href="${other}"`));assert.ok(html.includes(`class="language-link" href="${other.replace(origin,'')}"`));
-  assert.ok(html.includes('href="/'+prefix+'museum/'+(a.topic==='imsai'?'imsai-8080':'apollo-11')+'/"'));
+  assert.ok(html.includes('href="/'+prefix+'museum/'+(a.exhibit||(a.topic==='imsai'?'imsai-8080':'apollo-11'))+'/"'));
   const sitemap=read('sitemap-blog.xml'),entry=sitemap.match(/<url>[\s\S]*?<\/url>/g).find(s=>s.includes('<loc>'+url+'</loc>'));
-  assert.ok(entry);assert.match(entry,/<lastmod>2026-10-15<\/lastmod>/);assert.ok(read(prefix+'blog/feed.xml').includes(url));assert.ok(read(prefix+'blog/index.html').includes(url));
+  assert.ok(entry);assert.ok(entry.includes('<lastmod>'+a.date+'</lastmod>'));assert.ok(read(prefix+'blog/feed.xml').includes(url));assert.ok(read(prefix+'blog/index.html').includes(url));
   const ids=new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]));for(const [,anchor]of html.matchAll(/href="#([^"]+)"/g))assert.ok(ids.has(anchor),anchor);
   assert.doesNotMatch(html,/\{\{figure:|<iframe|FAQPage|AggregateRating/);
  });
