@@ -25,14 +25,16 @@
     "build:sgi": "node scripts/build-jurassic-park-sgi.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:sgi": "node --test tests/jurassic-park-sgi.test.mjs",
     "test:sgi:browser": "node scripts/test-jurassic-park-sgi-browser.mjs",
-    "build:museum-blog": "node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/integrate-chernobyl.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "build:museum-blog": "node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/integrate-chernobyl.mjs && node scripts/integrate-storage-media-lab.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:museum-blog": "node --test tests/museum-blog.test.mjs tests/blog-rss.test.mjs tests/jurassic-blog.test.mjs",
     "test:jurassic-blog:browser": "node scripts/test-jurassic-blog-browser.mjs",
-    "build:dual-isa": "node scripts/build-ibm-dual-isa.mjs && node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/integrate-chernobyl.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "build:dual-isa": "node scripts/build-ibm-dual-isa.mjs && node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/integrate-chernobyl.mjs && node scripts/integrate-storage-media-lab.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:dual-isa": "node --test tests/ibm-dual-isa*.test.mjs",
     "test:dual-isa:browser": "node scripts/test-ibm-dual-isa-browser.mjs",
-    "build:chernobyl": "node scripts/build-chernobyl.mjs && node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/integrate-chernobyl.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "build:chernobyl": "node scripts/build-chernobyl.mjs && node scripts/build-museum-blog.mjs && node scripts/integrate-jurassic-blog.mjs && node scripts/integrate-dual-isa.mjs && node scripts/integrate-chernobyl.mjs && node scripts/integrate-storage-media-lab.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:chernobyl": "node --test tests/chernobyl*.test.mjs",
-    "test:chernobyl:browser": "node scripts/test-chernobyl-browser.mjs --articles"
+    "test:chernobyl:browser": "node scripts/test-chernobyl-browser.mjs --articles",
+    "build:storage": "node scripts/build-storage-media-lab.mjs && node scripts/build-museum-blog.mjs --storage-only && node scripts/integrate-storage-media-lab.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:storage": "node --test tests/storage-media*.test.mjs"
   }
 }

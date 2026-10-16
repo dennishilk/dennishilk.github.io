@@ -1,0 +1,67 @@
+// Periods denote representative use, not universal release dates.
+export const media=[
+ ['card','Punched card','Lochkarte','1890s–1970s','paper','80 columns / Spalten',
+ 'Holes encode characters in columns. A reader senses their pattern. Cards can be sorted physically, but order matters; one card is not a disk with a filesystem.',
+ 'Löcher codieren Zeichen in Spalten. Ein Leser erfasst das Muster. Karten lassen sich physisch sortieren, doch die Reihenfolge zählt; eine Karte ist keine Diskette mit Dateisystem.',
+ 'Early data processing and program input. The 80-column card is one influential format, not every punched card.','Frühe Datenverarbeitung und Programmeingabe. Die 80-Spalten-Karte ist ein wichtiges Format, aber nicht jede Lochkarte.','chm'],
+ ['paper','Punched tape','Lochstreifen','1900s–1970s','strip','Format-dependent / formatabhängig',
+ 'Rows of holes carry codes; a feed hole keeps the reader synchronized. Reading is sequential. A tear interrupts the stream; length determines capacity.',
+ 'Lochreihen tragen Codes; ein Transportloch synchronisiert den Leser. Gelesen wird sequenziell. Ein Riss unterbricht den Strom; die Länge bestimmt die Kapazität.',
+ 'Teleprinters, numeric control and early program storage. No single byte capacity applies.','Fernschreiber, Maschinensteuerung und frühe Programme. Eine allgemeine Bytekapazität gibt es nicht.','chm'],
+ ['tape','Magnetic tape','Magnetband','1950s–today / heute','reel','Reel & format dependent / abhängig von Rolle und Format',
+ 'A coated ribbon passes a magnetic head. Data is arranged along the tape, so reaching a distant block may involve winding rather than an immediate seek.',
+ 'Ein beschichtetes Band läuft am Magnetkopf vorbei. Daten liegen entlang des Bandes; entfernte Blöcke erfordern unter Umständen Spulen statt eines direkten Zugriffs.',
+ 'Batch processing and backups; still important for archives. Large capacity does not mean disk-like random access.','Stapelverarbeitung und Backups; für Archive weiterhin wichtig. Große Kapazität bedeutet keinen wahlfreien Zugriff wie bei einer Platte.','ibm'],
+ ['cassette','Computer cassette','Datenkassette','1970s–1980s','tape','Duration & encoding / Laufzeit und Codierung',
+ 'Computer bits become a recorded signal on compact-cassette tape. The machine decodes the signal during playback. Start position and signal quality matter.',
+ 'Computerbits werden als Signal auf einem Kompaktkassettenband aufgezeichnet. Beim Abspielen decodiert der Rechner das Signal. Startposition und Signalqualität zählen.',
+ 'Affordable home-computer storage. Slow and sequential; capacity varies with baud rate and encoding, not just cassette minutes.','Preiswerter Heimcomputerspeicher. Langsam und sequenziell; die Kapazität hängt auch von Datenrate und Codierung ab.','chm'],
+ ['eight','8-inch floppy','8-Zoll-Diskette','1971–1980s','eight','≈80 KB · early IBM example / frühes IBM-Beispiel',
+ 'A flexible magnetic disk rotates in a large protective sleeve. The head moves between concentric tracks. IBM shipped an early read-only system in 1971.',
+ 'Eine flexible Magnetscheibe dreht sich in einer großen Schutzhülle. Der Kopf wechselt zwischen konzentrischen Spuren. IBM lieferte 1971 ein frühes Nur-Lese-System.',
+ 'Initially used for loading system information; later writable formats differ greatly. The earliest capacity is not a generic 8-inch specification.','Anfangs zum Laden von Systeminformationen; spätere beschreibbare Formate unterscheiden sich stark. Die frühe Kapazität ist kein allgemeiner 8-Zoll-Wert.','ibm'],
+ ['five','5.25-inch floppy','5,25-Zoll-Diskette','late 1970s–1990s','five','360 KiB DD / 1,200 KiB HD',
+ 'A magnetic disk in a flexible square sleeve, with a head opening and central spindle hole. Representative PC formats use two sides; DD and HD need suitable drives.',
+ 'Eine Magnetscheibe in flexibler quadratischer Hülle mit Kopföffnung und Spindelloch. Typische PC-Formate nutzen zwei Seiten; DD und HD brauchen passende Laufwerke.',
+ 'Programs, documents and game distribution. Easily carried; exposed surfaces and incompatible formats can spoil a transfer.','Programme, Dokumente und Spiele. Gut tragbar; offene Flächen und inkompatible Formate können die Übertragung verhindern.','ibm'],
+ ['dd','3.5-inch DD floppy','3,5-Zoll-DD-Diskette','1980s–1990s','floppy','737,280 B · 720 KiB',
+ 'A rigid shell and sliding shutter protect a flexible magnetic disk. The representative PC DD geometry is 80 cylinders × 2 sides × 9 sectors × 512 bytes.',
+ 'Eine feste Hülle mit Schieber schützt eine flexible Magnetscheibe. Typische PC-DD-Geometrie: 80 Zylinder × 2 Seiten × 9 Sektoren × 512 Byte.',
+ 'Portable documents and software. Mechanically similar to HD, but density and drive compatibility differ. FAT metadata reduces file space.','Dokumente und Software unterwegs. Mechanisch ähnlich wie HD, aber Dichte und Laufwerkskompatibilität unterscheiden sich. FAT-Metadaten brauchen Platz.','ibm'],
+ ['floppy','3.5-inch HD floppy','3,5-Zoll-HD-Diskette','late 1980s–2000s','floppy','1,474,560 B · 1,440 KiB',
+ '80 cylinders × 2 sides × 18 sectors × 512 bytes. The famous “1.44 MB” label combines conventions: it is neither 1.44 decimal MB nor 1.44 MiB.',
+ '80 Zylinder × 2 Seiten × 18 Sektoren × 512 Byte. Das berühmte Etikett „1,44 MB“ mischt Konventionen: weder 1,44 dezimale MB noch 1,44 MiB.',
+ 'Boot disks, drivers, schoolwork and multipart transfers. A standard FAT12 format reserves some sectors, leaving less room for ordinary files.','Bootdisketten, Treiber, Schularbeiten und mehrteilige Transfers. Ein übliches FAT12-Format reserviert Sektoren; für Dateien bleibt weniger Platz.','ibm'],
+ ['zip','Iomega ZIP 100','Iomega ZIP 100','mid-1990s–2000s','zip','100,000,000 B nominal',
+ 'A thicker removable magnetic cartridge, with denser tracks and a dedicated ZIP drive. It is not an ordinary floppy and cannot be used in a standard floppy drive.',
+ 'Eine dickere magnetische Wechselkassette mit dichteren Spuren und eigenem ZIP-Laufwerk. Sie ist keine gewöhnliche Diskette und passt funktional nicht ins Diskettenlaufwerk.',
+ 'Backups and large documents before USB became common. ZIP-250/750 were later relatives; compatibility is model-dependent. Nominal capacity is not free formatted space.','Backups und große Dokumente vor der USB-Verbreitung. ZIP-250/750 kamen später; Kompatibilität hängt vom Modell ab. Nennkapazität ist nicht freier formatierter Platz.','zip'],
+ ['cd74','CD-ROM / CD-R / CD-RW','CD-ROM / CD-R / CD-RW','1980s–today / heute','cd','74 min Mode 1 · 681,984,000 B',
+ 'An optical pickup follows a spiral. Pressed CD-ROMs use pits and lands; CD-R changes a dye layer and CD-RW uses a reversible phase-change material.',
+ 'Eine optische Abtasteinheit folgt einer Spirale. Gepresste CD-ROMs nutzen Pits und Lands; CD-R verändert eine Farbstoffschicht und CD-RW ein reversibles Phasenwechselmaterial.',
+ 'Music and software distribution. Mode 1 has 2,048 user bytes per sector; audio sectors carry a different payload. 80-minute Mode 1: 737,280,000 B.','Musik und Softwarevertrieb. Mode 1 bietet 2.048 Nutzbyte je Sektor; Audiosektoren haben eine andere Nutzlast. 80-Minuten-Mode-1-CD: 737.280.000 B.','cd'],
+ ['dvd','DVD','DVD','late 1990s–today / heute','cd','≈4,700,000,000 B · single layer / eine Schicht',
+ 'An optical disc with smaller features than a CD. The comparison uses a single-layer nominal capacity; recordable variants and filesystems have their own layouts.',
+ 'Eine optische Disc mit kleineren Strukturen als eine CD. Der Vergleich nutzt eine einschichtige Nennkapazität; beschreibbare Varianten und Dateisysteme haben eigene Layouts.',
+ 'Films, games and backups. Multiple layers are possible; this model does not silently substitute a dual-layer disc.','Filme, Spiele und Backups. Mehrere Schichten sind möglich; das Modell setzt nicht heimlich eine Dual-Layer-Disc ein.','dvd'],
+ ['bluray','Blu-ray Disc','Blu-ray Disc','2000s–today / heute','cd','25,000,000,000 B nominal · single layer',
+ 'A blue-violet laser and tighter optical geometry permit greater density. A 25 GB disc is the representative single-layer comparison, not every Blu-ray format.',
+ 'Ein blauvioletter Laser und engere optische Geometrie ermöglichen mehr Dichte. 25 GB ist der gewählte einschichtige Vergleich, nicht jedes Blu-ray-Format.',
+ 'HD video, console games and archives. Media variants and drive support matter; nominal bytes do not specify available filesystem space.','HD-Video, Konsolenspiele und Archive. Medienvariante und Laufwerksunterstützung zählen; Nennbyte sind kein freier Dateisystemplatz.','bluray'],
+ ['usb','USB flash drive','USB-Flash-Stick','2000s–today / heute','usb','128,000,000,000 B · selected example / Beispiel',
+ 'NAND cells retain electrical charge without power. A controller presents logical blocks and manages physical storage. No spindle or optical pickup is involved.',
+ 'NAND-Zellen halten elektrische Ladung ohne Stromversorgung. Ein Controller bietet logische Blöcke an und verwaltet die physischen Speicherbereiche. Es gibt keine Spindel oder Optik.',
+ 'Portable files and bootable ISO collections with Ventoy. Capacity, speed and endurance vary. Ventoy and filesystem structures occupy part of the nominal capacity.','Dateien unterwegs und bootfähige ISO-Sammlungen mit Ventoy. Kapazität, Tempo und Lebensdauer variieren. Ventoy und Dateisystemstrukturen belegen einen Teil der Nennkapazität.','ventoy'],
+ ['ssd','SSD / NVMe','SSD / NVMe','2000s–today / heute','ssd','Capacity varies / Kapazität je Modell',
+ 'NAND packages and a controller replace moving disks. Logical blocks can be remapped. NVMe is a command protocol usually carried over PCIe, not a kind of memory cell.',
+ 'NAND-Packages und Controller ersetzen bewegliche Platten. Logische Blöcke lassen sich neu zuordnen. NVMe ist ein meist über PCIe übertragenes Befehlsprotokoll, kein Speicherzelltyp.',
+ 'Usually internal system and game storage. Wear leveling distributes writes; garbage collection and error correction are controller tasks. No unlimited write endurance.','Meist interner System- und Spielespeicher. Wear Leveling verteilt Schreibvorgänge; Garbage Collection und Fehlerkorrektur sind Controlleraufgaben. Schreibhaltbarkeit ist nicht unbegrenzt.','flash']
+].map(([id,en,de,era,type,capacity,howEn,howDe,useEn,useDe,source])=>({id,name:[en,de],era,type,capacity,how:[howEn,howDe],use:[useEn,useDe],source}));
+
+export function localizedMeta(m,lang='en'){
+ const de=lang==='de';
+ const era=de?m.era.replace('late ','Ende ').replace('mid-','Mitte ').replace('today / heute','heute').replace(/(\d{3})0s/g,'$10er'):m.era.replace('today / heute','today');
+ const capacity=m.capacity.split(' / ').map(s=>s.trim());
+ const cap=capacity.length===2&&(capacity[0].includes('dependent')||capacity[0].includes('Duration')||capacity[0].includes('Capacity'))?capacity[de?1:0]:m.capacity.replace('early IBM example / frühes IBM-Beispiel',de?'frühes IBM-Beispiel':'early IBM example').replace('single layer / eine Schicht',de?'eine Schicht':'single layer').replace('selected example / Beispiel',de?'Beispiel':'selected example').replace('columns / Spalten',de?'Spalten':'columns');
+ return {era,capacity:de?cap.replace(/(?<=\d),(?=\d{3})/g,'.').replace('single layer','eine Schicht'):cap};
+}
