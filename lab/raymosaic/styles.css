@@ -147,3 +147,17 @@
 @media(max-width:900px) and (orientation:landscape) and (max-height:540px){
  .creator,.controls{max-height:none;overflow:visible}
 }
+
+
+/* Mission 07: minimal overlay, no layout shifts or heavy visual effects. */
+.overdrive-message{position:fixed;z-index:8;left:50%;top:clamp(120px,27dvh,280px);transform:translateX(-50%);pointer-events:none;
+ width:min(355px,calc(100vw - 32px));padding:13px 18px;border:1px solid rgba(242,203,139,.4);
+ border-radius:7px;background:#091522ef;box-shadow:0 14px 45px #020609a9;
+ font:11px/1.9 ui-monospace,SFMono-Regular,monospace;letter-spacing:.045em;color:#f2d19a}
+.overdrive-message span,.overdrive-message strong{display:block;white-space:normal}
+.overdrive-message strong{color:#f8e8cd;font-weight:700}
+@media(prefers-reduced-motion:no-preference){
+ .overdrive-message:not(.hidden){animation:overdrive-entry .32s ease-out both}
+ @keyframes overdrive-entry{from{opacity:0;transform:translate(-50%,9px)}to{opacity:1;transform:translate(-50%,0)}}
+}
+@media(max-width:680px){.overdrive-message{top:175px;font-size:10px}}
