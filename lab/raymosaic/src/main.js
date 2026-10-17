@@ -1,4 +1,6 @@
-import {DEFAULT_LIGHT,createArray,aimMirrors,projectMirror,withinWall,WALL,lerpNormal} from './optics.mjs';
+import {DEFAULT_LIGHT,aimMirrors,projectMirror,withinWall,WALL,lerpNormal} from './optics.mjs';
+import {createMirrorArray,MIRROR_COUNTS} from './mirror-modes.mjs';
+import {projectionBounds,projectionFraming,exportCamera} from './export-framing.mjs';
 import {makeTargetCanvas,paintTarget,sampleTarget,orientDrawingTargets} from './targets.js';
 import {publicPageUrl,publicShareText,shareServiceUrl,mastodonShareUrl} from './public-share.js';
 import {createScene,drawScene,drawProjectionOnly,drawExportSignature,easeAlign,cycleAlign,projectPoint} from './scene.js';
@@ -7,8 +9,8 @@ import {language,t,applyLanguage} from './i18n.js';
 import {buildMessageScenes,messageLength,opticalCapacity,exportSequencePlan,sequenceFrame,MAX_MESSAGE_GRAPHEMES} from './message-sequence.mjs';
 const $=id=>document.getElementById(id);
 const canvas=$('scene'),context=canvas.getContext('2d',{alpha:false});
-const scene=createScene(),targetCanvas=makeTargetCanvas();let mirrorCount=448,baseMirrors=createArray(28,16),messageScenes=[],sceneMirrors=[],sceneIndex=0,sequencePlaying=false,sceneEntered=0,transitionSource=null;
-let light=[...DEFAULT_LIGHT],targets=[],mirrors=[],preset='heart',ice=false,showRays=false,selected=-1,lightDirty=false;
+const scene=createScene(),targetCanvas=makeTargetCanvas();let mirrorCount=448,baseMirrors=createMirrorArray(448),messageScenes=[],sceneMirrors=[],sceneIndex=0,sequencePlaying=false,sceneEntered=0,transitionSource=null;
+let light=[...DEFAULT_LIGHT],targets=[],mirrors=[],preset='heart',ice=false,showRays=false,showLabels=true,selected=-1,lightDirty=false;
 let introStart=performance.now(),introForce=false,renderWidth=0,renderHeight=0,movingCamera=false;
 let messageTimer=0,exportWorker=null,exporting=false,exportBlob=null,exportUrl=null;
 let motifKind='heart',motifText='',aimLight=[...DEFAULT_LIGHT],restoring=false,autoSaveTimer=0,booting=true,cameraTouched=false,layoutMode='';
@@ -74,7 +76,7 @@ function responsiveCamera(){
 function resize(){responsiveCamera();const rect=canvas.getBoundingClientRect();const dpr=Math.min(window.devicePixelRatio||1,1.35);renderWidth=Math.max(1,Math.round(rect.width*dpr));renderHeight=Math.max(1,Math.round(rect.height*dpr));if(canvas.width!==renderWidth||canvas.height!==renderHeight){canvas.width=renderWidth;canvas.height=renderHeight;}}
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 function currentAlign(now){if(reduceMotion.matches)return 1;const t=Math.min(1,(now-introStart)/2600);return easeAlign(t);}
-let lastFrame=0;function tick(now){if(now-lastFrame<32){requestAnimationFrame(tick);return;}lastFrame=now;resize();const align=currentAlign(now);if(sequencePlaying&&messageScenes.length>1&&now-sceneEntered>=3000)showMessageScene((sceneIndex+1)%messageScenes.length,true);const mix=transitionSource?Math.min(1,(now-sceneEntered)/700):1;const rendered=transitionSource&&mix<1?interpolateMirrorArrays(transitionSource,mirrors,easeAlign(mix)):mirrors;drawScene(context,scene,rendered,light,{width:renderWidth,height:renderHeight,align:transitionSource?1:align,time:reduceMotion.matches?0:now/1000,rays:showRays,selected,ice,showLabels:!window.matchMedia('(max-width:680px)').matches});requestAnimationFrame(tick);}
+let lastFrame=0;function tick(now){if(now-lastFrame<(mirrorCount===1337?50:32)){requestAnimationFrame(tick);return;}lastFrame=now;resize();const align=currentAlign(now);if(sequencePlaying&&messageScenes.length>1&&now-sceneEntered>=3000)showMessageScene((sceneIndex+1)%messageScenes.length,true);const mix=transitionSource?Math.min(1,(now-sceneEntered)/700):1;const rendered=transitionSource&&mix<1?interpolateMirrorArrays(transitionSource,mirrors,easeAlign(mix)):mirrors;drawScene(context,scene,rendered,light,{width:renderWidth,height:renderHeight,align:transitionSource?1:align,time:reduceMotion.matches?0:now/1000,rays:showRays,selected,ice,showLabels});requestAnimationFrame(tick);}
 requestAnimationFrame(tick);
 function interpolateMirrorArrays(from,to,t){return to.map((m,i)=>({...m,normal:lerpNormal(from[i]?.normal||[0,1,0],m.normal,t)}));}
 function updatePresetButtons(name){document.querySelectorAll('[data-preset]').forEach(b=>{b.classList.toggle('selected',b.dataset.preset===name);});}
@@ -88,16 +90,30 @@ $('mirrorText').addEventListener('change',()=>{if(motifKind==='text')setTargets(
 $('prevScene').addEventListener('click',()=>showMessageScene((sceneIndex+messageScenes.length-1)%messageScenes.length,false));
 $('nextScene').addEventListener('click',()=>showMessageScene((sceneIndex+1)%messageScenes.length,false));
 $('toggleSequence').addEventListener('click',()=>{sequencePlaying=!sequencePlaying;sceneEntered=performance.now();renderSequenceControls();});
-$('mirrorDensity').addEventListener('change',()=>{const count=Number($('mirrorDensity').value);if(![448,666].includes(count))return;mirrorCount=count;baseMirrors=count===666?createArray(37,18):createArray(28,16);$('mirrorCount').textContent=`${count} MIRRORS`;setTargets(motifKind,motifKind==='draw'?draw:motifKind==='text'?motifText:undefined);toast(count===666?t('loveMirrors'):t('classicMirrors'));});
+let overdriveShown=false,overdriveTimer=0;
+function overdriveGreeting(){
+ if(overdriveShown)return;
+ overdriveShown=true;const notice=$('overdriveMessage');notice.classList.remove('hidden');
+ clearTimeout(overdriveTimer);overdriveTimer=setTimeout(()=>notice.classList.add('hidden'),2300);
+}
+$('mirrorDensity').addEventListener('change',()=>{
+ const count=Number($('mirrorDensity').value);if(!MIRROR_COUNTS.includes(count)||count===mirrorCount)return;
+ mirrorCount=count;baseMirrors=createMirrorArray(count);
+ $('mirrorCount').textContent=`${baseMirrors.length} MIRRORS`;
+ setTargets(motifKind,motifKind==='draw'?draw:motifKind==='text'?motifText:undefined);
+ if(count===1337)overdriveGreeting();
+ toast(count===1337?t('overdriveMirrors'):count===666?t('loveMirrors'):t('classicMirrors'));
+});
 $('quickGif').addEventListener('click',()=>{if(!$('customText').value.trim()){toast(t('invalid'));return;}$('applyText').click();$('quality').value='compact';$('duration').value='3';$('shareGif').click();$('startExport').click();});
 $('customText').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')$('applyText').click();});
 $('replay').addEventListener('click',()=>{introStart=performance.now();if(messageScenes.length>1)showMessageScene(0,true);toast(t('replay'));});
 $('showRays').addEventListener('change',e=>{showRays=e.target.checked;scheduleAutoSave();});
 $('coolLight').addEventListener('change',e=>{ice=e.target.checked;renderProjectionPreview();scheduleAutoSave();});
+$('showLabels').addEventListener('change',e=>{showLabels=e.target.checked;scheduleAutoSave();});
 for(const [id,i] of [['lightX',0],['lightY',1],['lightZ',2]])$(id).addEventListener('input',e=>{light[i]=Number(e.target.value);lightDirty=true;$('recalculate').disabled=false;$('lightCoordinates').textContent=light.map(x=>x.toFixed(1)).join(' / ');
  renderProjectionPreview();$('opticsMessage').textContent='The mirrors are still aiming at the old source. Watch the image shift, then recalculate.';$('motto').textContent='THE LIGHT MOVED. THE PHYSICS FOLLOWED.';scheduleAutoSave();});
 $('recalculate').addEventListener('click',()=>{if(motifKind==='text'){sceneMirrors=messageScenes.map(s=>opticsFor('text',s,light).mirrors);mirrors=sceneMirrors[sceneIndex];}else mirrors=aimMirrors(baseMirrors,light,targets);aimLight=[...light];lightDirty=false;$('recalculate').disabled=true;introStart=performance.now();renderProjectionPreview();scheduleAutoSave();$('opticsMessage').textContent='Normals recalculated for the new light source.';toast('Mirrors recalculated from the reflection law');});
-$('reset').addEventListener('click',()=>{light=[...DEFAULT_LIGHT];$('lightX').value=String(light[0]);$('lightY').value=String(light[1]);$('lightZ').value=String(light[2]);$('lightCoordinates').textContent=light.map(x=>x.toFixed(1)).join(' / ');scene.camera=createScene().camera;cameraTouched=false;layoutMode='';mirrorCount=448;baseMirrors=createArray(28,16);$('mirrorDensity').value='448';$('mirrorCount').textContent='448 MIRRORS';$('mirrorText').checked=true;
+$('reset').addEventListener('click',()=>{light=[...DEFAULT_LIGHT];$('lightX').value=String(light[0]);$('lightY').value=String(light[1]);$('lightZ').value=String(light[2]);$('lightCoordinates').textContent=light.map(x=>x.toFixed(1)).join(' / ');scene.camera=createScene().camera;cameraTouched=false;layoutMode='';mirrorCount=448;baseMirrors=createMirrorArray(448);$('mirrorDensity').value='448';$('mirrorCount').textContent='448 MIRRORS';$('mirrorText').checked=true;showLabels=true;$('showLabels').checked=true;
  $('showRays').checked=false;showRays=false;$('coolLight').checked=false;ice=false;preset='heart';updatePresetButtons('heart');selectTab('presets');setTargets('heart');scheduleAutoSave();toast('Instrument reset');});
 // Orbit camera by dragging the scene; inspect a facet with a click.
 let pointer=null;
@@ -146,11 +162,10 @@ function createFrameBuffer(c,frameContext,idx,total,mode,includeSignature,state)
  const incoming=multi&&step.index>0?frames[step.index-1]:null;
  const chosen=frames[step.index],reflectors=incoming&&step.alpha<1?interpolateMirrorArrays(incoming,chosen,easeAlign(step.alpha)):chosen;
  const t=idx/total,opts={width:c.width,height:c.height,align:multi?(step.index===0?step.alpha:1):cycleAlign(t),time:t*5,ice:state.ice,selected:-1,rays:false,showLabels:false,low:mode==='projection'};
- if(mode==='projection')drawProjectionOnly(frameContext,scene,reflectors,state.light,{...opts,reverseView:state.reverseView});
- else{const original=scene.camera;
-  const portrait=c.width<c.height,landscape=c.width>c.height;
-  scene.camera={...state.camera,target:portrait?[5,3,0]:landscape?[2,2.8,0]:[4.5,3,0],distance:portrait?17.5:landscape?19:15};
-  drawScene(frameContext,scene,reflectors,state.light,{...opts,exportClean:true});scene.camera=original;}
+ if(mode==='projection')drawProjectionOnly(frameContext,scene,reflectors,state.light,{...opts,reverseView:state.reverseView,framing:state.framing});
+ else{const original=scene.camera;scene.camera=state.exportCamera;
+  try{drawScene(frameContext,scene,reflectors,state.light,{...opts,exportClean:true});}
+  finally{scene.camera=original;}}
  if(includeSignature)drawExportSignature(frameContext,c.width,c.height);
  return frameContext.getImageData(0,0,c.width,c.height).data.buffer;
 }
@@ -160,7 +175,12 @@ $('startExport').addEventListener('click',async()=>{
  let plan;try{plan=exportSequencePlan(Math.max(1,sceneMirrors.length),Number($('duration').value),quality);}catch(e){toast(t('sequenceTooLong')+' '+e.message);return;}
  resetPreviousExport();exporting=true;$('startExport').disabled=true;
  const {fps,total}=plan,mode=$('projectionOnly').checked?'projection':'scene',includeSignature=$('brandGif').checked;
- const exportState={scenes:sceneMirrors.length?sceneMirrors.slice():[mirrors],light:[...light],ice,reverseView:motifKind==='draw'&&$('mirrorDrawing').checked||motifKind==='text'&&$('mirrorText').checked,camera:{...scene.camera}};
+ const exportScenes=sceneMirrors.length?sceneMirrors.slice():[mirrors];
+ const exportBounds=projectionBounds(exportScenes,light);
+ const exportState={scenes:exportScenes,light:[...light],ice,
+  reverseView:motifKind==='draw'&&$('mirrorDrawing').checked||motifKind==='text'&&$('mirrorText').checked,
+  framing:projectionFraming(exportBounds,width,height),
+  exportCamera:exportCamera(exportBounds,width,height,{...scene.camera})};
  const bufferCanvas=document.createElement('canvas');bufferCanvas.width=width;bufferCanvas.height=height;
  const frameCtx=bufferCanvas.getContext('2d',{willReadFrequently:true});
  const prog=$('exportProgress'),status=$('progressStatus'),fill=$('progressFill'),pct=$('progressPct');prog.classList.remove('hidden');status.textContent='Encoding animation…';fill.style.width='0%';pct.textContent='0%';
@@ -190,7 +210,7 @@ function snapshot(){
  return validateProject({format:'raymosaic',version:1,kind:motifKind,text:motifText,drawing:captureDrawing(draw),
   light:[...light],aimLight:[...aimLight],
   camera:{yaw:scene.camera.yaw,pitch:scene.camera.pitch,distance:scene.camera.distance,target:[...scene.camera.target]},
-  ice,rays:showRays,mirrorDrawing:$('mirrorDrawing').checked,mirrorText:$('mirrorText').checked,mirrorCount,sceneIndex,normals:mirrors.map(m=>m.normal.map(n=>Math.round(n*1e8)/1e8))});
+  ice,rays:showRays,showLabels,mirrorDrawing:$('mirrorDrawing').checked,mirrorText:$('mirrorText').checked,mirrorCount,sceneIndex,normals:mirrors.map(m=>m.normal.map(n=>Math.round(n*1e8)/1e8))});
 }
 function scheduleAutoSave(){
  if(restoring||booting)return;
@@ -204,7 +224,7 @@ function restoreProject(candidate){
   if(p.drawing)restoreDrawing(draw,p.drawing);
   else drawctx.clearRect(0,0,draw.width,draw.height);
   history=[];$('mirrorDrawing').checked=p.mirrorDrawing;$('mirrorText').checked=p.mirrorText;
-  mirrorCount=p.mirrorCount;baseMirrors=mirrorCount===666?createArray(37,18):createArray(28,16);$('mirrorDensity').value=String(mirrorCount);$('mirrorCount').textContent=`${mirrorCount} MIRRORS`;
+  mirrorCount=p.mirrorCount;baseMirrors=createMirrorArray(mirrorCount);$('mirrorDensity').value=String(mirrorCount);$('mirrorCount').textContent=`${mirrorCount} MIRRORS`;
   light=[...p.aimLight];
   if(p.kind==='draw')setTargets('draw',draw);
   else if(p.kind==='text')setTargets('text',p.text);
@@ -218,7 +238,7 @@ function restoreProject(candidate){
   lightDirty=light.some((v,i)=>Math.abs(v-aimLight[i])>1e-7);
   $('recalculate').disabled=!lightDirty;
   scene.camera={...p.camera,target:[...p.camera.target]};cameraTouched=true;responsiveCamera();
-  ice=p.ice;showRays=p.rays;$('coolLight').checked=ice;$('showRays').checked=showRays;
+  ice=p.ice;showRays=p.rays;showLabels=p.showLabels;$('coolLight').checked=ice;$('showRays').checked=showRays;$('showLabels').checked=showLabels;
   $('customText').value=p.kind==='text'?p.text:'';$('characterCount').textContent=`${messageLength($('customText').value)} / ${MAX_MESSAGE_GRAPHEMES}`;renderSequenceControls();
   preset=['heart','star','bolt'].includes(p.kind)?p.kind:'custom';
   updatePresetButtons(preset);selectTab(p.kind==='draw'?'draw':p.kind==='text'?'text':'presets');
