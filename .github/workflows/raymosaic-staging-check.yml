@@ -1,0 +1,50 @@
+name: RAYMOSAIC Website Staging QA
+on:
+  push:
+    branches: [mission-raymosaic-04]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Synchronize generated RSS and sitemap artifacts in staging only
+        run: |
+          node scripts/generate-blog-rss.mjs
+          node scripts/sync-seo.mjs
+          git add blog/feed.xml de/blog/feed.xml sitemap.xml sitemap-de.xml sitemap-blog.xml
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: synchronize staged RAYMOSAIC RSS and SEO files"
+            git push origin HEAD:mission-raymosaic-04
+          fi
+      - name: Bilingual lab, blog, sitemap and media checks
+        run: node --test tests/raymosaic-site.test.mjs
+      - name: RSS matches bilingual BlogPosting sources
+        run: node scripts/generate-blog-rss.mjs --check
+      - name: Verify sitemap artifacts are in sync (never deploy)
+        run: |
+          node scripts/sync-seo.mjs
+          git diff --exit-code -- sitemap.xml sitemap-de.xml sitemap-blog.xml
+
+      - name: Install Chromium for prefixed site integration test
+        run: |
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Start the staged static site without deploying
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/raymosaic-site.log 2>&1 &
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8000/lab/raymosaic/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/raymosaic-site.log
+          exit 1
+      - name: Real EN/DE site routes, GIF worker and link roundtrip
+        run: node tests/raymosaic-integration.mjs

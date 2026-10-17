@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <title>RAYMOSAIC — Zeichne mit reflektiertem Licht</title>
+ <meta name="description" content="Schreibe Namen und zeichne Motive aus reflektiertem Licht mit 448 Spiegeln. GIF, PNG, lokales Speichern und Teilen direkt im Browser.">
+ <meta name="theme-color" content="#0a101b"><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="https://www.dennishilk.com/de/lab/raymosaic/"><link rel="alternate" hreflang="en" href="https://www.dennishilk.com/lab/raymosaic/"><link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/lab/raymosaic/"><link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/lab/raymosaic/"><meta property="og:url" content="https://www.dennishilk.com/de/lab/raymosaic/"><meta property="og:image" content="https://www.dennishilk.com/lab/raymosaic/examples/raymosaic-heart.webp"><meta property="og:locale" content="de_DE"><meta property="og:locale:alternate" content="en_US"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.dennishilk.com/lab/raymosaic/examples/raymosaic-heart.webp">
+ <meta property="og:title" content="RAYMOSAIC — Zeichne mit reflektiertem Licht"><meta property="og:description" content="448 Spiegel, eine Lichtquelle und dein Motiv. Echtes Optiklabor mit animiertem GIF-Export im Browser."><meta property="og:type" content="website">
+ <link rel="stylesheet" href="/lab/raymosaic/styles.css">
+</head>
+<body>
+ <main class="app">
+  <canvas id="scene" aria-label="Interactive 3D view of a mirror array projecting light onto a wall"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="masthead">
+   <div class="brand"><div class="symbol"><span></span><span></span><span></span><span></span></div><div><strong>RAYMOSAIC</strong><small>AN OPTICAL PLAYGROUND · 001</small></div></div>
+   <nav class="site-nav" aria-label="Website"><a id="siteHome" href="/">← Home</a><a id="siteBlog" href="/blog/">Blog</a><a id="siteLanguage" href="?lang=de" aria-label="Auf Deutsch wechseln">DE</a></nav><div class="topright"><span class="live-dot"></span> LIVE SIMULATION <span class="top-separator">/</span> <span id="mirrorCount">448 MIRRORS</span></div>
+  </header>
+  <section class="tagline" aria-label="Introduction"><span class="eyebrow">LIGHT, REARRANGED</span><h1>Draw with <em>light.</em></h1><p>Hundreds of tiny mirrors. One source of light.<br>One surprisingly personal piece of physics.</p></section>
+  <section class="panel creator" aria-label="Create a motif">
+   <div class="panel-title"><span>01 / CREATE</span><span class="status"><i></i> OPTICS ACTIVE</span></div>
+   <div class="tabs" role="tablist" aria-label="Creation mode"><button class="tab" data-tab="presets" role="tab" aria-selected="false">Presets</button><button class="tab active" data-tab="text" role="tab" aria-selected="true">Text</button><button class="tab" data-tab="draw" role="tab" aria-selected="false">Draw</button></div>
+   <div class="tabcontent hidden" id="presetsTab"><div class="presetgrid"><button class="preset selected" data-preset="heart" aria-label="Heart">♡ <small>HEART</small></button><button class="preset" data-preset="hello" aria-label="Hello">HELLO <small>HELLO</small></button><button class="preset" data-preset="bolt" aria-label="Lightning bolt">ϟ <small>BOLT</small></button><button class="preset" data-preset="star" aria-label="Star">☆ <small>STAR</small></button></div></div>
+   <div class="tabcontent" id="textTab"><label for="customText">YOUR MESSAGE</label><div class="inputrow"><input type="text" id="customText" maxlength="13" placeholder="Type a name…" autocomplete="off"><button id="applyText" class="primary compact">Create</button></div><small class="hint">Up to 13 characters. Short words have the most detail.</small><button id="quickGif" class="quick-gift" type="button">✧ Make a GIF gift ↗</button><small id="quickHint" class="hint">Type a name → Create → Share GIF. Nothing gets uploaded.</small></div>
+   <div class="tabcontent hidden" id="drawTab"><canvas id="drawCanvas" width="240" height="120" aria-label="Draw your own light design"></canvas><div class="drawtools"><button id="brush" class="tiny active">Brush</button><button id="eraser" class="tiny">Erase</button><button id="undoDraw" class="tiny">Undo</button><button id="clearDraw" class="tiny">Clear</button><button id="applyDraw" class="primary compact">Project</button></div></div>
+   <div class="panel-footer"><span id="motto">A HEART MADE OF REFLECTIONS</span><button class="textbutton" id="replay">↻ Replay</button></div>
+  </section>
+  <section class="panel controls" aria-label="Explore the optics"><div class="panel-title"><span>02 / EXPLORE</span><button class="textbutton" id="reset">RESET ALL ↗</button></div>
+   <label class="switchline"><span>Reveal light rays<small>Trace the path of a reflection</small></span><input type="checkbox" id="showRays"><i></i></label>
+   <label class="switchline"><span>Cool light<small>Change the color of the glow</small></span><input type="checkbox" id="coolLight"><i></i></label>
+   <div class="sliders"><div class="sliderhead"><span>LIGHT POSITION</span><span id="lightCoordinates">−4.7 / 6.8 / 3.8</span></div><label>X <input id="lightX" aria-label="Light source X" type="range" min="-7" max="1" step="0.1" value="-4.7"></label><label>Y <input id="lightY" aria-label="Light source Y" type="range" min="3" max="10" step="0.1" value="6.8"></label><label>Z <input id="lightZ" aria-label="Light source Z" type="range" min="-3" max="7" step="0.1" value="3.8"></label></div>
+   <button id="recalculate" class="outline" disabled>Recalculate mirrors <span>↗</span></button><small class="hint" id="opticsMessage">Drag the scene to orbit. Scroll to zoom. Click a mirror to inspect it.</small>
+   <div class="project-shelf" aria-label="Project storage"><div class="sliderhead">03 / PROJECT</div><div class="project-actions"><button id="loadLocal" class="tiny" type="button">Restore last project</button><button id="downloadProject" class="tiny" type="button">Download project file</button></div></div>
+  </section>
+  <aside id="inspector" class="inspector hidden" aria-live="polite"><div class="eyebrow">MIRROR INSPECTOR <button id="closeInspector" aria-label="Close mirror inspector">×</button></div><strong id="mirrorId">MIRROR 000</strong><p id="mirrorInfo"></p></aside>
+  <footer class="toolbar"><div class="scenefoot"><span class="asterisk">✳</span> NO UPLOADS <span class="divider">/</span> REAL RAY GEOMETRY <span class="divider">/</span> PRIVATE BY DESIGN</div><div class="actions"><button id="saveProject" class="secondary">Save project</button><button id="openProject" class="secondary">Open project</button><button id="shareProject" class="secondary">Copy link</button><button id="savePng" class="secondary">↓ PNG</button><button id="shareGif" class="primary">✧ Export & Share <span>↗</span></button></div></footer>
+  <input type="file" id="projectFileInput" accept=".raymosaic,.json,application/json" class="hidden" aria-label="Open RAYMOSAIC project file">
+  <div id="toast" class="toast hidden" role="status"></div>
+ </main>
+ <dialog id="exportDialog"><div class="dialogheading"><div><span class="eyebrow">SAVE A LITTLE LIGHT</span><h2>Make it yours.</h2><p>Export real rendered frames as a looping animated GIF. Works without uploading a thing.</p></div><button id="closeExport" class="close" aria-label="Close export settings">×</button></div>
+  <div class="exportoptions"><div><label for="aspect">FRAME</label><select id="aspect"><option value="square">Square · 1:1</option><option value="portrait">Portrait · 9:16</option><option value="landscape">Landscape · 16:9</option></select></div><div><label for="quality">QUALITY</label><select id="quality"><option value="compact">Messaging · smaller file</option><option value="standard" selected>Standard · balanced</option><option value="high">High · larger file</option></select></div><div><label for="duration">DURATION</label><select id="duration"><option value="3">3 seconds</option><option value="5" selected>5 seconds</option><option value="8">8 seconds</option></select></div><label class="checkoption"><input type="checkbox" id="projectionOnly"> Projection only (no instrument)</label></div>
+  <div class="exportprogress hidden" id="exportProgress"><div class="progressrow"><span id="progressStatus">Preparing…</span><span id="progressPct">0%</span></div><div class="progressbar"><i id="progressFill"></i></div></div>
+  <div id="exportPreview" class="exportpreview hidden"><img id="gifPreview" alt="Preview of your animated light projection"><div><strong>Ready to share.</strong><small id="exportSize"></small></div></div>
+  <div class="exportbuttons"><button id="cancelExport" class="secondary">Cancel</button><button id="startExport" class="primary">Create animated GIF ↗</button><button id="downloadGif" class="primary hidden">↓ Download GIF</button><button id="nativeShare" class="secondary hidden">Share…</button></div>
+  <small class="exportfoot">GIF is supported everywhere, but apps differ in how they display or forward animation.</small>
+ </dialog>
+ <script type="module" src="/lab/raymosaic/src/main.js"></script>
+</body>
+</html>
