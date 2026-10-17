@@ -6,7 +6,7 @@ const de={
 '[data-tab="presets"]':'Motive','[data-tab="text"]':'Text','[data-tab="draw"]':'Zeichnen',
 '[data-preset="heart"] small':'HERZ','[data-preset="hello"] small':'HALLO','[data-preset="bolt"] small':'BLITZ','[data-preset="star"] small':'STERN',
 '#textTab label[for="customText"]':'DEINE NACHRICHT','#applyText':'Nachricht projizieren ↗','#quickGif':'✧ Als GIF verschenken ↗',
-'#textHint':'Ein kurzer Name erscheint sofort. Lange Nachrichten werden aus echten Lichtreflexionen als Folge projiziert.',
+'#textHint':'Ein kurzer Name erscheint sofort. Lange Nachrichten erscheinen in echten Lichtreflexionen. Emoji-Darstellung hängt von installierten Schriften ab.',
 '#brush':'Pinsel','#eraser':'Radierer','#undoDraw':'Zurück','#clearDraw':'Leeren','#applyDraw':'Projizieren','#replay':'↻ Wiederholen',
 '.controls .panel-title > span:first-child':'02 / ERFORSCHEN','#reset':'ALLES ZURÜCKSETZEN ↗',
 '.switchline:first-of-type span':'Lichtstrahlen zeigen<small>Verlauf einer Reflexion sichtbar machen</small>',
