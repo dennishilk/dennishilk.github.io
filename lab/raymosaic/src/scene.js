@@ -42,20 +42,23 @@ function flatMap(w,h){const margin=.075,s=Math.min((w*(1-margin*2))/(WALL.hiZ-WA
  return pt=>[w*.5+(pt[2]-(WALL.hiZ+WALL.loZ)/2)*s,h*.5-((pt[1]-(WALL.hiY+WALL.loY)/2))*s,10];}
 export function drawProjectionOnly(ctx,scene,mirrors,light,opts={}){
  const {width:w,height:h,align=1,time=0,ice=false}=opts;ctx.clearRect(0,0,w,h);
- const grd=ctx.createLinearGradient(0,0,w,h);grd.addColorStop(0,'#090e19');grd.addColorStop(1,'#11141e');ctx.fillStyle=grd;ctx.fillRect(0,0,w,h);
+ // Flat dark studio backdrop: avoids distracting gradient/dither textures in GIF exports.
+ ctx.fillStyle='#0a1019';ctx.fillRect(0,0,w,h);
  const p=flatMap(w,h),s=spotsFor(mirrors,light,align,time);
  projectGlow(ctx,p,s,ice?scene.cool:scene.warm,w,h,1);
- ctx.fillStyle='rgba(230,231,240,.5)';ctx.font=`${Math.max(9,Math.round(w*.018))}px ui-monospace,monospace`;ctx.textAlign='left';ctx.fillText('RAYMOSAIC · REFLECTED LIGHT',w*.06,h*.94);
 }
 export function drawScene(ctx,scene,mirrors,light,opts={}){
- const {width:w,height:h,align=1,time=0,rays=false,selected=-1,ice=false,showLabels=true,low=false}=opts;
+ const {width:w,height:h,align=1,time=0,rays=false,selected=-1,ice=false,showLabels=true,low=false,exportClean=false}=opts;
  const p=projector(scene.camera,w,h),wall=[[WALL.x,WALL.loY,WALL.loZ],[WALL.x,WALL.loY,WALL.hiZ],[WALL.x,WALL.hiY,WALL.hiZ],[WALL.x,WALL.hiY,WALL.loZ]];
  ctx.clearRect(0,0,w,h);
+ if(exportClean){ctx.fillStyle='#0a1019';ctx.fillRect(0,0,w,h);}
+ else{
  const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#0b121f');bg.addColorStop(.58,'#070d16');bg.addColorStop(1,'#141722');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
  const amb=ctx.createRadialGradient(w*.48,h*.42,5,w*.48,h*.42,w*.67);amb.addColorStop(0,'rgba(23,47,78,.44)');amb.addColorStop(1,'rgba(5,10,20,0)');ctx.fillStyle=amb;ctx.fillRect(0,0,w,h);
  // Floor grid = precise spatial reference, never a projection shortcut.
  for(let z=-4.2;z<=4.21;z+=.7)line3(ctx,p,[-4.7,-.12,z],[3.9,-.12,z],'rgba(129,162,192,.13)',.85);
  for(let x=-4.7;x<=3.91;x+=.7)line3(ctx,p,[x,-.12,-4.2],[x,-.12,4.2],'rgba(129,162,192,.13)',.85);
+ }
  quad(ctx,p,wall,'#111b2b','rgba(130,183,213,.64)');
  // Metal frame around wall.
  const frame=wall.map(a=>[a[0]-.06,a[1],a[2]]);quad(ctx,p,frame,'rgba(35,51,68,.12)','rgba(159,192,212,.47)');
@@ -95,3 +98,12 @@ export function drawScene(ctx,scene,mirrors,light,opts={}){
 export function easeAlign(progress){return ease(progress);}
 export function cycleAlign(t){const k=t%1;if(k<.1)return 0;if(k<.60)return ease((k-.1)/.5);if(k<.85)return 1;return 1-ease((k-.85)/.15);}
 export function projectPoint(camera,width,height,worldPoint){return projector(camera,width,height)(worldPoint);}
+// Shared, optional signature for both GIF modes. Never applied to the live simulation.
+export function drawExportSignature(ctx,w,h){
+ ctx.save();
+ ctx.fillStyle='rgba(186,199,215,.49)';
+ ctx.font=`500 ${Math.max(10,Math.min(16,Math.round(w*.023)))}px ui-monospace,monospace`;
+ ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ ctx.fillText('RAYMOSAIC',w*.058,h*.944);
+ ctx.restore();
+}
