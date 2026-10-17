@@ -1,6 +1,6 @@
 import {DEFAULT_LIGHT,createArray,aimMirrors,projectMirror,withinWall,WALL} from './optics.mjs';
 import {makeTargetCanvas,paintTarget,sampleTarget} from './targets.js';
-import {createScene,drawScene,drawProjectionOnly,easeAlign,cycleAlign,projectPoint} from './scene.js';
+import {createScene,drawScene,drawProjectionOnly,drawExportSignature,easeAlign,cycleAlign,projectPoint} from './scene.js';
 import {captureDrawing,restoreDrawing,validateProject,saveLocal,loadLocal,parseProject,projectFile,makeShareHash,projectFromHash} from './project-state.js';
 import {language,t,applyLanguage} from './i18n.js';
 const $=id=>document.getElementById(id);
@@ -76,17 +76,18 @@ $('cancelExport').addEventListener('click',()=>{cancelGif();modal.close();});
 function resetPreviousExport(){if(exportUrl){URL.revokeObjectURL(exportUrl);exportUrl=null;}exportBlob=null;$('exportPreview').classList.add('hidden');$('downloadGif').classList.add('hidden');$('nativeShare').classList.add('hidden');}
 function formatSize(n){return n>1000000?`${(n/1000000).toFixed(2)} MB`:`${Math.round(n/1024)} KB`;}
 function exportDimensions(aspect,quality){const short=quality==='compact'?320:quality==='high'?768:512;if(aspect==='portrait')return [Math.round(short*9/16),short];if(aspect==='landscape')return [short,Math.round(short*9/16)];return [short,short];}
-function createFrameBuffer(c,frameContext,idx,total,mode){const t=idx/total,align=cycleAlign(t),opts={width:c.width,height:c.height,align,time:t*5,ice,selected:-1,rays:false,showLabels:false,low:mode==='projection'};
+function createFrameBuffer(c,frameContext,idx,total,mode,includeSignature){const t=idx/total,align=cycleAlign(t),opts={width:c.width,height:c.height,align,time:t*5,ice,selected:-1,rays:false,showLabels:false,low:mode==='projection'};
  if(mode==='projection')drawProjectionOnly(frameContext,scene,mirrors,light,opts);
  else {const original=scene.camera;
   const portrait=c.width<c.height,landscape=c.width>c.height;
   scene.camera={...original,target:portrait?[5,3,0]:landscape?[2,2.8,0]:[4.5,3,0],distance:portrait?17.5:landscape?19:15};
-  drawScene(frameContext,scene,mirrors,light,opts);scene.camera=original;}
+  drawScene(frameContext,scene,mirrors,light,{...opts,exportClean:true});scene.camera=original;}
+ if(includeSignature)drawExportSignature(frameContext,c.width,c.height);
  return frameContext.getImageData(0,0,c.width,c.height).data.buffer;
 }
 $('startExport').addEventListener('click',async()=>{
  if(exporting)return;resetPreviousExport();exporting=true;$('startExport').disabled=true;
- const quality=$('quality').value,[width,height]=exportDimensions($('aspect').value,quality),fps=quality==='compact'?10:quality==='high'?15:12,duration=Number($('duration').value),total=Math.round(fps*duration),mode=$('projectionOnly').checked?'projection':'scene';
+ const quality=$('quality').value,[width,height]=exportDimensions($('aspect').value,quality),fps=quality==='compact'?10:quality==='high'?15:12,duration=Number($('duration').value),total=Math.round(fps*duration),mode=$('projectionOnly').checked?'projection':'scene',includeSignature=$('brandGif').checked;
  const bufferCanvas=document.createElement('canvas');bufferCanvas.width=width;bufferCanvas.height=height;
  const frameCtx=bufferCanvas.getContext('2d',{willReadFrequently:true});
  const prog=$('exportProgress'),status=$('progressStatus'),fill=$('progressFill'),pct=$('progressPct');prog.classList.remove('hidden');status.textContent='Encoding animation…';fill.style.width='0%';pct.textContent='0%';
@@ -94,12 +95,12 @@ $('startExport').addEventListener('click',async()=>{
   worker.onmessage=e=>{
    if(worker!==exportWorker)return;
    const msg=e.data;
-   if(msg.type==='ready'){const frame=createFrameBuffer(bufferCanvas,frameCtx,index,total,mode);worker.postMessage({type:'frame',buffer:frame},[frame]);}
+   if(msg.type==='ready'){const frame=createFrameBuffer(bufferCanvas,frameCtx,index,total,mode,includeSignature);worker.postMessage({type:'frame',buffer:frame},[frame]);}
    else if(msg.type==='progress'){
     index=msg.done;const progress=Math.round(index/total*100);fill.style.width=progress+'%';pct.textContent=progress+'%';status.textContent=t('exporting')+index+' / '+total;
     if(index>=total){worker.postMessage({type:'finish'});return;}
     // Yield to the main thread so the UI can repaint and the Cancel button remains responsive.
-    requestAnimationFrame(()=>{if(worker!==exportWorker)return;const frame=createFrameBuffer(bufferCanvas,frameCtx,index,total,mode);worker.postMessage({type:'frame',buffer:frame},[frame]);});
+    requestAnimationFrame(()=>{if(worker!==exportWorker)return;const frame=createFrameBuffer(bufferCanvas,frameCtx,index,total,mode,includeSignature);worker.postMessage({type:'frame',buffer:frame},[frame]);});
    }else if(msg.type==='complete'){exportBlob=msg.blob;exportUrl=URL.createObjectURL(exportBlob);$('gifPreview').src=exportUrl;$('exportSize').textContent=`${width} × ${height} · ${msg.frames} frames · ${formatSize(msg.size)}`;
     $('exportPreview').classList.remove('hidden');$('downloadGif').classList.remove('hidden');if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([exportBlob],'raymosaic.gif',{type:'image/gif'})]}))$('nativeShare').classList.remove('hidden');
     status.textContent=t('done');fill.style.width='100%';pct.textContent='100%';worker.terminate();exportWorker=null;exporting=false;$('startExport').disabled=false;$('startExport').textContent='Create another GIF ↗';
