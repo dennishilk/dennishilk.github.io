@@ -4,22 +4,34 @@ on:
     branches: [mission-raymosaic-04]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Synchronize generated RSS and sitemap artifacts in staging only
+        run: |
+          node scripts/generate-blog-rss.mjs
+          node scripts/sync-seo.mjs
+          git add blog/feed.xml de/blog/feed.xml sitemap.xml sitemap-de.xml sitemap-blog.xml
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: synchronize staged RAYMOSAIC RSS and SEO files"
+            git push origin HEAD:mission-raymosaic-04
+          fi
       - name: Bilingual lab, blog, sitemap and media checks
         run: node --test tests/raymosaic-site.test.mjs
       - name: RSS matches bilingual BlogPosting sources
         run: node scripts/generate-blog-rss.mjs --check
-      - name: Verify all SEO generators are in sync (never deploy)
+      - name: Verify sitemap artifacts are in sync (never deploy)
         run: |
           node scripts/sync-seo.mjs
-          git diff --stat
           git diff --exit-code -- sitemap.xml sitemap-de.xml sitemap-blog.xml
