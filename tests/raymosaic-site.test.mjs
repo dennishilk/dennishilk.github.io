@@ -15,7 +15,7 @@ test('one real application core with DE/EN entry points',()=>{
  assert.match(dePage,/<html lang="de">/);
  assert.match(dePage,/rel="canonical" href="https:\/\/www\.dennishilk\.com\/de\/lab\/raymosaic\/"/);
  assert.match(enPage,/rel="canonical" href="https:\/\/www\.dennishilk\.com\/lab\/raymosaic\/"/);
- for(const part of ['main.js','scene.js','optics.mjs','gif-worker.js','project-state.js','i18n.js'])assert.ok(statSync(join(root,'lab/raymosaic/src',part)).size>500);
+ for(const part of ['main.js','scene.js','optics.mjs','gif-worker.js','project-state.js','i18n.js','public-share.js'])assert.ok(statSync(join(root,'lab/raymosaic/src',part)).size>500);
  assert.match(read('lab/raymosaic/src/main.js'),/new Worker\(new URL\('\.\/gif-worker\.js',import\.meta\.url\)\)/);
 });
 test('versioned projects, no remote processing and gzip links',()=>{
@@ -24,6 +24,10 @@ test('versioned projects, no remote processing and gzip links',()=>{
  assert.match(state,/CompressionStream\('gzip'\)/);
  assert.match(state,/LINK_MAX=1850/);
  assert.doesNotMatch(state,/fetch\s*\(|XMLHttpRequest|sendBeacon/);
+ assert.match(state,/mirrorDrawing:p\.mirrorDrawing===true/);
+ const share=read('lab/raymosaic/src/public-share.js');
+ assert.match(share,/https:\/\/www\.dennishilk\.com\/lab\/raymosaic\//);
+ assert.match(share,/PUBLIC_PAGES/);
 });
 test('both blog posts include valid bilingual BlogPosting metadata',()=>{
  for(const [i,path] of posts.entries()){

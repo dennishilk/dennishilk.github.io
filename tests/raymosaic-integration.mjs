@@ -23,8 +23,14 @@ try{
   assert.ok(url.startsWith('http://127.0.0.1:8000'+route+'#p=v1.'),url.slice(0,80));
   await page.goto(url,{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelector('#customText')?.value==='LUNA',null,{timeout:20000});
+  await page.locator('#shareRaymosaic').click();
+  await page.locator('#publicCopy').click();
+  const publicUrl=await page.evaluate(()=>window.__capturedURL);
+  assert.equal(publicUrl,'https://www.dennishilk.com'+route,'public sharing omits private fragment');
+  assert.equal(await page.locator('#mirrorDrawing').isChecked(),true);
+  await page.locator('#closePublicShare').click();
   assert.deepEqual(errors,[]);
-  console.log('PASS '+route+' GIF, DE/EN locale, JS module worker, compressed link roundtrip: '+size);
+  console.log('PASS '+route+' GIF, DE/EN locale, JS module worker, personal link and privacy-safe public link: '+size);
   await page.close();
  }
 }finally{await context.close();await browser.close();}
