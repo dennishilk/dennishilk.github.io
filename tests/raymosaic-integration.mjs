@@ -29,6 +29,16 @@ try{
   assert.equal(publicUrl,'https://www.dennishilk.com'+route,'public sharing omits private fragment');
   assert.equal(await page.locator('#mirrorDrawing').isChecked(),true);
   await page.locator('#closePublicShare').click();
+  await page.locator('#mirrorDensity').selectOption('666');
+  await page.locator('#customText').fill('Ich liebe dich, mein Schatz Katharina ❤️. Du bist mein Licht, meine Freude und jeder einzelne Tag mit dir ist etwas ganz Besonderes. Wir bleiben zusammen und strahlen weiter, ein Spiegel nach dem anderen.');
+  await page.locator('#mirrorText').check();
+  await page.locator('#applyText').click();
+  assert.ok(await page.locator('#sceneList button').count()>=7);
+  assert.match(await page.locator('#mirrorCount').innerText(),/666/);
+  await page.locator('#howItWorks').click();
+  assert.equal(await page.locator('#physicsDialog').isVisible(),true);
+  assert.equal(await page.locator('.physics-steps li').count(),6);
+  await page.keyboard.press('Escape');
   assert.deepEqual(errors,[]);
   console.log('PASS '+route+' GIF, DE/EN locale, JS module worker, personal link and privacy-safe public link: '+size);
   await page.close();
