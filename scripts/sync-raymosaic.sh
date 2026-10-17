@@ -10,7 +10,7 @@ test -f "$source_repo/src/optics.mjs" || { echo "Not a RAYMOSAIC source checkout
 dest="$site/lab/raymosaic"
 files=(
   index.html styles.css LICENSE src/main.js src/optics.mjs src/scene.js
-  src/targets.js src/gif-worker.js src/project-state.js src/i18n.js src/public-share.js
+  src/targets.js src/gif-worker.js src/project-state.js src/i18n.js src/public-share.js src/message-sequence.mjs
   examples/raymosaic-heart.webp examples/raymosaic-nebu.webp
   examples/raymosaic-nebu.gif examples/raymosaic-scene-nebu.gif
 )
@@ -31,13 +31,13 @@ page = page.replace('rel="canonical" href="https://www.dennishilk.com/lab/raymos
 page = page.replace('<title>RAYMOSAIC — Draw with reflected light</title>',
                     '<title>RAYMOSAIC — Zeichne mit reflektiertem Licht</title>')
 page = page.replace('Make pictures from simulated reflections in hundreds of tiny mirrors. Draw, experiment with optics, and export an animated GIF — entirely in your browser.',
-                    'Schreibe Namen und zeichne Motive aus reflektiertem Licht mit 448 Spiegeln. GIF, PNG, lokales Speichern und Teilen direkt im Browser.')
+                    'Schreibe Liebesnachrichten aus reflektiertem Licht mit 448 oder 666 Spiegeln. Mehrteilige GIFs, PNG und Projekte direkt im Browser.')
 page = page.replace('<meta property="og:url" content="https://www.dennishilk.com/lab/raymosaic/">',
                     '<meta property="og:url" content="https://www.dennishilk.com/de/lab/raymosaic/">')
 page = page.replace('<meta property="og:title" content="RAYMOSAIC — Draw with reflected light">',
                     '<meta property="og:title" content="RAYMOSAIC — Zeichne mit reflektiertem Licht">')
 page = page.replace('Hundreds of mirrors. One light. Your imagination. A real optical simulation with animated GIF export.',
-                    '448 Spiegel, eine Lichtquelle und dein Motiv. Echtes Optiklabor mit animiertem GIF-Export im Browser.')
+                    '448 oder 666 Spiegel, eine Lichtquelle und deine Nachricht. Echtes Optiklabor mit animiertem GIF-Export im Browser.')
 page = page.replace('<meta property="og:locale" content="en_US">', '<meta property="og:locale" content="de_DE">')
 page = page.replace('<meta property="og:locale:alternate" content="de_DE">', '<meta property="og:locale:alternate" content="en_US">')
 Path(sys.argv[2]).write_text(page, encoding="utf-8")
