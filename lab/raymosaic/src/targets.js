@@ -10,7 +10,7 @@ export function paintTarget(canvas,kind,value='HELLO'){
  }else if(kind==='bolt'){
   c.lineWidth=13;c.beginPath();c.moveTo(134,16);c.lineTo(72,91);c.lineTo(118,91);c.lineTo(101,161);c.lineTo(171,70);c.lineTo(125,70);c.closePath();c.stroke();
  }else if(kind==='draw'&&value instanceof HTMLCanvasElement){c.drawImage(value,16,8,W-32,H-16);}
- else{const t=String(value||'HELLO').trim().slice(0,13)||'HELLO';let size=t.length<6?71:t.length<10?48:34;
+ else{const t=String(value||'HELLO').trim()||'HELLO';let size=t.length<6?71:t.length<10?48:34;
   c.font=`800 ${size}px system-ui,Arial,sans-serif`;while(c.measureText(t).width>216&&size>17){size-=1;c.font=`800 ${size}px system-ui,Arial,sans-serif`;}
   c.textAlign='center';c.textBaseline='middle';c.fillText(t,120,88);
  }
