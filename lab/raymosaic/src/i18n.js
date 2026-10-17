@@ -18,7 +18,7 @@ const de={
 '.dialogheading .eyebrow':'EIN BISSCHEN LICHT BEHALTEN','.dialogheading h2':'Mach es zu deinem.',
 '.dialogheading p':'Erstelle ein echtes animiertes GIF direkt im Browser. Keine Uploads.',
 'label[for="aspect"]':'FORMAT','label[for="quality"]':'QUALITÄT','label[for="duration"]':'DAUER',
-'.exportoptions .checkoption':'<input type="checkbox" id="projectionOnly"> Nur Projektion (ohne Spiegelanlage)',
+'#projectionLabelText':'Nur Projektion (ohne Spiegelanlage)','#brandGifLabelText':'Kleines RAYMOSAIC-Logo anzeigen',
 '#cancelExport':'Abbrechen','#startExport':'Animiertes GIF erstellen ↗','#downloadGif':'↓ GIF herunterladen','#nativeShare':'Teilen…',
 '.exportfoot':'GIF ist weit verbreitet. Manche Messenger spielen die Animation beim Teilen anders ab. Bei Bedarf die GIF-Datei versenden.',
 '#exportPreview strong':'Bereit zum Teilen.','#siteHome':'← Startseite','#siteBlog':'Blog','#siteLanguage':'EN',
