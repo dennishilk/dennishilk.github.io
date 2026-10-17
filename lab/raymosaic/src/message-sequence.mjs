@@ -36,7 +36,8 @@ export function exportSequencePlan(sceneCount,requestedSeconds=3,quality='compac
  const segmentSeconds=Math.max(1.9,Math.min(2.6,38/sceneCount));
  const seconds=Math.ceil(sceneCount*segmentSeconds*10)/10;
  const total=Math.round(seconds*fps);
- if(total>420)throw Error('Too many frames. Shorten the message or export at Messaging quality.');
+ const budget=quality==='compact'?400:quality==='standard'?175:110;
+ if(total>budget)throw Error('This high-resolution sequence would use too much memory. Select Messaging quality, or shorten the text.');
  return {seconds,fps,total,segmentSeconds,adjusted:seconds>requestedSeconds};
 }
 export function sequenceFrame(index,total,sceneCount){
