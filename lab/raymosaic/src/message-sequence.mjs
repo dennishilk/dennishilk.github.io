@@ -27,7 +27,7 @@ export function buildMessageScenes(text,capacity=12){
  }
  return out;
 }
-export function opticalCapacity(mirrorCount){return mirrorCount===666?15:mirrorCount===1024?16:13;}
+export function opticalCapacity(mirrorCount){return mirrorCount===1337?17:mirrorCount===666?15:13;}
 export function sceneDuration(count){return count<=1?0:Math.max(2.4,Math.min(3.25,40/Math.max(1,count)));}
 export function exportSequencePlan(sceneCount,requestedSeconds=3,quality='compact'){
  if(!Number.isInteger(sceneCount)||sceneCount<1||sceneCount>120)throw Error('Invalid message scene count');
