@@ -35,3 +35,16 @@ jobs:
         run: |
           node scripts/sync-seo.mjs
           git diff --exit-code -- sitemap.xml sitemap-de.xml sitemap-blog.xml
+
+      - name: Install Chromium for prefixed site integration test
+        run: |
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Start the staged static site without deploying
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/raymosaic-site.log 2>&1 &
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8000/lab/raymosaic/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/raymosaic-site.log
+          exit 1
+      - name: Real EN/DE site routes, GIF worker and link roundtrip
+        run: node tests/raymosaic-integration.mjs
