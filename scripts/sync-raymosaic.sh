@@ -10,7 +10,7 @@ test -f "$source_repo/src/optics.mjs" || { echo "Not a RAYMOSAIC source checkout
 dest="$site/lab/raymosaic"
 files=(
   index.html styles.css LICENSE src/main.js src/optics.mjs src/scene.js
-  src/targets.js src/gif-worker.js src/project-state.js src/i18n.js
+  src/targets.js src/gif-worker.js src/project-state.js src/i18n.js src/public-share.js
   examples/raymosaic-heart.webp examples/raymosaic-nebu.webp
   examples/raymosaic-nebu.gif examples/raymosaic-scene-nebu.gif
 )
