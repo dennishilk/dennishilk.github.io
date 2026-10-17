@@ -128,3 +128,22 @@
 @media(max-width:1500px){.how-it-works{position:static;transform:none;margin:5px auto;display:block}.toolbar{display:flex;flex-direction:column;gap:6px}}
 @media(max-width:680px){#customText{min-height:88px;font-size:16px}.how-it-works{margin:3px auto 6px;min-height:40px}.app{padding-bottom:calc(260px + env(safe-area-inset-bottom,0px))}.toolbar .scenefoot{display:none}.physics-content{grid-template-columns:1fr}#physicsDiagram{max-height:190px}.scene-list button{min-height:44px}}
 @media(max-width:900px) and (orientation:landscape) and (max-height:540px){.toolbar{gap:2px;padding-top:3px}.how-it-works{min-height:30px;padding:4px 14px}.app{padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}}
+
+
+/* Keep the expanded editor above the toolbar; scroll long content inside its panel. */
+.creator{max-height:calc(100dvh - 240px);overflow-y:auto;overscroll-behavior:contain}
+@media(min-width:681px) and (max-width:1500px){
+ .creator,.controls{bottom:185px;max-height:calc(100dvh - 215px)}
+ .toolbar{padding:8px 20px}
+ .toolbar .scenefoot{font-size:8px}
+ .toolbar .actions{flex-wrap:wrap;justify-content:center}
+ .toolbar .actions button{min-height:38px}
+}
+@media(max-width:680px){
+ .creator,.controls{max-height:none;overflow:visible}
+ html{scroll-padding-bottom:225px}
+ .creator,.controls,.public-share-trigger{scroll-margin-bottom:225px}
+}
+@media(max-width:900px) and (orientation:landscape) and (max-height:540px){
+ .creator,.controls{max-height:none;overflow:visible}
+}
