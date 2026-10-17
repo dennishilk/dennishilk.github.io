@@ -1,0 +1,25 @@
+name: RAYMOSAIC Website Staging QA
+on:
+  push:
+    branches: [mission-raymosaic-04]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bilingual lab, blog, sitemap and media checks
+        run: node --test tests/raymosaic-site.test.mjs
+      - name: RSS matches bilingual BlogPosting sources
+        run: node scripts/generate-blog-rss.mjs --check
+      - name: Verify all SEO generators are in sync (never deploy)
+        run: |
+          node scripts/sync-seo.mjs
+          git diff --stat
+          git diff --exit-code -- sitemap.xml sitemap-de.xml sitemap-blog.xml
