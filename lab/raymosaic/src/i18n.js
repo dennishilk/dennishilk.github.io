@@ -47,6 +47,8 @@ const de={
 '.dialogheading p':'Erstelle ein echtes animiertes GIF direkt im Browser. Keine Uploads.',
 'label[for="aspect"]':'FORMAT','label[for="quality"]':'QUALITÄT','label[for="duration"]':'DAUER',
 '#projectionLabelText':'Nur Projektion (ohne Spiegelanlage)','#brandGifLabelText':'Kleines RAYMOSAIC-Logo anzeigen',
+'#exportModeNote':'Die gesamte Spiegelanlage mit Lichtquelle und Projektionswand.',
+'#progressStatus':'Wird vorbereitet…',
 '#cancelExport':'Abbrechen','#startExport':'Animiertes GIF erstellen ↗','#downloadGif':'↓ GIF herunterladen','#nativeShare':'Teilen…',
 '.exportfoot':'GIF ist weit verbreitet. Manche Messenger spielen die Animation beim Teilen anders ab. Bei Bedarf die GIF-Datei versenden.',
 '#exportPreview strong':'Bereit zum Teilen.','#siteHome':'← Startseite','#siteBlog':'Blog','#siteLanguage':'EN',
@@ -56,6 +58,20 @@ const messages={
 en:{saved:'Project saved on this device',loaded:'Project restored',link:'Link copied; anyone with the link can see the motif',file:'Project file downloaded',broken:'Unable to load project: ',linkFail:'Cannot create link: ',shareFail:'Sharing unavailable; download the GIF instead',invalid:'Please enter a name first',replay:'Replaying mirror alignment',optics:'Drag to orbit. Scroll to zoom. Select a mirror.',exporting:'Rendering frame ',done:'Animated GIF created',cancel:'GIF export cancelled',textTooLong:'Your text is too long (400 characters max)',loveMirrors:'666 mirrors · DOOM of Love ❤️',overdriveMirrors:'1337 mirrors · OVERDRIVE 🚀',classicMirrors:'448 mirrors · Classic',pngOneScene:'PNG saves only the current scene',sequenceExport:'Complete message sequence — duration adjusted automatically:',sequenceTooLong:'This GIF would be too large.'},
 de:{saved:'Projekt auf diesem Gerät gespeichert',loaded:'Projekt wiederhergestellt',link:'Link kopiert; Empfänger können das Motiv ansehen',file:'Projektdatei heruntergeladen',broken:'Projekt konnte nicht geladen werden: ',linkFail:'Link nicht möglich: ',shareFail:'Teilen nicht verfügbar. Bitte GIF herunterladen.',invalid:'Bitte zuerst einen Namen eingeben',replay:'Spiegelanimation wird wiederholt',optics:'Ziehen zum Drehen. Scrollen zum Zoomen. Spiegel anklicken.',exporting:'Bild wird berechnet ',done:'Animiertes GIF erstellt',cancel:'GIF-Export abgebrochen',textTooLong:'Die Nachricht ist zu lang (maximal 400 Zeichen)',loveMirrors:'666 Spiegel · DOOM of Love ❤️',overdriveMirrors:'1337 Spiegel · OVERDRIVE 🚀',classicMirrors:'448 Spiegel · Classic',pngOneScene:'PNG speichert nur die aktuelle Szene',sequenceExport:'Vollständige Nachrichtenfolge — Dauer automatisch angepasst:',sequenceTooLong:'Dieses GIF würde zu groß.'}
 };
+Object.assign(messages.en,{
+ createGif:'Create animated GIF ↗',anotherGif:'Create another GIF ↗',encoding:'Encoding animation…',frames:'frames',
+ gifError:'GIF error: ',encodingError:'GIF encoding error: ',exportUnavailable:'Export unavailable: ',
+ sequenceAdvice:'Choose Messaging quality or shorten the text.',gifShareText:'I made this with simulated reflected light.',
+ projectionNote:'Only reflected light on black. No mirrors, lamp or wall frame.',
+ sceneNote:'The complete mirror instrument, light source and projection wall.'
+});
+Object.assign(messages.de,{
+ createGif:'Animiertes GIF erstellen ↗',anotherGif:'Weiteres GIF erstellen ↗',encoding:'Animation wird erstellt…',frames:'Bilder',
+ gifError:'GIF-Fehler: ',encodingError:'Fehler bei der GIF-Kodierung: ',exportUnavailable:'Export nicht verfügbar: ',
+ sequenceAdvice:'Wähle die Messenger-Qualität oder kürze die Nachricht.',gifShareText:'Mit simulierten Lichtreflexionen gestaltet.',
+ projectionNote:'Nur reflektiertes Licht auf Schwarz. Ohne Spiegel, Lichtquelle oder Wandrahmen.',
+ sceneNote:'Die gesamte Spiegelanlage mit Lichtquelle und Projektionswand.'
+});
 export function t(key){return messages[language][key]||key;}
 export function applyLanguage(){
  document.documentElement.lang=language;
@@ -67,5 +83,7 @@ export function applyLanguage(){
  for(const [selector,value] of Object.entries(de)){const el=document.querySelector(selector);if(!el)continue;if(value.includes('<'))el.innerHTML=value;else el.textContent=value;}
  document.getElementById('customText').placeholder='Schreib einen Namen oder eine Liebesnachricht…';document.getElementById('mirrorDensity').options[0].textContent='448 Spiegel · Classic';document.getElementById('mirrorDensity').options[1].textContent='666 Spiegel · DOOM of Love ❤️';document.getElementById('mirrorDensity').options[2].textContent='1337 Spiegel · OVERDRIVE 🚀';
  for(const [selector,labels] of [['#aspect',['Quadrat · 1:1','Hochformat · 9:16','Querformat · 16:9']],['#quality',['Messenger · kleinere Datei','Standard · ausgewogen','Hoch · größere Datei']],['#duration',['3 Sekunden','5 Sekunden','8 Sekunden']]]){const select=document.querySelector(selector);if(select)Array.from(select.options).forEach((o,i)=>o.textContent=labels[i]);}
+ document.getElementById('closeExport').setAttribute('aria-label','Exporteinstellungen schließen');
+ document.getElementById('gifPreview').alt='Vorschau deiner animierten Lichtprojektion';
  document.title='RAYMOSAIC — Zeichne mit reflektiertem Licht';
 }

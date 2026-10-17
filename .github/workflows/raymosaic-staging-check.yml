@@ -1,7 +1,7 @@
 name: RAYMOSAIC Website Staging QA
 on:
   push:
-    branches: [mission-raymosaic-05, mission-raymosaic-06, mission-raymosaic-07, main]
+    branches: [mission-raymosaic-05, mission-raymosaic-06, mission-raymosaic-07, mission-raymosaic-08, main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -25,10 +25,10 @@ jobs:
           node scripts/sync-seo.mjs
           git diff --exit-code -- sitemap.xml sitemap-de.xml sitemap-blog.xml
 
-      - name: Install Chromium for prefixed site integration test
+      - name: Install Chromium and Firefox for prefixed site integration tests
         run: |
           npm install --no-save playwright@1.56.0
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox
       - name: Start the staged static site without deploying
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/raymosaic-site.log 2>&1 &

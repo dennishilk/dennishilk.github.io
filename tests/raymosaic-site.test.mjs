@@ -15,7 +15,7 @@ test('one real application core with DE/EN entry points',()=>{
  assert.match(dePage,/<html lang="de">/);
  assert.match(dePage,/rel="canonical" href="https:\/\/www\.dennishilk\.com\/de\/lab\/raymosaic\/"/);
  assert.match(enPage,/rel="canonical" href="https:\/\/www\.dennishilk\.com\/lab\/raymosaic\/"/);
- for(const part of ['main.js','scene.js','optics.mjs','gif-worker.js','project-state.js','i18n.js','public-share.js','message-sequence.mjs','mirror-modes.mjs','export-framing.mjs'])assert.ok(statSync(join(root,'lab/raymosaic/src',part)).size>500);
+ for(const part of ['main.js','scene.js','optics.mjs','gif-worker.js','project-state.js','i18n.js','public-share.js','message-sequence.mjs','mirror-modes.mjs','export-framing.mjs','export-renderer.js'])assert.ok(statSync(join(root,'lab/raymosaic/src',part)).size>500);
  assert.match(read('lab/raymosaic/src/main.js'),/new Worker\(new URL\('\.\/gif-worker\.js',import\.meta\.url\)\)/);
 });
 test('versioned projects, no remote processing and gzip links',()=>{
@@ -55,4 +55,20 @@ test('homepage, sitemap, RSS and original generated media are wired',()=>{
  for(const path of posts){const route=path.replace(/index\.html$/,'');assert.ok(read('sitemap-blog.xml').includes('https://www.dennishilk.com/'+route));}
  for(const path of ['blog/feed.xml','de/blog/feed.xml'])assert.match(read(path),/RAYMOSAIC/);
  for(const path of ['raymosaic-heart.webp','raymosaic-nebu.webp','raymosaic-scene-nebu.gif'])assert.ok(statSync(join(root,'lab/raymosaic/examples',path)).size>1000);
+});
+test('current bilingual articles describe all mirror modes and the real projection export',()=>{
+ for(const path of posts){
+  const html=read(path);
+  for(const token of ['448','666','1337','DOOM of Love','OVERDRIVE','r = i − 2(i · n)n','Web Worker','400'])assert.ok(html.includes(token),path+': '+token);
+  assert.match(html,/raymosaic-projection\.gif" loading="lazy" width="512" height="512"/);
+  assert.match(html,/museum\/jurassic-park-sgi\//);
+  assert.doesNotMatch(html,/https:\/\/github.com\/dennishilk\/raymosaic/,'public article does not depend on repository visibility');
+  const data=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const article=data['@graph'].find(n=>n['@type']==='BlogPosting');
+  assert.match(html,new RegExp('rel="canonical" href="'+article.url+'"'));
+  for(const id of [...html.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]))assert.ok(html.includes('id="'+id+'"'),path+': missing anchor '+id);
+ }
+ const renderer=read('lab/raymosaic/src/export-renderer.js');
+ assert.match(renderer,/mode==='projection'/);assert.match(renderer,/drawProjectionOnly/);assert.match(renderer,/drawScene/);
+ assert.ok(statSync(join(root,'lab/raymosaic/examples/raymosaic-projection.gif')).size>1000);
 });

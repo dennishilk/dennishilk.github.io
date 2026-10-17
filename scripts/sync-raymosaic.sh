@@ -10,9 +10,9 @@ test -f "$source_repo/src/optics.mjs" || { echo "Not a RAYMOSAIC source checkout
 dest="$site/lab/raymosaic"
 files=(
   index.html styles.css LICENSE src/main.js src/optics.mjs src/scene.js
-  src/targets.js src/gif-worker.js src/project-state.js src/i18n.js src/public-share.js src/message-sequence.mjs src/mirror-modes.mjs src/export-framing.mjs
+  src/targets.js src/gif-worker.js src/project-state.js src/i18n.js src/public-share.js src/message-sequence.mjs src/mirror-modes.mjs src/export-framing.mjs src/export-renderer.js
   examples/raymosaic-heart.webp examples/raymosaic-nebu.webp
-  examples/raymosaic-nebu.gif examples/raymosaic-scene-nebu.gif
+  examples/raymosaic-nebu.gif examples/raymosaic-scene-nebu.gif examples/raymosaic-projection.gif
 )
 for path in "${files[@]}"; do
   install -d "$(dirname "$dest/$path")"

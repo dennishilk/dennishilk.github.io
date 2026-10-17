@@ -1,6 +1,7 @@
-import {chromium} from 'playwright';
+import {chromium,firefox} from 'playwright';
 import assert from 'node:assert/strict';
-const browser=await chromium.launch({headless:true});
+for(const engine of [chromium,firefox]){
+const browser=await engine.launch({headless:true});
 const context=await browser.newContext({viewport:{width:1250,height:820},acceptDownloads:true});
 try{
  for(const route of ['/lab/raymosaic/','/de/lab/raymosaic/']){
@@ -13,7 +14,7 @@ try{
   await page.locator('#quickGif').click();
   await page.locator('#downloadGif').waitFor({state:'visible',timeout:120000});
   const size=await page.locator('#exportSize').textContent();
-  assert.match(size,/30 frames/);
+  assert.match(size,route.startsWith('/de/')?/30 Bilder/:/30 frames/);
   await page.locator('#closeExport').click();
   await page.evaluate(()=>{window.__capturedURL='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__capturedURL=text;}}});});
   await page.locator('#shareProject').click();
@@ -52,7 +53,9 @@ try{
   assert.equal(await page.locator('#mirrorDensity').inputValue(),'1337');
   assert.equal(await page.locator('#showLabels').isChecked(),false);
   assert.deepEqual(errors,[]);
-  console.log('PASS '+route+' GIF, DE/EN locale, JS module worker, personal link and privacy-safe public link: '+size);
+  console.log('PASS '+engine.name()+' '+route+' GIF, DE/EN locale, JS module worker, personal link and privacy-safe public link: '+size);
   await page.close();
  }
 }finally{await context.close();await browser.close();}
+
+}
