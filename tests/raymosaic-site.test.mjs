@@ -15,7 +15,7 @@ test('one real application core with DE/EN entry points',()=>{
  assert.match(dePage,/<html lang="de">/);
  assert.match(dePage,/rel="canonical" href="https:\/\/www\.dennishilk\.com\/de\/lab\/raymosaic\/"/);
  assert.match(enPage,/rel="canonical" href="https:\/\/www\.dennishilk\.com\/lab\/raymosaic\/"/);
- for(const part of ['main.js','scene.js','optics.mjs','gif-worker.js','project-state.js','i18n.js','public-share.js','message-sequence.mjs'])assert.ok(statSync(join(root,'lab/raymosaic/src',part)).size>500);
+ for(const part of ['main.js','scene.js','optics.mjs','gif-worker.js','project-state.js','i18n.js','public-share.js','message-sequence.mjs','mirror-modes.mjs','export-framing.mjs'])assert.ok(statSync(join(root,'lab/raymosaic/src',part)).size>500);
  assert.match(read('lab/raymosaic/src/main.js'),/new Worker\(new URL\('\.\/gif-worker\.js',import\.meta\.url\)\)/);
 });
 test('versioned projects, no remote processing and gzip links',()=>{
@@ -26,6 +26,10 @@ test('versioned projects, no remote processing and gzip links',()=>{
  assert.doesNotMatch(state,/fetch\s*\(|XMLHttpRequest|sendBeacon/);
  assert.match(state,/mirrorDrawing:p\.mirrorDrawing===true/);
  assert.match(state,/mirrorCount/);
+ assert.match(state,/showLabels:p\.showLabels!==false/);
+ assert.match(read('lab/raymosaic/src/mirror-modes.mjs'),/1337/);
+ assert.match(read('lab/raymosaic/src/export-framing.mjs'),/projectMirror/);
+ assert.match(read('lab/raymosaic/index.html'),/1337 mirrors · OVERDRIVE/);
  assert.match(read('lab/raymosaic/src/message-sequence.mjs'),/buildMessageScenes/);
  const share=read('lab/raymosaic/src/public-share.js');
  assert.match(share,/https:\/\/www\.dennishilk\.com\/lab\/raymosaic\//);
