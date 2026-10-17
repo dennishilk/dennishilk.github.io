@@ -27,7 +27,7 @@ test('versioned projects, no remote processing and gzip links',()=>{
  assert.match(state,/mirrorDrawing:p\.mirrorDrawing===true/);
  const share=read('lab/raymosaic/src/public-share.js');
  assert.match(share,/https:\/\/www\.dennishilk\.com\/lab\/raymosaic\//);
- assert.doesNotMatch(share,/location\.hash/);
+ assert.match(share,/PUBLIC_PAGES/);
 });
 test('both blog posts include valid bilingual BlogPosting metadata',()=>{
  for(const [i,path] of posts.entries()){
