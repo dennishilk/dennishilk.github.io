@@ -16,6 +16,11 @@ export function paintTarget(canvas,kind,value='HELLO'){
  }
  return canvas;
 }
+// Horizontal orientation correction is applied once to sampled target coordinates,
+// never to the visible sketch or the independently computed forward rays.
+export function orientDrawingTargets(points,mirrorDrawing=false){
+ return mirrorDrawing?points.map(([u,v])=>[1-u,v]):points;
+}
 function rng(seed){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 export function sampleTarget(canvas,count,seed=16723){const c=canvas.getContext('2d',{willReadFrequently:true}),pixels=c.getImageData(0,0,W,H).data;
  const entries=[],sums=[];let total=0;for(let y=0;y<H;y++)for(let x=0;x<W;x++){
