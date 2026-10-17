@@ -38,13 +38,15 @@ function projectGlow(ctx,p,spots,img,w,h,brightness=1,mode='scene'){
  }
  ctx.restore();
 }
-function flatMap(w,h,reverseView=false){const margin=.075,s=Math.min((w*(1-margin*2))/(WALL.hiZ-WALL.loZ),(h*(1-margin*2))/(WALL.hiY-WALL.loY));
+function flatMap(w,h,reverseView=false,framing=null){
+ if(framing)return pt=>[framing.centerX+(reverseView?-1:1)*(pt[2]-framing.centerZ)*framing.scale,framing.screenY-(pt[1]-framing.centerY)*framing.scale,10];
+ const margin=.075,s=Math.min((w*(1-margin*2))/(WALL.hiZ-WALL.loZ),(h*(1-margin*2))/(WALL.hiY-WALL.loY));
  return pt=>[w*.5+(reverseView?-1:1)*(pt[2]-(WALL.hiZ+WALL.loZ)/2)*s,h*.5-((pt[1]-(WALL.hiY+WALL.loY)/2))*s,10];}
 export function drawProjectionOnly(ctx,scene,mirrors,light,opts={}){
- const {width:w,height:h,align=1,time=0,ice=false,reverseView=false}=opts;ctx.clearRect(0,0,w,h);
+ const {width:w,height:h,align=1,time=0,ice=false,reverseView=false,framing=null}=opts;ctx.clearRect(0,0,w,h);
  // Flat dark studio backdrop: avoids distracting gradient/dither textures in GIF exports.
  ctx.fillStyle='#0a1019';ctx.fillRect(0,0,w,h);
- const p=flatMap(w,h,reverseView),s=spotsFor(mirrors,light,align,time);
+ const p=flatMap(w,h,reverseView,framing),s=spotsFor(mirrors,light,align,time);
  projectGlow(ctx,p,s,ice?scene.cool:scene.warm,w,h,1);
 }
 export function drawScene(ctx,scene,mirrors,light,opts={}){
