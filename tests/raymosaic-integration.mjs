@@ -39,6 +39,18 @@ try{
   assert.equal(await page.locator('#physicsDialog').isVisible(),true);
   assert.equal(await page.locator('.physics-steps li').count(),6);
   await page.keyboard.press('Escape');
+  const choices=await page.locator('#mirrorDensity option').allTextContents();
+  assert.equal(choices.length,3);
+  assert.match(choices.at(-1),/1337/);
+  await page.locator('#showLabels').uncheck();
+  await page.locator('#mirrorDensity').selectOption('1337');
+  assert.match(await page.locator('#mirrorCount').innerText(),/1337/);
+  assert.equal(await page.locator('#showLabels').isChecked(),false);
+  await page.locator('#saveProject').click();
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.locator('#loadLocal').click();
+  assert.equal(await page.locator('#mirrorDensity').inputValue(),'1337');
+  assert.equal(await page.locator('#showLabels').isChecked(),false);
   assert.deepEqual(errors,[]);
   console.log('PASS '+route+' GIF, DE/EN locale, JS module worker, personal link and privacy-safe public link: '+size);
   await page.close();
