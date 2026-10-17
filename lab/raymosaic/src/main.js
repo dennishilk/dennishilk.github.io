@@ -208,7 +208,7 @@ $('publicNativeShare').addEventListener('click',async()=>{
  try{await navigator.share({title:'RAYMOSAIC',text:publicShareText(language),url:publicPageUrl(language)});}
  catch(e){if(e.name!=='AbortError')toast(language==='de'?'Geräteteilen nicht verfügbar. Anderen Dienst oder Link kopieren wählen.':'Native sharing unavailable. Choose a service or copy the link.');}
 });
-function openPublicLink(url){const w=window.open(url,'_blank','noopener,noreferrer');if(!w)toast(language==='de'?'Bitte Pop-up-Freigabe prüfen.':'Please allow the sharing window.');}
+function openPublicLink(url){window.open(url,'_blank','noopener,noreferrer');/* noopener may return null even when the window opened successfully. */}
 for(const [id,service] of [['publicWhatsApp','whatsapp'],['publicFacebook','facebook'],['publicX','x'],['publicEmail','email']]){
  $(id).addEventListener('click',()=>{const url=shareServiceUrl(service,language);if(service==='email')location.href=url;else openPublicLink(url);});
 }
