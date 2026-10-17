@@ -1,12 +1,13 @@
 import {DEFAULT_LIGHT,aimMirrors,projectMirror,withinWall,WALL,lerpNormal} from './optics.mjs';
 import {createMirrorArray,MIRROR_COUNTS} from './mirror-modes.mjs';
 import {projectionBounds,projectionFraming,exportCamera} from './export-framing.mjs';
+import {renderExportFrame} from './export-renderer.js';
 import {makeTargetCanvas,paintTarget,sampleTarget,orientDrawingTargets} from './targets.js';
 import {publicPageUrl,publicShareText,shareServiceUrl,mastodonShareUrl} from './public-share.js';
-import {createScene,drawScene,drawProjectionOnly,drawExportSignature,easeAlign,cycleAlign,projectPoint} from './scene.js';
+import {createScene,drawScene,drawProjectionOnly,easeAlign,projectPoint} from './scene.js';
 import {captureDrawing,restoreDrawing,validateProject,saveLocal,loadLocal,parseProject,projectFile,makeShareHash,projectFromHash} from './project-state.js';
 import {language,t,applyLanguage} from './i18n.js';
-import {buildMessageScenes,messageLength,opticalCapacity,exportSequencePlan,sequenceFrame,MAX_MESSAGE_GRAPHEMES} from './message-sequence.mjs';
+import {buildMessageScenes,messageLength,opticalCapacity,exportSequencePlan,MAX_MESSAGE_GRAPHEMES} from './message-sequence.mjs';
 const $=id=>document.getElementById(id);
 const canvas=$('scene'),context=canvas.getContext('2d',{alpha:false});
 const scene=createScene(),targetCanvas=makeTargetCanvas();let mirrorCount=448,baseMirrors=createMirrorArray(448),messageScenes=[],sceneMirrors=[],sceneIndex=0,sequencePlaying=false,sceneEntered=0,transitionSource=null;
@@ -104,7 +105,7 @@ $('mirrorDensity').addEventListener('change',()=>{
  if(count===1337)overdriveGreeting();
  toast(count===1337?t('overdriveMirrors'):count===666?t('loveMirrors'):t('classicMirrors'));
 });
-$('quickGif').addEventListener('click',()=>{if(!$('customText').value.trim()){toast(t('invalid'));return;}$('applyText').click();$('quality').value='compact';$('duration').value='3';$('shareGif').click();$('startExport').click();});
+$('quickGif').addEventListener('click',()=>{if(!$('customText').value.trim()){toast(t('invalid'));return;}$('applyText').click();$('quality').value='compact';$('duration').value='3';$('projectionOnly').checked=true;$('shareGif').click();$('startExport').click();});
 $('customText').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')$('applyText').click();});
 $('replay').addEventListener('click',()=>{introStart=performance.now();if(messageScenes.length>1)showMessageScene(0,true);toast(t('replay'));});
 $('showRays').addEventListener('change',e=>{showRays=e.target.checked;scheduleAutoSave();});
@@ -148,42 +149,44 @@ $('mirrorDrawing').addEventListener('change',()=>{if(motifKind==='draw')setTarge
 // PNG uses exactly the same independently computed forward renderer.
 $('savePng').addEventListener('click',()=>{if(messageScenes.length>1)toast(t('pngOneScene')+` ${sceneIndex+1}/${messageScenes.length}`);const c=document.createElement('canvas');c.width=1600;c.height=900;const ctx=c.getContext('2d');drawScene(ctx,scene,mirrors,light,{width:c.width,height:c.height,align:1,time:1,ice,selected:-1,rays:showRays});c.toBlob(blob=>{if(!blob){toast('PNG generation failed');return;}download(blob,messageScenes.length>1?`raymosaic-scene-${sceneIndex+1}-of-${messageScenes.length}.png`:'raymosaic.png');},'image/png');});
 function download(blob,filename){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-const modal=$('exportDialog');function updateExportNote(){const note=$('sequenceExportNote');note.hidden=messageScenes.length<=1;if(!note.hidden){try{const plan=exportSequencePlan(messageScenes.length,Number($('duration').value),$('quality').value);note.textContent=t('sequenceExport')+` ${messageScenes.length} · ${plan.seconds.toFixed(1)} s · ${plan.total} frames`;}catch(e){note.textContent=t('sequenceTooLong')+' '+e.message;}}}
-for(const id of ['duration','quality'])$(id).addEventListener('change',updateExportNote);
+const modal=$('exportDialog');function updateExportNote(){
+ $('exportModeNote').textContent=t($('projectionOnly').checked?'projectionNote':'sceneNote');
+ const note=$('sequenceExportNote');note.hidden=messageScenes.length<=1;
+ if(!note.hidden){try{const plan=exportSequencePlan(messageScenes.length,Number($('duration').value),$('quality').value);note.textContent=t('sequenceExport')+` ${messageScenes.length} · ${plan.seconds.toFixed(1)} s · ${plan.total} ${t('frames')}`;}catch{note.textContent=t('sequenceTooLong')+' '+t('sequenceAdvice');}}
+}
+const exportOptions=['aspect','quality','duration','projectionOnly','brandGif'];
+function lockExportOptions(locked){for(const id of exportOptions)$(id).disabled=locked;}
+// A previous file no longer represents the dialog as soon as any setting changes.
+for(const id of exportOptions)$(id).addEventListener('change',()=>{
+ resetPreviousExport();$('exportProgress').classList.add('hidden');$('startExport').textContent=t('createGif');updateExportNote();
+});
 $('shareGif').addEventListener('click',()=>{updateExportNote();modal.showModal();});$('closeExport').addEventListener('click',()=>{cancelGif();modal.close();});
 modal.addEventListener('cancel',()=>cancelGif());
-function cancelGif(){if(exporting)toast(t('cancel'));if(exportWorker){exportWorker.terminate();exportWorker=null;}exporting=false;$('exportProgress').classList.add('hidden');$('startExport').disabled=false;$('startExport').textContent='Create animated GIF ↗';}
+modal.addEventListener('close',()=>{cancelGif();resetPreviousExport();});
+function cancelGif(){if(exporting)toast(t('cancel'));if(exportWorker){exportWorker.terminate();exportWorker=null;}exporting=false;lockExportOptions(false);$('exportProgress').classList.add('hidden');$('startExport').disabled=false;$('startExport').textContent=t('createGif');}
 $('cancelExport').addEventListener('click',()=>{cancelGif();modal.close();});
-function resetPreviousExport(){if(exportUrl){URL.revokeObjectURL(exportUrl);exportUrl=null;}exportBlob=null;$('exportPreview').classList.add('hidden');$('downloadGif').classList.add('hidden');$('nativeShare').classList.add('hidden');}
+function resetPreviousExport(){if(exportUrl){URL.revokeObjectURL(exportUrl);exportUrl=null;}exportBlob=null;$('gifPreview').removeAttribute('src');$('exportPreview').classList.add('hidden');$('downloadGif').classList.add('hidden');$('nativeShare').classList.add('hidden');}
 function formatSize(n){return n>1000000?`${(n/1000000).toFixed(2)} MB`:`${Math.round(n/1024)} KB`;}
 function exportDimensions(aspect,quality){const short=quality==='compact'?320:quality==='high'?768:512;if(aspect==='portrait')return [Math.round(short*9/16),short];if(aspect==='landscape')return [short,Math.round(short*9/16)];return [short,short];}
 function createFrameBuffer(c,frameContext,idx,total,mode,includeSignature,state){
- const frames=state.scenes,step=sequenceFrame(idx,total,frames.length),multi=frames.length>1;
- const incoming=multi&&step.index>0?frames[step.index-1]:null;
- const chosen=frames[step.index],reflectors=incoming&&step.alpha<1?interpolateMirrorArrays(incoming,chosen,easeAlign(step.alpha)):chosen;
- const t=idx/total,opts={width:c.width,height:c.height,align:multi?(step.index===0?step.alpha:1):cycleAlign(t),time:t*5,ice:state.ice,selected:-1,rays:false,showLabels:false,low:mode==='projection'};
- if(mode==='projection')drawProjectionOnly(frameContext,scene,reflectors,state.light,{...opts,reverseView:state.reverseView,framing:state.framing});
- else{const original=scene.camera;scene.camera=state.exportCamera;
-  try{drawScene(frameContext,scene,reflectors,state.light,{...opts,exportClean:true});}
-  finally{scene.camera=original;}}
- if(includeSignature)drawExportSignature(frameContext,c.width,c.height);
+ renderExportFrame(frameContext,scene,state,idx,total,mode,includeSignature,c.width,c.height);
  return frameContext.getImageData(0,0,c.width,c.height).data.buffer;
 }
 $('startExport').addEventListener('click',async()=>{
  if(exporting)return;
  const quality=$('quality').value,[width,height]=exportDimensions($('aspect').value,quality);
- let plan;try{plan=exportSequencePlan(Math.max(1,sceneMirrors.length),Number($('duration').value),quality);}catch(e){toast(t('sequenceTooLong')+' '+e.message);return;}
- resetPreviousExport();exporting=true;$('startExport').disabled=true;
+ let plan;try{plan=exportSequencePlan(Math.max(1,sceneMirrors.length),Number($('duration').value),quality);}catch{toast(t('sequenceTooLong')+' '+t('sequenceAdvice'));return;}
+ resetPreviousExport();exporting=true;lockExportOptions(true);$('startExport').disabled=true;
  const {fps,total}=plan,mode=$('projectionOnly').checked?'projection':'scene',includeSignature=$('brandGif').checked;
  const exportScenes=sceneMirrors.length?sceneMirrors.slice():[mirrors];
  const exportBounds=projectionBounds(exportScenes,light);
  const exportState={scenes:exportScenes,light:[...light],ice,
   reverseView:motifKind==='draw'&&$('mirrorDrawing').checked||motifKind==='text'&&$('mirrorText').checked,
-  framing:projectionFraming(exportBounds,width,height),
+  framing:projectionFraming(exportBounds,width,height,includeSignature),
   exportCamera:exportCamera(exportBounds,width,height,{...scene.camera})};
  const bufferCanvas=document.createElement('canvas');bufferCanvas.width=width;bufferCanvas.height=height;
  const frameCtx=bufferCanvas.getContext('2d',{willReadFrequently:true});
- const prog=$('exportProgress'),status=$('progressStatus'),fill=$('progressFill'),pct=$('progressPct');prog.classList.remove('hidden');status.textContent='Encoding animation…';fill.style.width='0%';pct.textContent='0%';
+ const prog=$('exportProgress'),status=$('progressStatus'),fill=$('progressFill'),pct=$('progressPct');prog.classList.remove('hidden');status.textContent=t('encoding');fill.style.width='0%';pct.textContent='0%';
  try{const worker=new Worker(new URL('./gif-worker.js',import.meta.url));exportWorker=worker;let index=0;
   worker.onmessage=e=>{
    if(worker!==exportWorker)return;
@@ -194,15 +197,15 @@ $('startExport').addEventListener('click',async()=>{
     if(index>=total){worker.postMessage({type:'finish'});return;}
     // Yield to the main thread so the UI can repaint and the Cancel button remains responsive.
     requestAnimationFrame(()=>{if(worker!==exportWorker)return;const frame=createFrameBuffer(bufferCanvas,frameCtx,index,total,mode,includeSignature,exportState);worker.postMessage({type:'frame',buffer:frame},[frame]);});
-   }else if(msg.type==='complete'){exportBlob=msg.blob;exportUrl=URL.createObjectURL(exportBlob);$('gifPreview').src=exportUrl;$('exportSize').textContent=`${width} × ${height} · ${msg.frames} frames · ${formatSize(msg.size)}`;
+   }else if(msg.type==='complete'){exportBlob=msg.blob;exportUrl=URL.createObjectURL(exportBlob);$('gifPreview').src=exportUrl;$('exportSize').textContent=`${width} × ${height} · ${msg.frames} ${t('frames')} · ${formatSize(msg.size)}`;
     $('exportPreview').classList.remove('hidden');$('downloadGif').classList.remove('hidden');if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([exportBlob],'raymosaic.gif',{type:'image/gif'})]}))$('nativeShare').classList.remove('hidden');
-    status.textContent=t('done');fill.style.width='100%';pct.textContent='100%';worker.terminate();exportWorker=null;exporting=false;$('startExport').disabled=false;$('startExport').textContent='Create another GIF ↗';
-   }else if(msg.type==='error'){toast(`GIF error: ${msg.message}`);cancelGif();}
-  };worker.onerror=e=>{toast(`GIF encoding error: ${e.message}`);cancelGif();};worker.postMessage({type:'init',width,height,fps,total});
- }catch(e){toast(`Export unavailable: ${e.message}`);cancelGif();}
+    status.textContent=t('done');fill.style.width='100%';pct.textContent='100%';worker.terminate();exportWorker=null;exporting=false;lockExportOptions(false);$('startExport').disabled=false;$('startExport').textContent=t('anotherGif');
+   }else if(msg.type==='error'){cancelGif();toast(t('gifError')+msg.message);}
+  };worker.onerror=e=>{cancelGif();toast(t('encodingError')+e.message);};worker.postMessage({type:'init',width,height,fps,total,dither:mode!=='projection'});
+ }catch(e){cancelGif();toast(t('exportUnavailable')+e.message);}
 });
 $('downloadGif').addEventListener('click',()=>{if(exportBlob)download(exportBlob,'raymosaic.gif');});
-$('nativeShare').addEventListener('click',async()=>{if(!exportBlob)return;try{await navigator.share({files:[new File([exportBlob],'raymosaic.gif',{type:'image/gif'})],title:'RAYMOSAIC',text:'I made this with simulated reflected light.'});}catch(e){if(e.name!=='AbortError')toast('Direct sharing unavailable. Please download the GIF instead.');}});
+$('nativeShare').addEventListener('click',async()=>{if(!exportBlob)return;try{await navigator.share({files:[new File([exportBlob],'raymosaic.gif',{type:'image/gif'})],title:'RAYMOSAIC',text:t('gifShareText')});}catch(e){if(e.name!=='AbortError')toast(t('shareFail'));}});
 
 // Versioned local projects. Full project files keep mirror normals.
 // Small share links deterministically regenerate normals from the motif and aimLight.

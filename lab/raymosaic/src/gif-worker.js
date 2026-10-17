@@ -11,7 +11,7 @@ const bayer=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
 function quantize(data,w,h){const idx=new Uint8Array(w*h);for(let y=0;y<h;y++)for(let x=0;x<w;x++){
  const p=(y*w+x)*4,i=y*w+x;
  // Gentle ordered dithering for a small file and stable animation.
- const d=(bayer[(y&3)*4+(x&3)]-7.5)*.60;
+ const d=settings.dither===false?0:(bayer[(y&3)*4+(x&3)]-7.5)*.60;
  const r=Math.max(0,Math.min(255,data[p]+d)),g=Math.max(0,Math.min(255,data[p+1]+d)),b=Math.max(0,Math.min(255,data[p+2]+d));
  const lo=Math.min(r,g,b),hi=Math.max(r,g,b);
  if(hi-lo<16){idx[i]=216+Math.round((r+g+b)/3*39/255);}

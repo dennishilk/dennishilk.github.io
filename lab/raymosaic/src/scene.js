@@ -27,11 +27,12 @@ function spotsFor(mirrors,light,align,time,low=false){const out=[];
   out.push({mirror:m,center:rays.center,corners:rays.corners,normal,energy:Math.pow(cos,.6)});
  }return out;
 }
-function projectGlow(ctx,p,spots,img,w,h,brightness=1,mode='scene'){
+function projectGlow(ctx,p,spots,img,w,h,brightness=1,glowLimit=15){
  ctx.save();ctx.globalCompositeOperation='screen';
  for(const hit of spots){const center=p(hit.center);if(!center)continue;
   let radius=Math.max(3,Math.min(12,w/165));
   const corners=hit.corners.map(p).filter(Boolean);if(corners.length){radius=0;for(const a of corners)radius=Math.max(radius,Math.hypot(a[0]-center[0],a[1]-center[1]));radius=Math.max(2.8,Math.min(radius*.48,15));}
+  radius=Math.min(radius,glowLimit);
   const flicker=1+.06*Math.sin(hit.mirror.id*1.6+brightness*10);
   ctx.globalAlpha=Math.min(1,brightness*hit.energy*flicker*.9);
   ctx.drawImage(img,center[0]-radius*2.1,center[1]-radius*2.1,radius*4.2,radius*4.2);
@@ -45,9 +46,9 @@ function flatMap(w,h,reverseView=false,framing=null){
 export function drawProjectionOnly(ctx,scene,mirrors,light,opts={}){
  const {width:w,height:h,align=1,time=0,ice=false,reverseView=false,framing=null}=opts;ctx.clearRect(0,0,w,h);
  // Flat dark studio backdrop: avoids distracting gradient/dither textures in GIF exports.
- ctx.fillStyle='#0a1019';ctx.fillRect(0,0,w,h);
+ ctx.fillStyle='#000000';ctx.fillRect(0,0,w,h);
  const p=flatMap(w,h,reverseView,framing),s=spotsFor(mirrors,light,align,time);
- projectGlow(ctx,p,s,ice?scene.cool:scene.warm,w,h,1);
+ projectGlow(ctx,p,s,ice?scene.cool:scene.warm,w,h,1,framing?.glowLimit||15);
 }
 export function drawScene(ctx,scene,mirrors,light,opts={}){
  const {width:w,height:h,align=1,time=0,rays=false,selected=-1,ice=false,showLabels=true,low=false,exportClean=false}=opts;
