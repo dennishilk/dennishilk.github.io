@@ -125,6 +125,6 @@
 .physics-steps li{margin-bottom:14px}.physics-steps strong{font-size:12px;color:#f4d69d}
 .physics-steps p{font-size:11px;color:#c0d0dd;line-height:1.65;margin:5px 0}
 @media(prefers-reduced-motion:no-preference){#physicsDiagram .ray-in{stroke-dasharray:8 5;animation:lightpath 2.6s linear infinite}#physicsDiagram .ray-out{stroke-dasharray:8 5;animation:lightpath 2.6s linear infinite;animation-delay:.25s}@keyframes lightpath{to{stroke-dashoffset:-65}}}
-@media(max-width:1150px){.how-it-works{position:static;transform:none;margin:5px auto;display:block}.toolbar{display:flex;flex-direction:column;gap:6px}}
+@media(max-width:1500px){.how-it-works{position:static;transform:none;margin:5px auto;display:block}.toolbar{display:flex;flex-direction:column;gap:6px}}
 @media(max-width:680px){#customText{min-height:88px;font-size:16px}.how-it-works{margin:3px auto 6px;min-height:40px}.app{padding-bottom:calc(260px + env(safe-area-inset-bottom,0px))}.toolbar .scenefoot{display:none}.physics-content{grid-template-columns:1fr}#physicsDiagram{max-height:190px}.scene-list button{min-height:44px}}
 @media(max-width:900px) and (orientation:landscape) and (max-height:540px){.toolbar{gap:2px;padding-top:3px}.how-it-works{min-height:30px;padding:4px 14px}.app{padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}}
