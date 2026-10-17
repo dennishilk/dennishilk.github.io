@@ -5,8 +5,8 @@ const de={
 '.creator .panel-title > span:first-child':'01 / GESTALTEN','.creator .status':'● OPTIK AKTIV',
 '[data-tab="presets"]':'Motive','[data-tab="text"]':'Text','[data-tab="draw"]':'Zeichnen',
 '[data-preset="heart"] small':'HERZ','[data-preset="hello"] small':'HALLO','[data-preset="bolt"] small':'BLITZ','[data-preset="star"] small':'STERN',
-'#textTab label':'DEINE NACHRICHT','#applyText':'Erstellen','#quickGif':'✧ Als GIF verschenken ↗',
-'#textTab .hint':'Bis zu 13 Zeichen. Kurze Namen werden am deutlichsten.',
+'#textTab label[for="customText"]':'DEINE NACHRICHT','#applyText':'Nachricht projizieren ↗','#quickGif':'✧ Als GIF verschenken ↗',
+'#textHint':'Ein kurzer Name erscheint sofort. Lange Nachrichten erscheinen in echten Lichtreflexionen. Emoji-Darstellung hängt von installierten Schriften ab.',
 '#brush':'Pinsel','#eraser':'Radierer','#undoDraw':'Zurück','#clearDraw':'Leeren','#applyDraw':'Projizieren','#replay':'↻ Wiederholen',
 '.controls .panel-title > span:first-child':'02 / ERFORSCHEN','#reset':'ALLES ZURÜCKSETZEN ↗',
 '.switchline:first-of-type span':'Lichtstrahlen zeigen<small>Verlauf einer Reflexion sichtbar machen</small>',
@@ -29,6 +29,18 @@ const de={
 '#mastodonInstanceLabel':'Mastodon-Instanz (z. B. mastodon.social)',
 '#publicMastodon':'Auf Mastodon teilen ↗',
 '#sharePrivacyNote':'Externe Anbieter öffnen sich erst nach deinem Klick. Der öffentliche Link enthält keine Zeichnung.',
+'#mirrorTextTitle':'Motiv automatisch spiegeln','#mirrorTextHelp':'Schreib ganz normal. RAYMOSAIC korrigiert die Ausrichtung für die echte Spiegelprojektion.',
+'#mirrorDensityLabel':'SPIEGELDICHTE','#densityHint':'Jeder Spiegel wird einzeln berechnet.',
+'#sequenceHeading':'Deine Nachricht aus Licht','#prevScene':'← Zurück','#nextScene':'Weiter →',
+'#howItWorks span':'Wie funktioniert das?','#physicsEyebrow':'DIE PHYSIK DES LICHTS',
+'#physicsTitle':'Wie funktioniert das? 🔬','#physicsIntro':'448 oder 666 einzeln ausgerichtete Spiegel, eine Lichtquelle und das Reflexionsgesetz.',
+'#physicsStep1':'01 — Eine Lichtquelle','#physicsBody1':'Eine punktförmige Lichtquelle beleuchtet alle Spiegel der Anlage.',
+'#physicsStep2':'02 — Spiegelausrichtung','#physicsBody2':'Jede Spiegelfläche erhält eine berechnete Oberflächennormale.',
+'#physicsStep3':'03 — Reflexionsgesetz','#physicsBody3':'Einfalls- und Ausfallswinkel zur Flächennormale sind gleich: r = i − 2(i · n)n.',
+'#physicsStep4':'04 — Die Projektion','#physicsBody4':'Die reflektierten Strahlen treffen auf die Wand und bilden einzelne Lichtpunkte.',
+'#physicsStep5':'05 — Neue Nachricht','#physicsBody5':'Für jede Szene werden die Spiegelnormalen neu berechnet und ihre Ausrichtung animiert.',
+'#physicsStep6':'06 — Export und Teilen','#physicsBody6':'Der Browser erzeugt GIF-Bilder aus der Simulation, ganz ohne Upload.',
+'#diagramLight':'LICHT','#diagramMirror':'SPIEGEL','#diagramNormal':'NORMALE','#diagramWall':'WAND',
 
 '.dialogheading .eyebrow':'EIN BISSCHEN LICHT BEHALTEN','.dialogheading h2':'Mach es zu deinem.',
 '.dialogheading p':'Erstelle ein echtes animiertes GIF direkt im Browser. Keine Uploads.',
@@ -37,11 +49,11 @@ const de={
 '#cancelExport':'Abbrechen','#startExport':'Animiertes GIF erstellen ↗','#downloadGif':'↓ GIF herunterladen','#nativeShare':'Teilen…',
 '.exportfoot':'GIF ist weit verbreitet. Manche Messenger spielen die Animation beim Teilen anders ab. Bei Bedarf die GIF-Datei versenden.',
 '#exportPreview strong':'Bereit zum Teilen.','#siteHome':'← Startseite','#siteBlog':'Blog','#siteLanguage':'EN',
-'#quickHint':'Name eingeben → Erstellen → GIF teilen. Alles bleibt auf deinem Gerät.'
+'#quickHint':'Nachricht eingeben → Projizieren → GIF teilen. Alles bleibt auf deinem Gerät.'
 };
 const messages={
-en:{saved:'Project saved on this device',loaded:'Project restored',link:'Link copied; anyone with the link can see the motif',file:'Project file downloaded',broken:'Unable to load project: ',linkFail:'Cannot create link: ',shareFail:'Sharing unavailable; download the GIF instead',invalid:'Please enter a name first',replay:'Replaying mirror alignment',optics:'Drag to orbit. Scroll to zoom. Select a mirror.',exporting:'Rendering frame ',done:'Animated GIF created',cancel:'GIF export cancelled'},
-de:{saved:'Projekt auf diesem Gerät gespeichert',loaded:'Projekt wiederhergestellt',link:'Link kopiert; Empfänger können das Motiv ansehen',file:'Projektdatei heruntergeladen',broken:'Projekt konnte nicht geladen werden: ',linkFail:'Link nicht möglich: ',shareFail:'Teilen nicht verfügbar. Bitte GIF herunterladen.',invalid:'Bitte zuerst einen Namen eingeben',replay:'Spiegelanimation wird wiederholt',optics:'Ziehen zum Drehen. Scrollen zum Zoomen. Spiegel anklicken.',exporting:'Bild wird berechnet ',done:'Animiertes GIF erstellt',cancel:'GIF-Export abgebrochen'}
+en:{saved:'Project saved on this device',loaded:'Project restored',link:'Link copied; anyone with the link can see the motif',file:'Project file downloaded',broken:'Unable to load project: ',linkFail:'Cannot create link: ',shareFail:'Sharing unavailable; download the GIF instead',invalid:'Please enter a name first',replay:'Replaying mirror alignment',optics:'Drag to orbit. Scroll to zoom. Select a mirror.',exporting:'Rendering frame ',done:'Animated GIF created',cancel:'GIF export cancelled',textTooLong:'Your text is too long (400 characters max)',loveMirrors:'666 mirrors · For the love ❤️',classicMirrors:'448 mirrors · Classic',pngOneScene:'PNG saves only the current scene',sequenceExport:'Complete message sequence — duration adjusted automatically:',sequenceTooLong:'This GIF would be too large.'},
+de:{saved:'Projekt auf diesem Gerät gespeichert',loaded:'Projekt wiederhergestellt',link:'Link kopiert; Empfänger können das Motiv ansehen',file:'Projektdatei heruntergeladen',broken:'Projekt konnte nicht geladen werden: ',linkFail:'Link nicht möglich: ',shareFail:'Teilen nicht verfügbar. Bitte GIF herunterladen.',invalid:'Bitte zuerst einen Namen eingeben',replay:'Spiegelanimation wird wiederholt',optics:'Ziehen zum Drehen. Scrollen zum Zoomen. Spiegel anklicken.',exporting:'Bild wird berechnet ',done:'Animiertes GIF erstellt',cancel:'GIF-Export abgebrochen',textTooLong:'Die Nachricht ist zu lang (maximal 400 Zeichen)',loveMirrors:'666 Spiegel · Für die Liebe ❤️',classicMirrors:'448 Spiegel · Klassisch',pngOneScene:'PNG speichert nur die aktuelle Szene',sequenceExport:'Vollständige Nachrichtenfolge — Dauer automatisch angepasst:',sequenceTooLong:'Dieses GIF würde zu groß.'}
 };
 export function t(key){return messages[language][key]||key;}
 export function applyLanguage(){
@@ -52,7 +64,7 @@ export function applyLanguage(){
  if(swap){const url=new URL(location.href);if(location.hostname==='localhost'||location.hostname==='127.0.0.1'){if(language==='de')url.searchParams.delete('lang');else url.searchParams.set('lang','de');swap.href=url.pathname+url.search+url.hash;}else swap.href=(language==='de'?'/lab/raymosaic/':'/de/lab/raymosaic/')+url.hash;swap.setAttribute('aria-label',language==='de'?'Switch to English':'Auf Deutsch wechseln');}
  if(language!=='de')return;
  for(const [selector,value] of Object.entries(de)){const el=document.querySelector(selector);if(!el)continue;if(value.includes('<'))el.innerHTML=value;else el.textContent=value;}
- document.getElementById('customText').placeholder='Schreib einen Namen…';
+ document.getElementById('customText').placeholder='Schreib einen Namen oder eine Liebesnachricht…';document.getElementById('mirrorDensity').options[0].textContent='448 Spiegel · Klassisch';document.getElementById('mirrorDensity').options[1].textContent='666 Spiegel · Für die Liebe ❤️';
  for(const [selector,labels] of [['#aspect',['Quadrat · 1:1','Hochformat · 9:16','Querformat · 16:9']],['#quality',['Messenger · kleinere Datei','Standard · ausgewogen','Hoch · größere Datei']],['#duration',['3 Sekunden','5 Sekunden','8 Sekunden']]]){const select=document.querySelector(selector);if(select)Array.from(select.options).forEach((o,i)=>o.textContent=labels[i]);}
  document.title='RAYMOSAIC — Zeichne mit reflektiertem Licht';
 }

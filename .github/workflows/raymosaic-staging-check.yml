@@ -1,7 +1,7 @@
 name: RAYMOSAIC Website Staging QA
 on:
   push:
-    branches: [mission-raymosaic-05, main]
+    branches: [mission-raymosaic-05, mission-raymosaic-06, main]
   workflow_dispatch:
 permissions:
   contents: read

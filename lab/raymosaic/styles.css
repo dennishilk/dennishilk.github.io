@@ -93,3 +93,57 @@
   .mastodon-share .inputrow{flex-direction:column}
   .tagline{min-height:415px}
 }
+
+
+/* Mission 06: restrained editorial controls, preserving the existing optical identity. */
+#textTab .message-editor{display:flex;flex-direction:column;gap:8px}
+#customText{display:block;min-width:0;width:100%;min-height:84px;max-height:180px;resize:vertical;box-sizing:border-box;background:#0c1825;border:1px solid #3b5268;border-radius:6px;color:#eaf3f7;padding:12px;font:13px/1.5 inherit;font-family:system-ui,sans-serif}
+#customText:focus-visible{outline:2px solid #f4ca8d;outline-offset:2px}
+.message-meta,.sequence-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.message-meta .hint{flex:1}
+#characterCount{white-space:nowrap;color:#e5c58d;font:10px ui-monospace,monospace}
+.sequence-editor{margin-top:14px;border-top:1px solid var(--line);padding-top:11px}
+.sequence-editor[hidden],.export-sequence-note[hidden]{display:none!important}
+.sequence-heading strong{font-size:11px;color:#f3ddba}
+.sequence-heading span{font:10px ui-monospace,monospace;color:#c4d5e4}
+.message-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-height:90px;overflow-y:auto;background:#0a1421;border:1px solid rgba(170,200,220,.17);border-radius:5px;padding:9px;color:#d3dce5;font-size:12px;line-height:1.5;margin:9px 0}
+.scene-list{display:flex;gap:6px;overflow-x:auto;padding:7px 0}
+.scene-list button{flex:none;font:10px/1.3 ui-monospace,monospace;min-height:36px;max-width:140px;border:1px solid #3e5568;background:#0d1b2c;color:#d4e3ed;padding:8px;border-radius:5px}
+.scene-list button[aria-current="true"]{border-color:#f3cc8b;color:#ffe4b2;background:#243045}
+.sequence-actions{display:flex;gap:7px}.sequence-actions button{flex:1;min-height:40px}
+.density-control{margin:7px 0 16px;display:flex;flex-direction:column;gap:7px}
+.density-control>label{font:10px ui-monospace,monospace;letter-spacing:.12em;color:#d6e1ed}
+#mirrorDensity{min-height:44px;width:100%;border:1px solid #3d5872;border-radius:5px;background:#111d2a;color:#f2e1c5;padding:9px 11px}
+.export-sequence-note{border-top:1px solid #384957;padding-top:9px;color:#f2cf91;font:11px/1.55 system-ui,sans-serif}
+.toolbar{position:fixed}
+.how-it-works{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-height:42px;padding:8px 16px;border:1px solid rgba(178,211,231,.25);background:#0f1c2bbd;color:#d2e8f3;font:11px ui-monospace,monospace;border-radius:5px;white-space:nowrap}
+.how-it-works:hover{border-color:#f3cb8a;color:#f9e2b4}
+#physicsDialog{max-width:720px;width:min(92vw,720px);max-height:min(86dvh,790px);overflow-y:auto}
+.physics-content{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:18px;align-items:start}
+#physicsDiagram{width:100%;height:auto;background:linear-gradient(145deg,#101d2a,#09121b);border:1px solid #334a60;border-radius:8px}
+.physics-steps{margin:0;padding-left:24px;list-style:none;counter-reset:optics}
+.physics-steps li{margin-bottom:14px}.physics-steps strong{font-size:12px;color:#f4d69d}
+.physics-steps p{font-size:11px;color:#c0d0dd;line-height:1.65;margin:5px 0}
+@media(prefers-reduced-motion:no-preference){#physicsDiagram .ray-in{stroke-dasharray:8 5;animation:lightpath 2.6s linear infinite}#physicsDiagram .ray-out{stroke-dasharray:8 5;animation:lightpath 2.6s linear infinite;animation-delay:.25s}@keyframes lightpath{to{stroke-dashoffset:-65}}}
+@media(max-width:1500px){.how-it-works{position:static;transform:none;margin:5px auto;display:block}.toolbar{display:flex;flex-direction:column;gap:6px}}
+@media(max-width:680px){#customText{min-height:88px;font-size:16px}.how-it-works{margin:3px auto 6px;min-height:40px}.app{padding-bottom:calc(260px + env(safe-area-inset-bottom,0px))}.toolbar .scenefoot{display:none}.physics-content{grid-template-columns:1fr}#physicsDiagram{max-height:190px}.scene-list button{min-height:44px}}
+@media(max-width:900px) and (orientation:landscape) and (max-height:540px){.toolbar{gap:2px;padding-top:3px}.how-it-works{min-height:30px;padding:4px 14px}.app{padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}}
+
+
+/* Keep the expanded editor above the toolbar; scroll long content inside its panel. */
+.creator{max-height:calc(100dvh - 240px);overflow-y:auto;overscroll-behavior:contain}
+@media(min-width:681px) and (max-width:1500px){
+ .creator,.controls{bottom:185px;max-height:calc(100dvh - 215px)}
+ .toolbar{padding:8px 20px}
+ .toolbar .scenefoot{font-size:8px}
+ .toolbar .actions{flex-wrap:wrap;justify-content:center}
+ .toolbar .actions button{min-height:38px}
+}
+@media(max-width:680px){
+ .creator,.controls{max-height:none;overflow:visible}
+ html{scroll-padding-bottom:225px}
+ .creator,.controls,.public-share-trigger{scroll-margin-bottom:225px}
+}
+@media(max-width:900px) and (orientation:landscape) and (max-height:540px){
+ .creator,.controls{max-height:none;overflow:visible}
+}
