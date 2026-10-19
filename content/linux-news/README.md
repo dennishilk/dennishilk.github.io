@@ -17,6 +17,12 @@ workarounds. The existing Networks & Security section remains the evergreen libr
 5. Run `npm run build:linux-news`, `npm run sync:seo`, `npm run test:linux-news`,
    `npm run test:seo`, and the existing RSS/sitemap/localization checks.
 
+`npm run test:linux-news:browser` checks the real Chromium layout at seven widths
+from 320 to 2048 pixels, localized SVG selection, table-of-contents links, sticky
+header clearance, language switches and category cards. The dedicated GitHub
+Actions workflow runs this without deployment and retains screenshots plus a
+JSON report for seven days. Local use requires Playwright and its Chromium build.
+
 `scripts/build-linux-news.mjs` reuses the existing localized article navigation,
 footer, typography, table styles and responsive TOCs. It replaces only its own
 index category, prepends its articles to the RSS-source ItemList, keeps article

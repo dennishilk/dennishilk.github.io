@@ -1,0 +1,45 @@
+name: Linux news desktop and mobile QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/linux-news/**'
+      - 'assets/blog/linux-news/**'
+      - 'blog/**'
+      - 'de/blog/**'
+      - 'scripts/build-linux-news.mjs'
+      - 'scripts/test-linux-news-browser.mjs'
+      - '.github/workflows/linux-news-browser.yml'
+  pull_request:
+    paths:
+      - 'content/linux-news/**'
+      - 'assets/blog/linux-news/**'
+      - 'blog/**'
+      - 'de/blog/**'
+      - 'scripts/build-linux-news.mjs'
+      - 'scripts/test-linux-news-browser.mjs'
+      - '.github/workflows/linux-news-browser.yml'
+permissions:
+  contents: read
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser test dependencies
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Check localized article and index layouts without deployment
+        run: node scripts/test-linux-news-browser.mjs
+      - name: Preserve layout screenshots and check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-news-browser-qa
+          path: /tmp/linux-news-browser-qa/
+          retention-days: 7
