@@ -38,6 +38,9 @@
     "test:chernobyl": "node --test tests/chernobyl*.test.mjs",
     "test:chernobyl:browser": "node scripts/test-chernobyl-browser.mjs --articles",
     "build:storage": "node scripts/build-storage-media-lab.mjs && node scripts/build-museum-blog.mjs --storage-only && node scripts/integrate-storage-media-lab.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
-    "test:storage": "node --test tests/storage-media*.test.mjs"
+    "test:storage": "node --test tests/storage-media*.test.mjs",
+    "build:cthulhu-dragon": "node scripts/build-cthulhu-dragon.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:cthulhu-dragon": "node --test tests/cthulhu-dragon.test.mjs",
+    "test:cthulhu-dragon:browser": "node scripts/test-cthulhu-dragon-browser.mjs"
   }
 }

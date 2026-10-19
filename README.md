@@ -177,3 +177,15 @@ Unless otherwise indicated, original editorial content, articles, graphics,
 images, and other creative website content are © Dennis Hilk. Third-party
 materials remain the property of their respective rights holders and are
 subject to their own terms.
+
+## Cthulhu Dragon desktop tutorial
+
+The complete bilingual NixOS/XMonad guide lives at `/blog/nixos-xmonad-kanagawa-dragon/`
+and `/de/blog/nixos-xmonad-kanagawa-dragon/`. Its 15 complete configuration files come
+from the canonical `dennishilk/cthulhu` setup; refresh them with
+`node scripts/sync-cthulhu-dragon.mjs --from /path/to/cthulhu` after committing there.
+`npm run build:cthulhu-dragon` rebuilds both articles, RSS and sitemap offline.
+Run `npm run test:cthulhu-dragon`, `npm run test:cthulhu-dragon:browser` and
+`npm run test:seo`. See `docs/cthulhu-dragon/REVIEW.md` for verification scope, real
+screenshot credits and hardware/browser limitations. The Marked build dependency's
+separate license is retained under `scripts/vendor/`.

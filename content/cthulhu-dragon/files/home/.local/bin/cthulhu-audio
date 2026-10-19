@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export LC_ALL=C
+
+case "${1:-}" in
+  up)   wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ ;;
+  down) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;;
+  mute) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
+  mic)  wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle ;;
+  status) ;; # Read-only mode used by Xmobar; no notification.
+  *) printf 'Usage: cthulhu-audio {up|down|mute|mic|status}\n' >&2; exit 2 ;;
+esac
+
+if [[ "$1" == mic ]]; then
+  state="$(wpctl get-volume @DEFAULT_AUDIO_SOURCE@)"
+  if [[ "$state" == *"[MUTED]"* ]]; then
+    dunstify -a Cthulhu -r 41002 -t 1800 "Mikrofon" "Stummgeschaltet"
+  else
+    dunstify -a Cthulhu -r 41002 -t 1800 "Mikrofon" "Aktiv"
+  fi
+else
+  state="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+  percent="$(awk '{printf "%.0f", $2 * 100}' <<< "$state")"
+  if [[ "$1" == status ]]; then
+    if [[ "$state" == *"[MUTED]"* ]]; then printf 'MUTE\n'; else printf '%s%%\n' "$percent"; fi
+  elif [[ "$state" == *"[MUTED]"* ]]; then
+    dunstify -a Cthulhu -r 41001 -t 1800 -h int:value:0 "Audio" "Stummgeschaltet"
+  else
+    dunstify -a Cthulhu -r 41001 -t 1800 -h "int:value:$percent" "Lautstärke" "$percent%"
+  fi
+fi

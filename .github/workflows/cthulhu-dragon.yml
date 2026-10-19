@@ -1,0 +1,37 @@
+name: Cthulhu Dragon article checks
+on:
+  push:
+    branches: [main]
+    paths: ['content/cthulhu-dragon/**', 'assets/blog/cthulhu-dragon/**', 'blog/nixos-xmonad-kanagawa-dragon/**', 'de/blog/nixos-xmonad-kanagawa-dragon/**', 'scripts/*cthulhu-dragon*', 'tests/cthulhu-dragon.test.mjs', '.github/workflows/cthulhu-dragon.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild complete bilingual articles and check deterministic output
+        run: |
+          npm run build:cthulhu-dragon
+          git diff --exit-code
+          npm run test:cthulhu-dragon
+          node --test tests/blog-rss.test.mjs tests/linux-news.test.mjs
+          npm run test:seo
+      - name: Install isolated browser dependency
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Verify desktop/mobile layout, full code copying and navigation
+        run: npm run test:cthulhu-dragon:browser
+      - name: Preserve screenshots and browser report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cthulhu-dragon-browser-qa
+          path: /tmp/cthulhu-dragon-qa/
+          retention-days: 7

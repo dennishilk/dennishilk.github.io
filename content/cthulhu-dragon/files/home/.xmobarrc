@@ -1,0 +1,18 @@
+Config
+  { font = "xft:Hack:size=11"
+  , bgColor = "#181616"
+  , fgColor = "#c5c9c5"
+  , position = OnScreen 0 (TopSize C 100 28)
+  , lowerOnStart = False
+  , hideOnStart = False
+  , overrideRedirect = True
+  , allDesktops = True
+  , persistent = True
+  , sepChar = "%"
+  , alignSep = "}{"
+  , template = " }<action=`gsimplecal` button=1><fc=#c4b28a>%date%</fc></action>{  <action=`pavucontrol` button=3><fc=#87a987>VOL</fc> %volume%</action>   "
+  , commands =
+      [ Run Date "%H:%M" "date" 100
+      , Run Com "sh" ["-c", "\"$HOME/.local/bin/cthulhu-audio\" status"] "volume" 10
+      ]
+  }

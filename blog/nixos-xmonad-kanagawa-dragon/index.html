@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NixOS XMonad setup: Kanagawa Dragon, startx &amp; full configs · Dennis Hilk</title><meta name="description" content="Rebuild my NixOS XMonad desktop with Kanagawa Dragon: Plasma or Minimal, safe startx migration, dual monitors, complete configs, Kitty, GTK and Fastfetch."><meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/"><link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/"><link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/nixos-xmonad-kanagawa-dragon/"><link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/">
+<link rel="alternate" type="application/rss+xml" title="Dennis Hilk — Blog (English)" href="https://www.dennishilk.com/blog/feed.xml">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Dennis Hilk"><meta property="og:title" content="NixOS + XMonad: Building My Complete Kanagawa Dragon Desktop from Scratch"><meta property="og:description" content="Rebuild my NixOS XMonad desktop with Kanagawa Dragon: Plasma or Minimal, safe startx migration, dual monitors, complete configs, Kitty, GTK and Fastfetch."><meta property="og:url" content="https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/"><meta property="og:image" content="https://www.dennishilk.com/assets/blog/cthulhu-dragon/desktop-2048.webp"><meta property="og:image:width" content="2048"><meta property="og:image:height" content="858"><meta property="og:image:alt" content="Actual Cthulhu desktop: transparent Kitty with Fastfetch over a dark green mountain forest, with Xmobar clock and volume at the top."><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-10-19"><meta property="article:modified_time" content="2026-10-19"><meta property="article:section" content="Linux tutorials &amp; desktop"><meta property="article:author" content="https://www.dennishilk.com/about/">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="NixOS + XMonad: Building My Complete Kanagawa Dragon Desktop from Scratch"><meta name="twitter:description" content="Rebuild my NixOS XMonad desktop with Kanagawa Dragon: Plasma or Minimal, safe startx migration, dual monitors, complete configs, Kitty, GTK and Fastfetch."><meta name="twitter:image" content="https://www.dennishilk.com/assets/blog/cthulhu-dragon/desktop-2048.webp"><meta name="twitter:image:alt" content="Actual Cthulhu desktop: transparent Kitty with Fastfetch over a dark green mountain forest, with Xmobar clock and volume at the top.">
+<link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials"><link rel="stylesheet" href="/assets/blog/cthulhu-dragon/guide.css?v=20261019">
+<link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006"><script defer src="/assets/js/language-toggle.js?v=20261006"></script><script defer src="/blog/navigation.js?v=20261008"></script><script defer src="/assets/blog/cthulhu-dragon/guide.js?v=20261019"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/#article","url":"https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/","mainEntityOfPage":"https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/","headline":"NixOS + XMonad: Building My Complete Kanagawa Dragon Desktop from Scratch","description":"Rebuild my NixOS XMonad desktop with Kanagawa Dragon: Plasma or Minimal, safe startx migration, dual monitors, complete configs, Kitty, GTK and Fastfetch.","inLanguage":"en","datePublished":"2026-10-19","dateModified":"2026-10-19","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/"},"image":"https://www.dennishilk.com/assets/blog/cthulhu-dragon/desktop-2048.webp","wordCount":3983,"articleSection":"Linux tutorials & desktop","keywords":["NixOS XMonad setup","NixOS startx","Kanagawa Dragon GTK","XMonad configuration","Linux desktop customization"],"isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"isBasedOn":"https://github.com/dennishilk/cthulhu","citation":["https://github.com/dennishilk/cthulhu/tree/main/WM/xmonad/nixos-kanagawa-dragon","https://github.com/Fausto-Korpsvart/Kanagawa-GKT-Theme","https://xmonad.github.io/xmonad-docs/"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"NixOS + XMonad: Building My Complete Kanagawa Dragon Desktop from Scratch","item":"https://www.dennishilk.com/blog/nixos-xmonad-kanagawa-dragon/"}]}]}</script></head>
+<body id="page-top">
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk<span class="brand-section">Blog</span></a><nav class="main-nav" aria-label="Main navigation"><a href="/blog/" aria-current="location">Blog</a><details class="tools-menu"><summary>Tools</summary><div class="tools-list"><a href="/tools/image-converter/">Image converter</a><a href="/linux-migration-companion/">Linux Migration Companion</a><a href="https://github.com/dennishilk/windows-telemetry-inspector" title="Project and documentation on GitHub">Windows Telemetry Inspector</a><a href="https://github.com/dennishilk/nvidia-driver" title="Project and documentation on GitHub">NVIDIA Driver for Debian</a><a href="https://github.com/dennishilk/spdif-fix" title="Project and documentation on GitHub">SPDIF-Fix</a><a href="https://github.com/dennishilk/skynet-shredder" title="Project and documentation on GitHub">Skynet Shredder</a></div></details><a href="/museum/">Computer Museum</a><a href="/about/">About</a></nav><a class="language-link" href="/de/blog/nixos-xmonad-kanagawa-dragon/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="article-main dragon-guide"><nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><a href="/blog/#tutorials">Linux tutorials &amp; desktop</a></nav>
+<header class="article-header"><p class="eyebrow">CTHULHU · NIXOS / X11 / XMONAD</p><h1>NixOS + XMonad: Building My Complete Kanagawa Dragon Desktop from Scratch</h1><p class="intro">Two installation routes, one reproducible desktop: the real files behind Cthulhu, with mouse-driven tiling, a managed startx session and a complete Kanagawa Dragon configuration library.</p><div class="article-meta"><span>By <a href="/about/">Dennis Hilk</a></span><time datetime="2026-10-19">19 October 2026</time><span>19 minutes plus installation</span></div></header>
+<figure class="dragon-hero"><a href="/assets/blog/cthulhu-dragon/desktop-2048.webp" aria-label="Open desktop screenshot at full resolution"><img src="/assets/blog/cthulhu-dragon/desktop-1920.webp" srcset="/assets/blog/cthulhu-dragon/desktop-960.webp 960w, /assets/blog/cthulhu-dragon/desktop-1920.webp 1920w, /assets/blog/cthulhu-dragon/desktop-2048.webp 2048w" sizes="(max-width:1100px) 94vw, 1080px" width="2048" height="858" fetchpriority="high" decoding="async" alt="Actual Cthulhu desktop: transparent Kitty with Fastfetch over a dark green mountain forest, with Xmobar clock and volume at the top."></a><figcaption>My actual desktop on 19 October 2026. Screenshot: Dennis Hilk. Visible third-party artwork retains its original rights; supply your own images for the reproduction.</figcaption></figure>
+<div class="dragon-overview"><div><span class="dragon-number">02</span><span>routes: Plasma or Minimal</span></div><div><span class="dragon-number">15</span><span>complete files</span></div><a href="https://github.com/dennishilk/cthulhu/tree/main/WM/xmonad/nixos-kanagawa-dragon">Setup on GitHub ↗</a></div>
+<div class="article-layout"><article class="article-copy" aria-label="NixOS + XMonad: Building My Complete Kanagawa Dragon Desktop from Scratch"><details class="mobile-toc"><summary>In this guide</summary><ol><li><a href="#choose-the-installation-route">Choose the installation route</a></li><li><a href="#route-a-prepare-inside-plasma">Route A: prepare inside Plasma</a></li><li><a href="#route-b-prepare-from-minimal">Route B: prepare from Minimal</a></li><li><a href="#shared-installation-system-files-and-home-files">Shared installation: system files and home files</a></li><li><a href="#kanagawa-dragon-install-the-gtk-theme">Kanagawa Dragon: install the GTK theme</a></li><li><a href="#monitors-wallpapers-and-the-cursor">Monitors, wallpapers and the cursor</a></li><li><a href="#route-a-test-first-then-remove-plasma">Route A: test first, then remove Plasma</a></li><li><a href="#what-startx-manages">What startx manages</a></li><li><a href="#xmonad-mouse-movement-tiling-and-fullscreen">XMonad: mouse movement, tiling and fullscreen</a></li><li><a href="#kitty-xmobar-notifications-and-audio">Kitty, Xmobar, notifications and audio</a></li><li><a href="#fastfetch-image-modules-and-your-own-system-age">Fastfetch: image, modules and your own system age</a></li><li><a href="#vs-code-and-optional-applications">VS Code and optional applications</a></li><li><a href="#complete-configuration-file-library">Complete configuration file library</a></li><li><a href="#troubleshooting-and-recovery">Troubleshooting and recovery</a></li><li><a href="#evidence-image-credits-and-sources">Evidence, image credits and sources</a></li></ol></details>
+<p>Cthulhu is my everyday Linux workstation: a Ryzen 7 5800X3D, a Radeon RX 9060 XT and two very different monitors. In this rebuild I returned to XMonad. I wanted a desktop whose window placement, launcher, notifications and startup I could understand by reading a handful of files. Kanagawa Dragon ties those pieces together: near-black surfaces, warm text and quiet green accents.</p>
+<p>A tiling window manager arranges windows instead of asking me to position every new application. That does not mean abandoning the mouse. This configuration focuses the monitor under the pointer, resizes tile boundaries with the mouse and lets me drag a window across monitors before it tiles again. The result is the desktop documented here, based on my working files from 19 October 2026.</p>
+<p>Removing Plasma removes its complete desktop session from this startup path; XMonad, Xmobar, Dunst and Picom take specific jobs. This is a choice about control and workflow. I have not measured RAM savings or improved game performance. X11 remains the basis, including for OBS and Steam; this guide cannot establish compatibility for every game, GPU or capture workflow.</p>
+<h2 id="choose-the-installation-route">Choose the installation route</h2>
+<p>Both routes start with an already installed, bootable NixOS system and converge at the same desktop module and home files. This is not a disk-partitioning guide. Keep the installation&#39;s bootloader, network, existing account, hostname, locale, storage mounts, hardware-configuration.nix and system.stateVersion. The desktop module deliberately contains none of my drive labels or kernel choices.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison or reference table"><table><thead><tr>
+<th>Route</th>
+<th>Starting point</th>
+<th>First graphical test</th>
+<th>Final session</th>
+</tr>
+</thead><tbody><tr>
+<td>A — recommended for newcomers</td>
+<td>Graphical NixOS installation with Plasma, working browser</td>
+<td>Choose XMonad in SDDM, then separately verify startx from a TTY</td>
+<td>TTY login → startx → XMonad</td>
+</tr>
+<tr>
+<td>B — experienced users</td>
+<td>Successfully installed NixOS Minimal, network and TTY login</td>
+<td>startx from the local TTY</td>
+<td>TTY login → startx → XMonad</td>
+</tr>
+</tbody></table></div><p>The examples target the NixOS 26.05 option layout. CI evaluates a recorded nixpkgs revision; it is a check of these examples, not a pin applied to your installed system. Keep your own channel or flake inputs. Newer revisions may require adaptation. Flake users must add newly imported files to their tracked configuration source before rebuilding with their existing --flake target.</p>
+<h2 id="route-a-prepare-inside-plasma">Route A: prepare inside Plasma</h2>
+<p>Install NixOS using its graphical installer and select Plasma. Reboot into that installation, check networking and open this tutorial in Firefox. Open Konsole beside the browser. The following commands work in Bash and Fish; execute them in order, one block at a time. Existing directories are never assumed disposable.</p>
+<p>Install Git temporarily and clone the real repository. If ~/cthulhu already exists, inspect it instead of cloning over it.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">nix-shell -p git
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">git clone --single-branch --branch main https://github.com/dennishilk/cthulhu.git <span class="tok-string">&quot;$HOME/cthulhu&quot;</span>
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">cd <span class="tok-string">&quot;$HOME/cthulhu/WM/xmonad/nixos-kanagawa-dragon&quot;</span>
+</code></pre></figure>
+<p>Keep Plasma and SDDM enabled throughout preparation. Do not set standalone = true yet. Continue with the shared installation section below, then return to the migration section after the first rebuild.</p>
+<h2 id="route-b-prepare-from-minimal">Route B: prepare from Minimal</h2>
+<p>Start after the Minimal installation has booted from disk, with working networking and your normal user logged into a local TTY. Your account needs sudo permission. A remote SSH session is useful for editing, but startx belongs on the local virtual terminal. You never need to install Plasma for this route.</p>
+<p>The temporary shell supplies Git and Nano even on a small installation. If you already use Fish, entering nix-shell normally starts a Bash subshell; exit returns to Fish.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">nix-shell -p git nano
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">git clone --single-branch --branch main https://github.com/dennishilk/cthulhu.git <span class="tok-string">&quot;$HOME/cthulhu&quot;</span>
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">cd <span class="tok-string">&quot;$HOME/cthulhu/WM/xmonad/nixos-kanagawa-dragon&quot;</span>
+</code></pre></figure>
+<p>Use the same files and commands below. In cthulhu-local.nix set standalone = true immediately: this route has no Plasma installation to preserve. After the first successful rebuild, reboot so Fish, groups and session variables come from a fresh login. Then run startx as your normal user.</p>
+<h2 id="shared-installation-system-files-and-home-files">Shared installation: system files and home files</h2>
+<p>Back up /etc/nixos before editing it. The dated destination must not already exist; choose another suffix if you repeat this step. These are copies, not replacements for the generated hardware file.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo cp -a /etc/nixos <span class="tok-string">&quot;/etc/nixos.before-cthulhu-$(date +%Y%m%d-%H%M%S)&quot;</span>
+</code></pre></figure>
+<p>First check whether the two destination filenames already exist. If either exists, compare it and choose a fresh filename or consciously merge it before continuing. GNU cp -n below skips an existing destination rather than overwriting it; verify what was actually installed.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">ls -l /etc/nixos/desktop.nix /etc/nixos/cthulhu-<span class="tok-keyword">local</span>.nix
+</code></pre></figure>
+<p>A missing-file message is expected on a fresh installation. Copy the modules and open your local options:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo cp -n nixos/desktop.nix nixos/cthulhu-<span class="tok-keyword">local</span>.nix /etc/nixos/
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nano /etc/nixos/cthulhu-<span class="tok-keyword">local</span>.nix
+</code></pre></figure>
+<p>Replace YOUR_LOGIN with your existing account name (check with whoami). Choose your X11 keyboard layout. Route A keeps standalone false; Route B uses true. Set personalApps = true to install Chrome, VS Code, OBS and Kdenlive and reproduce all their launcher shortcuts. With false, Firefox and the essential desktop tools remain available; M-b/M-o/M-v require either those optional packages or your own replacement commands. gaming = true adds Steam, Lutris and 32-bit graphics/audio support. Both optional switches allow unfree packages; virtualization, Ledger support, printer services and my personal disks are not prerequisites.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">whoami
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nano /etc/nixos/configuration.nix
+</code></pre></figure>
+<p>Add ./cthulhu-local.nix to the EXISTING imports list. On an installation whose only import is the generated hardware file, that list becomes the following. Preserve any other imports and every unrelated setting in your file:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">nix</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-nix">imports = [ ./hardware-configuration.nix ./cthulhu-<span class="tok-keyword">local</span>.nix ];
+</code></pre></figure>
+<p>Do not copy a new system.stateVersion from this article. Keep the value already generated for your installation. Keep your own graphics driver configuration too: this module enables the graphics stack but does not replace an NVIDIA driver setup or choose a new kernel for you. If an option conflicts with an existing declaration, read the reported files and merge that specific setting; do not paste another complete machine configuration over it.</p>
+<p>Review the user installer before running it, without sudo:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">less scripts/install-user.sh
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">bash scripts/install-user.sh
+</code></pre></figure>
+<p>It copies only the published home/ files, marks the helpers executable and creates your own Fastfetch age marker once. It preflights the complete set and refuses differing existing files, destination symlinks and an existing ~/.config/xmonad directory that would take precedence over ~/.xmonad. It never removes Plasma or edits /etc/nixos. If it reports a conflict, copy the named file to a backup, compare it and move it aside deliberately. An identical rerun leaves file contents and the marker timestamp intact. Once you customize a file, a rerun reports that difference instead of undoing your work.</p>
+<p>Inspect and build your system before activating it. For a channel-based installation:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nixos-rebuild build
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nixos-rebuild switch
+</code></pre></figure>
+<p>Use your existing --flake argument for a flake-managed host. Changes to NixOS services/packages require a rebuild. Editing a home file does not require a NixOS rebuild.</p>
+<h2 id="kanagawa-dragon-install-the-gtk-theme">Kanagawa Dragon: install the GTK theme</h2>
+<p>The GTK source is <a href="https://github.com/Fausto-Korpsvart/Kanagawa-GKT-Theme">Fausto-Korpsvart/Kanagawa-GKT-Theme</a>. It was archived on 3 October 2026 and uses GPL-3.0. The installer requires sassc; upstream also lists Murrine and gnome-themes-extra for legacy GTK rendering. The desktop module supplies these packages. We fetch upstream source rather than embedding its theme assets in this repository.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">mkdir -p <span class="tok-string">&quot;$HOME/.local/share&quot;</span>
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">git clone https://github.com/Fausto-Korpsvart/Kanagawa-GKT-Theme.git <span class="tok-string">&quot;$HOME/.local/share/kanagawa-gtk-source&quot;</span>
+</code></pre></figure>
+<p>Use the audited upstream revision for this reproduction. An existing source checkout should be reviewed before changing its revision.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">git -C <span class="tok-string">&quot;$HOME/.local/share/kanagawa-gtk-source&quot;</span> checkout --detach 55ca4ba249eba21f861b9866b71ab41bb8930318
+</code></pre></figure>
+<p>Run as your normal user. The upstream installer replaces existing theme directories of the same name; back up any customized Kanagawa theme first. This is the command used on my desktop:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">nix-shell -p sassc --run <span class="tok-string">'bash ~/.local/share/kanagawa-gtk-source/themes/install.sh -n Kanagawa -t green -c dark --tweaks dragon'</span>
+</code></pre></figure>
+<p>The explicit -n Kanagawa fixes the theme name. During setup the Nix shell environment produced an unintended name without it. Check that ~/.themes/Kanagawa-Green-Dark-Dragon exists. GTK 3 applications such as Thunar and Mousepad read settings.ini when started; close and reopen them after theme changes. No Plasma or GNOME settings panel is required.</p>
+<p>GTK 4&#39;s settings file now also uses Bibata-Modern-Classic; the private snapshot still said breeze_cursors. This is a deliberate publication correction. A theme name alone does not guarantee GTK 4 or libadwaita styling. Upstream offers gtk-4.0 CSS/assets and an -l option, but that option replaces existing GTK 4 CSS links. We do not enable it automatically. Applications using libadwaita or sandboxed runtimes may retain their own appearance. GTK 3 Thunar/Mousepad are the reliable core of this reproduction; global GTK_THEME overrides are unnecessary here.</p>
+<p>The palette has specific jobs: #181616 is the dark base, #c5c9c5 the text, #87a987 the focus/selection accent, #393836 the inactive border and #c4746e a critical notification. Kitty uses a real, credited Kanagawa Dragon palette file; GTK, Rofi, Dunst, Xmobar and XMonad use matching choices rather than one application magically theming the others.</p>
+<h2 id="monitors-wallpapers-and-the-cursor">Monitors, wallpapers and the cursor</h2>
+<p>Inside the first graphical XMonad session, inspect your outputs:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">xrandr
+</code></pre></figure>
+<p>My first monitor is DP-2, 3440×1440 at 144 Hz, with HDMI-1 at 1920×1080 and 60 Hz to its right. Those connector names and modes are hardware-specific. The published monitors.sh defaults to configure_layout=false and preserves the current layout. Edit the names, supported modes and positions before setting that switch to true. A single-monitor setup can keep it false and use the working Xorg layout, or replace the two-output command with a command for its one output.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">nano <span class="tok-string">&quot;$HOME/.config/cthulhu/monitors.sh&quot;</span>
+</code></pre></figure>
+<p>Use your own images. 1.png is my first monitor&#39;s wallpaper; 2.png is the second monitor&#39;s wallpaper. On one monitor, 1.png is enough. The helper passes only files that exist; with no images it sets a solid Dragon background. feh uses Xinerama&#39;s monitor order; if images land on the wrong screens, check that order with feh --list-xinerama and swap the file order. --primary does not universally redefine feh&#39;s ordering.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">mkdir -p <span class="tok-string">&quot;$HOME/Bilder/wallpaper&quot;</span>
+</code></pre></figure>
+<p>Copy your chosen PNGs there with Thunar or cp, keeping these filenames. For example, after placing a picture at ~/Pictures/my-wallpaper.png:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">cp -n <span class="tok-string">&quot;$HOME/Pictures/my-wallpaper.png&quot;</span> <span class="tok-string">&quot;$HOME/Bilder/wallpaper/1.png&quot;</span>
+</code></pre></figure>
+<p>Apply immediately from an X11 terminal:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">bash <span class="tok-string">&quot;$HOME/.config/cthulhu/monitors.sh&quot;</span>
+</code></pre></figure>
+<p>feh --bg-max scales to fit without cropping and can leave margins. --bg-fill fills the screen and crops whatever exceeds its aspect ratio. My startup uses --bg-max. The directory name Bilder is just this configuration&#39;s convention, not a requirement for a German locale; change the helper if you prefer another directory.</p>
+<p>Bibata-Modern-Classic is the black cursor. NixOS exports XCURSOR_THEME and XCURSOR_SIZE=24 at login; both GTK settings files match them, and xsetroot -cursor_name left_ptr initializes the root-window pointer. The package makes the cursor theme available. A fresh login/startx session is required for changed session variables; reloading XMonad alone cannot replace its inherited environment.</p>
+<h2 id="route-a-test-first-then-remove-plasma">Route A: test first, then remove Plasma</h2>
+<p>After preparation, log out of Plasma and choose the XMonad session in SDDM. Test Kitty (Super+Return), Rofi, Thunar, dialogs, fullscreen and your monitor arrangement. This verifies the window manager while the graphical login still offers a recovery route.</p>
+<p>Next log out of XMonad. Switch to a TTY with Ctrl+Alt+F3 and log in as your normal user. From that TTY stop SDDM temporarily, after saving all graphical work:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo systemctl stop display-manager
+</code></pre></figure>
+<p>The generated system-wide xinitrc is used only if ~/.xinitrc is absent and XINITRC is unset. Inspect an existing file and move it to your own backup if you want to use the generated script. Do not create a separate minimal exec xmonad file: it bypasses the managed session initialization.</p>
+<p>Bash, if XINITRC was set:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">bash</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-bash">unset XINITRC
+</code></pre></figure>
+<p>Fish, if XINITRC was set:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">fish</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-fish"><span class="tok-keyword">set</span> -e XINITRC
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">startx
+</code></pre></figure>
+<p>Do not use sudo startx and do not start it inside an existing desktop terminal. Verify the Polkit agent, USB mounting, notifications, audio and opening files. In an XMonad terminal:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">systemctl --user status nixos-fake-graphical-session.target cthulhu-polkit.service
+</code></pre></figure>
+<p>If this test fails, exit XMonad with Super+Shift+Q and restore the login manager from the TTY:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo systemctl start display-manager
+</code></pre></figure>
+<p>Only after the standalone session works, edit /etc/nixos/cthulhu-local.nix and set standalone=true. Save your work, exit XMonad, rebuild from the TTY and reboot. That explicit switch overrides Plasma/SDDM enablement and selects multi-user.target. It does not delete your Plasma files or user data.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nano /etc/nixos/cthulhu-<span class="tok-keyword">local</span>.nix
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nixos-rebuild build
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nixos-rebuild switch
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo reboot
+</code></pre></figure>
+<p>At the console, log in and run startx. Route B arrives at exactly this point after its own first rebuild and reboot; it skips the SDDM testing and removal steps entirely.</p>
+<h2 id="what-startx-manages">What startx manages</h2>
+<p>NixOS generates /etc/X11/xinit/xinitrc from the enabled XMonad session. Our extraCommands identify this session as XMonad and import the display/desktop environment into D-Bus and systemd. The generated script imports DISPLAY and XDG_SESSION_ID, starts nixos-fake-graphical-session.target, runs the XMonad session, waits for it and stops the target when the session exits. The Polkit agent follows this target. UDisks2, GVfs and the GTK portal provide the supporting desktop services.</p>
+<p>The target name is NixOS implementation terminology, not an extra desktop to install. Do not independently start another D-Bus session or a second copy of Picom/Polkit on top. The complete module below supplies the customization; the generated xinitrc stays owned by NixOS. Inspect the actual result on your installation with:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">cat /etc/X11/xinit/xinitrc
+</code></pre></figure>
+<p>The GTK portal handles supported desktop requests such as file dialogs. It does not provide a Wayland screencast backend; OBS capture on this X11 setup must be checked using the available X11 sources, for example XSHM, and the application&#39;s actual permissions.</p>
+<h2 id="xmonad-mouse-movement-tiling-and-fullscreen">XMonad: mouse movement, tiling and fullscreen</h2>
+<p>The full Haskell configuration is in the file library below. Super/Windows is Mod4. focusFollowsMouse handles windows; focusOnMouseMove from xmonad-contrib updates focus on pointer movement. The custom root MotionEvent hook also examines screen rectangles when the pointer is over empty desktop space and switches to the workspace currently visible on that monitor. This is why monitor focus does not depend on clicking a window.</p>
+<p>With Super+left-drag, mouseMoveWindow temporarily floats the window. afterDrag schedules the final action after release. queryPointer and pointScreen find the destination monitor; W.shiftWin sends the window to that monitor&#39;s visible workspace and W.sink returns it to tiling. This logic is retained from my working configuration. Dropping a deliberately floating window with this gesture also tiles it. Super+right-drag uses the ordinary floating resize action; use Super+F to return it to tiling.</p>
+<p>MouseResizableTile and its mirrored variant provide draggable tile dividers. Use the separator handles between tiled windows to change their proportions; resizing a floating rectangle is a different operation. spacingRaw adds outer 8-pixel and window 6-pixel borders; avoidStruts reserves Xmobar&#39;s area. Navigation2D supplies directional window swapping. Dialogs float through isDialog. ewmh and ewmhFullscreen support application fullscreen requests; the Full layout selected with Super+Space still has this configuration&#39;s spacing and bar reservation and is not the same thing as application fullscreen.</p>
+<p>Workspaces 1–9 form one global set. Each monitor shows a different workspace; they are not two independent sets of nine. Super+number uses the inherited greedy-view behavior, so selecting a workspace already visible on the other monitor can exchange the displayed workspaces. Super+Shift+number moves the focused window there. The screen shortcuts below refer to XMonad screen indices, which need not match connector numbering.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison or reference table"><table><thead><tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead><tbody><tr>
+<td>Super+Return / Super+Shift+Return</td>
+<td>Kitty (explicit / inherited default)</td>
+</tr>
+<tr>
+<td>Super+T / Super+M</td>
+<td>Thunar / Mousepad</td>
+</tr>
+<tr>
+<td>Super+B / Super+O / Super+V</td>
+<td>Chrome / OBS / VS Code (personalApps)</td>
+</tr>
+<tr>
+<td>Super+D</td>
+<td>Rofi application launcher</td>
+</tr>
+<tr>
+<td>Super+Q</td>
+<td>Close focused window; this overrides the default restart key</td>
+</tr>
+<tr>
+<td>Super+F</td>
+<td>Toggle floating at a centered 70% size / sink back to tiling</td>
+</tr>
+<tr>
+<td>Super+Left / Super+Right</td>
+<td>Focus under pointer, then swap window left/right</td>
+</tr>
+<tr>
+<td>Super+left mouse</td>
+<td>Drag; release on destination monitor and tile</td>
+</tr>
+<tr>
+<td>Super+middle mouse</td>
+<td>Promote focused window to master</td>
+</tr>
+<tr>
+<td>Super+right mouse</td>
+<td>Resize as a floating window</td>
+</tr>
+<tr>
+<td>Super+Space</td>
+<td>Cycle MouseResizableTile, mirrored variant and Full</td>
+</tr>
+<tr>
+<td>Super+J / Super+K</td>
+<td>Inherited next/previous focus</td>
+</tr>
+<tr>
+<td>Super+1…9 / Super+Shift+1…9</td>
+<td>View workspace / move window</td>
+</tr>
+<tr>
+<td>Super+W / Super+E / Super+R</td>
+<td>Focus screen 0 / 1 / 2, if present</td>
+</tr>
+<tr>
+<td>Super+Shift+W / E / R</td>
+<td>Send window to workspace on screen 0 / 1 / 2</td>
+</tr>
+<tr>
+<td>Print</td>
+<td>Select screenshot region; save under ~/Bilder/Screenshots</td>
+</tr>
+<tr>
+<td>Volume up/down, mute, microphone mute</td>
+<td>PipeWire helper and Dunst feedback</td>
+</tr>
+<tr>
+<td>Super+Ctrl+R</td>
+<td>Recompile, then restart only if compilation succeeds</td>
+</tr>
+<tr>
+<td>Super+Shift+Q</td>
+<td>Exit the XMonad session (inherited default)</td>
+</tr>
+</tbody></table></div><p>After editing xmonad.hs, use Super+Ctrl+R or the command below inside XMonad. Compilation errors are reported without intentionally replacing the running configuration; keep an open terminal while testing.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">xmonad --recompile &amp;&amp; xmonad --restart
+</code></pre></figure>
+<p>spawnOnce remembers commands across normal XMonad restarts. It will not rerun your monitor setup or replace an already started Xmobar, Dunst or Picom after this restart. Run the monitor helper explicitly for wallpaper changes. For daemon configuration changes, close/restart that component deliberately, or exit the X session and run startx again. Session environment changes require a new login.</p>
+<h2 id="kitty-xmobar-notifications-and-audio">Kitty, Xmobar, notifications and audio</h2>
+<p>Kitty includes current-theme.conf and sets background_opacity 0.8. On X11, transparency needs a compositor. This desktop starts picom --backend xrender --daemon from XMonad; there is no separate working picom.conf in the source handoff. XRender is the recorded choice, not a claim that it is best for every GPU. Existing ~/.config/picom.conf or ~/.config/picom/picom.conf can still be picked up by Picom: review an old config if the command behaves differently. Avoid running a second compositor while testing.</p>
+<p>Xmobar appears on screen index 0, with a 28-pixel height, Hack font, clock and volume. The clock opens gsimplecal with a left click; right-clicking volume opens pavucontrol. The source&#39;s tiny shell volume formatter displayed 0.05 as 05% and ignored mute. The published version asks the shared audio helper for a read-only status so 5% and MUTE are accurate. Its 10-tick interval updates about once a second. Dunst uses the same Dragon background/green frame and red critical notifications.</p>
+<p>cthulhu-audio controls the default WirePlumber sink/source via wpctl. Volume moves in five-percent steps and increases are capped at 1.0 (100%). Output mute and microphone mute use different notification replacement IDs, preventing a long queue of volume popups. LC_ALL=C stabilizes decimal parsing. The visible notification labels remain German, matching my actual files; change those strings if desired. wpctl status and pavucontrol help select the correct device when HDMI audio becomes the default.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">wpctl status
+</code></pre></figure>
+<p>Hack is explicitly installed for Xmobar, Dunst, Rofi and VS Code. Nerd Font packages provide Fastfetch&#39;s symbols. Missing glyphs are a font/fallback issue, not evidence that the system-information module has failed.</p>
+<h2 id="fastfetch-image-modules-and-your-own-system-age">Fastfetch: image, modules and your own system age</h2>
+<p>The full JSONC retains the framed information layout: user/host, uptime, OS, kernel, WM, terminal, shell, CPU, root disk, memory/swap, host, GPU, displays, age and colors. The personal Games.Vol1/Games.Vol2/Homelab rows have been removed from the portable default. Add disk modules with your own mounted paths if you need them; the root disk module already works without my drives. The GPU format&#39;s numbered placeholders are inherited from the source and can produce empty fields when a driver does not report that information.</p>
+<p>Use an image you own or are permitted to redistribute at ~/.config/fastfetch/1.png. This filename is independent of the wallpaper directory. kitty-icat sends it through Kitty&#39;s image protocol, using width 30 and height 15 character cells, top padding 1, left 2 and right 4. It requires a suitable graphical Kitty terminal and its kitten helper; a plain Linux console, unsupported terminal or some multiplexer sessions will not render it the same way. Without an image yet, test the information layout with fastfetch --logo none.</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">fastfetch --logo none
+</code></pre></figure>
+<p>After adding your image, run fastfetch in Kitty. The installer creates ~/.config/fastfetch/cthulhu-born only if absent. The command module subtracts its modification time from the current time and reports whole days. This is a user-maintained installation marker, not automatically the age of the motherboard or Nix store. The private marker dated back to July 2022; new users do not inherit that date. If you create it yourself, use touch once at installation time and avoid touching it again unless you mean to reset the counter.</p>
+<h2 id="vs-code-and-optional-applications">VS Code and optional applications</h2>
+<p>settings.json selects Kanagawa Dragon, Material Icon Theme and Hack. Install the extensions from their actual publishers after enabling personalApps. The source handoff did not include an extension inventory; the following verified theme package provides the required theme label:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">code --install-extension metaphore.kanagawa-vscode-color-theme
+</code></pre></figure>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">code --install-extension PKief.material-icon-theme
+</code></pre></figure>
+<p>Restart VS Code if the theme is not applied immediately. VS Code settings are not NixOS modules. Steam/Lutris support is opt-in; existing Proton prefixes, library mounts, game compatibility and my ongoing Radeon troubleshooting are separate from reproducing the desktop. OBS and Kdenlive are installed through the personal-app switch, with no invented performance results.</p>
+<h2 id="complete-configuration-file-library">Complete configuration file library</h2>
+<p>The following are the complete published files, not fragments. The GitHub and raw links point to the matching setup tree. This reusable desktop module is the safe alternative to publishing my complete host-specific configuration.nix as an installer. Your original configuration.nix imports it and retains all installation-specific decisions.</p>
+<h3 id="nixos-desktop-nix">nixos/desktop.nix</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/nixos/desktop.nix">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/nixos/desktop.nix">Raw</a></p>
+<figure class="code-block" data-source-file="nixos/desktop.nix"><figcaption><span>nixos/desktop.nix</span><span class="code-language">nix</span></figcaption><pre tabindex="0" aria-label="nixos/desktop.nix"><code class="language-nix">{ config, lib, pkgs, ... }:
+<span class="tok-keyword">let</span> cfg = config.cthulhu.desktop;
+<span class="tok-keyword">in</span> {
+  options.cthulhu.desktop = {
+    enable = lib.mkEnableOption <span class="tok-string">&quot;the Cthulhu Kanagawa Dragon X11 desktop&quot;</span>;
+    user = lib.mkOption {
+      type = lib.types.str;
+      description = <span class="tok-string">&quot;An existing normal login account; this module does not create accounts.&quot;</span>;
+    };
+    keyboardLayout = lib.mkOption { type = lib.types.str; default = <span class="tok-string">&quot;de&quot;</span>; };
+    standalone = lib.mkOption {
+      type = lib.types.bool;
+      default = <span class="tok-keyword">false</span>;
+      description = <span class="tok-string">&quot;Explicitly disable Plasma/SDDM after testing startx from a TTY.&quot;</span>;
+    };
+    personalApps = lib.mkOption {
+      type = lib.types.bool;
+      default = <span class="tok-keyword">false</span>;
+      description = <span class="tok-string">&quot;Install Chrome, VS Code, OBS, Kdenlive and media tools; allows unfree software.&quot;</span>;
+    };
+    gaming = lib.mkOption {
+      type = lib.types.bool;
+      default = <span class="tok-keyword">false</span>;
+      description = <span class="tok-string">&quot;Install Steam/Lutris and 32-bit graphics/audio support; allows unfree software.&quot;</span>;
+    };
+  };
+  config = lib.mkIf cfg.enable (lib.mkMerge [ {
+    assertions = [ {
+      assertion = cfg.user != <span class="tok-string">&quot;YOUR_LOGIN&quot;</span> &amp;&amp; config.users.users.${cfg.user}.isNormalUser;
+      message = <span class="tok-string">&quot;Set cthulhu.desktop.user to an existing normal account from your installation.&quot;</span>;
+    } ];
+    services.xserver = {
+      enable = <span class="tok-keyword">true</span>;
+      xkb.layout = cfg.keyboardLayout;
+      desktopManager.xterm.enable = <span class="tok-keyword">false</span>;
+      windowManager.xmonad = {
+        enable = <span class="tok-keyword">true</span>;
+        enableContribAndExtras = <span class="tok-keyword">true</span>;
+      };
+      displayManager.startx = {
+        enable = <span class="tok-keyword">true</span>;
+        generateScript = <span class="tok-keyword">true</span>;
+        extraCommands = <span class="tok-string">''</span>
+          <span class="tok-keyword">export</span> XDG_CURRENT_DESKTOP=XMonad
+          <span class="tok-keyword">export</span> XDG_SESSION_DESKTOP=xmonad
+          <span class="tok-keyword">export</span> XDG_SESSION_TYPE=x11
+          dbus-update-activation-environment --systemd DISPLAY XAUTHORITY \
+            XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
+        <span class="tok-string">''</span>;
+      };
+    };
+    programs.fish.enable = <span class="tok-keyword">true</span>;
+    users.users.${cfg.user}.shell = pkgs.fish;
+    environment.sessionVariables = {
+      XCURSOR_THEME = <span class="tok-string">&quot;Bibata-Modern-Classic&quot;</span>;
+      XCURSOR_SIZE = <span class="tok-string">&quot;24&quot;</span>;
+    };
+    hardware.graphics.enable = <span class="tok-keyword">true</span>;
+    services.pipewire = {
+      enable = <span class="tok-keyword">true</span>;
+      alsa.enable = <span class="tok-keyword">true</span>;
+      pulse.enable = <span class="tok-keyword">true</span>;
+      wireplumber.enable = <span class="tok-keyword">true</span>;
+    };
+    services.pulseaudio.enable = lib.mkForce <span class="tok-keyword">false</span>;
+    security.rtkit.enable = <span class="tok-keyword">true</span>;
+    services.dbus.enable = <span class="tok-keyword">true</span>;
+    services.udisks2.enable = <span class="tok-keyword">true</span>;
+    services.gvfs.enable = <span class="tok-keyword">true</span>;
+    security.polkit.enable = <span class="tok-keyword">true</span>;
+    systemd.user.services.cthulhu-polkit = {
+      description = <span class="tok-string">&quot;Polkit agent for the generated startx session&quot;</span>;
+      wantedBy = [ <span class="tok-string">&quot;nixos-fake-graphical-session.target&quot;</span> ];
+      partOf = [ <span class="tok-string">&quot;nixos-fake-graphical-session.target&quot;</span> ];
+      serviceConfig = {
+        ExecStart = <span class="tok-string">&quot;${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1&quot;</span>;
+        Restart = <span class="tok-string">&quot;on-failure&quot;</span>;
+      };
+    };
+    programs.thunar.enable = <span class="tok-keyword">true</span>;
+    services.tumbler.enable = <span class="tok-keyword">true</span>;
+    xdg.portal = {
+      enable = <span class="tok-keyword">true</span>;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      config.xmonad.default = [ <span class="tok-string">&quot;gtk&quot;</span> ];
+    };
+    fonts.fontconfig.enable = <span class="tok-keyword">true</span>;
+    fonts.packages = <span class="tok-keyword">with</span> pkgs; [
+      hack-font nerd-fonts.jetbrains-mono nerd-fonts.fira-code
+      noto-fonts noto-fonts-color-emoji
+    ];
+    environment.systemPackages = <span class="tok-keyword">with</span> pkgs; [
+      bash git curl nano kitty xterm firefox mousepad rofi xmobar dunst
+      picom feh xrandr xsetroot maim gsimplecal pavucontrol
+      wireplumber libnotify fastfetch bibata-cursors kdePackages.breeze-icons
+      sassc gtk-engine-murrine gnome-themes-extra
+    ];
+  }
+  (lib.mkIf cfg.personalApps {
+    nixpkgs.config.allowUnfree = <span class="tok-keyword">true</span>;
+    environment.systemPackages = <span class="tok-keyword">with</span> pkgs; [
+      google-chrome vscode obs-studio kdePackages.kdenlive vlc ffmpeg-full
+    ];
+  })
+  (lib.mkIf cfg.gaming {
+    nixpkgs.config.allowUnfree = <span class="tok-keyword">true</span>;
+    programs.steam.enable = <span class="tok-keyword">true</span>;
+    hardware.graphics.enable32Bit = <span class="tok-keyword">true</span>;
+    services.pipewire.alsa.support32Bit = <span class="tok-keyword">true</span>;
+    environment.systemPackages = [ pkgs.lutris pkgs.vulkan-tools pkgs.libva-utils ];
+  })
+  (lib.mkIf cfg.standalone {
+    services.desktopManager.plasma6.enable = lib.mkForce <span class="tok-keyword">false</span>;
+    services.displayManager.sddm.enable = lib.mkForce <span class="tok-keyword">false</span>;
+    systemd.defaultUnit = <span class="tok-string">&quot;multi-user.target&quot;</span>;
+  }) ]);
+}
+</code></pre></figure>
+<h3 id="nixos-cthulhu-local-nix">nixos/cthulhu-local.nix</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/nixos/cthulhu-local.nix">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/nixos/cthulhu-local.nix">Raw</a></p>
+<figure class="code-block" data-source-file="nixos/cthulhu-local.nix"><figcaption><span>nixos/cthulhu-local.nix</span><span class="code-language">nix</span></figcaption><pre tabindex="0" aria-label="nixos/cthulhu-local.nix"><code class="language-nix">{ ... }: {
+  imports = [ ./desktop.nix ];
+  cthulhu.desktop = {
+    enable = <span class="tok-keyword">true</span>;
+    user = <span class="tok-string">&quot;YOUR_LOGIN&quot;</span>; <span class="tok-comment"># Your existing account; do not create a second user.</span>
+    keyboardLayout = <span class="tok-string">&quot;de&quot;</span>; <span class="tok-comment"># e.g. &quot;us&quot;; keep locale/timezone in configuration.nix.</span>
+    standalone = <span class="tok-keyword">false</span>; <span class="tok-comment"># Path A: keep Plasma/SDDM until startx has been tested.</span>
+    personalApps = <span class="tok-keyword">false</span>; <span class="tok-comment"># true enables Chrome/Code/OBS/Kdenlive shortcuts.</span>
+    gaming = <span class="tok-keyword">false</span>; <span class="tok-comment"># true adds Steam/Lutris and 32-bit support.</span>
+  };
+}
+</code></pre></figure>
+<h3 id="home-xmonad-xmonad-hs">home/.xmonad/xmonad.hs</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.xmonad/xmonad.hs">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.xmonad/xmonad.hs">Raw</a></p>
+<figure class="code-block" data-source-file="home/.xmonad/xmonad.hs"><figcaption><span>home/.xmonad/xmonad.hs</span><span class="code-language">haskell</span></figcaption><pre tabindex="0" aria-label="home/.xmonad/xmonad.hs"><code class="language-haskell">
+<span class="tok-keyword">import</span> XMonad
+<span class="tok-keyword">import</span> Data.List (find)
+<span class="tok-keyword">import</span> Data.Monoid (All(..))
+<span class="tok-keyword">import</span> <span class="tok-keyword">qualified</span> Data.Map <span class="tok-keyword">as</span> M
+<span class="tok-keyword">import</span> <span class="tok-keyword">qualified</span> XMonad.StackSet <span class="tok-keyword">as</span> W
+
+<span class="tok-keyword">import</span> XMonad.Actions.AfterDrag (afterDrag)
+<span class="tok-keyword">import</span> XMonad.Actions.Navigation2D (withNavigation2DConfig, windowSwap, Direction2D(..))
+<span class="tok-keyword">import</span> XMonad.Actions.UpdateFocus (focusOnMouseMove, focusUnderPointer)
+<span class="tok-keyword">import</span> XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
+<span class="tok-keyword">import</span> XMonad.Hooks.ManageDocks (avoidStruts, docks)
+<span class="tok-keyword">import</span> XMonad.Hooks.ManageHelpers (isDialog)
+<span class="tok-keyword">import</span> XMonad.Layout.MouseResizableTile (mouseResizableTile, mouseResizableTileMirrored)
+<span class="tok-keyword">import</span> XMonad.Layout.Spacing (spacingRaw, Border(..))
+<span class="tok-keyword">import</span> XMonad.Util.EZConfig (additionalKeysP)
+<span class="tok-keyword">import</span> XMonad.Util.SpawnOnce (spawnOnce)
+
+myStartupHook :: X ()
+myStartupHook = <span class="tok-keyword">do</span>
+  spawnOnce <span class="tok-string">&quot;bash \&quot;$HOME/.config/cthulhu/monitors.sh\&quot;&quot;</span>
+  spawnOnce <span class="tok-string">&quot;picom --backend xrender --daemon&quot;</span>
+  spawnOnce <span class="tok-string">&quot;dunst&quot;</span>
+  spawnOnce <span class="tok-string">&quot;xsetroot -cursor_name left_ptr&quot;</span>
+  spawnOnce <span class="tok-string">&quot;xmobar ~/.xmobarrc&quot;</span>
+
+mouseScreenHook :: Event -&gt; X All
+mouseScreenHook MotionEvent { ev_x = x, ev_y = y, ev_window = w } = <span class="tok-keyword">do</span>
+  root &lt;- asks theRoot
+  <span class="tok-keyword">if</span> w /= root <span class="tok-keyword">then</span> pure (All <span class="tok-keyword">True</span>) <span class="tok-keyword">else</span> <span class="tok-keyword">do</span>
+    ws &lt;- gets windowset
+    <span class="tok-keyword">let</span> screens = W.current ws : W.visible ws
+        inside sc =
+          <span class="tok-keyword">let</span> r = screenRect (W.screenDetail sc)
+              px = fromIntegral x :: Int
+              py = fromIntegral y :: Int
+              left = fromIntegral (rect_x r) :: Int
+              top = fromIntegral (rect_y r) :: Int
+              right = left + fromIntegral (rect_width r)
+              bottom = top + fromIntegral (rect_height r)
+          <span class="tok-keyword">in</span> px &gt;= left &amp;&amp; px &lt; right &amp;&amp; py &gt;= top &amp;&amp; py &lt; bottom
+    <span class="tok-keyword">case</span> find inside screens <span class="tok-keyword">of</span>
+      Just sc | W.screen sc /= W.screen (W.current ws) -&gt;
+        windows (W.view (W.tag (W.workspace sc)))
+      _ -&gt; pure ()
+    pure (All <span class="tok-keyword">True</span>)
+mouseScreenHook _ = pure (All <span class="tok-keyword">True</span>)
+
+moveToScreenAndTile :: Window -&gt; X ()
+moveToScreenAndTile w = <span class="tok-keyword">do</span>
+  d &lt;- asks display
+  root &lt;- asks theRoot
+  (_, _, _, px, py, _, _, _) &lt;- io $ queryPointer d root
+  destination &lt;- pointScreen (fromIntegral px) (fromIntegral py)
+  <span class="tok-keyword">case</span> destination <span class="tok-keyword">of</span>
+    Just sc -&gt; windows (W.sink w . W.shiftWin (W.tag (W.workspace sc)) w)
+    Nothing -&gt; windows (W.sink w)
+
+myMouseBindings (XConfig { modMask = modm }) = M.fromList
+  [ ((modm, button1), \w -&gt; focus w &gt;&gt; mouseMoveWindow w &gt;&gt; afterDrag (moveToScreenAndTile w))
+  , ((modm, button2), \w -&gt; focus w &gt;&gt; windows W.shiftMaster)
+  , ((modm, button3), \w -&gt; focus w &gt;&gt; mouseResizeWindow w &gt;&gt; windows W.shiftMaster)
+  ]
+
+toggleFloat :: Window -&gt; X ()
+toggleFloat w = <span class="tok-keyword">do</span>
+  floating &lt;- gets (W.floating . windowset)
+  <span class="tok-keyword">if</span> M.member w floating
+    <span class="tok-keyword">then</span> windows (W.sink w)
+    <span class="tok-keyword">else</span> windows (W.float w (W.RationalRect <span class="tok-number">0.15</span> <span class="tok-number">0.15</span> <span class="tok-number">0.7</span> <span class="tok-number">0.7</span>))
+
+main :: IO ()
+main = xmonad $ ewmhFullscreen $ ewmh $ withNavigation2DConfig def $ docks $ def
+  { modMask     = mod4Mask
+  , terminal    = <span class="tok-string">&quot;kitty&quot;</span>
+  , borderWidth = <span class="tok-number">2</span>
+  , normalBorderColor = <span class="tok-string">&quot;#393836&quot;</span>
+  , focusedBorderColor = <span class="tok-string">&quot;#87a987&quot;</span>
+  , startupHook = myStartupHook
+  , focusFollowsMouse = <span class="tok-keyword">True</span>
+  , mouseBindings = myMouseBindings
+  , rootMask = rootMask def .|. pointerMotionMask
+  , handleEventHook = handleEventHook def &lt;+&gt; focusOnMouseMove &lt;+&gt; mouseScreenHook
+  , manageHook = manageHook def &lt;+&gt; (isDialog <span class="tok-comment">--&gt; doFloat)</span>
+  , layoutHook = avoidStruts $ spacingRaw <span class="tok-keyword">False</span> (Border <span class="tok-number">8</span> <span class="tok-number">8</span> <span class="tok-number">8</span> <span class="tok-number">8</span>) <span class="tok-keyword">True</span> (Border <span class="tok-number">6</span> <span class="tok-number">6</span> <span class="tok-number">6</span> <span class="tok-number">6</span>) <span class="tok-keyword">True</span> $ (mouseResizableTile ||| mouseResizableTileMirrored ||| Full)
+  }
+  `additionalKeysP`
+  [ (<span class="tok-string">&quot;M-t&quot;</span>,        spawn <span class="tok-string">&quot;thunar&quot;</span>)
+  , (<span class="tok-string">&quot;M-m&quot;</span>,        spawn <span class="tok-string">&quot;mousepad&quot;</span>)
+  , (<span class="tok-string">&quot;M-f&quot;</span>, withFocused toggleFloat)
+  , (<span class="tok-string">&quot;M-&lt;Left&gt;&quot;</span>, focusUnderPointer &gt;&gt; windowSwap L <span class="tok-keyword">False</span>)
+  , (<span class="tok-string">&quot;M-&lt;Right&gt;&quot;</span>, focusUnderPointer &gt;&gt; windowSwap R <span class="tok-keyword">False</span>)
+  , (<span class="tok-string">&quot;M-&lt;Return&gt;&quot;</span>, spawn <span class="tok-string">&quot;kitty&quot;</span>)
+  , (<span class="tok-string">&quot;M-q&quot;</span>,        kill)
+  , (<span class="tok-string">&quot;M-b&quot;</span>,        spawn <span class="tok-string">&quot;google-chrome-stable&quot;</span>)
+  , (<span class="tok-string">&quot;M-o&quot;</span>,        spawn <span class="tok-string">&quot;obs&quot;</span>)
+  , (<span class="tok-string">&quot;M-v&quot;</span>,        spawn <span class="tok-string">&quot;code&quot;</span>)
+  , (<span class="tok-string">&quot;M-d&quot;</span>,        spawn <span class="tok-string">&quot;rofi -show drun&quot;</span>)
+  , (<span class="tok-string">&quot;&lt;Print&gt;&quot;</span>, spawn <span class="tok-string">&quot;mkdir -p ~/Bilder/Screenshots &amp;&amp; maim -s ~/Bilder/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png&quot;</span>)
+
+  , (<span class="tok-string">&quot;&lt;XF86AudioRaiseVolume&gt;&quot;</span>, spawn <span class="tok-string">&quot;$HOME/.local/bin/cthulhu-audio up&quot;</span>)
+  , (<span class="tok-string">&quot;&lt;XF86AudioLowerVolume&gt;&quot;</span>, spawn <span class="tok-string">&quot;$HOME/.local/bin/cthulhu-audio down&quot;</span>)
+  , (<span class="tok-string">&quot;&lt;XF86AudioMute&gt;&quot;</span>,        spawn <span class="tok-string">&quot;$HOME/.local/bin/cthulhu-audio mute&quot;</span>)
+  , (<span class="tok-string">&quot;&lt;XF86AudioMicMute&gt;&quot;</span>,     spawn <span class="tok-string">&quot;$HOME/.local/bin/cthulhu-audio mic&quot;</span>)
+
+  , (<span class="tok-string">&quot;M-C-r&quot;</span>, spawn <span class="tok-string">&quot;xmonad --recompile &amp;&amp; xmonad --restart&quot;</span>)
+  ]
+</code></pre></figure>
+<h3 id="home-xmobarrc">home/.xmobarrc</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.xmobarrc">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.xmobarrc">Raw</a></p>
+<figure class="code-block" data-source-file="home/.xmobarrc"><figcaption><span>home/.xmobarrc</span><span class="code-language">haskell</span></figcaption><pre tabindex="0" aria-label="home/.xmobarrc"><code class="language-haskell">Config
+  { font = <span class="tok-string">&quot;xft:Hack:size=11&quot;</span>
+  , bgColor = <span class="tok-string">&quot;#181616&quot;</span>
+  , fgColor = <span class="tok-string">&quot;#c5c9c5&quot;</span>
+  , position = OnScreen <span class="tok-number">0</span> (TopSize C <span class="tok-number">100</span> <span class="tok-number">28</span>)
+  , lowerOnStart = <span class="tok-keyword">False</span>
+  , hideOnStart = <span class="tok-keyword">False</span>
+  , overrideRedirect = <span class="tok-keyword">True</span>
+  , allDesktops = <span class="tok-keyword">True</span>
+  , persistent = <span class="tok-keyword">True</span>
+  , sepChar = <span class="tok-string">&quot;%&quot;</span>
+  , alignSep = <span class="tok-string">&quot;}{&quot;</span>
+  , template = <span class="tok-string">&quot; }&lt;action=`gsimplecal` button=1&gt;&lt;fc=#c4b28a&gt;%date%&lt;/fc&gt;&lt;/action&gt;{  &lt;action=`pavucontrol` button=3&gt;&lt;fc=#87a987&gt;VOL&lt;/fc&gt; %volume%&lt;/action&gt;   &quot;</span>
+  , commands =
+      [ Run Date <span class="tok-string">&quot;%H:%M&quot;</span> <span class="tok-string">&quot;date&quot;</span> <span class="tok-number">100</span>
+      , Run Com <span class="tok-string">&quot;sh&quot;</span> [<span class="tok-string">&quot;-c&quot;</span>, <span class="tok-string">&quot;\&quot;$HOME/.local/bin/cthulhu-audio\&quot; status&quot;</span>] <span class="tok-string">&quot;volume&quot;</span> <span class="tok-number">10</span>
+      ]
+  }
+</code></pre></figure>
+<h3 id="home-config-kitty-kitty-conf">home/.config/kitty/kitty.conf</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/kitty/kitty.conf">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/kitty/kitty.conf">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/kitty/kitty.conf"><figcaption><span>home/.config/kitty/kitty.conf</span><span class="code-language">ini</span></figcaption><pre tabindex="0" aria-label="home/.config/kitty/kitty.conf"><code class="language-ini"><span class="tok-comment"># Transparenz</span>
+
+<span class="tok-comment"># Schriftgröße (falls du sie anpassen willst)</span>
+font_size <span class="tok-number">11.0</span>
+
+<span class="tok-comment"># Scrollback-Puffer (wie weit du hochscrollen kannst)</span>
+scrollback_lines <span class="tok-number">10000</span>
+
+<span class="tok-comment"># Klickbare Links aktivieren</span>
+detect_urls yes
+
+background_opacity <span class="tok-number">0.8</span>
+
+
+<span class="tok-comment"># BEGIN_KITTY_THEME</span>
+<span class="tok-comment"># Kanagawa_dragon</span>
+include current-theme.conf
+<span class="tok-comment"># END_KITTY_THEME</span>
+</code></pre></figure>
+<h3 id="home-config-kitty-current-theme-conf">home/.config/kitty/current-theme.conf</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/kitty/current-theme.conf">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/kitty/current-theme.conf">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/kitty/current-theme.conf"><figcaption><span>home/.config/kitty/current-theme.conf</span><span class="code-language">ini</span></figcaption><pre tabindex="0" aria-label="home/.config/kitty/current-theme.conf"><code class="language-ini"><span class="tok-comment"># vim:ft=kitty</span>
+
+<span class="tok-comment">## name: Kanagawa_dragon</span>
+<span class="tok-comment">## license: MIT</span>
+<span class="tok-comment">## author: Tommaso Laurenzi</span>
+<span class="tok-comment">## upstream: https://github.com/rebelot/kanagawa.nvim/</span>
+<span class="tok-comment">## blurb: NeoVim dark colorscheme inspired by the colors of the famous painting</span>
+<span class="tok-comment">## by Katsushika Hokusai. Dragon version.</span>
+
+<span class="tok-comment">#: The basic colors</span>
+
+foreground                      <span class="tok-comment">#c5c9c5</span>
+background                      <span class="tok-comment">#181616</span>
+selection_foreground            <span class="tok-comment">#c8c093</span>
+selection_background            <span class="tok-comment">#2d4f67</span>
+
+<span class="tok-comment">#: Cursor colors</span>
+
+cursor                          <span class="tok-comment">#c8c093</span>
+
+<span class="tok-comment">#: URL underline color when overing with mouse</span>
+
+url_color                       <span class="tok-comment">#72a7bc</span>
+
+<span class="tok-comment">#: Tab bar colors</span>
+
+active_tab_foreground           <span class="tok-comment">#c8c093</span>
+active_tab_background           <span class="tok-comment">#12120f</span>
+inactive_tab_foreground         <span class="tok-comment">#a6a69c</span>
+inactive_tab_background         <span class="tok-comment">#12120f</span>
+
+<span class="tok-comment">#: The basic 16 colors</span>
+
+<span class="tok-comment">#: black</span>
+color0  <span class="tok-comment">#0d0c0c</span>
+color8  <span class="tok-comment">#a6a69c</span>
+
+<span class="tok-comment">#: red</span>
+color1  <span class="tok-comment">#c4746e</span>
+color9  <span class="tok-comment">#e46876</span>
+
+<span class="tok-comment">#: green</span>
+color2  <span class="tok-comment">#8a9a7b</span>
+color10 <span class="tok-comment">#87a987</span>
+
+<span class="tok-comment">#: yellow</span>
+color3  <span class="tok-comment">#c4b28a</span>
+color11 <span class="tok-comment">#e6c384</span>
+
+<span class="tok-comment">#: blue</span>
+color4  <span class="tok-comment">#8ba4b0</span>
+color12 <span class="tok-comment">#7fb4ca</span>
+
+<span class="tok-comment">#: magenta</span>
+color5  <span class="tok-comment">#a292a3</span>
+color13 <span class="tok-comment">#938aa9</span>
+
+<span class="tok-comment">#: cyan</span>
+color6  <span class="tok-comment">#8ea4a2</span>
+color14 <span class="tok-comment">#7aa89f</span>
+
+<span class="tok-comment">#: white</span>
+color7  <span class="tok-comment">#c8c093</span>
+color15 <span class="tok-comment">#c5c9c5</span>
+
+
+<span class="tok-comment">#: You can set the remaining 240 colors as color16 to color255.</span>
+
+color16 <span class="tok-comment">#b6927b</span>
+color17 <span class="tok-comment">#b98d7b</span>
+</code></pre></figure>
+<h3 id="home-config-dunst-dunstrc">home/.config/dunst/dunstrc</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/dunst/dunstrc">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/dunst/dunstrc">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/dunst/dunstrc"><figcaption><span>home/.config/dunst/dunstrc</span><span class="code-language">ini</span></figcaption><pre tabindex="0" aria-label="home/.config/dunst/dunstrc"><code class="language-ini">[global]
+    monitor = <span class="tok-number">0</span>
+    follow = none
+    origin = top-right
+    offset = (<span class="tok-number">16</span>, <span class="tok-number">44</span>)
+    width = <span class="tok-number">320</span>
+    height = (<span class="tok-number">0</span>, <span class="tok-number">180</span>)
+    notification_limit = <span class="tok-number">3</span>
+
+    font = Hack <span class="tok-number">10</span>
+    corner_radius = <span class="tok-number">10</span>
+    frame_width = <span class="tok-number">2</span>
+    separator_height = <span class="tok-number">4</span>
+    padding = <span class="tok-number">12</span>
+    horizontal_padding = <span class="tok-number">14</span>
+    gap_size = <span class="tok-number">6</span>
+
+    transparency = <span class="tok-number">5</span>
+    progress_bar = <span class="tok-keyword">true</span>
+    progress_bar_height = <span class="tok-number">7</span>
+    progress_bar_frame_width = <span class="tok-number">0</span>
+    progress_bar_corner_radius = <span class="tok-number">3</span>
+    highlight = <span class="tok-string">&quot;#87a987&quot;</span>
+
+[urgency_low]
+    background = <span class="tok-string">&quot;#181616&quot;</span>
+    foreground = <span class="tok-string">&quot;#c5c9c5&quot;</span>
+    frame_color = <span class="tok-string">&quot;#737c73&quot;</span>
+    timeout = <span class="tok-number">3</span>
+
+[urgency_normal]
+    background = <span class="tok-string">&quot;#181616&quot;</span>
+    foreground = <span class="tok-string">&quot;#c5c9c5&quot;</span>
+    frame_color = <span class="tok-string">&quot;#87a987&quot;</span>
+    timeout = <span class="tok-number">4</span>
+
+[urgency_critical]
+    background = <span class="tok-string">&quot;#181616&quot;</span>
+    foreground = <span class="tok-string">&quot;#c4746e&quot;</span>
+    frame_color = <span class="tok-string">&quot;#c4746e&quot;</span>
+    timeout = <span class="tok-number">0</span>
+</code></pre></figure>
+<h3 id="home-config-rofi-config-rasi">home/.config/rofi/config.rasi</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/rofi/config.rasi">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/rofi/config.rasi">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/rofi/config.rasi"><figcaption><span>home/.config/rofi/config.rasi</span><span class="code-language">ini</span></figcaption><pre tabindex="0" aria-label="home/.config/rofi/config.rasi"><code class="language-ini">configuration {
+    modi: <span class="tok-string">&quot;drun,run&quot;</span><span class="tok-comment">;</span>
+    show-icons: <span class="tok-keyword">true</span><span class="tok-comment">;</span>
+    font: <span class="tok-string">&quot;Hack 11&quot;</span><span class="tok-comment">;</span>
+    drun-display-format: <span class="tok-string">&quot;{name}&quot;</span><span class="tok-comment">;</span>
+}
+
+* {
+    bg: <span class="tok-comment">#181616;</span>
+    bg-alt: <span class="tok-comment">#282727;</span>
+    fg: <span class="tok-comment">#c5c9c5;</span>
+    green: <span class="tok-comment">#87a987;</span>
+    muted: <span class="tok-comment">#737c73;</span>
+    selected: <span class="tok-comment">#393836;</span>
+}
+
+window {
+    width: 650px<span class="tok-comment">;</span>
+    location: center<span class="tok-comment">;</span>
+    anchor: center<span class="tok-comment">;</span>
+    background-color: @bg<span class="tok-comment">;</span>
+    border: 2px<span class="tok-comment">;</span>
+    border-color: @green<span class="tok-comment">;</span>
+    border-radius: 12px<span class="tok-comment">;</span>
+    padding: 16px<span class="tok-comment">;</span>
+}
+
+mainbox {
+    spacing: 12px<span class="tok-comment">;</span>
+    children: [ inputbar, listview ]<span class="tok-comment">;</span>
+}
+
+inputbar {
+    background-color: @bg-alt<span class="tok-comment">;</span>
+    border-radius: 8px<span class="tok-comment">;</span>
+    padding: 12px<span class="tok-comment">;</span>
+    spacing: 10px<span class="tok-comment">;</span>
+    children: [ prompt, entry ]<span class="tok-comment">;</span>
+}
+
+prompt {
+    text-color: @green<span class="tok-comment">;</span>
+}
+
+entry {
+    text-color: @fg<span class="tok-comment">;</span>
+    placeholder: <span class="tok-string">&quot;Anwendung suchen...&quot;</span><span class="tok-comment">;</span>
+    placeholder-color: @muted<span class="tok-comment">;</span>
+}
+
+listview {
+    lines: <span class="tok-number">8</span><span class="tok-comment">;</span>
+    columns: <span class="tok-number">1</span><span class="tok-comment">;</span>
+    spacing: 5px<span class="tok-comment">;</span>
+    scrollbar: <span class="tok-keyword">false</span><span class="tok-comment">;</span>
+}
+
+element {
+    padding: 9px<span class="tok-comment">;</span>
+    spacing: 12px<span class="tok-comment">;</span>
+    border-radius: 7px<span class="tok-comment">;</span>
+}
+
+element normal.active {
+    background-color: @bg<span class="tok-comment">;</span>
+    text-color: @green<span class="tok-comment">;</span>
+}
+
+element selected.normal {
+    background-color: @selected<span class="tok-comment">;</span>
+    text-color: @green<span class="tok-comment">;</span>
+}
+
+element-icon {
+    size: 22px<span class="tok-comment">;</span>
+}
+
+element-text {
+    text-color: @fg<span class="tok-comment">;</span>
+}
+</code></pre></figure>
+<h3 id="home-local-bin-cthulhu-audio">home/.local/bin/cthulhu-audio</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.local/bin/cthulhu-audio">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.local/bin/cthulhu-audio">Raw</a></p>
+<figure class="code-block" data-source-file="home/.local/bin/cthulhu-audio"><figcaption><span>home/.local/bin/cthulhu-audio</span><span class="code-language">bash</span></figcaption><pre tabindex="0" aria-label="home/.local/bin/cthulhu-audio"><code class="language-bash"><span class="tok-comment">#!/usr/bin/env bash</span>
+<span class="tok-keyword">set</span> -euo pipefail
+<span class="tok-keyword">export</span> LC_ALL=C
+
+<span class="tok-keyword">case</span> <span class="tok-string">&quot;${1:-}&quot;</span> <span class="tok-keyword">in</span>
+  up)   wpctl <span class="tok-keyword">set</span>-volume -l <span class="tok-number">1.0</span> @DEFAULT_AUDIO_SINK@ <span class="tok-number">5</span>%+ ;;
+  down) wpctl <span class="tok-keyword">set</span>-volume @DEFAULT_AUDIO_SINK@ <span class="tok-number">5</span>%- ;;
+  mute) wpctl <span class="tok-keyword">set</span>-mute @DEFAULT_AUDIO_SINK@ toggle ;;
+  mic)  wpctl <span class="tok-keyword">set</span>-mute @DEFAULT_AUDIO_SOURCE@ toggle ;;
+  status) ;; <span class="tok-comment"># Read-only mode used by Xmobar; no notification.</span>
+  *) printf <span class="tok-string">'Usage: cthulhu-audio {up|down|mute|mic|status}\n'</span> &gt;&amp;<span class="tok-number">2</span>; exit <span class="tok-number">2</span> ;;
+<span class="tok-keyword">esac</span>
+
+<span class="tok-keyword">if</span> [[ <span class="tok-string">&quot;$1&quot;</span> == mic ]]; <span class="tok-keyword">then</span>
+  state=<span class="tok-string">&quot;$(wpctl get-volume @DEFAULT_AUDIO_SOURCE@)&quot;</span>
+  <span class="tok-keyword">if</span> [[ <span class="tok-string">&quot;$state&quot;</span> == *<span class="tok-string">&quot;[MUTED]&quot;</span>* ]]; <span class="tok-keyword">then</span>
+    dunstify -a Cthulhu -r <span class="tok-number">41002</span> -t <span class="tok-number">1800</span> <span class="tok-string">&quot;Mikrofon&quot;</span> <span class="tok-string">&quot;Stummgeschaltet&quot;</span>
+  <span class="tok-keyword">else</span>
+    dunstify -a Cthulhu -r <span class="tok-number">41002</span> -t <span class="tok-number">1800</span> <span class="tok-string">&quot;Mikrofon&quot;</span> <span class="tok-string">&quot;Aktiv&quot;</span>
+  <span class="tok-keyword">fi</span>
+<span class="tok-keyword">else</span>
+  state=<span class="tok-string">&quot;$(wpctl get-volume @DEFAULT_AUDIO_SINK@)&quot;</span>
+  percent=<span class="tok-string">&quot;$(awk '{printf &quot;</span>%.0f<span class="tok-string">&quot;, $2 * 100}' &lt;&lt;&lt; &quot;</span>$state<span class="tok-string">&quot;)&quot;</span>
+  <span class="tok-keyword">if</span> [[ <span class="tok-string">&quot;$1&quot;</span> == status ]]; <span class="tok-keyword">then</span>
+    <span class="tok-keyword">if</span> [[ <span class="tok-string">&quot;$state&quot;</span> == *<span class="tok-string">&quot;[MUTED]&quot;</span>* ]]; <span class="tok-keyword">then</span> printf <span class="tok-string">'MUTE\n'</span>; <span class="tok-keyword">else</span> printf <span class="tok-string">'%s%%\n'</span> <span class="tok-string">&quot;$percent&quot;</span>; <span class="tok-keyword">fi</span>
+  elif [[ <span class="tok-string">&quot;$state&quot;</span> == *<span class="tok-string">&quot;[MUTED]&quot;</span>* ]]; <span class="tok-keyword">then</span>
+    dunstify -a Cthulhu -r <span class="tok-number">41001</span> -t <span class="tok-number">1800</span> -h int:value:<span class="tok-number">0</span> <span class="tok-string">&quot;Audio&quot;</span> <span class="tok-string">&quot;Stummgeschaltet&quot;</span>
+  <span class="tok-keyword">else</span>
+    dunstify -a Cthulhu -r <span class="tok-number">41001</span> -t <span class="tok-number">1800</span> -h <span class="tok-string">&quot;int:value:$percent&quot;</span> <span class="tok-string">&quot;Lautstärke&quot;</span> <span class="tok-string">&quot;$percent%&quot;</span>
+  <span class="tok-keyword">fi</span>
+<span class="tok-keyword">fi</span>
+</code></pre></figure>
+<h3 id="home-config-gtk-3-0-settings-ini">home/.config/gtk-3.0/settings.ini</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/gtk-3.0/settings.ini">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/gtk-3.0/settings.ini">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/gtk-3.0/settings.ini"><figcaption><span>home/.config/gtk-3.0/settings.ini</span><span class="code-language">ini</span></figcaption><pre tabindex="0" aria-label="home/.config/gtk-3.0/settings.ini"><code class="language-ini">[Settings]
+gtk-theme-name=Kanagawa-Green-Dark-Dragon
+gtk-application-prefer-dark-theme=<span class="tok-keyword">true</span>
+gtk-button-images=<span class="tok-keyword">true</span>
+gtk-cursor-blink=<span class="tok-keyword">true</span>
+gtk-cursor-blink-time=<span class="tok-number">1000</span>
+gtk-cursor-theme-name=Bibata-Modern-Classic
+gtk-cursor-theme-size=<span class="tok-number">24</span>
+gtk-decoration-layout=icon:minimize,maximize,close
+gtk-enable-animations=<span class="tok-keyword">true</span>
+gtk-font-name=Noto Sans,  <span class="tok-number">10</span>
+gtk-icon-theme-name=breeze-dark
+gtk-menu-images=<span class="tok-keyword">true</span>
+gtk-primary-button-warps-slider=<span class="tok-keyword">true</span>
+gtk-sound-theme-name=ocean
+gtk-toolbar-style=<span class="tok-number">3</span>
+gtk-xft-dpi=<span class="tok-number">98304</span>
+</code></pre></figure>
+<h3 id="home-config-gtk-4-0-settings-ini">home/.config/gtk-4.0/settings.ini</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/gtk-4.0/settings.ini">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/gtk-4.0/settings.ini">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/gtk-4.0/settings.ini"><figcaption><span>home/.config/gtk-4.0/settings.ini</span><span class="code-language">ini</span></figcaption><pre tabindex="0" aria-label="home/.config/gtk-4.0/settings.ini"><code class="language-ini">[Settings]
+gtk-application-prefer-dark-theme=<span class="tok-keyword">true</span>
+gtk-cursor-blink=<span class="tok-keyword">true</span>
+gtk-cursor-blink-time=<span class="tok-number">1000</span>
+gtk-cursor-theme-name=Bibata-Modern-Classic
+gtk-cursor-theme-size=<span class="tok-number">24</span>
+gtk-decoration-layout=icon:minimize,maximize,close
+gtk-enable-animations=<span class="tok-keyword">true</span>
+gtk-font-name=Noto Sans,  <span class="tok-number">10</span>
+gtk-icon-theme-name=breeze-dark
+gtk-primary-button-warps-slider=<span class="tok-keyword">true</span>
+gtk-sound-theme-name=ocean
+gtk-xft-dpi=<span class="tok-number">98304</span>
+</code></pre></figure>
+<h3 id="home-config-fastfetch-config-jsonc">home/.config/fastfetch/config.jsonc</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/fastfetch/config.jsonc">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/fastfetch/config.jsonc">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/fastfetch/config.jsonc"><figcaption><span>home/.config/fastfetch/config.jsonc</span><span class="code-language">json</span></figcaption><pre tabindex="0" aria-label="home/.config/fastfetch/config.jsonc"><code class="language-json">{
+  <span class="tok-string">&quot;$schema&quot;</span>: <span class="tok-string">&quot;https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json&quot;</span>,
+  <span class="tok-string">&quot;logo&quot;</span>: <span class="tok-string">&quot;~/.config/fastfetch/1.png&quot;</span>,
+  <span class="tok-string">&quot;logoType&quot;</span>: <span class="tok-string">&quot;kitty-icat&quot;</span>,
+  <span class="tok-string">&quot;logoWidth&quot;</span>: <span class="tok-number">30</span>,
+  <span class="tok-string">&quot;logoHeight&quot;</span>: <span class="tok-number">15</span>,
+  <span class="tok-string">&quot;logoPadding&quot;</span>: {
+    <span class="tok-string">&quot;top&quot;</span>: <span class="tok-number">1</span>,
+    <span class="tok-string">&quot;left&quot;</span>: <span class="tok-number">2</span>,
+    <span class="tok-string">&quot;right&quot;</span>: <span class="tok-number">4</span>
+  },
+  <span class="tok-string">&quot;display&quot;</span>: {
+    <span class="tok-string">&quot;separator&quot;</span>: <span class="tok-string">&quot; &quot;</span>
+  },
+  <span class="tok-string">&quot;modules&quot;</span>: [
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;╭───────────╮&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;custom&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  user    │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;title&quot;</span>,
+      <span class="tok-string">&quot;format&quot;</span>: <span class="tok-string">&quot;{user-name}&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ 󰇅 hname   │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;title&quot;</span>,
+      <span class="tok-string">&quot;format&quot;</span>: <span class="tok-string">&quot;{host-name}&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ 󰅐 uptime  │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;uptime&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  distro  │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;os&quot;</span>,
+      <span class="tok-string">&quot;format&quot;</span>: <span class="tok-string">&quot;I use NixOS btw&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  kernel  │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;kernel&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  wm      │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;wm&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  term    │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;terminal&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  shell   │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;shell&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ 󰍛 cpu     │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;cpu&quot;</span>,
+      <span class="tok-string">&quot;showPeCoreCount&quot;</span>: <span class="tok-keyword">true</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ 󰉉 root    │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;disk&quot;</span>,
+      <span class="tok-string">&quot;folders&quot;</span>: <span class="tok-string">&quot;/&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  memory  │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;memory&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ 󰓡 swap    │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;swap&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;├───────────┤&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;custom&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ PC        │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;host&quot;</span>,
+      <span class="tok-string">&quot;format&quot;</span>: <span class="tok-string">&quot;{5} {1} ({2})&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ ├ 󰢮 gpu   │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;gpu&quot;</span>,
+      <span class="tok-string">&quot;format&quot;</span>: <span class="tok-string">&quot;{1} {2} @ {12}&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ ├  disp  │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;display&quot;</span>,
+      <span class="tok-string">&quot;order&quot;</span>: <span class="tok-string">&quot;desc&quot;</span>,
+      <span class="tok-string">&quot;format&quot;</span>: <span class="tok-string">&quot;{1}x{2} @ {3} Hz&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│ └  age   │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;command&quot;</span>,
+      <span class="tok-string">&quot;text&quot;</span>: <span class="tok-string">&quot;marker=\&quot;$HOME/.config/fastfetch/cthulhu-born\&quot;; if [ -f \&quot;$marker\&quot; ]; then birth_install=$(stat -c %Y \&quot;$marker\&quot;); current=$(date +%s); echo $(((current - birth_install) / 86400)) days; else printf \&quot;marker missing\\n\&quot;; fi&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;│  colors  │&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;colors&quot;</span>,
+      <span class="tok-string">&quot;symbol&quot;</span>: <span class="tok-string">&quot;circle&quot;</span>
+    },
+    {
+      <span class="tok-string">&quot;key&quot;</span>: <span class="tok-string">&quot;╰───────────╯&quot;</span>,
+      <span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;custom&quot;</span>
+    }
+  ]
+}
+</code></pre></figure>
+<h3 id="home-config-code-user-settings-json">home/.config/Code/User/settings.json</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/Code/User/settings.json">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/Code/User/settings.json">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/Code/User/settings.json"><figcaption><span>home/.config/Code/User/settings.json</span><span class="code-language">json</span></figcaption><pre tabindex="0" aria-label="home/.config/Code/User/settings.json"><code class="language-json">{
+    <span class="tok-string">&quot;workbench.colorTheme&quot;</span>: <span class="tok-string">&quot;Kanagawa Dragon&quot;</span>,
+    <span class="tok-string">&quot;workbench.iconTheme&quot;</span>: <span class="tok-string">&quot;material-icon-theme&quot;</span>,
+    <span class="tok-string">&quot;editor.fontFamily&quot;</span>: <span class="tok-string">&quot;'Hack', monospace&quot;</span>
+}
+</code></pre></figure>
+<h3 id="home-config-cthulhu-monitors-sh">home/.config/cthulhu/monitors.sh</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/cthulhu/monitors.sh">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/home/.config/cthulhu/monitors.sh">Raw</a></p>
+<figure class="code-block" data-source-file="home/.config/cthulhu/monitors.sh"><figcaption><span>home/.config/cthulhu/monitors.sh</span><span class="code-language">bash</span></figcaption><pre tabindex="0" aria-label="home/.config/cthulhu/monitors.sh"><code class="language-bash"><span class="tok-comment">#!/usr/bin/env bash</span>
+<span class="tok-keyword">set</span> -euo pipefail
+
+<span class="tok-comment"># Run xrandr, adapt outputs/modes, then opt in. False preserves your layout.</span>
+configure_layout=<span class="tok-keyword">false</span>
+primary=DP-<span class="tok-number">2</span>
+secondary=HDMI-<span class="tok-number">1</span>
+<span class="tok-keyword">if</span> <span class="tok-string">&quot;$configure_layout&quot;</span>; <span class="tok-keyword">then</span>
+  <span class="tok-keyword">if</span> ! xrandr --output <span class="tok-string">&quot;$primary&quot;</span> --primary --mode 3440x1440 --rate <span class="tok-number">144</span> --pos 0x0 \
+      --output <span class="tok-string">&quot;$secondary&quot;</span> --mode 1920x1080 --rate <span class="tok-number">60</span> --pos 3440x0; <span class="tok-keyword">then</span>
+    printf <span class="tok-string">'Monitor layout failed; check xrandr output and supported modes.\n'</span> &gt;&amp;<span class="tok-number">2</span>
+  <span class="tok-keyword">fi</span>
+<span class="tok-keyword">fi</span>
+
+<span class="tok-comment"># Supply your own artwork. feh's Xinerama monitor order decides assignment.</span>
+wallpaper_dir=<span class="tok-string">&quot;${1:-$HOME/Bilder/wallpaper}&quot;</span>
+images=()
+<span class="tok-keyword">for</span> image <span class="tok-keyword">in</span> <span class="tok-string">&quot;$wallpaper_dir/1.png&quot;</span> <span class="tok-string">&quot;$wallpaper_dir/2.png&quot;</span>; <span class="tok-keyword">do</span>
+  [[ ! -f <span class="tok-string">&quot;$image&quot;</span> ]] || images+=(<span class="tok-string">&quot;$image&quot;</span>)
+<span class="tok-keyword">done</span>
+<span class="tok-keyword">if</span> ((${<span class="tok-comment">#images[@]})); then</span>
+  feh --bg-max <span class="tok-string">&quot;${images[@]}&quot;</span>
+<span class="tok-keyword">else</span>
+  xsetroot -solid <span class="tok-string">'#181616'</span>
+<span class="tok-keyword">fi</span>
+</code></pre></figure>
+<h3 id="scripts-install-user-sh">scripts/install-user.sh</h3>
+<p><a href="https://github.com/dennishilk/cthulhu/blob/main/WM/xmonad/nixos-kanagawa-dragon/scripts/install-user.sh">GitHub</a> · <a href="https://raw.githubusercontent.com/dennishilk/cthulhu/main/WM/xmonad/nixos-kanagawa-dragon/scripts/install-user.sh">Raw</a></p>
+<figure class="code-block" data-source-file="scripts/install-user.sh"><figcaption><span>scripts/install-user.sh</span><span class="code-language">bash</span></figcaption><pre tabindex="0" aria-label="scripts/install-user.sh"><code class="language-bash"><span class="tok-comment">#!/usr/bin/env bash</span>
+<span class="tok-comment"># Installs home/ only. No sudo, package management or display-manager changes.</span>
+<span class="tok-keyword">set</span> -euo pipefail
+source_root=<span class="tok-string">&quot;$(cd -- &quot;</span>$(dirname -- <span class="tok-string">&quot;${BASH_SOURCE[0]}&quot;</span>)/..<span class="tok-string">&quot; &amp;&amp; pwd)&quot;</span>
+target=<span class="tok-string">&quot;${1:-$HOME}&quot;</span>
+[[ $<span class="tok-comment"># -le 1 &amp;&amp; &quot;$target&quot; = /* &amp;&amp; &quot;$target&quot; != / &amp;&amp; -d &quot;$target&quot; ]] || {</span>
+  printf <span class="tok-string">'Usage: bash install-user.sh [existing-absolute-home-directory]\n'</span> &gt;&amp;<span class="tok-number">2</span>; exit <span class="tok-number">2</span>;
+}
+target=<span class="tok-string">&quot;$(realpath -- &quot;</span>$target<span class="tok-string">&quot;)&quot;</span>
+[[ <span class="tok-string">&quot;$target&quot;</span> != / ]] || { printf <span class="tok-string">'Refusing filesystem root.\n'</span> &gt;&amp;<span class="tok-number">2</span>; exit <span class="tok-number">2</span>; }
+[[ ! -d <span class="tok-string">&quot;$target/.config/xmonad&quot;</span> ]] || {
+  printf <span class="tok-string">'Existing .config/xmonad takes precedence. Review it before installing .xmonad.\n'</span> &gt;&amp;<span class="tok-number">2</span>; exit <span class="tok-number">1</span>;
+}
+mapfile -d <span class="tok-string">''</span> files &lt; &lt;(find <span class="tok-string">&quot;$source_root/home&quot;</span> -type f -print0 | sort -z)
+<span class="tok-comment"># Check all conflicts before creating files. Never traverse destination symlinks.</span>
+<span class="tok-keyword">for</span> file <span class="tok-keyword">in</span> <span class="tok-string">&quot;${files[@]}&quot;</span>; <span class="tok-keyword">do</span>
+  relative=<span class="tok-string">&quot;${file#&quot;</span>$source_root/home/<span class="tok-string">&quot;}&quot;</span>
+  destination=<span class="tok-string">&quot;$target/$relative&quot;</span>
+  parent=<span class="tok-string">&quot;$destination&quot;</span>
+  while [[ <span class="tok-string">&quot;$parent&quot;</span> != <span class="tok-string">&quot;$target&quot;</span> ]]; <span class="tok-keyword">do</span>
+    [[ ! -L <span class="tok-string">&quot;$parent&quot;</span> ]] || { printf <span class="tok-string">'Refusing symlink: %s\n'</span> <span class="tok-string">&quot;$parent&quot;</span> &gt;&amp;<span class="tok-number">2</span>; exit <span class="tok-number">1</span>; }
+    parent=<span class="tok-string">&quot;$(dirname -- &quot;</span>$parent<span class="tok-string">&quot;)&quot;</span>
+    [[ ! -e <span class="tok-string">&quot;$parent&quot;</span> || -d <span class="tok-string">&quot;$parent&quot;</span> ]] || {
+      printf <span class="tok-string">'Not a directory: %s\n'</span> <span class="tok-string">&quot;$parent&quot;</span> &gt;&amp;<span class="tok-number">2</span>; exit <span class="tok-number">1</span>;
+    }
+  <span class="tok-keyword">done</span>
+  <span class="tok-keyword">if</span> [[ -e <span class="tok-string">&quot;$destination&quot;</span> ]] &amp;&amp; ! cmp -s -- <span class="tok-string">&quot;$file&quot;</span> <span class="tok-string">&quot;$destination&quot;</span>; <span class="tok-keyword">then</span>
+    printf <span class="tok-string">'Conflict: %s\nBack it up and move it aside, then rerun. No files installed.\n'</span> <span class="tok-string">&quot;$destination&quot;</span> &gt;&amp;<span class="tok-number">2</span>
+    exit <span class="tok-number">1</span>
+  <span class="tok-keyword">fi</span>
+<span class="tok-keyword">done</span>
+<span class="tok-keyword">for</span> file <span class="tok-keyword">in</span> <span class="tok-string">&quot;${files[@]}&quot;</span>; <span class="tok-keyword">do</span>
+  destination=<span class="tok-string">&quot;$target/${file#&quot;</span>$source_root/home/<span class="tok-string">&quot;}&quot;</span>
+  mkdir -p -- <span class="tok-string">&quot;$(dirname -- &quot;</span>$destination<span class="tok-string">&quot;)&quot;</span>
+  <span class="tok-keyword">if</span> [[ ! -e <span class="tok-string">&quot;$destination&quot;</span> ]]; <span class="tok-keyword">then</span>
+    (<span class="tok-keyword">set</span> -o noclobber; cat -- <span class="tok-string">&quot;$file&quot;</span> &gt; <span class="tok-string">&quot;$destination&quot;</span>)
+    printf <span class="tok-string">'Installed %s\n'</span> <span class="tok-string">&quot;$destination&quot;</span>
+  <span class="tok-keyword">fi</span>
+<span class="tok-keyword">done</span>
+chmod +x -- <span class="tok-string">&quot;$target/.local/bin/cthulhu-audio&quot;</span> <span class="tok-string">&quot;$target/.config/cthulhu/monitors.sh&quot;</span>
+marker=<span class="tok-string">&quot;$target/.config/fastfetch/cthulhu-born&quot;</span>
+<span class="tok-keyword">if</span> [[ ! -e <span class="tok-string">&quot;$marker&quot;</span> &amp;&amp; ! -L <span class="tok-string">&quot;$marker&quot;</span> ]]; <span class="tok-keyword">then</span>
+  (<span class="tok-keyword">set</span> -o noclobber; : &gt; <span class="tok-string">&quot;$marker&quot;</span>)
+<span class="tok-keyword">fi</span>
+printf <span class="tok-string">'Done. Add your own artwork; edit monitors.sh and review the installation guide.\n'</span>
+</code></pre></figure>
+<h2 id="troubleshooting-and-recovery">Troubleshooting and recovery</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison or reference table"><table><thead><tr>
+<th>Symptom</th>
+<th>Check and recovery</th>
+</tr>
+</thead><tbody><tr>
+<td>Nix evaluation fails</td>
+<td>Read the option/file named in the error. Confirm YOUR_LOGIN is replaced, the user already exists, imports are tracked for flakes and your revision supports these options. Do not activate a failed build.</td>
+</tr>
+<tr>
+<td>startx uses an old session</td>
+<td>Check ~/.xinitrc and XINITRC; either overrides the generated script. Review ~/.config/xmonad as well as ~/.xmonad.</td>
+</tr>
+<tr>
+<td>Black screen or an X error</td>
+<td>Switch to a TTY with Ctrl+Alt+F3. Inspect ~/.local/share/xorg/Xorg.0.log and journalctl -b. Confirm a local login, your existing driver configuration and supported xrandr modes.</td>
+</tr>
+<tr>
+<td>No authentication prompt or portal</td>
+<td>Check systemctl --user status cthulhu-polkit.service and journalctl --user -b. Start through the generated startx session and avoid duplicate agents.</td>
+</tr>
+<tr>
+<td>Wallpaper or bar unchanged after restart</td>
+<td>spawnOnce does not repeat after an ordinary XMonad restart. Run monitors.sh directly or start a new X session.</td>
+</tr>
+<tr>
+<td>Cursor is Breeze or tiny</td>
+<td>Confirm both GTK files and XCURSOR_THEME/XCURSOR_SIZE after a fresh login. Apps can have their own cursor behavior.</td>
+</tr>
+<tr>
+<td>Kitty is opaque</td>
+<td>Check Picom is running once, inspect its terminal error output and any old Picom configuration, then open a new Kitty window.</td>
+</tr>
+<tr>
+<td>Fastfetch artwork missing</td>
+<td>Supply your own PNG in the correct directory and run in Kitty. Test text independently with --logo none.</td>
+</tr>
+<tr>
+<td>Volume is on the wrong device</td>
+<td>Use wpctl status and pavucontrol; the helper intentionally targets the current default sink/source.</td>
+</tr>
+</tbody></table></div><p>To return to the previous generation from a TTY:</p>
+<figure class="code-block"><figcaption><span>Terminal / configuration</span><span class="code-language">sh</span></figcaption><pre tabindex="0" aria-label="Terminal / configuration"><code class="language-sh">sudo nixos-rebuild switch --rollback
+</code></pre></figure>
+<p>If the current system cannot be used, select an earlier NixOS generation in the boot menu. Keep those generations while migrating; do not garbage-collect your recovery path mid-installation. To return permanently to Plasma, set standalone=false again, preserve or restore your original Plasma/SDDM declarations and rebuild. The switch only forces them off while true; it does not create a Plasma installation on the Minimal route. Home-file backups are restored separately because NixOS rollback does not roll back manually copied dotfiles.</p>
+<h2 id="evidence-image-credits-and-sources">Evidence, image credits and sources</h2>
+<p>The configuration derives from my actual working files; I reported that dragging, resizing and the rebooted session worked. Automated source/configuration checks are listed in the repository&#39;s validation record. They do not test my Radeon, two physical displays or a complete graphical session on a fresh machine. Readers still need to verify those behaviors on their own hardware.</p>
+<p>The current forest-background screenshot was supplied by Dennis Hilk on 19 October 2026 specifically for this documentation. It shows the real desktop with Kitty and Fastfetch. Earlier Fuji screenshots belong to an earlier state and are not used to represent this version. The screenshot is documentation, not a separately licensed wallpaper or Fastfetch asset pack. Artwork visible inside it retains its original rights; the downloadable setup contains no extracted artwork. Use your own images for 1.png and 2.png. See ATTRIBUTION.md for the separate theme licenses and the publication corrections.</p>
+<p>Primary technical references:</p>
+<ul>
+<li><a href="https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/x11/display-managers/startx.nix">NixOS startx module and generated-session behavior</a></li>
+<li><a href="https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/x11/window-managers/xmonad.nix">NixOS XMonad module and contrib packages</a></li>
+<li><a href="https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Actions-AfterDrag.html">XMonad AfterDrag</a></li>
+<li><a href="https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Actions-UpdateFocus.html">XMonad UpdateFocus</a></li>
+<li><a href="https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Layout-MouseResizableTile.html">XMonad MouseResizableTile</a></li>
+<li><a href="https://sw.kovidgoyal.net/kitty/conf/">Kitty configuration</a></li>
+<li><a href="https://man.finalrewind.org/1/feh/">feh manual, wallpaper modes and Xinerama</a></li>
+<li><a href="https://github.com/fastfetch-cli/fastfetch/wiki/Json-Schema">Fastfetch JSON schema</a></li>
+<li><a href="https://github.com/Fausto-Korpsvart/Kanagawa-GKT-Theme">Kanagawa GTK source and license</a></li>
+<li><a href="https://github.com/rebelot/kanagawa.nvim">Kanagawa original palette</a></li>
+<li><a href="https://github.com/paccodes/kanagawa-vscode-theme">Kanagawa VS Code theme</a></li>
+<li><a href="https://github.com/material-extensions/vscode-material-icon-theme">Material Icon Theme</a></li>
+<li><a href="https://docs.gtk.org/gtk4/class.Settings.html">GTK 4 Settings</a></li>
+</ul>
+
+<nav class="article-end-nav" aria-label="Article navigation"><a href="/blog/#tutorials">← Desktop tutorials</a><a href="#page-top">Back to top ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="Table of contents"><h2>In this guide</h2><ol><li><a href="#choose-the-installation-route">Choose the installation route</a></li><li><a href="#route-a-prepare-inside-plasma">Route A: prepare inside Plasma</a></li><li><a href="#route-b-prepare-from-minimal">Route B: prepare from Minimal</a></li><li><a href="#shared-installation-system-files-and-home-files">Shared installation: system files and home files</a></li><li><a href="#kanagawa-dragon-install-the-gtk-theme">Kanagawa Dragon: install the GTK theme</a></li><li><a href="#monitors-wallpapers-and-the-cursor">Monitors, wallpapers and the cursor</a></li><li><a href="#route-a-test-first-then-remove-plasma">Route A: test first, then remove Plasma</a></li><li><a href="#what-startx-manages">What startx manages</a></li><li><a href="#xmonad-mouse-movement-tiling-and-fullscreen">XMonad: mouse movement, tiling and fullscreen</a></li><li><a href="#kitty-xmobar-notifications-and-audio">Kitty, Xmobar, notifications and audio</a></li><li><a href="#fastfetch-image-modules-and-your-own-system-age">Fastfetch: image, modules and your own system age</a></li><li><a href="#vs-code-and-optional-applications">VS Code and optional applications</a></li><li><a href="#complete-configuration-file-library">Complete configuration file library</a></li><li><a href="#troubleshooting-and-recovery">Troubleshooting and recovery</a></li><li><a href="#evidence-image-credits-and-sources">Evidence, image credits and sources</a></li></ol></nav><a class="sidebar-tool" href="https://github.com/dennishilk/cthulhu/tree/main/WM/xmonad/nixos-kanagawa-dragon">Every file on GitHub ↗</a><p class="source-revision">Documented revision: <a href="https://github.com/dennishilk/cthulhu/commit/dbebd7e1acca81c53dcf498a7409f9210b73d17d">dbebd7e</a></p></aside></div>
+<aside class="related-guide"><p class="eyebrow">Continue reading</p><a href="/blog/nixos-configuration-nix-explained/">Understand NixOS configuration →</a><a href="/blog/fish-shell-beginners/">Everyday Fish →</a><a href="/blog/backup-linux-configuration/">Back up Linux configuration →</a></aside>
+</main><footer class="site-footer"><div><a class="footer-brand" href="/">Dennis Hilk</a><p>Practical tools, Linux and unusual computers.</p></div><nav aria-label="More links"><a href="/">Home</a><a href="https://github.com/dennishilk">GitHub</a><a href="/impressum.html">Impressum</a><a href="/datenschutzerklaerung.html">Privacy</a><a href="https://buymeacoffee.com/dennishilk">East Frisian tea</a></nav><p class="copyright">© 2026 Dennis Hilk</p></footer>
+</body></html>

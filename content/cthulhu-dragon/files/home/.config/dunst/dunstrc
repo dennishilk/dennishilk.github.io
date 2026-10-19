@@ -1,0 +1,41 @@
+[global]
+    monitor = 0
+    follow = none
+    origin = top-right
+    offset = (16, 44)
+    width = 320
+    height = (0, 180)
+    notification_limit = 3
+
+    font = Hack 10
+    corner_radius = 10
+    frame_width = 2
+    separator_height = 4
+    padding = 12
+    horizontal_padding = 14
+    gap_size = 6
+
+    transparency = 5
+    progress_bar = true
+    progress_bar_height = 7
+    progress_bar_frame_width = 0
+    progress_bar_corner_radius = 3
+    highlight = "#87a987"
+
+[urgency_low]
+    background = "#181616"
+    foreground = "#c5c9c5"
+    frame_color = "#737c73"
+    timeout = 3
+
+[urgency_normal]
+    background = "#181616"
+    foreground = "#c5c9c5"
+    frame_color = "#87a987"
+    timeout = 4
+
+[urgency_critical]
+    background = "#181616"
+    foreground = "#c4746e"
+    frame_color = "#c4746e"
+    timeout = 0

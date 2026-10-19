@@ -1,0 +1,80 @@
+configuration {
+    modi: "drun,run";
+    show-icons: true;
+    font: "Hack 11";
+    drun-display-format: "{name}";
+}
+
+* {
+    bg: #181616;
+    bg-alt: #282727;
+    fg: #c5c9c5;
+    green: #87a987;
+    muted: #737c73;
+    selected: #393836;
+}
+
+window {
+    width: 650px;
+    location: center;
+    anchor: center;
+    background-color: @bg;
+    border: 2px;
+    border-color: @green;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+mainbox {
+    spacing: 12px;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius: 8px;
+    padding: 12px;
+    spacing: 10px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    text-color: @green;
+}
+
+entry {
+    text-color: @fg;
+    placeholder: "Anwendung suchen...";
+    placeholder-color: @muted;
+}
+
+listview {
+    lines: 8;
+    columns: 1;
+    spacing: 5px;
+    scrollbar: false;
+}
+
+element {
+    padding: 9px;
+    spacing: 12px;
+    border-radius: 7px;
+}
+
+element normal.active {
+    background-color: @bg;
+    text-color: @green;
+}
+
+element selected.normal {
+    background-color: @selected;
+    text-color: @green;
+}
+
+element-icon {
+    size: 22px;
+}
+
+element-text {
+    text-color: @fg;
+}
