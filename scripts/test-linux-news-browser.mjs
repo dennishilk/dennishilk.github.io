@@ -26,6 +26,7 @@ const origin='http://127.0.0.1:'+server.address().port;
 let browser;
 try{
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  report.browserVersion=browser.version();
   const page=await browser.newPage({viewport:{width:1440,height:1050},reducedMotion:'reduce'});
   page.on('pageerror',e=>report.errors.push(e.message));
   page.on('response',r=>{if(r.status()>=400)report.errors.push(r.status()+' '+r.url());});
@@ -45,7 +46,7 @@ try{
     }
     for(const [name,width,height] of [['desktop',1440,1050],['mobile',390,844]]){
       await page.setViewportSize({width,height});await page.goto(origin+route);await page.locator('.news-hero img').evaluate(img=>img.decode());
-      await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.webp',type:'webp',quality:75,fullPage:true});
+      await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.jpg',type:'jpeg',quality:80,fullPage:true});
     }
     await page.locator('.mobile-toc summary').click();
     await page.locator('.mobile-toc a[href="#fix-status"]').click();
@@ -65,7 +66,7 @@ try{
     for(const width of widths){await page.setViewportSize({width,height:1050});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),lang+' index overflow '+width);report.indexViews.push({language:lang,width});}
     await page.setViewportSize({width:1440,height:1050});await page.locator('#blog-navigation a[href="#linux-news"]').click();
     assert.ok(page.url().endsWith('#linux-news'));assert.equal(await page.locator('#linux-news .guide-card').count(),specs.filter(x=>x.lang===lang).length);
-    await page.screenshot({path:output+'/'+lang+'-category.webp',type:'webp',quality:75});
+    await page.screenshot({path:output+'/'+lang+'-category.jpg',type:'jpeg',quality:80});
     await page.locator('#linux-news .card-link').filter({hasText:a.title}).click();assert.ok(page.url().includes('/blog/'+a.slug+'/'));
     report.interactions.push(lang+': category navigation and article card');
   }
