@@ -1,0 +1,38 @@
+[
+  {
+    "topic": "ubuntu-openssh",
+    "lang": "en",
+    "slug": "ubuntu-26-10-openssh-bug",
+    "alternate": "ubuntu-26-10-openssh-fehler",
+    "title": "Ubuntu 26.10 OpenSSH Bug: How Package Cleanup Can Break SSH Access",
+    "seoTitle": "Ubuntu 26.10 OpenSSH Bug: Cause, Workaround & Recovery",
+    "description": "Ubuntu 26.10 OpenSSH: when purging residual rc packages can break SSH, which versions are fixed, safe checks and console recovery. USN-8928-1 explained separately.",
+    "summary": "Why purging an old OpenSSH variant can remove the new variant’s configuration. Verified package versions, a preventive workaround and careful recovery guidance.",
+    "category": "Linux News & Security",
+    "published": "2026-10-19",
+    "modified": "2026-10-19",
+    "checked": "2026-10-19",
+    "keywords": ["Ubuntu 26.10", "OpenSSH packaging bug", "GSSAPI", "rc package state", "SSH recovery", "USN-8928-1"],
+    "imageAlt": "Schematic: replacing openssh-server leaves it in rc state while openssh-server-gssapi is installed. Purging the old package without the correction puts shared configuration at risk.",
+    "imageCaption": "Example transition, regular server to GSSAPI: rc is expected. Risk begins when the old package is purged without the correction. Original schematic, not a terminal capture or live bug-status display.",
+    "sourceUrls": ["https://documentation.ubuntu.com/release-notes/26.10/", "https://bugs.launchpad.net/bugs/2169738", "https://ubuntu.com/security/notices/USN-8928-1", "https://canonical.com/blog/canonical-releases-ubuntu-26-10-stonking-stingray", "https://api.launchpad.net/1.0/bugs/2169738/bug_tasks", "https://launchpad.net/ubuntu/stonking/+source/openssh", "https://launchpad.net/ubuntu/stonking/+source/openssh-gssapi"]
+  },
+  {
+    "topic": "ubuntu-openssh",
+    "lang": "de",
+    "slug": "ubuntu-26-10-openssh-fehler",
+    "alternate": "ubuntu-26-10-openssh-bug",
+    "title": "Ubuntu 26.10: OpenSSH-Fehler kann SSH-Zugriff verhindern – Ursache und Workaround",
+    "seoTitle": "Ubuntu 26.10: OpenSSH-Fehler, Workaround & Wiederherstellung",
+    "description": "Ubuntu 26.10: Wann das Purgen alter OpenSSH-Pakete den SSH-Zugang gefährdet. Geprüfte Versionen, sicherer Workaround und Wiederherstellung. USN-8928-1 eingeordnet.",
+    "summary": "Warum das Purgen einer alten OpenSSH-Variante die Konfiguration des Nachfolgers löschen kann. Mit geprüftem Paketstatus, Vorsichtsmaßnahme und Wiederherstellung.",
+    "category": "Linux-News & Sicherheit",
+    "published": "2026-10-19",
+    "modified": "2026-10-19",
+    "checked": "2026-10-19",
+    "keywords": ["Ubuntu 26.10", "OpenSSH-Fehler", "GSSAPI", "rc-Paketstatus", "SSH-Zugang wiederherstellen", "USN-8928-1"],
+    "imageAlt": "Schema: Nach dem Ersatz steht openssh-server auf rc und openssh-server-gssapi ist installiert. Das Purgen des alten Pakets ohne Korrektur gefährdet gemeinsam genutzte Konfiguration.",
+    "imageCaption": "Beispielwechsel vom regulären Server zu GSSAPI: rc ist erwartet. Das Risiko entsteht beim Purgen des alten Pakets ohne Korrektur. Eigene Erklärgrafik, kein Terminal-Screenshot und keine Live-Bugstatusanzeige.",
+    "sourceUrls": ["https://documentation.ubuntu.com/release-notes/26.10/", "https://bugs.launchpad.net/bugs/2169738", "https://ubuntu.com/security/notices/USN-8928-1", "https://canonical.com/blog/canonical-releases-ubuntu-26-10-stonking-stingray", "https://api.launchpad.net/1.0/bugs/2169738/bug_tasks", "https://launchpad.net/ubuntu/stonking/+source/openssh", "https://launchpad.net/ubuntu/stonking/+source/openssh-gssapi"]
+  }
+]

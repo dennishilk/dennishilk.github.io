@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "build:linux-news": "node scripts/build-linux-news.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:linux-news": "node --test tests/linux-news.test.mjs",
     "build:password-cracking": "node scripts/build-password-cracking-wordlists.mjs && node scripts/build-password-cracking-variants.mjs && node scripts/build-password-cracking-worker.mjs",
     "test:password-cracking": "node --test tests/password-cracking-lab.test.mjs",
     "test:password-cracking:browser": "node scripts/test-password-cracking-browser.mjs",

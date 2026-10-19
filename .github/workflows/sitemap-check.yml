@@ -28,6 +28,10 @@ on:
       - "tests/seo-sitemap-generator.test.mjs"
       - "scripts/sync-seo.mjs"
       - "scripts/audit-seo.mjs"
+      - "scripts/build-linux-news.mjs"
+      - "content/linux-news/**"
+      - "assets/blog/linux-news/**"
+      - "tests/linux-news.test.mjs"
       - "scripts/gaming-integration.mjs"
       - "content/linux-gaming-repair/publication.json"
       - "tests/seo-localization.test.mjs"
@@ -64,6 +68,10 @@ on:
       - "tests/seo-sitemap-generator.test.mjs"
       - "scripts/sync-seo.mjs"
       - "scripts/audit-seo.mjs"
+      - "scripts/build-linux-news.mjs"
+      - "content/linux-news/**"
+      - "assets/blog/linux-news/**"
+      - "tests/linux-news.test.mjs"
       - "scripts/gaming-integration.mjs"
       - "content/linux-gaming-repair/publication.json"
       - "tests/seo-localization.test.mjs"
@@ -87,6 +95,8 @@ jobs:
         run: node --test tests/sitemaps.test.mjs
       - name: Validate translated article sitemap generation
         run: node --test tests/seo-sitemap-generator.test.mjs
+      - name: Validate bilingual Linux news and safe command examples
+        run: npm run test:linux-news
       - name: Audit all crawlable URLs and language pairs
         run: node scripts/audit-seo.mjs
       - name: Validate SEO and localization contracts

@@ -1,0 +1,17 @@
+/* Scoped additions to the existing blog typography and palette. */
+.news-hero { max-width:1048px; margin:0 0 46px; }
+.news-hero picture { display:block; }
+.news-hero img { width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:14px; }
+.news-hero figcaption { max-width:800px; margin-top:13px; color:var(--muted); font-size:14px; line-height:1.7; }
+.news-callout,.news-status { padding:22px 24px; margin:28px 0; border:1px solid #73543c; border-left:3px solid #f2b36d; border-radius:9px; background:#211c18; font-size:16px; }
+.news-status { border-color:#365569; border-left-color:var(--accent); background:var(--surface); }
+.article-copy .news-callout p,.article-copy .news-status p { margin:0; }
+.news-callout strong { color:#ffd1a0; }
+.news-sources,.news-method { font-size:15px; }
+.article-copy .news-method { color:var(--muted); border-top:1px solid var(--line); padding-top:22px; }
+.news-article .article-header { max-width:920px; }
+.news-article .article-header .intro { max-width:790px; font-size:18px; }
+.news-article .article-meta { margin-top:24px; }
+.news-article .article-copy td code { overflow-wrap:anywhere; }
+@media(max-width:1000px) { .news-hero { max-width:730px; margin-left:auto; margin-right:auto; } .news-article .article-header { max-width:730px; } }
+@media(max-width:650px) { .news-hero { margin-bottom:32px; } .news-hero img { aspect-ratio:620/960; } .news-callout,.news-status { padding:18px; font-size:15px; } .news-article .article-header .intro { font-size:17px; } }

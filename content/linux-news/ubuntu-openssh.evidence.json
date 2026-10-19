@@ -1,0 +1,132 @@
+{
+  "checked": "2026-10-19",
+  "method": "Primary documentation, Launchpad source and amd64 binary publication records, packaging source, published Canonical autopkgtest log. No local Ubuntu 26.10 reproduction.",
+  "bug": {
+    "url": "https://bugs.launchpad.net/bugs/2169738",
+    "api": "https://api.launchpad.net/1.0/bugs/2169738",
+    "created": "2026-10-06T17:56:59.501687+00:00",
+    "tasks": [
+      {
+        "bug_target_name": "openssh (Ubuntu)",
+        "status": "In Progress",
+        "date_fix_released": null
+      },
+      {
+        "bug_target_name": "openssh-gssapi (Ubuntu)",
+        "status": "Fix Released",
+        "date_fix_released": "2026-10-11T17:54:06.158216+00:00"
+      },
+      {
+        "bug_target_name": "openssh (Debian)",
+        "status": "Fix Released",
+        "date_fix_released": null
+      }
+    ]
+  },
+  "sourcePublications": [
+    {
+      "source": "openssh",
+      "source_package_version": "1:10.5p1-1ubuntu3",
+      "pocket": "Proposed",
+      "status": "Published",
+      "date_published": "2026-10-11T13:39:22.456645+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+sourcepub/18830480"
+    },
+    {
+      "source": "openssh",
+      "source_package_version": "1:10.5p1-1ubuntu2",
+      "pocket": "Release",
+      "status": "Published",
+      "date_published": "2026-09-12T09:46:17.892040+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+sourcepub/18729183"
+    },
+    {
+      "source": "openssh-gssapi",
+      "source_package_version": "1:10.5p1-1ubuntu3",
+      "pocket": "Release",
+      "status": "Published",
+      "date_published": "2026-10-11T18:01:24.430473+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+sourcepub/18830772"
+    }
+  ],
+  "binaryPublications": [
+    {
+      "binary": "openssh-server",
+      "architecture": "amd64",
+      "binary_package_version": "1:10.5p1-1ubuntu3",
+      "pocket": "Proposed",
+      "status": "Published",
+      "date_published": "2026-10-11T15:05:50.152488+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/251227415"
+    },
+    {
+      "binary": "openssh-server",
+      "architecture": "amd64",
+      "binary_package_version": "1:10.5p1-1ubuntu2",
+      "pocket": "Release",
+      "status": "Published",
+      "date_published": "2026-09-12T09:46:17.892040+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/249539752"
+    },
+    {
+      "binary": "openssh-client",
+      "architecture": "amd64",
+      "binary_package_version": "1:10.5p1-1ubuntu3",
+      "pocket": "Proposed",
+      "status": "Published",
+      "date_published": "2026-10-11T15:05:50.152488+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/251227411"
+    },
+    {
+      "binary": "openssh-client",
+      "architecture": "amd64",
+      "binary_package_version": "1:10.5p1-1ubuntu2",
+      "pocket": "Release",
+      "status": "Published",
+      "date_published": "2026-09-12T09:46:17.892040+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/249539750"
+    },
+    {
+      "binary": "openssh-server-gssapi",
+      "architecture": "amd64",
+      "binary_package_version": "1:10.5p1-1ubuntu3",
+      "pocket": "Release",
+      "status": "Published",
+      "date_published": "2026-10-11T18:01:24.430473+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/251229320"
+    },
+    {
+      "binary": "openssh-client-gssapi",
+      "architecture": "amd64",
+      "binary_package_version": "1:10.5p1-1ubuntu3",
+      "pocket": "Release",
+      "status": "Published",
+      "date_published": "2026-10-11T18:01:24.430473+00:00",
+      "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/251229318"
+    }
+  ],
+  "packageSource": {
+    "changelog": "https://git.launchpad.net/ubuntu/+source/openssh/tree/debian/changelog?h=ubuntu/stonking-devel",
+    "fixRevision": "1:10.5p1-1ubuntu3",
+    "postrmGuard": "Return before cleanup when the counterpart marker file exists.",
+    "limitations": "A current branch is not an immutable version reference. Revision identified in changelog and bug record."
+  },
+  "upstreamTest": {
+    "url": "https://autopkgtest.ubuntu.com/results/autopkgtest-stonking/stonking/amd64/o/openssh/20261011_190427_73a09@/log.gz",
+    "test": "purge-keeps-config-with-counterpart",
+    "result": "PASS",
+    "architecture": "amd64",
+    "date": "2026-10-11",
+    "independentlyExecutedHere": false
+  },
+  "usn": {
+    "url": "https://ubuntu.com/security/notices/USN-8928-1",
+    "published": "2026-10-14",
+    "releases": {
+      "26.04 LTS": "1:10.2p1-2ubuntu3.8",
+      "24.04 LTS": "1:9.6p1-3ubuntu13.20",
+      "22.04 LTS": "1:8.9p1-3ubuntu0.18"
+    },
+    "separateFromPurgeRegression": true
+  }
+}
