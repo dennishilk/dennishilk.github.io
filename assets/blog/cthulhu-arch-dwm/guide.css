@@ -1,0 +1,42 @@
+/* Authentic Cthulhu Arch/dwm case study. Scoped, responsive, no external assets. */
+.arch-guide {--arch-ink:#dce9ec;--arch-cyan:#80d8f8;--arch-line:#304b57}
+.arch-guide .eyebrow,.arch-guide .breadcrumbs a,.arch-guide .article-copy a,.arch-guide .desktop-toc a:hover {color:var(--arch-cyan)}
+.arch-guide .article-header{max-width:940px}
+.arch-guide .article-header h1{max-width:940px}
+.arch-guide .intro{max-width:840px;font-size:20px;line-height:1.75;color:#bbcad7}
+.arch-hero{margin:34px 0 12px}
+.arch-hero a{display:block}
+.arch-hero img{display:block;width:100%;height:auto;border:1px solid #385362;border-radius:10px;background:#090e14}
+.arch-hero figcaption{margin:10px 0 0;color:#abbecd;font-size:13px;line-height:1.7}
+.arch-overview{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;padding:17px 0 23px;border-bottom:1px solid #29424b;margin:0 0 32px;color:#bdcdda;font-size:14px}
+.arch-overview strong{font:700 23px ui-monospace,monospace;color:var(--arch-cyan);vertical-align:middle;margin-right:8px}
+.arch-overview a{margin-left:auto}
+.arch-guide .article-copy h2{margin-top:50px}
+.arch-guide .article-copy h3{margin-top:29px}
+.arch-note{border-left:3px solid #80d8f8;background:#10202b;padding:17px 19px;border-radius:0 8px 8px 0;margin:20px 0 30px;color:#c9dbe5;font-size:16px;line-height:1.7}
+.arch-warning{border-left-color:#d9bd82;background:#28231a}
+.arch-code{max-width:100%;overflow:hidden;border:1px solid #304b57;background:#0c141d;border-radius:9px;margin:22px 0 30px}
+.arch-code figcaption{padding:10px 15px;border-bottom:1px solid #304b57;background:#182b37;color:#c8d8e0;font:12px ui-monospace,monospace}
+.arch-code pre{margin:0;padding:16px 18px;border:0;border-radius:0;background:#0c141d;overflow:auto;line-height:1.65}
+.arch-code code{background:none;border:0;padding:0;color:#dbe9ed;font-size:13px}
+.arch-guide .table-scroll{border-color:#304b57}
+.arch-guide .table-scroll th{background:#172733}
+.arch-guide .table-scroll td,.arch-guide .table-scroll th{padding:12px 14px}
+.arch-toc{margin:0 0 28px;border:1px solid #304b57;border-radius:9px;background:#101e2a;padding:18px 22px;font-size:15px}
+.arch-toc strong{display:block;margin-bottom:8px;color:#e3eff6}
+.arch-toc ol{columns:2;column-gap:32px;margin:0;padding-left:21px}
+.arch-toc li{break-inside:avoid;margin:5px 0}
+.arch-toc a{color:#9cdafa;text-decoration:none}
+.arch-end{padding:20px 23px;margin:34px 0;border:1px solid #34535b;border-radius:10px;background:#12232b}
+.arch-end p:last-child{margin-bottom:0}
+.arch-source{font-size:14px;color:#afc1cc}
+.arch-guide .desktop-toc{max-height:calc(100vh - 145px)}
+@media(max-width:690px){
+.arch-guide .article-header h1{font-size:clamp(30px,8vw,43px)}
+.arch-guide .intro{font-size:18px}
+.arch-overview a{margin-left:0;width:100%}
+.arch-toc ol{columns:1}
+.arch-code pre{padding:13px}
+.arch-code code{font-size:12px}
+.arch-guide .article-copy h2,.arch-guide .article-copy h3{scroll-margin-top:125px}
+}
