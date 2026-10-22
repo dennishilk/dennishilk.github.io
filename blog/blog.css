@@ -142,16 +142,16 @@ tr:last-child td { border-bottom:0; }
 .feed-copy { flex:1 1 240px; }
 .feed-copy h2 { margin:0 0 5px; font-size:16px; line-height:1.4; }
 .feed-copy p { margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
-.feed-links { display:flex; flex-wrap:wrap; gap:9px; }
+.feed-links { display:flex; flex-wrap:wrap; justify-content:center; column-gap:9px; row-gap:10px; }
 .feed-link { display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:8px; padding:9px 12px; color:var(--text); background:var(--surface); font-size:12px; font-weight:650; text-decoration:none; white-space:nowrap; }
 .feed-link:hover { color:var(--accent); border-color:var(--accent); }
 .feed-link:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 .feed-icon { width:15px; height:15px; flex:none; color:#f5a623; }
 /* Quiet Google source-preference link beneath the three RSS subscriptions. No embedded Google scripts. */
-.preferred-source { flex:0 0 100%; display:flex; justify-content:flex-end; padding-top:6px; font-size:12px; }
+.preferred-source { flex:0 0 100%; display:flex; justify-content:center; text-align:center; padding-top:2px; font-size:12px; }
 .preferred-source a { color:var(--muted); text-decoration:none; font-weight:500; line-height:1.5; }
 .preferred-source a:hover { color:var(--accent); text-decoration:underline; }
 .preferred-source a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
-@media(max-width:650px) { .blog-feeds { padding:17px; gap:14px; } .feed-links { width:100%; } .preferred-source { justify-content:flex-start; } }
+@media(max-width:650px) { .blog-feeds { padding:17px; gap:14px; } .feed-links { width:100%; } .preferred-source { justify-content:center; } }
 
 #dual-isa-story { overflow-wrap:anywhere; hyphens:auto; }
