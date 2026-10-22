@@ -147,6 +147,11 @@ tr:last-child td { border-bottom:0; }
 .feed-link:hover { color:var(--accent); border-color:var(--accent); }
 .feed-link:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 .feed-icon { width:15px; height:15px; flex:none; color:#f5a623; }
-@media(max-width:650px) { .blog-feeds { padding:17px; gap:14px; } .feed-links { width:100%; } }
+/* Quiet Google source-preference link beneath the three RSS subscriptions. No embedded Google scripts. */
+.preferred-source { flex:0 0 100%; display:flex; justify-content:flex-end; padding-top:6px; font-size:12px; }
+.preferred-source a { color:var(--muted); text-decoration:none; font-weight:500; line-height:1.5; }
+.preferred-source a:hover { color:var(--accent); text-decoration:underline; }
+.preferred-source a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+@media(max-width:650px) { .blog-feeds { padding:17px; gap:14px; } .feed-links { width:100%; } .preferred-source { justify-content:flex-start; } }
 
 #dual-isa-story { overflow-wrap:anywhere; hyphens:auto; }
