@@ -32,7 +32,7 @@
 <tr><td><code>/mnt/Games.Vol1</code></td><td>Existing Samsung 860 EVO ext4 Steam library</td></tr>
 <tr><td><code>/mnt/Games.Vol2</code></td><td>Second existing Samsung 860 EVO ext4 game library</td></tr>
 <tr><td><code>/mnt/Homelab</code></td><td>Separate ext4 NVMe for recordings, diagnostics and data</td></tr>
-<tr><td>Swap</td><td>zram rather than the old conventional swap arrangement</td></tr>
+<tr><td>Swap</td><td>4 GiB visible in the current monitor; the exact swap backend has not been independently confirmed</td></tr>
 </tbody></table></div>
 <p>The three data volumes were mounted using their UUIDs in <code>/etc/fstab</code>, then checked with <code>findmnt</code> and ultimately verified again in Steam. Anyone adapting the setup must use <strong>their own UUIDs</strong> and boot layout. Copying another machine's PARTUUID, disk paths or EFI entries without checking them is a particularly bad shortcut.</p>
 <p>Our rule was straightforward: <strong>verify the boot and storage layers before touching the desktop</strong>. That prevented a cosmetic WM rebuild from disturbing already working boot files or precious game libraries.</p>
@@ -76,7 +76,7 @@
 <h2 id="everyday">7. Audio, files, clipboard, and system services</h2>
 <p>A window manager alone is not a workstation. I also need Chrome, Thunar with removable-volume handling, Mousepad, archives, VLC, reliable clipboard behavior and sound. The installation therefore includes <strong>PipeWire, pipewire-pulse, WirePlumber</strong> and <code>wpctl</code>. Hardware volume keys control the default output directly, without installing an entire desktop environment.</p>
 <p>Thunar is backed by Tumbler, GVfs, udisks2 and a Polkit agent. <code>xfce4-clipman</code> runs standalone without an XFCE panel, preserving clipboard text after the source window closes while disabling permanent history storage on exit. The setup also covers <code>NetworkManager</code>, time sync, periodic SSD TRIM and weekly Pacman cache cleanup. The intended firewall policy denies unsolicited inbound traffic while allowing outbound connections; crucially, the bootstrap avoids turning on UFW during an SSH session.</p>
-<p>We deliberately skipped Bluetooth daemons, printer services, extra notification programs and unnecessary panels. This is not about claiming an unmeasured RAM-performance miracle. It is about knowing which components are running and why.</p>
+<p>GIMP was installed later for image editing alongside the minimal desktop. We deliberately skipped Bluetooth daemons, printer services, extra notification programs and unnecessary panels. This is not about claiming an unmeasured RAM-performance miracle. It is about knowing which components are running and why.</p>
 <h2 id="amd">8. RX 9060 XT: Mesa, RADV, and 32-bit Vulkan</h2>
 <p>The RX 9060 XT is an RDNA4/Navi44 GPU. Seeing an Xorg desktop is not proof that the whole Linux gaming stack works. We explicitly checked the <code>amdgpu</code> driver, Mesa/RADV, Vulkan and especially <strong>32-bit graphics support for Steam and Proton</strong>. The Arch packages involved include <code>mesa</code>, <code>lib32-mesa</code>, <code>vulkan-radeon</code>, <code>lib32-vulkan-radeon</code>, <code>vulkan-icd-loader</code> and <code>lib32-vulkan-icd-loader</code>.</p>
 <p>This requires the enabled <code>multilib</code> repository. We verified OpenGL, Vulkan and 32-bit library availability before moving on to games. Mixed Windows titles under Proton are precisely why checking only the 64-bit Vulkan path can produce misleading confidence.</p>
