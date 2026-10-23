@@ -1,0 +1,187 @@
+{
+  "date": "2026-10-23",
+  "type": "selected derived evidence, not original raw logs",
+  "system": {
+    "distribution": "Arch Linux",
+    "window_manager": "dwm",
+    "gpu": "RX 9060 XT 16 GB / Navi44 / GFX1200",
+    "kernel": "7.2.11-arch1-1",
+    "RADV": "26.2.5",
+    "VKD3D": "212991fc2c266bc",
+    "Proton": "1791559474 proton-11.0-2e-x86_64"
+  },
+  "workflow": {
+    "collector": "started before fullscreen game",
+    "shader_wait_minutes": "10-15",
+    "clock": "tracefs mono; Wine clock not cross-calibrated"
+  },
+  "captures": [
+    {
+      "tool": "GEM Watch v1",
+      "handle": 7558,
+      "recorded_generations": 2,
+      "last_close_to_failed_lookup_ms": "3.643",
+      "source": "cthulhu-gem-watch-20261023T101845Z-696273.log",
+      "sha256": "7e7b1314937436c693ac650edfa13064c16e6dacddf749ba4d396b026b8f1274",
+      "allocation_class": "not established"
+    },
+    {
+      "tool": "GEM Stack Watch v2",
+      "handle": 6233,
+      "recorded_generations": 3,
+      "last_close_to_failed_lookup_ms": "5.227",
+      "source": "cthulhu-gem-stack-watch-20261023T121807Z-922010.log",
+      "sha256": "17a4201fc1278c53763fd471c62385bc131554093f4abda7e290cdf35c948d56",
+      "allocation_class": "latest recorded generation: RADV descriptor-pool BO; Wine vkDestroyDescriptorPool",
+      "intended_generation_in_rejected_list": "unknown"
+    },
+    {
+      "tool": "Pool Caller Watch v3, first capture",
+      "handle": 3317,
+      "recorded_generations": 6,
+      "last_close_to_failed_lookup_ms": "5.517",
+      "source": "cthulhu-pool-caller-watch-20261023T135531Z-1106168.log",
+      "sha256": "50d5c8f67870520237c0802299c249d3835308f8bcf393e30d689d842f7c9a8d",
+      "pe_uprobe_hits": {
+        "entry": 0,
+        "exit": 0
+      },
+      "allocation_class": "not established"
+    },
+    {
+      "tool": "Pool Caller Watch v3, further capture",
+      "handle": 3498,
+      "recorded_generations": 2,
+      "last_close_to_failed_lookup_ms": "5.806",
+      "source": "cthulhu-pool-caller-watch-20261023T143105Z-1179758.log",
+      "sha256": "63f421c7bfd6fbdf7b10662c194c63bef05b4fd46e3c248a51196856fb0794fe",
+      "pe_uprobe_hits": {
+        "entry": 0,
+        "exit": 0
+      },
+      "allocation_class": "not established",
+      "parsed_kernel_records": 44300,
+      "timeline_mono_seconds": {
+        "latest_create": "37551.368062",
+        "latest_close_return": "37551.402929",
+        "lookup_null": "37551.408735",
+        "bo_enoent": "37551.408736",
+        "cs_enoent": "37551.408736"
+      }
+    }
+  ],
+  "common_recorded_kernel_findings": {
+    "inline_bo_list_entries": 21,
+    "bo_return": -2,
+    "cs_return": -2,
+    "reported_kernel_probe_misses": 0,
+    "reported_buffer_losses": 0,
+    "successful_reassign_between_last_close_and_lookup": false
+  },
+  "latest_proton": {
+    "source": "steam-1643320(4).log",
+    "bytes": 23846550,
+    "sha256": "349a38ba77e5633f25a463917dc576b9c622f7bbae3f39fb1b954dae5792ade8",
+    "descriptor_buffer_disabled_explicitly": true,
+    "cs_rejected_minus2_count": 1,
+    "unreal_device_removed_utc": "2026-10-23T14:48:37.385Z",
+    "local_time": "16:48:37.385 CEST",
+    "local_used_mb": "7256.52",
+    "local_budget_mb": "15169.93",
+    "DRED": "not available",
+    "kernel_reset_proven_by_this_pair": false
+  },
+  "v4_validation": {
+    "simulation_tests_passed": 26,
+    "real_registration": "passed on Cthulhu, then probes removed",
+    "real_capture": "normal-exit control, 90 independently verified pairs and 36 successful scoped handle closes",
+    "candidate_api_caller": "all observed return addresses resolve using the complete early mappings to d3d12core.dll+0x386ce4; verification slots resolve to Wine PE offset 0x12a7a"
+  },
+  "scripts": [
+    {
+      "file": "cthulhu-cs-watch.py",
+      "bytes": 16490,
+      "sha256": "a14217220cb3e78616d9002f13be108581ef02c6f098d1b4b4b3d273ae59bfad",
+      "public_path": "assets/blog/cthulhu-cs-watch/cthulhu-cs-watch.py"
+    },
+    {
+      "file": "cthulhu-gem-watch.py",
+      "bytes": 24386,
+      "sha256": "432058cdb6d5e20b2821b8f8c24cf264110f47d730a7ae4503572abc60410af3",
+      "public_path": "assets/blog/cthulhu-gem-watch/cthulhu-gem-watch.py"
+    },
+    {
+      "file": "cthulhu-gem-stack-watch.py",
+      "bytes": 38738,
+      "sha256": "89fb0b03b695d21c80d334bee6105f76de2dbd0096c3451ca026353ce80e44fd",
+      "public_path": "assets/blog/cthulhu-gem-watch/cthulhu-gem-stack-watch.py"
+    },
+    {
+      "file": "cthulhu-pool-caller-watch.py",
+      "bytes": 40078,
+      "sha256": "cd7f5d170e6c3a724a7619b221ca22f0de748050d01e8eaa38c969719b28ae4a",
+      "public_path": "assets/blog/cthulhu-gem-watch/cthulhu-pool-caller-watch.py"
+    },
+    {
+      "file": "cthulhu-native-pool-watch.py",
+      "bytes": 45467,
+      "sha256": "d4b844a6cb5598a84807ebeede08e630d6a48ddfd8fa03ed435545951205f073",
+      "public_path": "assets/blog/cthulhu-gem-watch/cthulhu-native-pool-watch.py"
+    }
+  ],
+  "limits": [
+    "A successful handle close is not proof that all references or GPU memory have been destroyed.",
+    "The intended handle generation and original D3D12 Release/fence sequence remain unknown.",
+    "Zero PE-probe hits establish a coverage gap, not absence of pool destruction.",
+    "No common cause with the historical 21 October GPUVM fault is established.",
+    "No firmware fix or upstream fix is confirmed."
+  ],
+  "native_normal_exit_control": {
+    "source": "cthulhu-native-pool-watch-20261023T154024Z-1313210.log",
+    "bytes": 15905729,
+    "lines": 79434,
+    "sha256": "ad3a3aead94e8d902a970f5c4ba9cb0cc2c8d34f919b3c69a7446156a9188c81",
+    "user_report": "normal game exit confirmed by user; no reload crash reported; gameplay duration not independently measured",
+    "capture_start_cest": "2026-10-23T17:40:24.801520+02:00",
+    "capture_end_cest": "2026-10-23T18:02:54.529685+02:00",
+    "elapsed_mono_seconds": "1349.728165468",
+    "native_entries": 90,
+    "native_exits": 90,
+    "independently_validated_pairs": 90,
+    "successful_scoped_handle_closes": 36,
+    "observed_caller_module": "d3d12core.dll",
+    "observed_caller_rva": "0x386ce4",
+    "unwind_function_begin_rva": "0x386c80",
+    "unwind_function_end_rva": "0x386d4c",
+    "source_attribution": "code/source inference: sequence matches pinned d3d12_descriptor_heap_cleanup; no debug-symbol recovery",
+    "api_return_wine_pe_offset": "0x12a7a",
+    "game_process_threads_with_pool_calls": 4,
+    "raw_systemwide_events": 79229,
+    "buffer_read_events": 79229,
+    "reported_kernel_probe_misses": 0,
+    "reported_buffer_losses": 0,
+    "captured_null_lookups": 0,
+    "captured_bo_enoent": 0,
+    "captured_cs_enoent": 0,
+    "module_file_hashes_match_with_observed_device_inode": true,
+    "late_metadata_unavailable_events": 21,
+    "incomplete_pool_pairs": 0,
+    "cleanup_errors": [],
+    "limits": [
+      "A coverage control, not a captured reload failure or a fix.",
+      "Early mappings and matching file hashes are available; some shutdown-time metadata reads occur after exit.",
+      "The intended rejected-list generation, original D3D12 Release and fence chronology remain unknown."
+    ]
+  },
+  "investigation_status": {
+    "as_of": "2026-10-23",
+    "repeated_game_tests": "paused after successful native coverage control",
+    "root_cause_component_proven": false,
+    "confirmed_fix": false,
+    "evidence_sufficient_for_precise_developer_report": true,
+    "next_step": "review and report existing evidence; additional reproduction only for a specific open question or targeted follow-up",
+    "shader_wait_minutes_per_launch": "10-15",
+    "old_gpuvm_fault_and_later_rejected_submissions": "kept separate",
+    "new_upstream_report_published": false
+  }
+}
