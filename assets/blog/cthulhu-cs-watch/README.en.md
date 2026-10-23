@@ -1,5 +1,8 @@
 # cthulhu-cs-watch.py — my capture on 23 October 2026
 
+**Current status, 23 October 2026:** I have paused repeated game testing. The commands below document my capture workflow so far. Further reproduction is reserved for a specific open question or targeted follow-up request. Existing evidence is sufficient for a precise developer report; culprit and fix remain unresolved.
+
+
 I used this tool on Cthulhu with Arch Linux, kernel 7.2.11-arch1-1 and an RX 9060 XT to locate ENOENT in a rejected GPU submission. It is a diagnostic tool for the inspected kernel version, not a game fix.
 
 ## Unchanged source and validation status

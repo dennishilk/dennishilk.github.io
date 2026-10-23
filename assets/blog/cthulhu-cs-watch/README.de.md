@@ -1,5 +1,8 @@
 # cthulhu-cs-watch.py — mein Messablauf vom 23. Oktober 2026
 
+**Aktueller Stand, 23. Oktober 2026:** Meine wiederholten Spieltests sind vorerst abgeschlossen. Die folgenden Befehle dokumentieren meinen bisherigen Messablauf. Ich plane weitere Reproduktion erst für eine konkrete offene Frage oder gezielte Rückfrage. Die vorhandenen Belege reichen für einen präzisen Entwicklerbericht; Verursacher und Fix sind noch offen.
+
+
 Ich habe dieses Werkzeug auf Cthulhu mit Arch Linux, Kernel 7.2.11-arch1-1 und einer RX 9060 XT verwendet, um den Rückgabewert ENOENT während einer abgewiesenen GPU-Submission einzugrenzen. Es ist ein Diagnosewerkzeug für diesen geprüften Kernelstand, kein Spiele-Fix.
 
 ## Unveränderte Quelle und aktueller Prüfstand

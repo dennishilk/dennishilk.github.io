@@ -1,5 +1,8 @@
 # Meine Cthulhu-Messwerkzeuge vom 23. Oktober 2026
 
+**Aktueller Stand, 23. Oktober 2026:** Meine wiederholten Spieltests sind vorerst abgeschlossen. Die folgenden Befehle dokumentieren meinen bisherigen Messablauf. Ich plane weitere Reproduktion erst für eine konkrete offene Frage oder gezielte Rückfrage. Die vorhandenen Belege reichen für einen präzisen Entwicklerbericht; Verursacher und Fix sind noch offen.
+
+
 Ich habe die Werkzeuge schrittweise eingesetzt, um den reproduzierbaren S.T.A.L.K.E.R.-Reload-Absturz genauer einzugrenzen. Ich bewahre jede bereitgestellte Skriptversion unverändert auf. Sie sind auf x86_64 Linux 7.2.11 und die im Quelltext geprüften Builds begrenzt; Instrumentierung kann Timing verändern.
 
 | Datei | Gemessen bzw. vorbereitet | Tatsächlicher Status dieses Tages |

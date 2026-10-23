@@ -66,12 +66,21 @@ ${body}
 for(const lang of ['en','de']){
   const de=lang==='de',prefix=de?'/de':'',path=prefix.slice(1)+(de?'/':'')+'blog/index.html';
   const articles=specs.filter(a=>a.lang===lang).sort((a,b)=>b.published.localeCompare(a.published)||a.slug.localeCompare(b.slug));
-  const category=de?'Linux-News & Sicherheit':'Linux News & Security',count=String(articles.length).padStart(2,'0');
+  const category=de?'Linux-News & Sicherheit':'Linux News & Security';
   let h=read(path);
+  const existingSection=h.match(/<section id="linux-news"[\s\S]*?<\/section>/)?.[0];
+  const existingCards=[...(existingSection||'').matchAll(/<article\b[\s\S]*?<\/article>/g)].map(m=>m[0]);
+  const routeOf=card=>card.match(/<a class="card-link" href="([^"]+)"/)?.[1];
+  const newsByRoute=new Map(articles.map(a=>[prefix+'/blog/'+a.slug+'/',a]));
+  // This category also contains manually maintained investigations such as
+  // Cthulhu. Rebuilding the generated news must retain their cards and copy.
+  const manualCards=existingCards.filter(card=>!newsByRoute.has(routeOf(card)));
+  const count=String(articles.length+manualCards.length).padStart(2,'0');
   h=h.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/,(_,json)=>{
     const data=JSON.parse(json),list=data['@graph'].find(n=>n['@type']==='ItemList'),blog=data['@graph'].find(n=>n['@type']==='Blog');
     const news=articles.map(a=>({'@type':'ListItem',url:origin+prefix+'/blog/'+a.slug+'/',name:a.title}));
-    const urls=new Set(news.map(n=>n.url));list.itemListElement=[...news,...list.itemListElement.filter(n=>!urls.has(n.url))].map((n,i)=>({...n,position:i+1}));
+    const updates=new Map(news.map(n=>[n.url,n])),existingURLs=new Set(list.itemListElement.map(n=>n.url));
+    list.itemListElement=[...news.filter(n=>!existingURLs.has(n.url)),...list.itemListElement.map(n=>updates.has(n.url)?{...n,...updates.get(n.url)}:n)].map((n,i)=>({...n,position:i+1}));
     list.numberOfItems=list.itemListElement.length;
     blog.dateModified=[blog.dateModified,...articles.map(a=>a.modified)].filter(Boolean).sort().at(-1);
     return '<script type="application/ld+json">'+JSON.stringify(data)+'</script>';
@@ -79,11 +88,25 @@ for(const lang of ['en','de']){
   const metadata=JSON.parse(h.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   h=h.replace(/(<p class="blog-count">)\d+/, '$1'+metadata['@graph'].find(n=>n['@type']==='ItemList').numberOfItems);
   const nav=`<a href="#linux-news">${esc(category)}<span>${count}</span></a>`;
-  if(h.includes('href="#linux-news"'))h=h.replace(/<a href="#linux-news">[\s\S]*?<\/a>/,nav);
+  if(h.includes('href="#linux-news"'))h=h.replace(/(<a href="#linux-news">[\s\S]*?<span>)\d+(<\/span>)/,(_,before,after)=>before+count+after);
   else h=h.replace(/(<nav id="blog-navigation"[^>]*>)/,'$1'+nav);
-  const cards=articles.map(a=>`<article id="news-${a.topic}" class="guide-card"><a class="card-link" href="${prefix}/blog/${a.slug}/"><div class="guide-top"><span class="category">Ubuntu &amp; OpenSSH</span><span class="reading-time"><time datetime="${a.published}">${date(a.published,lang)}</time></span></div><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p><span class="privacy-badge">${de?'Primärquellen · geprüfter Paketstatus':'Primary sources · verified package status'}</span><span class="read-link">${de?'Analyse lesen':'Read the analysis'} <span aria-hidden="true">→</span></span></a></article>`).join('\n');
+  const renderCard=a=>`<article id="news-${a.topic}" class="guide-card"><a class="card-link" href="${prefix}/blog/${a.slug}/"><div class="guide-top"><span class="category">Ubuntu &amp; OpenSSH</span><span class="reading-time"><time datetime="${a.published}">${date(a.published,lang)}</time></span></div><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p><span class="privacy-badge">${de?'Primärquellen · geprüfter Paketstatus':'Primary sources · verified package status'}</span><span class="read-link">${de?'Analyse lesen':'Read the analysis'} <span aria-hidden="true">→</span></span></a></article>`;
+  const existingRoutes=new Set(existingCards.map(routeOf));
+  const cards=[...articles.filter(a=>!existingRoutes.has(prefix+'/blog/'+a.slug+'/')).map(renderCard),...existingCards.map(card=>{
+    const a=newsByRoute.get(routeOf(card));
+    if(!a)return card;
+    return card.replace(/<h3>[\s\S]*?<\/h3>/,'<h3>'+esc(a.title)+'</h3>')
+      .replace(/<p>[\s\S]*?<\/p>/,'<p>'+esc(a.summary)+'</p>')
+      .replace(/<time datetime="[^"]+">[\s\S]*?<\/time>/,`<time datetime="${a.published}">${date(a.published,lang)}</time>`);
+  })].join('\n');
   const section=`<section id="linux-news" class="guides-section" aria-labelledby="linux-news-title"><div class="section-heading"><h2 id="linux-news-title">${esc(category)}</h2><span>${count}</span></div><p class="section-intro">${de?'Release-Analysen, wichtige Upstream-Änderungen, Sicherheitsmeldungen und verifizierte Workarounds. Datierte Berichte mit Primärquellen, geprüftem Status und klar benannten offenen Fragen.':'Release analyses, important upstream changes, security advisories and verified workarounds. Dated reports with primary sources, checked status and clearly identified open questions.'}</p><div class="guide-grid">${cards}</div><p class="section-return"><a href="#blog-navigation">${de?'Zur Themenübersicht ↑':'Back to topics ↑'}</a></p></section>`;
-  if(h.includes('<section id="linux-news"'))h=h.replace(/<section id="linux-news"[\s\S]*?<\/section>/,section);
+  if(existingSection&&existingCards.length){
+    const first=existingSection.indexOf(existingCards[0]),last=existingSection.lastIndexOf(existingCards.at(-1))+existingCards.at(-1).length;
+    const refreshed=(existingSection.slice(0,first)+cards+existingSection.slice(last))
+      .replace(/(<div class="section-heading">[\s\S]*?<span>)\d+(<\/span>)/,(_,before,after)=>before+count+after);
+    h=h.replace(existingSection,refreshed);
+  }
+  else if(existingSection)h=h.replace(existingSection,section);
   else h=h.replace('<section id="tutorials"',section+'\n<section id="tutorials"');
   write(path,h);
   // The SEO generator preserves old sitemap dates. Advance only the index that

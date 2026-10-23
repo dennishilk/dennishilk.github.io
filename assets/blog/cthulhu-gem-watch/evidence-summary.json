@@ -172,5 +172,16 @@
       "Early mappings and matching file hashes are available; some shutdown-time metadata reads occur after exit.",
       "The intended rejected-list generation, original D3D12 Release and fence chronology remain unknown."
     ]
+  },
+  "investigation_status": {
+    "as_of": "2026-10-23",
+    "repeated_game_tests": "paused after successful native coverage control",
+    "root_cause_component_proven": false,
+    "confirmed_fix": false,
+    "evidence_sufficient_for_precise_developer_report": true,
+    "next_step": "review and report existing evidence; additional reproduction only for a specific open question or targeted follow-up",
+    "shader_wait_minutes_per_launch": "10-15",
+    "old_gpuvm_fault_and_later_rejected_submissions": "kept separate",
+    "new_upstream_report_published": false
   }
 }

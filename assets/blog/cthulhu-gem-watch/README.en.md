@@ -1,5 +1,8 @@
 # My Cthulhu capture tools from 23 October 2026
 
+**Current status, 23 October 2026:** I have paused repeated game testing. The commands below document my capture workflow so far. Further reproduction is reserved for a specific open question or targeted follow-up request. Existing evidence is sufficient for a precise developer report; culprit and fix remain unresolved.
+
+
 I used these tools incrementally to narrow down the repeatable S.T.A.L.K.E.R. reload failure. I preserve each supplied script version unchanged. They are limited to x86_64 Linux 7.2.11 and the exact builds checked in their source; instrumentation can change timing.
 
 | File | Measured or prepared | Actual status on this day |
