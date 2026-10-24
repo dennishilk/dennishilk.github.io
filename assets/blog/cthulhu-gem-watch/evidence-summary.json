@@ -184,7 +184,7 @@
     ],
     "evidence_sufficient_for_precise_developer_report": true,
     "new_upstream_report_published": false,
-    "next_step": "offline comparison of saved UKI/initrd contents before attributing differences specifically to firmware",
+    "next_step": "Use the completed UKI/initramfs comparison and exact platform BIOS/driver/firmware identity to select a targeted follow-up; no repeated comparison or game run requested.",
     "shader_wait_minutes_per_launch": "10-15"
   },
   "historical_scope": "captures, common_recorded_kernel_findings, v4_validation and native_normal_exit_control retain their 23 October scope; updates_20261024 is the next day, not a replacement of the earlier observations",
@@ -244,7 +244,7 @@
           "global_options_unchanged": true,
           "uprobe_counter_limit": "The exposed uprobe profile has hit counts but no separate miss counter."
         },
-        "loaded_firmware_version_fields": "newer October set: ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; version fields, not complete blob hashes",
+        "loaded_firmware_version_fields": "ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; fields match the earlier October-test values, not proof of package provenance, identical blobs or complete firmware identity",
         "intended_generation_in_rejected_list": "unknown",
         "full_GPU_use_and_fence_chronology": "not captured"
       },
@@ -289,7 +289,7 @@
           "global_options_unchanged": true,
           "uprobe_counter_limit": "The exposed uprobe profile has hit counts but no separate miss counter."
         },
-        "loaded_firmware_version_fields": "newer October set: ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; version fields, not complete blob hashes",
+        "loaded_firmware_version_fields": "ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; fields match the earlier October-test values, not proof of package provenance, identical blobs or complete firmware identity",
         "intended_generation_in_rejected_list": "unknown",
         "full_GPU_use_and_fence_chronology": "not captured"
       },
@@ -336,7 +336,7 @@
           "additional_stack_fields_verified_pairs": 39,
           "additional_pair_agreement": true
         },
-        "loaded_firmware_version_fields": "newer October set: ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; version fields, not complete blob hashes",
+        "loaded_firmware_version_fields": "ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; fields match the earlier October-test values, not proof of package provenance, identical blobs or complete firmware identity",
         "intended_generation_in_rejected_list": "unknown",
         "full_GPU_use_and_fence_chronology": "not captured",
         "release_caller": {
@@ -627,6 +627,41 @@
       "GPU_audio_state": "D3",
       "limits": "No timestamp for sticky correctable/unsupported-request bits; no fatal AER sequence preserved; idle D3 and peer-limited speed are not defects by themselves."
     },
-    "windows_counter_observation": "User reports games run under Windows 11; no new matched Windows trace for these Arma runs. Does not exclude all platform/hardware/power interactions."
-  }
+    "windows_counter_observation": "User reports games run under Windows 11; no new matched Windows trace for these Arma runs. Does not exclude all platform/hardware/power interactions.",
+    "completed_UKI_initramfs_comparison": {
+      "status": "already completed in earlier user-supplied outputs, not a new measurement on 24 October",
+      "kernel_and_embedded_command_line_payloads_identical": true,
+      "reported_differing_path_entries": 84,
+      "changed_existing_compressed_AMDGPU_firmware_files": 81,
+      "firmware_alias_difference_entries": 2,
+      "alias": "yellow_carp_vcn.bin.zst: regular file in early September archive versus link to vcn_3_1_2.bin.zst in main archive of arch-linux.efi",
+      "other_changed_file": "usr/lib/udev/hwdb.bin",
+      "GPU_modalias_query_properties_identical": true,
+      "compared": [
+        "file content hashes",
+        "link targets",
+        "file types",
+        "permissions",
+        "UID/GID",
+        "early/main archive placement"
+      ],
+      "outside_scope": [
+        "timestamps",
+        "complete PE headers",
+        "historical external boot additions",
+        "complete runtime blob hashes/use",
+        "historical root filesystem and cache state"
+      ],
+      "other_module_or_boot_script_differences_reported": false,
+      "compressed_file_hash_difference_proves_uncompressed_blob_difference": false
+    }
+  },
+  "editorial_corrections": [
+    {
+      "date": "2026-10-24",
+      "correction": "Previous blog update incorrectly treated the completed initramfs content comparison as pending. Restored the already recorded 84-entry result and withdrew a repeat-comparison recommendation.",
+      "new_Cthulhu_measurement": false,
+      "root_cause_or_fix_claim_changed": false
+    }
+  ]
 }
