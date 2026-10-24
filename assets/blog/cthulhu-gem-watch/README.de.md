@@ -1,17 +1,18 @@
-# Meine Cthulhu-Messwerkzeuge vom 23. Oktober 2026
+# Meine Cthulhu-Messwerkzeuge, 23.–24. Oktober 2026
 
-**Aktueller Stand, 23. Oktober 2026:** Meine wiederholten Spieltests sind vorerst abgeschlossen. Die folgenden Befehle dokumentieren meinen bisherigen Messablauf. Ich plane weitere Reproduktion erst für eine konkrete offene Frage oder gezielte Rückfrage. Die vorhandenen Belege reichen für einen präzisen Entwicklerbericht; Verursacher und Fix sind noch offen.
+**Aktueller Stand, 24. Oktober 2026:** Ich habe mit der nativen v4 und v5 tatsächliche Fehler erfasst, einschließlich des Release-Aufrufers für die letzte Belegung eines fehlenden Handles. Diese Host-Submission-Fehler bleiben getrennt vom älteren GPUVM-Fault, dem instrumentierten Validierungslauf und Armas PCI-Zugriffsausfall. Verursacher und Fix bleiben offen. Die folgenden Befehle dokumentieren abgeschlossene Arbeit; weitere Spielstarts ohne konkrete Frage pausiere ich.
 
 
 Ich habe die Werkzeuge schrittweise eingesetzt, um den reproduzierbaren S.T.A.L.K.E.R.-Reload-Absturz genauer einzugrenzen. Ich bewahre jede bereitgestellte Skriptversion unverändert auf. Sie sind auf x86_64 Linux 7.2.11 und die im Quelltext geprüften Builds begrenzt; Instrumentierung kann Timing verändern.
 
-| Datei | Gemessen bzw. vorbereitet | Tatsächlicher Status dieses Tages |
+| Datei | Gemessen bzw. vorbereitet | Tatsächlicher Stand bis 24. Oktober |
 |---|---|---|
 | [cthulhu-cs-watch.py](../cthulhu-cs-watch/cthulhu-cs-watch.py) | Drei Kernel-Rückkehrproben für BO-Liste, Syncobj und CS | Live benutzt; ENOENT auf BO-/CS-Pfad, kein erfasstes Syncobj-ENOENT |
 | [cthulhu-gem-watch.py](cthulhu-gem-watch.py) | Sieben Kernel-Proben für Handles und Dateikontext | Live benutzt; Handle 7558, letzter Close 3,643 ms vor NULL-Lookup |
 | [cthulhu-gem-stack-watch.py](cthulhu-gem-stack-watch.py) | Sieben Kernel-Proben, zwei private Instanzen und begrenzte native Stacks | Live benutzt; Handle 6233, letzter Close 5,227 ms vorher; spätere Symbolauflösung belegt Pool-Abbau |
 | [cthulhu-pool-caller-watch.py](cthulhu-pool-caller-watch.py) | Sieben Kernel-Proben und zwei PE-Uprobes, eine private Instanz | Registrierung erfolgreich; zwei Live-Aufnahmen, aber beide PE-Proben jeweils ohne Treffer |
-| [cthulhu-native-pool-watch.py](cthulhu-native-pool-watch.py) | Sieben Kernel-Proben und zwei native ELF-Uprobes | 26 lokale Simulationstests; Registrierung und regulärer Kontrolllauf bestätigt: 90 Paare, 36 erfolgreiche Handle-Closes |
+| [cthulhu-native-pool-watch.py](cthulhu-native-pool-watch.py) | Sieben Kernel-Proben und zwei native ELF-Uprobes | 26 lokale Simulationstests; Registrierung und Kontrolllauf vom 23. Oktober: 90 Paare, 36 Closes; am 24. Oktober Start-/Reload-Fehler mit Handles 299/8842 |
+| [cthulhu-heap-release-watch.py](cthulhu-heap-release-watch.py) | Gleiche neun Proben plus vier begrenzte Stack-/Heap-Kandidaten | 33 lokale Offline-Prüfungen dokumentiert; Registrierung und tatsächlicher Reload-Fehler bestätigt: 39 geprüfte Paare, Handle 3229 wird 6,887 ms vor fehlgeschlagenem Lookup geschlossen |
 
 ## Mein Ablauf und abgeschlossene Abdeckungsprüfung
 
@@ -34,9 +35,30 @@ Für eine Zuordnung brauche ich vollständige Klammern im selben nativen Thread,
 Ein erfolgreicher GEM-Handle-Close ist nicht gleichbedeutend mit dem Ende aller Objekt-/GPU-Referenzen. Wegen der Handle-Wiederverwendung ist die ursprünglich von der BO-Liste beabsichtigte Generation weiterhin unbekannt. Ich habe keine vollständige D3D12-Release-/Fence-Kette erfasst und keinen Zusammenhang mit dem älteren GPUVM-Fault bewiesen.
 
 
-## Bestätigter regulärer Kontrolllauf
+## Bestätigter regulärer Kontrolllauf, 23. Oktober
 
-Ich habe das Spiel regulär beendet. Beide nativen Proben melden 90 Treffer; alle 90 Paare wurden unabhängig anhand gleicher nativer TID, Argumente und RSP-Differenz 24 bestätigt. 36 Paare umschließen je einen erfolgreichen GEM-Handle-Close. Alle Kandidaten-Caller ergeben in der frühen vollständigen Mappingaufnahme `d3d12core.dll+0x386ce4`, alle Gegenprüf-Slots Wine-PE-Dateioffset `0x12a7a`. Der gemappte Ersatz-Inode der D3D12-DLL wurde diesmal passend geöffnet und mit dem bekannten Hash bestätigt. Es gab kein erfasstes NULL-Lookup-/BO-/CS-ENOENT, keine gemeldeten Kernel-Probe- oder Pufferverluste und keine Aufräumfehler. Späte Prozessmetadaten waren beim Nachlesen teilweise nicht mehr verfügbar; die frühe passende Snapshot-/Dateihash-Zuordnung liegt vor. Daraus folgt noch keine Zuordnung eines tatsächlich fehlgeschlagenen Reloads zu dieser Aufrufstelle und keine vollständige Release-/Fence-Kette.
+Ich habe das Spiel regulär beendet. Beide nativen Proben melden 90 Treffer; alle 90 Paare wurden unabhängig anhand gleicher nativer TID, Argumente und RSP-Differenz 24 bestätigt. 36 Paare umschließen je einen erfolgreichen GEM-Handle-Close. Alle Kandidaten-Caller ergeben in der frühen vollständigen Mappingaufnahme `d3d12core.dll+0x386ce4`, alle Gegenprüf-Slots Wine-PE-Dateioffset `0x12a7a`. Der gemappte Ersatz-Inode der D3D12-DLL wurde diesmal passend geöffnet und mit dem bekannten Hash bestätigt. Es gab kein erfasstes NULL-Lookup-/BO-/CS-ENOENT, keine gemeldeten Kernel-Probe- oder Pufferverluste und keine Aufräumfehler. Späte Prozessmetadaten waren beim Nachlesen teilweise nicht mehr verfügbar; die frühe passende Snapshot-/Dateihash-Zuordnung liegt vor. Dieser Kontrolllauf allein lieferte keine Aufrufstelle eines fehlgeschlagenen Reloads und keine vollständige Release-/Fence-Kette. Die Fehler des Folgetags sind eigene Aufnahmen.
+
+## Tatsächliche native Fehler und die v5-Erweiterung, 24. Oktober
+
+Die v4-Startaufnahme zeigt Handle 299 in einer BO-Liste mit 20 Einträgen, 3,377 ms nach seinem letzten erfolgreichen Close. Die spätere Gameplay-/Tod-/Reload-Aufnahme zeigt Handle 8842 bei 21 Einträgen, 6,923 ms nach dem Close. In der ersten Aufnahme gibt es eine Belegung vor dem Fehler; die Wiederverwendung nach dem erfolglosen Lookup ist nicht die Belegung der abgewiesenen Liste. Die zweite Aufnahme enthält drei Belegungen vor dem Fehler. Original-Hashes und ausgewählte Statistiken stehen in `updates_20261024.stalker_failures` der JSON-Übersicht.
+
+V5 ergänzt `caller2` bei `params+104`, `caller3` bei `params+200`, `heap_hint` bei `params+88` und `heap_pool` bei `heap_hint+176`. Das sind begrenzte Kandidaten für exakt den geprüften Codepfad, kein allgemeines ABI und kein beliebiger Stack-Unwind. Eine Zuordnung verlangt die erwarteten `d3d12core.dll`-RVAs `0x386ce4` und `0x386afa`, geprüfte Binär-/Mapping-Identitäten und einen passenden nichtleeren Pool. Der Laufzeit-Inode/Hash des Upscalers gehört nicht zu den drei abgesicherten Modulen; die separat nachgereichte DLL entsprach anschließend AMDs offizieller Binärdatei.
+
+Meine abgeschlossenen Registrierungs- und Messbefehle lauteten nacheinander:
+
+```sh
+sudo python3 -B "$HOME/cthulhu-heap-release-watch.py" --probe-check
+sudo python3 -B "$HOME/cthulhu-heap-release-watch.py" --arm
+```
+
+Der originale v5-Quellkopf behält seinen Prüfstand vor der Aufnahme. Die spätere Live-Aufnahme bestand alle 39 Zusatzfeldprüfungen, mit 16 erfolgreichen Closes innerhalb der Aufrufklammern, 44.848 geparsten/gelesenen Ereignissen, null gemeldeten Kernel-Misses/Buffer-Verlusten und erfolgreichem Aufräumen. Gewöhnliche Uprobe-Trefferstatistiken enthalten keinen eigenen Zähler verpasster Instanzen. Private Instanzen und unveränderte globale Stack-Optionen bleiben Teil der Methode.
+
+Die letzte Belegung von Handle 3229 wurde innerhalb der beobachteten Pool-Zerstörung geschlossen; 6,887 ms später scheitert der Lookup, danach liefern BO/CS `-2`. Der höhere erfasste Rücksprung lautet `amd_fidelityfx_upscaler_dx12.dll+0x3bea`. Exakter offizieller SDK-Binärvergleich und Quelltext/Disassembly identifizieren `DestroyBackendContextDX12`, das `descRingBuffer` bei Call-RVA `0x3be7` freigibt. Das ist eine Quelltext-/Binärzuordnung, keine PDB-Auflösung. Vorzeitiger Release, gemeinte Handle-Belegung, vollständiger Fence-Verlauf und verantwortliche Komponente sind damit nicht geklärt. Diese abgewiesene Submission erreicht keine GPU-Ausführung.
+
+## Andere Befunde sind keine gleichwertigen Aufnahmen
+
+Die gleiche Faktenübersicht enthält jetzt den Validierungslauf mit Build-genau zugeordneten CPU-Fehlern im Diagnosepfad, zwei Arma-D3D11-/DXVK-Läufe mit bestätigten Binding Models Descriptor buffer/Legacy, die gesicherten Blackbox-Sitzungen und die PCI-Aufnahme nach dem Neustart. In beiden Arma-Läufen fällt der PCI-Konfigurationszugriff vor dem ersten Ring-Reset-Versuch aus. Nur die erste gesicherte Sitzung belegt eine abgeschlossene fehlgeschlagene GPU-Recovery (`-19`); in der zweiten fehlt ein abgeschlossener Ausgang. Keiner dieser Befunde ist der alte GPUVM-Fault mit gültiger Fehleradresse oder die Host-BO-Listen-ENOENT-Sequenz. Private Rohlogs, Dumps, Debug-Daten und fremde DLLs veröffentliche ich hier nicht.
 
 ## Originale und nachvollziehbare Zusammenfassung
 
@@ -51,6 +73,7 @@ Ich habe das Spiel regulär beendet. Beide nativen Proben melden 90 Treffer; all
 | cthulhu-gem-stack-watch.py | 38738 | `89fb0b03b695d21c80d334bee6105f76de2dbd0096c3451ca026353ce80e44fd` |
 | cthulhu-pool-caller-watch.py | 40078 | `cd7f5d170e6c3a724a7619b221ca22f0de748050d01e8eaa38c969719b28ae4a` |
 | cthulhu-native-pool-watch.py | 45467 | `d4b844a6cb5598a84807ebeede08e630d6a48ddfd8fa03ed435545951205f073` |
+| cthulhu-heap-release-watch.py | 48494 | `1d22520eeafeb757feac5ef89ec95dd92505ad45aa5a0eb8f0e8c7fa502bb5b5` |
 
 ## Primärquellen
 
@@ -58,3 +81,6 @@ Ich habe das Spiel regulär beendet. Beide nativen Proben melden 90 Treffer; all
 - [Kernel kprobe/kretprobe documentation](https://docs.kernel.org/trace/kprobetrace.html)
 - [Kernel uprobe documentation](https://docs.kernel.org/trace/uprobetracer.html)
 - [Pinned Wine Unix dispatcher](https://github.com/ValveSoftware/wine/blob/e60892cc2398b0a83c332a2078c7b85e47bdb42b/dlls/ntdll/unix/signal_x86_64.c)
+- [AMDs passender FidelityFX-Backend-Quelltext](https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/blob/f4c1da8e92f3fe563b5c28c44e6267ce6b6b8eb2/Kits/FidelityFX/backend/dx12/ffx_dx12.cpp)
+- [Linux 7.2.11: PCI-Bus-Zugriffsprüfung](https://github.com/gregkh/linux/blob/v7.2.11/drivers/gpu/drm/amd/amdgpu/amdgpu.h)
+- [Linux 7.2.11: Devcoredump-Formatierung](https://github.com/gregkh/linux/blob/v7.2.11/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c)

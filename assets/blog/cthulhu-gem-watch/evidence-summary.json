@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-23",
+  "date": "2026-10-24",
   "type": "selected derived evidence, not original raw logs",
   "system": {
     "distribution": "Arch Linux",
@@ -76,20 +76,8 @@
     "cs_return": -2,
     "reported_kernel_probe_misses": 0,
     "reported_buffer_losses": 0,
-    "successful_reassign_between_last_close_and_lookup": false
-  },
-  "latest_proton": {
-    "source": "steam-1643320(4).log",
-    "bytes": 23846550,
-    "sha256": "349a38ba77e5633f25a463917dc576b9c622f7bbae3f39fb1b954dae5792ade8",
-    "descriptor_buffer_disabled_explicitly": true,
-    "cs_rejected_minus2_count": 1,
-    "unreal_device_removed_utc": "2026-10-23T14:48:37.385Z",
-    "local_time": "16:48:37.385 CEST",
-    "local_used_mb": "7256.52",
-    "local_budget_mb": "15169.93",
-    "DRED": "not available",
-    "kernel_reset_proven_by_this_pair": false
+    "successful_reassign_between_last_close_and_lookup": false,
+    "scope": "the four captures listed in captures, all from 23 October; not every later run"
   },
   "v4_validation": {
     "simulation_tests_passed": 26,
@@ -127,6 +115,12 @@
       "bytes": 45467,
       "sha256": "d4b844a6cb5598a84807ebeede08e630d6a48ddfd8fa03ed435545951205f073",
       "public_path": "assets/blog/cthulhu-gem-watch/cthulhu-native-pool-watch.py"
+    },
+    {
+      "file": "cthulhu-heap-release-watch.py",
+      "bytes": 48494,
+      "sha256": "1d22520eeafeb757feac5ef89ec95dd92505ad45aa5a0eb8f0e8c7fa502bb5b5",
+      "public_path": "assets/blog/cthulhu-gem-watch/cthulhu-heap-release-watch.py"
     }
   ],
   "limits": [
@@ -134,7 +128,10 @@
     "The intended handle generation and original D3D12 Release/fence sequence remain unknown.",
     "Zero PE-probe hits establish a coverage gap, not absence of pool destruction.",
     "No common cause with the historical 21 October GPUVM fault is established.",
-    "No firmware fix or upstream fix is confirmed."
+    "No firmware fix or upstream fix is confirmed.",
+    "Descriptor-buffer disabling is not a universal fix: Arma legacy also fails.",
+    "Identifying a Release caller does not prove premature release.",
+    "Windows stability is a counter-observation, not hardware exoneration."
   ],
   "native_normal_exit_control": {
     "source": "cthulhu-native-pool-watch-20261023T154024Z-1313210.log",
@@ -174,14 +171,462 @@
     ]
   },
   "investigation_status": {
-    "as_of": "2026-10-23",
-    "repeated_game_tests": "paused after successful native coverage control",
+    "as_of": "2026-10-24",
+    "repeated_game_tests": "paused without a specific new question",
     "root_cause_component_proven": false,
     "confirmed_fix": false,
+    "failure_classes_kept_separate": [
+      "21 October GPUVM fault",
+      "Stalker host BO/CS ENOENT",
+      "Arma PCI configuration access loss",
+      "validation-layer CPU bad reads",
+      "SATA transport errors"
+    ],
     "evidence_sufficient_for_precise_developer_report": true,
-    "next_step": "review and report existing evidence; additional reproduction only for a specific open question or targeted follow-up",
-    "shader_wait_minutes_per_launch": "10-15",
-    "old_gpuvm_fault_and_later_rejected_submissions": "kept separate",
-    "new_upstream_report_published": false
+    "new_upstream_report_published": false,
+    "next_step": "offline comparison of saved UKI/initrd contents before attributing differences specifically to firmware",
+    "shader_wait_minutes_per_launch": "10-15"
+  },
+  "historical_scope": "captures, common_recorded_kernel_findings, v4_validation and native_normal_exit_control retain their 23 October scope; updates_20261024 is the next day, not a replacement of the earlier observations",
+  "proton_20261023": {
+    "source": "steam-1643320(4).log",
+    "bytes": 23846550,
+    "sha256": "349a38ba77e5633f25a463917dc576b9c622f7bbae3f39fb1b954dae5792ade8",
+    "descriptor_buffer_disabled_explicitly": true,
+    "cs_rejected_minus2_count": 1,
+    "unreal_device_removed_utc": "2026-10-23T14:48:37.385Z",
+    "local_time": "16:48:37.385 CEST",
+    "local_used_mb": "7256.52",
+    "local_budget_mb": "15169.93",
+    "DRED": "not available",
+    "kernel_reset_proven_by_this_pair": false
+  },
+  "updates_20261024": {
+    "stalker_failures": [
+      {
+        "tool_version": 4,
+        "observation": "startup",
+        "trace": {
+          "name": "cthulhu-native-pool-watch-20261024T085350Z-38013.log",
+          "bytes": 779094,
+          "lines": 3385,
+          "sha256": "536233d59e7ac729ca6ea9adfa4e8162ab395f9887e30c08e94b540c0adf080d"
+        },
+        "proton": {
+          "name": "steam-1643320(6).log",
+          "bytes": 21353197,
+          "lines": 234981,
+          "sha256": "995c41e808c98ace7c1dbb378d8f77cc50ad3f40239544801586246cda46741f"
+        },
+        "handle": 299,
+        "recorded_generations_before_failed_lookup": 1,
+        "last_close_to_failed_lookup_ms": "3.377000",
+        "BO_entries": 20,
+        "BO_return": -2,
+        "CS_return": -2,
+        "timeline_monotonic_seconds": {
+          "close_return": "1156.495819",
+          "lookup_NULL": "1156.499196",
+          "BO_return": "1156.499198",
+          "CS_return": "1156.499198"
+        },
+        "capture_statistics": {
+          "kernel_misses": 0,
+          "buffer_loss": 0,
+          "parsed_events": 3295,
+          "read_events": 3295,
+          "native_pairs": 8,
+          "game_pairs_with_verified_mappings": 7,
+          "other_process_pairs_without_mapping_attribution": 1,
+          "scoped_closes": 3,
+          "incomplete_pairs": 0,
+          "cleanup_errors": [],
+          "global_options_unchanged": true,
+          "uprobe_counter_limit": "The exposed uprobe profile has hit counts but no separate miss counter."
+        },
+        "loaded_firmware_version_fields": "newer October set: ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; version fields, not complete blob hashes",
+        "intended_generation_in_rejected_list": "unknown",
+        "full_GPU_use_and_fence_chronology": "not captured"
+      },
+      {
+        "tool_version": 4,
+        "observation": "reload",
+        "trace": {
+          "name": "cthulhu-native-pool-watch-20261024T085651Z-46319.log",
+          "bytes": 11761158,
+          "lines": 57471,
+          "sha256": "1bfcb2656adcb018c5c291489b9185a1c833547b5a7b850855745ac2fc709328"
+        },
+        "proton": {
+          "name": "steam-1643320(5).log",
+          "bytes": 23585260,
+          "lines": 257552,
+          "sha256": "e6d25465d558a3d0c54962932acab802d06e46a36a54e1b214698ebe2936896f"
+        },
+        "handle": 8842,
+        "recorded_generations_before_failed_lookup": 3,
+        "last_close_to_failed_lookup_ms": "6.923000",
+        "BO_entries": 21,
+        "BO_return": -2,
+        "CS_return": -2,
+        "timeline_monotonic_seconds": {
+          "close_return": "2361.986709",
+          "lookup_NULL": "2361.993632",
+          "BO_return": "2361.993633",
+          "CS_return": "2361.993633"
+        },
+        "capture_statistics": {
+          "kernel_misses": 0,
+          "buffer_loss": 0,
+          "parsed_events": 57358,
+          "read_events": 57358,
+          "native_pairs": 39,
+          "game_pairs_with_verified_mappings": 39,
+          "other_process_pairs_without_mapping_attribution": 0,
+          "scoped_closes": 16,
+          "incomplete_pairs": 0,
+          "cleanup_errors": [],
+          "global_options_unchanged": true,
+          "uprobe_counter_limit": "The exposed uprobe profile has hit counts but no separate miss counter."
+        },
+        "loaded_firmware_version_fields": "newer October set: ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; version fields, not complete blob hashes",
+        "intended_generation_in_rejected_list": "unknown",
+        "full_GPU_use_and_fence_chronology": "not captured"
+      },
+      {
+        "tool_version": 5,
+        "observation": "v5",
+        "trace": {
+          "name": "cthulhu-heap-release-watch-20261024T095455Z-163490.log",
+          "bytes": 9247450,
+          "lines": 44963,
+          "sha256": "aee11a22f87b869c7f31f5d3dc367f1a56d166b0312bd2c42393fe8fcf81db86"
+        },
+        "proton": {
+          "name": "steam-1643320(7).log",
+          "bytes": 23590335,
+          "lines": 257577,
+          "sha256": "1a5fb927109ac536fce7a731fc059ab19a7e8062944d00ed0e16d84790fdbde5"
+        },
+        "handle": 3229,
+        "recorded_generations_before_failed_lookup": 3,
+        "last_close_to_failed_lookup_ms": "6.887000",
+        "BO_entries": 21,
+        "BO_return": -2,
+        "CS_return": -2,
+        "timeline_monotonic_seconds": {
+          "close_return": "5779.728463",
+          "lookup_NULL": "5779.735350",
+          "BO_return": "5779.735352",
+          "CS_return": "5779.735352"
+        },
+        "capture_statistics": {
+          "kernel_misses": 0,
+          "buffer_loss": 0,
+          "parsed_events": 44848,
+          "read_events": 44848,
+          "native_pairs": 39,
+          "game_pairs_with_verified_mappings": 39,
+          "other_process_pairs_without_mapping_attribution": 0,
+          "scoped_closes": 16,
+          "incomplete_pairs": 0,
+          "cleanup_errors": [],
+          "global_options_unchanged": true,
+          "uprobe_counter_limit": "The exposed uprobe profile has hit counts but no separate miss counter.",
+          "additional_stack_fields_verified_pairs": 39,
+          "additional_pair_agreement": true
+        },
+        "loaded_firmware_version_fields": "newer October set: ME c26, PFP c94, MEC da2, ASD 21000119, MES 97; version fields, not complete blob hashes",
+        "intended_generation_in_rejected_list": "unknown",
+        "full_GPU_use_and_fence_chronology": "not captured",
+        "release_caller": {
+          "cleanup_return_RVA": "d3d12core.dll+0x386ce4",
+          "release_return_RVA": "d3d12core.dll+0x386afa",
+          "higher_return_RVA": "amd_fidelityfx_upscaler_dx12.dll+0x3bea",
+          "call_RVA": "0x3be7",
+          "backend_member_offset": "0x48",
+          "source_inference": "DestroyBackendContextDX12: descRingBuffer->Release()",
+          "complete_five_release_sequences": 7,
+          "total_release_calls_in_pattern": 35,
+          "attribution_limit": "Source/binary inference, not recovered PDB symbols. Supplied upscaler binary matches official SDK; runtime upscaler inode/hash not captured. Does not prove premature release or component responsibility."
+        },
+        "upscaler_binary": {
+          "name": "amd_fidelityfx_upscaler_dx12.dll",
+          "bytes": 13138192,
+          "sha256": "241e6e5e4d848424eb8ec9a6b22c43fe34cf0cf52d30002ca435ba42e53a9ca0",
+          "git_blob_sha1": "4bd446fd7b91f9f6072555b1907c7c49991c4160",
+          "exact_official_sdk_v2_0_0_blob_match": true,
+          "official_commit": "f4c1da8e92f3fe563b5c28c44e6267ce6b6b8eb2",
+          "official_path": "Kits/FidelityFX/signedbin/amd_fidelityfx_upscaler_dx12.dll",
+          "source_cpp_blob": "dfe14176cc9cd36d46e47d36d95c2191e0706943"
+        },
+        "game_log": {
+          "CS_rejected_minus2": 1,
+          "device_loss_warning_cascade": 128,
+          "local_used_MB": "7285.90",
+          "local_budget_MB": "15331.73",
+          "DRED": "not available",
+          "kernel_reset_proven_by_this_pair": false
+        },
+        "unreal": {
+          "engine": "5.5.4",
+          "game": "2.0.6",
+          "seconds_since_start": 1003,
+          "minidump_limit": "CPU crash-report path, not a recovered failing GPU instruction"
+        }
+      }
+    ],
+    "steam_manifest": {
+      "appid": 1643320,
+      "buildid": "25382007",
+      "LastUpdated_unix": "1792590400",
+      "new_game_build_on_24_October_proven": false
+    },
+    "saved_game_settings": {
+      "upscaling": "TSR",
+      "DLSS_FG": "Off",
+      "FFX_FI": "Off",
+      "AsyncCompute": true,
+      "rendering_resolution_percent": "66.67",
+      "stored_preferred_swapchain_provider": "FSR4SwapchainProvider",
+      "FSR4_or_frame_generation_active_proven": false
+    },
+    "validation_run": {
+      "source": {
+        "name": "cthulhu-validation-20261024T134449342633Z.log",
+        "bytes": 26612263,
+        "lines": 273030,
+        "sha256": "3440e26e02b4bdcf036b9810a0e76ec651707d2141c6c08187798241efb5313d"
+      },
+      "package": "vulkan-validation-layers 1.4.363.0-1",
+      "build_id": "c4e432ae72694deb6e654d4af686c350a1064682",
+      "launch_options": "VKD3D_CONFIG=vk_debug VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation VKD3D_DISABLE_EXTENSIONS=VK_EXT_descriptor_buffer RADV_DEBUG=hang,noumr PROTON_LOG=1 %command%",
+      "activation_confirmed": true,
+      "two_activation_messages_mean_two_runs": false,
+      "user_observation": "gameplay and first death/reload worked; second reload hung for minutes, then user rebooted",
+      "VUID_message_headers": 368,
+      "distinct_VUIDs": 44,
+      "duplicate_suppression_notices": 35,
+      "CPU_primary_faults": {
+        "validation_layer": 6,
+        "libc": 1
+      },
+      "secondary_unwind_faults": 7,
+      "immediate_CPU_fault_attribution": "invalid signed object-type indices in the validation reporting path, through ReportInvalidCommandBuffer/LogObjectList::add/string_VulkanObjectType; four bad addresses match computed diagnostic-table reads",
+      "reported_presence_counts": {
+        "cs_rejected": 0,
+        "vk_device_lost": 0,
+        "dxgi_device_removed": 0,
+        "unreal_gpu_crash": 0
+      },
+      "GPU_assisted_validation_requested": false,
+      "limits": [
+        "VUID counts are not counts of proven independent game bugs.",
+        "First lifetime messages occur shortly after startup; not all can be attributed to reload.",
+        "Invalid-state origin, a layer race/use-after-free and cause of whole hang remain unknown.",
+        "Kept separate from original GPUVM fault and host ENOENT failures."
+      ],
+      "build_sources": [
+        {
+          "file": "core_checks/cc_cmd_buffer.cpp",
+          "url": "https://debuginfod.archlinux.org/buildid/c4e432ae72694deb6e654d4af686c350a1064682/source/usr/src/debug/vulkan-validation-layers/Vulkan-ValidationLayers/layers/core_checks/cc_cmd_buffer.cpp",
+          "bytes": 204153,
+          "sha256": "62e75640000b270272a70ea4fba3c9a4686f2d50dd61734385f288d22dfa4258"
+        },
+        {
+          "file": "vulkan/generated/vk_object_types.cpp",
+          "url": "https://debuginfod.archlinux.org/buildid/c4e432ae72694deb6e654d4af686c350a1064682/source/usr/src/debug/vulkan-validation-layers/Vulkan-ValidationLayers/layers/vulkan/generated/vk_object_types.cpp",
+          "bytes": 9404,
+          "sha256": "afefc8ba983cadf39c10d8c1aec9248a63aa233668527ca1de7d52e980abca6d"
+        },
+        {
+          "file": "error_message/logging.cpp",
+          "url": "https://debuginfod.archlinux.org/buildid/c4e432ae72694deb6e654d4af686c350a1064682/source/usr/src/debug/vulkan-validation-layers/Vulkan-ValidationLayers/layers/error_message/logging.cpp",
+          "bytes": 41140,
+          "sha256": "2f327350268931f485a82bdfa745307a2c427c1387e22aa7af5a71753f039baf"
+        },
+        {
+          "file": "error_message/logging.h",
+          "url": "https://debuginfod.archlinux.org/buildid/c4e432ae72694deb6e654d4af686c350a1064682/source/usr/src/debug/vulkan-validation-layers/Vulkan-ValidationLayers/layers/error_message/logging.h",
+          "bytes": 16809,
+          "sha256": "0fd5ccb4460e95d049f94def53b3f37147f8bfcaf5add10f23b44176650dc59b"
+        }
+      ]
+    },
+    "SATA_transport": {
+      "source_sha256": "84e1e5cda1bacf209960a4b35fa8da2feec9804dc481f1631601e818303bd829",
+      "ata_port": "ata2",
+      "link_resets": 2,
+      "failed_reads": 4,
+      "errors": [
+        "ICRC",
+        "BadCRC"
+      ],
+      "user_counter_observation": "Stalker tested on main M.2 and another M.2 without improvement; failed SSD and common GPU root cause unproven"
+    },
+    "arma": {
+      "renderer": "Arma3_x64.exe / D3D11 feature level 11_0 / DXVK v2.7.1-498-ga6764047e587178 / RADV 26.2.5",
+      "archive": {
+        "name": "cthulhu-arma-blackbox-20261024.tar.gz",
+        "bytes": 129558,
+        "sha256": "a2adb94b08ed7981805062fd2f3a08ec40933110c06551c6df6e769629f83a40"
+      },
+      "runs": [
+        {
+          "label": "A",
+          "session": "20261024T134209Z_2afc6a54-b34b-499a-bae9-bdbd10bc8b2a",
+          "launch_options": "PROTON_LOG=1 %command%",
+          "confirmed_binding_model": "Descriptor buffer",
+          "descriptor_buffer_feature_enabled": true,
+          "proton_source": {
+            "name": "steam-107410.log",
+            "bytes": 2530066,
+            "sha256": "f2429e640dc671b366f34cea329a1aa9e02e531efce1ae3f02e6a2cf489ba7b5"
+          },
+          "user_observation": "brief campaign gameplay, black screens/full fan, forced reboot",
+          "telemetry_rows": 5621,
+          "last_valid_telemetry": {
+            "time_UTC": "2026-10-24T15:17:55.383Z",
+            "GPU_edge_C": 58.0,
+            "GPU_junction_C": 72.0,
+            "memory_C": 68.0,
+            "VRAM_used_bytes": 3597402112,
+            "GPU_reported_W": 135.0,
+            "power_cap_W": 175.0
+          },
+          "kernel_time_CEST": {
+            "first_bus_loss": "2026-10-24T17:17:56.404353+02:00",
+            "first_gfx_timeout": "2026-10-24T17:17:57.430021+02:00",
+            "first_ring_reset_attempt": "2026-10-24T17:17:57.430485+02:00"
+          },
+          "bus_loss_before_first_ring_reset_seconds": 1.026132,
+          "preserved_recovery_result": "GPU Recovery Failed: -19 (ENODEV)",
+          "dump": {
+            "bytes": 320435,
+            "lines": 20009,
+            "sha256": "29ed556f1be62a1ce66b2cfe57491075f7fb6811f6b2ce0663046e10e45cb745",
+            "metadata_sha256": "df8e6f891a596572f0a008847dad91f24954e92a4b319bceb5abc073202ef24b",
+            "captured_CEST": "2026-10-24T17:17:59+02:00",
+            "time_since_boot": "5756.987457572",
+            "process": "rvMain TGID: 187249 thread: dxvk-submit PID: 187495",
+            "pasid": 78,
+            "vmid": 7,
+            "ring": "gfx_0.0.0",
+            "named_register_count": 879,
+            "named_registers_all_ffffffff": true,
+            "complete_copy": true,
+            "IB_readbacks": [
+              {
+                "index": 0,
+                "dwords": 64,
+                "all_ffffffff": true
+              },
+              {
+                "index": 1,
+                "dwords": 32,
+                "all_ffffffff": true
+              }
+            ]
+          }
+        },
+        {
+          "label": "B",
+          "session": "20261024T151829Z_b3f35b57-391e-4d89-a19f-5d9066c53f28",
+          "launch_options": "DXVK_CONFIG=\"dxvk.enableDescriptorBuffer = False\" PROTON_LOG=1 %command%",
+          "confirmed_binding_model": "Legacy",
+          "descriptor_buffer_feature_enabled": false,
+          "proton_source": {
+            "name": "steam-107410(1).log",
+            "bytes": 1972986,
+            "sha256": "159966cf0d4ae6c12d1942031f70bc5b30763021e5482fb88b1258aeb5540b02"
+          },
+          "user_observation": "hardlock in menu, forced reboot",
+          "telemetry_rows": 971,
+          "last_valid_telemetry": {
+            "time_UTC": "2026-10-24T15:34:58.414Z",
+            "GPU_edge_C": 55.0,
+            "GPU_junction_C": 70.0,
+            "memory_C": 62.0,
+            "VRAM_used_bytes": 3141730304,
+            "GPU_reported_W": 148.0,
+            "power_cap_W": 175.0
+          },
+          "kernel_time_CEST": {
+            "first_bus_loss": "2026-10-24T17:34:59.469720+02:00",
+            "first_gfx_timeout": "2026-10-24T17:35:00.733312+02:00",
+            "first_ring_reset_attempt": "2026-10-24T17:35:00.733750+02:00"
+          },
+          "bus_loss_before_first_ring_reset_seconds": 1.26403,
+          "preserved_recovery_result": "no completed recovery result in preserved file",
+          "dump": {
+            "bytes": 379308,
+            "lines": 24115,
+            "sha256": "8bfd8aa778be9f9c46557b4f2386540219c6799a429fcde91f72a0e2f03ca521",
+            "metadata_sha256": "285e496ca666697ee61e3e7869f4f387a90e2ff88f16b28f588a6712286a12b2",
+            "captured_CEST": "2026-10-24T17:35:02+02:00",
+            "time_since_boot": "1000.317340876",
+            "process": "rvMain TGID: 36430 thread: dxvk-submit PID: 36642",
+            "pasid": 156,
+            "vmid": 5,
+            "ring": "gfx_0.0.0",
+            "named_register_count": 879,
+            "named_registers_all_ffffffff": true,
+            "complete_copy": true,
+            "IB_readbacks": [
+              {
+                "index": 0,
+                "dwords": 64,
+                "all_ffffffff": true
+              },
+              {
+                "index": 1,
+                "dwords": 32,
+                "all_ffffffff": true
+              }
+            ]
+          },
+          "audio_function": {
+            "inaccessible_D3hot_to_D0_time_CEST": "2026-10-24T17:34:59.321751+02:00",
+            "cause_of_GPU_failure_proven": false
+          }
+        }
+      ],
+      "firmware_version_fields_both_dumps": {
+        "ME": "0x00000c12",
+        "PFP": "0x00000c76",
+        "MEC": "0x00000d7a",
+        "ASD": "0x21000118",
+        "MES": "0x00000093",
+        "VCN": "0x0910c01a",
+        "DMCUB": "0x0a004b00",
+        "SMC": "0x00664700"
+      },
+      "source_semantics": {
+        "kernel": "v7.2.11",
+        "bus_message": "PCI configuration read failed or returned all ones; raw PCI_COMMAND word not captured",
+        "Unknown_x63": "invalid status read, not a real negotiated x63 link; raw LNKSTA not captured",
+        "zero_fault_block": "cached fault fields are formatted unconditionally; no valid NULL GPUVM fault proven"
+      },
+      "limits": [
+        "One-second telemetry does not measure electrical transients.",
+        "NA means unavailable, not zero.",
+        "No physical component or original software trigger is identified.",
+        "The two games/API paths and firmware sets are not a controlled firmware-only comparison.",
+        "No single constant clock offset provides exact subsecond mapping between journal and kernel monotonic timestamps.",
+        "Installed Blackbox source hash was not verified against the pinned published reference."
+      ]
+    },
+    "post_reboot_PCI_snapshot": {
+      "bytes": 25957,
+      "sha256": "129b17426687616881c6f7b31b8d85a59b6601195a4f49b6ad2aa8d3f50cfa78",
+      "scope": "read-only after reboot, not crash-time register capture",
+      "ASPM_disabled_on_all_five_recorded_functions": true,
+      "root_facing_link": "16 GT/s x16, root max 16 GT/s",
+      "downstream_GPU_link": "32 GT/s x16",
+      "GPU_state": "D0",
+      "GPU_audio_state": "D3",
+      "limits": "No timestamp for sticky correctable/unsupported-request bits; no fatal AER sequence preserved; idle D3 and peer-limited speed are not defects by themselves."
+    },
+    "windows_counter_observation": "User reports games run under Windows 11; no new matched Windows trace for these Arma runs. Does not exclude all platform/hardware/power interactions."
   }
 }
