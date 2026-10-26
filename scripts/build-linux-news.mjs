@@ -90,12 +90,13 @@ for(const lang of ['en','de']){
   const nav=`<a href="#linux-news">${esc(category)}<span>${count}</span></a>`;
   if(h.includes('href="#linux-news"'))h=h.replace(/(<a href="#linux-news">[\s\S]*?<span>)\d+(<\/span>)/,(_,before,after)=>before+count+after);
   else h=h.replace(/(<nav id="blog-navigation"[^>]*>)/,'$1'+nav);
-  const renderCard=a=>`<article id="news-${a.topic}" class="guide-card"><a class="card-link" href="${prefix}/blog/${a.slug}/"><div class="guide-top"><span class="category">${esc(a.topicLabel||'Ubuntu & OpenSSH')}</span><span class="reading-time"><time datetime="${a.published}">${date(a.published,lang)}</time></span></div><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p><span class="privacy-badge">${esc(a.sourceBadge||(de?'Primärquellen · geprüfter Paketstatus':'Primary sources · verified package status'))}</span><span class="read-link">${de?'Analyse lesen':'Read the analysis'} <span aria-hidden="true">→</span></span></a></article>`;
+  const renderCard=a=>`<article id="news-${a.topic}" class="guide-card"><a class="card-link" href="${prefix}/blog/${a.slug}/"><div class="guide-top"><span class="category">${esc(a.topicLabel||'Ubuntu & OpenSSH')}</span><span class="reading-time"><time datetime="${a.published}">${date(a.published,lang)}</time></span></div><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p><span class="read-link">${de?'Analyse lesen':'Read the analysis'} <span aria-hidden="true">→</span></span></a></article>`;
   const existingRoutes=new Set(existingCards.map(routeOf));
   const cards=[...articles.filter(a=>!existingRoutes.has(prefix+'/blog/'+a.slug+'/')).map(renderCard),...existingCards.map(card=>{
     const a=newsByRoute.get(routeOf(card));
     if(!a)return card;
-    return card.replace(/<h3>[\s\S]*?<\/h3>/,'<h3>'+esc(a.title)+'</h3>')
+    return card.replace(/<span class="privacy-badge">[\s\S]*?<\/span>/g,'')
+      .replace(/<h3>[\s\S]*?<\/h3>/,'<h3>'+esc(a.title)+'</h3>')
       .replace(/<p>[\s\S]*?<\/p>/,'<p>'+esc(a.summary)+'</p>')
       .replace(/<time datetime="[^"]+">[\s\S]*?<\/time>/,`<time datetime="${a.published}">${date(a.published,lang)}</time>`);
   })].join('\n');
