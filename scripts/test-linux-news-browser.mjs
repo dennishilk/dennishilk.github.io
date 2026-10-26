@@ -38,7 +38,9 @@ try{
     assert.equal(await page.locator('html').getAttribute('lang'),a.lang);
     for(const width of widths){
       await page.setViewportSize({width,height:1050});
-      await page.waitForFunction(mobile=>document.querySelector('.news-hero img').currentSrc.includes('-mobile.svg')===mobile,width<=650);
+      const hero=a.heroImage||'/assets/blog/linux-news/'+a.topic+'-'+a.lang+'.svg';
+      const expected=width<=650?(a.heroMobileImage||hero.replace('.svg','-mobile.svg')):hero;
+      await page.waitForFunction(expected=>new URL(document.querySelector('.news-hero img').currentSrc).pathname===expected,expected);
       await page.locator('.news-hero img').evaluate(img=>img.decode());
       const state=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,heroWidth:document.querySelector('.news-hero').getBoundingClientRect().width,decoded:document.querySelector('.news-hero img').naturalWidth>0,mobileTOC:getComputedStyle(document.querySelector('.mobile-toc')).display!=='none',desktopTOC:getComputedStyle(document.querySelector('.article-sidebar')).display!=='none'}));
       assert.ok(state.documentWidth<=width,`${a.lang} article overflow at ${width}`);assert.ok(state.decoded);assert.equal(state.mobileTOC,width<=1000);assert.equal(state.desktopTOC,width>1000);
@@ -48,13 +50,21 @@ try{
       await page.setViewportSize({width,height});await page.goto(origin+route);await page.locator('.news-hero img').evaluate(img=>img.decode());
       await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.jpg',type:'jpeg',quality:80,fullPage:true});
     }
+    const target=a.topic==='worldnode-nginx'?'worldnode':'fix-status';
     await page.locator('.mobile-toc summary').click();
-    await page.locator('.mobile-toc a[href="#fix-status"]').click();
-    assert.ok(page.url().endsWith('#fix-status'));
-    await page.waitForFunction(()=>{const r=document.querySelector('#fix-status').getBoundingClientRect();return r.top>=document.querySelector('.site-header').getBoundingClientRect().height-2&&r.top<innerHeight;});
+    await page.locator('.mobile-toc a[href="#'+target+'"]').click();
+    assert.ok(page.url().endsWith('#'+target));
+    await page.waitForFunction(target=>{const r=document.getElementById(target).getBoundingClientRect();return r.top>=document.querySelector('.site-header').getBoundingClientRect().height-2&&r.top<innerHeight;},target);
     report.interactions.push(a.lang+': mobile TOC target remains below sticky header');
     await page.setViewportSize({width:1440,height:1050});
-    await page.goto(origin+route);await page.locator('.desktop-toc a[href="#fix-status"]').click();assert.ok(page.url().endsWith('#fix-status'));
+    await page.goto(origin+route);await page.locator('.desktop-toc a[href="#'+target+'"]').click();assert.ok(page.url().endsWith('#'+target));
+    if(a.topic==='worldnode-nginx'){
+      assert.equal(await page.locator('.wn-shot img').count(),4);
+      for(const image of await page.locator('.wn-shot img').all()){
+        await image.scrollIntoViewIfNeeded();await image.evaluate(img=>img.decode());
+        assert.ok(await image.evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0));
+      }
+    }
     await page.locator('.language-link').click();
     assert.equal(await page.locator('html').getAttribute('lang'),a.lang==='en'?'de':'en');
     assert.ok(page.url().includes('/blog/'+a.alternate+'/'));
@@ -65,13 +75,16 @@ try{
     await page.goto(origin+prefix+'/blog/');
     for(const width of widths){await page.setViewportSize({width,height:1050});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),lang+' index overflow '+width);report.indexViews.push({language:lang,width});}
     await page.setViewportSize({width:1440,height:1050});await page.locator('#blog-navigation a[href="#linux-news"]').click();
-    assert.ok(page.url().endsWith('#linux-news'));assert.equal(await page.locator('#linux-news .guide-card').count(),specs.filter(x=>x.lang===lang).length);
+    assert.ok(page.url().endsWith('#linux-news'));
+    const categoryCount=await page.locator('#linux-news .guide-card').count();
+    assert.equal(Number(await page.locator('#linux-news .section-heading span').textContent()),categoryCount);
+    for(const article of specs.filter(x=>x.lang===lang))assert.equal(await page.locator('#linux-news .card-link[href="'+prefix+'/blog/'+article.slug+'/"]').count(),1);
     await page.screenshot({path:output+'/'+lang+'-category.jpg',type:'jpeg',quality:80});
     await page.locator('#linux-news .card-link').filter({hasText:a.title}).click();assert.ok(page.url().includes('/blog/'+a.slug+'/'));
     report.interactions.push(lang+': category navigation and article card');
   }
   assert.deepEqual(report.errors,[]);
-  console.log('PASS: '+report.articleViews.length+' article views, '+report.indexViews.length+' index views, responsive SVGs, TOCs, sticky-header clearance, language round trips and category cards.');
+  console.log('PASS: '+report.articleViews.length+' article views, '+report.indexViews.length+' index views, decoded article images, TOCs, sticky-header clearance, language round trips and category cards.');
 }finally{
   await writeFile(output+'/report.json',JSON.stringify(report,null,2)+'\n');
   if(browser)await browser.close();await new Promise(r=>server.close(r));

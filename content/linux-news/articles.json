@@ -12,10 +12,25 @@
     "published": "2026-10-19",
     "modified": "2026-10-19",
     "checked": "2026-10-19",
-    "keywords": ["Ubuntu 26.10", "OpenSSH packaging bug", "GSSAPI", "rc package state", "SSH recovery", "USN-8928-1"],
+    "keywords": [
+      "Ubuntu 26.10",
+      "OpenSSH packaging bug",
+      "GSSAPI",
+      "rc package state",
+      "SSH recovery",
+      "USN-8928-1"
+    ],
     "imageAlt": "Schematic: replacing openssh-server leaves it in rc state while openssh-server-gssapi is installed. Purging the old package without the correction puts shared configuration at risk.",
     "imageCaption": "Example transition, regular server to GSSAPI: rc is expected. Risk begins when the old package is purged without the correction. Original schematic, not a terminal capture or live bug-status display.",
-    "sourceUrls": ["https://documentation.ubuntu.com/release-notes/26.10/", "https://bugs.launchpad.net/bugs/2169738", "https://ubuntu.com/security/notices/USN-8928-1", "https://canonical.com/blog/canonical-releases-ubuntu-26-10-stonking-stingray", "https://api.launchpad.net/1.0/bugs/2169738/bug_tasks", "https://launchpad.net/ubuntu/stonking/+source/openssh", "https://launchpad.net/ubuntu/stonking/+source/openssh-gssapi"]
+    "sourceUrls": [
+      "https://documentation.ubuntu.com/release-notes/26.10/",
+      "https://bugs.launchpad.net/bugs/2169738",
+      "https://ubuntu.com/security/notices/USN-8928-1",
+      "https://canonical.com/blog/canonical-releases-ubuntu-26-10-stonking-stingray",
+      "https://api.launchpad.net/1.0/bugs/2169738/bug_tasks",
+      "https://launchpad.net/ubuntu/stonking/+source/openssh",
+      "https://launchpad.net/ubuntu/stonking/+source/openssh-gssapi"
+    ]
   },
   {
     "topic": "ubuntu-openssh",
@@ -30,9 +45,110 @@
     "published": "2026-10-19",
     "modified": "2026-10-19",
     "checked": "2026-10-19",
-    "keywords": ["Ubuntu 26.10", "OpenSSH-Fehler", "GSSAPI", "rc-Paketstatus", "SSH-Zugang wiederherstellen", "USN-8928-1"],
+    "keywords": [
+      "Ubuntu 26.10",
+      "OpenSSH-Fehler",
+      "GSSAPI",
+      "rc-Paketstatus",
+      "SSH-Zugang wiederherstellen",
+      "USN-8928-1"
+    ],
     "imageAlt": "Schema: Nach dem Ersatz steht openssh-server auf rc und openssh-server-gssapi ist installiert. Das Purgen des alten Pakets ohne Korrektur gefährdet gemeinsam genutzte Konfiguration.",
     "imageCaption": "Beispielwechsel vom regulären Server zu GSSAPI: rc ist erwartet. Das Risiko entsteht beim Purgen des alten Pakets ohne Korrektur. Eigene Erklärgrafik, kein Terminal-Screenshot und keine Live-Bugstatusanzeige.",
-    "sourceUrls": ["https://documentation.ubuntu.com/release-notes/26.10/", "https://bugs.launchpad.net/bugs/2169738", "https://ubuntu.com/security/notices/USN-8928-1", "https://canonical.com/blog/canonical-releases-ubuntu-26-10-stonking-stingray", "https://api.launchpad.net/1.0/bugs/2169738/bug_tasks", "https://launchpad.net/ubuntu/stonking/+source/openssh", "https://launchpad.net/ubuntu/stonking/+source/openssh-gssapi"]
+    "sourceUrls": [
+      "https://documentation.ubuntu.com/release-notes/26.10/",
+      "https://bugs.launchpad.net/bugs/2169738",
+      "https://ubuntu.com/security/notices/USN-8928-1",
+      "https://canonical.com/blog/canonical-releases-ubuntu-26-10-stonking-stingray",
+      "https://api.launchpad.net/1.0/bugs/2169738/bug_tasks",
+      "https://launchpad.net/ubuntu/stonking/+source/openssh",
+      "https://launchpad.net/ubuntu/stonking/+source/openssh-gssapi"
+    ]
+  },
+  {
+    "topic": "worldnode-nginx",
+    "lang": "en",
+    "slug": "debian-13-nginx-security-update",
+    "alternate": "debian-13-nginx-sicherheitsluecken",
+    "title": "Debian 13 nginx Security Update: Five Vulnerabilities and My Worldnode Verification",
+    "seoTitle": "Debian 13 nginx Security Update: 5 CVEs & Verification",
+    "description": "Debian DSA-6575-1 explained: five nginx CVEs, Debian 13's fixed package and four authentic Worldnode logs proving unattended-upgrades applied the fix.",
+    "summary": "Five nginx CVEs, Debian's patched package and a real server audit: my Worldnode logs show unattended-upgrades installed the fix automatically.",
+    "category": "Linux News & Security",
+    "topicLabel": "Debian 13 & nginx",
+    "sourceBadge": "Debian advisory · real server logs",
+    "published": "2026-10-26",
+    "modified": "2026-10-26",
+    "checked": "2026-10-26",
+    "keywords": [
+      "Debian 13 nginx",
+      "DSA-6575-1",
+      "nginx CVE 2026",
+      "trixie-security",
+      "unattended-upgrades",
+      "nginx security backports",
+      "Worldnode"
+    ],
+    "heroImage": "/assets/blog/linux-news/worldnode-nginx-04-unattended.webp",
+    "heroMobileImage": "/assets/blog/linux-news/worldnode-nginx-04-unattended.webp",
+    "heroWidth": 1683,
+    "heroHeight": 579,
+    "extraCss": "/assets/blog/linux-news/worldnode-nginx.css",
+    "imageAlt": "Original Worldnode APT history: unattended-upgrade automatically installed the patched Debian 13 nginx package on 22 October 2026.",
+    "imageCaption": "Original terminal evidence from my production server: unattended-upgrades installed nginx 1.26.3-3+deb13u10 on 22 October, before I inspected the logs on 26 October.",
+    "socialAlt": "Debian 13 nginx security advisory illustrated with an original Worldnode unattended-upgrades terminal screenshot.",
+    "primarySourceUrl": "https://lists.debian.org/debian-security-announce/2026/msg00490.html",
+    "primarySourceLabel": "Primary source: Debian DSA-6575-1",
+    "sourceUrls": [
+      "https://lists.debian.org/debian-security-announce/2026/msg00490.html",
+      "https://security-tracker.debian.org/tracker/nginx",
+      "https://tracker.debian.org/pkg/nginx/",
+      "https://nginx.org/en/security_advisories.html",
+      "https://wiki.debian.org/PeriodicUpdates",
+      "https://dyn.manpages.debian.org/trixie/unattended-upgrades/unattended-upgrade.8.en.html"
+    ]
+  },
+  {
+    "topic": "worldnode-nginx",
+    "lang": "de",
+    "slug": "debian-13-nginx-sicherheitsluecken",
+    "alternate": "debian-13-nginx-security-update",
+    "title": "Debian 13: Fünf nginx-Sicherheitslücken – mein Worldnode-Praxischeck",
+    "seoTitle": "Debian 13: nginx-Sicherheitslücken prüfen & beheben",
+    "description": "Debian DSA-6575-1: fünf nginx-CVEs, die gepatchte Version für Debian 13 und echte Worldnode-Logs, die das automatische Sicherheitsupdate beweisen.",
+    "summary": "Fünf nginx-Sicherheitslücken, Debians korrigiertes Paket und echte Serverlogs: So habe ich Worldnodes automatisches Sicherheitsupdate nachgewiesen.",
+    "category": "Linux-News & Sicherheit",
+    "topicLabel": "Debian 13 & nginx",
+    "sourceBadge": "Debian-Advisory · echte Serverlogs",
+    "published": "2026-10-26",
+    "modified": "2026-10-26",
+    "checked": "2026-10-26",
+    "keywords": [
+      "Debian 13 nginx",
+      "DSA-6575-1",
+      "nginx Sicherheitslücken",
+      "trixie-security",
+      "unattended-upgrades",
+      "Sicherheits-Backports",
+      "Worldnode"
+    ],
+    "heroImage": "/assets/blog/linux-news/worldnode-nginx-04-unattended.webp",
+    "heroMobileImage": "/assets/blog/linux-news/worldnode-nginx-04-unattended.webp",
+    "heroWidth": 1683,
+    "heroHeight": 579,
+    "extraCss": "/assets/blog/linux-news/worldnode-nginx.css",
+    "imageAlt": "Originale Worldnode-APT-History: unattended-upgrades installierte das Debian-13-nginx-Sicherheitspaket automatisch am 22. Oktober 2026.",
+    "imageCaption": "Original-Terminalbeleg meines Servers: unattended-upgrades installierte nginx 1.26.3-3+deb13u10 am 22. Oktober, vier Tage vor meiner Prüfung.",
+    "socialAlt": "Debian-13-nginx-Sicherheitsmeldung mit originalem Worldnode-Terminalscreenshot von unattended-upgrades.",
+    "primarySourceUrl": "https://lists.debian.org/debian-security-announce/2026/msg00490.html",
+    "primarySourceLabel": "Primärquelle: Debian DSA-6575-1",
+    "sourceUrls": [
+      "https://lists.debian.org/debian-security-announce/2026/msg00490.html",
+      "https://security-tracker.debian.org/tracker/nginx",
+      "https://tracker.debian.org/pkg/nginx/",
+      "https://nginx.org/en/security_advisories.html",
+      "https://wiki.debian.org/PeriodicUpdates",
+      "https://dyn.manpages.debian.org/trixie/unattended-upgrades/unattended-upgrade.8.en.html"
+    ]
   }
 ]

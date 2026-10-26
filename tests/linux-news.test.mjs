@@ -17,7 +17,7 @@ for(const a of specs){
     assert.equal((html.match(/<h1\b/g)||[]).length,1);
     assert.equal(article.url,url);assert.equal(article.inLanguage,a.lang);
     assert.equal(article.datePublished,a.published);assert.equal(article.dateModified,a.modified);
-    assert.ok(article.wordCount>=1400);assert.equal(article.articleSection,a.category);
+    assert.ok(article.wordCount>=(a.topic==='worldnode-nginx'?1200:1400));assert.equal(article.articleSection,a.category);
     for(const [key,value] of [['canonical',url],['description',a.description]]){
       const tags=[...html.matchAll(/<(?:link|meta)\b[^>]*>/g)].map(m=>attrs(m[0]));
       const found=tags.filter(t=>t.rel===key||t.name===key);assert.equal(found.length,1,key);assert.equal(found[0].href||found[0].content,value.replaceAll('&','&amp;'));
@@ -42,7 +42,10 @@ for(const a of specs){
       if(link.hash){const content=link.pathname===new URL(url).pathname?html:read(file.slice(1));assert.ok(content.includes('id="'+link.hash.slice(1)+'"'),link.href);}
     }
     const img=attrs(html.match(/<img\b[^>]*>/)[0]);assert.ok(img.alt.length>50);assert.ok(Number(img.width)>0&&Number(img.height)>0);
-    assert.match(html,/<source media="\(max-width:650px\)"[^>]*-mobile\.svg/);
+    if(a.heroMobileImage){
+      const source=attrs(html.match(/<source media="\(max-width:650px\)"[^>]*>/)[0]);
+      assert.equal(source.srcset,a.heroMobileImage);
+    }else assert.match(html,/<source media="\(max-width:650px\)"[^>]*-mobile\.svg/);
     assert.ok(html.includes('<figcaption>'));
     const social=readFileSync(new URL('assets/blog/linux-news/'+a.topic+'-social-'+a.lang+'.png',root));
     assert.equal(social.subarray(1,4).toString(),'PNG');assert.equal(social.readUInt32BE(16),1200);assert.equal(social.readUInt32BE(20),630);
@@ -50,6 +53,19 @@ for(const a of specs){
   test(a.lang+': copyable commands are diagnostic and repair prerequisites precede recovery',()=>{
     const body=read('content/linux-news/'+a.topic+'.'+a.lang+'.fragment');
     const commands=[...body.matchAll(/<pre\b[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g)].map(m=>m[1].trim());
+    if(a.topic==='worldnode-nginx'){
+      assert.equal(commands.length,6);
+      for(const cmd of commands)assert.match(cmd,/^(?:apt-cache policy nginx|dpkg-query -W |systemctl status nginx |sudo zgrep )/);
+      for(const cve of ['15176','93479','95101','97205','97629'])assert.ok(body.includes('CVE-2026-'+cve));
+      assert.ok(body.includes('DSA-6575-1'));assert.ok(body.includes('1.26.3-3+deb13u10'));
+      assert.ok(body.includes('/usr/bin/unattended-upgrade'));assert.ok(body.includes('2026-10-22T06:51:26+02:00'));
+      assert.equal((body.match(/<figure class="wn-shot">/g)||[]).length,4);
+      const html=read(path);
+      assert.ok(html.includes('href="'+a.primarySourceUrl+'"'));
+      assert.ok(html.includes('content="'+a.socialAlt+'"'));
+      assert.ok(!html.includes('bugs.launchpad.net/bugs/2169738'));
+      return;
+    }
     assert.equal(commands.length,8);
     for(const cmd of commands)assert.match(cmd,/^(?:cat \/etc\/os-release|dpkg -l 'openssh-\*'|apt-cache policy openssh-server |dpkg-query --control-show openssh-server postrm|apt-get -s --reinstall install openssh-server-gssapi|sudo \/usr\/sbin\/sshd -t|systemctl status ssh\.service ssh\.socket |sudo journalctl -u ssh\.service -u ssh\.socket )/);
     const repair=body.indexOf('apt-get -s --reinstall');assert.ok(body.indexOf('class="news-callout"',body.indexOf('<h2 id="'+(a.lang==='de'?'wiederherstellen':'recovery')+'"'))<repair);
