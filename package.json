@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build:linux-news": "node scripts/build-linux-news.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "build:linux-news": "node scripts/build-linux-audio-rescue.mjs && node scripts/build-linux-news.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:linux-news": "node --test tests/linux-news.test.mjs",
     "test:linux-news:browser": "node scripts/test-linux-news-browser.mjs",
     "build:password-cracking": "node scripts/build-password-cracking-wordlists.mjs && node scripts/build-password-cracking-variants.mjs && node scripts/build-password-cracking-worker.mjs",
@@ -41,6 +41,9 @@
     "test:storage": "node --test tests/storage-media*.test.mjs",
     "build:cthulhu-dragon": "node scripts/build-cthulhu-dragon.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:cthulhu-dragon": "node --test tests/cthulhu-dragon.test.mjs",
-    "test:cthulhu-dragon:browser": "node scripts/test-cthulhu-dragon-browser.mjs"
+    "test:cthulhu-dragon:browser": "node scripts/test-cthulhu-dragon-browser.mjs",
+    "build:audio-rescue": "python scripts/build-linux-audio-visuals.py && node scripts/build-linux-audio-rescue.mjs && node scripts/build-linux-news.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "test:audio-rescue": "node --test tests/linux-audio-rescue.test.mjs",
+    "test:audio-rescue:browser": "node scripts/test-linux-audio-rescue-browser.mjs"
   }
 }

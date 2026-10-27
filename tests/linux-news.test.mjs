@@ -47,12 +47,18 @@ for(const a of specs){
       assert.equal(source.srcset,a.heroMobileImage);
     }else assert.match(html,/<source media="\(max-width:650px\)"[^>]*-mobile\.svg/);
     assert.ok(html.includes('<figcaption>'));
-    const social=readFileSync(new URL('assets/blog/linux-news/'+a.topic+'-social-'+a.lang+'.png',root));
+    const social=readFileSync(new URL(a.socialImage?.slice(1)||'assets/blog/linux-news/'+a.topic+'-social-'+a.lang+'.png',root));
     assert.equal(social.subarray(1,4).toString(),'PNG');assert.equal(social.readUInt32BE(16),1200);assert.equal(social.readUInt32BE(20),630);
   });
   test(a.lang+': copyable commands are diagnostic and repair prerequisites precede recovery',()=>{
     const body=read('content/linux-news/'+a.topic+'.'+a.lang+'.fragment');
     const commands=[...body.matchAll(/<pre\b[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g)].map(m=>m[1].trim());
+    if(a.topic==='linux-audio-rescue'){
+      assert.ok(commands.length>=20);
+      assert.ok(body.includes('session.suspend-timeout-seconds = 0'));
+      assert.ok(body.includes('51-audio-rescue-spdif.conf.disabled'));
+      return;
+    }
     if(a.topic==='worldnode-nginx'){
       assert.equal(commands.length,6);
       for(const cmd of commands)assert.match(cmd,/^(?:apt-cache policy nginx|dpkg-query -W |systemctl status nginx |sudo zgrep )/);

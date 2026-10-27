@@ -10,7 +10,7 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 const output=process.env.LINUX_NEWS_QA||'/tmp/linux-news-browser-qa';
 await mkdir(output,{recursive:true});
 const {chromium}=await import(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright/index.mjs':'playwright');
-const specs=JSON.parse(await readFile(resolve(root,'content/linux-news/articles.json'),'utf8'));
+const specs=JSON.parse(await readFile(resolve(root,'content/linux-news/articles.json'),'utf8')).filter(a=>!process.argv.includes('--audio-only')||a.topic==='linux-audio-rescue');
 const widths=[320,390,650,768,1024,1440,2048],report={browser:'Chromium',articleViews:[],indexViews:[],interactions:[],errors:[]};
 const server=createServer(async(req,res)=>{
   try{
@@ -25,7 +25,7 @@ await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port;
 let browser;
 try{
-  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:{})});
   report.browserVersion=browser.version();
   const page=await browser.newPage({viewport:{width:1440,height:1050},reducedMotion:'reduce'});
   page.on('pageerror',e=>report.errors.push(e.message));
@@ -40,7 +40,7 @@ try{
       await page.setViewportSize({width,height:1050});
       const hero=a.heroImage||'/assets/blog/linux-news/'+a.topic+'-'+a.lang+'.svg';
       const expected=width<=650?(a.heroMobileImage||hero.replace('.svg','-mobile.svg')):hero;
-      await page.waitForFunction(expected=>new URL(document.querySelector('.news-hero img').currentSrc).pathname===expected,expected);
+      await page.waitForFunction(expected=>{const src=document.querySelector('.news-hero img').currentSrc;return Boolean(src)&&new URL(src).pathname===expected;},expected);
       await page.locator('.news-hero img').evaluate(img=>img.decode());
       const state=await page.evaluate(()=>({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,heroWidth:document.querySelector('.news-hero').getBoundingClientRect().width,decoded:document.querySelector('.news-hero img').naturalWidth>0,mobileTOC:getComputedStyle(document.querySelector('.mobile-toc')).display!=='none',desktopTOC:getComputedStyle(document.querySelector('.article-sidebar')).display!=='none'}));
       assert.ok(state.documentWidth<=width,`${a.lang} article overflow at ${width}`);assert.ok(state.decoded);assert.equal(state.mobileTOC,width<=1000);assert.equal(state.desktopTOC,width>1000);
@@ -50,7 +50,7 @@ try{
       await page.setViewportSize({width,height});await page.goto(origin+route);await page.locator('.news-hero img').evaluate(img=>img.decode());
       await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.jpg',type:'jpeg',quality:80,fullPage:true});
     }
-    const target=a.topic==='worldnode-nginx'?'worldnode':'fix-status';
+    const target=a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':'fix-status';
     await page.locator('.mobile-toc summary').click();
     await page.locator('.mobile-toc a[href="#'+target+'"]').click();
     assert.ok(page.url().endsWith('#'+target));
