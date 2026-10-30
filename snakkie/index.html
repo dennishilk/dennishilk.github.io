@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow">
+  <title>Snakkie — Your friendly AI from East Frisia | Preview</title>
+  <meta name="description" content="Meet Snakkie: Nebby in a captain’s hat. A first look at a friendly East Frisian companion, with a chat interface preview and curated Low German words.">
+  <link rel="canonical" href="https://www.dennishilk.com/snakkie/">
+  <link rel="alternate" hreflang="en" href="https://www.dennishilk.com/snakkie/">
+  <link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/snakkie/">
+  <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/snakkie/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Snakkie — Your friendly AI from East Frisia | Preview">
+  <meta property="og:description" content="Meet Snakkie: Nebby in a captain’s hat. A first look at a friendly East Frisian companion, with a chat interface preview and curated Low German words.">
+  <meta property="og:url" content="https://www.dennishilk.com/snakkie/">
+  <meta property="og:image" content="https://www.dennishilk.com/assets/snakkie/snakkie-captain-768.webp">
+  <meta property="og:image:alt" content="Snakkie, our navy-blue penguin in a striped shirt and captain’s hat.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="/assets/snakkie/snakkie.css?v=1">
+  <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
+  <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
+  <script type="module" src="/assets/snakkie/ui.mjs?v=1"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="page">
+    <nav class="topnav" aria-label="Page navigation">
+      <a class="brand" href="/"><span class="prompt" aria-hidden="true">~/</span> DENNIS HILK</a>
+      <div class="nav-end"><span class="preview-tag">A first hello</span><span class="lang-switch"><a href="/de/snakkie/" hreflang="de" lang="de">DE</a></span></div>
+    </nav>
+    <main id="main" tabindex="-1">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span aria-hidden="true">⚓</span> WIESMOOR · OSTFRIESLAND</p>
+          <h1>Snakkie<span class="title-dot">.</span></h1>
+          <p class="tagline">Your friendly AI<br>from East Frisia.</p>
+          <p class="greeting" lang="nds">Moin! Ik bün Snakkie.</p>
+          <p class="intro">A curious companion from East Frisia. Here to help, share a little local culture and, eventually, have a proper chat. With a dry sense of humour, naturally.</p>
+          <div class="hero-actions"><a class="button primary" href="#chat">Meet Snakkie <span aria-hidden="true">↗</span></a><a class="quiet-link" href="#platt">Platt van Dag <span aria-hidden="true">↓</span></a></div>
+          <p class="hero-note">Design preview · Real AI is still on the horizon.</p>
+        </div>
+        <figure class="mascot">
+          <div class="mascot-orbit" aria-hidden="true"></div>
+          <img src="/assets/snakkie/snakkie-captain-768.webp" srcset="/assets/snakkie/snakkie-captain-480.webp 480w, /assets/snakkie/snakkie-captain-768.webp 768w" sizes="(max-width: 700px) 88vw, 46vw" width="768" height="768" fetchpriority="high" alt="Snakkie: the familiar navy-blue Nebby penguin, waving in a blue-and-white striped shirt and a white captain’s hat with a gold anchor.">
+          <figcaption><span aria-hidden="true">↳</span> Nebby becomes Snakkie!</figcaption>
+        </figure>
+      </header>
+
+      <section class="hello-strip" aria-label="Snakkie’s personality">
+        <p>Rooted here.<br><strong>Curious about everywhere.</strong></p>
+        <p>Helpful by nature. A little cheeky by choice. German and English are planned, alongside carefully checked East Frisian Platt. Good answers come first. The odd joke can come along.</p>
+      </section>
+
+      <div class="preview-grid">
+        <section id="chat" class="chat panel" aria-labelledby="chat-title">
+          <div class="panel-heading"><div><p class="eyebrow">01 / A place to chat</p><h2 id="chat-title">Pull up a chair.</h2></div><span class="status-badge">Interface preview</span></div>
+          <p class="preview-disclosure" id="preview-disclosure">No AI model is connected. You can try the layout: your text stays on this page and receives no AI answer.</p>
+          <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Preview conversation" tabindex="0">
+            <article class="message welcome">
+              <img src="/assets/snakkie/snakkie-avatar.webp" width="48" height="48" alt="">
+              <div><p class="message-author">Snakkie <span>· written welcome</span></p><p>Moin! I’m Snakkie. My captain’s hat is ready; my AI is still being built. One day I’d like to help in English, German and East Frisian Platt. For now, come and have a look around!</p></div>
+            </article>
+          </div>
+          <form id="chat-form" aria-describedby="preview-disclosure composer-note">
+            <div class="chat-options"><label for="reply-language">Future reply language</label><select id="reply-language" disabled><option value="en">English</option><option value="de">Deutsch</option><option value="nds">East Frisian Platt (planned)</option></select></div>
+            <p class="translation-plan" id="translation-plan" hidden>Planned: show an English translation alongside Platt replies.</p>
+            <label class="sr-only" for="chat-input">Preview message (maximum 500 characters)</label>
+            <div class="composer"><textarea id="chat-input" rows="2" maxlength="500" placeholder="Try a message — only on this page…" disabled></textarea><button class="button primary" id="send" type="submit" disabled>Try <span aria-hidden="true">↑</span></button></div>
+            <div class="composer-footer"><small id="composer-note">Local preview · nothing is sent or saved</small><button id="reset-chat" type="button" class="text-button" disabled>Clear</button></div>
+          </form>
+          <noscript><p class="no-js">The preview controls need JavaScript. This welcome and the word example remain readable.</p></noscript>
+        </section>
+
+        <section id="platt" class="platt panel" aria-labelledby="platt-title">
+          <div class="panel-heading"><div><p class="eyebrow">02 / A little local language</p><h2 id="platt-title">Platt van Dag<span class="title-dot">.</span></h2></div><span class="word-icon" aria-hidden="true">Aa</span></div>
+          <p class="word-intro">A small word. A little closer to home.</p>
+          <p class="sample-label">Curated examples · no daily rotation yet</p>
+          <div id="word-content" aria-live="polite" aria-atomic="true">
+            <h3 id="word" lang="nds">Moin</h3>
+            <dl class="word-translations"><div><dt>DE</dt><dd id="word-de">Hallo / Guten Tag</dd></div><div><dt>EN</dt><dd id="word-en">Hello / good day</dd></div></dl>
+            <blockquote><p id="word-example" lang="nds">Moin!</p><p id="word-example-translation">Hello!</p></blockquote>
+            <p class="word-note" id="word-note">A greeting for any time of day. Attested in the dictionary for East Frisia; not exclusive to Wiesmoor.</p>
+            <a id="word-source" class="word-source" href="https://www.platt-wb.de/platt-hoch/?term=Moin" rel="noreferrer">Wörterbuch für Ostfriesland · Moin <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="word-controls" hidden><button id="previous-word" type="button" aria-label="Previous word example">←</button><span id="word-count">1 / 2</span><button id="next-word" type="button" aria-label="Next word example">→</button></div>
+          <p class="audio-note">Pronunciation audio will follow after local review.</p>
+        </section>
+      </div>
+
+      <section class="story" aria-labelledby="story-title">
+        <div class="story-copy"><p class="eyebrow">03 / NEBBY BECOMES SNAKKIE</p><h2 id="story-title">Same curious soul.<br>A different hat.</h2><p>You may already know Nebby, our little explorer in an astronaut’s helmet. Now he’s coming home to East Frisia: familiar face, striped shirt, captain’s hat. And a new role as a friendly digital companion.</p></div>
+        <div class="story-note"><span aria-hidden="true">⚓</span><p>“First, make yourself at home.<br>The clever part is coming.”</p><small>Snakkie · an authored line, not an AI response</small></div>
+      </section>
+      <details class="horizon"><summary>What’s on the horizon?</summary><p>A genuinely helpful AI, carefully checked regional language, optional translations and a curated daily word. The inference engine is still an open decision. This version has no model downloads, external AI services or subscriptions.</p></details>
+    </main>
+    <footer><a class="brand" href="/">DENNIS HILK</a><p>Snakkie · Made with curiosity in East Frisia.</p><div><a href="/impressum.html">Legal notice</a><a href="/datenschutzerklaerung.html">Privacy</a></div></footer>
+  </div>
+</body>
+</html>
