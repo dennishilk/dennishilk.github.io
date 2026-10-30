@@ -1,0 +1,92 @@
+{
+  "answers": [
+    {
+      "elapsedMs": 47206.5,
+      "firstTokenMs": 37787,
+      "language": "de",
+      "prompt": "Hallo Snakkie, wer bist du?",
+      "text": "Hallo! Ich bin Snakkie, ein Pinguin. Wie geht es dir?",
+      "timings": {
+        "cache_n": 0,
+        "predicted_ms": 9821,
+        "predicted_n": 19,
+        "predicted_per_second": 1.832807249770899,
+        "predicted_per_token_ms": 545.6111111111111,
+        "prompt_ms": 37359.3,
+        "prompt_n": 114,
+        "prompt_per_second": 3.051449036786021,
+        "prompt_per_token_ms": 327.71315789473687
+      }
+    },
+    {
+      "elapsedMs": 64777,
+      "firstTokenMs": 8247.699999999953,
+      "language": "de",
+      "prompt": "Erkläre mir Linux in einfachen Worten.",
+      "text": "Linux ist eine Vielfalt der Software, die auf der Welt bestellt wird. Es ist ein System für die Erstellung und Bearbeitung von Systemanwendungen, die sich auf Hardware und Datenbanken konzentrieren. Linux verwendet oft das Terminal (TUI) um Systemanwendungen anzupfädieren. Es ist auch ein System für die Nutzung von speziellen Hardware, wie den PCs oder dem Linux Desktop. Linux ist ein System für die Entwicklung von Systemanwendungen und kann auch als eine Plattform für die Nutzung von Datenbanken oder der Erstellung von Webanwendungen verwendet werden.",
+      "timings": {
+        "cache_n": 100,
+        "predicted_ms": 57168.199,
+        "predicted_n": 131,
+        "predicted_per_second": 2.273991524553712,
+        "predicted_per_token_ms": 439.75537692307694,
+        "prompt_ms": 7589.701,
+        "prompt_n": 16,
+        "prompt_per_second": 2.108119937794651,
+        "prompt_per_token_ms": 474.3563125
+      }
+    },
+    {
+      "elapsedMs": 54104.299999999814,
+      "firstTokenMs": 5606.59999999986,
+      "language": "de",
+      "prompt": "Was ist der Unterschied zwischen Debian und Arch Linux?",
+      "text": "Der Unterschied zwischen Debian und Arch Linux besteht in der Verteidigung der Sicherheit und der Fähigkeit der User zu überwachen und zu schützen. Arch Linux bietet eine größere Fähigkeiten und ist in der Regel ein Alternativ zum Debian, da es der größere und ältere der beiden Systeme ist. Arch Linux hat eine stärkere Sicherheit und eine größere Datenbank, die die Sicherheitsanforderungen der User gerecht wird. Deine Meinung?",
+      "timings": {
+        "cache_n": 100,
+        "predicted_ms": 48939.399,
+        "predicted_n": 106,
+        "predicted_per_second": 2.145510614055559,
+        "predicted_per_token_ms": 466.08951428571424,
+        "prompt_ms": 5099.4,
+        "prompt_n": 16,
+        "prompt_per_second": 3.137624034200102,
+        "prompt_per_token_ms": 318.7125
+      }
+    },
+    {
+      "elapsedMs": 11879,
+      "firstTokenMs": 4801.59999999986,
+      "language": "de",
+      "prompt": "Erzähl mir einen kurzen Witz.",
+      "text": "Witz: \"Ich habe einen großen Schwert und bin dabei, meinem Haus zu verlassen.\"",
+      "timings": {
+        "cache_n": 100,
+        "predicted_ms": 7486.101,
+        "predicted_n": 21,
+        "predicted_per_second": 2.671617708604252,
+        "predicted_per_token_ms": 374.30505,
+        "prompt_ms": 4375.7,
+        "prompt_n": 14,
+        "prompt_per_second": 3.199488081906895,
+        "prompt_per_token_ms": 312.55
+      }
+    }
+  ],
+  "environment": {
+    "cores": 5,
+    "isolated": false,
+    "secure": false,
+    "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+  },
+  "error": "AbortError: Aborted",
+  "load": {
+    "backend": "cpu",
+    "context": 2048,
+    "elapsedMs": 29181.5,
+    "fromCache": false,
+    "model": "qwen25",
+    "persistent": false
+  },
+  "model": "qwen25"
+}

@@ -5,7 +5,9 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { words, wordAt } from '../assets/snakkie/words.mjs';
-import { previewAdapter, InferenceUnavailableError } from '../assets/snakkie/inference.mjs';
+import {LocalInference} from '../assets/snakkie/inference.mjs';
+import {runtime,models,modelURL,limits,prepareMessages,shouldSend} from '../assets/snakkie/model-config.mjs';
+import {createModelStorage,downloadSessionBlob} from '../assets/snakkie/model-storage.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
@@ -23,21 +25,102 @@ test('both direct routes are noindex, have reciprocal language links and resolve
       assert.ok(existsSync(new URL(file, root)), `${attr} missing: ${target}`);
     }
     assert.doesNotMatch(html, /<(?:script|img)[^>]*src="https?:|<link[^>]*rel="stylesheet"[^>]*href="https?:/);
-    assert.match(html, /<textarea[^>]*maxlength="500"[^>]*disabled>/);
+    assert.match(html, /<textarea[^>]*maxlength="800"[^>]*disabled>/);
+    assert.match(html, /id="start-model"[^>]*disabled/);
+    assert.match(html, /Shift\+Enter/);
+    assert.match(html,i ? /Nebbys Cousin/ : /Nebby’s cousin/);
+    assert.doesNotMatch(html,/Nebby becomes Snakkie|NEBBY BECOMES SNAKKIE/);
     assert.match(html, /<noscript>/);
   });
 });
 
-test('preview fails closed instead of generating an answer', async () => {
-  assert.equal(previewAdapter.capabilities.inference, false);
-  await assert.rejects(async () => {
-    for await (const event of previewAdapter.generate({ messages: [{role:'user',content:'Moin'}], language:'de' })) {
-      assert.fail(`unexpected answer: ${JSON.stringify(event)}`);
-    }
-  }, InferenceUnavailableError);
-  for (const file of ['ui.mjs','inference.mjs','words.mjs']) {
-    assert.doesNotMatch(read(`assets/snakkie/${file}`), /\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|localStorage|sessionStorage|indexedDB|innerHTML/);
+test('model URLs are local, artifacts pinned, and UI has no chat persistence or HTML injection', async () => {
+  const ai = new LocalInference();
+  assert.equal(ai.worker,null);
+  await assert.rejects(ai.generate({messages:[]}),/MODEL_NOT_READY/);
+  for (const model of Object.values(models)) {
+    assert.ok(modelURL(model).startsWith('/assets/snakkie/local-ai/'));
+    assert.match(model.sha256,/^[a-f0-9]{64}$/);
+    assert.match(model.source,/\/resolve\/[a-f0-9]{40}\//);
   }
+  assert.deepEqual(JSON.parse(read('assets/snakkie/artifacts.json')),{runtime,models});
+  for (const file of ['ui.mjs','inference.mjs','inference-worker.mjs','words.mjs']) {
+    assert.doesNotMatch(read(`assets/snakkie/${file}`), /XMLHttpRequest|WebSocket|sendBeacon|localStorage|sessionStorage|indexedDB|innerHTML/);
+  }
+});
+
+test('Enter sends; Shift+Enter, IME composition and non-Enter keys do not', () => {
+  assert.equal(shouldSend({key:'Enter'}),true);
+  assert.equal(shouldSend({key:'Enter',shiftKey:true}),false);
+  assert.equal(shouldSend({key:'Enter',isComposing:true}),false);
+  assert.equal(shouldSend({key:'Enter',keyCode:229}),false);
+  assert.equal(shouldSend({key:'a'}),false);
+});
+
+test('context is bounded, complete pairs are retained and current language is explicit', () => {
+  const history = Array.from({length:20},(_,i)=>({role:i%2?'assistant':'user',content:'older message '.repeat(18)}));
+  history.push({role:'user',content:'Welches Betriebssystem habe ich erwähnt?'});
+  const prepared = prepareMessages(history,'de');
+  assert.equal(prepared[0].role,'system');
+  assert.match(prepared[0].content,/Pinguin/);
+  assert.match(prepared[0].content,/Nebby ist dein Cousin/);
+  assert.equal(prepared[1].role,'user');
+  assert.equal(prepared.at(-1).content,history.at(-1).content);
+  assert.ok(new TextEncoder().encode(prepared.map(m=>m.content).join('')).length <= limits.promptBytes);
+  assert.ok(prepared.length <= limits.exchanges*2+2);
+  assert.throws(()=>prepareMessages([{role:'user',content:' '}],'de'),/EMPTY_INPUT/);
+  assert.throws(()=>prepareMessages([{role:'user',content:'🐧'.repeat(201)}],'de'),/INPUT_TOO_LONG/);
+  assert.match(prepareMessages([{role:'user',content:'Hello'}],'en')[0].content,/in English/);
+});
+
+test('worker adapter is lazy, rejects duplicate requests and supports streaming and cancellation', async t => {
+  const previous = globalThis.Worker;
+  class FakeWorker {
+    constructor() { this.sent=[]; FakeWorker.instance=this; }
+    postMessage(message) { this.sent.push(message); }
+    terminate() { this.terminated=true; }
+    emit(data) { this.onmessage({data}); }
+  }
+  globalThis.Worker=FakeWorker;
+  t.after(()=>{ if(previous)globalThis.Worker=previous;else delete globalThis.Worker; });
+  const ai=new LocalInference(); t.after(()=>ai.dispose());
+  assert.equal(FakeWorker.instance,undefined);
+  const loading=ai.load(); const worker=FakeWorker.instance;
+  await assert.rejects(ai.load(),/BUSY/);
+  assert.equal(worker.terminated,undefined);
+  worker.emit({id:1,type:'done',result:{backend:'cpu'}}); await loading;
+  let text=''; const controller=new AbortController();
+  const running=ai.generate({messages:[{role:'user',content:'Moin'}],language:'de',signal:controller.signal,onToken:token=>{text+=token;}});
+  await assert.rejects(ai.generate({messages:[]}),/BUSY/);
+  worker.emit({id:999,type:'token',text:'stale'});
+  worker.emit({id:2,type:'token',text:'Moin!'}); assert.equal(text,'Moin!');
+  controller.abort(); assert.equal(worker.sent.at(-1).type,'cancel');
+  worker.emit({id:2,type:'error',name:'AbortError',message:'Aborted'});
+  await assert.rejects(running,{name:'AbortError'});
+  ai.dispose(); assert.equal(worker.terminated,true); assert.equal(ai.ready,false);
+});
+
+test('asset provisioning dry run makes no output directory or model download', () => {
+  const fixture=join(tmpdir(),'snakkie-dry-run-'+process.pid);
+  const output=execFileSync('python3',['scripts/prepare-snakkie-assets.py','--output',fixture,'--dry-run'],{cwd:root,encoding:'utf8'});
+  assert.match(output,/Destination:/); assert.equal(existsSync(fixture),false);
+});
+
+test('unavailable persistent storage falls back honestly, with an empty private cache', async () => {
+  const storage=await createModelStorage();
+  assert.equal(storage.persistent,false);
+  assert.deepEqual(await storage.backend.list(),[]);
+  assert.equal(await storage.backend.read('absent'),null);
+  await storage.backend.delete('absent');
+});
+
+test('session downloads report byte progress and reject incomplete or oversized files', async t => {
+  t.mock.method(globalThis,'fetch',async()=>new Response(new Uint8Array([1,2,3])));
+  let progress;
+  const blob=await downloadSessionBlob('https://test.invalid/model',3,undefined,event=>{progress=event;});
+  assert.equal(blob.size,3); assert.deepEqual(progress,{loaded:3,total:3});
+  await assert.rejects(downloadSessionBlob('https://test.invalid/model',4,undefined,()=>{}),/MODEL_SIZE_MISMATCH/);
+  await assert.rejects(downloadSessionBlob('https://test.invalid/model',2,undefined,()=>{}),/MODEL_SIZE_MISMATCH/);
 });
 
 test('curated examples wrap manually and retain evidence and regional limits', () => {

@@ -1,0 +1,55 @@
+{
+  "answers": [
+    {
+      "elapsedMs": 55480.80000000005,
+      "firstTokenMs": 35953.89999999991,
+      "language": "de",
+      "prompt": "Hallo Snakkie, wer bist du?",
+      "text": "Hey! Ich bin Snakkie, ein Pinguin aus Ostfriesland. Ich träge ein Streifenhemd und eine Kapitänsmütze. Ich esse ehrlich und respektvoll. 😊",
+      "timings": {
+        "cache_n": 0,
+        "predicted_ms": 19538.4,
+        "predicted_n": 49,
+        "predicted_per_second": 2.456700651025672,
+        "predicted_per_token_ms": 407.05,
+        "prompt_ms": 35860.199,
+        "prompt_n": 154,
+        "prompt_per_second": 4.294454696138189,
+        "prompt_per_token_ms": 232.8584350649351
+      }
+    },
+    {
+      "elapsedMs": 20459.700000000183,
+      "firstTokenMs": 6250.700000000186,
+      "language": "de",
+      "prompt": "Erkläre mir Linux in einfachen Worten.",
+      "text": "Linux ist ein System, das das Betriebssystem von Computers ist, das ich nutzen kann. Es ist gut für die Computer, das ist die grundlegende Anwendung.",
+      "timings": {
+        "cache_n": 136,
+        "predicted_ms": 14578.4,
+        "predicted_n": 37,
+        "predicted_per_second": 2.469406793612468,
+        "predicted_per_token_ms": 404.9555555555555,
+        "prompt_ms": 5821.201,
+        "prompt_n": 20,
+        "prompt_per_second": 3.435717131224296,
+        "prompt_per_token_ms": 291.06005
+      }
+    }
+  ],
+  "environment": {
+    "cores": 5,
+    "isolated": false,
+    "secure": false,
+    "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+  },
+  "load": {
+    "backend": "cpu",
+    "context": 2048,
+    "elapsedMs": 11406.40000000014,
+    "fromCache": false,
+    "model": "qwen3",
+    "persistent": false
+  },
+  "model": "qwen3"
+}

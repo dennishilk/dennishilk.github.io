@@ -1,0 +1,39 @@
+{
+  "runtime": {
+    "version": "3.8.1",
+    "base": "/assets/snakkie/local-ai/wllama-3.8.1/",
+    "archive": "https://registry.npmjs.org/@wllama/wllama/-/wllama-3.8.1.tgz",
+    "sha256": "bbe65fcc6d128d7853aed6d1699db7541e51a0363dc0135b8b68153acbf74670",
+    "moduleSHA256": "e5506753e41a59c11f61f2c52422045be9fc76e32a7e47f037aaad5df4ec723e",
+    "wasmSHA256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c"
+  },
+  "models": {
+    "qwen17": {
+      "id": "qwen17",
+      "name": "Qwen3 1.7B · Q4_K_M",
+      "bytes": 1107409472,
+      "file": "qwen3-1.7b-q4_k_m-b139949c.gguf",
+      "license": "Apache-2.0",
+      "sha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+      "source": "https://huggingface.co/unsloth/Qwen3-1.7B-GGUF/resolve/d7f544eead698dbd1f15126ef60b45a1e1933222/Qwen3-1.7B-Q4_K_M.gguf"
+    },
+    "qwen3": {
+      "id": "qwen3",
+      "name": "Qwen3 0.6B · Q4_K_M",
+      "bytes": 396705472,
+      "file": "qwen3-0.6b-q4_k_m-ac2d9771.gguf",
+      "license": "Apache-2.0",
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+      "source": "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "qwen25": {
+      "id": "qwen25",
+      "name": "Qwen2.5 0.5B Instruct · Q4_K_M",
+      "bytes": 491400032,
+      "file": "qwen2.5-0.5b-instruct-q4_k_m-74a4da8c.gguf",
+      "license": "Apache-2.0",
+      "sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+      "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/9217f5db79a29953eb74d5343926648285ec7e67/qwen2.5-0.5b-instruct-q4_k_m.gguf"
+    }
+  }
+}

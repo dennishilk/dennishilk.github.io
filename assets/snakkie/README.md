@@ -1,4 +1,4 @@
-# Snakkie — first website preview
+# Snakkie — local AI experiment 0.2
 
 Direct routes: `/snakkie/` (English), `/de/snakkie/` (German).
 Both are `noindex,follow`. They are deliberately absent from navigation,
@@ -18,25 +18,31 @@ node --test tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs tests/s
 npm run test:seo
 ```
 
-The standalone generator only writes the two Snakkie HTML pages. No new runtime
-dependency, installation or package change is needed. Shared language-toggle
+The standalone generator only writes the two Snakkie HTML pages. The generator
+and base page need no package installation or package.json change. The optional
+chat requires the separately provisioned, pinned runtime described below.
+Shared language-toggle
 CSS/JS and the existing local JetBrains Mono font files are reused. Theme tokens
 come from the main site's black/blue palette; `style.css` is not imported because
 it includes a Google Fonts request. Font license remains at
 `assets/password-cracking-lab/fonts/OFL.txt`.
 
-## What works
+## Current version
 
-- Static bilingual page, reciprocal routes and existing alternate-language control.
-- Responsive mascot, keyboard controls, labelled inputs, status log, visible focus,
-  reduced-motion support, static/no-JavaScript welcome and first word.
-- Local-only chat layout test: input is rendered with textContent, capped at 500
-  characters and eight preview turns. Reset removes it. Nothing is sent or saved.
-  The welcome and joke are authored copy. No generated answers or simulated thinking.
-- Reply-language selector is a design preview. Selecting Platt reveals the planned
-  translation feature; it changes neither the page locale nor any AI output.
-- Two manually navigable, locally bundled word examples with source links.
-  No date-driven selection, audio or speech synthesis is claimed.
+The chat now occupies the full content width, with a 500–650px conversation
+viewport on larger screens. Platt van Dag is a separate section below it.
+Enter submits, Shift+Enter inserts a newline, IME Enter does not submit.
+
+The previous local echo demo has been replaced with a real lazy-loaded wllama
+adapter. The start button requests local model/runtime files **only after a
+click**. Missing files produce an honest error, never a fake ready state or
+scripted model response. Replies stream from inference in a worker and can be
+stopped. Text is rendered as plain text; chat history is not persisted/uploaded.
+
+Read [the 0.2 research and deployment report](../../docs/snakkie/local-ai-0.2.md)
+for engine/model comparisons, measurements, limitations, exact artifacts and
+owner-run provisioning. Model weights and runtime binaries are ignored by Git
+and must be supplied separately. A normal git pull alone does not supply them.
 
 ## Regional language evidence
 
@@ -57,6 +63,11 @@ larger curated dataset remain future work. The user's supplied greeting
 teaching example.
 
 ## Mascot provenance and limits
+
+Current character story: **Snakkie is Nebby's cousin from East Frisia.** This
+user correction supersedes the earlier “Nebby becomes Snakkie” working slogan.
+The established illustration is unchanged. The exact historical image prompt
+below is retained as production provenance, not as the current character story.
 
 **Fixed character reference:** `snakkie-captain-source.png` is the canonical
 Snakkie for all future expressions and poses. The user's explicit requirement
@@ -106,40 +117,15 @@ WebP variants are resized/encoded from the source with Pillow, Lanczos sampling,
 quality 88 and method 6. Alpha is retained. Extra expressions and animation are
 intentionally deferred to prioritize a single coherent main figure.
 
-## Later AI integration
+## Inference modules
 
-`inference.mjs` documents an engine-independent async streaming adapter boundary,
-language/translation inputs, cancellation and capabilities. The preview adapter
-has `inference: false` and always throws on generation. The UI never invokes it.
-This is a boundary for future work, not an installed inference stack.
+- `model-config.mjs`: pinned local paths, artifact metadata, persona and bounded context.
+- `inference.mjs`: lazy adapter with progress, streaming, cancellation and watchdogs.
+- `inference-worker.mjs`: wllama integration; no external inference endpoints.
+- `model-storage.mjs`: explicit origin-private model cache or session-only fallback.
+- `artifacts.json`: reproducible provisioning manifest, checked against the JS metadata.
+- `ui.mjs`: page controls, safe streaming transcript and word navigation.
 
-Before enabling real answers, decide together on engine and model/license,
-browser/WebGPU compatibility, loading size and memory budget, CPU/mobile fallback,
-privacy, failure/cancellation behavior, response quality and runtime costs.
-Then connect a real adapter, implement loading/streaming/error UI and evaluate
-DE/EN and locally reviewed Platt. No particular engine is selected here.
-
-The daily-word feature needs an independently curated/licensed dataset, explicit
-regional provenance and a documented Europe/Berlin daily selection rule.
-Daily rotation should only be labelled active after it exists.
-
-## Validation of this first version
-
-- `node scripts/build-snakkie.mjs`: passes; repeat build produces identical HTML.
-- `node scripts/sync-seo.mjs --sitemaps-only`: passes; no existing file changes
-  and neither Snakkie route is added to the sitemap set.
-- 44 Node tests pass across Snakkie (5), sitemaps/generator/localization, blog RSS,
-  homepage project order, museum catalog and World Observer bilingual coverage.
-- `npm run test:seo`: passes, 0 validation errors, 0 broken internal links,
-  0 broken hreflang pairs, 0 sitemap duplicates; 1,059 indexable URLs remain.
-- Chromium browser QA: DE/EN switch, safe literal rendering of HTML-like input,
-  local preview notice, reset, word navigation and planned Platt translation note.
-  All displayed mascot assets load. Runtime elements reference local assets.
-- Desktop viewport 1,348 CSS px and responsive iframe widths 320, 390, 768 CSS px
-  (305, 375, 753 content px with desktop scrollbars) checked without horizontal
-  overflow. Desktop, phone chat and tablet layouts inspected visually. This is
-  responsive browser QA, not a test on physical mobile devices.
-- Original Nebby PNG checksums are unchanged. WebP variants retain alpha.
-
-No production deployment was performed. Worldnode's normal `git pull` remains
-the owner's next step after the commit is pushed to `origin/main`.
+`local-ai/` is excluded from Git. Do not commit weights, runtime tarballs, browser
+caches, private transcripts or API keys. Keep all browser runtime paths local.
+The mascot reference and unlisted/noindex rules remain in force.

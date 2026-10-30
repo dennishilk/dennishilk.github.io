@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,follow">
   <title>Snakkie — Your friendly AI from East Frisia | Preview</title>
-  <meta name="description" content="Meet Snakkie: Nebby in a captain’s hat. A first look at a friendly East Frisian companion, with a chat interface preview and curated Low German words.">
+  <meta name="description" content="Meet Snakkie, Nebby’s cousin from East Frisia: a penguin in a captain’s hat, with an experimental local AI chat and curated Low German words.">
   <link rel="canonical" href="https://www.dennishilk.com/snakkie/">
   <link rel="alternate" hreflang="en" href="https://www.dennishilk.com/snakkie/">
   <link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/snakkie/">
   <link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/snakkie/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Snakkie — Your friendly AI from East Frisia | Preview">
-  <meta property="og:description" content="Meet Snakkie: Nebby in a captain’s hat. A first look at a friendly East Frisian companion, with a chat interface preview and curated Low German words.">
+  <meta property="og:description" content="Meet Snakkie, Nebby’s cousin from East Frisia: a penguin in a captain’s hat, with an experimental local AI chat and curated Low German words.">
   <meta property="og:url" content="https://www.dennishilk.com/snakkie/">
   <meta property="og:image" content="https://www.dennishilk.com/assets/snakkie/snakkie-captain-768.webp">
   <meta property="og:image:alt" content="Snakkie, our navy-blue penguin in a striped shirt and captain’s hat.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="/favicon.png">
-  <link rel="stylesheet" href="/assets/snakkie/snakkie.css?v=1">
+  <link rel="stylesheet" href="/assets/snakkie/snakkie.css?v=2">
   <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
   <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
-  <script type="module" src="/assets/snakkie/ui.mjs?v=1"></script>
+  <script type="module" src="/assets/snakkie/ui.mjs?v=2"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -39,38 +39,49 @@
           <p class="greeting" lang="nds">Moin! Ik bün Snakkie.</p>
           <p class="intro">A curious companion from East Frisia. Here to help, share a little local culture and, eventually, have a proper chat. With a dry sense of humour, naturally.</p>
           <div class="hero-actions"><a class="button primary" href="#chat">Meet Snakkie <span aria-hidden="true">↗</span></a><a class="quiet-link" href="#platt">Platt van Dag <span aria-hidden="true">↓</span></a></div>
-          <p class="hero-note">Design preview · Real AI is still on the horizon.</p>
+          <p class="hero-note">Local AI experiment · You decide when to start.</p>
         </div>
         <figure class="mascot">
           <div class="mascot-orbit" aria-hidden="true"></div>
-          <img src="/assets/snakkie/snakkie-captain-768.webp" srcset="/assets/snakkie/snakkie-captain-480.webp 480w, /assets/snakkie/snakkie-captain-768.webp 768w" sizes="(max-width: 700px) 88vw, 46vw" width="768" height="768" fetchpriority="high" alt="Snakkie: the familiar navy-blue Nebby penguin, waving in a blue-and-white striped shirt and a white captain’s hat with a gold anchor.">
-          <figcaption><span aria-hidden="true">↳</span> Nebby becomes Snakkie!</figcaption>
+          <img src="/assets/snakkie/snakkie-captain-768.webp" srcset="/assets/snakkie/snakkie-captain-480.webp 480w, /assets/snakkie/snakkie-captain-768.webp 768w" sizes="(max-width: 700px) 88vw, 46vw" width="768" height="768" fetchpriority="high" alt="Snakkie, Nebby’s navy-blue penguin cousin, waving in a blue-and-white striped shirt and a white captain’s hat with a gold anchor.">
+          <figcaption><span aria-hidden="true">↳</span> Nebby’s cousin from East Frisia.</figcaption>
         </figure>
       </header>
 
       <section class="hello-strip" aria-label="Snakkie’s personality">
         <p>Rooted here.<br><strong>Curious about everywhere.</strong></p>
-        <p>Helpful by nature. A little cheeky by choice. German and English are planned, alongside carefully checked East Frisian Platt. Good answers come first. The odd joke can come along.</p>
+        <p>Helpful by nature. A little cheeky by choice. Try German or English; carefully checked East Frisian Platt is planned. Good answers come first. The odd joke can come along.</p>
       </section>
 
       <div class="preview-grid">
         <section id="chat" class="chat panel" aria-labelledby="chat-title">
-          <div class="panel-heading"><div><p class="eyebrow">01 / A place to chat</p><h2 id="chat-title">Pull up a chair.</h2></div><span class="status-badge">Interface preview</span></div>
-          <p class="preview-disclosure" id="preview-disclosure">No AI model is connected. You can try the layout: your text stays on this page and receives no AI answer.</p>
-          <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Preview conversation" tabindex="0">
+          <div class="panel-heading"><div><p class="eyebrow">01 / A place to chat</p><h2 id="chat-title">Pull up a chair.</h2></div><span class="status-badge" id="model-badge">Model not loaded</span></div>
+          <p class="preview-disclosure" id="preview-disclosure">A real small language model, running on your device. No chat text goes to an AI service. Experimental: answers can be wrong; authentic Platt is not supported yet.</p>
+          <div class="model-setup">
+            <div class="model-settings"><label for="model-select">Language model<select id="model-select" aria-label="Language model"><option value="qwen17">Qwen3 1.7B · 1.11 GB</option><option value="qwen3">Qwen3 0.6B · 397 MB · weaker answers</option></select></label><label for="backend-select">Run on<select id="backend-select" aria-label="Run on"><option value="auto">Automatic · GPU / CPU</option><option value="cpu">CPU · WebAssembly</option><option value="webgpu">WebGPU · experimental</option></select></label></div>
+            <div class="start-row"><button id="start-model" type="button" class="button primary" disabled>Start Snakkie <span aria-hidden="true">↗</span></button><button id="cancel-load" type="button" class="button stop-button" hidden>Cancel loading</button><p id="download-note">First start: about 1.11 GB for the model + 9 MB runtime from this website. No automatic download.</p></div>
+            <p id="model-status" role="status">Not loaded. Start when you are ready.</p>
+            <progress id="model-progress" max="100" value="0" aria-label="Model download progress" hidden></progress>
+            <p id="model-error" role="alert" hidden></p>
+            <div class="model-tools"><button id="unload-model" class="text-button" type="button" disabled>Unload model</button><button id="clear-cache" class="text-button" type="button" disabled>Delete model cache</button><span id="cache-note">Model cache only; conversations are not saved.</span></div>
+          </div>
+          <div class="chat-messages" id="chat-messages" role="log" aria-live="off" aria-label="Conversation with Snakkie" tabindex="0">
             <article class="message welcome">
               <img src="/assets/snakkie/snakkie-avatar.webp" width="48" height="48" alt="">
-              <div><p class="message-author">Snakkie <span>· written welcome</span></p><p>Moin! I’m Snakkie. My captain’s hat is ready; my AI is still being built. One day I’d like to help in English, German and East Frisian Platt. For now, come and have a look around!</p></div>
+              <div><p class="message-author">Snakkie <span>· written welcome</span></p><p>Moin! I’m Snakkie. The captain’s hat fits; now let’s try the brain. Start my local model above, then ask me something in English or German. I’m still small and learning my manners — please check important answers.</p></div>
             </article>
           </div>
-          <form id="chat-form" aria-describedby="preview-disclosure composer-note">
-            <div class="chat-options"><label for="reply-language">Future reply language</label><select id="reply-language" disabled><option value="en">English</option><option value="de">Deutsch</option><option value="nds">East Frisian Platt (planned)</option></select></div>
+          <button id="latest-message" class="latest-message" type="button" hidden>Latest messages ↓</button>
+          <p id="chat-announcement" class="sr-only" role="status"></p>
+          <form id="chat-form" aria-describedby="preview-disclosure composer-note keyboard-note">
+            <div class="chat-options"><label for="reply-language">Reply language</label><select id="reply-language" disabled><option value="en">English</option><option value="de">Deutsch</option><option value="nds" disabled>East Frisian Platt (planned)</option></select></div>
             <p class="translation-plan" id="translation-plan" hidden>Planned: show an English translation alongside Platt replies.</p>
-            <label class="sr-only" for="chat-input">Preview message (maximum 500 characters)</label>
-            <div class="composer"><textarea id="chat-input" rows="2" maxlength="500" placeholder="Try a message — only on this page…" disabled></textarea><button class="button primary" id="send" type="submit" disabled>Try <span aria-hidden="true">↑</span></button></div>
-            <div class="composer-footer"><small id="composer-note">Local preview · nothing is sent or saved</small><button id="reset-chat" type="button" class="text-button" disabled>Clear</button></div>
+            <label class="sr-only" for="chat-input">Message to Snakkie</label>
+            <div class="composer"><textarea id="chat-input" rows="2" maxlength="800" aria-describedby="keyboard-note" placeholder="Start the model above, then say moin…" disabled></textarea><button class="button primary" id="send" type="submit" disabled>Send <span aria-hidden="true">↑</span></button><button class="button stop-button" id="stop-model" type="button" hidden>Stop ■</button></div>
+            <p id="keyboard-note" class="keyboard-note">Enter to send · Shift+Enter for a new line</p>
+            <div class="composer-footer"><small id="composer-note">On this device · short context · no saved conversations</small><button id="reset-chat" type="button" class="text-button" disabled>New conversation</button></div>
           </form>
-          <noscript><p class="no-js">The preview controls need JavaScript. This welcome and the word example remain readable.</p></noscript>
+          <noscript><p class="no-js">The local chat needs JavaScript. This welcome and the word example remain readable.</p></noscript>
         </section>
 
         <section id="platt" class="platt panel" aria-labelledby="platt-title">
@@ -90,10 +101,10 @@
       </div>
 
       <section class="story" aria-labelledby="story-title">
-        <div class="story-copy"><p class="eyebrow">03 / NEBBY BECOMES SNAKKIE</p><h2 id="story-title">Same curious soul.<br>A different hat.</h2><p>You may already know Nebby, our little explorer in an astronaut’s helmet. Now he’s coming home to East Frisia: familiar face, striped shirt, captain’s hat. And a new role as a friendly digital companion.</p></div>
+        <div class="story-copy"><p class="eyebrow">03 / A FAMILY RESEMBLANCE</p><h2 id="story-title">Curiosity runs<br>in the family.</h2><p>You may already know Nebby, our little explorer in an astronaut’s helmet. Meet his cousin Snakkie: a striped shirt, a captain’s hat and a home in East Frisia. The family resemblance is unmistakable. So is the curiosity — with a little extra dry humour from the coast.</p></div>
         <div class="story-note"><span aria-hidden="true">⚓</span><p>“First, make yourself at home.<br>The clever part is coming.”</p><small>Snakkie · an authored line, not an AI response</small></div>
       </section>
-      <details class="horizon"><summary>What’s on the horizon?</summary><p>A genuinely helpful AI, carefully checked regional language, optional translations and a curated daily word. The inference engine is still an open decision. This version has no model downloads, external AI services or subscriptions.</p></details>
+      <details class="horizon"><summary>How does the local experiment work?</summary><p>wllama runs a quantized Qwen model on your device in a worker. You choose when to download it from this website. Where supported, only model files are cached in origin-private browser storage; the browser can evict them. Without storage, loading is session-only. No chat history is stored or uploaded. Hardware support and answer quality vary; CPU mode can be slow. Only a small recent part of the conversation fits into memory. The experimental WebGPU path may fall back to CPU. A locally reviewed Platt mode and a daily word collection are future work.</p></details>
     </main>
     <footer><a class="brand" href="/">DENNIS HILK</a><p>Snakkie · Made with curiosity in East Frisia.</p><div><a href="/impressum.html">Legal notice</a><a href="/datenschutzerklaerung.html">Privacy</a></div></footer>
   </div>
