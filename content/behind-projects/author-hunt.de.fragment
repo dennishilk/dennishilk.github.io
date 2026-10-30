@@ -1,0 +1,28 @@
+<p>Manchmal öffne ich die <strong>Google Search Console</strong>, um nachzusehen, ob meine Linux-Artikel, Experimente und mein Computermuseum bei Google gefunden werden. Welche Suchanfragen bringen meine Seiten in die Suchergebnisse? Was interessiert die Besucher? Ganz normale Suchmaschinenoptimierung, kurz SEO.</p>
+<p>Am 30. Oktober 2026 erwartete mich dort allerdings etwas Besonderes.</p>
+<h2 id="the-prompt">Ein KI-Prompt zwischen Linux und SGI</h2>
+<p>Zwischen ganz normalen Suchanfragen wie <code>linux migration</code>, <code>fastfetch</code> und <code>sgi fsn</code> tauchte plötzlich ein monströs langer englischer Text auf.</p>
+<p>Er begann mit:</p>
+<p><strong>„prompt title: deep author email finder“</strong></p>
+<p>Es folgte eine ausführliche Anleitung für einen KI-Rechercheagenten, der die direkte E-Mail-Adresse eines Buchautors aufspüren sollte. Mit 15 Recherchequellen, strengen Verifikationsregeln und der ausdrücklichen Aufforderung, möglichst gründlich zu suchen.</p>
+<p>Amazon, Goodreads, LinkedIn, alte Webseiten in der Wayback Machine – offenbar sollte wirklich nichts unversucht bleiben.</p>
+{{screenshot}}
+<p>Das brachte mich zum Lachen. Schließlich habe ich selbst einen Mystery-Roman namens <a href="https://www.dennishilk.com/lost-administrator/"><strong>The Lost Administrator</strong></a> veröffentlicht und bekomme inzwischen regelmäßig zweifelhafte Angebote für Buchmarketing und Rezensionen.</p>
+<p>Eine Verbindung zwischen diesen Mails und der Suchanfrage kann ich daraus natürlich nicht ableiten. Die Kombination ist trotzdem ziemlich komisch.</p>
+<h2 id="the-homepage">Google zeigte ausgerechnet meine Startseite</h2>
+<p><strong>Das Beste daran?</strong></p>
+<p>Als ich nachschaute, welche meiner Seiten Google zu dieser absurden Suchanfrage angezeigt hatte, war es nicht einmal die Seite meines Romans.</p>
+<p>Es war einfach meine Startseite: <a href="https://www.dennishilk.com/"><strong>dennishilk.com</strong></a>.</p>
+<p>Da sucht jemand nach Autorenkontakten, und Google präsentiert ihm einen Linux-Enthusiasten mit <a href="https://www.dennishilk.com/museum/">interaktivem Computermuseum</a>, GPU-Debugging, historischen Rechnern und allerlei Experimenten.</p>
+<p>Immerhin: Ein Autor wohnt hier tatsächlich auch. Er ist nur gelegentlich damit beschäftigt, herauszufinden, warum seine Grafikkarte gerade beschlossen hat, das Universum zu verlassen.</p>
+<h2 id="what-the-data-says">Was die Search Console verrät – und was offenbleibt</h2>
+<p>Für diese Suchanfrage zeigt der Screenshot <strong>0 Klicks</strong>. Meine Startseite wurde also in den Suchergebnissen angezeigt; ein Besuch über diesen Eintrag ist im gezeigten Bericht nicht verzeichnet.</p>
+<p>Genau deshalb lohnt sich beim Blick auf SEO-Statistiken die Unterscheidung: <strong>Impressionen</strong> beschreiben die erfassten Einblendungen in Google, <strong>Klicks</strong> die Aufrufe über die Suchergebnisse. Eine ungewöhnliche Suchanfrage ist noch kein ungewöhnlicher Besucher.</p>
+<p>Ob tatsächlich ein KI-Agent dahintersteckte oder jemand den Prompt versehentlich in Google eingefügt hatte, lässt sich nicht feststellen. Die Search Console zeigt Suchanfragen und Leistungsdaten, keine Identität der Suchenden. Auch das verwendete Werkzeug und die Absicht dahinter bleiben offen.</p>
+<p>Aber eines weiß ich:</p>
+<p><strong>Ich wollte eigentlich nur meine SEO-Statistiken überprüfen. Stattdessen habe ich möglicherweise einen digitalen Autorenjäger entdeckt, dem Google mein Computermuseum ins Schaufenster gestellt hat.</strong></p>
+<p>Reingekommen ist er laut den angezeigten Klickzahlen nicht. Vielleicht waren ihm die Linux-Rechner doch etwas unheimlich.</p>
+<p>Willkommen im Internet. 🐙</p>
+<hr>
+<p><strong>Falls du tatsächlich wegen des Buches hier bist:</strong> <a href="https://www.dennishilk.com/lost-administrator/">The Lost Administrator – Roman und interaktive Workstation</a> findest du hier. Den fertigen Roman gibt es kostenlos auf Deutsch und Englisch als PDF und EPUB. Und Michael Webers Debian-Workstation lässt sich direkt im Browser erkunden. Ganz ohne 15-stufige Autorenjagd. 😉</p>
+<p><em>Zum Nachlesen: <a href="https://support.google.com/webmasters/answer/7042828?hl=de">Googles Erklärung zu Impressionen, Position und Klicks</a>.</em></p>
