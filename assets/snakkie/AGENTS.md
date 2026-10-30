@@ -4,7 +4,7 @@ User decision, 2026-10-30: **This exact Snakkie is the visual reference.** Futur
 expressions must depict the same character, not a newly invented penguin.
 
 Current character canon, corrected by the user on 2026-10-30: **Snakkie is
-Nebby's cousin.** Preserve that family relationship in DE/EN copy and AI persona.
+Nebby's cousin.** Preserve that family relationship in DE/EN copy and the curated personality texts.
 The existing artwork stays canonical. The old working slogan “Nebby becomes
 Snakkie” is historical provenance and must not return as the public story.
 

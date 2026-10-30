@@ -1,5 +1,10 @@
 # Snakkie 0.2 — browser-local inference experiment
 
+> HISTORICAL: superseded by 0.3. The frontend no longer uses an LLM. Do not
+> provision these models for the current page. The old provisioner and inference
+> modules were removed; the manifest/licenses are archived in `history-0.2/`.
+> See [the current report](knowledge-0.3.md).
+
 This is an unlisted, noindex proof of concept. The mascot, hero, bilingual
 routes, original Nebby files and public navigation are preserved. No changes
 to Worldnode services, nginx, secrets or server inference were made.

@@ -1,66 +1,73 @@
-# Snakkie — local AI experiment 0.2
+# Snakkie — knowledge & humour companion 0.3
 
 Direct routes: `/snakkie/` (English), `/de/snakkie/` (German).
-Both are `noindex,follow`. They are deliberately absent from navigation,
-homepage cards, World Observer, Wiesmoor, sitemaps and RSS. This is an unlisted
-public page, not access control. Do not disallow crawling in robots.txt: crawlers
-need to read the noindex directive. The existing sitemap generator already
-excludes noindex pages; this is covered by the Snakkie regression test.
+Both remain unlisted and `noindex,follow`. No inbound menus, cards, Observer,
+Wiesmoor, RSS or sitemap links. Do not disallow crawling in robots.txt: crawlers
+must be able to read noindex. The mascot and original Nebby files are unchanged.
 
-## Build and checks
-
-Run from repository root:
+## Build and verify
 
 ```sh
 node scripts/build-snakkie.mjs
 node --test tests/snakkie.test.mjs
-node --test tests/sitemaps.test.mjs tests/seo-sitemap-generator.test.mjs tests/seo-localization.test.mjs tests/blog-rss.test.mjs tests/homepage-featured-projects.test.mjs tests/museum-catalog.test.mjs
 npm run test:seo
 ```
 
-The standalone generator only writes the two Snakkie HTML pages. The generator
-and base page need no package installation or package.json change. The optional
-chat requires the separately provisioned, pinned runtime described below.
-Shared language-toggle
-CSS/JS and the existing local JetBrains Mono font files are reused. Theme tokens
-come from the main site's black/blue palette; `style.css` is not imported because
-it includes a Google Fonts request. Font license remains at
-`assets/password-cracking-lab/fonts/OFL.txt`.
+The generator writes only the two Snakkie HTML pages. No packages, models,
+frameworks, external runtime or server process are required. The page reuses the
+site's local fonts and language-switch assets.
 
-## Current version
+## Current architecture
 
-The chat now occupies the full content width, with a 500–650px conversation
-viewport on larger screens. Platt van Dag is a separate section below it.
-Enter submits, Shift+Enter inserts a newline, IME Enter does not submit.
+- `knowledge/*.json`: stable-ID bilingual records, original jokes, source-bearing
+  factual entries, dictionary words/phrase and varied honest fallbacks.
+- `engine.mjs`: transparent curated retrieval; normalized terms, synonyms, guarded
+  one-edit typo correction, mandatory topic anchors, confidence/ambiguity checks.
+- `weather.mjs`: reads only the existing same-origin Wiesmoor Observer JSON;
+  strict timestamps, freshness checks and separate current/forecast paths.
+- `words.mjs`: independent word loader and deterministic local-calendar selection.
+- `ui.mjs`: keyboard controls, accessible plain-text replies, safe source links,
+  bounded in-memory transcript, gentle scroll following. No saved chat history.
 
-The previous local echo demo has been replaced with a real lazy-loaded wllama
-adapter. The start button requests local model/runtime files **only after a
-click**. Missing files produce an honest error, never a fake ready state or
-scripted model response. Replies stream from inference in a worker and can be
-stopped. Text is rendered as plain text; chat history is not persisted/uploaded.
+There is no generative AI. Texts come from the maintained collection. A joke or
+fallback uses a shuffled bag, exhausting the set before repeating. The small
+context remembers only the preceding intent for “Noch einen!”; it is not a
+language-model conversation memory. Explicit DE/EN answer-language switches are
+supported; unknown questions are left unanswered rather than guessed.
 
-Read [the 0.2 research and deployment report](../../docs/snakkie/local-ai-0.2.md)
-for engine/model comparisons, measurements, limitations, exact artifacts and
-owner-run provisioning. Model weights and runtime binaries are ignored by Git
-and must be supplied separately. A normal git pull alone does not supply them.
+The dataset currently has 100 bilingual original jokes, 20 bilingual fallbacks,
+12 factual entries, 6 personality entries, 2 dictionary words and 1 phrase.
+New IDs must be stable and unique; keep DE/EN, source/provenance and review status.
+Add varied queries and necessary topic anchors, then test positive AND negative
+matches. Do not broaden fuzzy matching to short or ambiguous terms casually.
+A German/English phrasing is an editorial translation, not a dictionary quote.
 
-## Regional language evidence
+## Regional language and daily word
 
-Checked 2026-10-30 by retrieving the dictionary pages directly:
+Only Moin, snacken and “Van snacken kummt snacken.” are teaching entries. They
+were checked against `www.platt-wb.de` on 2026-10-30. The dictionary is based on
+Gernot de Vries's Ostfriesisches Wörterbuch with publisher permission. We retain
+its spelling and eastern-East-Frisian qualification for snacken. Specific
+Wiesmoor speaker review remains pending. Branding greetings and humorous copy
+must not silently become authenticated teaching material.
 
-- https://www.platt-wb.de/platt-hoch/?term=Moin — Moin as a greeting at any time.
-- https://www.platt-wb.de/platt-hoch/?term=snacken — speaking/chatting, explicitly
-  labelled eastern East Frisian; the short example is listed there too.
+The daily selection uses the visitor's local calendar date and words sorted by
+stable ID. It rotates across just TWO words; the UI states that small scope.
+Manual browsing does not change the daily algorithm. Audio and more entries
+require regional review and, for larger source-derived datasets, permissions.
 
-The site's dictionary states it is based on Gernot de Vries's *Ostfriesisches
-Wörterbuch*, with permission of Verlag Schuster Leer. English translations and
-the short cultural notes here are our editorial translations/paraphrases.
-Only a minimal selection is used, not a copy of the dictionary. The words are
-attested for East Frisia; neither is represented as uniquely Wiesmoorer. Local
-speaker review, pronunciation recordings and redistribution permission for a
-larger curated dataset remain future work. The user's supplied greeting
-“Moin! Ik bün Snakkie.” is branding copy, not an independently verified regional
-teaching example.
+## Weather and history
+
+See [the 0.3 report](../../docs/snakkie/knowledge-0.3.md) for source checks, byte
+sizes, tests, freshness policy and known limits. No new weather API is called.
+The raw weather export is published by the existing Worldnode process and is
+ignored in Git; do not add a frozen snapshot to production as a substitute.
+
+The [0.2 report](../../docs/snakkie/local-ai-0.2.md) and its benchmark JSON remain
+historical. Runtime licenses and the pinned artifact manifest now live under
+`docs/snakkie/history-0.2/`. Their runtime/provisioner code was removed. Existing
+untracked model files are deliberately left untouched; Git does not clean them.
+The frontend no longer reads those files or old browser model caches.
 
 ## Mascot provenance and limits
 
@@ -116,16 +123,3 @@ Production prompt (built-in tool, no CLI/API key):
 WebP variants are resized/encoded from the source with Pillow, Lanczos sampling,
 quality 88 and method 6. Alpha is retained. Extra expressions and animation are
 intentionally deferred to prioritize a single coherent main figure.
-
-## Inference modules
-
-- `model-config.mjs`: pinned local paths, artifact metadata, persona and bounded context.
-- `inference.mjs`: lazy adapter with progress, streaming, cancellation and watchdogs.
-- `inference-worker.mjs`: wllama integration; no external inference endpoints.
-- `model-storage.mjs`: explicit origin-private model cache or session-only fallback.
-- `artifacts.json`: reproducible provisioning manifest, checked against the JS metadata.
-- `ui.mjs`: page controls, safe streaming transcript and word navigation.
-
-`local-ai/` is excluded from Git. Do not commit weights, runtime tarballs, browser
-caches, private transcripts or API keys. Keep all browser runtime paths local.
-The mascot reference and unlisted/noindex rules remain in force.
