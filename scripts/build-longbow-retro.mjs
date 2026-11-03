@@ -22,7 +22,10 @@ const sourceUrls=[
  'https://www.flightsimulator.com/microsoft-flight-simulator-2024-launch-day-update/',
  'https://arstechnica.com/gaming/2021/11/battlefield-2042-review-the-future-of-warfare-is-meaningless/',
  'https://www.mobygames.com/company/11/origin-systems-inc/',
- 'https://news.ea.com/press-releases/press-releases-details/2011/EA-Launches-Origin/default.aspx'
+ 'https://news.ea.com/press-releases/press-releases-details/2011/EA-Launches-Origin/default.aspx',
+ 'https://en.wikipedia.org/wiki/AN/APG-78_Longbow',
+ 'https://commons.wikimedia.org/wiki/File:Westland_apache_wah-64d_longbow_zj206_arp.jpg',
+ 'https://commons.wikimedia.org/wiki/File:JGSDF_AH-64D%EF%BC%8874506%EF%BC%89_APG-78_Longbow_millimeter-wave_fire-control_radar.JPG'
 ];
 const cardId='story-longbow';
 
