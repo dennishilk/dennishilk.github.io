@@ -1,0 +1,34 @@
+/* November features extend the existing news shell without changing other posts. */
+.deep-dive { --feature-accent:#8ddbc0; }
+.deep-dive.kernel-feature { --feature-accent:#b8adf5; }
+.deep-dive.kde-feature { --feature-accent:#8bcdf3; }
+.deep-dive .news-hero img { aspect-ratio:auto; }
+.deep-dive .article-copy h3 { margin-top:30px; }
+.deep-dive .article-copy code { overflow-wrap:anywhere; }
+.deep-dive .article-copy pre code { overflow-wrap:normal; }
+.deep-dive .check-guide { margin:30px 0; padding:25px; background:var(--surface); border:1px solid var(--line); border-top:3px solid var(--feature-accent); border-radius:10px; }
+.deep-dive .check-guide h3 { margin:0 0 14px; }
+.deep-dive label,.deep-dive legend { font-weight:600; }
+.deep-dive select,.deep-dive button { font:inherit; color:var(--text); background:var(--surface-soft); border:1px solid #63768c; border-radius:6px; padding:10px 12px; min-height:44px; max-width:100%; }
+.deep-dive select { display:block; width:100%; margin:12px 0 22px; }
+.deep-dive button { cursor:pointer; font-size:14px; }
+.deep-dive button:hover { border-color:var(--feature-accent); }
+.deep-dive :is(button,select,input,summary):focus-visible { outline:3px solid var(--feature-accent); outline-offset:4px; }
+.deep-dive fieldset { border:0; padding:0; margin:22px 0; min-width:0; }
+.deep-dive fieldset label { display:flex; gap:12px; align-items:flex-start; font-weight:400; padding:9px 0; }
+.deep-dive input[type=checkbox] { width:20px; height:20px; flex:0 0 20px; margin-top:6px; accent-color:var(--feature-accent); }
+.deep-dive .guide-progress { color:var(--feature-accent); font-size:15px; }
+.deep-dive .copy-control { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin:-16px 0 24px; min-height:44px; }
+.deep-dive .copy-status { font-size:14px; color:var(--muted); }
+.deep-dive .research-ledger { display:grid; grid-template-columns:1fr 1fr; gap:1px; margin:28px 0; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+.deep-dive .research-ledger div { background:var(--surface); padding:22px; }
+.deep-dive .research-ledger dt { color:var(--feature-accent); font-size:30px; font-weight:700; line-height:1.3; }
+.deep-dive .research-ledger dd { margin:10px 0 0; font-size:15px; line-height:1.6; }
+.deep-dive details.reader-path { padding:16px 0; border-bottom:1px solid var(--line); }
+.deep-dive details.reader-path summary { cursor:pointer; padding:8px 4px; min-height:44px; color:var(--feature-accent); font-weight:650; }
+.deep-dive details.reader-path p { margin-top:14px; }
+.deep-dive .method-note { color:var(--muted); font-size:15px; }
+.deep-dive .table-scroll:focus-visible { outline-color:var(--feature-accent); }
+.deep-dive [hidden] { display:none !important; }
+@media(max-width:650px) { .deep-dive .check-guide { padding:18px; } .deep-dive .research-ledger { grid-template-columns:1fr; } }
+@media(prefers-reduced-motion:reduce) { .deep-dive * { scroll-behavior:auto; transition:none; } }

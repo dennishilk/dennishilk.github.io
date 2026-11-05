@@ -40,3 +40,24 @@ review and upstream test evidence rather than an independently run Ubuntu system
 The Ubuntu report's `ubuntu-openssh.evidence.json` records the 19 October 2026 source
 and amd64 binary publication check. It is an editorial snapshot, not a live status
 service or an assertion about every architecture's installation state.
+
+## November 2026 deep dives
+
+The APT, kernel-AI and Plasma 6.8 features use the same builder and six canonical
+fragments. `november-2026.evidence.json` records the dated primary-source checks,
+release-specific package thresholds, counting units and research limitations.
+It is an editorial snapshot, not a live vulnerability database.
+
+`npm run build:linux-deep-dives:visuals` authors their responsive SVG diagrams and
+localized social PNGs. The checked-in assets make the normal HTML rebuild
+independent of sharp. `deep-dives.js` progressively adds local reference filters,
+checklist progress and clipboard controls; it has no network or storage APIs.
+Never replace the APT guide with a version scanner without independently testing
+Debian version ordering and exact distributor/release mapping.
+
+`npm run test:linux-deep-dives` checks operational command boundaries, counting
+units and the no-JavaScript content. `npm run test:linux-news:browser` also tests
+all guide choices, keyboard-operated checks and copy buttons, clipboard failure,
+and complete fallback content with JavaScript disabled. The browser test uses
+Playwright; `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select an existing compatible
+Chromium executable for local QA.

@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "build:linux-deep-dives:visuals": "node scripts/build-linux-deep-dive-visuals.mjs",
+    "test:linux-deep-dives": "node --test tests/linux-deep-dives.test.mjs",
     "build:linux-news": "node scripts/build-linux-audio-rescue.mjs && node scripts/build-linux-news.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
     "test:linux-news": "node --test tests/linux-news.test.mjs",
     "test:linux-news:browser": "node scripts/test-linux-news-browser.mjs",

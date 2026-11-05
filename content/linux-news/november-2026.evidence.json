@@ -1,0 +1,88 @@
+{
+  "checked": "2026-11-05",
+  "scope": "Public primary-source review for three bilingual features. No production access, exploit execution or hardware benchmark.",
+  "apt": {
+    "disclosed": "2026-11-04",
+    "cve": "CVE-2026-109518",
+    "advisories": [
+      "DSA-6607-1",
+      "DLA-4880-1",
+      "USN-8996-1"
+    ],
+    "fixed_versions": {
+      "debian_trixie": "3.0.4",
+      "debian_bookworm": "2.6.2",
+      "ubuntu_jammy": "2.4.15ubuntu0.1",
+      "ubuntu_noble": "2.8.4ubuntu0.1",
+      "ubuntu_resolute": "3.2.1ubuntu0.1",
+      "ubuntu_stonking": "3.3.3ubuntu0.1"
+    },
+    "prerequisites": [
+      "APT package installation",
+      "attacker-controlled HTTP exchange or malicious mirror/proxy",
+      "redirects and download retries",
+      "nonzero Acquire::Retries"
+    ],
+    "cvss": {
+      "version": "4.0",
+      "score": 7.7,
+      "severity": "High",
+      "source": "https://ubuntu.com/security/CVE-2026-109518"
+    },
+    "remediation_source": "https://ubuntu.com/blog/apt-vulnerability-fixes-available",
+    "update_sequence": "Refresh lists successfully, then review and install the upgrade with Acquire::Retries=0 for that invocation; recheck installed apt-source packages.",
+    "limits": "Source version thresholds require exact distributor/release mapping. HTTPS protects the path, not a malicious endpoint. Page does not inspect visitor machines."
+  },
+  "kernel_ai": {
+    "published": "2026-11-04",
+    "source": "https://openai.com/index/a-thousand-fewer-paths-to-root/",
+    "main_run": {
+      "audit_targets": 5034,
+      "candidate_findings": 2308,
+      "dynamically_reproduced": 1724,
+      "lpe_artifacts_before_variant_analysis": 1169,
+      "distinct_lpe_patch_groups": 948,
+      "information_leak_pocs": 291,
+      "api_credits_usd": 1213430
+    },
+    "earlier_end_of_analysis_snapshot": {
+      "upstream_patched_lpes": 61,
+      "staging_patches": 43,
+      "public_reporting_and_discussion": 299,
+      "limits": "Researcher-reported states after ten days; not a current distro-package inventory or proven disjoint sets."
+    },
+    "adapted_kernelctf": {
+      "lpe_exploits": 21,
+      "api_credits_usd": 32936,
+      "limits": "Separate experiment and cost basis. SLAB_VIRTUAL omitted for incompatibility. Bounty valuation hypothetical, not program acceptance."
+    },
+    "arithmetic": {
+      "main_cost_per_distinct_lpe_usd": 1279.99,
+      "report_presented_average_usd": 1279
+    },
+    "limits": "Attributed researcher claims, not independently reproduced by the blog. No exhaustive public mapping of all groups to released distro packages verified."
+  },
+  "plasma": {
+    "released": "2026-10-14",
+    "source": "https://kde.org/announcements/plasma/6/6.8.0/",
+    "developer_context_date": "2026-06-02",
+    "developer_context": "https://planet.kde.org/david-edmundson-2026-06-02-ex-11-prepping-for-plasmas-last-x11-supported-release/",
+    "change": "Plasma 6.8 retires its X11 login session; XWayland and KDE application X11 compatibility continue.",
+    "package_snapshot": {
+      "debian_trixie": "4:6.3.6-1",
+      "arch_extra_x86_64": "6.8.2-1",
+      "ubuntu_stonking": "4:6.7.5-0ubuntu1",
+      "ubuntu_resolute": "4:6.6.4-0ubuntu1",
+      "ubuntu_resolute_updates": "4:6.6.6-0ubuntu0.1",
+      "fedora_44": "6.8.2-1.fc44",
+      "fedora_45": "6.8.2-1.fc45",
+      "fedora_43": "6.7.5-1.fc43"
+    },
+    "limits": "Repository snapshot only. Driver, KWin, XWayland, portal and application support need local verification. No claim that Cthulhu runs Plasma 6.8."
+  },
+  "retrieval_limits": [
+    "Debian DLA mailing-list open initially returned 403; the official indexed message and tracker independently confirmed DLA-4880-1, date and Bookworm 2.6.2.",
+    "KDE NVIDIA wiki open returned 403; the official indexed page established the referenced topic. Version-scoped NVIDIA 580.178.04 primary documentation was opened and added for a directly accessible driver reference.",
+    "Wayland book Xwayland page timed out; official indexed content identifies it as an X server and Wayland client. Architecture and portal documentation were opened directly."
+  ]
+}

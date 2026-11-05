@@ -10,6 +10,7 @@
 .news-sources,.news-method { font-size:15px; }
 .article-copy .news-method { color:var(--muted); border-top:1px solid var(--line); padding-top:22px; }
 .news-article .article-header { max-width:920px; }
+.news-article .article-header h1 { overflow-wrap:anywhere; hyphens:auto; }
 .news-article .article-header .intro { max-width:790px; font-size:18px; }
 .news-article .article-meta { margin-top:24px; }
 .news-article .article-copy td code { overflow-wrap:anywhere; }

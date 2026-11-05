@@ -28,6 +28,7 @@ try{
   browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:{})});
   report.browserVersion=browser.version();
   const page=await browser.newPage({viewport:{width:1440,height:1050},reducedMotion:'reduce'});
+  await page.context().grantPermissions(['clipboard-read','clipboard-write'],{origin});
   page.on('pageerror',e=>report.errors.push(e.message));
   page.on('response',r=>{if(r.status()>=400)report.errors.push(r.status()+' '+r.url());});
   await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
@@ -50,7 +51,7 @@ try{
       await page.setViewportSize({width,height});await page.goto(origin+route);await page.locator('.news-hero img').evaluate(img=>img.decode());
       await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.jpg',type:'jpeg',quality:80,fullPage:true});
     }
-    const target=a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':'fix-status';
+    const target=a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':a.topic==='ai-linux-kernel-948'?'numbers':a.topic==='plasma-68-wayland'?'readiness':'fix-status';
     await page.locator('.mobile-toc summary').click();
     await page.locator('.mobile-toc a[href="#'+target+'"]').click();
     assert.ok(page.url().endsWith('#'+target));
@@ -64,6 +65,50 @@ try{
         await image.scrollIntoViewIfNeeded();await image.evaluate(img=>img.decode());
         assert.ok(await image.evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0));
       }
+    }
+    if(a.articleClass?.includes('deep-dive')){
+      const first=page.locator('pre[data-copy]').first();
+      const command=await first.textContent();
+      const button=first.locator('xpath=following-sibling::*[1]').locator('button');
+      await button.focus();await page.keyboard.press('Enter');
+      await page.waitForFunction(()=>/Copied|Kopiert/.test(document.querySelector('.copy-status').textContent));
+      assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),command);
+      await page.evaluate(()=>{navigator.clipboard.writeText=async()=>{throw Error('Clipboard denied in test');};});
+      await button.click();
+      await page.waitForFunction(()=>/manually|manuell/.test(document.querySelector('.copy-status').textContent));
+      report.interactions.push(a.lang+' '+a.topic+': keyboard copy preserves exact command; clipboard denial has manual fallback');
+      if(a.topic==='apt-cve-2026-109518'){
+        const select=page.locator('#apt-release');
+        for(const value of ['debian','ubuntu','other','all']){
+          await select.selectOption(value);
+          const visible=await page.locator('[data-guide-panel]:visible').evaluateAll(xs=>xs.map(x=>x.dataset.guidePanel));
+          assert.deepEqual(visible,value==='all'?['debian','ubuntu','other']:[value]);
+        }
+        for(const box of await page.locator('.check-guide input').all()){await box.focus();await page.keyboard.press('Space');}
+        assert.match(await page.locator('[data-progress]').textContent(),/4 (?:of|von) 4/);
+        assert.match(await page.locator('[data-progress]').textContent(),/not a security assessment|kein Sicherheitsnachweis/);
+        await page.locator('[data-reset]').click();
+        assert.equal(await page.locator('.check-guide input:checked').count(),0);
+        report.interactions.push(a.lang+': all APT reference filters, keyboard checkboxes, cautionary progress and reset');
+      }
+      if(a.topic==='plasma-68-wayland'){
+        for(const value of ['office','gaming','development','remote','creative','all']){
+          await page.locator('#wayland-use').selectOption(value);
+          const visible=await page.locator('[data-guide-panel]:visible').evaluateAll(xs=>xs.map(x=>({key:x.dataset.guidePanel,open:x.open})));
+          assert.deepEqual(visible,value==='all'?['office','gaming','development','remote','creative'].map(key=>({key,open:false})):[{key:value,open:true}]);
+        }
+        report.interactions.push(a.lang+': five Wayland workflows and return to full guide');
+      }
+      const noJS=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});
+      await noJS.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+      const fallback=await noJS.newPage();await fallback.goto(origin+route);
+      assert.equal(await fallback.locator('pre[data-copy]').count(),await page.locator('pre[data-copy]').count());
+      for(const panel of await fallback.locator('[data-guide-panel]').all())assert.ok(await panel.isVisible());
+      for(const summary of await fallback.locator('.check-guide details summary').all()){
+        await summary.click();assert.equal(await summary.evaluate(x=>x.parentElement.open),true);
+      }
+      assert.equal(await fallback.locator('[data-selector]:visible').count(),0);
+      await noJS.close();report.interactions.push(a.lang+' '+a.topic+': commands and full guide available without JavaScript');
     }
     await page.locator('.language-link').click();
     assert.equal(await page.locator('html').getAttribute('lang'),a.lang==='en'?'de':'en');

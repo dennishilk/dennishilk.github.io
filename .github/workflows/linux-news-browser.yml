@@ -35,7 +35,10 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.56.0
           npx playwright install --with-deps chromium
       - name: Check localized article and index layouts without deployment
-        run: node scripts/test-linux-news-browser.mjs
+        run: |
+          npm run test:linux-news
+          npm run test:linux-deep-dives
+          node scripts/test-linux-news-browser.mjs
       - name: Preserve layout screenshots and check report
         if: always()
         uses: actions/upload-artifact@v4
