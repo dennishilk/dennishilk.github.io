@@ -40,6 +40,13 @@ Six complete editions use the existing Linux News & Security category and its ca
 
 Local browser provisioning used a compatible downloaded headless Chromium because the runtime-default browser download returned an incomplete archive. No test dependency was added to the published site.
 
+GitHub publication commit: `f6a91bfc849e1f993e0feab417f4c1662757b99e`.
+Its RSS and sitemap/SEO workflows passed. The first news browser job stopped at
+dependency provisioning: `ubuntu-latest` selected Ubuntu 26.04, which the existing
+Playwright 1.56.0 installer does not support. A follow-up pins this job to Ubuntu
+24.04, matching the locally validated host, while keeping the existing browser
+test version and all checks.
+
 ## Primary evidence and limitations
 
 The dated fact record is [`content/linux-news/november-2026.evidence.json`](../content/linux-news/november-2026.evidence.json). Article bodies link evidence next to claims. Main sources:
