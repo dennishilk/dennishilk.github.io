@@ -1,0 +1,31 @@
+name: Illustrated gaming memoir checks
+on:
+  pull_request:
+    paths:
+      - 'blog/my-gaming-journey-1984-2026/**'
+      - 'de/blog/meine-spiele-von-damals-bis-heute/**'
+      - 'assets/blog/gaming-journey/**'
+      - 'tests/gaming-journey.test.mjs'
+      - '.github/workflows/gaming-journey-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'blog/my-gaming-journey-1984-2026/**'
+      - 'de/blog/meine-spiele-von-damals-bis-heute/**'
+      - 'assets/blog/gaming-journey/**'
+      - 'tests/gaming-journey.test.mjs'
+      - '.github/workflows/gaming-journey-check.yml'
+permissions:
+  contents: read
+jobs:
+  memoir:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check assets/blog/gaming-journey/timeline.js
+      - run: node --test tests/gaming-journey.test.mjs tests/sitemaps.test.mjs tests/blog-rss.test.mjs tests/seo-localization.test.mjs tests/linux-news.test.mjs
+      - run: node scripts/generate-blog-rss.mjs --check
+      - run: npm run test:seo
