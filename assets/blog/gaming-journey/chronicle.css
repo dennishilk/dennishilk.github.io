@@ -1,12 +1,14 @@
 
 /* Gaming memories 1984–2026: layered onto /blog/blog.css, no third-party fonts. */
 .memory-article { --memory-amber:#f5c47d; --memory-green:#9ee4bd; }
-.memory-article .article-header { max-width:920px; }
+.memory-article .article-header { max-width:850px; margin-left:auto; margin-right:auto; }
+.memory-article .article-layout { display:block; max-width:850px; margin:0 auto; }
+.memory-article .article-copy { max-width:none; }
 .memory-article .article-copy { min-width:0; }
 .memory-article .article-lead {font-size:clamp(1.14rem,2vw,1.42rem);line-height:1.72;color:#e1eaf2; }
 .memory-article h2 {scroll-margin-top:106px;}
 .memory-article h3 {scroll-margin-top:106px;}
-.memory-article .memory-hero{position:relative;overflow:hidden;border:1px solid #34506a;border-radius:18px;min-height:260px;background:linear-gradient(125deg,#162b3a,#111724);}
+.memory-article .memory-hero{margin:0 0 30px;position:relative;overflow:hidden;border:1px solid #34506a;border-radius:18px;min-height:260px;background:linear-gradient(125deg,#162b3a,#111724);}
 .memory-article .memory-hero img { width:100%;height:auto;display:block;max-height:470px;object-fit:cover;opacity:.83; }
 .memory-article .memory-hero figcaption{font-size:.82rem;color:#bdccdc;padding:12px 18px;border-top:1px solid #293c4f;}
 .memory-article .memory-hero .memory-tag{position:absolute;left:20px;top:18px;padding:6px 10px;background:#0c1624dd;color:var(--memory-amber);font:700 .76rem ui-monospace,monospace;border-radius:6px;letter-spacing:.09em}
@@ -47,7 +49,7 @@
 .memory-article .game-era{padding:20px;border:1px solid #304155;background:#111a26;border-radius:12px;}
 .memory-article .game-era h3{font-size:1.12rem;margin:0 0 16px;}
 .memory-article .game-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;list-style:none;padding:0;margin:0;}
-.memory-article .game-list li{padding:10px 12px;border-left:2px solid #4b7e8f;background:#172635;color:#dcebf7;font-size:.89rem;line-height:1.5;}
+.memory-article .game-list li{margin:0;padding:10px 12px;border-left:2px solid #4b7e8f;background:#172635;color:#dcebf7;font-size:.89rem;line-height:1.5;}
 .memory-article .game-list li strong{font-weight:660}
 .memory-article .game-list li small{display:block;color:#9cb3c5;line-height:1.4;}
 .memory-article .game-list li[hidden],.memory-article .game-era[hidden]{display:none!important;}
@@ -63,3 +65,5 @@
 .memory-article .memory-end strong{color:var(--memory-amber)}
 @media(max-width:780px){.memory-article .era-navigation{grid-template-columns:repeat(2,minmax(0,1fr))}.memory-article .memory-story-grid{grid-template-columns:1fr}.memory-article .memory-facts{grid-template-columns:1fr}.memory-article .game-list{grid-template-columns:1fr}.memory-article .memory-hardware{font-size:.8rem}.memory-article .memory-hardware td:first-child{white-space:normal}}
 @media(prefers-reduced-motion:reduce){.memory-article *{scroll-behavior:auto!important}}
+
+@media(min-width:1100px){.memory-article .article-header{max-width:850px}.memory-article .article-copy{font-size:18px}}
