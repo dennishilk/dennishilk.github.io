@@ -1,6 +1,12 @@
 # Gaming Journey verification
 
-## Image archive update, 7 November 2026
+## Wikimedia image and search metadata follow-up, 7 November 2026
+
+The archive includes imagery for 79 of the same 99 games. This pass adds 14 game logos or wordmarks and three clearly labelled reference photographs. The Konami arcade board is a reference for the NES title, and the other two photographs depict the designers of Beneath a Steel Sky and Leisure Suit Larry 6. The remaining 20 entries have further reference links at the end of the article. English Wikipedia files with only a non-free use rationale are linked through their articles. Each locally displayed image has a file-level provenance record.
+
+The German and English articles have revised search titles and summaries, contextual section headings, localized internal links to the related Longbow and Arch/Linux articles, structured hero image metadata, and matching Open Graph image dimensions and alt text. The RSS and sitemap generators include the update. The original published dates, canonical URLs and language alternates are preserved.
+
+## First image archive update, 7 November 2026
 
 Both language editions retain all 99 entries in the original order. 62 entries have imagery: 30 game screenshots, one cover, one official illustration, 25 title logos and five labelled reference images. The other 37 entries appear as text with external image references in the sources section. Their artwork remains an open item and the article lists every title. The platform placeholders were removed.
 
