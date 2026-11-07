@@ -18,7 +18,7 @@
         let shown = 0;
         for (const card of group.querySelectorAll('.game-card')) {
           const matches = (selected === 'all' || group.dataset.gameEra === selected)
-            && (!imagesOnly.checked || card.dataset.imageStatus === 'screenshot')
+            && (!imagesOnly.checked || card.dataset.imageStatus !== 'unillustrated')
             && normalize(`${card.dataset.gameTitle} ${card.dataset.gameMemory}`).includes(query);
           card.hidden = !matches;
           if (matches) { shown++; count++; }
@@ -51,11 +51,14 @@
       if (!thumb) return;
       event.preventDefault();
       opener = link;
+      dialog.dataset.mediaKind = link.dataset.mediaKind || 'screenshot';
       image.alt = thumb.alt;
       image.width = thumb.naturalWidth || Number(thumb.width);
       image.height = thumb.naturalHeight || Number(thumb.height);
       image.src = link.href;
-      caption.textContent = link.closest('figure')?.querySelector('figcaption')?.textContent.trim() || thumb.alt;
+      caption.textContent = link.closest('figure')?.querySelector('figcaption')?.textContent.trim()
+        || link.closest('.game-card')?.querySelector('.game-credit')?.firstChild?.textContent.trim()
+        || thumb.alt;
       original.href = link.href;
       dialog.showModal();
     });
@@ -68,6 +71,7 @@
     image.addEventListener('error', () => { dialog.close(); if (opener) window.location.assign(opener.href); });
   }
   document.querySelector('[data-paperclip]')?.addEventListener('click', event => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const image = event.currentTarget.parentElement.querySelector('img');
     image.classList.remove('paperclip-wave');
     requestAnimationFrame(() => requestAnimationFrame(() => image.classList.add('paperclip-wave')));

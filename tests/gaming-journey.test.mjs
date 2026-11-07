@@ -18,12 +18,19 @@ for(const [lang,html] of Object.entries(pages)){
   for(const locale of ['en','de'])assert.ok(links.some(a=>a.hreflang===locale&&a.href===origin+routes[locale]));
   assert.ok(links.some(a=>a.hreflang==='x-default'&&a.href===origin+routes.en));
   const data=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
-  const article=data['@graph'].find(n=>n['@type']==='BlogPosting');assert.equal(article.datePublished,'2026-11-06');assert.equal(article.dateModified,'2026-11-06');assert.equal(article.author.name,'Dennis Hilk');assert.equal(article.inLanguage,lang);assert.ok(data['@graph'].some(n=>n['@type']==='BreadcrumbList'));
+  const article=data['@graph'].find(n=>n['@type']==='BlogPosting');assert.equal(article.datePublished,'2026-11-06');assert.equal(article.dateModified,'2026-11-07');assert.equal(article.author.name,'Dennis Hilk');assert.equal(article.inLanguage,lang);assert.ok(data['@graph'].some(n=>n['@type']==='BreadcrumbList'));
  });
  test(`${lang}: all 99 memories and disclosed artwork coverage remain accessible`,()=>{
   const cards=tags(html,'li').filter(a=>a['data-game-title']);assert.equal(cards.length,99);assert.equal(new Set(cards.map(a=>a['data-game-title'])).size,99);
-  const coverage=manifest.coverage.find(c=>c.lang===lang);assert.deepEqual(cards.filter(c=>c['data-image-status']==='screenshot').map(c=>c['data-game-title']),coverage.imagedGames.map(t=>t.replaceAll('&','&amp;')));
-  assert.equal(coverage.actualImages+coverage.fallbackCount,99);assert.equal(coverage.fallbackGames.length,coverage.fallbackCount);assert.equal(coverage.actualImages,6);
+  const coverage=manifest.coverage.find(c=>c.lang===lang);assert.deepEqual(cards.filter(c=>c['data-image-status']!=='unillustrated').map(c=>c['data-game-title']),coverage.imagedGames.map(t=>t.replaceAll('&','&amp;')));
+  assert.equal(coverage.actualImages+coverage.unillustratedCount,99);assert.equal(coverage.unillustratedGames.length,coverage.unillustratedCount);assert.ok(coverage.actualImages>=62);assert.equal(coverage.screenshotCount+coverage.coverCount+coverage.artworkCount+coverage.logoCount+coverage.referenceCount,coverage.actualImages);
+  const unillustrated = [...html.matchAll(/<li class="game-card"[^>]*data-image-status="unillustrated"[^>]*>[\s\S]*?<\/li>/g)];
+  assert.equal(unillustrated.length,coverage.unillustratedCount);
+  for(const [entry] of unillustrated)assert.doesNotMatch(entry,/<(?:img|svg)\b|href="https:\/\//);
+  assert.doesNotMatch(html,/game-schematic|archive-symbols\.svg/);
+  const [article,credits] = html.split('<section class="era-block" id="quellen">');
+  assert.ok(credits);
+  assert.doesNotMatch(article,/<a\b[^>]*href="https:\/\/(?:commons\.wikimedia\.org|creativecommons\.org|www\.mobygames\.com)\//);
   assert.ok(html.includes('data-game-search'));assert.ok(html.includes('data-images-only'));assert.ok(html.includes('data-reset-filters'));assert.ok(html.includes('aria-live="polite"'));
  });
  test(`${lang}: all nine real character screenshots have the correct identity and level`,()=>{
@@ -62,7 +69,7 @@ test('all new media have traceable attribution and no thumbnail downloads full-r
   if(m.thumbnail){assert.notEqual(m.thumbnail,m.path);assert.ok(statSync(resolve(root,m.thumbnail.slice(1))).size<150_000,m.thumbnail);}
   if(m.kind==='historical-reference-photo'||m.kind==='publisher-game-image')assert.match(m.licenseURL,/^https:\/\//);
  }
- assert.equal(manifest.images.filter(m=>m.kind==='historical-reference-photo').length,12);
+ assert.equal(manifest.images.filter(m=>m.kind==='historical-reference-photo').length,18);
 });
 test('animation supports reduced motion and modal has native keyboard semantics',()=>{
  const css=read('assets/blog/gaming-journey/chronicle.css');assert.match(css,/@media\(prefers-reduced-motion:reduce\)[\s\S]*animation:none/);assert.ok(!css.includes('infinite'));
