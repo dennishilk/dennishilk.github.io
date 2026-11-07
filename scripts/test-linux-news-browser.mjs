@@ -51,7 +51,7 @@ try{
       await page.setViewportSize({width,height});await page.goto(origin+route);await page.locator('.news-hero img').evaluate(img=>img.decode());
       await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.jpg',type:'jpeg',quality:80,fullPage:true});
     }
-    const target=a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':a.topic==='ai-linux-kernel-948'?'numbers':a.topic==='plasma-68-wayland'?'readiness':'fix-status';
+    const target=a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':a.topic==='ai-linux-kernel-948'?'numbers':a.topic==='plasma-68-wayland'?'readiness':a.topic==='windows-10-esu-2027'?(a.lang==='de'?'entscheidung':'decision'):'fix-status';
     await page.locator('.mobile-toc summary').click();
     await page.locator('.mobile-toc a[href="#'+target+'"]').click();
     assert.ok(page.url().endsWith('#'+target));
@@ -59,6 +59,53 @@ try{
     report.interactions.push(a.lang+': mobile TOC target remains below sticky header');
     await page.setViewportSize({width:1440,height:1050});
     await page.goto(origin+route);await page.locator('.desktop-toc a[href="#'+target+'"]').click();assert.ok(page.url().endsWith('#'+target));
+    if(a.topic==='windows-10-esu-2027'){
+      const lab=page.locator('[data-esu-lab]'),form=lab.locator('form');
+      const result=lab.locator('.esu-result'),title=result.locator('h3');
+      const requestCount=[];
+      const requestListener=request=>requestCount.push(request.url());
+      await page.locator('.esu-desktop img').scrollIntoViewIfNeeded();
+      await page.locator('.esu-desktop img').evaluate(img=>img.decode());
+      await page.waitForLoadState('networkidle');
+      page.on('request',requestListener);
+      try{
+        const values={edition:'home',managed:'no',win11:'no',account:'local',region:'eea',workload:'gaming',apps:'no',anticheat:'yes',spare:'no',priority:'balanced',live:'not-yet'};
+        const titleFor=async route=>lab.locator(`template[data-esu-route="${route}"]`).evaluate(node=>node.content.querySelector('h4').textContent);
+        await page.context().setOffline(true);
+        await form.locator('[type="submit"]').focus();
+        await page.keyboard.press('Enter');
+        assert.equal(await page.locator(':focus').getAttribute('name'),'edition');
+        for(const [name,value] of Object.entries(values))await form.locator(`select[name="${name}"]`).selectOption(value);
+        for(const [changes,route] of [
+          [{},'esu'],[{win11:'yes'},'windows'],[{anticheat:'no'},'live'],[{live:'passed'},'migration'],[{managed:'yes'},'verify']
+        ]){
+          for(const [name,value] of Object.entries(changes))await form.locator(`select[name="${name}"]`).selectOption(value);
+          assert.equal(await result.isVisible(),false);
+          await form.locator('[type="submit"]').focus();
+          await page.keyboard.press('Enter');
+          assert.equal(await title.textContent(),await titleFor(route));
+          assert.equal(await page.locator(':focus').getAttribute('id'),'esu-result-title');
+          if(route==='esu')assert.match(await result.textContent(),/Kaufoption|paid option/);
+        }
+        await form.locator('[type="reset"]').focus();await page.keyboard.press('Enter');
+        assert.equal(await result.isVisible(),false);
+        assert.equal(await page.locator(':focus').getAttribute('name'),'edition');
+        assert.deepEqual(await form.locator('select').evaluateAll(xs=>xs.map(x=>x.value)),Array(11).fill(''));
+        assert.deepEqual(requestCount,[]);
+      }finally{
+        page.off('request',requestListener);
+        await page.context().setOffline(false);
+      }
+      const noJS=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});
+      const fallback=await noJS.newPage();
+      try{
+        await fallback.goto(origin+route);
+        assert.equal(await fallback.locator('[data-esu-lab]').isVisible(),false);
+        assert.ok(await fallback.locator('noscript').isVisible());
+        assert.ok(await fallback.locator('#linux-live').isVisible());
+      }finally{await noJS.close();}
+      report.interactions.push(a.lang+': Decision Lab required fields, five routes, keyboard focus, reset, offline operation and no-JavaScript fallback');
+    }
     if(a.topic==='worldnode-nginx'){
       assert.equal(await page.locator('.wn-shot img').count(),4);
       for(const image of await page.locator('.wn-shot img').all()){

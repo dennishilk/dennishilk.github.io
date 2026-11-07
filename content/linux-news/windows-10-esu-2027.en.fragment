@@ -1,0 +1,240 @@
+<div class="news-status"><p><strong>Last reviewed <time datetime="2026-11-07">7 November 2026</time></strong> · Microsoft provides Consumer ESU for eligible Windows 10 PCs through <strong>12 October 2027</strong>. In the European Economic Area (EEA), enrollment is available at no extra cost if you continue to sign into Windows with the Microsoft account used to enroll. There is a paid option for people who want to keep using a local account. <a href="#sources">Sources and verification</a></p></div>
+
+<h2 id="end-of-support">What changed when Windows 10 reached end of support?</h2>
+<p>In the morning the PC still starts, the browser opens, and the printer prints. That evening it may even run the game you bought your graphics card for. End of support is hard to see from the desktop. What changed on 14 October 2025 was the service behind it. Regular support ended for the mainstream Windows 10 editions. Whether Windows Update now delivers operating system security fixes depends in part on enrollment in Extended Security Updates, or ESU.</p>
+<p>Ask three separate questions before spending money or wiping a drive. Do you need security updates for your current Windows 10 installation? Is this PC officially eligible for Windows 11? And what software, hardware, or games must still work on the next system? Each answer gives you something concrete to check before you settle on a plan.</p>
+<ol class="esu-timeline" aria-label="Windows 10 and Consumer ESU timeline">
+<li><time datetime="2025-10-14">14 October 2025</time><strong>Regular support ends</strong><span>The Windows 10 Home and Pro 22H2 lifecycle ends. ESU covers selected security updates after that date.</span></li>
+<li><time datetime="2026-06-25">25 June 2026</time><strong>Microsoft documents another year</strong><span>An editor’s note on the Windows blog confirms the new end date for personal devices.</span></li>
+<li><time datetime="2026-10">October 2026</time><strong>Original consumer cutoff</strong><span>Older guides may still mention the original October 2026 window. In the business program, 13 October 2026 also marks the end of ESU Year One.</span></li>
+<li><time datetime="2026-11-07">7 November 2026</time><strong>Current status reviewed</strong><span>Microsoft’s German and English consumer pages list October 2027 and say existing enrollment continues automatically.</span></li>
+<li><time datetime="2027-10-12">12 October 2027</time><strong>Consumer ESU ends</strong><span>This date applies to late enrollments as well. Paying in 2027 gives you coverage through the same deadline.</span></li>
+</ol>
+<h3>What does ESU actually cover?</h3>
+<p>ESU supplies security updates classified as critical or important by the Microsoft Security Response Center under the program. That matters for a PC you still use every day. New features, routine bug fixes and general Windows technical support fall outside the program. Microsoft describes an exception for help with ESU license activation and installing ESU updates. Browsers, Office, game launchers, drivers and other applications follow their own lifecycles. An up-to-date browser cannot replace operating system patches, and a patched Windows installation cannot fix a vulnerability in an old accounting application.</p>
+<p>Think of Consumer ESU as time to run specific checks. You can review official Windows 11 eligibility or spend an afternoon with a Linux USB drive while your current setup still works. Pick a date for that test. Otherwise, a printer driver or a missing game save can end up choosing the timetable for you.</p>
+
+<h2 id="eea">Free Windows 10 ESU in Europe and the local account option</h2>
+<p>Microsoft documents specific Consumer ESU terms for the European Economic Area, which includes Germany and Ireland. There are two sign-ins to understand. One is the Microsoft account used to <em>enroll</em> the device. The other is the account you use to <em>sign into Windows</em> day to day. Enrollment requires a Microsoft account and the license is associated with that account.</p>
+<div class="esu-table"><table><caption>Consumer ESU options for personal devices in the EEA</caption><thead><tr><th scope="col">Your situation</th><th scope="col">Microsoft’s published cost</th><th scope="col">Account and conditions</th></tr></thead><tbody>
+<tr><th scope="row">You continue signing into Windows with the enrollment account</th><td>No additional cost</td><td>Keep using the same Microsoft account to sign into Windows. This also applies if you switch from a local account during free enrollment.</td></tr>
+<tr><th scope="row">You want to keep signing into Windows with a local account</th><td>One-time purchase of US$30 or the local currency equivalent, plus applicable tax</td><td>Use a Microsoft account for enrollment and purchase. You can keep your local Windows sign-in afterward. Check the final price shown in the wizard.</td></tr>
+<tr><th scope="row">Business use, managed PC or a specialist edition</th><td>Depends on the license, lifecycle and program</td><td>Confirm the device’s management status and exact edition before applying consumer terms.</td></tr>
+</tbody></table></div>
+<p><strong>The 60-day condition.</strong> Under the free EEA option, if you stop using the enrollment account to sign into Windows, Microsoft says ESU updates will stop after a period of up to 60 days. If updates have stopped for that reason, enroll again to resume them. Signing into a Microsoft website is different from signing into Windows on the enrolled PC. The wording also leaves room for coverage to stop before exactly two months have elapsed.</p>
+<p>For example, a family PC already using a Microsoft account can use that account to enroll at no extra cost if the device and administrator meet the requirements. Someone who deliberately uses a local Windows account can review the paid option and keep their everyday sign-in. Microsoft allows an existing ESU license to be reused on up to ten eligible devices. Add each device through its own enrollment wizard with the original Microsoft account and follow the conditions of the option you chose.</p>
+<p>Outside the EEA, the choices can differ. Microsoft’s US page lists a no-extra-cost option that uses PC settings sync, 1,000 Microsoft Rewards points, or a one-time purchase. Check the Microsoft page for your region and the options the wizard presents on your PC. US enrollment instructions are a poor guide to what you will see in Germany or Ireland.</p>
+
+<h2 id="enroll">How to enroll in Windows 10 ESU and verify it</h2>
+<p>Microsoft lists Windows 10 <strong>22H2</strong> Home, Pro, Pro Education and Pro for Workstations as eligible editions. It also requires the latest Windows update, the <strong>KB5126256</strong> ESU licensing preparation package, an administrator account on the device, and an enrollment Microsoft account that is not a child account. These steps follow Microsoft’s documentation. The wording on screen can vary with the display language and device state.</p>
+<ol class="esu-steps">
+<li><strong>Check version and edition.</strong> Press <kbd>Windows</kbd> + <kbd>R</kbd>, type <code>winver</code> and press Enter. You can also find the Windows specifications under <b>Settings → System → About</b>. If the PC reports 21H2 or LTSC, check the version and product lifecycle first.</li>
+<li><strong>Prepare Windows Update.</strong> Open <b>Settings → Update &amp; Security → Windows Update</b>, check for updates and install what Windows offers. Restart if prompted. Microsoft says Windows Update delivers KB5126256 automatically to devices that are not yet enrolled once they have a security update from 14 October 2025 or later, such as KB5066791. Check update history after restarting. If you need to install the package manually, follow Microsoft’s documented order.</li>
+<li><strong>Check the device and account.</strong> Use an administrator account. If this is an employer’s machine, or you are unsure who manages it, check with IT before changing account or device enrollment settings.</li>
+<li><strong>Open the wizard.</strong> Follow the ESU enrollment link in Windows Update, such as <b>Enroll now</b>. If you are signed in locally, sign into a Microsoft account when the wizard asks.</li>
+<li><strong>Choose your option.</strong> Read the sign-in condition for no-extra-cost EEA enrollment. If you want to stay local, check the purchase total and the Microsoft account that will hold the license before you confirm.</li>
+<li><strong>Verify enrollment and patch installation separately.</strong> Check the ESU status on the Windows Update screen. Then check for updates again and look in update history for successful installation of an applicable cumulative security update for 22H2. Match the date and KB number against Microsoft’s release information. A Defender definition update, a browser update, or the presence of KB5126256 alone does not establish ESU coverage.</li>
+</ol>
+<h3>Why is ESU missing or failing in Windows Update?</h3>
+<div class="esu-table"><table><caption>What to check before you change anything</caption><thead><tr><th scope="col">What you see</th><th scope="col">Next check</th></tr></thead><tbody>
+<tr><th scope="row">No link before enrollment</th><td>Confirm 22H2, the edition, current Windows updates, KB5126256 and any pending restart. Check administrator rights, kiosk mode and device management. Then look for an existing license.</td></tr>
+<tr><th scope="row">You changed your Windows sign-in</th><td>For free EEA coverage, check the original enrollment account. If coverage stopped because the sign-in changed, enroll again.</td></tr>
+<tr><th scope="row">Enrollment succeeded, but an update fails</th><td>Write down the KB number, error code and date. Check free space, connectivity and whether Windows is waiting for a restart. Take those details to the Windows Update troubleshooter or Microsoft’s ESU support.</td></tr>
+<tr><th scope="row">The PC reports managed settings</th><td>Check for Active Directory domain membership, an Entra join or MDM enrollment. Microsoft distinguishes Entra registration alone, which can be eligible if the other requirements are met.</td></tr>
+</tbody></table></div>
+<p>A PC that has not enrolled can still boot and run ordinary applications, while the Windows installation misses the Consumer ESU fixes. Once enrolled, it can receive the applicable fixes through Windows Update. Windows uses cumulative updates, so you need not see every security fix released since October 2025 as its own item in the history. When investigating a problem, keep a record of the current build, the most recent cumulative update and the enrollment status.</p>
+<h3>Consumer ESU, commercial ESU and LTSC have different lifecycles</h3>
+<p>Commercial Windows 10 ESU has its own annual licensing model. Microsoft lists 12 October 2027 for the end of commercial Year Two and 10 October 2028 for Year Three. The latter date applies to the commercial program. LTSC is another distinction. For example, Windows 10 Enterprise LTSC 2021 has regular support through 12 January 2027, while Windows 10 IoT Enterprise LTSC 2021 has a lifecycle through 13 January 2032. Look up the full product name before borrowing a date from another edition.</p>
+
+<h2 id="decision">Windows 10 Decision Lab</h2>
+<p>Answer for the particular PC you want to keep, replace or move to another system. Choose the relevant unknown option if you still need to check something. The result explains what to do next and identifies any assumptions you need to verify yourself.</p>
+<div class="esu-lab" data-esu-lab hidden>
+<form class="esu-form" aria-describedby="esu-privacy" autocomplete="off">
+<fieldset>
+<legend>Your PC and how you use it</legend>
+<p id="esu-privacy">This page evaluates your answers without sending or saving them. It cannot check your hardware or license automatically.</p>
+<div class="esu-questions">
+<div><label for="esu-edition">Which Windows 10 edition do you use?</label>
+<select id="esu-edition" name="edition" required>
+<option value="">Choose an option</option>
+<option value="home">Home</option>
+<option value="pro">Pro</option>
+<option value="proVariant">Pro Education or Pro for Workstations</option>
+<option value="other">Enterprise, LTSC or another edition</option>
+<option value="unknown">Unknown</option>
+</select></div>
+<div><label for="esu-managed">Is this a personal, unmanaged PC?</label>
+<select id="esu-managed" name="managed" required>
+<option value="">Choose an option</option>
+<option value="no">Yes, personal and unmanaged</option>
+<option value="yes">No, used for work or managed</option>
+<option value="unknown">Unknown</option>
+</select></div>
+<div><label for="esu-win11">Does the PC officially support Windows 11?</label>
+<select id="esu-win11" name="win11" required>
+<option value="">Choose an option</option>
+<option value="yes">Yes, confirmed</option>
+<option value="no">No</option>
+<option value="unknown">Not checked yet</option>
+</select></div>
+<div><label for="esu-account">How do you sign into Windows?</label>
+<select id="esu-account" name="account" required>
+<option value="">Choose an option</option>
+<option value="microsoft">With a Microsoft account</option>
+<option value="local">With a local account</option>
+<option value="unknown">Unknown</option>
+</select></div>
+<div><label for="esu-region">Where do you use this PC?</label>
+<select id="esu-region" name="region" required>
+<option value="">Choose an option</option>
+<option value="eea">In the EEA, such as Germany or Ireland</option>
+<option value="elsewhere">Outside the EEA</option>
+<option value="unknown">Unknown</option>
+</select></div>
+<div><label for="esu-workload">What do you primarily use the PC for?</label>
+<select id="esu-workload" name="workload" required>
+<option value="">Choose an option</option>
+<option value="office">Office work</option>
+<option value="web">Web browsing</option>
+<option value="dev">Development</option>
+<option value="creative">Creative work</option>
+<option value="gaming">Gaming</option>
+</select></div>
+<div><label for="esu-apps">Do you need any Windows-only applications?</label>
+<select id="esu-apps" name="apps" required>
+<option value="">Choose an option</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+<option value="unknown">I still need to check</option>
+</select></div>
+<div><label for="esu-anticheat">Are anti-cheat protected multiplayer games essential?</label>
+<select id="esu-anticheat" name="anticheat" required>
+<option value="">Choose an option</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+<option value="unknown">I still need to check</option>
+</select></div>
+<div><label for="esu-spare">Do you have a spare PC or room for a test installation?</label>
+<select id="esu-spare" name="spare" required>
+<option value="">Choose an option</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+<option value="unknown">Unknown</option>
+</select></div>
+<div><label for="esu-priority">How important are minimal change and simple maintenance?</label>
+<select id="esu-priority" name="priority" required>
+<option value="">Choose an option</option>
+<option value="low-change">Very important</option>
+<option value="balanced">I can make some changes</option>
+<option value="open">I’m comfortable experimenting</option>
+</select></div>
+<div><label for="esu-live">Have you tested Linux on relevant hardware yet?</label>
+<select id="esu-live" name="live" required>
+<option value="">Choose an option</option>
+<option value="passed">Yes, my hardware and workflow work in testing</option>
+<option value="not-yet">No, or important checks are still open</option>
+</select></div>
+</div></fieldset>
+<div class="esu-actions"><button type="submit">Show recommendation</button><button type="reset">Start over</button></div>
+</form>
+<section class="esu-result" aria-labelledby="esu-result-title" hidden><h3 id="esu-result-title" tabindex="-1"></h3><div data-esu-answer></div><ul data-esu-notes></ul></section>
+<template data-esu-route="esu"><h4>Check Windows 10 ESU as a bridge</h4><p>You need more time or have a Windows-dependent workflow to protect. Check Consumer ESU eligibility and plan your move to a supported system.</p><p><a href="#enroll">Read the relevant section →</a></p></template>
+<template data-esu-route="windows"><h4>Review the official Windows 11 upgrade</h4><p>You confirmed Windows 11 eligibility. Upgrading may preserve your familiar software and devices with fewer changes. Back up your data and check vendor support.</p><p><a href="#windows-11">Read the relevant section →</a></p></template>
+<template data-esu-route="live"><h4>Try Linux from a live USB first</h4><p>Boot Linux from USB to check your hardware and typical tasks. Use copies of important files and leave the Windows drive alone.</p><p><a href="#linux-live">Read the relevant section →</a></p></template>
+<template data-esu-route="migration"><h4>Prepare the Linux migration</h4><p>Your test worked and you reported no unresolved Windows dependencies. Verify backup and recovery, software and games, and decide between a separate installation and dual boot.</p><p><a href="#companion-title">Read the relevant section →</a></p></template>
+<template data-esu-route="verify"><h4>Confirm the edition or management status first</h4><p>Your answers do not establish a Consumer ESU route for this device. Check the edition, management status and applicable licensing or update path first.</p><p><a href="#enroll">Read the relevant section →</a></p></template>
+<template data-esu-note="requirements"><li>ESU requires 22H2, current updates, KB5126256, administrator rights and an eligible Microsoft account, among other conditions. Windows Update shows whether enrollment is offered.</li></template>
+<template data-esu-note="eeaMicrosoft"><li>In the EEA, the no-extra-cost option may suit your setup. Keep signing into Windows with the Microsoft account used to enroll.</li></template>
+<template data-esu-note="eeaLocal"><li>In the EEA, the paid option lets you stay on a local account. Enrollment still requires a Microsoft account. The no-extra-cost option requires ongoing Windows sign-in with that account.</li></template>
+<template data-esu-note="eeaUnknown"><li>Check your current Windows sign-in. In the EEA it affects which option suits your everyday use.</li></template>
+<template data-esu-note="region"><li>Check Microsoft’s terms for your region. Account conditions and offers can vary by country.</li></template>
+<template data-esu-note="win11"><li>Check official Windows 11 eligibility with Microsoft’s PC Health Check.</li></template>
+<template data-esu-note="windowsWorkload"><li>Test the required application, specific game and online mode before moving. Keep a supported Windows route available if a dependency is confirmed.</li></template>
+<template data-esu-note="unknownWorkload"><li>Resolve unknown Windows dependencies before replacing an installation.</li></template>
+<template data-esu-note="office"><li>Open representative documents and test macros, fonts and your printer.</li></template>
+<template data-esu-note="web"><li>Test browser profiles, webcam, microphone and the services you sign into every day.</li></template>
+<template data-esu-note="dev"><li>Check toolchains, containers, hardware access and how you will handle your keys.</li></template>
+<template data-esu-note="creative"><li>Test real projects with their plug-ins, color profiles, input devices and export formats.</li></template>
+<template data-esu-note="gaming"><li>Check the launcher, saves and anti-cheat for the specific mode you play.</li></template>
+<template data-esu-note="spare"><li>Use the spare PC or separate test installation to rehearse the complete workflow.</li></template>
+<template data-esu-note="noSpare"><li>Use a live USB to check the basics while you arrange a separate test installation.</li></template>
+</div>
+<noscript><p>With JavaScript off, use the sections below. If the PC is eligible for Windows 11 and you need Windows software, look at the upgrade first. If you need more time, check ESU eligibility. If your options are open, boot a Linux live USB.</p></noscript>
+
+<h2 id="windows-11">When upgrading to Windows 11 makes sense</h2>
+<p>If the PC meets the official requirements and you rely on a specific Windows application, specialist accessory or anti-cheat protected game, Windows 11 is often the shortest route. Check Microsoft’s PC Health Check and Windows Update for upgrade eligibility. Requirements include a supported CPU, TPM 2.0 and UEFI firmware capable of Secure Boot. A machine can feel fast enough and still fall outside the supported hardware list. A compatibility hold can also explain why an otherwise eligible machine is not yet offered the upgrade.</p>
+<p>Back up your data and verify that you can restore it before upgrading. If device encryption or BitLocker is active, make sure the recovery key is accessible away from the affected PC. Check that the software and peripherals you depend on are supported on the target version. For a working PC, vendor support for the tools you actually use can matter more than the processor list.</p>
+
+<h2 id="linux-live">Try Linux from USB and plan a migration</h2>
+<p>A live USB is the first test I suggest to someone coming from Windows. It starts a Linux desktop from the stick and leaves you free to decide whether to open the installer. Testing the hardware in front of you settles practical questions about Wi-Fi, audio and that second monitor faster than comparing distribution names.</p>
+<ol class="esu-steps">
+<li><strong>Prepare the image.</strong> Download the ISO from the distribution and verify its checksum and signature according to the project’s instructions. Back up the USB drive first, since writing the image overwrites it. Double-check the target in the writing tool.</li>
+<li><strong>Boot from the stick once.</strong> Use the PC’s boot menu to start the live session. Leave internal drives alone. You can explore without opening the installer or changing partitions or encryption.</li>
+<li><strong>Rehearse a normal day.</strong> Check Wi-Fi, Bluetooth, audio output, microphone, webcam, printer or scanner, both displays at the expected resolutions and refresh rates, and suspend and resume. Open copies of the files you actually work on. Try exporting a document that uses special fonts or working with a spreadsheet that contains macros.</li>
+<li><strong>Interpret the result.</strong> USB speed affects responsiveness. Graphics drivers and codecs can differ after installation. A successful boot is useful hardware evidence. For a demanding game or a large creative project, use a second test on a separate installation.</li>
+<li><strong>Plan data and a way back.</strong> Include documents, photos, local mail archives, browser profiles, password vaults, SSH keys, projects, game saves and recovery codes as applicable. Restore a few files to verify the backup. Being able to open a restored project tells you more than a green badge in the backup app.</li>
+</ol>
+<p>Put each application in one of three groups: essential, replaceable or rarely used. For essential tools, check the files, plug-ins, licensing and collaboration workflows you rely on. A Linux alternative can be excellent for a new project and still lose information when importing older work. If you choose dual boot, identify the target disk, UEFI mode, encryption state and recovery options first. Follow your distribution’s partitioning guide. A spare machine or drive can make the experiment easier to manage.</p>
+<aside class="esu-companion" aria-labelledby="companion-title">
+<p class="eyebrow">Free tool by Dennis Hilk</p>
+<h3 id="companion-title">Linux Migration Companion</h3>
+<p>My Companion walks you through that inventory. Start with requirements and a distribution shortlist, check essential applications and hardware, then plan a live test. Record what is still open, work through the data migration and USB preparation, and keep track of the first steps after installation.</p>
+<p>The application processes the inventory in your browser. You can import hardware reports locally and export progress to a file. It uses browser storage for progress. The Decision Lab above keeps its answers only while the current page is open.</p>
+<a class="esu-cta" href="/linux-migration-companion/">Plan the move with Linux Migration Companion <span aria-hidden="true">→</span></a>
+</aside>
+<p>If you prefer to start on paper, the <a href="/blog/windows-to-linux-migration-checklist/">Windows-to-Linux migration checklist</a> covers the sequence. For a specific sound problem, the <a href="/blog/linux-audio-troubleshooting/">Linux audio guide</a> has its own troubleshooting flow.</p>
+
+<h2 id="daily-linux">The Linux desktop I use every day</h2>
+<p>Over the years I’ve tried Debian, Arch Linux, Gentoo, NixOS, CachyOS, Zorin OS and Linux Mint. My desktops have included KDE Plasma and XFCE, and I’ve used window managers including Sway, i3, XMonad and dwm. As of November 2026, Cthulhu, my main PC, runs Arch Linux and dwm on X11. The older NixOS and Plasma setups are still part of my <a href="/blog/cthulhu-linux-journey/">Cthulhu Linux journey</a>.</p>
+<figure class="esu-desktop"><a href="/assets/blog/cthulhu-arch-dwm/desktop-2048.webp"><img src="/assets/blog/cthulhu-arch-dwm/desktop-2048.webp" srcset="/assets/blog/windows-10-esu-2027/cthulhu-960.webp 960w, /assets/blog/cthulhu-arch-dwm/desktop-2048.webp 2048w" sizes="(max-width: 760px) 94vw, 760px" width="2048" height="857" loading="lazy" decoding="async" alt="Two Arch and dwm desktops on Cthulhu, with Kitty and Fastfetch on the left and the btop system monitor on the right."></a><figcaption>My original screenshot from the <a href="/blog/arch-linux-dwm-cthulhu/">Arch/dwm build report</a>, dated 22 October 2026. It shows the desktop documented in that report.</figcaption></figure>
+<p>The Ryzen 7 5800X3D and Radeon RX 9060 XT with 16 GiB drive displays at 3440 × 1440 at 144 Hz and 1920 × 1080 at 60 Hz. Kitty is my terminal and Fish is my shell. I like how little dwm gets in the way of my work, and I keep coming back to XMonad too. Those preferences came out of using several desktops long enough to know what I reach for every day.</p>
+<p>For a first move from Windows, I would start with <strong>Linux Mint Cinnamon</strong>, Zorin OS, or KDE Plasma on a newcomer-friendly distribution. Mint’s Driver Manager is one reason I like it, particularly for NVIDIA machines. I tend to leave Arch and especially Gentoo for later. If tiling windows interests you, I found <a href="/blog/sway-configuration-explained/">Sway</a> relatively approachable. On an existing Arch test machine, you can explore separate desktop sessions and see how i3, dwm or <a href="/blog/xmonad-hs-explained/">XMonad</a> suit you. That makes a good project once you actually want to experiment with the desktop.</p>
+<dl class="esu-glossary">
+<dt>Distribution</dt><dd>The installable system, including the Linux kernel, system tools, package repositories and update policy. Mint and Arch are examples.</dd>
+<dt>Desktop environment</dt><dd>A coordinated set of desktop interfaces such as a panel, settings, a file manager and session management. Cinnamon and KDE Plasma are examples.</dd>
+<dt>Display system</dt><dd>With X11, an X server mediates applications, display and input. With Wayland, applications speak the Wayland protocol to a compositor, which also assembles the display output.</dd>
+<dt>Window manager</dt><dd>Arranges windows and controls focus and workspaces. dwm is an X11 window manager. Sway handles those jobs as a Wayland compositor.</dd>
+</dl>
+
+<h2 id="gaming">Can I play modern AAA games on Linux?</h2>
+<p>On my PC, yes, for many games. On Steam I play <strong>War Thunder</strong>, the Assassin’s Creed games I own, <strong>Baldur’s Gate 3</strong>, Captain of Industry, Alan Wake 2, Anno 1800 and Arma 3. Assetto Corsa, Assetto Corsa Competizione, Kingdom Come: Deliverance II, No Man’s Sky, Starfield, S.T.A.L.K.E.R. 2 and Where Winds Meet also worked well for my use. Duke Nukem 3D, Half-Life and Counter-Strike are among my positive experiences with older games. A different launcher, update or multiplayer mode can change the result on another PC.</p>
+<p>Steam can launch native Linux builds directly. For many Windows games, it uses <strong>Proton</strong>, Valve’s compatibility layer built on Wine. For the World of Warcraft versions I play, I use <strong>Lutris</strong> to set up the Battle.net launcher and manage its Wine environment. Wine provides Windows interfaces on Linux, and Battle.net remains Blizzard’s launcher. This is my working setup. Check Blizzard’s published requirements for the platforms it officially supports.</p>
+<h3>Anti-cheat, launchers and ordinary game bugs</h3>
+<p>A launcher that fails to open is a different problem from a game that reaches its menu but refuses a protected online match. Battlefield, GTA Online and Fortnite have been trouble spots for me. Check the specific release. EA lists Secure Boot and EA Javelin for Battlefield 6 on PC. Rockstar identifies BattlEye as a limit on GTA Online on Steam Deck and distinguishes it from Story Mode. Steam’s Proton documentation explains why Easy Anti-Cheat and BattlEye support can depend on what the publisher enables or configures for a particular game.</p>
+<p>On <strong>14 October 2026</strong>, Epic introduced EAC Linux v2 and named Fortnite as the planned first pilot. The announcement describes requirements including signed kernels and modules, TPM 2.0 and Secure Boot. As of 7 November 2026, Epic still describes the Linux release as upcoming. If playing Fortnite locally matters to you, keep a Windows option available until the publisher confirms support for your setup.</p>
+<p>To check a game before moving, search for the exact release on <a href="https://www.protondb.com/">ProtonDB</a>. Read several recent desktop Linux reports with similar GPUs and Proton versions. Check the date, launcher, mods and actual mode tested, then read the publisher’s current anti-cheat statement. A real match in the required mode on a test installation is the check that matters. For setup details, see my <a href="/blog/linux-gaming-steam-proton-lutris/">Steam, Proton and Lutris guide</a>. My <a href="/blog/my-gaming-journey-1984-2026/">gaming journey</a> traces the very different machines and games I used along the way.</p>
+<h3>AMD, NVIDIA, Mesa and Vulkan</h3>
+<p>I’ve used a GeForce RTX 3060 Ti and a Radeon RX 9060 XT for Linux gaming. Both worked for my use. AMD was easier for me to set up. On a modern Radeon, the kernel’s <code>amdgpu</code> driver typically works alongside Mesa’s <strong>RADV</strong> Vulkan driver. Mesa supplies userspace graphics drivers. Vulkan is the graphics API a game or translation layer can use. On NVIDIA, install the matching driver and userspace libraries through the distribution’s supported route. The particular GPU and driver stack matter. My <a href="/blog/rx-9060-xt-linux-crashes/">RX 9060 XT troubleshooting report</a> shows one case where those details made a difference.</p>
+
+<h2 id="faq">Windows 10 ESU frequently asked questions</h2>
+<details class="esu-faq"><summary>Do I have to enroll again for the second year?</summary><p>Microsoft says existing Consumer ESU enrollment continues automatically through 12 October 2027. The conditions of the option you chose still apply. Check Windows Update if your sign-in or device management has changed.</p></details>
+<details class="esu-faq"><summary>Can I keep my local Windows account?</summary><p>Yes, in the EEA the one-time purchase lets you continue signing into Windows locally. You use a Microsoft account to enroll and buy the license.</p></details>
+<details class="esu-faq"><summary>Can I wait until 2027 to enroll?</summary><p>Eligible devices can enroll through the end of the program. Coverage still ends on the same date. If you regularly use Windows 10 online today, check your enrollment now.</p></details>
+<details class="esu-faq"><summary>Do I need a new PC?</summary><p>Check whether this PC officially supports Windows 11 first. If you can do without Windows-only applications, a live USB test can help you see whether this same machine meets your needs with Linux.</p></details>
+
+<h2 id="sources">Sources and verification</h2>
+<p class="news-method">Reviewed <time datetime="2026-11-07">7 November 2026</time>. ESU terms and system requirements were checked against the documentation below. The Windows instructions follow Microsoft’s published steps. Linux desktop and gaming observations are my experience. The dated desktop screenshot comes from the linked Cthulhu build report.</p>
+<ul class="news-sources">
+<li><a href="https://www.microsoft.com/de-de/windows/extended-security-updates">Microsoft · Consumer ESU in Germany and the EEA</a></li>
+<li><a href="https://www.microsoft.com/en-ie/windows/extended-security-updates">Microsoft · Consumer ESU in Ireland and the EEA</a></li>
+<li><a href="https://www.microsoft.com/en-us/windows/extended-security-updates">Microsoft · US enrollment options</a></li>
+<li><a href="https://www.microsoft.com/de-de/windows/end-of-support">Microsoft · End of support and help with ESU activation</a></li>
+<li><a href="https://blogs.windows.com/windowsexperience/2025/06/24/stay-secure-with-windows-11-copilot-pcs-and-windows-365-before-support-ends-for-windows-10/">Windows Experience Blog · 25 June 2026 editor’s note on the extension</a></li>
+<li><a href="https://support.microsoft.com/en-us/servicing/os/windows-10/2026/09/kb5126256-windows-10-21h2-22h2-standalone-cbs">Microsoft Support · KB5126256 and installation</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/release-health/release-information">Microsoft Learn · Windows 10 builds, cumulative updates and LTSC</a></li>
+<li><a href="https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates">Microsoft Learn · Commercial ESU years</a></li>
+<li><a href="https://support.microsoft.com/en-us/windows/experience/compatibility/how-to-use-the-pc-health-check-app">Microsoft Support · PC Health Check</a></li>
+<li><a href="https://www.microsoft.com/en-us/windows/windows-11-specifications">Microsoft · Windows 11 system requirements</a></li>
+<li><a href="https://linuxmint-installation-guide.readthedocs.io/en/latest/">Linux Mint · ISO verification, live USB and drivers</a></li>
+<li><a href="https://github.com/dennishilk/linux-migration-companion">Linux Migration Companion · Source and documentation</a></li>
+<li><a href="https://partner.steamgames.com/doc/steamhardware/proton">Valve · Proton and anti-cheat configuration</a></li>
+<li><a href="https://lutris.net/">Lutris · Games and runners on Linux</a></li>
+<li><a href="https://worldofwarcraft.blizzard.com/en-gb/">Blizzard · World of Warcraft system requirements</a></li>
+<li><a href="https://www.ea.com/games/battlefield/battlefield-6/news/secure-boot-information">EA · Secure Boot and Javelin for Battlefield 6</a></li>
+<li><a href="https://support.rockstargames.com/articles/1nenwhZlVrJY6CTFeSS2Fx/grand-theft-auto-online-battleye-faq">Rockstar · BattlEye and GTA Online</a></li>
+<li><a href="https://onlineservices.epicgames.com/news/introducing-easy-anti-cheat-linux-v2">Epic Online Services · EAC Linux v2 and planned Fortnite pilot</a></li>
+<li><a href="https://www.epicgames.com/help/c-34254770/c-33726977/can-i-play-fortnite-on-linux-a22610900">Epic Games · Fortnite on Linux support status</a></li>
+<li><a href="https://store.epicgames.com/news/epic-games-launcher-preview">Epic Games Store · Launcher preview and planned Linux release</a></li>
+<li><a href="https://docs.mesa3d.org/drivers/radv.html">Mesa · RADV as an AMD Vulkan driver</a></li>
+<li><a href="https://www.protondb.com/">ProtonDB · Community game reports</a></li>
+</ul>

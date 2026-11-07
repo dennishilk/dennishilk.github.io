@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {existsSync,readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
+import {recommend} from '../assets/blog/windows-10-esu-2027/decision-lab.js';
 
 const root=new URL('../',import.meta.url),origin='https://www.dennishilk.com';
 const read=p=>readFileSync(new URL(p,root),'utf8');
@@ -57,6 +58,16 @@ for(const a of specs){
     // and interactive checks in the shared browser suite.
     // Their copyable commands carry data-copy and keyboard-focus attributes.
     if(['apt-cve-2026-109518','ai-linux-kernel-948','plasma-68-wayland'].includes(a.topic))return;
+    if(a.topic==='windows-10-esu-2027'){
+      assert.equal(commands.length,0);
+      assert.match(body,/<code>winver<\/code>/);
+      assert.match(body,/KB5126256/);
+      assert.ok(body.includes('datetime="'+a.checked+'"'));
+      assert.ok(body.includes('href="/linux-migration-companion/"'));
+      assert.equal((body.match(/<select\b[^>]+ required>/g)||[]).length,11);
+      for(const source of a.sourceUrls)assert.ok(body.includes('href="'+source+'"'),source);
+      return;
+    }
     if(a.topic==='linux-audio-rescue'){
       assert.ok(commands.length>=20);
       assert.ok(body.includes('session.suspend-timeout-seconds = 0'));
@@ -109,4 +120,26 @@ test('rebuild is deterministic and does not remove existing articles or change o
   execFileSync(process.execPath,['scripts/build-linux-news.mjs'],{cwd:root});
   const hash=s=>createHash('sha256').update(s).digest('hex');
   paths.forEach((path,i)=>assert.equal(hash(read(path)),hash(before[i]),'rebuild changed '+path));
+});
+
+
+test('Decision Lab chooses routes and prerequisites from the actual answers',()=>{
+  const defaults={edition:'home',managed:'no',win11:'unknown',account:'microsoft',region:'eea',workload:'office',apps:'no',anticheat:'no',spare:'no',priority:'balanced',live:'not-yet'};
+  const cases=[
+    [{},'live',['office','win11','noSpare']],
+    [{workload:'dev',spare:'yes',live:'passed'},'migration',['dev','win11','spare']],
+    [{live:'passed',apps:'unknown'},'live',['office','win11','unknownWorkload','noSpare']],
+    [{win11:'yes',anticheat:'yes',workload:'gaming'},'windows',['gaming','windowsWorkload']],
+    [{win11:'yes',priority:'low-change'},'windows',['office']],
+    [{edition:'pro',win11:'no',apps:'yes',account:'local'},'esu',['office','windowsWorkload','requirements','eeaLocal']],
+    [{edition:'proVariant',priority:'low-change'},'esu',['office','win11','requirements','eeaMicrosoft']],
+    [{apps:'yes',account:'unknown'},'esu',['office','win11','windowsWorkload','requirements','eeaUnknown']],
+    [{apps:'yes',region:'elsewhere'},'esu',['office','win11','windowsWorkload','requirements','region']],
+    [{apps:'yes',region:'unknown'},'esu',['office','win11','windowsWorkload','requirements','region']],
+    [{managed:'yes',win11:'yes',apps:'yes'},'verify',['office','windowsWorkload']],
+    [{managed:'unknown'},'verify',['office','win11']],
+    [{edition:'unknown',apps:'yes'},'verify',['office','win11','windowsWorkload']],
+    [{edition:'other',apps:'yes'},'verify',['office','win11','windowsWorkload']],
+  ];
+  for(const [answers,route,notes] of cases)assert.deepEqual(recommend({...defaults,...answers}),{route,notes});
 });

@@ -21,6 +21,8 @@ for(const a of specs){
   shell=shell.replace(/(<a class="language-link" href=")[^"]+/,'$1'+other.slice(origin.length));
   const footer=template.match(/<footer class="site-footer">[\s\S]*?<\/footer>/)[0];
   const body=read('content/linux-news/'+a.topic+'.'+a.lang+'.fragment');
+  const relatedGuides=a.relatedGuides?.map(guide=>`<a href="${esc(guide.href)}">${esc(guide.label)} →</a>`).join('')||
+    `<a href="${prefix}/blog/${de?'ssh-schluessel-linux-server':'ssh-keys-linux-server'}/">${de?'SSH-Schlüssel und Serveridentität verstehen':'Understand SSH keys and server identity'} →</a><a href="${prefix}/blog/${de?'linux-konfiguration-sichern':'backup-linux-configuration'}/">${de?'Linux-Konfiguration sinnvoll sichern':'Back up Linux configuration'} →</a><a href="${prefix}/blog/${de?'journalctl-linux-fehler-finden':'journalctl-linux-troubleshooting'}/">${de?'Linux-Fehler mit journalctl untersuchen':'Investigate Linux failures with journalctl'} →</a>`;
   const headings=[...body.matchAll(/<h2 id="([^"]+)">([^<]+)<\/h2>/g)];
   const toc='<ol>'+headings.map(([,id,title])=>`<li><a href="#${id}">${title}</a></li>`).join('')+'</ol>';
   const wordCount=plain(body).split(/\s+/).filter(Boolean).length,minutes=Math.ceil(wordCount/210);
@@ -56,7 +58,7 @@ ${a.leadFragment?read(a.leadFragment):''}<figure class="news-hero"><picture><sou
 <div class="article-layout"><article class="article-copy" aria-label="${esc(a.title)}"><details class="mobile-toc"><summary>${de?'In diesem Artikel':'In this article'}</summary>${toc}</details>
 ${body}
 <nav class="article-end-nav" aria-label="${de?'Artikelnavigation':'Article navigation'}"><a href="${prefix}/blog/#linux-news">← ${esc(a.category)}</a><a href="#page-top">${de?'Nach oben':'Back to top'} ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="${de?'Inhaltsverzeichnis':'Table of contents'}"><h2>${de?'In diesem Artikel':'In this article'}</h2>${toc}</nav><a class="sidebar-tool" href="${esc(a.primarySourceUrl||'https://bugs.launchpad.net/bugs/2169738')}">${esc(a.primarySourceLabel||(de?'Primärquelle: Launchpad-Bug 2169738':'Primary source: Launchpad bug 2169738'))} ↗</a></aside></div>
-<aside class="related-guide"><p class="eyebrow">${de?'Passende Grundlagen':'Related practical guides'}</p><a href="${prefix}/blog/${de?'ssh-schluessel-linux-server':'ssh-keys-linux-server'}/">${de?'SSH-Schlüssel und Serveridentität verstehen':'Understand SSH keys and server identity'} →</a><a href="${prefix}/blog/${de?'linux-konfiguration-sichern':'backup-linux-configuration'}/">${de?'Linux-Konfiguration sinnvoll sichern':'Back up Linux configuration'} →</a><a href="${prefix}/blog/${de?'journalctl-linux-fehler-finden':'journalctl-linux-troubleshooting'}/">${de?'Linux-Fehler mit journalctl untersuchen':'Investigate Linux failures with journalctl'} →</a></aside>
+<aside class="related-guide"><p class="eyebrow">${de?'Passende Grundlagen':'Related practical guides'}</p>${relatedGuides}</aside>
 </main>\n`+footer+'\n</body></html>\n';
   mkdirSync(resolve(root,route.slice(1)),{recursive:true});write(route.slice(1)+'index.html',html);
   console.log(a.lang+' '+a.slug+': '+wordCount+' words');
