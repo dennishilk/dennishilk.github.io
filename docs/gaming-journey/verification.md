@@ -1,4 +1,19 @@
-# Illustrated gaming journey — verification, 6 November 2026
+# Gaming Journey verification
+
+## Image archive update, 7 November 2026
+
+Both language editions retain all 99 entries in the original order. 62 entries have imagery: 30 game screenshots, one cover, one official illustration, 25 title logos and five labelled reference images. The other 37 entries appear as text with external image references in the sources section. Their artwork remains an open item and the article lists every title. The platform placeholders were removed.
+
+Six hardware generation figures now use genuine reference photographs, bringing the total to 18 historical hardware photographs. Captions identify differences between the referenced hardware and the author's own components. All nine supplied WoW character screenshots and the expandable Cthulhu hero are present. The paperclip tribute has eyes and a short, user-triggered movement that respects reduced motion.
+
+Original source and licence links are grouped at the bottom in both languages. Captions link to the relevant credit where appropriate. The unified manifest distinguishes screenshots, covers, artwork, logos and references. New WebP images were decoded and their recorded dimensions checked.
+
+Validation: 78 focused website tests pass. Both RSS feeds pass their generation check, and the sitemap and SEO audits pass with zero errors. The update advances the article modification dates, the two blog sitemap entries and both feed build dates to 7 November 2026.
+
+## First illustrated edition, 6 November 2026
+
+The sections below record the previous edition as it was delivered on 6 November.
+
 
 Repository: `dennishilk/dennishilk.github.io`. The backend/collector repository and Worldnode were not touched.
 

@@ -93,8 +93,7 @@
 .memory-article .hardware-card strong{color:#f3d4a7;font-size:1.05rem}
 .memory-article .hardware-card p{margin:8px 0;color:#c1d0db;font-size:inherit}
 .memory-article .hardware-card small{display:block;font-size:.75rem;color:#aec4d2;overflow-wrap:anywhere}
-.memory-article .hardware-schematics{grid-template-columns:repeat(3,minmax(0,1fr))}
-.memory-article .hardware-schematics svg{color:#8bd3c8;display:block;width:100%;height:150px;padding:14px;background:linear-gradient(145deg,#14303b,#10222d);box-sizing:border-box}
+.memory-article .hardware-timeline{grid-template-columns:repeat(3,minmax(0,1fr))}
 .memory-article .character-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:28px 0 14px}
 .memory-article .character-card{min-width:0;overflow:hidden;border:1px solid #3d4b48;border-radius:13px;background:#122127;margin:0}
 .memory-article .character-card img{display:block;width:100%;height:auto}
@@ -111,26 +110,23 @@
 .memory-article .paperclip-stage img{width:100%;height:auto;display:block}
 .memory-article .paperclip-stage button,.memory-article .archive-reset{font:inherit;font-size:.82rem;border:1px solid #63838b;color:#d4ece7;background:#152d37;border-radius:8px;padding:10px 14px;cursor:pointer}
 .memory-article .paperclip-wave{animation:paperclip-wave 2.6s ease-in-out 1}
-@keyframes paperclip-wave{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}50%{transform:rotate(7deg)}75%{transform:rotate(-4deg)}}
+@keyframes paperclip-wave{
+  0%,100%{transform:none}
+  24%{transform:translateY(-7px) rotate(-7deg)}
+  48%{transform:translateY(-3px) rotate(6deg)}
+  72%{transform:translateY(-5px) rotate(-4deg)}
+}
 .memory-article .game-era{padding:22px;background:#101c28}
 .memory-article .game-era h3{color:#f1d1a4;margin-bottom:22px}
 .memory-article .game-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .memory-article .game-list .game-card{padding:0;border:1px solid #345064;border-radius:11px;background:#142635;overflow:hidden;display:flex;flex-direction:column}
 .memory-article .game-media{display:block;position:relative;aspect-ratio:16/9;background:#0c1a26}
 .memory-article .game-media img{display:block;width:100%;height:100%;object-fit:contain}
-.memory-article .game-schematic{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 65% 20%,#244455,#101e2c);color:#8bb6ba;overflow:hidden}
-.memory-article [data-game-era="nes"] .game-schematic{color:#e0c080;background:radial-gradient(ellipse at 70% 10%,#4e3c2a,#211e23)}
-.memory-article [data-game-era="amiga"] .game-schematic{color:#b7b7e5;background:radial-gradient(ellipse at 70% 10%,#35334b,#171e2c)}
-.memory-article [data-game-era="handheld"] .game-schematic{color:#aec88e;background:radial-gradient(ellipse at 70% 10%,#354333,#182622)}
-.memory-article .game-schematic svg{height:80%;width:70%;margin-left:15%;opacity:.9}
-.memory-article .game-catalog-number{position:absolute;left:12px;top:10px;font:600 .64rem ui-monospace,monospace;letter-spacing:.06em;opacity:.9}
-.memory-article .game-art-label{position:absolute;left:12px;bottom:10px;right:12px;font:600 .6rem ui-monospace,monospace;letter-spacing:.04em}
 .memory-article .game-card-copy{padding:16px;display:flex;flex-direction:column;flex:1}
 .memory-article .game-platform{font:600 .63rem/1.5 ui-monospace,monospace;text-transform:uppercase;color:#a8c5cb;margin-bottom:8px}
 .memory-article .game-card-copy>strong{font-size:1rem;line-height:1.4;color:#edf3ed}
 .memory-article .game-card-copy>small{font-size:.82rem;color:#bacbd4;margin:10px 0 15px;line-height:1.65}
 .memory-article .game-card-copy .game-credit{font-size:.7rem;line-height:1.6;color:#abc0ce;margin:auto 0 8px;padding-top:12px;border-top:1px solid #344b5b}
-.memory-article .game-reference{font-size:.73rem;color:#a8dcdf;line-height:1.6;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
 .memory-article .archive-coverage{padding:18px 22px;background:#142d32;border:1px solid #40655f;border-radius:12px;margin:24px 0}
 .memory-article .archive-coverage strong{color:#d2eac9}
 .memory-article .archive-coverage p{font-size:.9rem;margin:8px 0 0;line-height:1.7}
@@ -155,6 +151,15 @@
 .memory-lightbox>p{font:15px/1.6 system-ui,sans-serif;max-width:100ch;margin:16px auto;overflow-wrap:anywhere}
 .memory-lightbox .memory-original{color:#a9e3dc;display:block;text-align:center;font:15px/1.6 system-ui,sans-serif}
 body:has(.memory-lightbox[open]){overflow:hidden}
-@media(max-width:860px){.memory-article .game-list{grid-template-columns:repeat(2,minmax(0,1fr))}.memory-article .hardware-schematics{grid-template-columns:repeat(2,minmax(0,1fr))}.memory-article .memory-clippy{grid-template-columns:160px minmax(0,1fr);padding:18px;gap:18px}}
-@media(max-width:560px){.memory-article .hardware-gallery,.memory-article .character-gallery{grid-template-columns:1fr}.memory-article .hardware-schematics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.memory-article .hardware-schematics figcaption{padding:12px}.memory-article .hardware-schematics strong{font-size:.9rem}.memory-article .game-list{grid-template-columns:1fr}.memory-article .game-era{padding:15px}.memory-article .game-card-copy{padding:18px}.memory-article .memory-explainer{padding:20px}.memory-article .memory-clippy{grid-template-columns:1fr}.memory-article .paperclip-stage{max-width:180px;margin:auto}.memory-article .missing-art ul{columns:1}.memory-article .memory-hero .memory-tag{position:static;display:block;border-radius:0;font-size:.65rem}.memory-lightbox{padding:12px}.memory-article .memory-hardware th,.memory-article .memory-hardware td{padding:8px}.memory-article .game-schematic{max-height:190px}.memory-article .game-schematic svg{height:140px}.memory-article .era-block{margin-top:42px}}
+@media(max-width:860px){.memory-article .game-list{grid-template-columns:repeat(2,minmax(0,1fr))}.memory-article .hardware-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}.memory-article .memory-clippy{grid-template-columns:160px minmax(0,1fr);padding:18px;gap:18px}}
+@media(max-width:560px){.memory-article .hardware-gallery,.memory-article .character-gallery{grid-template-columns:1fr}.memory-article .hardware-timeline{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.memory-article .hardware-timeline figcaption{padding:12px}.memory-article .hardware-timeline strong{font-size:.9rem}.memory-article .game-list{grid-template-columns:1fr}.memory-article .game-era{padding:15px}.memory-article .game-card-copy{padding:18px}.memory-article .memory-explainer{padding:20px}.memory-article .memory-clippy{grid-template-columns:1fr}.memory-article .paperclip-stage{max-width:180px;margin:auto}.memory-article .missing-art ul{columns:1}.memory-article .memory-hero .memory-tag{position:static;display:block;border-radius:0;font-size:.65rem}.memory-lightbox{padding:12px}.memory-article .memory-hardware th,.memory-article .memory-hardware td{padding:8px}.memory-article .era-block{margin-top:42px}}
 @media(prefers-reduced-motion:reduce){.memory-article .paperclip-wave{animation:none!important}}
+
+/* Authentic title logos are shown whole, with a neutral surface for dark wordmarks. */
+.memory-article .game-logo-media{background:#eeefeb;padding:20px;box-sizing:border-box}
+.memory-article .game-logo-media img,.memory-article .game-cover-media img{object-fit:contain}
+.memory-lightbox[data-media-kind="logo"]>img{background:#eeefeb;padding:18px;box-sizing:border-box}
+.memory-article .additional-image-credits{margin-top:24px;padding:18px;border:1px solid #354b59;border-radius:10px}
+.memory-article .additional-image-credits summary{cursor:pointer;font-weight:700}
+.memory-article .additional-image-credits li{margin-bottom:18px;overflow-wrap:anywhere}
+.memory-article .image-credit-logo{display:block;width:125px;height:auto;margin-top:10px;background:#eeefeb}
