@@ -1,0 +1,24 @@
+# WoW Forever Observer
+
+The first release is the static character panel in the [English article](../blog/wow-forever-nebukatneza-dennis-hilk/index.html#observer) and [German article](../de/blog/wow-forever-nebukatneza-dennis-hilk/index.html#observer). The author’s 10 November 2026 screenshot records level 14. The public profile was checked manually that day and showed level 14, Undead, Paladin, Horde, EU and Normal. The author supplied the language he plays in. A baseline observation does not establish when level 14 was reached.
+
+## Data source assessment, 10 November 2026
+
+| Source | Access | Update behavior and use |
+| --- | --- | --- |
+| [WoWArmory.gg profile](https://wowarmory.gg/forever/eu/character/dennis-hilk) | Public, unauthenticated human-facing page. The [terms](https://wowarmory.gg/terms-of-use) allow linking and prohibit overloading the site with bulk automated requests. No supported machine API or permitted polling rate was verified for this service. | [Forever search](https://wowarmory.gg/forever) says profiles appear from level 10 after logout. The [source notes](https://wowarmory.gg/data-sources) describe server-side snapshots and no guaranteed refresh when opening a profile. Link out to it. |
+| [Battle.net developer documentation](https://develop.battle.net/documentation/world-of-warcraft/profile-apis) | Blizzard requires a Battle.net developer registration and an application client. For public profile calls, the planned authentication is a server-side OAuth client-credentials grant. Use an authorized client and confirm the Forever interface before enabling the job. | A [community report](https://us.forums.blizzard.com/en/blizzard/t/wow-forever-api-what-works-so-far-plus-a-ts-client/60334) reports a Forever EU profile namespace, level 10 and logout requirements, and character equipment, specializations, professions, statistics and achievement endpoints. Official Forever-specific documentation, behavior for this character, and any Forever-specific limit remain unverified. |
+| Owner’s screenshots and journal | Manually dated by the author. | The permanent history can use independently recorded observations such as the screenshot in the article. |
+
+The [Blizzard Developer API Terms](https://www.blizzard.com/en-us/legal/a2989b50-5f16-43b1-abec-2ae17cc09dd6/blizzard-developer-api-terms-of-use) state a general ceiling of 36,000 calls per hour, subject to changes by Blizzard. The terms also set a maximum 30-day TTL for data pulled from the APIs and explain a WoW character-validation option. Before enabling automatic history, confirm how that option applies to historical records and derived milestones. Until then, cap API-derived history below 30 days and keep it out of permanent Git history and backups.
+
+## Integration on Worldnode
+
+- Confirm the approved Forever EU profile route and schema with a registered application before writing the adapter. Keep the client secret on Debian 13 Worldnode in the collector’s service credentials. Obtain and reuse the short-lived token on the server. Serve a same-origin static JSON export containing only display fields.
+- Once the provider’s limits and terms are confirmed, start with hourly checks for this one character. Fetch the summary and supported subresources at a low rate. Honor any stricter limit and `Retry-After`. Treat unavailable fields as unknown. Distinguish time checked, time successfully synchronized and source observation time. Only display a source timestamp if the provider actually supplies it and its meaning is known.
+- Validate profile identity and keep the last usable snapshot on transient failure while it is within the allowed retention period. Mark it stale and leave the last successful sync timestamp untouched. Invalidate and remove the affected data when the source confirms deletion or withdrawal. Rotate retained data and expire derived history with the underlying records until longer retention is confirmed.
+- Publish the latest snapshot and bounded history atomically outside Git, following the existing World Observer deployment model. Store level, equipment by slot, talent selection, professions, selected statistics and achievement changes only where the verified source exposes them. Give optional fields their own freshness when they update independently.
+- Append a dated milestone on the first successful observation of a higher level. Record the observed level and collection time. Do not interpolate intermediate levels or equate the observation with the in-game level-up time. A repeated snapshot must not create another milestone.
+- Keep the static article panel usable if automated data is absent or expired. The collector requires neither access to the game process nor automated requests to the third-party armory.
+
+No collector or timer is active in this release.

@@ -10,14 +10,17 @@ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll
 const specs=JSON.parse(read('content/behind-projects/articles.json'));
 const date=(s,lang)=>new Intl.DateTimeFormat(lang==='de'?'de-DE':'en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(s+'T12:00:00Z'));
 
-for(const a of specs){
+const topic=process.argv[2];
+if(topic&&!specs.some(a=>a.topic===topic))throw Error('Unknown topic: '+topic);
+
+for(const a of specs.filter(a=>!topic||a.topic===topic)){
   const de=a.lang==='de',prefix=de?'/de':'',route=prefix+'/blog/'+a.slug+'/',url=origin+route;
   const en=de?origin+'/blog/'+a.alternate+'/':url,ger=de?url:origin+'/de/blog/'+a.alternate+'/',other=de?en:ger;
   if(!specs.some(b=>b.topic===a.topic&&b.lang!==a.lang&&b.slug===a.alternate&&b.alternate===a.slug))throw Error('Missing reciprocal story: '+a.slug);
   const template=read(de?'de/blog/nebuverse-gotosocial-selbst-hosten/index.html':'blog/nebuverse-self-hosting-gotosocial/index.html');
   const shell=template.match(/<body\b[\s\S]*?<\/header>/)[0].replace(/(<a class="language-link" href=")[^"]+/,'$1'+other.slice(origin.length));
   const footer=template.match(/<footer class="site-footer">[\s\S]*?<\/footer>/)[0];
-  const figure=`<figure class="article-figure"><a href="${a.image}"><img src="${a.image}" width="1528" height="1274" loading="lazy" decoding="async" alt="${esc(a.imageAlt)}"></a><figcaption>${esc(a.imageCaption)}</figcaption></figure>`;
+  const figure=`<figure class="article-figure"><a href="${a.image}"><img src="${a.image}" width="${a.imageWidth??1528}" height="${a.imageHeight??1274}" loading="lazy" decoding="async" alt="${esc(a.imageAlt)}"></a><figcaption>${esc(a.imageCaption)}${a.credit?` <span class="credit">${esc(a.credit)}</span>`:''}</figcaption></figure>`;
   const body=read('content/behind-projects/'+a.topic+'.'+a.lang+'.fragment').replace('{{screenshot}}',figure);
   const headings=[...body.matchAll(/<h2 id="([^"]+)">([^<]+)<\/h2>/g)];
   const toc='<ol>'+headings.map(([,id,title])=>`<li><a href="#${id}">${title}</a></li>`).join('')+'</ol>';
@@ -36,16 +39,16 @@ for(const a of specs){
 <link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials"><link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006"><script defer src="/assets/js/language-toggle.js?v=20261006"></script><script defer src="/blog/navigation.js?v=20261008"></script>
 <script type="application/ld+json">${JSON.stringify(graph).replaceAll('<','\\u003c')}</script></head>`;
   const tocTitle=de?'In diesem Artikel':'In this article';
-  const html=head+'\n'+shell+`<main class="article-main" id="main"><nav class="breadcrumbs" aria-label="${de?'Brotkrumennavigation':'Breadcrumbs'}"><a href="${prefix}/">${de?'Startseite':'Home'}</a><span aria-hidden="true">/</span><a href="${prefix}/blog/">Blog</a><span aria-hidden="true">/</span><a href="${prefix}/blog/#behind-projects">${esc(a.category)}</a></nav><header class="article-header"><p class="eyebrow">${esc(a.category)} · Google Search Console</p><h1 id="article-title">${esc(a.title)}</h1><div class="article-meta"><span>${de?'Von':'By'} <a href="/about/">Dennis Hilk</a></span><time datetime="${a.date}">${date(a.date,a.lang)}</time><span>${minutes} ${de?'Minuten Lesezeit':'minute read'}</span></div></header><div class="article-layout"><article class="article-copy" aria-labelledby="article-title"><details class="mobile-toc"><summary>${tocTitle}</summary>${toc}</details>
+  const html=head+'\n'+shell+`<main class="article-main" id="main"><nav class="breadcrumbs" aria-label="${de?'Brotkrumennavigation':'Breadcrumbs'}"><a href="${prefix}/">${de?'Startseite':'Home'}</a><span aria-hidden="true">/</span><a href="${prefix}/blog/">Blog</a><span aria-hidden="true">/</span><a href="${prefix}/blog/#behind-projects">${esc(a.category)}</a></nav><header class="article-header"><p class="eyebrow">${esc(a.category)} · ${esc(a.tag??'Google Search Console')}</p><h1 id="article-title">${esc(a.title)}</h1><div class="article-meta"><span>${de?'Von':'By'} <a href="/about/">Dennis Hilk</a></span><time datetime="${a.date}">${date(a.date,a.lang)}</time><span>${minutes} ${de?'Minuten Lesezeit':'minute read'}</span></div></header><div class="article-layout"><article class="article-copy" aria-labelledby="article-title"><details class="mobile-toc"><summary>${tocTitle}</summary>${toc}</details>
 ${body}
-<nav class="article-end-nav" aria-label="${de?'Artikelnavigation':'Article navigation'}"><a href="${prefix}/blog/#behind-projects">← ${esc(a.category)}</a><a href="#page-top">${de?'Nach oben':'Back to top'} ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="${tocTitle}"><h2>${tocTitle}</h2>${toc}</nav><a class="sidebar-tool" href="/lost-administrator/">The Lost Administrator →</a></aside></div><aside class="related-guide"><p class="eyebrow">${de?'Weiter entdecken':'Explore more'}</p><a href="/lost-administrator/">${de?'Roman und interaktive Workstation':'Novel and interactive workstation'} →</a><a href="/museum/${de?'?lang=de':''}">Computer Museum →</a></aside></main>`+footer+'\n</body></html>\n';
+<nav class="article-end-nav" aria-label="${de?'Artikelnavigation':'Article navigation'}"><a href="${prefix}/blog/#behind-projects">← ${esc(a.category)}</a><a href="#page-top">${de?'Nach oben':'Back to top'} ↑</a></nav></article><aside class="article-sidebar"><nav class="desktop-toc" aria-label="${tocTitle}"><h2>${tocTitle}</h2>${toc}</nav>${a.sidebar?`<a class="sidebar-tool" href="${esc(a.sidebar.href)}">${esc(a.sidebar.label)} →</a>`:'<a class="sidebar-tool" href="/lost-administrator/">The Lost Administrator →</a>'}</aside></div>${a.sidebar?'':`<aside class="related-guide"><p class="eyebrow">${de?'Weiter entdecken':'Explore more'}</p><a href="/lost-administrator/">${de?'Roman und interaktive Workstation':'Novel and interactive workstation'} →</a><a href="/museum/${de?'?lang=de':''}">Computer Museum →</a></aside>`}</main>`+footer+'\n</body></html>\n';
   mkdirSync(resolve(root,route.slice(1)),{recursive:true});write(route.slice(1)+'index.html',html);
 
   // Upsert only this story's card and metadata, retaining all other sections.
   const indexPath=(de?'de/':'')+'blog/index.html';let index=read(indexPath);
   const section=index.match(/<section id="behind-projects"[\s\S]*?<\/section>/)?.[0];
   if(!section)throw Error('Missing Behind the Projects category');
-  const card=`<article id="story-${a.topic}" class="guide-card"><a class="card-link" href="${route}"><div class="guide-top"><span class="category">${esc(a.category)} · SEO</span><span class="reading-time">${minutes} ${de?'Minuten Lesezeit':'minute read'}</span></div><h3>${esc(a.title)}</h3><p>${esc(a.description)}</p><span class="read-link">${de?'Artikel lesen':'Read the article'} <span aria-hidden="true">→</span></span></a></article>`;
+  const card=`<article id="story-${a.topic}" class="guide-card"><a class="card-link" href="${route}"><div class="guide-top"><span class="category">${esc(a.category)} · ${esc(a.tag??'SEO')}</span><span class="reading-time">${minutes} ${de?'Minuten Lesezeit':'minute read'}</span></div><h3>${esc(a.title)}</h3><p>${esc(a.description)}</p><span class="read-link">${de?'Artikel lesen':'Read the article'} <span aria-hidden="true">→</span></span></a></article>`;
   let updated=section.replace(new RegExp('<article id="story-'+a.topic+'"[\\s\\S]*?<\\/article>'),'');
   updated=updated.replace('<div class="guide-grid">','<div class="guide-grid">'+card);
   const count=String((updated.match(/class="guide-card\b/g)||[]).length).padStart(2,'0');
