@@ -49,18 +49,20 @@
 <p>On Cthulhu I play on Arch Linux with dwm. For World of Warcraft I launch Battle.net through Lutris and Wine, then install and start the relevant WoW version there. My Steam games go through Steam and Proton. I cover both setups in my <a href="/blog/linux-gaming-steam-proton-lutris/">Linux gaming guide to Steam, Proton and Lutris</a>.</p>
 
 <h2 id="observer">WoW Forever Observer</h2>
-<div class="related-guide">
-<p><strong>Static starting snapshot · 10 November 2026</strong></p>
-<dl>
-<dt>Character</dt><dd>Dennis Hilk · Undead Paladin · Horde</dd>
-<dt>Region and ruleset</dt><dd>EU · Normal (PvE) · Played in German</dd>
-<dt>First recorded observation</dt><dd><time datetime="2026-11-10">10 November 2026</time> · Level 14 in my own screenshot</dd>
-<dt>Last successful automated sync</dt><dd>Pending. I cross-checked the starting snapshot with the public Armory on 10 November.</dd>
-<dt>Equipment, talents, professions, stats and achievements</dt><dd>The linked profile shows equipment, talents, professions and stats. There is no automated history here yet for those fields or for achievements.</dd>
-</dl>
-<p><a href="https://wowarmory.gg/forever/eu/character/dennis-hilk">View Dennis Hilk in the WoW Forever Armory</a></p>
+<section class="forever-character" aria-labelledby="forever-character-name">
+<figure>
+<a class="forever-portrait" href="https://worldofwarcraft.blizzard.com/en-us/forever/eu/armory/character/dennis-hilk/"><img src="https://render.worldofwarcraft.com/forever-eu/character/80/11295056-main-sd-raw.png" width="1600" height="1200" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="Dennis Hilk, an undead paladin with sword and round shield in the classic WoW model"></a>
+<figcaption>Armory render © Blizzard Entertainment</figcaption>
+</figure>
+<div>
+<p class="forever-status"><time datetime="2026-11-10">Manually checked on 10 November 2026</time></p>
+<h3 id="forever-character-name">Dennis Hilk</h3>
+<p><strong>Level 14 · Undead Paladin · Horde</strong><br>EU · Normal (PvE) · Played in German</p>
+<p>Automatic sync is still pending. The official profile shows newer data as soon as Blizzard publishes it.</p>
+<p class="forever-links"><a href="https://worldofwarcraft.blizzard.com/en-us/forever/eu/armory/character/dennis-hilk/">Open the official Armory</a> <a href="https://wowarmory.gg/forever/eu/character/dennis-hilk">WoWArmory.gg</a></p>
 </div>
-<p>The independent Armory describes two delays. Characters appear from level 10 after logging out, and the Armory can still serve an older saved snapshot. A future sync can record <em>when</em> the Observer first saw a higher level. The moment it happened in-game remains unknown. If a character gains several levels between checks, the history can record only the level actually observed.</p>
+</section>
+<p>The independent Armory describes two delays. Characters appear from level 10 after logging out, and the Armory can still serve an older saved snapshot. A future sync can turn higher levels and newly reported achievements into dated milestones. The moment it happened in-game remains unknown. If a character gains several levels between checks, the history can record only the level actually observed.</p>
 <p>The plan for <a href="/world-observer.html">World Observer</a> is a small collector on Worldnode, my Debian 13 server. Community developers report that Battle.net already has a Forever API namespace. Once Blizzard documents the interface for this use and I’ve verified access with a registered client, a server-side collector can track the last successful sync, equipment, talents, professions and selected stats. Achievements can join them if the source reliably exposes them. Blizzard’s API terms limit how long API data can be kept. A permanent journal can still grow from my own dated entries.</p>
 <p>I first entered Azeroth as Nebukatneza and somewhere along the way came out as nebu. This time it was simpler. After about twenty years, I finally walked in as Dennis Hilk.</p>
 

@@ -1,6 +1,6 @@
 # WoW Forever Observer
 
-The first release is the static character panel in the [English article](../blog/wow-forever-nebukatneza-dennis-hilk/index.html#observer) and [German article](../de/blog/wow-forever-nebukatneza-dennis-hilk/index.html#observer). The author’s 10 November 2026 screenshot records level 14. The public profile was checked manually that day and showed level 14, Undead, Paladin, Horde, EU and Normal. The author supplied the language he plays in. A baseline observation does not establish when level 14 was reached.
+The first release is the static character panel in the [English article](../blog/wow-forever-nebukatneza-dennis-hilk/index.html#observer) and [German article](../de/blog/wow-forever-nebukatneza-dennis-hilk/index.html#observer). The author’s 10 November 2026 screenshot records level 14. The public profile was checked manually that day and showed level 14, Undead, Paladin, Horde, EU and Normal. The author supplied the language he plays in. A baseline observation does not establish when level 14 was reached. The panel displays the public SD render linked by [Blizzard’s official character profile](https://worldofwarcraft.blizzard.com/en-us/forever/eu/armory/character/dennis-hilk/). The browser loads the image from Blizzard’s CDN. The render and the manually verified level have independent refresh behavior.
 
 ## Data source assessment, 10 November 2026
 

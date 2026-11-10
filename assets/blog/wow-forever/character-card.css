@@ -1,0 +1,59 @@
+.forever-character {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(16px, 3vw, 28px);
+  margin: 24px 0 30px;
+  padding: clamp(14px, 3vw, 24px);
+  border: 1px solid #8e6b34;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #262014, #141611 75%);
+  box-shadow: inset 0 0 0 3px #18150e;
+  color: #e6dfd1;
+}
+
+.forever-character figure { margin: 0; }
+.forever-character figcaption { margin-top: 8px; color: #d0c3a8; font-size: .8rem; }
+
+.forever-portrait {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border: 1px solid #8e6b34;
+  border-radius: 5px;
+  background: radial-gradient(ellipse at 50% 53%, #666246, #292b20 59%, #151711);
+}
+
+.forever-portrait img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260%;
+  max-width: none;
+  height: auto;
+  transform: translate(-47.25%, -54.8%);
+}
+
+.forever-character .forever-status {
+  margin: 0 0 5px;
+  color: #e4be72;
+  font-size: .85rem;
+}
+
+.forever-character h3 {
+  margin: 0 0 6px;
+  color: #f3d189;
+  font-family: Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+}
+
+.forever-character p { margin: 0 0 12px; }
+.forever-character .forever-links { margin: 0; }
+.forever-character .forever-links a { color: #f3d189; }
+.forever-character .forever-links a + a { margin-left: 12px; }
+
+@media (max-width: 600px) {
+  .forever-character { grid-template-columns: minmax(0, 1fr); }
+  .forever-character figure { width: min(100%, 220px); margin-inline: auto; }
+}
