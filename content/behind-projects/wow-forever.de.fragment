@@ -1,5 +1,26 @@
 <p class="article-lead">Fast zwanzig Jahre lang hieß ich in Azeroth Nebukatneza. Im November 2026 stand ich zum ersten Mal mit einem anderen Namen über dem Kopf in der Welt. Da stand <strong>Dennis Hilk</strong>. Nach zwei Jahrzehnten ist mir als neuer Charaktername also mein eigener eingefallen. Und der Typ mit meinem Namen ist ausgerechnet ein untoter Paladin.</p>
 
+<h2 id="observer">WoW Forever Observer</h2>
+<section class="forever-character" aria-labelledby="forever-character-name" data-forever-card>
+<figure>
+<a class="forever-portrait" href="https://worldofwarcraft.blizzard.com/de-de/forever/eu/armory/character/dennis-hilk/"><img src="https://render.worldofwarcraft.com/forever-eu/character/80/11295056-main-sd-raw.png" width="1600" height="1200" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="Dennis Hilk, untoter Paladin mit Schwert und Rundschild im klassischen WoW-Modell"></a>
+<figcaption>Armory-Render © Blizzard Entertainment</figcaption>
+</figure>
+<div>
+<p class="forever-status" data-forever-status role="status">Manuell bestätigt am 10. November 2026 · automatischer Abgleich noch nicht aktiviert</p>
+<h3 id="forever-character-name">Dennis Hilk</h3>
+<p><strong><span data-forever-level>Stufe 14</span> · Untoter Paladin · Horde</strong><br>EU · Normal (PvE)</p>
+<dl class="forever-metrics">
+<div><dt>Erfahrung</dt><dd data-forever-xp>—</dd></div>
+<div><dt>Ø Gegenstandsstufe</dt><dd data-forever-ilvl>—</dd></div>
+</dl>
+<p class="forever-last-login" data-forever-login>Nach Einrichtung des Worldnode-Collectors erscheinen hier aktuelle Werte. Bis dahin gilt der manuell bestätigte Ausgangsstand.</p>
+<details class="forever-jobs"><summary>Berufe und Fertigkeiten</summary><ul class="forever-data-list" data-forever-professions><li>Noch keine Live-Daten verfügbar</li></ul></details>
+<details class="forever-gear"><summary>Aktuelle Ausrüstung</summary><ul class="forever-data-list" data-forever-equipment><li>Noch keine Live-Daten verfügbar</li></ul></details>
+<p class="forever-links"><a href="https://worldofwarcraft.blizzard.com/de-de/forever/eu/armory/character/dennis-hilk/">Offizielles Arsenal öffnen</a> <a href="https://wowarmory.gg/forever/eu/character/dennis-hilk">WoWArmory.gg</a></p>
+</div>
+</section>
+
 <h2 id="destromath">Wie aus Nebukatneza nebu wurde</h2>
 <p>Mein erstes World of Warcraft spielte ich auf Destromath, einem deutschen EU-PvP-Realm. Horde, untoter Hexenmeister, Gilde <em>Klinge der Macht</em>. Irgendwann wurde aus Nebukatneza einfach <strong>nebu</strong>. Der Name blieb auch außerhalb von WoW hängen. <a href="/de/blog/warum-ich-nebu-heisse/">Wie ich zu meinem Namen nebu kam</a>, habe ich schon einmal aufgeschrieben.</p>
 <p>Die Geschichte meines Hexenmeisters ging nach Stufe 60 weiter. <strong>Ich habe jede Erweiterung von The Burning Crusade bis einschließlich Dragonflight gespielt, und Nebukatneza blieb mein Hauptcharakter.</strong> Mal mit einer Pause dazwischen, mal erst mitten in einer Erweiterung wieder eingestiegen. Die Kontinente, Talentbäume und Regeln wechselten. Wenn ich zurückkam, hatte ich immer noch meinen Hexenmeister.</p>
@@ -48,22 +69,10 @@
 <h2 id="linux">WoW auf Linux, Battle.net über Lutris</h2>
 <p>Auf Cthulhu spiele ich unter Arch Linux mit dwm. Für World of Warcraft starte ich Battle.net über Lutris und Wine. Dort installiere und starte ich die jeweilige WoW-Version. Meine Steam-Spiele laufen auf einem anderen Weg über Steam und Proton. Wie ich beide Wege eingerichtet habe, steht in meinem <a href="/de/blog/linux-gaming-steam-proton-lutris/">Linux-Gaming-Artikel über Steam, Proton und Lutris</a>.</p>
 
-<h2 id="observer">WoW Forever Observer</h2>
-<section class="forever-character" aria-labelledby="forever-character-name">
-<figure>
-<a class="forever-portrait" href="https://worldofwarcraft.blizzard.com/de-de/forever/eu/armory/character/dennis-hilk/"><img src="https://render.worldofwarcraft.com/forever-eu/character/80/11295056-main-sd-raw.png" width="1600" height="1200" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="Dennis Hilk, untoter Paladin mit Schwert und Rundschild im klassischen WoW-Modell"></a>
-<figcaption>Armory-Render © Blizzard Entertainment</figcaption>
-</figure>
-<div>
-<p class="forever-status"><time datetime="2026-11-10">Manuell geprüft am 10. November 2026</time></p>
-<h3 id="forever-character-name">Dennis Hilk</h3>
-<p><strong>Stufe 14 · Untoter Paladin · Horde</strong><br>EU · Normal (PvE) · Spielsprache Deutsch</p>
-<p>Der automatische Abgleich steht noch aus. Sobald Blizzard einen neuen Stand veröffentlicht, findest du ihn im offiziellen Profil.</p>
-<p class="forever-links"><a href="https://worldofwarcraft.blizzard.com/de-de/forever/eu/armory/character/dennis-hilk/">Offizielles Arsenal öffnen</a> <a href="https://wowarmory.gg/forever/eu/character/dennis-hilk">WoWArmory.gg</a></p>
-</div>
-</section>
+<h2 id="observer-tech">Wie der WoW Forever Observer funktioniert</h2>
+<p>Andere spielen WoW und leveln ihren Charakter. Ich sitze in meiner Fish-Shell unter Arch Linux und frage meinen Debian-Server in Braunschweig, ob er weiß, wie es meinem untoten Paladin in Azeroth geht. Die Antwort kam tatsächlich: Dennis Hilk, Untoter, Paladin, Horde, Stufe 14. Manchmal suche ich wohl einfach neue Gründe, Linux-Server zu beschäftigen. 😄</p>
 <p>Die unabhängige Armory beschreibt zwei Verzögerungen. Charaktere erscheinen ab Stufe 10 nach dem Ausloggen. Danach kann die Armory noch einen älteren gespeicherten Stand anzeigen. Ein automatischer Abruf könnte später eine höhere Stufe und neu gemeldete Erfolge als datierte Meilensteine anzeigen. Den exakten Moment des Stufenaufstiegs kann er daraus nicht ableiten. Wenn zwischen zwei Abrufen mehrere Stufen vergehen, gehört nur der tatsächlich beobachtete Stand in die Chronik.</p>
-<p>Für <a href="/de/world-observer.html">World Observer</a> ist dafür ein kleiner Collector auf meinem Debian-13-Server Worldnode vorgesehen. Berichte von Entwicklern nennen bereits einen Forever-Namensraum in der Battle.net-API. Sobald Blizzard die Schnittstelle für diesen Zweck dokumentiert und der registrierte Zugriff geprüft ist, kann ein serverseitiger Abruf den letzten erfolgreichen Abgleich, Ausrüstung, Talente, Berufe und ausgewählte Werte erfassen. Erfolge kommen hinzu, wenn die Quelle sie zuverlässig liefert. Die Blizzard-API-Bedingungen begrenzen die Aufbewahrung von API-Daten. Die dauerhafte Chronik kann mit eigenen, manuell datierten Einträgen weiterwachsen.</p>
+<p>Die offizielle Blizzard-API liefert für meinen Forever-Charakter bereits erfolgreich Stufe, Erfahrungspunkte, Ausrüstung, Berufe und weitere Profilwerte. Den authentifizierten Abruf habe ich am 10. November 2026 direkt von meinem Debian-13-Server Worldnode getestet. Der regelmäßige Collector ist noch nicht aktiviert. Sobald er eingerichtet ist, soll er nur zulässige öffentliche Anzeigedaten als zeitlich begrenzte JSON-Momentaufnahme veröffentlichen. Der letzte erfolgreiche Abgleich wird stets angezeigt; ein verzögerter Stand wird nicht als live ausgegeben.</p>
 <p>Früher kam ich als Nebukatneza nach Azeroth und ging irgendwann als nebu wieder raus. Diesmal war die Reihenfolge einfacher. Nach rund zwanzig Jahren bin ich einfach als Dennis Hilk reingegangen.</p>
 
 <h2 id="quellen">Quellen und Bildnachweise</h2>
@@ -75,3 +84,5 @@
 <li><a href="https://www.blizzard.com/de-de/legal/a2989b50-5f16-43b1-abec-2ae17cc09dd6/nutzungsbestimmungen-fur-die-entwickler-api-von-blizzard">Blizzards Entwickler-API-Bedingungen</a> und <a href="https://us.forums.blizzard.com/en/blizzard/t/wow-forever-api-what-works-so-far-plus-a-ts-client/60334">Bericht aus der Entwickler-Community zur Forever-API</a>.</li>
 <li>Beide Screenshots stammen aus meinem Spiel. Die Rechte an den dargestellten Spielinhalten liegen bei Blizzard Entertainment.</li>
 </ul>
+
+<script defer src="/assets/blog/wow-forever/observer.js?v=20261110"></script>
