@@ -21,6 +21,14 @@
 </div>
 </section>
 
+<section class="forever-level-story" aria-label="My little Blizzard API story">
+<p class="forever-level-kicker">A morning in Azeroth and on Worldnode · 10 November 2026</p>
+<h3>“So, what level are you?”</h3>
+<p class="forever-level-dialogue"><strong>“14.”</strong> — “Wait, weren't you level 14 this morning?” — <strong>“Yes! But now my Debian server can track my undead paladin through Blizzard's API. Even his professions!”</strong></p>
+<p>I was only about 20 percent away from level 15. Other people might have knocked out one more quest. Instead, I spent the entire morning exploring API endpoints, setting up OAuth credentials and building a Python collector for my blog.</p>
+<p>While everyone else plays WoW and levels their characters, I sit in my Fish shell on Arch Linux asking my Debian 13 server, Worldnode, whether it knows how my undead paladin in Azeroth is doing. It actually answered: Dennis Hilk, Undead, Paladin, Horde, level 14. Apparently I just keep finding new excuses to make Linux servers do things. 😄</p>
+</section>
+
 <h2 id="destromath">How Nebukatneza became nebu</h2>
 <p>My first World of Warcraft home was Destromath, a German EU PvP realm. Horde, undead warlock, guild <em>Klinge der Macht</em>. At some point Nebukatneza became <strong>nebu</strong>, and the name followed me well beyond WoW. I’ve written separately about <a href="/blog/why-im-called-nebu/">how I ended up being called nebu</a>.</p>
 <p>My warlock’s story carried on after level 60. <strong>I played every expansion from The Burning Crusade through Dragonflight, and Nebukatneza stayed my main.</strong> Sometimes I took a break and came back halfway through an expansion. The continents, talent trees and rules kept changing. Whenever I came back, I still had my warlock.</p>
@@ -70,9 +78,8 @@
 <p>On Cthulhu I play on Arch Linux with dwm. For World of Warcraft I launch Battle.net through Lutris and Wine, then install and start the relevant WoW version there. My Steam games go through Steam and Proton. I cover both setups in my <a href="/blog/linux-gaming-steam-proton-lutris/">Linux gaming guide to Steam, Proton and Lutris</a>.</p>
 
 <h2 id="observer-tech">How the WoW Forever Observer works</h2>
-<p>Other people play WoW and level their characters. I sit in my Fish shell on Arch Linux asking my Debian server in Braunschweig whether it knows how my undead paladin in Azeroth is doing. It actually answered: Dennis Hilk, Undead, Paladin, Horde, level 14. Sometimes I think I just look for new reasons to keep Linux servers busy. 😄</p>
 <p>The independent Armory describes two delays. Characters appear from level 10 after logging out, and the Armory can still serve an older saved snapshot. A future sync can turn higher levels and newly reported achievements into dated milestones. The moment it happened in-game remains unknown. If a character gains several levels between checks, the history can record only the level actually observed.</p>
-<p>Blizzard’s official API already returns my Forever character’s level, experience, equipment, professions and other profile fields. On 10 November 2026 I successfully queried it from my Debian 13 server, Worldnode, with a registered API client. The scheduled collector is not enabled yet. Once configured, it will publish only permitted public display fields as a time-limited JSON snapshot. The page will always show the last successful sync and never present delayed data as live.</p>
+<p>Blizzard’s official API returns my Forever character’s level, experience, equipment and professions. On 10 November 2026, I successfully ran the Python collector on my Debian 13 server, Worldnode, and published its first real JSON snapshot. It contains only selected display data: no credentials and no permanent gameplay history. The website shows the last successful sync time; the hourly automated run is configured separately. An older snapshot is not live telemetry.</p>
 <p>I first entered Azeroth as Nebukatneza and somewhere along the way came out as nebu. This time it was simpler. After about twenty years, I finally walked in as Dennis Hilk.</p>
 
 <h2 id="sources">Sources and image credits</h2>
