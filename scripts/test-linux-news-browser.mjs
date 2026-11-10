@@ -51,7 +51,7 @@ try{
       await page.setViewportSize({width,height});await page.goto(origin+route);await page.locator('.news-hero img').evaluate(img=>img.decode());
       await page.screenshot({path:output+'/'+a.lang+'-'+a.topic+'-'+name+'.jpg',type:'jpeg',quality:80,fullPage:true});
     }
-    const target=a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':a.topic==='ai-linux-kernel-948'?'numbers':a.topic==='plasma-68-wayland'?'readiness':a.topic==='windows-10-esu-2027'?(a.lang==='de'?'entscheidung':'decision'):'fix-status';
+    const target=a.topic==='epic-games-launcher-linux'?'wine-proton':a.topic==='linux-audio-rescue'?'services':a.topic==='worldnode-nginx'?'worldnode':a.topic==='ai-linux-kernel-948'?'numbers':a.topic==='plasma-68-wayland'?'readiness':a.topic==='windows-10-esu-2027'?(a.lang==='de'?'entscheidung':'decision'):'fix-status';
     await page.locator('.mobile-toc summary').click();
     await page.locator('.mobile-toc a[href="#'+target+'"]').click();
     assert.ok(page.url().endsWith('#'+target));

@@ -1,0 +1,20 @@
+.epic-setup-images {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.epic-setup-images .article-figure {
+  margin: 0;
+}
+
+@media (max-width: 650px) {
+  .epic-setup-images {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.epic-games-article .news-hero img {
+  aspect-ratio: 2048 / 857;
+}

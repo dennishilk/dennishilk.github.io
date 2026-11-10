@@ -18,7 +18,8 @@ for(const a of specs){
     assert.equal((html.match(/<h1\b/g)||[]).length,1);
     assert.equal(article.url,url);assert.equal(article.inLanguage,a.lang);
     assert.equal(article.datePublished,a.published);assert.equal(article.dateModified,a.modified);
-    assert.ok(article.wordCount>=(a.topic==='worldnode-nginx'?1200:1400));assert.equal(article.articleSection,a.category);
+    const minimumWords={'worldnode-nginx':1200,'epic-games-launcher-linux':900};
+    assert.ok(article.wordCount>=(minimumWords[a.topic]??1400));assert.equal(article.articleSection,a.category);
     for(const [key,value] of [['canonical',url],['description',a.description]]){
       const tags=[...html.matchAll(/<(?:link|meta)\b[^>]*>/g)].map(m=>attrs(m[0]));
       const found=tags.filter(t=>t.rel===key||t.name===key);assert.equal(found.length,1,key);assert.equal(found[0].href||found[0].content,value.replaceAll('&','&amp;'));
@@ -72,6 +73,17 @@ for(const a of specs){
       assert.ok(commands.length>=20);
       assert.ok(body.includes('session.suspend-timeout-seconds = 0'));
       assert.ok(body.includes('51-audio-rescue-spdif.conf.disabled'));
+      return;
+    }
+    if(a.topic==='epic-games-launcher-linux'){
+      assert.deepEqual(commands,[
+        'yay -S epic-games-launcher-bin',
+        'epic-games-launcher',
+        String.raw`find "$HOME/.local/share/com.epicgames.eglv2/compat/runtime" -maxdepth 4 -type f -name version -print -exec head -n 2 {} \;`,
+        '/home/nebu/.local/share/com.epicgames.eglv2/compat/runtime/GE-Proton10-34/version\n1774238111 GE-Proton10-34'
+      ]);
+      assert.equal((body.match(/<figure class="article-figure">/g)||[]).length,7);
+      for(const source of a.sourceUrls)assert.ok(body.includes('href="'+source+'"'),source);
       return;
     }
     if(a.topic==='worldnode-nginx'){
