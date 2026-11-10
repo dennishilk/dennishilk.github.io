@@ -21,6 +21,14 @@
 </div>
 </section>
 
+<section class="forever-level-story" aria-label="Meine kleine Blizzard-API-Geschichte">
+<p class="forever-level-kicker">Ein Vormittag in Azeroth und auf Worldnode · 10. November 2026</p>
+<h3>„Und, welches Level bist du?“</h3>
+<p class="forever-level-dialogue"><strong>„14.“</strong> – „Hä? Warst du heute Morgen nicht auch schon 14?“ – <strong>„Ja! Aber mein Debian-Server kann jetzt über die Blizzard-API meinen untoten Paladin beobachten. Sogar meine Berufe!“</strong></p>
+<p>Nur noch etwa 20 Prozent fehlten bis Stufe 15. Andere Leute hätten schnell eine Quest erledigt. Ich habe stattdessen den ganzen Vormittag API-Endpunkte untersucht, OAuth-Zugangsdaten eingerichtet und einen Python-Collector für meinen Blog gebaut.</p>
+<p>Während andere WoW spielen und ihren Charakter leveln, sitze ich in meiner Fish-Shell unter Arch Linux und frage meinen Debian-13-Server Worldnode, ob er weiß, wie es meinem untoten Paladin in Azeroth geht. Die Antwort kam tatsächlich: Dennis Hilk, Untoter, Paladin, Horde, Stufe 14. Ich suche mir offenbar immer neue Gründe, Linux-Server zu beschäftigen. 😄</p>
+</section>
+
 <h2 id="destromath">Wie aus Nebukatneza nebu wurde</h2>
 <p>Mein erstes World of Warcraft spielte ich auf Destromath, einem deutschen EU-PvP-Realm. Horde, untoter Hexenmeister, Gilde <em>Klinge der Macht</em>. Irgendwann wurde aus Nebukatneza einfach <strong>nebu</strong>. Der Name blieb auch außerhalb von WoW hängen. <a href="/de/blog/warum-ich-nebu-heisse/">Wie ich zu meinem Namen nebu kam</a>, habe ich schon einmal aufgeschrieben.</p>
 <p>Die Geschichte meines Hexenmeisters ging nach Stufe 60 weiter. <strong>Ich habe jede Erweiterung von The Burning Crusade bis einschließlich Dragonflight gespielt, und Nebukatneza blieb mein Hauptcharakter.</strong> Mal mit einer Pause dazwischen, mal erst mitten in einer Erweiterung wieder eingestiegen. Die Kontinente, Talentbäume und Regeln wechselten. Wenn ich zurückkam, hatte ich immer noch meinen Hexenmeister.</p>
@@ -70,9 +78,8 @@
 <p>Auf Cthulhu spiele ich unter Arch Linux mit dwm. Für World of Warcraft starte ich Battle.net über Lutris und Wine. Dort installiere und starte ich die jeweilige WoW-Version. Meine Steam-Spiele laufen auf einem anderen Weg über Steam und Proton. Wie ich beide Wege eingerichtet habe, steht in meinem <a href="/de/blog/linux-gaming-steam-proton-lutris/">Linux-Gaming-Artikel über Steam, Proton und Lutris</a>.</p>
 
 <h2 id="observer-tech">Wie der WoW Forever Observer funktioniert</h2>
-<p>Andere spielen WoW und leveln ihren Charakter. Ich sitze in meiner Fish-Shell unter Arch Linux und frage meinen Debian-Server in Braunschweig, ob er weiß, wie es meinem untoten Paladin in Azeroth geht. Die Antwort kam tatsächlich: Dennis Hilk, Untoter, Paladin, Horde, Stufe 14. Manchmal suche ich wohl einfach neue Gründe, Linux-Server zu beschäftigen. 😄</p>
 <p>Die unabhängige Armory beschreibt zwei Verzögerungen. Charaktere erscheinen ab Stufe 10 nach dem Ausloggen. Danach kann die Armory noch einen älteren gespeicherten Stand anzeigen. Ein automatischer Abruf könnte später eine höhere Stufe und neu gemeldete Erfolge als datierte Meilensteine anzeigen. Den exakten Moment des Stufenaufstiegs kann er daraus nicht ableiten. Wenn zwischen zwei Abrufen mehrere Stufen vergehen, gehört nur der tatsächlich beobachtete Stand in die Chronik.</p>
-<p>Die offizielle Blizzard-API liefert für meinen Forever-Charakter bereits erfolgreich Stufe, Erfahrungspunkte, Ausrüstung, Berufe und weitere Profilwerte. Den authentifizierten Abruf habe ich am 10. November 2026 direkt von meinem Debian-13-Server Worldnode getestet. Der regelmäßige Collector ist noch nicht aktiviert. Sobald er eingerichtet ist, soll er nur zulässige öffentliche Anzeigedaten als zeitlich begrenzte JSON-Momentaufnahme veröffentlichen. Der letzte erfolgreiche Abgleich wird stets angezeigt; ein verzögerter Stand wird nicht als live ausgegeben.</p>
+<p>Die offizielle Blizzard-API liefert Stufe, Erfahrungspunkte, Ausrüstung und Berufe meines Forever-Charakters. Am 10. November 2026 habe ich den Python-Collector auf meinem Debian-13-Server Worldnode erfolgreich getestet und den ersten echten JSON-Snapshot veröffentlicht. Er enthält nur ausgewählte Anzeigedaten, keine Zugangsdaten und keine dauerhafte Spielchronik. Die Website zeigt den Zeitpunkt des letzten erfolgreichen Abgleichs; die stündliche automatische Ausführung wird separat eingerichtet. Ein älterer Stand ist ausdrücklich kein Live-Telemetriesignal.</p>
 <p>Früher kam ich als Nebukatneza nach Azeroth und ging irgendwann als nebu wieder raus. Diesmal war die Reihenfolge einfacher. Nach rund zwanzig Jahren bin ich einfach als Dennis Hilk reingegangen.</p>
 
 <h2 id="quellen">Quellen und Bildnachweise</h2>
