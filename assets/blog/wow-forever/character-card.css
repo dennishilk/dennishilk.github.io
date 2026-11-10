@@ -78,3 +78,28 @@
 .forever-character .forever-data-list li { padding: 5px 0; border-bottom: 1px solid rgba(243,209,137,.1); overflow-wrap: anywhere; }
 .forever-character .forever-last-login { font-size: .82rem; color: #d0c3a8; }
 @media (max-width: 400px) { .forever-character .forever-metrics { grid-template-columns: minmax(0,1fr); } }
+
+/* A personal anecdote sits beneath the API-powered character portrait. */
+.forever-level-story {
+  margin: -8px 0 36px;
+  padding: 18px clamp(16px, 3vw, 24px);
+  border-left: 3px solid #c49b59;
+  background: linear-gradient(100deg, rgba(171,126,56,.09), transparent 78%);
+  border-radius: 0 6px 6px 0;
+}
+.forever-level-story .forever-level-kicker {
+  margin: 0 0 10px;
+  color: #d0ad6a;
+  font-size: .82rem;
+  letter-spacing: .01em;
+}
+.forever-level-story h3 {
+  margin: 0 0 10px;
+  font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+  color: #f3d189;
+  line-height: 1.35;
+}
+.forever-level-story p { margin: 0 0 12px; }
+.forever-level-story p:last-child { margin-bottom: 0; }
+.forever-level-story .forever-level-dialogue { line-height: 1.75; }
+.forever-level-story .forever-level-dialogue strong { color: #f3d189; }
