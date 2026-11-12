@@ -23,6 +23,11 @@ const escape=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;')
 const e=escape;
 const attr=(href,label,extra='')=>`<a href="${e(href)}"${extra?' '+extra:''}>${e(label)}</a>`;
 const author={'@type':'Person',name:'Dennis Hilk',url:origin+'/about/'};
+const wmCover={
+ path:assets+'/screens/cthulhu-dwm-2026-11-12.webp',w:2048,h:857,
+ title:'Cthulhu · Arch Linux · dwm (X11)',artist:author.name,source:author.url
+};
+const images={...screens,'cthulhu-dwm':wmCover};
 
 function write(path,text) {
  const file=join(root,path,'index.html');
@@ -39,6 +44,7 @@ function build(lang) {
  const t=(de,en)=>idx?en:de;
  const home=de?'/de/':'/',blog=prefix+'/blog/';
  const imageLabels={
+  'cthulhu-dwm':t('Cthulhu mit Arch Linux und dwm unter X11. Links oben zeigt ein Kitty-Terminal die Systemdaten.','Cthulhu running Arch Linux and dwm on X11, with system information in a Kitty terminal at the top left.'),
   arch:t('Ultrabreiter Arch-Desktop mit dwm, dunklem Hintergrund, Terminals und Systemmonitoren','Ultrawide Arch desktop with dwm, a dark background, terminals and system monitors'),
   gentoo:t('Gentoo-Desktop mit xmonad, Steam und mehreren Terminals','Gentoo desktop with xmonad, Steam and several terminals'),
   nixos:t('Cthulhu mit dunklem xmonad-Desktop und Drachenhintergrund','Cthulhu with a dark xmonad desktop and dragon wallpaper'),
@@ -60,14 +66,17 @@ function build(lang) {
   xfce:t('Xfce 4.20 mit Panel und Desktop','Xfce 4.20 with panel and desktop')
  };
  function figure(id,hero=false) {
-  const image=screens[id];
+  const image=images[id];
   const alt=imageLabels[id];
   return `<figure><a data-enlarge href="${e(image.path)}" aria-label="${e(t('Vergrößern: ','Enlarge: ')+image.title)}"><img src="${e(image.path)}" width="${image.w}" height="${image.h}" ${hero?'fetchpriority="high"':'loading="lazy"'} decoding="async" alt="${e(alt)}"></a><figcaption>${e(image.title)} · ${attr(image.source,image.artist)}</figcaption></figure>`;
  }
  function shell(type,guide,body) {
   const {title,seoTitle,description,cover}=guide;
-  const path=routes[type][lang],url=origin+path,alt=routes[type][other],image=screens[cover];
-  const wmAssetVersion=type==='wm'?'?v=20261112-wm-challenge':'';
+  const path=routes[type][lang],url=origin+path,alt=routes[type][other],image=images[cover];
+  const wmAssetVersion=type==='wm'?'?v=20261112-wm-desktop':'';
+  const fullSizeLink=type==='wm'
+   ?' '+attr(image.path,t('Originalgröße öffnen','Open full-size image'),'class="button" data-lightbox-original target="_blank" rel="noopener" hidden')
+   :'';
   const crumbs=[{name:t('Startseite','Home'),item:origin+home},{name:'Blog',item:origin+blog},{name:title,item:url}];
   const schema={'@context':'https://schema.org','@graph':[
    {'@type':'BlogPosting','@id':url+'#article',url,inLanguage:lang,headline:title,mainEntityOfPage:url,
@@ -112,7 +121,7 @@ ${cover?`<script type="module" src="${assets}/ui.js${wmAssetVersion}"></script>`
 <nav class="breadcrumbs" aria-label="${t('Brotkrümelnavigation','Breadcrumbs')}">${attr(home,t('Startseite','Home'))} / ${attr(blog,'Blog')} / <span aria-current="page">${e(title)}</span></nav>
 ${body}
 </main>
-${cover?`<dialog data-lightbox aria-labelledby="image-caption"><button type="button">${t('Schließen','Close')}</button><figure><img alt=""><figcaption id="image-caption"></figcaption></figure></dialog>`:''}
+${cover?`<dialog data-lightbox aria-labelledby="image-caption"><button type="button">${t('Schließen','Close')}</button>${fullSizeLink}<figure><img alt=""><figcaption id="image-caption"></figcaption></figure></dialog>`:''}
 <footer><div class="wrap"><span>© 2026 Dennis Hilk · Wiesmoor</span>${attr('/impressum.html',t('Impressum','Legal notice'))}${attr('/datenschutzerklaerung.html',t('Datenschutz','Privacy'))}</div></footer>
 </body></html>
 `;
@@ -207,7 +216,7 @@ ${select('mod',t('Modifikatortaste','Modifier key'),[['super','Super / Windows']
    seoTitle:t('Linux-WM-Konfigurator für den ersten Login','Linux Window Manager Config Generator'),
    description:t('Erstelle eine Linux-Starter-Konfiguration für xmonad, dwm, i3, Sway, Hyprland, niri, labwc oder AwesomeWM. Mit Paketen, Tastenkürzeln und Hilfe zum ersten Login.','Generate a Linux starter config for xmonad, dwm, i3, Sway, Hyprland, niri, labwc or AwesomeWM. Get package commands, keybindings and first-login help.'),
    intro:t('Beim ersten Login in einen neuen Window Manager brauche ich ein Terminal, einen Programmstarter und einen Rückweg zur bisherigen Sitzung. Hier kannst du dir die passende Starter-Konfiguration samt Paketplan und Tastenkürzeln erstellen.','On the first login to a new window manager, I want a working terminal, an application launcher and a way back to my old session. Build a starter config here, with the package commands and keybindings for your setup.'),
-   cover:'nixos'
+   cover:'cthulhu-dwm'
   },
   updates:{
    title:t('Linux-Updates verstehen','Linux Updates Explained'),
@@ -262,7 +271,7 @@ ${prose(firstLogin)}
 ${prose(display)}
 ${wmChallenge}
 <section id="credits" class="article-copy"><h2>${t('Bildnachweise','Image credits')}</h2><ul>
-<li>${attr(screens.nixos.source,screens.nixos.title)} · ${e(screens.nixos.artist)}</li></ul></section>`);
+<li>${e(wmCover.title)} · ${attr(wmCover.source,wmCover.artist)}</li></ul></section>`);
 
  article('updates','updates',[['updates',topics.updates]],updateContent);
 

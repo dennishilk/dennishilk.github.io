@@ -337,6 +337,7 @@ function gallery() {
  const dialog=$('[data-lightbox]');
  if (typeof dialog?.showModal!=='function') return;
  const close=$('button',dialog), image=$('img',dialog),caption=$('figcaption',dialog);
+ const original=$('[data-lightbox-original]',dialog);
  let trigger=null;
  document.addEventListener('click',event=>{
   const anchor=event.target.closest('[data-enlarge]');
@@ -348,6 +349,7 @@ function gallery() {
   image.src=anchor.href;image.alt=thumb.alt;
   caption.textContent=sourceCaption?.textContent||thumb.alt;
   caption.hidden=!sourceCaption;
+  if (original) original.hidden=original.href!==anchor.href;
   dialog.showModal();close.focus();
  });
  close.addEventListener('click',()=>dialog.close());
