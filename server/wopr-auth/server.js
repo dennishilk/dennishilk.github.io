@@ -38,6 +38,7 @@ const MAX_CALLSIGN_LENGTH = 40;
 const MAX_ORIGIN_LENGTH = 80;
 const MAX_MESSAGE_LENGTH = 1200;
 const PUBLIC_PAGE_SIZE = 10;
+const ADMIN_RECENT_LIMIT = 100;
 const ALLOWED_EVENTS = new Set([
   "wopr_view",
   "login_failed",
@@ -186,6 +187,14 @@ function chronologicalTransmissionOrder(left, right) {
   return String(left.id || "").localeCompare(String(right.id || ""));
 }
 
+// A manual timestamp correction affects only public display/order, not the original receipt.
+function publishedTransmissionOrder(left, right) {
+  const timeDifference = Date.parse(left.displayAt || left.receivedAt || "") -
+    Date.parse(right.displayAt || right.receivedAt || "");
+  if (Number.isFinite(timeDifference) && timeDifference !== 0) return timeDifference;
+  return chronologicalTransmissionOrder(left, right);
+}
+
 function migrateSignalNumbers(records, startingNumber = 1) {
   let nextSignalNumber = Number.isSafeInteger(startingNumber) && startingNumber > 0 ? startingNumber : 1;
   for (const record of records) {
@@ -311,7 +320,7 @@ function publicTransmission(record) {
     callsign: record.callsign,
     origin: record.origin,
     message: record.message,
-    receivedAt: record.receivedAt,
+    receivedAt: record.displayAt || record.receivedAt,
     status: record.status,
     signal_number: record.signal_number,
   };
@@ -349,12 +358,21 @@ async function handleSubmitTransmission(req, res) {
   return sendJson(res, CONFIG.transmissionModeration ? 202 : 201, { ok: true, message: responseMessage });
 }
 
+function adminTransmission(record) {
+  return {
+    ...publicTransmission(record),
+    receivedAt: record.receivedAt,
+    displayAt: record.displayAt || null,
+    displayTimeEditedAt: record.displayTimeEditedAt || null,
+  };
+}
+
 async function handlePublicTransmissions(req, res) {
   const pageValue = new URL(req.url, "http://localhost").searchParams.get("page") || "1";
   if (!/^[1-9][0-9]{0,8}$/.test(pageValue)) return sendJson(res, 400, { ok: false });
   const records = await readTransmissions();
   const approved = records.filter((record) => record.status === "APPROVED")
-    .sort(chronologicalTransmissionOrder).reverse();
+    .sort(publishedTransmissionOrder).reverse();
   const total = approved.length;
   const totalPages = Math.max(1, Math.ceil(total / PUBLIC_PAGE_SIZE));
   const page = Math.min(Number(pageValue), totalPages);
@@ -369,6 +387,56 @@ async function handlePendingTransmissions(req, res) {
   return sendJson(res, 200, { ok: true, pending, count: pending.length });
 }
 
+async function handleRecentTransmissions(req, res) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  const records = await readTransmissions();
+  const recent = records.slice(-ADMIN_RECENT_LIMIT).reverse().map(adminTransmission);
+  const pendingCount = records.filter((record) => record.status === "PENDING").length;
+  return sendJson(res, 200, {
+    ok: true, recent, count: recent.length, total: records.length,
+    pending_count: pendingCount, limit: ADMIN_RECENT_LIMIT,
+  });
+}
+
+function validDisplayAt(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value &&
+    timestamp >= Date.parse("2000-01-01T00:00:00.000Z") &&
+    timestamp < Date.parse("2100-01-01T00:00:00.000Z");
+}
+
+async function updateTransmissionDisplayTime(req, res, id) {
+  if (!requireSession(req)) return sendJson(res, 401, { ok: false });
+  if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
+  if (!requireJsonContent(req)) return sendJson(res, 415, { ok: false });
+  if (!/^[a-zA-Z0-9-]{1,100}$/.test(id)) return sendJson(res, 400, { ok: false });
+  const body = await readJson(req);
+  if (!body || typeof body !== "object" || Array.isArray(body) ||
+      Object.keys(body).length !== 1 || !Object.hasOwn(body, "displayAt") ||
+      (body.displayAt !== null && !validDisplayAt(body.displayAt))) {
+    return sendJson(res, 400, { ok: false, message: "INVALID DATE/TIME" });
+  }
+  const record = await enqueueTransmissionWrite(async () => {
+    await ensureTransmissionStore();
+    const content = await fs.readFile(transmissionPath(), "utf8");
+    const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+    const found = records.find((entry) => entry.id === id);
+    if (!found) return null;
+    if (body.displayAt === null) {
+      delete found.displayAt;
+      delete found.displayTimeEditedAt;
+    } else {
+      found.displayAt = body.displayAt;
+      found.displayTimeEditedAt = new Date().toISOString();
+    }
+    await replaceTransmissionFile(records);
+    return found;
+  });
+  if (!record) return sendJson(res, 404, { ok: false });
+  return sendJson(res, 200, { ok: true, transmission: adminTransmission(record) });
+}
+
 async function updateTransmissionStatus(req, res, id, status) {
   if (!requireSession(req)) return sendJson(res, 401, { ok: false });
   if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
@@ -378,10 +446,12 @@ async function updateTransmissionStatus(req, res, id, status) {
     const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
     // Approved posts may be hidden later without erasing the historical record.
     const record = records.find((entry) => entry.id === id &&
-      (entry.status === "PENDING" || (status === "REJECTED" && entry.status === "APPROVED")));
+      (entry.status === "PENDING" ||
+       (status === "REJECTED" && entry.status === "APPROVED") ||
+       (status === "APPROVED" && entry.status === "REJECTED")));
     if (!record) return false;
     let nextSignalNumber;
-    if (status === "APPROVED") {
+    if (status === "APPROVED" && !Number.isSafeInteger(record.signal_number)) {
       let state = { next_signal_number: 1 };
       try { state = JSON.parse(await fs.readFile(signalStatePath(), "utf8")); } catch (error) {
         if (error.code !== "ENOENT") throw error;
@@ -392,7 +462,7 @@ async function updateTransmissionStatus(req, res, id, status) {
     record.status = status;
     record.reviewedAt = new Date().toISOString();
     await replaceTransmissionFile(records);
-    if (status === "APPROVED") {
+    if (Number.isSafeInteger(nextSignalNumber)) {
       await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: nextSignalNumber + 1 })}\n`, { mode: 0o640 });
     }
     return true;
@@ -569,6 +639,9 @@ async function route(req, res) {
     if (req.method === "POST" && url.pathname === "/api/transmissions") return await handleSubmitTransmission(req, res);
     if (req.method === "GET" && url.pathname === "/api/transmissions") return await handlePublicTransmissions(req, res);
     if (req.method === "GET" && url.pathname === "/wopr/api/transmissions/pending") return await handlePendingTransmissions(req, res);
+    if (req.method === "GET" && url.pathname === "/wopr/api/transmissions/recent") return await handleRecentTransmissions(req, res);
+    const timeMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/time$/);
+    if (req.method === "POST" && timeMatch) return await updateTransmissionDisplayTime(req, res, timeMatch[1]);
     if (req.method === "GET" && url.pathname === "/wopr/api/security/summary") return await handleSecuritySummary(req, res);
     if (req.method === "GET" && url.pathname === "/wopr/api/security/findings") return await handleSecurityFindings(req, res);
     if (req.method === "GET" && url.pathname === "/wopr/api/security/self-check") return await handleSecuritySelfCheck(req, res);
@@ -580,6 +653,8 @@ async function route(req, res) {
     if (req.method === "POST" && rejectMatch) return await updateTransmissionStatus(req, res, rejectMatch[1], "REJECTED");
     const hideMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/hide$/);
     if (req.method === "POST" && hideMatch) return await updateTransmissionStatus(req, res, hideMatch[1], "REJECTED");
+    const restoreMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/restore$/);
+    if (req.method === "POST" && restoreMatch) return await updateTransmissionStatus(req, res, restoreMatch[1], "APPROVED");
     return sendJson(res, 404, { ok: false });
   } catch (error) {
     return sendJson(res, error.status || 500, { ok: false });
