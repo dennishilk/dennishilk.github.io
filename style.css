@@ -147,16 +147,6 @@ h1 {
 }
 .card h3 { color: var(--accent); margin-bottom: 0.6rem; }
 .card p { color: #c9d1d9; }
-.linux-companions-card details { border-top: 1px solid var(--border); padding-block: .35rem; }
-.linux-companions-card summary { cursor: pointer; padding-block: .35rem; }
-.linux-companions-card details p { margin: .3rem 0 .5rem; }
-.linux-companions-card details a { display: inline-block; color: var(--accent); margin-bottom: .35rem; }
-.linux-companions-card :is(summary, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) {
-  .linux-companions-card { transition: none; }
-  .linux-companions-card:hover { transform: none; }
-}
-
 
 /* Footer */
 footer {

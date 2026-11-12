@@ -10,7 +10,7 @@ test('homepage presents the author identity and exact featured project order', (
   const start = homepage.indexOf('<section class="projects">');
   const projects = homepage.slice(start, homepage.indexOf('</section>', start));
   assert.deepEqual([...projects.matchAll(/<h3>([^<]+)<\/h3>/g)].map(match => match[1]), [
-    'The Lost Administrator', 'Linux Fix Lab', 'Linux Companions', 'BoringOS', 'Free Image Converter'
+    'The Lost Administrator', 'Linux Fix Lab', 'Distro &amp; WM Companion', 'BoringOS', 'Free Image Converter'
   ]);
   assert.doesNotMatch(projects, /NVIDIA Installer/);
   const storyCard = projects.slice(projects.indexOf('<a href="/lost-administrator/"'), projects.indexOf('</a>', projects.indexOf('<a href="/lost-administrator/"')));

@@ -128,7 +128,12 @@ test('both languages have indexable profiles, credited image files and reciproca
   const home=read(prefix+'index.html');
   const featured=home.split('class="cards"')[1].split('</section>')[0];
   assert.equal((featured.match(/class="card\b/g)||[]).length,5);
-  assert.ok(featured.includes('href="'+toolPath+'"')&&featured.includes('href="/linux-migration-companion/"'));
+  const cardStart=featured.indexOf('<a href="'+toolPath+'" class="card">');
+  assert.ok(cardStart>=0);
+  const card=featured.slice(cardStart,featured.indexOf('</a>',cardStart));
+  assert.match(card,/<h3>Distro &amp; WM Companion<\/h3>\s*<p>[^<]+<\/p>/);
+  assert.doesNotMatch(card,/<(?:details|summary|button)\b|fa-arrow/);
+  assert.match(tool,/href="\/linux-migration-companion\/"/);
   assert.ok(read(prefix+'blog/feed.xml').includes(articlePath));
  }
 });
