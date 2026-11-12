@@ -25,9 +25,9 @@
 <meta property="article:published_time" content="2026-11-12">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.png">
-<link rel="stylesheet" href="/assets/linux-distro-finder/style.css">
+<link rel="stylesheet" href="/assets/linux-distro-finder/style.css?v=20261112-wm-image">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/linux-wm-konfigurator/#article","url":"https://www.dennishilk.com/de/blog/linux-wm-konfigurator/","inLanguage":"de","headline":"WM-Konfigurator für den ersten Login","mainEntityOfPage":"https://www.dennishilk.com/de/blog/linux-wm-konfigurator/","articleSection":"Linux Tutorials","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"description":"Erstelle eine Linux-Starter-Konfiguration für xmonad, dwm, i3, Sway, Hyprland, niri, labwc oder AwesomeWM. Mit Paketen, Tastenkürzeln und Hilfe zum ersten Login.","image":"https://www.dennishilk.com/assets/linux-distro-finder/screens/nixos.webp","datePublished":"2026-11-12","dateModified":"2026-11-12"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"WM-Konfigurator für den ersten Login","item":"https://www.dennishilk.com/de/blog/linux-wm-konfigurator/"}]}]}</script>
-<script type="module" src="/assets/linux-distro-finder/ui.js"></script>
+<script type="module" src="/assets/linux-distro-finder/ui.js?v=20261112-wm-image"></script>
 </head><body>
 <a href="#main" class="skip">Zum Inhalt</a>
 <header class="top"><div class="wrap"><a href="/de/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk</a><a href="/de/blog/">Blog</a><a class="language" href="/blog/linux-window-manager-config-generator/" lang="en" hreflang="en" aria-label="Read in English">EN</a></div></header>
@@ -55,12 +55,7 @@
 <p>Welche Einstellungen verfügbar sind, hängt vom Window Manager ab. Installiere eine gewählte Schrift bei Bedarf separat.</p>
 <div class="form-grid" data-design></div><label class="check"><input type="checkbox" name="wallpaper"> Hintergrundbild einrichten</label></details>
 <p tabindex="-1" role="alert" data-build-error></p><button class="primary" type="submit">Konfiguration erstellen</button></form>
-<div class="panel" data-build-output hidden></div>
-<details class="egg"><summary><img src="/assets/linux-distro-finder/itsfine.webp" width="1535" height="1024" loading="lazy" alt=""> Ach, übrigens…</summary><div>
-<h3>EXTREMER LINUX-MODUS FREIGESCHALTET</h3><p><strong>Gentoo + ratpoison + NVIDIA + Steam</strong></p>
-<p><em>Empfohlen für Leute, die ihren Desktop zur Entspannung am Wochenende kompilieren.</em></p>
-<p><strong>„Weil’s geht!“</strong></p><p><a href="/assets/linux-distro-finder/itsfine.webp">Bild in voller Größe ansehen</a></p><p>Eine absichtlich anspruchsvolle Kombination. Prüfe X11-Sitzung, Treiber, 32-Bit-Bibliotheken und Steam separat.</p>
-<p><a href="https://wiki.archlinux.org/title/Ratpoison">Herausforderung angenommen? Über ratpoison</a></p></div></details></section>
+<div class="panel" data-build-output hidden></div></section>
 <section class="article-copy" id="install"><h2>Vom Installationsmedium zum ersten Login</h2>
 <ol><li>Sichere deine Dateien und lade ein offizielles Installationsmedium. Prüfe Signatur oder Prüfsumme anhand der Dokumentation. Ein Live-System oder eine VM hilft beim ersten Ausprobieren.</li><li>Prüfe Ziellaufwerk und Partitionsplan. Wähle einen vollständigen Desktop, wenn du am ersten Tag Dateimanager, Netzwerk und Einstellungen brauchst.</li><li>Aktualisiere das installierte System mit dem Weg für deine Distribution. Installiere die gewünschten Programme und die Sitzung, bevor du deine bisherige Sitzung verlässt.</li><li>Öffne Terminal und Browser in der bisherigen Sitzung. Sichere bestehende Konfigurationen und prüfe die neuen. Wähle dann beim Anmelden die neue Sitzung.</li></ol>
 <p>APT und DNF verwenden konfigurierte Paketquellen und lösen Abhängigkeiten auf. Bei Pacman gehört die Installation auf ein vollständig aktualisiertes System. Portage wertet Profile und USE-Flags aus. NixOS baut das System aus seiner Deklaration. Flatpak-Anwendungen haben eigene Laufzeitumgebungen und Quellen. <a href="/de/blog/linux-updates-verstehen/#updates">Update-Anleitungen für alle elf Distributionen</a></p></section>
@@ -77,10 +72,16 @@
 <tr><th scope="row">Fernzugriff</th><td>Eine X11-Anwendung über SSH weiterleiten, eine bestehende Sitzung teilen und vor dem Login fernsteuern sind drei verschiedene Aufgaben. Unter Wayland hängen Freigabe, Freigabedialoge und unbeaufsichtigter Zugriff von Desktop und Werkzeug ab. Teste den genauen Ablauf.</td></tr>
 </tbody></table></div>
 <p>Ich spiele auf Cthulhu mit Arch Linux und dwm unter X11, einschließlich Steam/Proton und Lutris. Ich habe auch unter NixOS mit Sway auf Wayland gespielt. Das sind Erfahrungen aus meinem Setup. <a href="/de/blog/arch-linux-dwm-cthulhu/">Cthulhu mit Arch und dwm</a> · <a href="/de/blog/sway-konfiguration-verstehen/">Sway-Konfiguration erklärt</a></p></section>
+<section class="article-copy" id="ratpoison-challenge">
+<h2>Herausforderung angenommen?</h2>
+<p><strong>Gentoo + ratpoison + NVIDIA + Steam</strong></p>
+<p>Ich würde Gentoo mit einem Multilib-Profil einrichten, den passenden NVIDIA-Treiber installieren und ratpoison unter X11 starten. Wenn ich per Tastenkürzel ein Terminal öffnen kann, würde ich die 32-Bit-Grafikbibliotheken für NVIDIA einrichten und Steam aus dem Steam-Overlay installieren.</p>
+<p class="inline-links"><a href="https://wiki.archlinux.org/title/Ratpoison">Ratpoison</a><a href="https://wiki.gentoo.org/wiki/Steam">Steam unter Gentoo</a></p>
+<p>Den Rest musst du selbst rausfinden. :D</p></section>
 <section id="credits" class="article-copy"><h2>Bildnachweise</h2><ul>
-<li><a href="/blog/nixos-xmonad-kanagawa-dragon/">NixOS · xmonad · Cthulhu</a> · Dennis Hilk</li>
-<li>It’s Fine · von Dennis Hilk bereitgestelltes, bearbeitetes Motiv.</li></ul></section>
+<li><a href="/blog/nixos-xmonad-kanagawa-dragon/">NixOS · xmonad · Cthulhu</a> · Dennis Hilk</li></ul></section>
 <section><h2>Weiterlesen</h2><p class="inline-links"><a href="/de/blog/welche-linux-distribution-passt-zu-mir-2026/">Welche Linux-Distribution passt zu dir?</a><a href="/de/blog/linux-updates-verstehen/">Linux-Updates verstehen</a></p></section>
+<figure class="wm-article-image"><a data-enlarge href="/assets/linux-distro-finder/itsfine.webp" aria-label="It’s Fine vergrößern"><img src="/assets/linux-distro-finder/itsfine.webp" width="1535" height="1024" loading="lazy" decoding="async" alt="Dennis sitzt mit einer Tasse Tee im brennenden Linux-Zimmer. Auf dem Bildschirm steht ein GRUB-Fehler."></a></figure>
 </article>
 </main>
 <dialog data-lightbox aria-labelledby="image-caption"><button type="button">Schließen</button><figure><img alt=""><figcaption id="image-caption"></figcaption></figure></dialog>

@@ -67,6 +67,7 @@ function build(lang) {
  function shell(type,guide,body) {
   const {title,seoTitle,description,cover}=guide;
   const path=routes[type][lang],url=origin+path,alt=routes[type][other],image=screens[cover];
+  const wmAssetVersion=type==='wm'?'?v=20261112-wm-image':'';
   const crumbs=[{name:t('Startseite','Home'),item:origin+home},{name:'Blog',item:origin+blog},{name:title,item:url}];
   const schema={'@context':'https://schema.org','@graph':[
    {'@type':'BlogPosting','@id':url+'#article',url,inLanguage:lang,headline:title,mainEntityOfPage:url,
@@ -101,9 +102,9 @@ ${image?`<meta property="og:image" content="${origin+image.path}">
 <meta property="article:published_time" content="${date}">
 <meta name="twitter:card" content="${image?'summary_large_image':'summary'}">
 <link rel="icon" href="/favicon.png">
-<link rel="stylesheet" href="${assets}/style.css${type==='finder'?'?v=20261112-distro-cards':''}">
+<link rel="stylesheet" href="${assets}/style.css${type==='finder'?'?v=20261112-distro-cards':wmAssetVersion}">
 <script type="application/ld+json">${JSON.stringify(schema).replaceAll('<','\\u003c')}</script>
-${cover?`<script type="module" src="${assets}/ui.js"></script>`:''}
+${cover?`<script type="module" src="${assets}/ui.js${wmAssetVersion}"></script>`:''}
 </head><body>
 <a href="#main" class="skip">${t('Zum Inhalt','Skip to content')}</a>
 <header class="top"><div class="wrap"><a href="${home}"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk</a><a href="${blog}">Blog</a><a class="language" href="${alt}" lang="${other}" hreflang="${other}" aria-label="${t('Read in English','Auf Deutsch lesen')}">${other.toUpperCase()}</a></div></header>
@@ -181,12 +182,17 @@ ${select('mod',t('Modifikatortaste','Modifier key'),[['super','Super / Windows']
 <p>${t('Welche Einstellungen verfügbar sind, hängt vom Window Manager ab. Installiere eine gewählte Schrift bei Bedarf separat.','Available settings depend on the window manager. Install the selected font separately if needed.')}</p>
 <div class="form-grid" data-design></div><label class="check"><input type="checkbox" name="wallpaper"> ${t('Hintergrundbild einrichten','Set up wallpaper')}</label></details>
 <p tabindex="-1" role="alert" data-build-error></p><button class="primary" type="submit">${t('Konfiguration erstellen','Generate configuration')}</button></form>
-<div class="panel" data-build-output hidden></div>
-<details class="egg"><summary><img src="${assets}/itsfine.webp" width="1535" height="1024" loading="lazy" alt=""> ${t('Ach, übrigens…','By the way…')}</summary><div>
-<h3>${t('EXTREMER LINUX-MODUS FREIGESCHALTET','EXTREME LINUX MODE UNLOCKED')}</h3><p><strong>Gentoo + ratpoison + NVIDIA + Steam</strong></p>
-<p><em>${t('Empfohlen für Leute, die ihren Desktop zur Entspannung am Wochenende kompilieren.','Recommended for people who consider compiling their desktop a relaxing weekend activity.')}</em></p>
-<p><strong>„Weil’s geht!“</strong></p><p>${attr(assets+'/itsfine.webp',t('Bild in voller Größe ansehen','View the full image'))}</p><p>${t('Eine absichtlich anspruchsvolle Kombination. Prüfe X11-Sitzung, Treiber, 32-Bit-Bibliotheken und Steam separat.','An intentionally challenging novelty combination. Check the X11 session, driver, 32-bit libraries and Steam separately.')}</p>
-<p>${attr('https://wiki.archlinux.org/title/Ratpoison',t('Herausforderung angenommen? Über ratpoison','Challenge accepted? About ratpoison'))}</p></div></details></section>`;
+<div class="panel" data-build-output hidden></div></section>`;
+
+ const wmChallenge=`<section class="article-copy" id="ratpoison-challenge">
+<h2>${t('Herausforderung angenommen?','Challenge accepted?')}</h2>
+<p><strong>Gentoo + ratpoison + NVIDIA + Steam</strong></p>
+<p>${t('Ich würde Gentoo mit einem Multilib-Profil einrichten, den passenden NVIDIA-Treiber installieren und ratpoison unter X11 starten. Wenn ich per Tastenkürzel ein Terminal öffnen kann, würde ich die 32-Bit-Grafikbibliotheken für NVIDIA einrichten und Steam aus dem Steam-Overlay installieren.','I’d set up Gentoo with a multilib profile, install the matching NVIDIA driver and start ratpoison under X11. Once I could open a terminal with a keyboard shortcut, I’d set up NVIDIA’s 32-bit graphics libraries and install Steam from the Steam overlay.')}</p>
+<p class="inline-links">${attr('https://wiki.archlinux.org/title/Ratpoison','Ratpoison')}${attr('https://wiki.gentoo.org/wiki/Steam',t('Steam unter Gentoo','Steam on Gentoo'))}</p>
+<p>${t('Den Rest musst du selbst rausfinden. :D','You’ll have to figure out the rest yourself. :D')}</p></section>`;
+ const wmImagePath=assets+'/itsfine.webp';
+ const wmImageAlt=t('Dennis sitzt mit einer Tasse Tee im brennenden Linux-Zimmer. Auf dem Bildschirm steht ein GRUB-Fehler.','Dennis sits with a cup of tea in a burning Linux room. The monitor shows a GRUB error.');
+ const wmImage=`<figure class="wm-article-image"><a data-enlarge href="${wmImagePath}" aria-label="${t('It’s Fine vergrößern','Enlarge It’s Fine')}"><img src="${wmImagePath}" width="1535" height="1024" loading="lazy" decoding="async" alt="${e(wmImageAlt)}"></a></figure>`;
 
  const updateContent=`<section id="updates"><h2>${t('Update-Befehle nach Distribution','Update commands by distribution')}</h2>
 <p class="lead">${t('Ein Paketupdate pflegt die installierte Version. Ein Release-Wechsel folgt eigenen Hinweisen und kann Paketquellen ändern. Firmware für Geräte kommt gegebenenfalls über fwupd oder den Hersteller. Flatpak-Apps und Laufzeiten aktualisierst du separat mit flatpak update.','Package updates maintain the installed release. A release upgrade follows its own instructions and can change repositories. Device firmware may come through fwupd or the vendor. Use flatpak update separately for Flatpak apps and runtimes.')}</p>
@@ -223,7 +229,7 @@ ${select('mod',t('Modifikatortaste','Modifier key'),[['super','Super / Windows']
 <p class="byline">${attr('/about/','Dennis Hilk')} · <time datetime="${date}">${t('12. November 2026','12 November 2026')}</time></p>
 ${attr('#'+action,topics[action],'class="button primary"')}</div>${guide.cover?figure(guide.cover,true):''}</header>`;
  }
- function article(type,action,nav,content) {
+ function article(type,action,nav,content,end='') {
   const more=Object.keys(guides).filter(key=>key!==type).map(key=>attr(routes[key][lang],guides[key].title));
   if (type==='finder') more.push(attr('/linux-migration-companion/','Linux Migration Companion'));
   const body=`<article class="guide">
@@ -231,7 +237,7 @@ ${hero(guides[type],action)}
 <nav class="section-nav" aria-label="${t('In diesem Artikel','In this article')}">${nav.map(([id,label])=>attr('#'+id,label)).join('')}</nav>
 ${content}
 <section><h2>${t('Weiterlesen','Read more')}</h2><p class="inline-links">${more.join('')}</p></section>
-</article>`;
+${end?end+'\n':''}</article>`;
   write(routes[type][lang],shell(type,guides[type],body));
  }
  article('finder','quiz',[
@@ -252,9 +258,9 @@ ${prose(maintenance)}
 ${prose(install)}
 ${prose(firstLogin)}
 ${prose(display)}
+${wmChallenge}
 <section id="credits" class="article-copy"><h2>${t('Bildnachweise','Image credits')}</h2><ul>
-<li>${attr(screens.nixos.source,screens.nixos.title)} · ${e(screens.nixos.artist)}</li>
-<li>It’s Fine · ${t('von Dennis Hilk bereitgestelltes, bearbeitetes Motiv','edited artwork supplied by Dennis Hilk')}.</li></ul></section>`);
+<li>${attr(screens.nixos.source,screens.nixos.title)} · ${e(screens.nixos.artist)}</li></ul></section>`,wmImage);
 
  article('updates','updates',[['updates',topics.updates]],updateContent);
 

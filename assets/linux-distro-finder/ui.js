@@ -344,8 +344,10 @@ function gallery() {
   event.preventDefault();
   trigger=anchor;
   const thumb=$('img',anchor);
+  const sourceCaption=anchor.closest('figure')?.querySelector('figcaption');
   image.src=anchor.href;image.alt=thumb.alt;
-  caption.textContent=anchor.closest('figure').querySelector('figcaption').textContent;
+  caption.textContent=sourceCaption?.textContent||thumb.alt;
+  caption.hidden=!sourceCaption;
   dialog.showModal();close.focus();
  });
  close.addEventListener('click',()=>dialog.close());

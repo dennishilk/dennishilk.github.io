@@ -53,7 +53,7 @@ button:disabled { opacity: .45; cursor: default; }
 .guide > section { margin-block: clamp(2.6rem,6vw,5rem); }
 .lead { max-width: 68ch; color: var(--muted); }
 .grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
-.panel, .profile, .result-list details, .egg { min-width: 0; border: 1px solid var(--line); border-radius: .8rem; background: var(--surface); }
+.panel, .profile, .result-list details { min-width: 0; border: 1px solid var(--line); border-radius: .8rem; background: var(--surface); }
 .panel { padding: clamp(.85rem,3vw,1.65rem); }
 .profile { padding: 1rem; }
 .profile h3 { margin-top: .7rem; }
@@ -122,12 +122,9 @@ input[type="radio"],input[type="checkbox"] { accent-color: var(--accent); }
 .shortcuts { padding-left: 1.2rem; }
 .shortcuts li { margin-bottom: .4rem; }
 .clipboard-temp { position: fixed; inset: 0 auto auto -100vw; }
-.egg { margin-block-start: 1rem; background: transparent; }
-.egg summary { display: flex; align-items: center; gap: .55rem; width: fit-content; min-height: 3rem; padding: .4rem .7rem; color: var(--muted); }
-.egg summary::after { content: '+'; }
-.egg[open] summary::after { content: '−'; }
-.egg img { width: 2rem; height: 1.55rem; object-fit: cover; border-radius: .2rem; }
-.egg > div { padding: .6rem 1rem; }
+.wm-article-image { max-width: 48rem; margin: 0 auto clamp(2.6rem,6vw,5rem); }
+.wm-article-image a { display: block; border-radius: .8rem; cursor: zoom-in; }
+.wm-article-image img { width: 100%; border-radius: inherit; }
 dialog { color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: .7rem; padding: 1rem; max-width: min(94vw, 91rem); max-height: 94vh; }
 dialog::backdrop { background: #05090de8; }
 dialog img { margin-top: .8rem; width: auto; max-height: 73vh; object-fit: contain; }
