@@ -16,18 +16,57 @@ function formatUtc(value) {
   return date.toISOString().replace("T", " ").replace(/\.\d{3}Z$/, " UTC");
 }
 
+const berlinDateTime = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
+});
+
+function berlinParts(date) {
+  return Object.fromEntries(berlinDateTime.formatToParts(date)
+    .filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
+}
+
 function formatLocal(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "TIME UNKNOWN";
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "medium" }).format(date);
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium", timeStyle: "medium", timeZone: "Europe/Berlin"
+  }).format(date) + " BERLIN";
 }
 
 function dateTimeLocalInput(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  const pad = (part) => String(part).padStart(2, "0");
-  return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate()) +
-    "T" + pad(date.getHours()) + ":" + pad(date.getMinutes()) + ":" + pad(date.getSeconds());
+  const p = berlinParts(date);
+  return p.year + "-" + p.month + "-" + p.day + "T" + p.hour + ":" + p.minute + ":" + p.second;
+}
+
+function berlinInputToIso(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value);
+  if (!match) return null;
+  const parts = match.slice(1).map((part) => Number(part || 0));
+  const [year, month, day, hour, minute, second] = parts;
+  const wall = Date.UTC(year, month - 1, day, hour, minute, second);
+  const canonical = new Date(wall);
+  if (canonical.getUTCFullYear() !== year || canonical.getUTCMonth() !== month - 1 ||
+      canonical.getUTCDate() !== day || canonical.getUTCHours() !== hour ||
+      canonical.getUTCMinutes() !== minute || canonical.getUTCSeconds() !== second) return null;
+
+  // Convert the exact Berlin clock time to an absolute instant, regardless of browser timezone.
+  let guess = wall;
+  for (let i = 0; i < 4; i++) {
+    const shown = berlinParts(new Date(guess));
+    const observed = Date.UTC(Number(shown.year), Number(shown.month) - 1,
+      Number(shown.day), Number(shown.hour), Number(shown.minute), Number(shown.second));
+    const delta = wall - observed;
+    if (delta === 0) break;
+    guess += delta;
+  }
+  const verified = berlinParts(new Date(guess));
+  const expected = [year, month, day, hour, minute, second].join(":");
+  const actual = [Number(verified.year), Number(verified.month), Number(verified.day),
+    Number(verified.hour), Number(verified.minute), Number(verified.second)].join(":");
+  return expected === actual ? new Date(guess).toISOString() : null;
 }
 
 function detail(label, value) {
@@ -96,7 +135,7 @@ function renderRecent(recent) {
     const editor = document.createElement("div");
     editor.className = "transmission-time-editor";
     const label = document.createElement("label");
-    label.textContent = "SET DISPLAY DATE & TIME (YOUR DEVICE'S LOCAL TIME)";
+    label.textContent = "SET PUBLIC DATE & TIME (EUROPE/BERLIN)";
     const input = document.createElement("input");
     input.type = "datetime-local";
     input.step = "1";
@@ -109,12 +148,12 @@ function renderRecent(recent) {
         setReviewStatus("ENTER A VALID DATE AND TIME.", "error");
         return;
       }
-      const date = new Date(input.value);
-      if (Number.isNaN(date.getTime())) {
-        setReviewStatus("INVALID DATE AND TIME.", "error");
+      const timestamp = berlinInputToIso(input.value);
+      if (!timestamp) {
+        setReviewStatus("INVALID BERLIN DATE/TIME (CHECK DAYLIGHT-SAVING TRANSITION).", "error");
         return;
       }
-      saveTimestamp(transmission.id, date.toISOString());
+      saveTimestamp(transmission.id, timestamp);
     });
     const reset = actionButton("ORIGINAL TIME", () => saveTimestamp(transmission.id, null));
     reset.disabled = !transmission.displayAt;
