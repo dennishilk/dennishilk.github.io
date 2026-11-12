@@ -28,9 +28,14 @@ Guestbook persistence uses a small local JSON Lines file because the workflow is
 
 All `/wopr/api/...` endpoints require the existing valid WOPR session cookie. nginx should also protect them with the same `auth_request` check.
 
-- `GET /wopr/api/transmissions/pending` — returns pending transmissions and the pending count.
-- `POST /wopr/api/transmissions/:id/approve` — marks one pending transmission as `APPROVED`.
-- `POST /wopr/api/transmissions/:id/reject` — marks one pending transmission as `REJECTED`.
+- `GET /wopr/api/transmissions/recent` — returns the last **100 stored entries** (approved, pending and rejected), plus their total count, pending count and original/optional display timestamps. Older entries remain on disk, even when not listed in WOPR.
+- `POST /wopr/api/transmissions/:id/time` — authenticated JSON `{ "displayAt": "2026-11-10T13:35:00.000Z" }`, or `{ "displayAt": null }` to reset. Changes **only the public date/time**; the immutable `receivedAt` remains for audit. The WOPR editor accepts **Europe/Berlin local clock time** (10 Nov, 14:35 CET corresponds to 13:35 UTC in storage) and the public guestbook shows that same Berlin wall-clock time.
+- `POST /wopr/api/transmissions/:id/hide` — hides an already published entry without deleting its record or signal number.
+- `POST /wopr/api/transmissions/:id/restore` — restores a hidden entry and reuses the original signal number.
+- `POST /wopr/api/transmissions/:id/approve` — publishes a pending transmission.
+- `POST /wopr/api/transmissions/:id/reject` — rejects a pending transmission.
+
+Admin actions require the existing WOPR session; mutating actions also check origin. The public guestbook always displays a record's manually chosen display time (when present), otherwise the original receipt time. The public archive is sorted by that display time, whereas the private 'last 100' list follows original storage order. No older records are automatically deleted.
 
 ## Stored data
 
