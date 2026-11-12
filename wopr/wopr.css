@@ -281,7 +281,7 @@ button:hover, .secondary-button:hover, .secondary-button:focus-visible { transfo
   color: var(--muted);
   line-height: 1.7;
 }
-#pending-count { color: var(--green); font-size: 1.6rem; }
+#pending-count, #recent-count { color: var(--green); font-size: 1.3rem; }
 .review-panel { margin-top: 1.2rem; }
 .pending-list { display: grid; gap: 0.85rem; margin-top: 0.85rem; }
 .pending-transmission {
@@ -293,6 +293,15 @@ button:hover, .secondary-button:hover, .secondary-button:focus-visible { transfo
 }
 .pending-transmission p { margin: 0 0 0.55rem; overflow-wrap: anywhere; }
 .pending-transmission strong { color: var(--amber); }
+.archive-note { color: var(--muted); line-height: 1.5; margin-top: .5rem; }
+.transmission-time-editor { margin-top: .9rem; padding: .85rem; border: 1px solid rgba(124,255,155,.25); background: rgba(124,255,155,.035); display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; }
+.transmission-time-editor label { display: flex; flex-direction: column; gap: .3rem; flex-basis: 100%; color: var(--amber); font-size: .78rem; letter-spacing: .04em; }
+.transmission-time-editor input { width: min(100%, 21rem); box-sizing: border-box; background: #07120e; border: 1px solid rgba(124,255,155,.5); color: var(--green); border-radius: 4px; font: inherit; padding: .55rem; color-scheme: dark; }
+.transmission-time-editor button { border: 1px solid rgba(124,255,155,.5); background: rgba(124,255,155,.1); color: var(--green); border-radius: 6px; padding: .55rem .7rem; font: inherit; cursor: pointer; }
+.transmission-time-editor button:disabled { opacity: .4; cursor: default; }
+.transmission-time-editor button:focus-visible, .transmission-time-editor input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.transmission-time-editor small { display: block; flex-basis: 100%; color: var(--muted); line-height: 1.5; }
+
 .moderation-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.85rem; }
 .moderation-actions button {
   border: 1px solid rgba(124, 255, 155, 0.48);
