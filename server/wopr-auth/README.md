@@ -1,13 +1,13 @@
 # WOPR auth and transmission service
 
-Small dependency-free Node.js service for the private `/wopr/dashboard/` area on `dennishilk.com` and the moderated public **INCOMING TRANSMISSIONS** guestbook.
+Small dependency-free Node.js service for the private `/wopr/dashboard/` area on `dennishilk.com` and the public **INCOMING TRANSMISSIONS** guestbook. Moderation is temporarily disabled by default; it can be restored with an environment flag.
 It reads secrets from the server environment and stores guestbook data outside the Git checkout.
 
 ## Architecture decision
 
 The existing `server/wopr-auth/` service is extended instead of adding a second server process. This keeps WOPR session validation, private moderation endpoints, and the public guestbook API in one dependency-free Node.js process on `127.0.0.1:8787`.
 
-Guestbook persistence uses a small local JSON Lines file because the workflow is append-heavy, low-volume, and moderated. No database is required for this use case.
+Guestbook persistence uses a small local JSON Lines file because the workflow is append-heavy, low-volume, and durable. No database is required for this use case.
 
 ## Endpoints
 
@@ -21,8 +21,8 @@ Guestbook persistence uses a small local JSON Lines file because the workflow is
 
 ### Public transmission API
 
-- `POST /api/transmissions` — accepts JSON `{ "callsign": "...", "origin": "...", "message": "...", "contact_channel": "" }`, stores a `PENDING` record, and returns a neutral review-pending response.
-- `GET /api/transmissions` — returns only `APPROVED` transmissions. It never returns `PENDING` or `REJECTED` records.
+- `POST /api/transmissions` — accepts JSON `{ "callsign": "...", "origin": "...", "message": "...", "contact_channel": "" }`. With moderation disabled (default), assigns a permanent signal number and immediately stores an `APPROVED` record. Set `WOPR_TRANSMISSIONS_MODERATION=true` to return to `PENDING` and manual approval.
+- `GET /api/transmissions?page=N` — returns the requested numbered page of 10 published transmissions (newest first), along with `page`, `total`, `total_pages`, and `per_page`. All approved entries are accessible across pages; there is no 50-entry archive cap. It never returns `PENDING` or `REJECTED` records.
 
 ### Private WOPR moderation API
 
@@ -38,7 +38,7 @@ Create this persistent directory on worldnode only:
 
 ```sh
 sudo install -d -m 0750 -o wopr-auth -g wopr-auth /var/lib/wopr/transmissions
-sudo install -m 0640 -o wopr-auth -g wopr-auth /dev/null /var/lib/wopr/transmissions/transmissions.jsonl
+sudo -u wopr-auth touch /var/lib/wopr/transmissions/transmissions.jsonl
 ```
 
 Records are stored as JSON Lines in:
@@ -47,7 +47,7 @@ Records are stored as JSON Lines in:
 /var/lib/wopr/transmissions/transmissions.jsonl
 ```
 
-Each record contains the visitor-provided callsign, optional origin, message, moderation status, generated id, timestamps, and a permanent `signal_number` assigned on approval. Existing approved records are migrated oldest-first. The adjacent `signal-state.json` counter prevents deleted numbers from being reused. IP addresses are not stored in these files. Do not commit `/var/lib/wopr/transmissions/` or any exported real messages.
+Each record contains the visitor-provided callsign, optional origin, message, moderation status, generated id, timestamps, and a permanent `signal_number` assigned on approval. Existing approved records are migrated oldest-first. The adjacent `signal-state.json` counter prevents deleted numbers from being reused. On startup with moderation disabled, historical `PENDING` messages are automatically published in chronological order. No records are removed. **Never recreate an existing `transmissions.jsonl` using `install ... /dev/null`: that would truncate it.** IP addresses are not stored in these files. Do not commit `/var/lib/wopr/transmissions/` or any exported real messages.
 
 ## Abuse and privacy protections
 
@@ -57,7 +57,7 @@ Each record contains the visitor-provided callsign, optional origin, message, mo
 - Callsign, origin, and message have server-side length limits.
 - Empty callsign/message submissions are rejected.
 - A hidden `contact_channel` honeypot field accepts bots neutrally without storing a message.
-- Public submissions are rate-limited in process and should also be rate-limited in nginx.
+- Guestbook submissions have **no per-IP or time-window quota**, in either the backend or the nginx example. The JSON size limit, input validation, honeypot, and origin checks remain. The login endpoint retains its own rate limit.
 - Public reads return only approved messages.
 - Frontend rendering uses `textContent`, not raw HTML.
 - Passwords, secrets, request bodies, and visitor IP addresses are not logged by the service.
@@ -69,7 +69,7 @@ Create this file on worldnode only:
 
 ```sh
 sudo install -d -m 0750 -o root -g root /etc/wopr
-sudo install -m 0640 -o root -g wopr-auth /dev/null /etc/wopr/wopr-auth.env
+sudo test -e /etc/wopr/wopr-auth.env || sudo install -m 0640 -o root -g wopr-auth /dev/null /etc/wopr/wopr-auth.env
 sudo editor /etc/wopr/wopr-auth.env
 ```
 
@@ -87,6 +87,7 @@ WOPR_SESSION_COOKIE=wopr_session
 WOPR_COOKIE_SECURE=true
 WOPR_COOKIE_SAMESITE=Strict
 WOPR_TRANSMISSIONS_DIR=/var/lib/wopr/transmissions
+WOPR_TRANSMISSIONS_MODERATION=false
 ```
 
 Generate a session secret on worldnode:
@@ -104,10 +105,10 @@ From a current checkout at `/srv/www/dennishilk.github.io`:
 ```sh
 sudo useradd --system --home /nonexistent --shell /usr/sbin/nologin wopr-auth || true
 sudo install -d -m 0750 -o root -g root /etc/wopr
-sudo install -m 0640 -o root -g wopr-auth /dev/null /etc/wopr/wopr-auth.env
+sudo test -e /etc/wopr/wopr-auth.env || sudo install -m 0640 -o root -g wopr-auth /dev/null /etc/wopr/wopr-auth.env
 sudo editor /etc/wopr/wopr-auth.env
 sudo install -d -m 0750 -o wopr-auth -g wopr-auth /var/lib/wopr/transmissions
-sudo install -m 0640 -o wopr-auth -g wopr-auth /dev/null /var/lib/wopr/transmissions/transmissions.jsonl
+sudo -u wopr-auth touch /var/lib/wopr/transmissions/transmissions.jsonl
 sudo cp /srv/www/dennishilk.github.io/server/wopr-auth/wopr-auth.service /etc/systemd/system/wopr-auth.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now wopr-auth.service
@@ -123,7 +124,7 @@ The service unit must allow writes to `/var/lib/wopr/transmissions` via `ReadWri
 Use `wopr/nginx.example.conf` as the WOPR/API section for the `dennishilk.com` server block. The important pieces are:
 
 1. `/wopr/`, `/wopr/wopr.css`, and `/wopr/wopr.js` stay public.
-2. `/api/transmissions` proxies to `127.0.0.1:8787` and should have nginx rate limiting plus `client_max_body_size 16k`.
+2. `/api/transmissions` proxies to `127.0.0.1:8787` without nginx request-rate limiting and with `client_max_body_size 16k`. Remove any existing `limit_req` from the actual server's `location = /api/transmissions`, not just from the tracked example.
 3. `/wopr/auth/login`, `/wopr/auth/logout`, and `/wopr/auth/event` proxy to `127.0.0.1:8787`.
 4. `/_wopr_session_check` is `internal` and proxies to `GET /wopr/auth/session`.
 5. `location ^~ /wopr/api/` uses `auth_request /_wopr_session_check;` and proxies to `127.0.0.1:8787`.
@@ -142,7 +143,7 @@ sudo systemctl reload nginx
 cd /srv/www/dennishilk.github.io
 git pull --ff-only
 sudo install -d -m 0750 -o wopr-auth -g wopr-auth /var/lib/wopr/transmissions
-sudo install -m 0640 -o wopr-auth -g wopr-auth /dev/null /var/lib/wopr/transmissions/transmissions.jsonl
+# Important: never overwrite or truncate the existing transmissions.jsonl.
 sudo cp server/wopr-auth/wopr-auth.service /etc/systemd/system/wopr-auth.service
 sudo systemctl daemon-reload
 sudo systemctl restart wopr-auth.service
@@ -165,7 +166,7 @@ curl -i https://dennishilk.com/api/transmissions
 curl -i https://dennishilk.com/wopr/api/transmissions/pending
 ```
 
-The wrong login must return `401`, pending messages must not appear in the public API, and private moderation endpoints must reject requests without a valid WOPR session.
+The wrong login must return `401`, published messages must appear without review, the numbered archive must expose every approved entry, and private moderation endpoints must reject requests without a valid WOPR session.
 
 ## WOPR Security Intelligence private state
 
