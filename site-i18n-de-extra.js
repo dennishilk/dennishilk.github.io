@@ -376,7 +376,7 @@
 
   addPage("/transmissions/", {
     title: "Gästebuch / Public Signal Uplink – Dennis Hilk",
-    description: "Öffentliches Gästebuch von dennishilk.com. Hinterlasse eine Nachricht, die vor der öffentlichen Anzeige geprüft wird.",
+    description: "Öffentliches Gästebuch von dennishilk.com. Nachrichten erscheinen direkt im Gästebucharchiv.",
     text: {
       "← MAIN NODE": "← HAUPTKNOTEN",
       "GUESTBOOK INTERFACE v1.0": "GÄSTEBUCH-INTERFACE v1.0",
@@ -386,11 +386,11 @@
       "WELCOME TO THE 90s": "WILLKOMMEN IN DEN 90ERN",
       "PUBLIC MESSAGE TERMINAL": "ÖFFENTLICHES NACHRICHTENTERMINAL",
       "ARCHIVE ONLINE": "ARCHIV ONLINE",
-      "Sign the public visitor log. Approved messages are assigned a permanent signal number and broadcast below.": "Trag dich in das öffentliche Besucherlog ein. Freigegebene Nachrichten erhalten eine dauerhafte Signalnummer und erscheinen anschließend unten.",
+      "Sign the public visitor log. Messages receive a permanent signal number and appear immediately below.": "Trag dich in das öffentliche Besucherlog ein. Deine Nachricht erhält sofort eine dauerhafte Signalnummer und erscheint direkt im Archiv.",
       "INPUT MODULE / NEW ENTRY": "EINGABEMODUL / NEUER EINTRAG",
       "CHANNEL 01 · RECEIVING": "KANAL 01 · EMPFANG",
       "SIGN THE GUESTBOOK": "INS GÄSTEBUCH EINTRAGEN",
-      "IDENTIFY YOUR SIGNAL · ENTER A MESSAGE · TRANSMIT FOR REVIEW": "SIGNAL IDENTIFIZIEREN · NACHRICHT EINGEBEN · ZUR PRÜFUNG SENDEN",
+      "IDENTIFY YOUR SIGNAL · ENTER A MESSAGE · GO LIVE": "SIGNAL IDENTIFIZIEREN · NACHRICHT EINGEBEN · DIREKT VERÖFFENTLICHEN",
       "CALLSIGN": "RUFZEICHEN",
       "ORIGIN": "HERKUNFT",
       "MESSAGE": "NACHRICHT",
@@ -403,7 +403,7 @@
       "SIGNAL / IDENTITY / ORIGIN": "SIGNAL / IDENTITÄT / HERKUNFT",
       "RECEIVED UTC": "EMPFANGEN UTC",
       "SCANNING APPROVED SIGNALS…": "FREIGEGEBENE SIGNALE WERDEN GESCANNT…",
-      "LOAD MORE SIGNALS": "WEITERE SIGNALE LADEN"
+      "Guestbook pages": "Gästebuchseiten"
     },
     attributes: {
       "Callsign": "Rufzeichen",
