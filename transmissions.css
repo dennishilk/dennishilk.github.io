@@ -67,7 +67,7 @@
 .transmissions-page .transmission-form textarea { min-height: 4.4rem; }
 .transmissions-page .transmission-form button { justify-self: start; border-radius: 0; padding: .55rem .85rem; background: #123745; box-shadow: inset 1px 1px rgba(255,255,255,.14), inset -2px -2px #001017; font-size: .73rem; }
 .transmissions-page .transmission-form button:focus-visible,
-.load-more-transmissions:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.transmission-page-button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .transmissions-page .transmission-status { grid-column: auto; justify-self: end; font-size: .67rem; }
 
 .transmissions-page .public-transmission-archive { margin-top: 0; margin-bottom: 1rem; padding: 0; }
@@ -86,9 +86,16 @@
 .transmissions-page .transmission-entry time { white-space: nowrap; font-size: .66rem; }
 .transmissions-page .transmission-entry blockquote { margin: .34rem 0 0; border: 0; border-left: 2px solid rgba(84,217,245,.35); padding: .08rem 6.5rem .08rem .55rem; color: #d9e4e8; font-size: .78rem; line-height: 1.42; }
 .transmissions-page .transmission-entry-status { position: absolute; right: .7rem; bottom: .68rem; color: var(--uplink-green); font-size: .56rem; letter-spacing: .08em; }
-.load-more-transmissions { display: block; width: calc(100% - 1.4rem); margin: .65rem .7rem; border: 1px solid rgba(84,217,245,.48); border-radius: 0; background: #0a2633; padding: .55rem; color: var(--uplink-cyan); cursor: pointer; font: 700 .7rem 'JetBrains Mono',monospace; letter-spacing: .1em; }
-.load-more-transmissions[hidden] { display: none; }
-.load-more-transmissions:hover { background: #123b4b; color: #fff; }
+.transmission-pages { display: flex; justify-content: center; align-items: center; gap: .3rem; flex-wrap: wrap; padding: .85rem .7rem; }
+.transmission-pages[hidden] { display: none; }
+.transmission-page-button { min-width: 2.2rem; min-height: 2.2rem; border: 1px solid rgba(84,217,245,.48); border-radius: 0; background: #0a2633; color: var(--uplink-cyan); padding: .5rem .65rem; cursor: pointer; font: 700 .7rem 'JetBrains Mono', monospace; letter-spacing: .05em; }
+.transmission-page-button:hover:not(:disabled) { background: #123b4b; color: #fff; }
+.transmission-page-button.active { background: #176074; color: #fff; border-color: #7fe3f8; }
+.transmission-page-button:disabled { opacity: .38; cursor: default; }
+.transmission-page-ellipsis { color: #90b7c0; padding: 0 .25rem; }
+@media (max-width: 700px) {
+  .transmission-page-button { min-width: 2rem; padding: .42rem .5rem; }
+}
 .transmissions-page footer { margin: .8rem 1rem 0; padding-bottom: 1.2rem; }
 
 @media (max-width: 700px) {
