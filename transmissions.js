@@ -2,10 +2,12 @@ const transmissionForm = document.getElementById("transmission-form");
 const transmissionStatus = document.getElementById("transmission-status");
 const transmissionList = document.getElementById("transmission-list");
 const transmissionCount = document.getElementById("transmission-count");
-const loadMoreButton = document.getElementById("load-more-transmissions");
-const TRANSMISSION_BATCH_SIZE = 10;
+const transmissionPages = document.getElementById("transmission-pages");
 let approvedTransmissions = [];
-let visibleTransmissionCount = TRANSMISSION_BATCH_SIZE;
+let currentTransmissionPage = 1;
+let totalTransmissionPages = 1;
+let totalTransmissionCount = 0;
+let latestLoadRequest = 0;
 
 function formatTransmissionTime(value) {
   const date = new Date(value);
@@ -45,7 +47,7 @@ function renderTransmissions() {
     return;
   }
 
-  approvedTransmissions.slice(0, visibleTransmissionCount).forEach((transmission) => {
+  approvedTransmissions.forEach((transmission) => {
     const article = document.createElement("article");
     article.className = "transmission-entry";
 
@@ -78,27 +80,82 @@ function renderTransmissions() {
     transmissionList.appendChild(article);
   });
 
-  if (loadMoreButton) {
-    const remaining = approvedTransmissions.length - visibleTransmissionCount;
-    loadMoreButton.hidden = remaining <= 0;
-    loadMoreButton.textContent = `LOAD MORE SIGNALS (${Math.min(remaining, TRANSMISSION_BATCH_SIZE)})`;
+  renderPages();
+}
+
+function renderPages() {
+  if (!transmissionPages) return;
+  transmissionPages.replaceChildren();
+  transmissionPages.hidden = totalTransmissionPages <= 1;
+  if (totalTransmissionPages <= 1) return;
+
+  const button = (label, page, options = {}) => {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "transmission-page-button";
+    el.textContent = label;
+    el.disabled = Boolean(options.disabled);
+    if (options.current) {
+      el.classList.add("active");
+      el.setAttribute("aria-current", "page");
+    }
+    el.setAttribute("aria-label", options.name || `Page ${page}`);
+    el.addEventListener("click", () => changeTransmissionPage(page));
+    transmissionPages.appendChild(el);
+  };
+  const ellipsis = () => {
+    const span = document.createElement("span");
+    span.className = "transmission-page-ellipsis";
+    span.textContent = "…";
+    span.setAttribute("aria-hidden", "true");
+    transmissionPages.appendChild(span);
+  };
+
+  button("← PREV", currentTransmissionPage - 1, { disabled: currentTransmissionPage === 1, name: "Previous page" });
+  let previous = 0;
+  const visible = new Set([1, totalTransmissionPages]);
+  for (let page = Math.max(1, currentTransmissionPage - 2); page <= Math.min(totalTransmissionPages, currentTransmissionPage + 2); page++) visible.add(page);
+  for (const page of [...visible].sort((a, b) => a - b)) {
+    if (previous && page > previous + 1) ellipsis();
+    button(String(page), page, { current: page === currentTransmissionPage });
+    previous = page;
+  }
+  button("NEXT →", currentTransmissionPage + 1, { disabled: currentTransmissionPage === totalTransmissionPages, name: "Next page" });
+}
+
+async function loadTransmissions(page = 1) {
+  if (!transmissionList) return;
+  const request = ++latestLoadRequest;
+  try {
+    const response = await fetch(`/api/transmissions?page=${encodeURIComponent(page)}`, {
+      headers: { "Accept": "application/json" }, cache: "no-store"
+    });
+    if (!response.ok) throw new Error("public transmissions unavailable");
+    const data = await response.json();
+    if (request !== latestLoadRequest) return;
+    approvedTransmissions = Array.isArray(data.transmissions) ? data.transmissions : [];
+    currentTransmissionPage = Number(data.page) || 1;
+    totalTransmissionPages = Number(data.total_pages) || 1;
+    totalTransmissionCount = Number(data.total) || 0;
+    if (transmissionCount) transmissionCount.textContent = `${totalTransmissionCount} SIGNAL${totalTransmissionCount === 1 ? "" : "S"}`;
+    renderTransmissions();
+  } catch (error) {
+    if (request !== latestLoadRequest) return;
+    transmissionList.innerHTML = '<p class="transmission-empty">SIGNAL ARCHIVE TEMPORARILY UNAVAILABLE.</p>';
+    if (transmissionPages) transmissionPages.hidden = true;
   }
 }
 
-async function loadTransmissions() {
-  if (!transmissionList) return;
-  try {
-    const response = await fetch("/api/transmissions", { headers: { "Accept": "application/json" } });
-    if (!response.ok) throw new Error("public transmissions unavailable");
-    const data = await response.json();
-    approvedTransmissions = (Array.isArray(data.transmissions) ? data.transmissions : [])
-      .slice()
-      .sort((a, b) => Number(b.signal_number) - Number(a.signal_number));
-    if (transmissionCount) transmissionCount.textContent = `${approvedTransmissions.length} SIGNAL${approvedTransmissions.length === 1 ? "" : "S"}`;
-    renderTransmissions();
-  } catch (error) {
-    transmissionList.innerHTML = '<p class="transmission-empty">SIGNAL ARCHIVE TEMPORARILY UNAVAILABLE.</p>';
+async function changeTransmissionPage(page, pushHistory = true) {
+  if (page < 1 || page > totalTransmissionPages || page === currentTransmissionPage) return;
+  await loadTransmissions(page);
+  if (pushHistory) {
+    const url = new URL(window.location.href);
+    if (currentTransmissionPage === 1) url.searchParams.delete("page");
+    else url.searchParams.set("page", String(currentTransmissionPage));
+    window.history.pushState({ transmissionPage: currentTransmissionPage }, "", url);
   }
+  document.querySelector(".public-transmission-archive")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function submitTransmission(event) {
@@ -127,7 +184,13 @@ async function submitTransmission(event) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok || data.ok === false) throw new Error("submission rejected");
     transmissionForm.reset();
-    setTransmissionStatus("TRANSMISSION RECEIVED.\nAWAITING REVIEW.", "success");
+    setTransmissionStatus(data.message || "TRANSMISSION RECEIVED.\nNOW LIVE.", "success");
+    await loadTransmissions(1);
+    if (currentTransmissionPage === 1) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("page");
+      window.history.replaceState({ transmissionPage: 1 }, "", url);
+    }
   } catch (error) {
     setTransmissionStatus("TRANSMISSION FAILED.\nRETRY LATER.", "error");
   }
@@ -137,11 +200,10 @@ if (transmissionForm && transmissionStatus) {
   transmissionForm.addEventListener("submit", submitTransmission);
 }
 
-if (loadMoreButton) {
-  loadMoreButton.addEventListener("click", () => {
-    visibleTransmissionCount += TRANSMISSION_BATCH_SIZE;
-    renderTransmissions();
-  });
-}
+window.addEventListener("popstate", () => {
+  const page = Number(new URL(window.location.href).searchParams.get("page")) || 1;
+  loadTransmissions(page);
+});
 
-loadTransmissions();
+const initialTransmissionPage = Number(new URL(window.location.href).searchParams.get("page")) || 1;
+loadTransmissions(Math.max(1, initialTransmissionPage));
