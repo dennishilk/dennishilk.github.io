@@ -73,7 +73,7 @@ function build(lang) {
  function shell(type,guide,body) {
   const {title,seoTitle,description,cover}=guide;
   const path=routes[type][lang],url=origin+path,alt=routes[type][other],image=images[cover];
-  const wmAssetVersion=type==='wm'?'?v=20261112-wm-desktop':'';
+  const wmAssetVersion=type==='wm'?'?v=20261112-wm-packages':'';
   const fullSizeLink=type==='wm'
    ?' '+attr(image.path,t('Originalgröße öffnen','Open full-size image'),'class="button" data-lightbox-original target="_blank" rel="noopener" hidden')
    :'';

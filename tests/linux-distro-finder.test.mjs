@@ -68,28 +68,70 @@ test('Debian 13 and Arch xmonad plans include actual dependencies and launcher n
 });
 
 test('every package selection has a classified plan and supported paths produce files',()=>{
- let supported=0;
+ const unavailable=new Map([
+  ['mint/hyprland','nobleHyprland'],['zorin/hyprland','nobleHyprland'],['fedora/hyprland','fedoraHyprland'],
+  ['slackware/hyprland','slackWayland'],['slackware/niri','slackWayland']
+ ]);
+ let checked=0;
  for (const {id:distro} of distros) for (const wm of Object.keys(wmSettings)) {
   for (const browser of ['firefox','chromium','chrome']) for (const terminal of ['classic','kitty','alacritty']) {
-   const settings=wmSettings[wm];
+   checked++;
+   const selection=[distro,wm,browser,terminal].join('/');
    const route=plan({distro,wm,browser,terminal,wallpaper:true});
-   assert.ok(['direct','extra','unverified'].includes(route.status));
-   if (route.status==='unverified') {
+   const reason=unavailable.get(distro+'/'+wm);
+   assert.equal(route.status==='unverified',Boolean(reason),selection);
+   if (reason) {
+    assert.equal(route.reason,reason,selection);
     assert.equal(route.command,undefined);
     continue;
    }
-   supported++;
-   assert.ok(route.command.every(Boolean));
+   const settings=route.settings;
+   assert.ok(['direct','extra'].includes(route.status),selection);
+   assert.ok((route.command.length>0||route.packageSources.length>0)&&route.command.every(Boolean),selection);
    if (terminal==='classic') assert.equal(route.term,settings.protocol==='wayland'?'foot':'xterm');
-   const files=generate({wm,browser:route.launchBrowser,terminal:route.term,wallpaper:true});
+   const files=generate({wm,browser:route.launchBrowser,terminal:route.term,wallpaper:!route.nixDwm,
+    legacyHyprland:route.legacyHyprland,legacyLabwc:route.legacyLabwc});
    assert.ok(files[settings.file].includes(route.term));
    assert.ok(files[settings.file].includes(route.launchBrowser));
    assert.ok(Object.entries(files).every(([name,value])=>!name.includes('/')&&value.endsWith('\n')));
    if (distro==='nixos') assert.match(route.module,/environment\.systemPackages = with pkgs;/);
   }
  }
- assert.ok(supported>350);
- assert.equal(plan({distro:'slackware',wm:'hyprland',browser:'firefox',terminal:'classic'}).status,'unverified');
+ assert.equal(checked,792);
+});
+
+test('Fedora dwm uses its RPM build dependencies and NixOS dwm imports the generated header',()=>{
+ const fedora=plan({distro:'fedora',wm:'dwm',browser:'chromium',terminal:'kitty'});
+ assert.equal(fedora.status,'extra');
+ assert.match(fedora.command[0],/^sudo dnf install gcc make libX11-devel libXft-devel libXinerama-devel fontconfig-devel freetype-devel xorg-x11-server-Xorg xorg-x11-xinit dmenu kitty chromium$/);
+ assert.equal(fedora.launchBrowser,'chromium-browser');
+ assert.match(fedora.dwmSource,/dwm-6\.8\.tar\.gz$/);
+ assert.equal(fedora.startup,'startx "$HOME/.local/bin/dwm"');
+ const nixos=plan({distro:'nixos',wm:'dwm',browser:'firefox',terminal:'classic',wallpaper:true});
+ assert.match(nixos.module,/pkgs\.dwm\.override \{ conf = \.\/config\.h; \}/);
+ assert.match(nixos.module,/extraSessionCommands.*''/);
+ assert.equal(nixos.dwmSource,null);
+ assert.equal(nixos.startup,null);
+});
+
+test('Hyprland packages use the configuration syntax for their release',()=>{
+ const choose=distro=>plan({distro,wm:'hyprland',browser:'firefox',terminal:'kitty'});
+ const backports=choose('debian'),ubuntu=choose('ubuntu'),arch=choose('arch');
+ assert.ok(backports.command.includes('sudo apt install -t trixie-backports hyprland'));
+ assert.equal(ubuntu.settings.file,'hyprland.conf');
+ assert.equal(arch.settings.file,'hyprland.lua');
+ const files=generate({wm:'hyprland',legacyHyprland:ubuntu.legacyHyprland,browser:'firefox',terminal:'kitty'});
+ assert.match(files['hyprland.conf'],/^bind = \$mod, Return, exec, kitty$/m);
+ assert.match(files['hyprland.conf'],/^bind = \$mod SHIFT, 9, movetoworkspace, 9$/m);
+});
+
+test('Slackware labwc uses its available actions and theme layout',()=>{
+ const route=plan({distro:'slackware',wm:'labwc',browser:'chromium',terminal:'classic'});
+ assert.ok(route.packageSources.some(([,url])=>url.endsWith('/15.0/desktop/labwc/')));
+ const files=generate({wm:'labwc',legacyLabwc:route.legacyLabwc,browser:route.launchBrowser,terminal:route.term});
+ assert.match(files['rc.xml'],/<action name="Execute"><command>foot<\/command><\/action>/);
+ assert.doesNotMatch(files['rc.xml'],/GoToDesktop/);
+ assert.match(files.themerc,/^border\.width:/);
 });
 
 test('design options are scoped to supported settings and input is allowlisted',()=>{

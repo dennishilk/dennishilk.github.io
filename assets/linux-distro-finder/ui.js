@@ -1,6 +1,6 @@
 import { questions,distros,desktops,rank,words } from './catalog.js';
-import { defaultKeys,keyOptions,wmSettings,palettes,generate } from './config.js';
-import { plan } from './packages.js';
+import { defaultKeys,keyOptions,wmSettings,palettes,generate } from './config.js?v=20261112-wm-packages';
+import { plan } from './packages.js?v=20261112-wm-packages';
 
 const lang=document.documentElement.lang==='de'?'de':'en';
 const ix=lang==='de'?0:1;
@@ -145,6 +145,14 @@ function explorer(root) {
 
 const descriptions = {
  source:['Lade das originale dwm-6.8-Archiv und entpacke es in einen eigenen Ordner. Sichere eine vorhandene config.h, lege die heruntergeladene Datei im Quellordner ab und führe dort die Build-Befehle aus. Starte die neue Binärdatei erst nach Abmelden aus einer freien Textkonsole. Wenn du xinitrc.dwm erzeugt hast, übernimm die beiden Zeilen nach Prüfung in deine eigene X-Startdatei oder nutze startx /absoluter/pfad/xinitrc.dwm nach chmod u+x auf dieser Datei.','Download and extract the original dwm 6.8 archive in its own directory. Back up any existing config.h, put the downloaded header in the source tree and run the build commands there. Sign out before starting the new binary from a free text console. If you enabled xinitrc.dwm, review and merge its two commands into your own X startup file or use startx /absolute/path/xinitrc.dwm after running chmod u+x on that file.'],
+ nixDwm:['Lege die erzeugte config.h neben linux-companion.nix, bevor du die Nix-Datei importierst und das System neu baust. NixOS baut dwm mit deinem Header und registriert die X11-Sitzung. Nimm bei einem Git-Flake beide Dateien in den Index auf.','Place the generated config.h alongside linux-companion.nix before importing the module and rebuilding. NixOS builds dwm with your header and registers the X11 session. For a Git-backed flake, stage both files.'],
+ niriSource:['Für niri ist hier ein Quellbuild vorgesehen. Installiere die unten aufgeführten Build-Abhängigkeiten und Rust nach der verlinkten Anleitung. Entpacke den niri-Release v26.04, führe darin cargo build --release --locked aus und installiere target/release/niri gemäß der manuellen Installationsanleitung. Der erste Start aus der Textkonsole nutzt niri --session.','This path builds niri from source. Install the build dependencies listed below and Rust as described in the linked guide. Extract the niri v26.04 release, run cargo build --release --locked in its source directory and install target/release/niri as described in the manual installation section. The first TTY launch uses niri --session.'],
+ backports:['Aktiviere zuerst trixie-backports nach der verlinkten Debian-Anleitung. Die übrigen Pakete kommen aus deinen normalen Debian-Quellen.','Enable trixie-backports first using the linked Debian instructions. The remaining packages use your normal Debian repositories.'],
+ ubuntuHyprland:['Der Hyprland-Paketweg gilt für Ubuntu 26.04 LTS mit aktiviertem Universe. Ubuntu 24.04 bietet dieses Paket im normalen Archiv nicht an.','The Hyprland package path targets Ubuntu 26.04 LTS with Universe enabled. Ubuntu 24.04 does not ship this package in its standard archive.'],
+ hyproverlay:['Hyprland kommt aus dem vom Projekt dokumentierten Hyproverlay. Installiere bei Bedarf app-eselect/eselect-repository und prüfe die Versions- und Keyword-Hinweise des Overlays.','Hyprland comes from Hyproverlay, which the upstream project documents. Install app-eselect/eselect-repository if needed and review the overlay’s version and keyword notes.'],
+ guruNiri:['niri kommt aus dem Gentoo-Community-Repository GURU. Installiere bei Bedarf app-eselect/eselect-repository und prüfe die Keyword-Meldung für gui-wm/niri::guru.','niri comes from the Gentoo GURU community repository. Install app-eselect/eselect-repository if needed and review the keyword prompt for gui-wm/niri::guru.'],
+ slackChrome:['Für Chrome verwende den SlackBuild aus extra/google-chrome auf dem offiziellen Slackware-Spiegel. Lade das 64-Bit-DEB von Google, lege es neben das Skript und folge der SlackBuild-Anleitung. Installiere anschließend das erzeugte Slackware-Paket.','For Chrome, use the SlackBuild from extra/google-chrome on the official Slackware mirror. Put Google’s 64-bit DEB beside the script and follow the SlackBuild instructions, then install the resulting Slackware package.'],
+ slackChromium:['Chromium kommt hier als Community-Paket von Alien BOB für Slackware64 15.0. Prüfe die Signatur und Paketbeschreibung im verlinkten Verzeichnis, bevor du das Paket installierst.','This path uses Alien BOB’s community Chromium package for Slackware64 15.0. Verify the signature and package description in the linked directory before installing it.'],
  deb:['Lade von Google das 64-Bit-DEB. Öffne einen Terminal im Downloadordner und installiere es mit sudo apt install ./google-chrome-stable_current_amd64.deb, sofern der Dateiname übereinstimmt. Prüfe die zusätzlich eingerichtete Paketquelle.','Download Google’s 64-bit DEB. In the download directory run sudo apt install ./google-chrome-stable_current_amd64.deb if that matches the filename. Review the extra repository it configures.'],
  rpm:['Lade das 64-Bit-RPM von Google. Installiere die lokale Datei mit sudo dnf install ./google-chrome-stable_current_x86_64.rpm auf Fedora oder sudo zypper install ./google-chrome-stable_current_x86_64.rpm auf Tumbleweed, sofern der Dateiname übereinstimmt. Prüfe die zusätzlich eingerichtete Quelle.','Download Google’s 64-bit RPM. Install the local file with sudo dnf install ./google-chrome-stable_current_x86_64.rpm on Fedora or sudo zypper install ./google-chrome-stable_current_x86_64.rpm on Tumbleweed, if the filename matches. Review the extra repository.'],
  aur:['Chrome kommt über das Community-Paket google-chrome im AUR. Prüfe PKGBUILD und Quellen, bevor du als normaler Nutzer makepkg -si in einem Checkout des AUR-Pakets aufrufst. base-devel und git müssen vorhanden sein.','Chrome is available via the community google-chrome AUR package. Review the PKGBUILD and sources before running makepkg -si as a normal user in an AUR package checkout. Install base-devel and git first.'],
@@ -157,9 +165,15 @@ const descriptions = {
  cachyos:['Prüfe die CachyOS-Reihenfolge der Repositories und den installierten Versionsstand. Die Befehle verwenden Pacman mit den eingerichteten Paketquellen.','Check the CachyOS repository order and installed versions. Commands use Pacman with your configured repositories.'],
  fedora:['Diese Anleitung gilt für klassische RPM-Installationen. Fedora Atomic verwendet andere Systemwerkzeuge.','This path targets traditional RPM installations. Fedora Atomic uses different system tools.'],
  gentoo:['Prüfe aktive Profile, USE-Flags, Keywords und Architektur vor der Bestätigung. GCC baut C-Quellcode. Für einen manuellen xmonad-Aufbau brauchst du separat GHC und passende Haskell-Bibliotheken.','Review profiles, USE flags, keywords and architecture before accepting. GCC builds C source. A manual xmonad setup separately requires GHC and matching Haskell libraries.'],
- slackware:['Voraussetzung ist eine vollständige Slackware-15.0-Installation mit GCC, make und Xorg samt Entwicklungsdateien. Führe die slackpkg-Befehle als root mit dem passenden Stable-Spiegel aus, wenn xterm oder Firefox fehlen. Baue und installiere dmenu anhand der verlinkten SlackBuild-Anleitung. Führe die dwm-Build-Schritte anschließend als normaler Nutzer aus.','This requires a full Slackware 15.0 install with GCC, make and Xorg including development files. Run the slackpkg commands as root with the matching stable mirror if xterm or Firefox is missing. Build and install dmenu with the linked SlackBuild instructions. Then build dwm as your normal user.'],
+ slackware:['Voraussetzung ist eine vollständige Slackware-15.0-Installation. Nutze für slackpkg als root den passenden 15.0-Spiegel. Installiere bei den verlinkten SlackBuilds zuerst die dort angegebenen Abhängigkeiten und danach die erzeugten Pakete.','Start with a full Slackware 15.0 install. Run slackpkg as root against the matching 15.0 mirror. For the linked SlackBuilds, install the dependencies listed on each page first, followed by the resulting packages.'],
  opensuse:['Prüfe die Paketauflösung gegen die Tumbleweed-Quellen und den aktuellen Snapshot.','Check resolution against the configured Tumbleweed repositories and current snapshot.'],
  nixos:['Importiere die erzeugte Nix-Datei über imports in configuration.nix oder in den Modulen deiner Flake. Bei einer Flake ergänze --flake .#hostname aus dem Projektordner und nimm die neue Datei bei einem Git-Flake in den Index auf. Eine Home-Manager-Konfiguration kann dieselben Dotfiles verwalten. Übertrage sie in diesem Fall dorthin.','Import the generated Nix file through imports in configuration.nix or through your flake modules. With a flake, add --flake .#hostname from its project and stage the new file for a Git-backed flake. Home Manager can own the same dotfiles. If it does, put them there.']
+};
+
+const unavailableReasons = {
+ fedoraHyprland:['Fedora 44 und 45 führen Hyprland in den geprüften Standardquellen nicht. Community-COPRs können Pakete anbieten. Für dieses Starterprofil braucht es eine Quelle mit einer passenden Hyprland-Version für dein Fedora-Release.','The standard repositories checked for Fedora 44 and 45 do not ship Hyprland. Community COPRs may provide it. This starter profile needs a source that ships a matching Hyprland version for your Fedora release.'],
+ nobleHyprland:['Für die Ubuntu-24.04-Basis von Linux Mint 22.x und Zorin OS 18 gibt es im Basisarchiv keinen passenden Hyprland-Paketweg. Die verlinkte Hyprland-Dokumentation beschreibt die unterstützten Versionen.','The Ubuntu 24.04 base of Linux Mint 22.x and Zorin OS 18 has no suitable Hyprland route in its standard archive. The linked Hyprland docs describe the supported releases.'],
+ slackWayland:['Für Slackware 15.0 gibt es dafür im geprüften SlackBuilds-Katalog keinen passenden Eintrag. Ein manueller Build benötigt einen eigenen Plan für die Wayland-Abhängigkeiten.','The reviewed SlackBuilds catalog has no suitable entry for Slackware 15.0. A manual build needs a separate plan for the Wayland dependencies.']
 };
 
 async function copy(text) {
@@ -252,12 +266,13 @@ function builder(root) {
   let packagePlan, files;
   const {distro,wm,terminal,browser}=values;
   const wallpaper=values.wallpaper==='on';
-  const settings=wmSettings[wm];
   const shortcuts=Object.fromEntries(Object.keys(defaultKeys).map(k=>[k,values[k+'Key']]));
   try {
    packagePlan=plan({distro,wm,terminal,browser,wallpaper});
    if (packagePlan.status!=='unverified') files=generate({
-    ...values,shortcuts,wallpaper,terminal:packagePlan.term,browser:packagePlan.launchBrowser,
+    ...values,shortcuts,wallpaper:wallpaper&&!packagePlan.nixDwm,
+    legacyHyprland:packagePlan.legacyHyprland,legacyLabwc:packagePlan.legacyLabwc,
+    terminal:packagePlan.term,browser:packagePlan.launchBrowser,
     colors:['background','foreground','active','inactive'].map(x=>values[x]),animations:values.animations==='on'
    });
   } catch (problem) {
@@ -280,19 +295,22 @@ function builder(root) {
   const sources=node('p',null,{class:'inline-links'});
   sources.append(link(tr('Paketquelle der Distribution','Distribution package source'),packagePlan.official),link(wmProfile.name+' '+tr('Dokumentation','documentation'),wmProfile.docs));
   if (packagePlan.source) sources.append(link(tr('Chrome-Paketquelle','Chrome package source'),packagePlan.source));
-  if (packagePlan.launcherSource) sources.append(link('dmenu · SlackBuild',packagePlan.launcherSource));
+  for (const [label,url] of packagePlan.packageSources||[]) sources.append(link(label,url));
   if (packagePlan.dwmSource) sources.append(link('dwm 6.8 · tar.gz',packagePlan.dwmSource));
   output.append(sources);
   if (!files) {
-   output.append(node('p',tr('Prüfe die Paketquelle, die Version des Window-Managers und die ausführbaren Befehle. Alternativ kannst du eine andere Kombination wählen.','Check package availability, the WM version and the executables. You can also select a different combination.')));
+   output.append(node('p',unavailableReasons[packagePlan.reason][ix]));
    output.hidden=false;if(focus)title.focus();return;
   }
+  const settings=packagePlan.settings;
   output.append(node('h4',tr('1. Pakete und Programme einrichten','1. Set up packages and applications')));
   const code=text=>{const pre=node('pre');pre.append(node('code',text));output.append(pre);};
   for (const id of packagePlan.setup) if (descriptions[id]) output.append(node('p',descriptions[id][ix]));
-  code(packagePlan.command.join('\n'));
+  if (packagePlan.command.length) code(packagePlan.command.join('\n'));
   if (packagePlan.module) output.append(fileActions('linux-companion.nix',packagePlan.module));
-  if (wm==='hyprland') output.append(node('p',tr('Das Profil verwendet die Lua-API von Hyprland 0.57. Prüfe Hyprland --version vor dem Einrichten.','This profile uses the Hyprland 0.57 Lua API. Check Hyprland --version before setting it up.')));
+  if (wm==='hyprland') output.append(node('p',packagePlan.legacyHyprland
+   ?tr('Das Profil nutzt hyprland.conf für Hyprland 0.53 oder 0.55. Sichere eine vorhandene hyprland.lua separat, damit beim Start die gewünschte Datei geladen wird.','This profile uses hyprland.conf for Hyprland 0.53 or 0.55. Back up any existing hyprland.lua separately so the intended file is loaded at startup.')
+   :tr('Das Profil verwendet die Lua-API von Hyprland 0.57. Prüfe Hyprland --version vor dem Einrichten.','This profile uses the Hyprland 0.57 Lua API. Check Hyprland --version before setting it up.')));
   if (wm==='niri') output.append(node('p',tr('Das Profil setzt niri 25.11 oder neuer voraus.','This profile targets niri 25.11 or newer.')));
   if (settings.protocol==='wayland') output.append(node('p',tr('Der klassische Terminal ist hier foot. Kitty und Alacritty sind ebenfalls Wayland-fähig. Für Bildschirmfreigabe und Dateiauswahl prüfe die D-Bus-Sitzung, PipeWire und passende Portale wie ','The classic terminal here is foot. Kitty and Alacritty also support Wayland. For sharing and file pickers, check the D-Bus session, PipeWire and suitable portals such as ')+packagePlan.portal+'.'));
   const launchers=node('dl',null,{class:'spec'});
@@ -300,16 +318,17 @@ function builder(root) {
    const dd=node('dd');dd.append(node('code',value));launchers.append(node('dt',label),dd);
   }
   output.append(launchers,node('p',tr('Führe in deiner bisherigen Sitzung command -v für jeden Programmnamen aus und öffne Browser und Terminal einmal. Prüfe auch den Programmstarter.','Run command -v for each executable in your current session, then open the browser and terminal once. Check the launcher too.')));
-  output.append(node('h4',tr('2. Konfiguration sichern und prüfen','2. Back up and validate configuration')),
-   node('p',tr('Zielordner ','Destination ')+settings.dir+'. '+tr('Falls XDG_CONFIG_HOME gesetzt ist, verwende diesen Pfad statt ~/.config. Sichere bestehende Dateien unter einem eigenen Namen, bevor du etwas ersetzt.','If XDG_CONFIG_HOME is set, use it instead of ~/.config. Save existing files under a separate name before replacing anything.')));
-  if (wm==='dwm') output.append(node('p',tr('Sichere auch eine vorhandene Datei ~/.local/bin/dwm vor make install. Der Build verwendet unmodifiziertes dwm 6.8.','Back up any existing ~/.local/bin/dwm before make install. This build uses unpatched dwm 6.8.')));
+  output.append(node('h4',tr('2. Konfiguration sichern und prüfen','2. Back up and validate configuration')));
+  if (!packagePlan.nixDwm) output.append(node('p',tr('Zielordner ','Destination ')+settings.dir+'. '+tr('Falls XDG_CONFIG_HOME gesetzt ist, verwende diesen Pfad statt ~/.config. Sichere bestehende Dateien unter einem eigenen Namen, bevor du etwas ersetzt.','If XDG_CONFIG_HOME is set, use it instead of ~/.config. Save existing files under a separate name before replacing anything.')));
+  if (wm==='dwm'&&!packagePlan.nixDwm) output.append(node('p',tr('Sichere auch eine vorhandene Datei ~/.local/bin/dwm vor make install. Der Build verwendet unmodifiziertes dwm 6.8.','Back up any existing ~/.local/bin/dwm before make install. This build uses unpatched dwm 6.8.')));
   if (wm==='xmonad') output.append(node('p',tr('Ein älteres ~/.xmonad oder XMONAD_CONFIG_DIR kann den Pfad beeinflussen. GHC und xmonad-contrib werden beim Recompile gebraucht. Bei Fehlern prüfe die Ausgabe, bevor du die Sitzung neu startest.','An older ~/.xmonad or XMONAD_CONFIG_DIR can affect lookup. GHC and xmonad-contrib are needed to recompile. Review build output before restarting the session.')));
   if (wm==='labwc') output.append(node('p',tr('xmllint prüft nur die XML-Struktur und ist optional. Achte beim Labwc-Start auf Hinweise zu unbekannten Aktionen.','xmllint is optional and checks XML structure. Check labwc startup output for unknown actions.')));
+  if (packagePlan.legacyLabwc) output.append(node('p',tr('Das Slackware-Profil verwendet die Syntax von labwc 0.5.3. Lege die erzeugte themerc unter ~/.themes/linux-companion/openbox-3/themerc ab. Das Profil nutzt die in dieser Version verfügbaren Fensteraktionen.','The Slackware profile uses labwc 0.5.3 syntax. Place the generated themerc at ~/.themes/linux-companion/openbox-3/themerc. The profile uses the window actions available in this version.')));
   if (wallpaper) output.append(node('p',tr('Lege für den Hintergrund ein Bild unter ~/Pictures/wallpaper.jpg ab. Es ist optional und hat keinen Einfluss auf die Tastaturbelegung.','Place your wallpaper at ~/Pictures/wallpaper.jpg. It is optional and has no effect on the keyboard bindings.')));
-  code([settings.check,settings.reload].filter(Boolean).join('\n'));
+  if (!packagePlan.nixDwm) code([settings.check,settings.reload].filter(Boolean).join('\n'));
   for (const [name,text] of Object.entries(files)) output.append(fileActions(name,text));
   output.append(node('h4',tr('3. Erste Anmeldung und Tastenkürzel','3. First login and shortcuts')));
-  if (wm!=='dwm') output.append(node('p',tr('Melde dich ab und wähle die Sitzung im Sitzungsmenü deines Display Managers. Behalte die bisherige Sitzung für den Rückweg.','Sign out and choose the session in your display manager’s session menu. Keep the existing session available as a fallback.')));
+  if (wm!=='dwm'||packagePlan.nixDwm) output.append(node('p',tr('Melde dich ab und wähle die Sitzung im Sitzungsmenü deines Display Managers. Behalte die bisherige Sitzung für den Rückweg.','Sign out and choose the session in your display manager’s session menu. Keep the existing session available as a fallback.')));
   if (packagePlan.startup) {
    output.append(node('p',tr('Alternativ kannst du diese Sitzung von einer freien lokalen Textkonsole als normaler Nutzer starten.','Alternatively, start this session as a normal user from a free local text console.')));
    code(packagePlan.startup);
@@ -318,7 +337,7 @@ function builder(root) {
   const shortcutsList=node('ul',null,{class:'shortcuts'});
   const bind=(key,label)=>{const li=node('li');li.append(node('kbd',mod+'+'+key),' '+label);shortcutsList.append(li);};
   for (const [action,key] of Object.entries(shortcuts)) bind(key==='Return'?'Enter':key.toUpperCase(),keyLabels[action]);
-  bind('1–9',tr('Arbeitsfläche wechseln','Switch workspace'));
+  if (!packagePlan.legacyLabwc) bind('1–9',tr('Arbeitsfläche wechseln','Switch workspace'));
   if (wm!=='labwc') bind('Shift+1–9',tr('Fenster auf Arbeitsfläche verschieben','Move window to workspace'));
   if (!['dwm','niri'].includes(wm)) bind('Shift+R',tr('Konfiguration neu laden oder WM neu starten','Reload configuration or restart WM'));
   bind(wm==='xmonad'?'Shift+Q':'Shift+E',tr('Sitzung verlassen','Exit session'));

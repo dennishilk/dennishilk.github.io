@@ -8,6 +8,9 @@ export const wmSettings = {
  labwc:{file:'rc.xml',dir:'~/.config/labwc/',protocol:'wayland',check:'xmllint --noout ~/.config/labwc/rc.xml',reload:'labwc --reconfigure',features:['border','font']},
  awesome:{file:'rc.lua',dir:'~/.config/awesome/',protocol:'x11',check:'awesome --check -c ~/.config/awesome/rc.lua',reload:'',features:['border','gaps','font','bar']}
 };
+export const legacyHyprlandSettings = {
+ ...wmSettings.hyprland,file:'hyprland.conf',check:'Hyprland --verify-config -c ~/.config/hypr/hyprland.conf'
+};
 export const palettes = {
  dark:['#101923','#deebf2','#71dce3','#314353'],
  light:['#eef4f7','#152732','#166d77','#9aabb4'],
@@ -31,7 +34,8 @@ function integer(raw, defaultValue, max) {
 }
 
 export function normalize(options) {
- const settings = Object.hasOwn(wmSettings,options.wm) ? wmSettings[options.wm] : null;
+ const settings = options.wm==='hyprland' && options.legacyHyprland===true ? legacyHyprlandSettings
+  : Object.hasOwn(wmSettings,options.wm) ? wmSettings[options.wm] : null;
  if (!settings || !browserCommands.includes(options.browser) || !terminalCommands.includes(options.terminal)) throw new Error('selection');
  const shortcuts = Object.fromEntries(actionKeys.map(action => [action,options.shortcuts?.[action] ?? defaultKeys[action]]));
  if (Object.values(shortcuts).some(key=>!keys.includes(key))) throw new Error('reserved');
@@ -117,6 +121,7 @@ ${bar}`};
 }
 
 function hyprland(c) {
+ if (c.legacyHyprland===true) return hyprlang(c);
  const key=c.shortcuts;
  const rgba=color=>`"rgba(${color.slice(1)}ff)"`;
  return {[c.file]:`-- Hyprland 0.57 Lua configuration
@@ -145,6 +150,39 @@ for i = 1, 9 do
     hl.bind(mod .. " + " .. i, hl.dsp.focus({ workspace = i }))
     hl.bind(mod .. " + SHIFT + " .. i, hl.dsp.window.move({ workspace = i }))
 end
+`};
+}
+
+function hyprlang(c) {
+ const key=c.shortcuts;
+ const rgba=color=>`rgba(${color.slice(1)}ff)`;
+ return {[c.file]:`# Hyprland 0.53/0.55 (Hyprlang)
+$mod = ${c.alt?'ALT':'SUPER'}
+monitor = , preferred, auto, auto
+
+general {
+    gaps_in = ${c.gaps}
+    gaps_out = ${c.gaps}
+    border_size = ${c.border}
+    col.active_border = ${rgba(c.active)}
+    col.inactive_border = ${rgba(c.inactive)}
+}
+
+animations {
+    enabled = ${c.animations?1:0}
+}
+
+${c.wallpaper?`exec-once = swaybg -i "${wallpaperPath}" -m fill\n`:''}bind = $mod, ${key.terminal}, exec, ${c.terminal}
+bind = $mod, ${key.browser}, exec, ${c.browser}
+bind = $mod, ${key.launcher}, exec, wofi --show drun
+bind = $mod, ${key.close}, killactive,
+bind = $mod SHIFT, R, exec, hyprctl reload
+bind = $mod SHIFT, E, exit,
+bind = $mod, left, movefocus, l
+bind = $mod, right, movefocus, r
+bind = $mod, up, movefocus, u
+bind = $mod, down, movefocus, d
+${nums.map(n=>`bind = $mod, ${n}, workspace, ${n}\nbind = $mod SHIFT, ${n}, movetoworkspace, ${n}`).join('\n')}
 `};
 }
 
@@ -179,26 +217,28 @@ ${nums.map(n=>`    ${mod}+${n} { focus-workspace ${n}; }\n    ${mod}+Shift+${n} 
 
 function labwc(c) {
  const key=c.shortcuts, mod=c.alt?'A':'W';
+ const legacy=c.legacyLabwc===true;
+ const execute=command=>legacy
+  ?`<action name="Execute"><command>${command}</command></action>`
+  :`<action name="Execute" command="${command}" />`;
  const result = {[c.file]:`<?xml version="1.0"?>
 <labwc_config>
   <theme>
-    <font place="ActiveWindow"><name>${c.font}</name><size>${c.fontSize}</size></font>
+${legacy?'    <name>linux-companion</name>\n':''}    <font place="ActiveWindow"><name>${c.font}</name><size>${c.fontSize}</size></font>
     <font place="InactiveWindow"><name>${c.font}</name><size>${c.fontSize}</size></font>
   </theme>
-  <desktops number="9" />
-  <keyboard>
-    <keybind key="${mod}-${key.terminal}"><action name="Execute" command="${c.terminal}" /></keybind>
-    <keybind key="${mod}-${key.browser}"><action name="Execute" command="${c.browser}" /></keybind>
-    <keybind key="${mod}-${key.launcher}"><action name="Execute" command="wofi --show drun" /></keybind>
+${legacy?'':'  <desktops number="9" />\n'}  <keyboard>
+    <keybind key="${mod}-${key.terminal}">${execute(c.terminal)}</keybind>
+    <keybind key="${mod}-${key.browser}">${execute(c.browser)}</keybind>
+    <keybind key="${mod}-${key.launcher}">${execute('wofi --show drun')}</keybind>
     <keybind key="${mod}-${key.close}"><action name="Close" /></keybind>
     <keybind key="${mod}-S-r"><action name="Reconfigure" /></keybind>
     <keybind key="${mod}-S-e"><action name="Exit" /></keybind>
     <keybind key="${mod}-Tab"><action name="NextWindow" /></keybind>
-${nums.map(n=>`    <keybind key="${mod}-${n}"><action name="GoToDesktop" to="${n}" /></keybind>`).join('\n')}
-  </keyboard>
+${legacy?'':nums.map(n=>`    <keybind key="${mod}-${n}"><action name="GoToDesktop" to="${n}" /></keybind>\n`).join('')}  </keyboard>
 </labwc_config>
 `,
- 'themerc-override':`border.width: ${c.border}
+ [legacy?'themerc':'themerc-override']:`border.width: ${c.border}
 window.active.border.color: ${c.active}
 window.inactive.border.color: ${c.inactive}
 `};
