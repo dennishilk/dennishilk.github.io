@@ -101,7 +101,7 @@ ${image?`<meta property="og:image" content="${origin+image.path}">
 <meta property="article:published_time" content="${date}">
 <meta name="twitter:card" content="${image?'summary_large_image':'summary'}">
 <link rel="icon" href="/favicon.png">
-<link rel="stylesheet" href="${assets}/style.css">
+<link rel="stylesheet" href="${assets}/style.css${type==='finder'?'?v=20261112-distro-cards':''}">
 <script type="application/ld+json">${JSON.stringify(schema).replaceAll('<','\\u003c')}</script>
 ${cover?`<script type="module" src="${assets}/ui.js"></script>`:''}
 </head><body>
@@ -124,7 +124,8 @@ ${cover?`<dialog data-lightbox aria-labelledby="image-caption"><button type="but
  }
  const cards=distros.map(d=>{
   const [title,...body]=portraits[d.id][idx];
-  return `<article class="profile" id="distro-${d.id}"><h3>${e(d.name)}</h3>${(distroScreens[d.id]||[d.id]).map(id=>figure(id)).join('')}<p class="subtitle">${e(title)}</p>${body.map(p=>`<p>${e(p)}</p>`).join('')}<p class="inline-links">${attr(d.site,t('Offizielle Website / Download','Official site / download'))}${attr(d.docs,t('Dokumentation','Documentation'))}${attr(routes.updates[lang]+'#update-'+d.id,t('Update-Anleitung','Update guide'))}</p></article>`;
+  const siteLink=attr(d.site,d.name,`class="profile-site" aria-label="${e(d.name+t(' · Offizielle Website',' · Official website'))}"`);
+  return `<article class="profile distro-profile" id="distro-${d.id}"><h3>${siteLink}</h3>${(distroScreens[d.id]||[d.id]).map(id=>figure(id)).join('')}<p class="subtitle">${e(title)}</p>${body.map(p=>`<p>${e(p)}</p>`).join('')}<p class="inline-links">${attr(d.docs,t('Dokumentation','Documentation'))}${attr(routes.updates[lang]+'#update-'+d.id,t('Update-Anleitung','Update guide'))}</p></article>`;
  }).join('\n');
  const filterFields=[
   ['protocol',t('Sitzung','Session'),['x11','wayland']],

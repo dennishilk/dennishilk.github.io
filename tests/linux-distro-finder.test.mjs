@@ -115,6 +115,13 @@ test('the three articles keep each feature on its own page in both languages',()
   assert.doesNotMatch(wm,/data-quiz|id="update-[a-z]+"/);
   assert.doesNotMatch(updates,/data-quiz|data-builder|type="module"/);
   assert.equal((finder.match(/id="distro-[a-z]+"/g)||[]).length,11);
+  for (const distro of distros) {
+   const start=finder.indexOf(`id="distro-${distro.id}"`);
+   const card=finder.slice(start,finder.indexOf('</article>',start));
+   assert.ok(card.includes(`<h3><a href="${distro.site.replaceAll('&','&amp;')}" class="profile-site"`),distro.id);
+   assert.ok(card.includes('<a data-enlarge')&&card.includes('<figcaption>'),distro.id);
+   assert.ok(card.includes(paths[2]+'#update-'+distro.id),distro.id);
+  }
   assert.equal((finder.match(/id="desktop-[a-z0-9]+"/g)||[]).length,12);
   assert.equal((updates.match(/id="update-[a-z]+"/g)||[]).length,11);
   assert.match(wm,/src="\/assets\/linux-distro-finder\/itsfine.webp"/);

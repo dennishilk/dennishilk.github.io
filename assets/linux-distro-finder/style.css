@@ -57,8 +57,14 @@ button:disabled { opacity: .45; cursor: default; }
 .panel { padding: clamp(.85rem,3vw,1.65rem); }
 .profile { padding: 1rem; }
 .profile h3 { margin-top: .7rem; }
+.distro-profile { position: relative; isolation: isolate; }
+.distro-profile:hover { border-color: var(--accent); }
+.profile-site { color: inherit; text-decoration: none; }
+.profile-site::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: .8rem; }
+.profile-site:focus-visible::after { outline: 2px solid var(--accent); outline-offset: 2px; }
+.distro-profile a:not(.profile-site) { position: relative; z-index: 2; }
 .profile figure { margin: -.1rem -.1rem .85rem; }
-.profile figure a { display: grid; place-items: center; background: #070d14; border-radius: .45rem; overflow: hidden; aspect-ratio: 16/9; }
+.profile figure > a[data-enlarge] { display: grid; place-items: center; background: #070d14; border-radius: .45rem; overflow: hidden; aspect-ratio: 16/9; }
 .profile img { width: 100%; height: 100%; object-fit: contain; }
 .profile p { color: var(--muted); }
 .profile .subtitle { color: var(--text); font-weight: 650; }
