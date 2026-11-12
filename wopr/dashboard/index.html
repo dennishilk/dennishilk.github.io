@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <title>WOPR Dashboard – Incoming Transmissions</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-  <link rel="stylesheet" href="/wopr/wopr.css?v=2" />
-  <script defer src="/wopr/dashboard/transmissions.js?v=2"></script>
+  <link rel="stylesheet" href="/wopr/wopr.css?v=3" />
+  <script defer src="/wopr/dashboard/transmissions.js?v=3"></script>
 
 <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
 <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
@@ -26,21 +26,22 @@
         <header class="wopr-header">
           <p class="kicker">SECURE SESSION</p>
           <h1>WOPR OBSERVER WORKSHOP</h1>
-          <p class="classification">AUTHENTICATED OPERATIONS · PUBLICATION QUEUE</p>
+          <p class="classification">AUTHENTICATED OPERATIONS · TRANSMISSION ARCHIVE</p>
         </header>
 
         <section class="staging-preview transmissions-ops" aria-labelledby="incoming-title">
           <div class="ops-card">
             <div>
               <h2 id="incoming-title">INCOMING TRANSMISSIONS</h2>
-              <p><strong id="pending-count">0</strong> PENDING</p>
+              <p><strong id="recent-count">0 OF 0</strong> RECENT · <strong id="pending-count">0</strong> PENDING</p>
             </div>
-            <button type="button" class="secondary-button" id="review-button">REVIEW</button>
+            <button type="button" class="secondary-button" id="review-button">OPEN ARCHIVE</button>
           </div>
-          <p id="review-status" class="auth-message">AWAITING QUEUE STATUS.</p>
+          <p id="review-status" class="auth-message">AWAITING ARCHIVE STATUS.</p>
 
           <div id="review-panel" class="review-panel" hidden>
-            <h2>REVIEW QUEUE</h2>
+            <h2>LAST 100 TRANSMISSIONS</h2>
+            <p class="archive-note">Published, pending and hidden entries are retained here for management. Older records remain safely stored. You can adjust the public date/time while preserving the original receipt timestamp.</p>
             <div id="pending-list" class="pending-list" aria-live="polite"></div>
           </div>
         </section>
