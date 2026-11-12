@@ -26,6 +26,7 @@ const CONFIG = {
   securityStateFile: process.env.WOPR_SECURITY_STATE_FILE || "/var/lib/wopr/security/security-state.json",
   securityReviewsFile: process.env.WOPR_SECURITY_REVIEWS_FILE || "/var/lib/wopr/security/operator-reviews.json",
   securityCasesFile: process.env.WOPR_SECURITY_CASES_FILE || "/var/lib/wopr/security/case-ledger.json",
+  transmissionModeration: process.env.WOPR_TRANSMISSIONS_MODERATION === "true",
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
@@ -36,10 +37,8 @@ const SIGNAL_STATE_FILE = "signal-state.json";
 const MAX_CALLSIGN_LENGTH = 40;
 const MAX_ORIGIN_LENGTH = 80;
 const MAX_MESSAGE_LENGTH = 1200;
-const PUBLIC_TRANSMISSION_LIMIT = 50;
-const PENDING_TRANSMISSION_LIMIT = 200;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
-const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_MAX = 60; // Keep abuse protection without the former five-post bottleneck.
 const ALLOWED_EVENTS = new Set([
   "wopr_view",
   "login_failed",
@@ -207,10 +206,10 @@ function chronologicalTransmissionOrder(left, right) {
 }
 
 function migrateSignalNumbers(records, startingNumber = 1) {
-  let nextSignalNumber = Math.max(
-    startingNumber,
-    ...records.map((record) => Number.isSafeInteger(record.signal_number) ? record.signal_number + 1 : 1),
-  );
+  let nextSignalNumber = Number.isSafeInteger(startingNumber) && startingNumber > 0 ? startingNumber : 1;
+  for (const record of records) {
+    if (Number.isSafeInteger(record.signal_number)) nextSignalNumber = Math.max(nextSignalNumber, record.signal_number + 1);
+  }
   const legacyApproved = records
     .filter((record) => record.status === "APPROVED" && !Number.isSafeInteger(record.signal_number))
     .sort(chronologicalTransmissionOrder);
@@ -241,23 +240,50 @@ async function readTransmissions() {
   return records;
 }
 
+function enqueueTransmissionWrite(task) {
+  const pending = writeQueue.then(task, task);
+  writeQueue = pending.catch(() => {}); // A failed write must not permanently block later submissions.
+  return pending;
+}
+
+async function replaceTransmissionFile(records) {
+  await ensureTransmissionStore();
+  const tmpPath = `${transmissionPath()}.${process.pid}.tmp`;
+  const data = records.map((record) => JSON.stringify(record)).join("\n");
+  await fs.writeFile(tmpPath, data ? `${data}\n` : "", { mode: 0o640 });
+  await fs.rename(tmpPath, transmissionPath());
+}
+
 function writeTransmissions(records) {
-  writeQueue = writeQueue.then(async () => {
-    await ensureTransmissionStore();
-    const tmpPath = `${transmissionPath()}.${process.pid}.tmp`;
-    const data = records.map((record) => JSON.stringify(record)).join("\n");
-    await fs.writeFile(tmpPath, data ? `${data}\n` : "", { mode: 0o640 });
-    await fs.rename(tmpPath, transmissionPath());
-  });
-  return writeQueue;
+  return enqueueTransmissionWrite(() => replaceTransmissionFile(records));
 }
 
 function appendTransmission(record) {
-  writeQueue = writeQueue.then(async () => {
+  return enqueueTransmissionWrite(async () => {
     await ensureTransmissionStore();
-    await fs.appendFile(transmissionPath(), `${JSON.stringify(record)}\n`, { mode: 0o640 });
+    if (record.status !== "APPROVED") {
+      await fs.appendFile(transmissionPath(), `${JSON.stringify(record)}\n`, { mode: 0o640 });
+      return;
+    }
+
+    // Allocate public signal numbers inside the write queue so parallel posts cannot reuse them.
+    const content = await fs.readFile(transmissionPath(), "utf8");
+    const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+    let state = { next_signal_number: 1 };
+    try { state = JSON.parse(await fs.readFile(signalStatePath(), "utf8")); } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    const hadLegacyRecords = records.some((entry) => entry.status === "APPROVED" && !Number.isSafeInteger(entry.signal_number));
+    record.signal_number = migrateSignalNumbers(records, state.next_signal_number);
+    record.reviewedAt = record.receivedAt;
+    if (hadLegacyRecords) {
+      await replaceTransmissionFile([...records, record]);
+    } else {
+      await fs.appendFile(transmissionPath(), `${JSON.stringify(record)}\n`, { mode: 0o640 });
+    }
+    // The file is authoritative: a crash before this update is repaired by migrateSignalNumbers.
+    await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: record.signal_number + 1 })}\n`, { mode: 0o640 });
   });
-  return writeQueue;
 }
 
 function requireSession(req) {
@@ -312,50 +338,63 @@ async function handleSubmitTransmission(req, res) {
   if (!rateLimitAllows(req)) return sendJson(res, 429, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
   const body = await readJson(req);
   const sanitized = sanitizeTransmission(body);
-  if (sanitized.honeypot) return sendJson(res, 200, { ok: true, message: "TRANSMISSION RECEIVED. AWAITING REVIEW." });
+  const responseMessage = CONFIG.transmissionModeration
+    ? "TRANSMISSION RECEIVED. AWAITING REVIEW."
+    : "TRANSMISSION RECEIVED. NOW LIVE.";
+  if (sanitized.honeypot) return sendJson(res, 200, { ok: true, message: responseMessage });
   if (!sanitized.ok) return sendJson(res, sanitized.status || 400, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
   await appendTransmission({
     id: crypto.randomUUID(),
     ...sanitized.value,
-    status: "PENDING",
+    status: CONFIG.transmissionModeration ? "PENDING" : "APPROVED",
     receivedAt: new Date().toISOString(),
   });
-  return sendJson(res, 202, { ok: true, message: "TRANSMISSION RECEIVED. AWAITING REVIEW." });
+  return sendJson(res, CONFIG.transmissionModeration ? 202 : 201, { ok: true, message: responseMessage });
 }
 
 async function handlePublicTransmissions(_req, res) {
   const records = await readTransmissions();
   const approved = records.filter((record) => record.status === "APPROVED")
-    .sort(chronologicalTransmissionOrder).slice(-PUBLIC_TRANSMISSION_LIMIT).reverse().map(publicTransmission);
+    .sort(chronologicalTransmissionOrder).reverse().map(publicTransmission);
   return sendJson(res, 200, { ok: true, transmissions: approved });
 }
 
 async function handlePendingTransmissions(req, res) {
   if (!requireSession(req)) return sendJson(res, 401, { ok: false });
   const records = await readTransmissions();
-  const pending = records.filter((record) => record.status === "PENDING").slice(-PENDING_TRANSMISSION_LIMIT).reverse().map(publicTransmission);
+  const pending = records.filter((record) => record.status === "PENDING").reverse().map(publicTransmission);
   return sendJson(res, 200, { ok: true, pending, count: pending.length });
 }
 
 async function updateTransmissionStatus(req, res, id, status) {
   if (!requireSession(req)) return sendJson(res, 401, { ok: false });
   if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
-  const records = await readTransmissions();
-  const record = records.find((entry) => entry.id === id && entry.status === "PENDING");
-  if (!record) return sendJson(res, 404, { ok: false });
-  let signalNumber;
-  if (status === "APPROVED") {
-    const state = JSON.parse(await fs.readFile(signalStatePath(), "utf8"));
-    signalNumber = migrateSignalNumbers(records, state.next_signal_number);
-  }
-  record.status = status;
-  record.reviewedAt = new Date().toISOString();
-  if (status === "APPROVED") {
-    record.signal_number = signalNumber;
-    await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: signalNumber + 1 })}\n`, { mode: 0o640 });
-  }
-  await writeTransmissions(records);
-  return sendJson(res, 200, { ok: true });
+  const found = await enqueueTransmissionWrite(async () => {
+    await ensureTransmissionStore();
+    const content = await fs.readFile(transmissionPath(), "utf8");
+    const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+    // Approved posts may be hidden later without erasing the historical record.
+    const record = records.find((entry) => entry.id === id &&
+      (entry.status === "PENDING" || (status === "REJECTED" && entry.status === "APPROVED")));
+    if (!record) return false;
+    let nextSignalNumber;
+    if (status === "APPROVED") {
+      let state = { next_signal_number: 1 };
+      try { state = JSON.parse(await fs.readFile(signalStatePath(), "utf8")); } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+      }
+      nextSignalNumber = migrateSignalNumbers(records, state.next_signal_number);
+      record.signal_number = nextSignalNumber;
+    }
+    record.status = status;
+    record.reviewedAt = new Date().toISOString();
+    await replaceTransmissionFile(records);
+    if (status === "APPROVED") {
+      await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: nextSignalNumber + 1 })}\n`, { mode: 0o640 });
+    }
+    return true;
+  });
+  return sendJson(res, found ? 200 : 404, { ok: found });
 }
 
 async function handleEvent(req, res) {
@@ -536,6 +575,8 @@ async function route(req, res) {
     if (req.method === "POST" && approveMatch) return await updateTransmissionStatus(req, res, approveMatch[1], "APPROVED");
     const rejectMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/reject$/);
     if (req.method === "POST" && rejectMatch) return await updateTransmissionStatus(req, res, rejectMatch[1], "REJECTED");
+    const hideMatch = url.pathname.match(/^\/wopr\/api\/transmissions\/([^/]+)\/hide$/);
+    if (req.method === "POST" && hideMatch) return await updateTransmissionStatus(req, res, hideMatch[1], "REJECTED");
     return sendJson(res, 404, { ok: false });
   } catch (error) {
     return sendJson(res, error.status || 500, { ok: false });
