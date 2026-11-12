@@ -44,6 +44,7 @@ function renderTransmissions() {
     empty.className = "transmission-empty";
     empty.textContent = "NO APPROVED SIGNALS RECEIVED YET.";
     transmissionList.appendChild(empty);
+    renderPages();
     return;
   }
 
@@ -139,16 +140,18 @@ async function loadTransmissions(page = 1) {
     totalTransmissionCount = Number(data.total) || 0;
     if (transmissionCount) transmissionCount.textContent = `${totalTransmissionCount} SIGNAL${totalTransmissionCount === 1 ? "" : "S"}`;
     renderTransmissions();
+    return true;
   } catch (error) {
-    if (request !== latestLoadRequest) return;
+    if (request !== latestLoadRequest) return false;
     transmissionList.innerHTML = '<p class="transmission-empty">SIGNAL ARCHIVE TEMPORARILY UNAVAILABLE.</p>';
     if (transmissionPages) transmissionPages.hidden = true;
+    return false;
   }
 }
 
 async function changeTransmissionPage(page, pushHistory = true) {
   if (page < 1 || page > totalTransmissionPages || page === currentTransmissionPage) return;
-  await loadTransmissions(page);
+  if (!await loadTransmissions(page)) return;
   if (pushHistory) {
     const url = new URL(window.location.href);
     if (currentTransmissionPage === 1) url.searchParams.delete("page");
