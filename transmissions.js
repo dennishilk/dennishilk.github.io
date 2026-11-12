@@ -11,15 +11,17 @@ let latestLoadRequest = 0;
 
 function formatTransmissionTime(value) {
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "UTC TIME UNKNOWN";
+  if (Number.isNaN(date.getTime())) return "TIME UNKNOWN";
   return new Intl.DateTimeFormat("en-GB", {
     year: "numeric",
     month: "short",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "UTC",
-  }).format(date).replace(",", "") + " UTC";
+    timeZone: "Europe/Berlin",
+    timeZoneName: "short",
+    hourCycle: "h23",
+  }).format(date).replace(",", "");
 }
 
 function setTransmissionStatus(text, mode = "") {
