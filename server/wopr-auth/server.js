@@ -37,8 +37,7 @@ const SIGNAL_STATE_FILE = "signal-state.json";
 const MAX_CALLSIGN_LENGTH = 40;
 const MAX_ORIGIN_LENGTH = 80;
 const MAX_MESSAGE_LENGTH = 1200;
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
-const RATE_LIMIT_MAX = 60; // Keep abuse protection without the former five-post bottleneck.
+const PUBLIC_PAGE_SIZE = 10;
 const ALLOWED_EVENTS = new Set([
   "wopr_view",
   "login_failed",
@@ -48,7 +47,6 @@ const ALLOWED_EVENTS = new Set([
   "logout",
 ]);
 const eventCounters = new Map();
-const submissionCounters = new Map();
 let writeQueue = Promise.resolve();
 
 function requireConfig() {
@@ -167,23 +165,6 @@ function hasTrustedOrigin(req) {
   return CONFIG.allowedOrigins.has(origin);
 }
 
-function clientRateKey(req) {
-  return String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown").split(",")[0].trim();
-}
-
-function rateLimitAllows(req) {
-  const now = Date.now();
-  const key = clientRateKey(req);
-  const current = submissionCounters.get(key) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
-  if (current.resetAt <= now) {
-    current.count = 0;
-    current.resetAt = now + RATE_LIMIT_WINDOW_MS;
-  }
-  current.count += 1;
-  submissionCounters.set(key, current);
-  return current.count <= RATE_LIMIT_MAX;
-}
-
 function recordEvent(type) {
   const current = eventCounters.get(type) || { count: 0, lastAt: null };
   current.count += 1;
@@ -227,16 +208,7 @@ async function readTransmissions() {
   await ensureTransmissionStore();
   const content = await fs.readFile(transmissionPath(), "utf8");
   const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
-  let state = { next_signal_number: 1 };
-  try { state = JSON.parse(await fs.readFile(signalStatePath(), "utf8")); } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-  }
-  const hadLegacyRecords = records.some((record) => record.status === "APPROVED" && !Number.isSafeInteger(record.signal_number));
-  const nextSignalNumber = migrateSignalNumbers(records, state.next_signal_number);
-  if (hadLegacyRecords) await writeTransmissions(records);
-  if (state.next_signal_number !== nextSignalNumber) {
-    await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: nextSignalNumber })}\n`, { mode: 0o640 });
-  }
+  migrateSignalNumbers(records);
   return records;
 }
 
@@ -256,6 +228,32 @@ async function replaceTransmissionFile(records) {
 
 function writeTransmissions(records) {
   return enqueueTransmissionWrite(() => replaceTransmissionFile(records));
+}
+
+async function initializeTransmissions() {
+  return enqueueTransmissionWrite(async () => {
+    await ensureTransmissionStore();
+    const content = await fs.readFile(transmissionPath(), "utf8");
+    const records = content.split("\n").filter(Boolean).map((line) => JSON.parse(line));
+    let state = { next_signal_number: 1 };
+    try { state = JSON.parse(await fs.readFile(signalStatePath(), "utf8")); } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    const hadLegacyRecords = records.some((record) => record.status === "APPROVED" && !Number.isSafeInteger(record.signal_number));
+    let nextSignalNumber = migrateSignalNumbers(records, state.next_signal_number);
+    const waiting = CONFIG.transmissionModeration ? [] : records
+      .filter((record) => record.status === "PENDING")
+      .sort(chronologicalTransmissionOrder);
+    for (const record of waiting) {
+      record.status = "APPROVED";
+      record.signal_number = nextSignalNumber++;
+      record.reviewedAt = new Date().toISOString();
+    }
+    if (hadLegacyRecords || waiting.length) await replaceTransmissionFile(records);
+    if (state.next_signal_number !== nextSignalNumber) {
+      await fs.writeFile(signalStatePath(), `${JSON.stringify({ next_signal_number: nextSignalNumber })}\n`, { mode: 0o640 });
+    }
+  });
 }
 
 function appendTransmission(record) {
@@ -335,7 +333,6 @@ async function handleLogin(req, res) {
 async function handleSubmitTransmission(req, res) {
   if (!hasTrustedOrigin(req)) return sendJson(res, 403, { ok: false });
   if (!requireJsonContent(req)) return sendJson(res, 415, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
-  if (!rateLimitAllows(req)) return sendJson(res, 429, { ok: false, message: "TRANSMISSION FAILED. RETRY LATER." });
   const body = await readJson(req);
   const sanitized = sanitizeTransmission(body);
   const responseMessage = CONFIG.transmissionModeration
@@ -352,11 +349,17 @@ async function handleSubmitTransmission(req, res) {
   return sendJson(res, CONFIG.transmissionModeration ? 202 : 201, { ok: true, message: responseMessage });
 }
 
-async function handlePublicTransmissions(_req, res) {
+async function handlePublicTransmissions(req, res) {
+  const pageValue = new URL(req.url, "http://localhost").searchParams.get("page") || "1";
+  if (!/^[1-9][0-9]{0,8}$/.test(pageValue)) return sendJson(res, 400, { ok: false });
   const records = await readTransmissions();
   const approved = records.filter((record) => record.status === "APPROVED")
-    .sort(chronologicalTransmissionOrder).reverse().map(publicTransmission);
-  return sendJson(res, 200, { ok: true, transmissions: approved });
+    .sort(chronologicalTransmissionOrder).reverse();
+  const total = approved.length;
+  const totalPages = Math.max(1, Math.ceil(total / PUBLIC_PAGE_SIZE));
+  const page = Math.min(Number(pageValue), totalPages);
+  const transmissions = approved.slice((page - 1) * PUBLIC_PAGE_SIZE, page * PUBLIC_PAGE_SIZE).map(publicTransmission);
+  return sendJson(res, 200, { ok: true, transmissions, page, total, total_pages: totalPages, per_page: PUBLIC_PAGE_SIZE });
 }
 
 async function handlePendingTransmissions(req, res) {
@@ -585,7 +588,7 @@ async function route(req, res) {
 
 if (require.main === module) {
 requireConfig();
-ensureTransmissionStore().catch((error) => {
+initializeTransmissions().catch((error) => {
   console.error(`WOPR transmission store unavailable: ${error.message}`);
   process.exit(1);
 }).then(() => {
@@ -595,4 +598,4 @@ ensureTransmissionStore().catch((error) => {
 });
 }
 
-module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, hasTrustedOrigin, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview, chronologicalTransmissionOrder, migrateSignalNumbers, publicTransmission };
+module.exports = { assertAllowedSelfCheckUrl, SELF_CHECK_PATHS, route, isValidSession, hasTrustedOrigin, runSelfCheck, operatorReviewFor, presentSecurityState, validateOperatorReview, chronologicalTransmissionOrder, migrateSignalNumbers, publicTransmission, initializeTransmissions };
