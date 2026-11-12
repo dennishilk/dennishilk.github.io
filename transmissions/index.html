@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="canonical" href="https://www.dennishilk.com/transmissions/">
   <title>Public Signal Uplink – Dennis Hilk</title>
-  <meta name="description" content="Public Signal Uplink guestbook for dennishilk.com. Leave an external communication for review before it appears publicly.">
+  <meta name="description" content="Public Signal Uplink guestbook for dennishilk.com. Messages appear directly in the public visitor archive.">
   <meta name="robots" content="index, follow">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/avatar.png">
   <link rel="preload" href="/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/style.css?v=43">
-  <link rel="stylesheet" href="/transmissions.css?v=2">
+  <link rel="stylesheet" href="/transmissions.css?v=3">
   <script defer src="/stars.js"></script>
-  <script defer src="/transmissions.js?v=4"></script>
+  <script defer src="/transmissions.js?v=5"></script>
   <meta property="og:title" content="Public Signal Uplink – Dennis Hilk">
-  <meta property="og:description" content="Public Signal Uplink guestbook for dennishilk.com. Leave an external communication for review before it appears publicly.">
+  <meta property="og:description" content="Public Signal Uplink guestbook for dennishilk.com. Messages appear directly in the public visitor archive.">
   <meta property="og:url" content="https://www.dennishilk.com/transmissions/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://www.dennishilk.com/avatar.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Public Signal Uplink – Dennis Hilk">
-  <meta name="twitter:description" content="Public Signal Uplink guestbook for dennishilk.com. Leave an external communication for review before it appears publicly.">
+  <meta name="twitter:description" content="Public Signal Uplink guestbook for dennishilk.com. Messages appear directly in the public visitor archive.">
   <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
 
 <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
@@ -45,7 +45,7 @@
       <span>PUBLIC MESSAGE TERMINAL</span>
       <span>ARCHIVE ONLINE</span>
     </div>
-    <p class="guestbook-intro">Sign the public visitor log. Approved messages are assigned a permanent signal number and broadcast below.</p>
+    <p class="guestbook-intro">Sign the public visitor log. Messages receive a permanent signal number and appear immediately below.</p>
   </header>
 
   <main>
@@ -57,7 +57,7 @@
         </div>
         <div class="uplink-panel-heading">
           <h2 id="uplink-title">SIGN THE GUESTBOOK</h2>
-          <p class="transmission-copy">IDENTIFY YOUR SIGNAL · ENTER A MESSAGE · TRANSMIT FOR REVIEW</p>
+          <p class="transmission-copy">IDENTIFY YOUR SIGNAL · ENTER A MESSAGE · GO LIVE</p>
         </div>
 
         <form id="transmission-form" class="transmission-form" autocomplete="off">
@@ -94,7 +94,7 @@
       <div id="transmission-list" class="transmission-list" aria-live="polite">
         <p class="transmission-empty">SCANNING APPROVED SIGNALS…</p>
       </div>
-      <button id="load-more-transmissions" class="load-more-transmissions" type="button" hidden>LOAD MORE SIGNALS</button>
+      <nav id="transmission-pages" class="transmission-pages" aria-label="Guestbook pages" hidden></nav>
     </section>
   </main>
 
