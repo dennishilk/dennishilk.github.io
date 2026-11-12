@@ -122,7 +122,10 @@ input[type="radio"],input[type="checkbox"] { accent-color: var(--accent); }
 .shortcuts { padding-left: 1.2rem; }
 .shortcuts li { margin-bottom: .4rem; }
 .clipboard-temp { position: fixed; inset: 0 auto auto -100vw; }
-.wm-article-image { max-width: 48rem; margin: 0 auto clamp(2.6rem,6vw,5rem); }
+.wm-challenge { padding: 0 clamp(.85rem,3vw,1.65rem); }
+.wm-challenge > summary { padding-block: .85rem; font-size: 1.16rem; }
+.wm-challenge > summary:hover { color: var(--accent); }
+.wm-article-image { margin-block-end: clamp(.85rem,3vw,1.65rem); }
 .wm-article-image a { display: block; border-radius: .8rem; cursor: zoom-in; }
 .wm-article-image img { width: 100%; border-radius: inherit; }
 dialog { color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: .7rem; padding: 1rem; max-width: min(94vw, 91rem); max-height: 94vh; }

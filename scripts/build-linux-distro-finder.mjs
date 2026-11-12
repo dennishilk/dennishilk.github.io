@@ -67,7 +67,7 @@ function build(lang) {
  function shell(type,guide,body) {
   const {title,seoTitle,description,cover}=guide;
   const path=routes[type][lang],url=origin+path,alt=routes[type][other],image=screens[cover];
-  const wmAssetVersion=type==='wm'?'?v=20261112-wm-image':'';
+  const wmAssetVersion=type==='wm'?'?v=20261112-wm-challenge':'';
   const crumbs=[{name:t('Startseite','Home'),item:origin+home},{name:'Blog',item:origin+blog},{name:title,item:url}];
   const schema={'@context':'https://schema.org','@graph':[
    {'@type':'BlogPosting','@id':url+'#article',url,inLanguage:lang,headline:title,mainEntityOfPage:url,
@@ -184,15 +184,17 @@ ${select('mod',t('Modifikatortaste','Modifier key'),[['super','Super / Windows']
 <p tabindex="-1" role="alert" data-build-error></p><button class="primary" type="submit">${t('Konfiguration erstellen','Generate configuration')}</button></form>
 <div class="panel" data-build-output hidden></div></section>`;
 
+ const wmImagePath=assets+'/itsfine.webp';
+ const wmImageAlt=t('Dennis sitzt mit einer Tasse Tee im brennenden Linux-Zimmer. Auf dem Bildschirm steht ein GRUB-Fehler.','Dennis sits with a cup of tea in a burning Linux room. The monitor shows a GRUB error.');
  const wmChallenge=`<section class="article-copy" id="ratpoison-challenge">
-<h2>${t('Herausforderung angenommen?','Challenge accepted?')}</h2>
+<details class="panel wm-challenge">
+<summary>${t('Lust auf eine Herausforderung?','Up for a challenge?')}</summary>
 <p><strong>Gentoo + ratpoison + NVIDIA + Steam</strong></p>
 <p>${t('Ich würde Gentoo mit einem Multilib-Profil einrichten, den passenden NVIDIA-Treiber installieren und ratpoison unter X11 starten. Wenn ich per Tastenkürzel ein Terminal öffnen kann, würde ich die 32-Bit-Grafikbibliotheken für NVIDIA einrichten und Steam aus dem Steam-Overlay installieren.','I’d set up Gentoo with a multilib profile, install the matching NVIDIA driver and start ratpoison under X11. Once I could open a terminal with a keyboard shortcut, I’d set up NVIDIA’s 32-bit graphics libraries and install Steam from the Steam overlay.')}</p>
 <p class="inline-links">${attr('https://wiki.archlinux.org/title/Ratpoison','Ratpoison')}${attr('https://wiki.gentoo.org/wiki/Steam',t('Steam unter Gentoo','Steam on Gentoo'))}</p>
-<p>${t('Den Rest musst du selbst rausfinden. :D','You’ll have to figure out the rest yourself. :D')}</p></section>`;
- const wmImagePath=assets+'/itsfine.webp';
- const wmImageAlt=t('Dennis sitzt mit einer Tasse Tee im brennenden Linux-Zimmer. Auf dem Bildschirm steht ein GRUB-Fehler.','Dennis sits with a cup of tea in a burning Linux room. The monitor shows a GRUB error.');
- const wmImage=`<figure class="wm-article-image"><a data-enlarge href="${wmImagePath}" aria-label="${t('It’s Fine vergrößern','Enlarge It’s Fine')}"><img src="${wmImagePath}" width="1535" height="1024" loading="lazy" decoding="async" alt="${e(wmImageAlt)}"></a></figure>`;
+<p>${t('Den Rest musst du selbst rausfinden. :D','You’ll have to figure out the rest yourself. :D')}</p>
+<figure class="wm-article-image"><a data-enlarge href="${wmImagePath}" aria-label="${t('It’s Fine vergrößern','Enlarge It’s Fine')}"><img src="${wmImagePath}" width="1535" height="1024" loading="lazy" decoding="async" alt="${e(wmImageAlt)}"></a></figure>
+</details></section>`;
 
  const updateContent=`<section id="updates"><h2>${t('Update-Befehle nach Distribution','Update commands by distribution')}</h2>
 <p class="lead">${t('Ein Paketupdate pflegt die installierte Version. Ein Release-Wechsel folgt eigenen Hinweisen und kann Paketquellen ändern. Firmware für Geräte kommt gegebenenfalls über fwupd oder den Hersteller. Flatpak-Apps und Laufzeiten aktualisierst du separat mit flatpak update.','Package updates maintain the installed release. A release upgrade follows its own instructions and can change repositories. Device firmware may come through fwupd or the vendor. Use flatpak update separately for Flatpak apps and runtimes.')}</p>
@@ -229,7 +231,7 @@ ${select('mod',t('Modifikatortaste','Modifier key'),[['super','Super / Windows']
 <p class="byline">${attr('/about/','Dennis Hilk')} · <time datetime="${date}">${t('12. November 2026','12 November 2026')}</time></p>
 ${attr('#'+action,topics[action],'class="button primary"')}</div>${guide.cover?figure(guide.cover,true):''}</header>`;
  }
- function article(type,action,nav,content,end='') {
+ function article(type,action,nav,content) {
   const more=Object.keys(guides).filter(key=>key!==type).map(key=>attr(routes[key][lang],guides[key].title));
   if (type==='finder') more.push(attr('/linux-migration-companion/','Linux Migration Companion'));
   const body=`<article class="guide">
@@ -237,7 +239,7 @@ ${hero(guides[type],action)}
 <nav class="section-nav" aria-label="${t('In diesem Artikel','In this article')}">${nav.map(([id,label])=>attr('#'+id,label)).join('')}</nav>
 ${content}
 <section><h2>${t('Weiterlesen','Read more')}</h2><p class="inline-links">${more.join('')}</p></section>
-${end?end+'\n':''}</article>`;
+</article>`;
   write(routes[type][lang],shell(type,guides[type],body));
  }
  article('finder','quiz',[
@@ -260,7 +262,7 @@ ${prose(firstLogin)}
 ${prose(display)}
 ${wmChallenge}
 <section id="credits" class="article-copy"><h2>${t('Bildnachweise','Image credits')}</h2><ul>
-<li>${attr(screens.nixos.source,screens.nixos.title)} · ${e(screens.nixos.artist)}</li></ul></section>`,wmImage);
+<li>${attr(screens.nixos.source,screens.nixos.title)} · ${e(screens.nixos.artist)}</li></ul></section>`);
 
  article('updates','updates',[['updates',topics.updates]],updateContent);
 
