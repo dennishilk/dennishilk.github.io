@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux Window Manager Config Generator · Dennis Hilk</title>
+<meta name="description" content="Generate a Linux starter config for xmonad, dwm, i3, Sway, Hyprland, niri, labwc or AwesomeWM. Get package commands, keybindings and first-login help.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://www.dennishilk.com/blog/linux-window-manager-config-generator/">
+<link rel="alternate" hreflang="en" href="https://www.dennishilk.com/blog/linux-window-manager-config-generator/">
+<link rel="alternate" hreflang="de" href="https://www.dennishilk.com/de/blog/linux-wm-konfigurator/">
+<link rel="alternate" hreflang="x-default" href="https://www.dennishilk.com/blog/linux-window-manager-config-generator/">
+<link rel="alternate" type="application/rss+xml" title="Dennis Hilk · Blog" href="https://www.dennishilk.com/blog/feed.xml">
+<meta property="og:site_name" content="Dennis Hilk">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Window Manager Config Generator for Your First Login">
+<meta property="og:description" content="Generate a Linux starter config for xmonad, dwm, i3, Sway, Hyprland, niri, labwc or AwesomeWM. Get package commands, keybindings and first-login help.">
+<meta property="og:url" content="https://www.dennishilk.com/blog/linux-window-manager-config-generator/">
+<meta property="og:image" content="https://www.dennishilk.com/assets/linux-distro-finder/screens/nixos.webp">
+<meta property="og:image:width" content="1440">
+<meta property="og:image:height" content="603">
+<meta property="og:image:alt" content="Cthulhu with a dark xmonad desktop and dragon wallpaper">
+<meta name="twitter:image:alt" content="Cthulhu with a dark xmonad desktop and dragon wallpaper">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="article:published_time" content="2026-11-12">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="/assets/linux-distro-finder/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/blog/linux-window-manager-config-generator/#article","url":"https://www.dennishilk.com/blog/linux-window-manager-config-generator/","inLanguage":"en","headline":"Window Manager Config Generator for Your First Login","mainEntityOfPage":"https://www.dennishilk.com/blog/linux-window-manager-config-generator/","articleSection":"Linux Tutorials","isPartOf":{"@id":"https://www.dennishilk.com/blog/#blog"},"author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"description":"Generate a Linux starter config for xmonad, dwm, i3, Sway, Hyprland, niri, labwc or AwesomeWM. Get package commands, keybindings and first-login help.","image":"https://www.dennishilk.com/assets/linux-distro-finder/screens/nixos.webp","datePublished":"2026-11-12","dateModified":"2026-11-12"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.dennishilk.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/blog/"},{"@type":"ListItem","position":3,"name":"Window Manager Config Generator for Your First Login","item":"https://www.dennishilk.com/blog/linux-window-manager-config-generator/"}]}]}</script>
+<script type="module" src="/assets/linux-distro-finder/ui.js"></script>
+</head><body>
+<a href="#main" class="skip">Skip to content</a>
+<header class="top"><div class="wrap"><a href="/"><span class="brand-mark" aria-hidden="true">&gt;_</span>Dennis Hilk</a><a href="/blog/">Blog</a><a class="language" href="/de/blog/linux-wm-konfigurator/" lang="de" hreflang="de" aria-label="Auf Deutsch lesen">DE</a></div></header>
+<main id="main" class="wrap editorial">
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / <span aria-current="page">Window Manager Config Generator for Your First Login</span></nav>
+<article class="guide">
+<header class="hero"><div><h1>Window Manager Config Generator for Your First Login</h1><p>On the first login to a new window manager, I want a working terminal, an application launcher and a way back to my old session. Build a starter config here, with the package commands and keybindings for your setup.</p>
+<p class="byline"><a href="/about/">Dennis Hilk</a> · <time datetime="2026-11-12">12 November 2026</time></p>
+<a href="#builder" class="button primary">Open the config generator</a></div><figure><a data-enlarge href="/assets/linux-distro-finder/screens/nixos.webp" aria-label="Enlarge: NixOS · xmonad · Cthulhu"><img src="/assets/linux-distro-finder/screens/nixos.webp" width="1440" height="603" fetchpriority="high" decoding="async" alt="Cthulhu with a dark xmonad desktop and dragon wallpaper"></a><figcaption>NixOS · xmonad · Cthulhu · <a href="/blog/nixos-xmonad-kanagawa-dragon/">Dennis Hilk</a></figcaption></figure></header>
+<nav class="section-nav" aria-label="In this article"><a href="#builder">Open the config generator</a><a href="#install">From installation media to first login</a><a href="#first-login">Recover from an empty first desktop</a><a href="#display">X11 or Wayland?</a></nav>
+<section id="builder"><h2>Build a starter configuration</h2>
+<p class="lead">Choose a distribution, window manager and applications. Get a package plan, shortcuts and the configuration files you can save locally. Your selections stay in the browser.</p>
+<noscript><p>File generation needs JavaScript. First-login instructions are available below.</p></noscript>
+<form class="panel" data-builder hidden>
+<div class="form-grid">
+<label>Distribution<select name="distro"><option value="mint">Linux Mint</option><option value="debian" selected>Debian 13</option><option value="arch">Arch Linux</option><option value="gentoo">Gentoo Linux</option><option value="fedora">Fedora Linux</option><option value="nixos">NixOS</option><option value="cachyos">CachyOS</option><option value="zorin">Zorin OS</option><option value="ubuntu">Ubuntu</option><option value="opensuse">openSUSE Tumbleweed</option><option value="slackware">Slackware Linux</option></select></label>
+<label>Window Manager<select name="wm"><option value="hyprland">Hyprland</option><option value="sway">Sway</option><option value="niri">niri</option><option value="labwc">labwc</option><option value="i3">i3</option><option value="dwm">dwm</option><option value="xmonad" selected>xmonad</option><option value="awesome">awesomewm</option></select></label>
+<label>Browser<select name="browser"><option value="firefox" selected>Firefox</option><option value="chrome">Google Chrome</option><option value="chromium">Chromium</option></select></label>
+<label>Terminal<select name="terminal"><option value="classic">Classic (xterm or foot)</option><option value="kitty" selected>Kitty</option><option value="alacritty">Alacritty</option></select></label>
+<label>Modifier key<select name="mod"><option value="super" selected>Super / Windows</option><option value="alt">Alt</option></select></label>
+</div>
+<details data-advanced><summary>Customize shortcuts</summary>
+<p>Numbers and reserved keys are assigned to navigation, workspaces or system functions.</p><div class="form-grid" data-keys></div></details>
+<details><summary>Customize appearance</summary>
+<p>Available settings depend on the window manager. Install the selected font separately if needed.</p>
+<div class="form-grid" data-design></div><label class="check"><input type="checkbox" name="wallpaper"> Set up wallpaper</label></details>
+<p tabindex="-1" role="alert" data-build-error></p><button class="primary" type="submit">Generate configuration</button></form>
+<div class="panel" data-build-output hidden></div>
+<details class="egg"><summary><img src="/assets/linux-distro-finder/itsfine.webp" width="1535" height="1024" loading="lazy" alt=""> By the way…</summary><div>
+<h3>EXTREME LINUX MODE UNLOCKED</h3><p><strong>Gentoo + ratpoison + NVIDIA + Steam</strong></p>
+<p><em>Recommended for people who consider compiling their desktop a relaxing weekend activity.</em></p>
+<p><strong>„Weil’s geht!“</strong></p><p><a href="/assets/linux-distro-finder/itsfine.webp">View the full image</a></p><p>An intentionally challenging novelty combination. Check the X11 session, driver, 32-bit libraries and Steam separately.</p>
+<p><a href="https://wiki.archlinux.org/title/Ratpoison">Challenge accepted? About ratpoison</a></p></div></details></section>
+<section class="article-copy" id="install"><h2>From installation media to first login</h2>
+<ol><li>Back up your files and get official installation media. Verify its signature or checksum as documented. Try a live system or virtual machine first.</li><li>Check the destination disk and partition plan. Choose a full desktop if you want a file manager, network controls and settings on day one.</li><li>Update the installed system through your distribution’s normal route. Install the applications and session you want before leaving your current session.</li><li>Open the terminal and browser from your current session. Back up existing configs and validate new ones. Then select the new session at login.</li></ol>
+<p>APT and DNF install from configured repositories and resolve dependencies. On Pacman, install against a fully updated system. Portage applies profiles and USE flags. NixOS builds the system from its declaration. Flatpak applications use their own runtimes and sources. <a href="/blog/linux-updates-explained/#updates">Update instructions for all eleven distributions</a></p></section>
+<section class="article-copy" id="first-login"><h2>Recover from an empty first desktop</h2>
+<ol><li>Try the terminal shortcut from your generated list. The default is <kbd>Super+Enter</kbd>.</li><li>Switch to a free text console, often <kbd>Ctrl+Alt+F3</kbd>. Some devices also need Fn. Sign in as your usual user.</li><li>Check that your browser, terminal and launcher are installed. For example, <code>command -v kitty</code> should give a path if you chose Kitty. Use the builder’s validation command to check config syntax.</li><li>Rename the new configuration file to an unused name and restore your separate backup. If you changed the NixOS setup, you can select the previous generation from the boot menu when available.</li><li>On a systemd system, <code>systemctl status display-manager</code> shows the login manager status. <code>journalctl --user -b</code> may show clues about the session. Return to the login screen and choose your existing graphical session. The function key for returning varies by distribution.</li></ol>
+<p>You can add a bar, wallpaper and notifications later. For a fresh WM, get the terminal, launcher and recovery path working first.</p></section>
+<section class="article-copy" id="display"><h2>X11 or Wayland?</h2>
+<p>Under X11, an X server manages display and input, and a separate window manager arranges windows. Wayland is a protocol in which the compositor handles display, input and window management together. XWayland runs an X server within a Wayland session and supports many older X11 applications. Check the login menu for the sessions actually installed. <a href="https://wayland.freedesktop.org/docs/html/">Wayland documentation</a></p>
+<div class="table-scroll" role="region" aria-label="Comparing X11 and Wayland" tabindex="0"><table><thead><tr><th scope="col">Task</th><th scope="col">What to check</th></tr></thead><tbody>
+<tr><th scope="row">AMD and NVIDIA</th><td>AMD’s open graphics stack combines kernel, firmware and Mesa. On NVIDIA, options depend on GPU model, driver version and compositor. NVIDIA’s open kernel modules still use NVIDIA userspace components. Check support for the whole session. <a href="https://wiki.archlinux.org/title/NVIDIA">NVIDIA on ArchWiki</a> · <a href="https://wiki.archlinux.org/title/AMDGPU">AMDGPU on ArchWiki</a></td></tr>
+<tr><th scope="row">Steam, Proton and Wine</th><td>Older games and clients may run through XWayland. Native Wayland support depends on the program and Wine version. Check Vulkan, any needed 32-bit drivers, controllers and the exact game. <a href="https://github.com/ValveSoftware/Proton">Valve Proton</a></td></tr>
+<tr><th scope="row">Capture and sharing</th><td>On Wayland, the ScreenCast portal and PipeWire often supply a selectable stream. Desktop, portal backend and app must work together. X11 applications often access screen data through X11. Try sharing a single window with your app. <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.ScreenCast.html">ScreenCast portal</a></td></tr>
+<tr><th scope="row">Monitors and older apps</th><td>Check mixed refresh rates, scaling and fullscreen on both monitors. On Wayland these depend on the compositor. XWayland can have scaling and input limits for older apps. Test global shortcuts and capture separately.</td></tr>
+<tr><th scope="row">Remote access</th><td>Forwarding an X11 application over SSH, sharing a running session and connecting before login are separate tasks. Wayland sharing, consent prompts and unattended access depend on the desktop and tools. Test the exact workflow.</td></tr>
+</tbody></table></div>
+<p>I play on Cthulhu with Arch Linux and dwm under X11, including Steam/Proton and Lutris. I have also gamed on NixOS and Sway under Wayland. These are examples from my own setup. <a href="/blog/arch-linux-dwm-cthulhu/">Cthulhu with Arch and dwm</a> · <a href="/blog/sway-configuration-explained/">Sway configuration explained</a></p></section>
+<section id="credits" class="article-copy"><h2>Image credits</h2><ul>
+<li><a href="/blog/nixos-xmonad-kanagawa-dragon/">NixOS · xmonad · Cthulhu</a> · Dennis Hilk</li>
+<li>It’s Fine · edited artwork supplied by Dennis Hilk.</li></ul></section>
+<section><h2>Read more</h2><p class="inline-links"><a href="/blog/which-linux-distro-2026/">Which Linux Distro Should I Use in 2026?</a><a href="/blog/linux-updates-explained/">Linux Updates Explained</a></p></section>
+</article>
+</main>
+<dialog data-lightbox aria-labelledby="image-caption"><button type="button">Close</button><figure><img alt=""><figcaption id="image-caption"></figcaption></figure></dialog>
+<footer><div class="wrap"><span>© 2026 Dennis Hilk · Wiesmoor</span><a href="/impressum.html">Legal notice</a><a href="/datenschutzerklaerung.html">Privacy</a></div></footer>
+</body></html>

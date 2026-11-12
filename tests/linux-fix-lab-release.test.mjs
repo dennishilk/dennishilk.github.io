@@ -35,8 +35,8 @@ test('Fix Lab inbound links stay within approved homepages and its diagnostic ec
 });
 
 for(const [path,titles]of [
-  ['index.html',['The Lost Administrator','Linux Fix Lab','Distro &amp; WM Companion','BoringOS','Free Image Converter']],
-  ['de/index.html',['The Lost Administrator','Linux Fix Lab','Distro &amp; WM Companion','BoringOS','Bildkonverter – JPG, PNG &amp; WebP']],
+  ['index.html',['The Lost Administrator','Linux Fix Lab','Linux Migration Companion','BoringOS','Free Image Converter']],
+  ['de/index.html',['The Lost Administrator','Linux Fix Lab','Linux Migration Companion','BoringOS','Bildkonverter – JPG, PNG &amp; WebP']],
 ])test(`${path}: approved launch replaces only the World Observer featured card and retains its navigation`,()=> {
   const source=read(path),start=source.indexOf('<section class="projects">'),section=source.slice(start,source.indexOf('</section>',start));
   assert.deepEqual([...section.matchAll(/<h3>([^<]+)<\/h3>/g)].map(match=>match[1]),titles);

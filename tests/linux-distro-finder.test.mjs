@@ -5,6 +5,7 @@ import {join} from 'node:path';
 import {distros,desktops,questions,rank} from '../assets/linux-distro-finder/catalog.js';
 import {generate,wmSettings} from '../assets/linux-distro-finder/config.js';
 import {plan} from '../assets/linux-distro-finder/packages.js';
+import {legacyDestination} from '../assets/linux-distro-finder/legacy-redirect.js';
 import {portraits} from '../content/linux-distro-finder/distros.mjs';
 import {profiles} from '../content/linux-distro-finder/desktops.mjs';
 import {updates,commandNotes} from '../content/linux-distro-finder/updates.mjs';
@@ -13,8 +14,8 @@ const root=join(import.meta.dirname,'..');
 const read=path=>readFileSync(join(root,path),'utf8');
 const screens=JSON.parse(read('content/linux-distro-finder/screens.json'));
 const variants=[
- {lang:'en',prefix:'',article:'which-linux-distro-2026'},
- {lang:'de',prefix:'de/',article:'welche-linux-distribution-passt-zu-mir-2026'}
+ {lang:'en',prefix:'',slugs:['which-linux-distro-2026','linux-window-manager-config-generator','linux-updates-explained']},
+ {lang:'de',prefix:'de/',slugs:['welche-linux-distribution-passt-zu-mir-2026','linux-wm-konfigurator','linux-updates-verstehen']}
 ];
 
 test('catalogs cover the 15 questions, 11 distributions and 12 desktops',()=>{
@@ -104,36 +105,67 @@ test('design options are scoped to supported settings and input is allowlisted',
  assert.throws(()=>generate({...common,wm:'xmonad',browser:'firefox; date'}),/selection/);
 });
 
-test('both languages have indexable profiles, credited image files and reciprocal metadata',()=>{
- for (const {lang,prefix,article} of variants) {
-  const toolPath='/'+prefix+'tools/linux-distro-finder/';
-  const articlePath='/'+prefix+'blog/'+article+'/';
-  const tool=read(toolPath+'index.html'),story=read(articlePath+'index.html');
-  assert.equal((tool.match(/id="distro-[a-z]+"/g)||[]).length,11);
-  assert.equal((tool.match(/id="desktop-[a-z0-9]+"/g)||[]).length,12);
-  assert.equal((tool.match(/id="update-[a-z]+"/g)||[]).length,11);
-  assert.match(tool,/src="\/assets\/linux-distro-finder\/itsfine.webp"/);
-  assert.doesNotMatch(tool,/hide-the-pain-dennis/);
+test('the three articles keep each feature on its own page in both languages',()=>{
+ for (const {prefix,slugs} of variants) {
+  const paths=slugs.map(slug=>'/'+prefix+'blog/'+slug+'/');
+  const [finder,wm,updates]=paths.map(path=>read(path+'index.html'));
+  assert.match(finder,/<form class="panel" data-quiz/);
+  assert.match(wm,/<form class="panel" data-builder/);
+  assert.doesNotMatch(finder,/data-builder|id="update-[a-z]+"/);
+  assert.doesNotMatch(wm,/data-quiz|id="update-[a-z]+"/);
+  assert.doesNotMatch(updates,/data-quiz|data-builder|type="module"/);
+  assert.equal((finder.match(/id="distro-[a-z]+"/g)||[]).length,11);
+  assert.equal((finder.match(/id="desktop-[a-z0-9]+"/g)||[]).length,12);
+  assert.equal((updates.match(/id="update-[a-z]+"/g)||[]).length,11);
+  assert.match(wm,/src="\/assets\/linux-distro-finder\/itsfine.webp"/);
+  assert.doesNotMatch(finder+updates,/itsfine\.webp/);
   for (const image of Object.values(screens)) {
    assert.ok(existsSync(join(root,image.path)),image.path);
-   assert.ok(tool.includes(image.path)&&tool.includes(image.source));
+   assert.ok(finder.includes(image.path)&&finder.includes(image.source));
    assert.ok(image.w>0&&image.h>0);
   }
-  for (const [html,path] of [[tool,toolPath],[story,articlePath]]) {
-   assert.ok(html.includes('<html lang="'+lang+'">'));
-   assert.ok(html.includes('rel="canonical" href="https://www.dennishilk.com'+path+'"'));
-   assert.equal((html.match(/hreflang="(?:en|de|x-default)"/g)||[]).length,4);
-   assert.ok(JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1])['@graph'].some(x=>x['@type']==='BreadcrumbList'));
+  for (const [i,html] of [finder,wm,updates].entries()) {
+   for (const path of paths.filter((_,j)=>i!==j)) assert.ok(html.includes('href="'+path+'"'));
   }
   const home=read(prefix+'index.html');
   const featured=home.split('class="cards"')[1].split('</section>')[0];
   assert.equal((featured.match(/class="card\b/g)||[]).length,5);
-  const cardStart=featured.indexOf('<a href="'+toolPath+'" class="card">');
-  assert.ok(cardStart>=0);
-  const card=featured.slice(cardStart,featured.indexOf('</a>',cardStart));
-  assert.match(card,/<h3>Distro &amp; WM Companion<\/h3>\s*<p>[^<]+<\/p>/);
-  assert.doesNotMatch(card,/<(?:details|summary|button)\b|fa-arrow/);
-  assert.match(tool,/href="\/linux-migration-companion\/"/);
-  assert.ok(read(prefix+'blog/feed.xml').includes(articlePath));
+  assert.match(featured,/<a href="\/linux-migration-companion\/" class="card">\s*<i [^>]+><\/i>\s*<h3>Linux Migration Companion<\/h3>/);
+  for (const path of paths) assert.ok(!featured.includes('href="'+path+'"'));
  }
+});
+
+test('localized articles have reciprocal metadata, blog index entries, RSS and sitemap entries',()=>{
+ for (const [i,{lang,prefix,slugs}] of variants.entries()) {
+  const other=variants[1-i];
+  for (const [j,slug] of slugs.entries()) {
+   const path='/'+prefix+'blog/'+slug+'/';
+   const alternate='/'+other.prefix+'blog/'+other.slugs[j]+'/';
+   const html=read(path+'index.html');
+   assert.ok(html.includes('<html lang="'+lang+'">'));
+   assert.ok(html.includes('rel="canonical" href="https://www.dennishilk.com'+path+'"'));
+   assert.ok(html.includes('rel="alternate" hreflang="'+other.lang+'" href="https://www.dennishilk.com'+alternate+'"'));
+   const graph=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1])['@graph'];
+   assert.equal(graph.find(x=>x['@type']==='BlogPosting').url,'https://www.dennishilk.com'+path);
+   assert.equal(graph.find(x=>x['@type']==='BreadcrumbList').itemListElement[1].name,'Blog');
+   assert.ok(read(prefix+'blog/index.html').includes('href="'+path+'"'));
+   assert.ok(read(prefix+'blog/feed.xml').includes(path));
+   assert.ok(read('sitemap-blog.xml').includes('<loc>https://www.dennishilk.com'+path+'</loc>'));
+  }
+ }
+});
+
+test('legacy URLs preserve known deep links and offer localized links without JavaScript',()=>{
+ for (const {prefix,slugs} of variants) {
+  const legacy=read(prefix+'tools/linux-distro-finder/index.html');
+  assert.match(legacy,/<meta name="robots" content="noindex,follow">/);
+  assert.doesNotMatch(legacy,/data-quiz|data-builder/);
+  for (const [i,guide] of ['finder','wm','updates'].entries()) {
+   assert.ok(legacy.includes('href="/'+prefix+'blog/'+slugs[i]+'/" data-guide="'+guide+'"'));
+  }
+ }
+ for (const [hash,guide] of [['#quiz','finder'],['#desktop-xmonad','finder'],['#builder','wm'],['#first-login','wm'],['#updates','updates'],['#update-arch','updates']]) {
+  assert.deepEqual(legacyDestination(hash),{guide,hash});
+ }
+ assert.deepEqual(legacyDestination('#unrecognized'),{guide:'finder',hash:''});
 });
