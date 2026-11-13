@@ -62,6 +62,7 @@ test('research returns only cited results and prefers an official source', async
       ] });
     }
     const prompt = JSON.parse(options.body).messages[0].content;
+    assert.match(prompt, /nur Fakten aus den Auszügen.*Jede Behauptung direkt belegen/);
     assert.match(prompt, /\[1\] Debian News: Release notes excerpt/);
     assert.doesNotMatch(prompt, /Invalid source/);
     return model('Die offiziellen Neuigkeiten findest du hier [1]. [9]');

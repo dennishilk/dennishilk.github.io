@@ -155,7 +155,13 @@ async function research(chat, fetcher, signal) {
 
 function modelMessages(chat, researchResult) {
   let system = PERSONA + (chat.language === 'de' ? ' Reply in German.' : ' Reply in English.');
-  if (researchResult.state !== 'found') system += ' You have no verified current results. Say when you cannot confirm a fact.';
+  if (researchResult.state === 'found') {
+    system += chat.language === 'de'
+      ? ' Bei Recherche: maximal drei kurze Sätze, nur Fakten aus den Auszügen. Jede Behauptung direkt belegen. Keine Witze, Spekulationen oder persönlichen Zuschreibungen. Wenn die Auszüge nicht reichen, sage das.'
+      : ' For research: at most three short sentences, using only facts in the excerpts. Cite each claim directly. Avoid jokes, speculation and personal characterizations. Say if the excerpts do not answer the question.';
+  } else {
+    system += ' You have no verified current results. Say when you cannot confirm a fact.';
+  }
   const user = { role: 'user', content: chat.message + '\n/no_think' };
   const sources = [];
   let budget = MAX_PROMPT_BYTES - Buffer.byteLength(system + user.content);
@@ -184,7 +190,7 @@ async function answer(chat, key, fetcher, signal) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + key },
     body: JSON.stringify({
-      messages, stream: false, temperature: 0.3, max_tokens: MAX_OUTPUT_TOKENS,
+      messages, stream: false, temperature: search.state === 'found' ? 0.15 : 0.3, max_tokens: MAX_OUTPUT_TOKENS,
       chat_template_kwargs: { enable_thinking: false }
     })
   }, signal, 45_000, 48 * 1024);
