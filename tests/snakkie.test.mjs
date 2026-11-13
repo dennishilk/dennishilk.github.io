@@ -39,6 +39,31 @@ test('all requested German inputs resolve appropriately, including follow-up and
  for(const [q,kind,id] of [['Moin!','greeting'],['Hallo Snakkie!','greeting'],['Erzähl mir einen Ostfriesenwitz.','joke'],['Noch einen!','joke'],['Kannst du Platt?','knowledge','platt-ability'],['Was bedeutet Moin?','knowledge','word-moin'],['Wo liegt Wiesmoor?','knowledge','wiesmoor-location'],['Wie ist das Wetter in Wiesmoor?','weather'],['Wer ist dein Cousin?','knowledge','nebby'],['Was ist Linux?','knowledge','linux'],['Kannst du mir Python erklären?','knowledge','python'],['Was weißt du nicht?','knowledge','limits'],['Wer hat 1832 in München einen Regenschirm gekauft?','unknown']]){const r=await ai.reply(q,'de');assert.equal(r.kind,kind,q);if(id)assert.equal(r.id,id,q);}
 });
 
+test('small talk and the new local facts resolve with natural bilingual copy', async () => {
+ const ai=engine();
+ for(const [question,lang,kind,id,text] of [
+  ['wie gehts dir','de','small-talk',undefined,/Mir geht’s gut/],
+  ['mir geht es auch gut','de','small-talk',undefined,/dass es dir gut geht/],
+  ['How are you doing?','en','small-talk',undefined,/I’m doing well/],
+  ['I’m good too','en','small-talk',undefined,/Glad to hear/],
+  ['kennst du dennis hilk ? was macht der so','de','knowledge','dennis-hilk',/World Observer.*BoringOS/],
+  ['Who is Dennis Hilk?','en','knowledge','dennis-hilk',/open-source projects/],
+  ['was führ sehenswürdigkeiten gibt es in wiesmoor','de','knowledge','wiesmoor-attractions',/Blumenreich.*Torf- und Siedlungsmuseum/],
+  ['What is there to see in Wiesmoor?','en','knowledge','wiesmoor-attractions',/Peat and Settlement Museum/]
+ ]){
+  const reply=await ai.reply(question,lang);
+  assert.equal(reply.kind,kind,question);
+  assert.equal(reply.id,id,question);
+  assert.match(reply.text,text,question);
+  if(id)assert.ok(reply.sources.length,question);
+ }
+ for(const question of ['Was hat Dennis Hilk gestern veröffentlicht?', 'Was macht Dennis Hilk mit Debian?',
+  'Welche Sehenswürdigkeiten in Wiesmoor haben heute offen?', 'What is there to see in Leer?',
+  'Wie geht es dir bei der Fehlersuche?', 'Mir geht es nicht gut']){
+  assert.equal((await ai.reply(question)).kind,'unknown',question);
+ }
+});
+
 test('retrieval handles umlauts, transliteration, simple typos and synonyms without forced matches',async()=>{
  const ai=engine();assert.equal(normalize('GRÜSSE Grüße'),'grusse grusse');assert.equal(normalize('MÜTZE'),normalize('Muetze'));assert.ok(oneTypo('wiesmor','wiesmoor'));assert.ok(oneTypo('linxu','linux'));assert.equal(oneTypo('hat','hot'),false);
  for(const q of ['Wo liegt WIESMOR?','Wo liegt Wiesmooor?','Wo ligt Wiesmoor?'])assert.equal((await ai.reply(q)).id,'wiesmoor-location',q);

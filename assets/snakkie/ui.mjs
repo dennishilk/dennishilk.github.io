@@ -1,4 +1,4 @@
-import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=3';
+import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=5';
 import { loadWords, wordAt, dailyWordIndex } from './words.mjs?v=3';
 
 const de = document.documentElement.lang === 'de';
@@ -125,6 +125,7 @@ async function aiReply(text, replyLanguage, signal) {
   });
   if (response.status === 429) return { error: 'rate_limit' };
   if (response.status === 413) return { error: 'input_too_large' };
+  if (response.status === 504) return { error: 'timeout' };
   const result = await response.json();
   if (!response.ok) return { error: result.error };
   if (typeof result.text !== 'string' || !result.text) return { error: 'unavailable' };
@@ -135,6 +136,7 @@ const unavailable = () => t('The local AI is temporarily unavailable. Please try
 function failureNote(error) {
   if (error === 'busy') return t('Moin! I’m helping someone else just now. Try again shortly.', 'Moin! Hier ist gerade ordentlich Betrieb. Versuch’s gleich noch mal.');
   if (error === 'rate_limit') return t('Too many requests in a short time. Give me a moment before trying again.', 'Das waren viele Anfragen in kurzer Zeit. Gib mir einen Moment und versuch es dann erneut.');
+  if (error === 'timeout') return t('That answer took too long. Try again or ask a shorter question.', 'Das hat zu lange gedauert. Versuch’s noch mal oder stell die Frage kürzer.');
   if (error === 'input_too_large') return t('Please shorten your message and try again.', 'Kürze bitte deine Nachricht und versuch es erneut.');
   return unavailable();
 }
@@ -159,29 +161,33 @@ form.addEventListener('submit', async event => {
   grow();
   input.focus();
   status.textContent = t('One moment…', 'Ik kiek mol eben na …');
-  let local;
+  let waitNotice;
   try {
     const engine = await ready;
     if (request !== current) return;
-    local = await engine?.reply(text, language.value);
+    const local = await engine?.reply(text, language.value);
     if (request !== current) return;
     if (local?.language) language.value = local.language;
     if (local && local.kind !== 'unknown') {
       message('assistant', local.text, local.sources);
       remember(text, local.text);
     } else {
+      waitNotice = setTimeout(() => {
+        if (request === current) status.textContent = t('Still working on your reply …', 'Ich bin noch dabei …');
+      }, 8000);
       const reply = await aiReply(text, language.value, current.signal);
       if (request !== current) return;
       if (reply.error) {
-        message('assistant', local?.text || '', [], failureNote(reply.error));
+        message('assistant', failureNote(reply.error));
       } else {
         message('assistant', reply.text, reply.sources, searchNote(reply.search));
         remember(text, reply.text);
       }
     }
-  } catch {
-    if (request === current) message('assistant', local?.text || '', [], unavailable());
+  } catch (error) {
+    if (request === current) message('assistant', error?.name === 'TimeoutError' ? failureNote('timeout') : unavailable());
   } finally {
+    clearTimeout(waitNotice);
     if (request === current) {
       request = undefined;
       status.textContent = '';

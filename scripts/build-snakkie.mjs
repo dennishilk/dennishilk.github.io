@@ -38,7 +38,7 @@ for(const lang of ['en','de']){
 <link rel="stylesheet" href="/assets/snakkie/snakkie.css?v=4">
 <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
 <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
-<script type="module" src="/assets/snakkie/ui.mjs?v=4"></script>
+<script type="module" src="/assets/snakkie/ui.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">${t('Skip to content','Zum Inhalt springen')}</a>

@@ -28,10 +28,11 @@ test('chat uses the protected local model, bounded history and selected language
     assert.equal(options.headers.Authorization, 'Bearer fixture-key');
     assert.equal(options.redirect, 'error');
     const body = JSON.parse(options.body);
-    assert.equal(body.max_tokens, 180);
+    assert.equal(body.max_tokens, 120);
     assert.equal(body.chat_template_kwargs.enable_thinking, false);
-    assert.match(body.messages[0].content, /Nebb[y]’s penguin cousin/);
-    assert.match(body.messages[0].content, /Reply in German/);
+    assert.match(body.messages[0].content, /Nebbys Cousin/);
+    assert.match(body.messages[0].content, /Die Person im Chat ist ein Gast/);
+    assert.match(body.messages[0].content, /in natürlichem Deutsch/);
     assert.deepEqual(body.messages.slice(1, -1), [
       { role: 'user', content: 'Was ist Debian?' },
       { role: 'assistant', content: 'Debian ist eine Linux-Distribution.' }
@@ -47,6 +48,32 @@ test('chat uses the protected local model, bounded history and selected language
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('Cache-Control'), 'no-store');
   assert.deepEqual(await response.json(), { text: 'Debian liefert Linux als Distribution.', sources: [], search: 'unused' });
+});
+
+test('explicitly detailed requests retain the larger answer budget', async t => {
+  const request = await fixture(t, async (_, options) => {
+    const body = JSON.parse(options.body);
+    assert.equal(body.max_tokens, 180);
+    assert.match(body.messages[0].content, /natural English/);
+    return model('A detailed answer.');
+  });
+  assert.equal((await request.post({ language: 'en', message: 'Explain this step by step.' })).status, 200);
+});
+
+test('the model timeout has a distinct response and releases the slot', async t => {
+  let first = true;
+  const request = await fixture(t, async () => {
+    if (first) {
+      first = false;
+      throw new DOMException('deadline', 'TimeoutError');
+    }
+    return model('Ready again.');
+  });
+  const chat = { language: 'en', message: 'Explain rainbows.' };
+  const timedOut = await request.post(chat);
+  assert.equal(timedOut.status, 504);
+  assert.deepEqual(await timedOut.json(), { error: 'timeout' });
+  assert.equal((await request.post(chat)).status, 200);
 });
 
 test('research returns only cited results and prefers an official source', async t => {

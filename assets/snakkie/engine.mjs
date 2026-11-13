@@ -5,7 +5,7 @@ export async function loadKnowledge(fetcher=fetch) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
   try {
   const responses=await Promise.all(KNOWLEDGE_FILES.map(async name=>{
-    const r=await fetcher(new URL(`./knowledge/${name}.json`,import.meta.url),{signal:controller.signal});
+    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=2':''}`,import.meta.url),{signal:controller.signal});
     if(!r.ok)throw new Error('KNOWLEDGE_UNAVAILABLE');
     return [name,(await r.json()).entries];
   }));
@@ -29,6 +29,7 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
   const words=(data['platt-words']||[]).map(w=>({id:'word-'+w.id,anchors:[[w.word]],queries:[`was bedeutet ${w.word}`,`what does ${w.word} mean`,`${w.word} auf deutsch englisch`,w.word],de:`${w.word}: ${w.de}. Englisch: ${w.en}.\nBeispiel: ${w.example} — ${w.exampleDe}\n${w.noteDe}`,en:`${w.word}: ${w.en}. German: ${w.de}.\nExample: ${w.example} — ${w.exampleEn}\n${w.noteEn}`,sources:[{label:w.sourceLabel,url:w.source}]}));
   const phrases=(data['platt-phrases']||[]).map(p=>({id:'phrase-'+p.id,anchors:[tokens(p.phrase)],queries:[p.phrase],de:`${p.phrase} — ${p.de}. Englisch: ${p.en}.\n${p.noteDe}`,en:`${p.phrase} — ${p.en}. German: ${p.de}.\n${p.noteEn}`,sources:[{label:p.sourceLabel,url:p.source}]}));
   const index=[...records,...words,...phrases].map(r=>({...r,queryTokens:r.queries.map(tokens),groups:r.anchors.map(group=>group.flatMap(tokens))}));
+  const fuzzyIndex=index.filter(record=>!record.exactOnly);
   const vocabulary=new Set([...index.flatMap(r=>r.queryTokens.flat()),...Object.keys(aliases).map(k=>aliases[k]),'joke','weather','temperature','rain','wind','wiesmoor','morgen','tomorrow','forecast','vorhersage']);
   const rotation=new Rotation(random);let lastIntent='';
   function correct(q){return q.map(w=>{if(vocabulary.has(w))return w;const near=[...vocabulary].filter(v=>oneTypo(w,v));return near.length===1?near[0]:w;});}
@@ -36,7 +37,7 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
     const exact=index.filter(r=>r.queries.some(query=>normalize(query)===raw));
     if(exact.length===1)return exact[0];
     if(!q.length)return null;
-    const ranked=index.map(r=>{
+    const ranked=fuzzyIndex.map(r=>{
       if(!r.groups.every(group=>group.some(a=>q.includes(a))))return {...r,score:0};
       let score=0;
       for(const phrase of r.queryTokens){const shared=q.filter(w=>phrase.includes(w)).length;const precision=shared/Math.max(1,q.length),recall=shared/Math.max(1,phrase.length);if(precision>=0.78)score=Math.max(score,0.8*precision+0.2*recall);}
@@ -71,6 +72,8 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         if(follow || q.every(w=>allowed.has(w))){const j=rotation.pick('jokes',data.jokes||[]);if(j)return response('joke',j[language],{id:j.id});}
       }
       if(/^(moin|hallo|hello|hi|hey)( snakkie)?$/.test(raw))return response('greeting',t('Moin! Schön, dass du da bist. Frag mich nach Wiesmoor, einem Platt-Wort oder einem Witz. Die Mütze sitzt, wir können loslegen.','Moin! Good to see you. Ask me about Wiesmoor, a Platt word or a joke. The hat fits; let’s get started.'));
+      if(/^(?:(?:moin|hallo|hey|hi|hello) )?(?:na )?(?:wie geht(?:s| s| es) dir|wie geht(?:s| s)|how are you(?: doing)?|how s it going|how s it going with you)(?: snakkie)?$/.test(query))return response('small-talk',t('Mir geht’s gut, danke. Und dir?','I’m doing well, thanks. How are you?'));
+      if(/^(?:mir geht(?:s| s| es) (?:auch )?(?:gut|prima|super|bestens)|i(?: m| am) (?:doing )?(?:well|fine|good|great)(?: too)?)(?: danke| thanks)?$/.test(query))return response('small-talk',t('Schön, dass es dir gut geht!','Glad to hear you’re doing well!'));
       if(/^(tschuss|tschus|auf wiedersehen|bye|goodbye|bis bald|see you)( snakkie)?$/.test(raw))return response('bye',t('Bis bald! Ich halte hier die Mütze fest.','See you! I’ll stay here holding on to my hat.'));
       if(/^(danke|dankeschon|vielen dank|thanks|thank you|thank you very much)( snakkie)?$/.test(raw))return response('thanks',t('Gern. Dafür bin ich hier. Und für die Teepausen.','You’re welcome. That’s what I’m here for. And the tea breaks.'));
       const found=search(q,query);
