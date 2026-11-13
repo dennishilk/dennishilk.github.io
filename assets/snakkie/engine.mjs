@@ -8,7 +8,7 @@ export async function loadKnowledge(fetcher=fetch) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
   try {
   const responses=await Promise.all(KNOWLEDGE_FILES.map(async name=>{
-    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=11':name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
+    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=12':name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
     if (name === 'utterances' && !r.ok) return [name, {}];
     if(!r.ok)throw new Error('KNOWLEDGE_UNAVAILABLE');
     return [name,(await r.json()).entries];
@@ -21,6 +21,16 @@ const smallTalk = new Map(SMALL_TALK.map(([id, phrases, replies]) => [id, {phras
 const contextEcho = new Set(['mir auch','bei mir auch','mir gehts auch','mir geht s auch','jo auch','jo auch gut','me too','same here','same','likewise','i am too','i m too']);
 const rephrasePhrases = new Set(['kurz bitte','fass dich kurz','kurz und knapp','keep it short','short answer please','be brief']);
 const repeatPhrases = new Set(['wiederhol das','wiederhole das','kannst du das wiederholen','sag das nochmal','sag das noch mal','was hast du gerade gesagt','repeat that','can you repeat that','say that again','what did you just say']);
+const authorCatsFollowUps = new Set([
+  'wie heißen seine katzen', 'wie heißen seine katzen hat er welche', 'wie viele katzen hat er',
+  'hat er katzen', 'kennst du seine katzen', 'what are his cats called',
+  'what are his cats called does he have any', 'what are his cats’ names',
+  'how many cats does he have', 'does he have cats', 'do you know his cats'
+].map(normalize));
+const catNamesFollowUps = new Set([
+  'warum heißen sie so', 'woher kommen die namen', 'woher haben sie ihre namen',
+  'why are they called that', 'where did they get their names', 'where do those names come from'
+].map(normalize));
 const clockKinds = new Map([['clock-time','time'],['clock-date','date'],['clock-both','both']]);
 const clockPhrases = new Map(Object.entries({
   'wie spät ist es':'time', 'wie viel uhr ist es':'time', 'wieviel uhr ist es':'time',
@@ -144,6 +154,8 @@ class Rotation {
 }
 export function createCompanion(data,{random=Math.random,weather=createWeatherReader(),now=Date.now}={}) {
   const records=[...(data.facts||[]),...(data.personality||[])];
+  const cats = records.find(record=>record.id==='dennis-cats');
+  const catNames = records.find(record=>record.id==='dennis-cat-names');
   const wiesmoorAttractions = records.find(record=>record.id==='wiesmoor-attractions');
   const words=(data['platt-words']||[]).map(w=>({id:'word-'+w.id,anchors:[[w.word]],queries:[`was bedeutet ${w.word}`,`what does ${w.word} mean`,`${w.word} auf deutsch englisch`,w.word],de:`${w.word}: ${w.de}. Englisch: ${w.en}.\nBeispiel: ${w.example} — ${w.exampleDe}\n${w.noteDe}`,en:`${w.word}: ${w.en}. German: ${w.de}.\nExample: ${w.example} — ${w.exampleEn}\n${w.noteEn}`,sources:[{label:w.sourceLabel,url:w.source}]}));
   const phrases=(data['platt-phrases']||[]).map(p=>({id:'phrase-'+p.id,anchors:[tokens(p.phrase)],queries:[p.phrase],de:`${p.phrase} — ${p.de}. Englisch: ${p.en}.\n${p.noteDe}`,en:`${p.phrase} — ${p.en}. German: ${p.de}.\n${p.noteEn}`,sources:[{label:p.sourceLabel,url:p.source}]}));
@@ -227,6 +239,13 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
       const authorInContext = lastTopic?.id === 'dennis-hilk' || lastTopic?.id === 'project-lost-administrator';
       if (asksAboutPrivateLife(cleaned,authorInContext,lastIntent === 'private-life')) {
         return response('private-life',privateLifeReply(language),{id:'private-life',social:true});
+      }
+      const catsInContext = lastTopic?.id === 'dennis-cats' || lastTopic?.id === 'dennis-cat-names';
+      if (authorInContext || catsInContext) {
+        const question = withoutGreeting.replace(/^(?:und|and) | (?:bitte|please)$/g,'');
+        const catTopic = catsInContext && catNamesFollowUps.has(question) ? catNames
+          : authorCatsFollowUps.has(question) ? cats : undefined;
+        if (catTopic) return response('knowledge',catTopic[language],{id:catTopic.id,sources:catTopic.sources,topic:catTopic});
       }
       const route = routes.get(query) || routes.get(query.replace(/ snakkie$/, '')) ||
         routes.get(withoutGreeting) || routes.get(withoutGreeting.replace(/ snakkie$/, ''));

@@ -1,4 +1,4 @@
-import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=11';
+import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=12';
 import { relevantHistory } from './conversation.mjs?v=7';
 import { loadWords, wordAt, dailyWordIndex } from './words.mjs?v=3';
 

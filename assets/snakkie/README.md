@@ -12,7 +12,7 @@ npm run test:seo
 
 ## How replies work
 
-- `knowledge/*.json` holds 100 bilingual original jokes, 20 fallbacks, 90
+- `knowledge/*.json` holds 100 bilingual original jokes, 20 fallbacks, 92
   factual entries, 6 personality entries, two dictionary words and one phrase.
 - `engine.mjs` resolves known topics, including small talk and simple follow-up
   joke requests. Fixed facts can use `exactOnly` so current or more specific

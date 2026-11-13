@@ -169,6 +169,30 @@ test('book questions use the author’s book page and private-life questions sta
  assert.equal((await ai.reply('Wie viele Bücher hat Dennis Hilk geschrieben?')).kind,'unknown');
 });
 
+test('public cat facts and author follow-ups link to the cat pages', async () => {
+ const ai=engine();
+ for (const [language,question,author,followUp,why] of [
+  ['de','kennst du die katzen von dennis hilk ?', 'Wer ist Dennis Hilk?', 'wie heißen seine katzen hat er welche ?', 'Woher haben sie ihre Namen?'],
+  ['en','Do you know Dennis Hilk’s cats?', 'Who is Dennis Hilk?', 'What are his cats called? Does he have any?', 'Why are they called that?']
+ ]) {
+  const direct=await ai.reply(question,language);
+  assert.equal(direct.id,'dennis-cats');
+  assert.match(direct.text,/BigMac.*Berta/);
+  assert.ok(direct.sources.some(source=>source.url===(language==='de'?'/de':'')+'/about/cats/'));
+  ai.reset();
+  assert.equal((await ai.reply(followUp,language)).kind,'unknown');
+  await ai.reply(author,language);
+  assert.equal((await ai.reply(followUp,language)).id,'dennis-cats');
+  const names=await ai.reply(why,language);
+  assert.equal(names.id,'dennis-cat-names');
+  assert.match(names.text,/BigMac.*Two and a Half Men/);
+  ai.reset();
+ }
+ assert.equal((await ai.reply('Hast du eine Katze?')).id,'pets');
+ assert.equal((await ai.reply('Was ist ein Big Mac?')).kind,'unknown');
+ assert.equal((await ai.reply('Hat Dennis Hilk Kinder?')).kind,'private-life');
+});
+
 test('the clock formats Wiesmoor time locally and leaves other time zones alone', async () => {
  const ai=createCompanion(data,{now:()=>now});
  assert.match((await ai.reply('Wie spät ist es in Wiesmoor?')).text,/Wiesmoor.*19:30 Uhr/);
