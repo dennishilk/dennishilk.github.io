@@ -2,7 +2,7 @@
 
 The site uses `POST /api/snakkie/chat`. Familiar questions, Platt, jokes and
 Wiesmoor weather still use the browser’s curated paths. Open questions and up to
-three preceding exchanges go to the API. One short research query may go to
+two relevant exchanges go to the API for follow-ups. One short research query may go to
 SearXNG. Source links come from SearXNG results supplied to the model. Whole
 web pages are never fetched by the chat API.
 
@@ -53,7 +53,10 @@ per client and ten per minute overall, and returns a retry hint when busy.
 Upstream calls have deadlines. Aborting an active browser request closes the
 upstream connection. Verify that the installed llama.cpp cancels generation and
 releases its own slot as expected. The application logs outcome and elapsed
-time, without chat contents. The site’s existing HTTP access logs still apply.
+time, without chat contents. Successful replies expose search, model and total
+time as `Server-Timing` metrics. Prompt and generation time are included when
+llama.cpp reports them. The browser keeps only the latest local lookup and
+reply durations in its performance timeline. The site’s existing HTTP access logs still apply.
 
 After reload, check both public language routes, source links, both blog posts
 and the sitemaps. Run the isolated backend tests for repeated and concurrent

@@ -419,6 +419,41 @@
           "url": "https://www.tourismus-wiesmoor.de/wiesmoor-erleben/aktivitaeten/wandern/wandertour-2"
         }
       ]
+    },
+    {
+      "id": "arch-debian",
+      "anchors": [
+        [
+          "arch"
+        ],
+        [
+          "debian"
+        ]
+      ],
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Unterschied zwischen Arch Linux und Debian?",
+        "Erkläre mir kurz den Unterschied zwischen Arch Linux und Debian.",
+        "Vergleiche Arch Linux und Debian",
+        "Arch Linux vs Debian",
+        "What is the difference between Arch Linux and Debian?",
+        "Briefly explain the difference between Arch Linux and Debian.",
+        "Compare Arch Linux and Debian"
+      ],
+      "de": "Arch Linux ist ein Rolling Release. Neue Paketversionen kommen laufend. Debian Stable veröffentlicht feste Versionen und versorgt sie mit Sicherheits- und Fehlerkorrekturen. Bei Arch ändert sich der Paketstand häufiger, bei Debian Stable bleibt er zwischen den Hauptversionen weitgehend gleich.",
+      "en": "Arch Linux is a rolling release, so new package versions arrive continuously. Debian Stable publishes fixed releases and maintains them with security and bug fixes. Arch’s package versions change more often. Debian Stable’s stay broadly the same between major releases.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "ArchWiki · Arch Linux",
+          "url": "https://wiki.archlinux.org/title/Arch_Linux"
+        },
+        {
+          "label": "Debian · Releases",
+          "url": "https://www.debian.org/releases/"
+        }
+      ]
     }
   ]
 }

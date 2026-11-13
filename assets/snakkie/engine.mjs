@@ -1,11 +1,13 @@
 // Curated retrieval, not generation. All response text comes from reviewed records.
 import {createWeatherReader} from './weather.mjs?v=3';
+import {SMALL_TALK, TOPICAL_SMALL_TALK} from './small-talk.mjs';
+import {clarification,followUpKind} from './conversation.mjs';
 export const KNOWLEDGE_FILES=['facts','personality','jokes','fallback-responses','platt-words','platt-phrases'];
 export async function loadKnowledge(fetcher=fetch) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
   try {
   const responses=await Promise.all(KNOWLEDGE_FILES.map(async name=>{
-    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=2':''}`,import.meta.url),{signal:controller.signal});
+    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'||name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
     if(!r.ok)throw new Error('KNOWLEDGE_UNAVAILABLE');
     return [name,(await r.json()).entries];
   }));
@@ -13,6 +15,11 @@ export async function loadKnowledge(fetcher=fetch) {
   }finally{clearTimeout(timer);controller.abort();}
 }
 export function normalize(text) {return String(text).toLowerCase().replaceAll('ß','ss').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ae/g,'a').replace(/oe/g,'o').replace(/ue/g,'u').replace(/[^a-z0-9]+/g,' ').trim();}
+const smallTalk = new Map(SMALL_TALK.flatMap(([id, aliases, replies]) =>
+  aliases.map(alias => [normalize(alias), {id, replies}])));
+const greetingPrefix = /^(?:moin|hallo|hi|hello|hey)(?: snakkie)? /;
+const languageRequest = /(?:^|[.!?,;:]\s*|\s+(?=(?:bitte|please)\s))(?:bitte\s+|please\s+)?(?:antworte|sprich|answer|reply|switch)(?:\s+(?:bitte|please))?\s+(?:auf|in|to)\s+(englisch|deutsch|english|german)\b\s*[.!?,;:]*/giu;
+
 const stop=new Set(normalize('der die das den dem des ein eine einer einem einen eines ich du er sie es wir ihr mir mich dir dich dein deine meinen mein uns sich ist sind bist bin was wie wo wer wann why what how where who is are am do does did a an the to of for on about please bitte erkläre erklären erklär explain tell me help kannst kann could can you would gerne gern etwas einfache einfachen einfach simple simply worten words in mit von über aus und oder and or at etwas mal doch denn jetzt eigentlich snakkie liegt liegen located ligt erzahle').split(' '));
 const aliases={east:'east',frisia:'eastfrisia',ostfriesisch:'ostfriesland',ostfriesischen:'ostfriesland',ostfriesischer:'ostfriesland',ostfriesische:'ostfriesland',ostfriesland:'ostfriesland',low:'low',german:'german',betriebssysteme:'betriebssystem',operating:'betriebssystem',system:'betriebssystem',systems:'betriebssystem',gegrundet:'geschichte',entstand:'geschichte',historie:'geschichte',heisst:'bedeutet',heisstes:'bedeutet',means:'bedeutet',mean:'bedeutet',meaning:'bedeutet',translate:'bedeutet',translation:'bedeutet',ubersetze:'bedeutet',ubersetzung:'bedeutet',witz:'joke',witze:'joke',ostfriesenwitz:'joke',ostfriesenwitze:'joke',jokes:'joke',gag:'joke',wetter:'weather',regnet:'rain',regen:'rain',windig:'wind',windy:'wind',raining:'rain',rainy:'rain',eastfrisian:'ostfriesland',warm:'temperature',temperatur:'temperature',plattdeutsch:'platt',lowgerman:'platt',kapitansmutze:'mutze',moin:'moin',hallo:'hello',hi:'hello',hey:'hello',tschuss:'bye',tschusschen:'bye',tschus:'bye',danke:'thanks',thank:'thanks'};
 function tokens(s){s=normalize(s).replace(/east frisia/g,'eastfrisia').replace(/low german/g,'platt').replace(/operating system/g,'betriebssystem');return [...new Set(s.split(' ').filter(w=>w&&!stop.has(w)).map(w=>aliases[w]||w))];}
@@ -29,14 +36,20 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
   const words=(data['platt-words']||[]).map(w=>({id:'word-'+w.id,anchors:[[w.word]],queries:[`was bedeutet ${w.word}`,`what does ${w.word} mean`,`${w.word} auf deutsch englisch`,w.word],de:`${w.word}: ${w.de}. Englisch: ${w.en}.\nBeispiel: ${w.example} — ${w.exampleDe}\n${w.noteDe}`,en:`${w.word}: ${w.en}. German: ${w.de}.\nExample: ${w.example} — ${w.exampleEn}\n${w.noteEn}`,sources:[{label:w.sourceLabel,url:w.source}]}));
   const phrases=(data['platt-phrases']||[]).map(p=>({id:'phrase-'+p.id,anchors:[tokens(p.phrase)],queries:[p.phrase],de:`${p.phrase} — ${p.de}. Englisch: ${p.en}.\n${p.noteDe}`,en:`${p.phrase} — ${p.en}. German: ${p.de}.\n${p.noteEn}`,sources:[{label:p.sourceLabel,url:p.source}]}));
   const index=[...records,...words,...phrases].map(r=>({...r,queryTokens:r.queries.map(tokens),groups:r.anchors.map(group=>group.flatMap(tokens))}));
+  const exactIndex = new Map();
+  for (const record of index) {
+    for (const alias of record.queries.map(normalize)) {
+      const previous = exactIndex.get(alias);
+      exactIndex.set(alias, previous === undefined || previous === record ? record : null);
+    }
+  }
   const fuzzyIndex=index.filter(record=>!record.exactOnly);
   const vocabulary=new Set([...index.flatMap(r=>r.queryTokens.flat()),...Object.keys(aliases).map(k=>aliases[k]),'joke','weather','temperature','rain','wind','wiesmoor','morgen','tomorrow','forecast','vorhersage']);
   const rotation=new Rotation(random);let lastIntent='';
   function correct(q){return q.map(w=>{if(vocabulary.has(w))return w;const near=[...vocabulary].filter(v=>oneTypo(w,v));return near.length===1?near[0]:w;});}
   function search(q,raw){
-    const exact=index.filter(r=>r.queries.some(query=>normalize(query)===raw));
-    if(exact.length===1)return exact[0];
-    if(!q.length)return null;
+    if (exactIndex.has(raw)) return exactIndex.get(raw);
+    if (!q.length) return null;
     const ranked=fuzzyIndex.map(r=>{
       if(!r.groups.every(group=>group.some(a=>q.includes(a))))return {...r,score:0};
       let score=0;
@@ -48,18 +61,41 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
   }
   return {
     reset(){lastIntent='';rotation.reset();},
-    async reply(input,language='de'){
+    async reply(input,language='de',{hasContext=false}={}){
       if(typeof input!=='string'||!input.trim())return null;
       if(input.length>800)return {kind:'limit',language,text:language==='de'?'Bitte kürze deine Nachricht auf höchstens 800 Zeichen.':'Please shorten your message to at most 800 characters.',sources:[]};
-      const raw=normalize(input);
-      if(/\b(auf englisch|in english|switch to english)\b/.test(raw))language='en';
-      if(/\b(auf deutsch|in german|switch to german)\b/.test(raw))language='de';
-      const query=raw.replace(/\b(?:bitte )?(?:antworte|sprich|answer|reply)(?: bitte)? (?:auf englisch|auf deutsch|in english|in german)\b/g,'').replace(/\b(?:auf englisch|auf deutsch|in english|in german)\b/g,'').trim();
-      const q=correct(tokens(query));
+      const selectLanguage = (_, requested) => {
+        language = /^(englisch|english)$/i.test(requested) ? 'en' : 'de';
+        return ' ';
+      };
+      const cleaned = input.replace(languageRequest, selectLanguage)
+        .replace(/(?:^|[.!?,;:]\s*)(?:bitte |please )?(?:auf|in) (englisch|deutsch|english|german)(?: bitte| please)?[.!?]*$/iu, selectLanguage)
+        .trim();
+      const raw = normalize(input);
+      const languageChanged = cleaned !== input.trim();
+      const query = normalize(cleaned);
       const t=(g,e)=>language==='de'?g:e;
-      const response=(kind,text,extra={})=>{lastIntent=kind;return {kind,text,language,sources:[],...extra};};
+      const response=(kind,text,extra={})=>{lastIntent=extra.social ? extra.id : kind;return {kind,text,language,sources:[],...extra};};
       // Serious/urgent topics get a neutral boundary before humour, even if a joke is requested.
       if(/\b(notfall|emergency|suizid|suicide|selbstmord|umbringen|vergiftet|poisoned|brustschmerz|chest pain|atemnot|sterben|vergewaltigt|missbraucht|traurig|depressed|trauer|tot|stirbt|died|krebs|cancer|dringend|urgent|panik|gestorben|krank|schmerzen|arzt|hilfe hilfe)\b|suizidgedanken|selbstmordgedanken|panikattacke/.test(raw))return response('serious',t('Das klingt ernst. Ich bin ein kleines Wissensangebot und kann dir hier keine verlässliche persönliche Hilfe geben. Bitte wende dich an einen geeigneten Menschen oder Fachdienst; bei unmittelbarer Gefahr an den örtlichen Notruf. Hier mache ich keine Witze.','That sounds serious. I’m a small knowledge companion and cannot provide reliable personal help here. Please contact a suitable person or professional service; in immediate danger, contact local emergency services. No jokes here.'));
+      if (!query && languageChanged) return response('small-talk', t('Klar, ich antworte auf Deutsch.', 'Sure, I’ll reply in English.'), {id:'language', social:true});
+      const withoutGreeting = query.replace(greetingPrefix, '');
+      const social = smallTalk.get(query.replace(/ snakkie$/, '')) ||
+        smallTalk.get(withoutGreeting.replace(/ snakkie$/, ''));
+      if (social) {
+        const {id, replies:[german, english]} = social;
+        if (id === 'also-thanks' && lastIntent !== 'how-are-you' && lastIntent !== 'doing-well') {
+          return response('thanks', t('Gern geschehen!', 'You’re welcome!'), {id, social:true});
+        }
+        const kind = id === 'greeting' || id === 'thanks' || id === 'bye' ? id : 'small-talk';
+        return response(kind, t(german, english), {id, social:!TOPICAL_SMALL_TALK.has(id)});
+      }
+      const followUp = followUpKind(cleaned);
+      if (followUp) {
+        if (!hasContext) return response('clarification', clarification(followUp, language), {social:true});
+        return response('unknown', '', {modelMessage:cleaned});
+      }
+      const q=correct(tokens(query));
       if(q.includes('weather')||q.includes('rain')||q.includes('wind')||q.includes('temperature')){
         const allowed=new Set(['weather','rain','wind','temperature','wiesmoor','heute','today','gerade','now','bei','hier','there','like','morgen','tomorrow','forecast','vorhersage','wird','wirds','regnen','raining','rains','es','bei','dir','is','ist','heiss','warm','cold','kalt','viel','stark','windy','it','the','out','outside']);
         if(q.some(w=>!allowed.has(w)))return response('weather-scope',t('Mein Wetterbericht gilt nur für Wiesmoor. Für andere Orte oder andere Wetterfragen habe ich hier keine passende Datenquelle.','My weather report covers Wiesmoor only. I have no suitable source here for other places or weather questions.'));
@@ -69,17 +105,12 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
       const follow=/^(noch (einen|ein|mehr)( bitte)?|another( one)?( please)?|one more( please)?)$/.test(raw);
       if((q.includes('joke')&&!/\b(kein|keinen|keine|dont|not|no)\b/.test(raw))||follow&&lastIntent==='joke'){
         const allowed=new Set(['joke','erzahl','erzahlst','erzahlen','tell','give','einen','noch','norddeutschen','ostfriesland','ostfriesen','kurzen','kurzer','short','funny','lustigen','northern','eastfrisia','bitte']);
-        if(follow || q.every(w=>allowed.has(w))){const j=rotation.pick('jokes',data.jokes||[]);if(j)return response('joke',j[language],{id:j.id});}
+        if(follow || /^(?:noch (?:einen|ein) witz|(?:another|one more) joke)(?: bitte| please)?$/.test(query) || q.every(w=>allowed.has(w))){const j=rotation.pick('jokes',data.jokes||[]);if(j)return response('joke',j[language],{id:j.id});}
       }
-      if(/^(moin|hallo|hello|hi|hey)( snakkie)?$/.test(raw))return response('greeting',t('Moin! Schön, dass du da bist. Frag mich nach Wiesmoor, einem Platt-Wort oder einem Witz. Die Mütze sitzt, wir können loslegen.','Moin! Good to see you. Ask me about Wiesmoor, a Platt word or a joke. The hat fits; let’s get started.'));
-      if(/^(?:(?:moin|hallo|hey|hi|hello) )?(?:na )?(?:wie geht(?:s| s| es) dir|wie geht(?:s| s)|how are you(?: doing)?|how s it going|how s it going with you)(?: snakkie)?$/.test(query))return response('small-talk',t('Mir geht’s gut, danke. Und dir?','I’m doing well, thanks. How are you?'));
-      if(/^(?:mir geht(?:s| s| es) (?:auch )?(?:gut|prima|super|bestens)|i(?: m| am) (?:doing )?(?:well|fine|good|great)(?: too)?)(?: danke| thanks)?$/.test(query))return response('small-talk',t('Schön, dass es dir gut geht!','Glad to hear you’re doing well!'));
-      if(/^(tschuss|tschus|auf wiedersehen|bye|goodbye|bis bald|see you)( snakkie)?$/.test(raw))return response('bye',t('Bis bald! Ich halte hier die Mütze fest.','See you! I’ll stay here holding on to my hat.'));
-      if(/^(danke|dankeschon|vielen dank|thanks|thank you|thank you very much)( snakkie)?$/.test(raw))return response('thanks',t('Gern. Dafür bin ich hier. Und für die Teepausen.','You’re welcome. That’s what I’m here for. And the tea breaks.'));
-      const found=search(q,query);
+      const found=search(q,query) || exactIndex.get(withoutGreeting);
       if(found)return response('knowledge',found[language],{id:found.id,sources:found.sources});
       const fallback=rotation.pick('unknown',data['fallback-responses']||[]);
-      return response('unknown',fallback?.[language]||t('Dazu habe ich keinen passenden geprüften Eintrag.','I don’t have a matching checked entry for that.'));
+      return response('unknown',fallback?.[language]||t('Dazu habe ich keinen passenden geprüften Eintrag.','I don’t have a matching checked entry for that.'), {modelMessage:cleaned||input});
     }
   };
 }

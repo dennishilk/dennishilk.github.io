@@ -28,16 +28,18 @@ test('chat uses the protected local model, bounded history and selected language
     assert.equal(options.headers.Authorization, 'Bearer fixture-key');
     assert.equal(options.redirect, 'error');
     const body = JSON.parse(options.body);
-    assert.equal(body.max_tokens, 120);
+    assert.equal(body.max_tokens, 96);
     assert.equal(body.chat_template_kwargs.enable_thinking, false);
-    assert.match(body.messages[0].content, /Nebbys Cousin/);
+    assert.match(body.messages[0].content, /Nebbys Pinguin-Cousin/);
     assert.match(body.messages[0].content, /Die Person im Chat ist ein Gast/);
-    assert.match(body.messages[0].content, /in natürlichem Deutsch/);
+    assert.match(body.messages[0].content, /natürliches, freundliches Deutsch/);
+    assert.match(body.messages[0].content, /Keine Kosenamen, Flirts/);
     assert.deepEqual(body.messages.slice(1, -1), [
       { role: 'user', content: 'Was ist Debian?' },
       { role: 'assistant', content: 'Debian ist eine Linux-Distribution.' }
     ]);
-    return model('<think>hidden reasoning</think>Debian liefert Linux als Distribution.');
+    assert.equal(body.timings_per_token,true);
+    return Response.json({ choices:[{message:{content:'<think>hidden reasoning</think>Debian liefert Linux als Distribution.'}}], timings:{prompt_ms:12,predicted_ms:41} });
   });
   const response = await request.post({
     language: 'de', message: 'Erklär das einfacher.', history: [
@@ -47,6 +49,7 @@ test('chat uses the protected local model, bounded history and selected language
   });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('Cache-Control'), 'no-store');
+  assert.match(response.headers.get('Server-Timing'),/model;dur=\d+, prompt;dur=12, generation;dur=41, total;dur=\d+/);
   assert.deepEqual(await response.json(), { text: 'Debian liefert Linux als Distribution.', sources: [], search: 'unused' });
 });
 
@@ -54,7 +57,7 @@ test('explicitly detailed requests retain the larger answer budget', async t => 
   const request = await fixture(t, async (_, options) => {
     const body = JSON.parse(options.body);
     assert.equal(body.max_tokens, 180);
-    assert.match(body.messages[0].content, /natural English/);
+    assert.match(body.messages[0].content, /natural, friendly English/);
     return model('A detailed answer.');
   });
   assert.equal((await request.post({ language: 'en', message: 'Explain this step by step.' })).status, 200);
@@ -88,19 +91,56 @@ test('research returns only cited results and prefers an official source', async
         { url: 'https://local.invalid/story', title: 'Invalid source', content: 'Fixture' }
       ] });
     }
-    const prompt = JSON.parse(options.body).messages[0].content;
-    assert.match(prompt, /nur Fakten aus den Auszügen.*Jede Behauptung direkt belegen/);
-    assert.match(prompt, /\[1\] Debian News: Release notes excerpt/);
-    assert.doesNotMatch(prompt, /Invalid source/);
+    const [system, user] = JSON.parse(options.body).messages;
+    assert.match(system.content, /nur Fakten aus den Auszügen.*Jede Behauptung direkt belegen/);
+    assert.doesNotMatch(system.content, /Debian News|Release notes excerpt/);
+    assert.match(user.content, /"id":1,"title":"Debian News","excerpt":"Release notes excerpt"/);
+    assert.doesNotMatch(user.content, /Invalid source/);
     return model('Die offiziellen Neuigkeiten findest du hier [1]. [9]');
   });
   const response = await request.post({ language: 'de', message: 'Recherchiere Was ist aktuell bei Debian?' });
   assert.equal(response.status, 200);
+  assert.match(response.headers.get('Server-Timing'),/search;dur=\d+/);
   assert.deepEqual(await response.json(), {
     text: 'Die offiziellen Neuigkeiten findest du hier [1].',
     sources: [{ id: '1', label: 'Debian News', url: 'https://www.debian.org/News/' }],
     search: 'used'
   });
+});
+
+test('static explanations skip search and name matches use only the known public sites', async t => {
+  let searches = 0;
+  const request = await fixture(t, async (url, options) => {
+    if (url.endsWith('/search')) {
+      searches++;
+      return Response.json({ results:[
+        {url:'https://example.com/',title:'Dennis Hilk',content:'Another person'},
+        {url:'https://www.dennishilk.com/about/',title:'About',content:'Open-source projects'},
+        {url:'https://github.com/dennishilk',title:'GitHub',content:'Project repositories'}
+      ] });
+    }
+    const prompt=JSON.parse(options.body).messages.at(-1).content;
+    if (!prompt.includes('Search excerpts')) return model('A general explanation.');
+    assert.doesNotMatch(prompt,/Another person/);
+    return model('Dennis Hilk writes open-source software [1].');
+  });
+  for(const message of ['What are sources of renewable energy?', 'Was sind Quellen in einem Text?','What is direct current?']){
+    const response=await request.post({language:'de',message});
+    assert.equal((await response.json()).search,'unused');
+  }
+  const researched=await request.post({language:'en',message:'Look up open-source projects by Dennis Hilk.'});
+  assert.equal((await researched.json()).sources[0].url,'https://www.dennishilk.com/about/');
+  assert.equal(searches,1);
+});
+
+test('a morning greeting does not turn a static question into research', async t => {
+  const request = await fixture(t, async url => {
+    assert.equal(url,'http://127.0.0.1:8081/v1/chat/completions');
+    return model('Debian ist eine Linux-Distribution.');
+  });
+  const result=await request.post({language:'de',message:'Guten Morgen, was ist Debian?'});
+  assert.equal(result.status,200);
+  assert.equal((await result.json()).search,'unused');
 });
 
 test('search failures, empty results and uncited results are distinguished', async t => {

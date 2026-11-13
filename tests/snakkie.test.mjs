@@ -7,6 +7,8 @@ import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {createCompanion,normalize,oneTypo,shouldSend,KNOWLEDGE_FILES,loadKnowledge} from '../assets/snakkie/engine.mjs';
 import {weatherReply,zonedTimestamp,createWeatherReader,WEATHER_URL} from '../assets/snakkie/weather.mjs';
+import {followUpKind,relevantHistory} from '../assets/snakkie/conversation.mjs';
+import {SMALL_TALK} from '../assets/snakkie/small-talk.mjs';
 import {wordAt,dailyWordIndex,loadWords} from '../assets/snakkie/words.mjs';
 const root=new URL('../',import.meta.url),read=p=>readFileSync(new URL(p,root),'utf8');
 const data=Object.fromEntries(KNOWLEDGE_FILES.map(k=>[k,JSON.parse(read(`assets/snakkie/knowledge/${k}.json`)).entries]));
@@ -42,10 +44,10 @@ test('all requested German inputs resolve appropriately, including follow-up and
 test('small talk and the new local facts resolve with natural bilingual copy', async () => {
  const ai=engine();
  for(const [question,lang,kind,id,text] of [
-  ['wie gehts dir','de','small-talk',undefined,/Mir geht’s gut/],
-  ['mir geht es auch gut','de','small-talk',undefined,/dass es dir gut geht/],
-  ['How are you doing?','en','small-talk',undefined,/I’m doing well/],
-  ['I’m good too','en','small-talk',undefined,/Glad to hear/],
+  ['wie gehts dir','de','small-talk','how-are-you',/Mir geht’s gut/],
+  ['mir geht es auch gut','de','small-talk','doing-well',/dass es dir gut geht/],
+  ['How are you doing?','en','small-talk','how-are-you',/I’m doing well/],
+  ['I’m good too','en','small-talk','doing-well',/Glad to hear/],
   ['kennst du dennis hilk ? was macht der so','de','knowledge','dennis-hilk',/World Observer.*BoringOS/],
   ['Who is Dennis Hilk?','en','knowledge','dennis-hilk',/open-source projects/],
   ['was führ sehenswürdigkeiten gibt es in wiesmoor','de','knowledge','wiesmoor-attractions',/Blumenreich.*Torf- und Siedlungsmuseum/],
@@ -55,13 +57,57 @@ test('small talk and the new local facts resolve with natural bilingual copy', a
   assert.equal(reply.kind,kind,question);
   assert.equal(reply.id,id,question);
   assert.match(reply.text,text,question);
-  if(id)assert.ok(reply.sources.length,question);
+  if(kind==='knowledge')assert.ok(reply.sources.length,question);
  }
  for(const question of ['Was hat Dennis Hilk gestern veröffentlicht?', 'Was macht Dennis Hilk mit Debian?',
   'Welche Sehenswürdigkeiten in Wiesmoor haben heute offen?', 'What is there to see in Leer?',
   'Wie geht es dir bei der Fehlersuche?', 'Mir geht es nicht gut']){
   assert.equal((await ai.reply(question)).kind,'unknown',question);
  }
+});
+
+test('alpha small talk uses exact bilingual replies and leaves substantive questions open', async () => {
+ const ai=engine();
+ assert.ok(SMALL_TALK.length>=25&&SMALL_TALK.length<=40);
+ for (const [id, aliases] of SMALL_TALK) {
+  for (const alias of aliases) assert.equal((await ai.reply(alias)).id,id,alias);
+ }
+ assert.equal((await ai.reply('hallo wie geht es dir')).text,'Mir geht’s gut, danke. Und dir?');
+ assert.equal((await ai.reply('auch danke,')).text,'Freut mich zu hören!');
+ assert.equal((await ai.reply('Hello, how are you?','en')).text,'I’m doing well, thanks. How are you?');
+ assert.equal((await ai.reply('Fine, thanks!','en')).text,'Glad to hear it!');
+ assert.match((await ai.reply('Wer bist du?')).text,/Nebbys Cousin.*Sprachmodell/);
+ assert.match((await ai.reply('Wer ist Nebby?')).text,/mein Cousin/);
+ assert.match((await ai.reply('Was kannst du?')).text,/Sprachmodell/);
+ assert.equal((await ai.reply('Noch einen Witz.')).kind,'joke');
+ assert.equal((await ai.reply('Another joke.','en')).kind,'joke');
+ assert.equal((await ai.reply('Hallo, kannst du mir erklären, wie ich Debian installiere?')).kind,'unknown');
+ assert.equal((await ai.reply('Hello, can you explain how to install Debian?','en')).kind,'unknown');
+ assert.equal((await ai.reply('Erkläre mir kurz den Unterschied zwischen Arch Linux und Debian.')).id,'arch-debian');
+ assert.equal((await ai.reply('Was ist neu bei Arch Linux und Debian heute?')).kind,'unknown');
+});
+
+test('follow-ups use the last topic and reset to a short clarification', async () => {
+ const ai=engine();
+ const pair=(user,assistant)=>[{role:'user',content:user},{role:'assistant',content:assistant}];
+ const arch=pair('Ich benutze Arch Linux.','Arch Linux also. Was möchtest du dazu wissen?');
+ const opinion=pair('Was hältst du davon?','Arch liefert Pakete fortlaufend.');
+ const comparison=pair('Und wie sieht es mit Debian aus?','Debian Stable veröffentlicht feste Versionen.');
+ assert.equal((await ai.reply(arch[0].content)).social,false);
+ for (const question of ['Was hältst du davon?','Und wie sieht es mit Debian aus?',
+  'Erklär es einfacher.','Das verstehe ich nicht.','Can you explain that more simply?']) {
+  assert.ok(followUpKind(question),question);
+  assert.equal((await ai.reply(question,'de',{hasContext:true})).kind,'unknown',question);
+ }
+ assert.deepEqual(relevantHistory(opinion[0].content,arch),arch);
+ assert.deepEqual(relevantHistory(comparison[0].content,[...arch,...opinion]),[...arch,...opinion]);
+ assert.deepEqual(relevantHistory('Erklär es einfacher.',[...arch,...opinion,...comparison]),[...arch,...comparison]);
+ assert.deepEqual(relevantHistory('Was ist JavaScript?',[...arch,...opinion]),[]);
+ assert.deepEqual(relevantHistory('Can you give an example of that?',arch),arch);
+ ai.reset();
+ assert.equal((await ai.reply('Was hältst du davon?')).kind,'clarification');
+ assert.equal((await ai.reply('Das verstehe ich nicht.')).kind,'clarification');
+ assert.deepEqual(relevantHistory('What do you think?',[]),[]);
 });
 
 test('retrieval handles umlauts, transliteration, simple typos and synonyms without forced matches',async()=>{
@@ -75,6 +121,12 @@ test('English answers and explicit language changes use curated translations',as
  const ai=engine();for(const [q,id] of [['Who are you?','identity'],['Who is your cousin?','nebby'],['What is Linux?','linux'],['Explain what an operating system does.','os'],['Can you explain Python?','python'],['What does Moin mean?','word-moin'],['Where is Wiesmoor?','wiesmoor-location']]){const r=await ai.reply(q,'en');assert.equal(r.id,id,q);assert.equal(r.language,'en');}
  assert.equal((await ai.reply('Tell me an East Frisian joke.','en')).kind,'joke');
  const change=await ai.reply('What is Linux? Please answer in English.','de');assert.equal(change.language,'en');assert.equal(change.id,'linux');
+ const topic=await ai.reply('How does the phrase in English work?','de');
+ assert.equal(topic.language,'de');
+ const explicit=await ai.reply('Can you compare Debian and Arch? Please reply in German.','en');
+ assert.equal(explicit.language,'de');
+ assert.equal(explicit.modelMessage,'Can you compare Debian and Arch');
+ assert.equal((await ai.reply('Switch to English.','de')).language,'en');
 });
 
 test('jokes rotate through all entries before repeating; fallback rotation and context reset are independent',async()=>{

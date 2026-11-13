@@ -1,4 +1,5 @@
-import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=5';
+import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=6';
+import { relevantHistory } from './conversation.mjs';
 import { loadWords, wordAt, dailyWordIndex } from './words.mjs?v=3';
 
 const de = document.documentElement.lang === 'de';
@@ -109,7 +110,6 @@ function message(role, text, sources = [], note = '') {
 }
 
 function remember(question, answer) {
-  if (!answer) return;
   history = [...history,
     { role: 'user', content: question.slice(0, 500) },
     { role: 'assistant', content: answer.slice(0, 500) }
@@ -120,7 +120,7 @@ async function aiReply(text, replyLanguage, signal) {
   const response = await fetch('/api/snakkie/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ message: text, language: replyLanguage, history }),
+    body: JSON.stringify({ message: text, language: replyLanguage, history: relevantHistory(text, history) }),
     signal: AbortSignal.any([signal, AbortSignal.timeout(57_000)])
   });
   if (response.status === 429) return { error: 'rate_limit' };
@@ -161,33 +161,40 @@ form.addEventListener('submit', async event => {
   grow();
   input.focus();
   status.textContent = t('One moment…', 'Ik kiek mol eben na …');
+  const started = performance.now();
   let waitNotice;
   try {
     const engine = await ready;
     if (request !== current) return;
-    const local = await engine?.reply(text, language.value);
+    const lookupStarted = performance.now();
+    const local = await engine?.reply(text, language.value, { hasContext: history.length > 0 });
+    performance.clearMeasures('snakkie:local-lookup');
+    performance.measure('snakkie:local-lookup', { start: lookupStarted, end: performance.now() });
     if (request !== current) return;
     if (local?.language) language.value = local.language;
     if (local && local.kind !== 'unknown') {
       message('assistant', local.text, local.sources);
-      remember(text, local.text);
+      if (!local.social) remember(local.modelMessage || text, local.text);
     } else {
       waitNotice = setTimeout(() => {
         if (request === current) status.textContent = t('Still working on your reply …', 'Ich bin noch dabei …');
       }, 8000);
-      const reply = await aiReply(text, language.value, current.signal);
+      const modelMessage = local?.modelMessage || text;
+      const reply = await aiReply(modelMessage, language.value, current.signal);
       if (request !== current) return;
       if (reply.error) {
         message('assistant', failureNote(reply.error));
       } else {
         message('assistant', reply.text, reply.sources, searchNote(reply.search));
-        remember(text, reply.text);
+        if (!['unverified', 'empty', 'unavailable', 'skipped'].includes(reply.search)) remember(modelMessage, reply.text);
       }
     }
   } catch (error) {
     if (request === current) message('assistant', error?.name === 'TimeoutError' ? failureNote('timeout') : unavailable());
   } finally {
     clearTimeout(waitNotice);
+    performance.clearMeasures('snakkie:reply');
+    performance.measure('snakkie:reply', { start: started, end: performance.now() });
     if (request === current) {
       request = undefined;
       status.textContent = '';
