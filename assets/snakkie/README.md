@@ -1,46 +1,31 @@
-# Snakkie — knowledge & humour companion 0.3
+# Snakkie 0.4
 
-Direct routes: `/snakkie/` (English), `/de/snakkie/` (German).
-Both remain unlisted and `noindex,follow`. No inbound menus, cards, Observer,
-Wiesmoor, RSS or sitemap links. Do not disallow crawling in robots.txt: crawlers
-must be able to read noindex. The mascot and original Nebby files are unchanged.
-
-## Build and verify
+Public pages: `/snakkie/` (English) and `/de/snakkie/` (German). Both are
+indexable and included in the language sitemaps. Snakkie is Nebby’s cousin.
 
 ```sh
 node scripts/build-snakkie.mjs
-node --test tests/snakkie.test.mjs
+node scripts/sync-seo.mjs --sitemaps-only
+node --test tests/snakkie*.test.mjs
 npm run test:seo
 ```
 
-The generator writes only the two Snakkie HTML pages. No packages, models,
-frameworks, external runtime or server process are required. The page reuses the
-site's local fonts and language-switch assets.
+## How replies work
 
-## Current architecture
-
-- `knowledge/*.json`: stable-ID bilingual records, original jokes, source-bearing
-  factual entries, dictionary words/phrase and varied honest fallbacks.
-- `engine.mjs`: transparent curated retrieval; normalized terms, synonyms, guarded
-  one-edit typo correction, mandatory topic anchors, confidence/ambiguity checks.
-- `weather.mjs`: reads only the existing same-origin Wiesmoor Observer JSON;
-  strict timestamps, freshness checks and separate current/forecast paths.
-- `words.mjs`: independent word loader and deterministic local-calendar selection.
-- `ui.mjs`: keyboard controls, accessible plain-text replies, safe source links,
-  bounded in-memory transcript, gentle scroll following. No saved chat history.
-
-There is no generative AI. Texts come from the maintained collection. A joke or
-fallback uses a shuffled bag, exhausting the set before repeating. The small
-context remembers only the preceding intent for “Noch einen!”; it is not a
-language-model conversation memory. Explicit DE/EN answer-language switches are
-supported; unknown questions are left unanswered rather than guessed.
-
-The dataset currently has 100 bilingual original jokes, 20 bilingual fallbacks,
-12 factual entries, 6 personality entries, 2 dictionary words and 1 phrase.
-New IDs must be stable and unique; keep DE/EN, source/provenance and review status.
-Add varied queries and necessary topic anchors, then test positive AND negative
-matches. Do not broaden fuzzy matching to short or ambiguous terms casually.
-A German/English phrasing is an editorial translation, not a dictionary quote.
+- `knowledge/*.json` holds 100 bilingual original jokes, 20 fallbacks, 12
+  factual entries, 6 personality entries, two dictionary words and one phrase.
+- `engine.mjs` resolves known topics, including greetings and simple follow-up
+  joke requests. Keep stable IDs, source provenance and both languages.
+- `weather.mjs` reads the existing same-origin World Observer export for
+  Wiesmoor. It validates timestamps and separates current weather from forecasts.
+- `words.mjs` independently loads the locally rotating Platt word.
+- `ui.mjs` sends open questions and a bounded conversation history to the
+  same-origin API. Conversation state lives in the current tab. A reset aborts
+  the browser request and starts a fresh conversation. The curated collection
+  remains available during service interruptions.
+- [The Worldnode API](../../server/snakkie/README.md) uses local llama.cpp for
+  generation and SearXNG for selected research questions. SearXNG can contact
+  external search providers. The model does not fetch pages or run tools.
 
 ## Regional language and daily word
 

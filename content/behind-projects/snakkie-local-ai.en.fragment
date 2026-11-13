@@ -1,0 +1,40 @@
+<p class="article-lead">The first time Snakkie replied on my Debian server, he wrote, “Ich bin gerne zur Snacke!” It sounds like a German penguin trying to say he’s always up for a chat and getting sidetracked by a snack. I hadn’t taught him that sentence. For a little penguin who had been reading from a knowledge book up to that point, it was a start.</p>
+<p>On 13 November 2026 I tried running a small language model and a search service on Worldnode, my old Xeon-backed server with no graphics card. I wanted to know how long I would have to wait for a reply and whether Snakkie could look things up when he ran out of things he knew.</p>
+{{screenshot}}
+<h2 id="background">From a knowledge book to a language model</h2>
+<p>Snakkie is Nebby’s cousin from Wiesmoor in East Frisia. Before the server experiment, he answered familiar questions with maintained texts. He could tell one of a hundred jokes, explain “Moin” and show the Wiesmoor weather from my World Observer. Those answers are fast and dependable. The collection runs out of room when you ask a new question or ask him to explain something he just said.</p>
+<p>I had already tried running a small model in the browser. It worked, but in my tests it took too long for a relaxed chat. So I moved the model to Worldnode. That machine also serves my website, guestbook, World Observer and GoToSocial instance. I wanted to see how much CPU time I could give the penguin.</p>
+<h2 id="worldnode">Worldnode and llama.cpp</h2>
+<p>Worldnode is a KVM/QEMU VM running Debian 13 “Trixie” with four virtual cores on an Intel Xeon E5-2699C v4 and about 23.4 GiB of RAM. The guest has AVX2 and FMA, with no dedicated GPU. I built llama.cpp from source and ran <code>llama-server</code> with two CPU threads and one slot. The startup run in the screenshot shows a context window of 2,048 tokens.</p>
+<p>llama.cpp loads the model from a GGUF file. The versions I tested use <code>Q4_K_M</code>, a quantization format that stores the model weights more compactly. A smaller model and fewer bytes of weight data help when the same CPU reads those weights and computes the next part of the reply. Throughput still depends on the model, thread count and machine.</p>
+<p>Here is an example for a fresh llama.cpp checkout. Substitute the path to your GGUF file. These commands show a CPU build and a short benchmark without opening a model API.</p>
+<div class="deep-dive"><pre tabindex="0" data-copy="Build llama.cpp and run the CPU benchmark"><code>cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON
+cmake --build build --config Release --parallel 2 --target llama-bench llama-server
+./build/bin/llama-bench -m /path/to/model.gguf -t 2 -p 128 -n 64</code></pre></div>
+<script defer src="/assets/blog/linux-news/deep-dives.js"></script>
+<h2 id="benchmark">What the Xeon managed in the benchmark</h2>
+<p>Prompt processing measures how quickly the model processes existing input. Text generation measures how quickly it produces new tokens. Each new token depends on the text that comes before it. A chat request can also spend time searching and preparing the input.</p>
+<figure class="article-figure"><a href="/assets/blog/snakkie-local-ai/benchmark-en.webp"><img src="/assets/blog/snakkie-local-ai/benchmark-en.webp" width="1386" height="673" loading="lazy" decoding="async" alt="Bar chart of prompt processing and text generation for three Qwen3 benchmark runs. The table below gives the exact values."></a><figcaption>Measured throughput on Worldnode in tokens per second. T stands for threads.</figcaption></figure>
+<div class="table-wrap"><table><caption>Qwen3 CPU measurements on Worldnode</caption><thead><tr><th scope="col">Model</th><th scope="col">Threads</th><th scope="col">Prompt tokens/s</th><th scope="col">Output tokens/s</th></tr></thead><tbody>
+<tr><th scope="row">Qwen3 0.6B Q4_K_M</th><td>2</td><td>80.74</td><td>16.92</td></tr>
+<tr><th scope="row">Qwen3 1.7B Q4_K_M</th><td>2</td><td>26.39</td><td>6.34</td></tr>
+<tr><th scope="row">Qwen3 1.7B Q4_K_M</th><td>3</td><td>35.51</td><td>6.30</td></tr>
+</tbody></table></div>
+<p>Three threads processed the prompt faster in this 1.7B run. Generation varied considerably and the measured rate of 6.30 tokens per second was close to the two-thread result of 6.34. The 0.6B model generated text much faster. When I gave both models the same technical question about Worldnode and the same source material, the 1.7B answer was easier to follow. I settled on 1.7B with two threads. At roughly six tokens per second, generation alone takes about 16 seconds for a 100-token reply.</p>
+<h2 id="web-search">The first web search with SearXNG</h2>
+<p>I set up SearXNG as a separate service. My first search was “Dennis Hilk”. The JSON response returned 38 results, including my website and GitHub. A short Python script picked relevant results, shortened their excerpts and passed them to llama.cpp with the question. The model named some of my Linux and open-source projects and added numbered references. That was the chain I wanted to see working in the terminal.</p>
+<p>A result count says little about the sources. A search excerpt can be old, leave out context or refer to someone else. In the browser chat, a source link is drawn from the results the application actually supplied to the model. The interface says when a reply is based on excerpts. A failed search or an answer without a usable source gets a status message.</p>
+<h2 id="services">From two SSH terminals to persistent services</h2>
+<p>The experiment used two systemd user services, <code>snakkie-ai.service</code> for llama.cpp and <code>snakkie-search.service</code> for SearXNG. Autostart and lingering keep them available beyond an open SSH session. Both listen on loopback. The persistent model service uses an API key and CPU and memory limits. A later check rejected an unauthenticated request with HTTP 401. The screenshot comes from the earlier terminal experiment and shows its startup warning.</p>
+<p>For Snakkie 0.4 I added a small interface between the site and the model. The browser uses the same HTTPS site address to reach it. Weather, jokes and familiar questions still use the existing sources. A short conversation history gives “Explain that more simply” something to refer to. Both versions of the page can report when the model is busy or the search service is unavailable.</p>
+<h2 id="limits">What I expect from it day to day</h2>
+<p>One slot means one model request at a time. If several people arrive at once, some will see a friendly message asking them to try again. A small model can misread the context, and external search engines can fail or take too long. The language model runs on Worldnode itself. The configured search providers may receive the terms needed for web research.</p>
+<p>My favourite part of this experiment is being able to measure and replace each part on its own. The Xeon can serve a small chat, and the Wiesmoor weather still comes from the same place it always did. If you’d like to try it, <a href="/snakkie/">have a chat with Snakkie</a>.</p>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://www.debian.org/releases/trixie/">Debian 13 “Trixie” release information</a></li>
+<li><a href="https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md">llama.cpp build documentation</a></li>
+<li><a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/server">llama.cpp model server and chat API</a></li>
+<li><a href="https://huggingface.co/Qwen/Qwen3-1.7B">Qwen3-1.7B model card</a></li>
+<li><a href="https://docs.searxng.org/dev/search_api">SearXNG Search API</a></li>
+</ul>

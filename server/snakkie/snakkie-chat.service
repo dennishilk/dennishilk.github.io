@@ -1,0 +1,23 @@
+[Unit]
+Description=Snakkie chat API
+After=network.target
+
+[Service]
+Type=simple
+User=nebu
+ExecStart=/srv/www/.tools/node22/bin/node /srv/www/dennishilk.github.io/server/snakkie/server.mjs
+LoadCredential=llama-api-key:/home/nebu/snakkie-lab/secrets/llama-api-key
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+MemoryMax=256M
+TasksMax=32
+
+[Install]
+WantedBy=multi-user.target

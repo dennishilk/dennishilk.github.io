@@ -47,9 +47,9 @@ test('both blog posts include valid bilingual BlogPosting metadata',()=>{
   assert.match(read(i?'de/blog/index.html':'blog/index.html'),new RegExp(article.url.replace(/[.*+?^$\{\}()|[\]\\]/g,'\\$&')));
  }
 });
-test('homepage, sitemap, RSS and original generated media are wired',()=>{
- assert.match(read('index.html'),/href="\/lab\/raymosaic\/"/);
- assert.match(read('de/index.html'),/href="\/de\/lab\/raymosaic\/"/);
+test('RayMosaic keeps its direct routes, sitemap, RSS and media',()=>{
+ assert.doesNotMatch(read('index.html'),/href="\/lab\/raymosaic\/"/);
+ assert.doesNotMatch(read('de/index.html'),/href="\/de\/lab\/raymosaic\/"/);
  assert.match(read('sitemap.xml'),/https:\/\/www\.dennishilk\.com\/lab\/raymosaic\//);
  assert.match(read('sitemap-de.xml'),/https:\/\/www\.dennishilk\.com\/de\/lab\/raymosaic\//);
  for(const path of posts){const route=path.replace(/index\.html$/,'');assert.ok(read('sitemap-blog.xml').includes('https://www.dennishilk.com/'+route));}

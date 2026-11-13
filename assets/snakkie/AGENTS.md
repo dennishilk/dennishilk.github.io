@@ -36,4 +36,4 @@ For future normal, winking, thoughtful, laughing or animated variants:
   replace the reference when creating a variant.
 
 See [README.md](README.md) for provenance, the production prompt, current scope,
-regional-language evidence and the deliberately unlisted/noindex publication.
+regional-language evidence and the Worldnode deployment.

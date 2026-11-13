@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,existsSync,mkdtempSync,mkdirSync,copyFileSync,readdirSync,rmSync} from 'node:fs';
+import {readFileSync,existsSync,mkdtempSync,mkdirSync,copyFileSync,rmSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -14,9 +14,9 @@ const engine=()=>createCompanion(data,{random:()=>0.4,weather:async options=>({k
 const now=Date.parse('2026-10-30T18:30:00Z');
 function weatherFixture(){return {observer:'wiesmoor-weather',data_status:'ok',collected_at_utc:'2026-10-30T18:00:06Z',location:{name:'Wiesmoor',latitude:53.4167,longitude:7.7333,timezone:'Europe/Berlin'},current:{time:'2026-10-30T19:00',temperature_2m:9.3,rain:0,wind_speed_10m:4.3},daily:{time:['2026-10-30','2026-10-31'],temperature_2m_min:[5.8,6.8],temperature_2m_max:[10.6,11.7]}};}
 
-test('bilingual direct routes preserve noindex, cousin story and existing local assets',()=>{
+test('public bilingual routes are indexable and preserve the cousin story and local assets',()=>{
  for(const [i,path] of ['snakkie/index.html','de/snakkie/index.html'].entries()){
-  const html=read(path);assert.match(html,new RegExp(`<html lang="${i?'de':'en'}">`));assert.match(html,/<meta name="robots" content="noindex,follow">/);
+  const html=read(path);assert.match(html,new RegExp(`<html lang="${i?'de':'en'}">`));assert.match(html,/<meta name="robots" content="index,follow,max-image-preview:large">/);
   for(const lang of ['en','de'])assert.ok(html.includes(`hreflang="${lang}" href="https://www.dennishilk.com/${lang==='de'?'de/':''}snakkie/"`));
   assert.match(html,i?/Nebbys Cousin/:/Nebby’s cousin/);assert.doesNotMatch(html,/Nebby becomes Snakkie|model-select|backend-select|start-model|clear-cache/);
   for(const [,target] of html.matchAll(/\b(?:src|href)="(\/[^"#?]*)(?:\?[^"#]*)?(?:#[^"]*)?"/g))assert.ok(existsSync(new URL(target.slice(1)+(target.endsWith('/')?'index.html':''),root)),target);
@@ -109,20 +109,39 @@ test('daily word uses stable sorted IDs and local calendar days; learning does n
  await assert.rejects(loadKnowledge(async()=>new Response('',{status:404})),/KNOWLEDGE_UNAVAILABLE/);
 });
 
-test('Enter sends, Shift+Enter/IME do not; frontend has no LLM, chat persistence or HTML injection',()=>{
+test('Enter sends, Shift+Enter/IME do not; frontend uses the same-origin API without storing or interpreting chat text',()=>{
  assert.equal(shouldSend({key:'Enter'}),true);for(const e of [{key:'Enter',shiftKey:true},{key:'Enter',isComposing:true},{key:'Enter',keyCode:229},{key:'a'}])assert.equal(shouldSend(e),false);
  for(const file of ['ui.mjs','engine.mjs','weather.mjs','words.mjs'])assert.doesNotMatch(read('assets/snakkie/'+file),/innerHTML|localStorage|sessionStorage|indexedDB|sendBeacon|new Worker|\.wasm|\.gguf|navigator\.gpu|wllama|Qwen|https:\/\/api\./);
  for(const file of ['inference.mjs','inference-worker.mjs','model-config.mjs','model-storage.mjs'])assert.equal(existsSync(new URL('assets/snakkie/'+file,root)),false);
  assert.equal(existsSync(new URL('scripts/prepare-snakkie-assets.py',root)),false);
+ assert.match(read('assets/snakkie/ui.mjs'), /fetch\('\/api\/snakkie\/chat'/);
 });
 
-test('no other public page, sitemap or RSS feed advertises Snakkie',()=>{
- const tracked=execFileSync('git',['ls-files','-z'],{cwd:root,encoding:'utf8'}).split('\0');
- for(const p of tracked.filter(p=>/\.(html|xml|json|js)$/.test(p)&&!/^(de\/)?snakkie\//.test(p)&&!p.startsWith('assets/snakkie/')&&!p.startsWith('docs/snakkie/'))){assert.doesNotMatch(read(p),/(?:href|url|loc)[^\n]{0,12}["'>]?(?:https:\/\/www\.dennishilk\.com)?\/(?:de\/)?snakkie\//i,p);}
+test('both start pages and blog stories link to their localized Snakkie page', () => {
+  for (const [prefix, slug] of [['', 'local-ai-without-gpu-snakkie'], ['de/', 'lokale-ki-ohne-gpu-snakkie']]) {
+    const route = '/' + prefix + 'snakkie/';
+    const homepage = read(prefix + 'index.html');
+    assert.ok(homepage.includes('href="' + route + '"'));
+    assert.match(homepage, /World of Warcraft<\/a>/);
+    assert.doesNotMatch(homepage, /World of Warcraft ❤️|raymosaic-feature|museum-highlights-title/);
+    assert.match(homepage, /href="\/museum\/"/);
+    const article = read(prefix + 'blog/' + slug + '/index.html');
+    assert.ok(article.includes('href="' + route + '"'));
+    assert.ok(read(prefix + 'blog/feed.xml').includes('/' + prefix + 'blog/' + slug + '/'));
+  }
 });
 
-test('sitemap regeneration excludes both noindex routes',t=>{
- const fixture=mkdtempSync(join(tmpdir(),'snakkie-sitemap-'));t.after(()=>rmSync(fixture,{recursive:true,force:true}));
- for(const p of ['snakkie/index.html','de/snakkie/index.html','scripts/sync-seo.mjs','scripts/hardware-integration.mjs','scripts/gaming-integration.mjs']){mkdirSync(join(fixture,p,'..'),{recursive:true});copyFileSync(new URL(p,root),join(fixture,p));}
- execFileSync(process.execPath,['scripts/sync-seo.mjs','--sitemaps-only'],{cwd:fixture});for(const name of readdirSync(fixture).filter(n=>/^sitemap.*\.xml$/.test(n)))assert.doesNotMatch(readFileSync(join(fixture,name),'utf8'),/\/(?:de\/)?snakkie\//);
+test('sitemap regeneration includes both localized Snakkie routes', t => {
+  const fixture = mkdtempSync(join(tmpdir(), 'snakkie-sitemap-'));
+  t.after(() => rmSync(fixture, { recursive: true, force: true }));
+  for (const path of ['snakkie/index.html', 'de/snakkie/index.html', 'scripts/sync-seo.mjs',
+    'scripts/hardware-integration.mjs', 'scripts/gaming-integration.mjs']) {
+    mkdirSync(join(fixture, path, '..'), { recursive: true });
+    copyFileSync(new URL(path, root), join(fixture, path));
+  }
+  execFileSync(process.execPath, ['scripts/sync-seo.mjs', '--sitemaps-only'], { cwd: fixture });
+  for (const [name, prefix] of [['sitemap.xml', ''], ['sitemap-de.xml', 'de/']]) {
+    const xml = readFileSync(join(fixture, name), 'utf8');
+    assert.ok(xml.includes('<loc>https://www.dennishilk.com/' + prefix + 'snakkie/</loc>'));
+  }
 });

@@ -1,0 +1,19 @@
+.article-copy .table-wrap { overflow-x: auto; }
+.article-copy .table-wrap table { width: 100%; margin-block: 1rem; border-collapse: collapse; }
+.article-copy .table-wrap caption { margin-block: .4rem; text-align: left; font-weight: 600; }
+.article-copy .table-wrap th,
+.article-copy .table-wrap td { padding: .6rem .75rem; border-bottom: 1px solid #354552; text-align: left; }
+.article-copy .table-wrap td { font-variant-numeric: tabular-nums; }
+.article-copy .copy-control { display: flex; align-items: center; justify-content: flex-end; gap: .6rem; margin: -1rem 0 1.5rem; }
+.article-copy .copy-control button {
+  min-height: 44px;
+  padding: .4rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: .4rem;
+  color: var(--text);
+  background: var(--surface-soft);
+  font: inherit;
+  cursor: pointer;
+}
+.article-copy .copy-control button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.article-copy .copy-status { color: var(--muted); font-size: .875rem; }

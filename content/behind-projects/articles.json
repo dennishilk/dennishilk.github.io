@@ -84,5 +84,55 @@
       "label": "Open the WoW Forever Observer"
     },
     "stylesheet": "/assets/blog/wow-forever/character-card.css?v=20261110-api-story"
+  },
+  {
+    "topic": "snakkie-local-ai",
+    "date": "2026-11-13",
+    "tag": "Snakkie",
+    "image": "/assets/blog/snakkie-local-ai/worldnode-prototyp.webp",
+    "imageWidth": 2048,
+    "imageHeight": 479,
+    "sourceUrl": "https://github.com/ggml-org/llama.cpp/tree/master/tools/server",
+    "lang": "de",
+    "slug": "lokale-ki-ohne-gpu-snakkie",
+    "alternate": "local-ai-without-gpu-snakkie",
+    "category": "Hinter den Projekten",
+    "title": "Lokale KI ohne GPU: Wie mein Debian-Server Snakkie das Sprechen und Recherchieren beibrachte",
+    "seoTitle": "Lokale KI ohne GPU: Snakkie auf Debian 13",
+    "description": "Snakkie läuft auf meinem Debian-Server ohne GPU. Ein Praxisbericht mit llama.cpp, Qwen3, SearXNG, echten CPU-Benchmarks und der ersten Webrecherche.",
+    "socialImage": "/assets/blog/snakkie-local-ai/social-de.jpg",
+    "imageAlt": "Links die frühere Snakkie-Seite in Firefox, daneben der Recherche-Prototyp und Ausgaben von llama.cpp und SearXNG im Terminal.",
+    "imageCaption": "Worldnode-Versuch vom 13. November 2026. Die Website und der separate Terminal-Prototyp sind nebeneinander geöffnet. Lokale Pfade und Teile des Logs sind abgedeckt.",
+    "socialAlt": "Snakkie mit Kapitänsmütze neben dem Titel Lokale KI ohne GPU und einem Ausschnitt des Worldnode-Experiments.",
+    "sidebar": {
+      "href": "/de/snakkie/",
+      "label": "Mit Snakkie schnacken"
+    },
+    "stylesheet": "/assets/blog/snakkie-local-ai/article.css"
+  },
+  {
+    "topic": "snakkie-local-ai",
+    "date": "2026-11-13",
+    "tag": "Snakkie",
+    "image": "/assets/blog/snakkie-local-ai/worldnode-prototyp.webp",
+    "imageWidth": 2048,
+    "imageHeight": 479,
+    "sourceUrl": "https://github.com/ggml-org/llama.cpp/tree/master/tools/server",
+    "lang": "en",
+    "slug": "local-ai-without-gpu-snakkie",
+    "alternate": "lokale-ki-ohne-gpu-snakkie",
+    "category": "Behind the Projects",
+    "title": "Local AI Without a GPU: How My Debian Server Taught Snakkie to Chat and Search the Web",
+    "seoTitle": "Local AI Without a GPU: Snakkie on Debian 13",
+    "description": "I ran Snakkie on a Debian server without a GPU. A firsthand account of llama.cpp, Qwen3, SearXNG, CPU benchmarks and the first web search.",
+    "socialImage": "/assets/blog/snakkie-local-ai/social-en.jpg",
+    "imageAlt": "The older Snakkie page in Firefox on the left, next to the separate research prototype and llama.cpp and SearXNG terminal output.",
+    "imageCaption": "Worldnode experiment, 13 November 2026. The website sits next to the separate terminal prototype. Local paths and part of the logs are covered.",
+    "socialAlt": "Snakkie in his captain’s hat, next to the words Local AI Without a GPU and a detail from the Worldnode experiment.",
+    "sidebar": {
+      "href": "/snakkie/",
+      "label": "Chat with Snakkie"
+    },
+    "stylesheet": "/assets/blog/snakkie-local-ai/article.css"
   }
 ]
