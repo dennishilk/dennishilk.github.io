@@ -1,4 +1,4 @@
-import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=7';
+import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=8';
 import { relevantHistory } from './conversation.mjs?v=7';
 import { loadWords, wordAt, dailyWordIndex } from './words.mjs?v=3';
 
@@ -156,6 +156,8 @@ form.addEventListener('submit', async event => {
   const current = new AbortController();
   request = current;
   controls();
+  pinned = true;
+  $('latest-message').hidden = true;
   message('user', text);
   input.value = '';
   grow();

@@ -1,13 +1,13 @@
 // Curated retrieval, not generation. All response text comes from reviewed records.
 import {createWeatherReader} from './weather.mjs?v=3';
-import {SMALL_TALK, TOPICAL_SMALL_TALK} from './small-talk.mjs?v=7';
+import {SMALL_TALK, TOPICAL_SMALL_TALK} from './small-talk.mjs?v=8';
 import {clarification,followUpKind} from './conversation.mjs';
 export const KNOWLEDGE_FILES=['facts','personality','jokes','fallback-responses','platt-words','platt-phrases','utterances'];
 export async function loadKnowledge(fetcher=fetch) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
   try {
   const responses=await Promise.all(KNOWLEDGE_FILES.map(async name=>{
-    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'||name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
+    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=8':name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
     if (name === 'utterances' && !r.ok) return [name, {}];
     if(!r.ok)throw new Error('KNOWLEDGE_UNAVAILABLE');
     return [name,(await r.json()).entries];
@@ -22,12 +22,65 @@ const rephrasePhrases = new Set(['kurz bitte','fass dich kurz','kurz und knapp',
 const repeatPhrases = new Set(['wiederhol das','wiederhole das','kannst du das wiederholen','sag das nochmal','sag das noch mal','was hast du gerade gesagt','repeat that','can you repeat that','say that again','what did you just say']);
 const clockKinds = new Map([['clock-time','time'],['clock-date','date'],['clock-both','both']]);
 const clockPhrases = new Map(Object.entries({
+  'wie spät ist es':'time', 'wie viel uhr ist es':'time', 'wieviel uhr ist es':'time',
+  'weißt du wie spät es ist':'time', 'weißt du wie viel uhr es ist':'time',
+  'weisst du wieviel uhr es ist':'time', 'weißt du wie spät es gerade ist':'time',
+  'kannst du mir sagen wie spät es ist':'time', 'sag mir bitte wie spät es ist':'time',
+  'kannst du mir die uhrzeit sagen':'time', 'sag mir die uhrzeit':'time',
   'wie spät ist es in wiesmoor':'time', 'uhrzeit in wiesmoor':'time',
   'wie spät ist es bei dir':'time', 'was ist die uhrzeit in wiesmoor':'time',
   'welches datum haben wir heute':'date', 'datum und uhrzeit':'both',
+  'what time is it':'time', 'what time is it now':'time',
+  'do you know what time it is':'time', 'can you tell me what time it is':'time',
+  'could you tell me the time':'time', 'can you tell me the time':'time',
+  'tell me the time please':'time',
   'what time is it in wiesmoor':'time', 'what is the time in wiesmoor':'time',
   'what time is it where you are':'time', 'date and time':'both', 'today s date':'date'
 }).map(([text, kind]) => [normalize(text),kind]));
+
+const eventSources = [
+  {label:'Stadt Wiesmoor · Veranstaltungen',url:'https://www.wiesmoor.de/Veranstaltungen'},
+  {label:'Wiesmoor Touristik · Veranstaltungssuche',url:'https://www.tourismus-wiesmoor.de/veranstaltungen-1'}
+];
+const eventPeriod = /\b(?:heute|morgen|samstag|sonntag|wochenende|today|tonight|tomorrow|saturday|sunday|weekend)\b/;
+const eventQuestion = /^(?:(?:was (?:ist|geht|passiert|gibt es)|(?:welche|was fur) (?:veranstaltungen|events|termine|konzerte|markte) (?:gibt es|finden|sind)|(?:veranstaltungen|events|termine|konzerte|markte))\b|(?:what(?: s| is) (?:on|happening|going on)|what events (?:are there|are on|are happening)|(?:events|things to do))\b)/;
+const eventFollowUpPrefix = /^(?:ja |yes )?(?:sag mir (?:bitte )?|(?:please )?tell me )?(?:was (?:ist |geht )?|und |what (?:about|is on|s on) |and )?/;
+const eventFollowUp = /^(?:am |on )?(?:heute(?: abend)?|morgen(?: am (?:samstag|sonntag))?|samstag|sonntag|(?:dieses )?wochenende|today|tonight|tomorrow(?: (?:on )?(?:saturday|sunday))?|saturday|sunday|(?:this )?weekend)(?: (?:bitte|please|los|ist|stattfindet))?$/;
+const eventTerms = new Set(
+  'in wiesmoor events veranstaltungen termine konzerte markte los heute morgen abend am samstag sonntag dieses kommenden wochenende was ist geht passiert gibt es welche fur finden statt sind what s is on happening going are there things to do for today tonight tomorrow saturday sunday weekend this coming the'.split(' ')
+);
+
+function isWiesmoorEventQuestion(query, followsEvents) {
+  if (followsEvents && eventFollowUp.test(query.replace(eventFollowUpPrefix,''))) return true;
+  if (!/\bwiesmoor\b/.test(query)) return false;
+  if (/^(?:veranstaltungskalender (?:fur |in )?wiesmoor|wiesmoor veranstaltungskalender|wiesmoor events calendar|event calendar (?:for |in )?wiesmoor)$/.test(query)) return true;
+  return eventQuestion.test(query.replace(/^wiesmoor /,'')) && query.split(' ').every(word => eventTerms.has(word)) && (
+    eventPeriod.test(query) || /\b(?:veranstaltungen|events|termine|konzerte|markte|los)\b/.test(query)
+  );
+}
+
+function eventCalendarSources(query, now) {
+  if (!eventPeriod.test(query)) return eventSources;
+  const parts = new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'
+  }).formatToParts(now);
+  const dateFields = Object.fromEntries(parts.map(({type,value})=>[type,Number(value)]));
+  const day = new Date(Date.UTC(dateFields.year,dateFields.month-1,dateFields.day));
+  const weekday = day.getUTCDay();
+  let start = 0;
+  let end = 0;
+  if (/\b(?:morgen|tomorrow)\b/.test(query)) start = end = 1;
+  else if (/\b(?:samstag|saturday)\b/.test(query)) start = end = (6 - weekday + 7) % 7;
+  else if (/\b(?:sonntag|sunday)\b/.test(query)) start = end = (7 - weekday) % 7;
+  else if (/\b(?:wochenende|weekend)\b/.test(query)) {
+    start = weekday === 0 ? 0 : 6 - weekday;
+    end = weekday === 0 ? 0 : start + 1;
+  }
+  const date = offset => new Date(day.getTime() + offset * 86_400_000).toISOString().slice(0,10);
+  const url = new URL(eventSources[1].url);
+  url.search = new URLSearchParams({start:date(start),end:date(end)});
+  return [eventSources[0],{...eventSources[1],url:url.href}];
+}
 const weatherKinds = new Map([['weather-current','current'],['weather-rain','rain'],['weather-tomorrow','tomorrow']]);
 const greetingPrefix = /^(?:moin|hallo|hi|hello|hey)(?: snakkie)? /;
 const languageRequest = /(?:^|[.!?,;:]\s*|\s+(?=(?:bitte|please)\s))(?:bitte\s+|please\s+)?(?:antworte|sprich|answer|reply|switch)(?:\s+(?:bitte|please))?\s+(?:auf|in|to)\s+(englisch|deutsch|english|german)\b\s*[.!?,;:]*/giu;
@@ -150,6 +203,15 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         }
         return response('clarification',t('Was soll ich wiederholen?','What would you like me to repeat?'),{social:true});
       }
+      if (isWiesmoorEventQuestion(withoutGreeting,lastIntent === 'events')) {
+        const sources = eventCalendarSources(withoutGreeting,now());
+        const text = eventPeriod.test(withoutGreeting)
+          ? t('Hier findest du die Wiesmoorer Termine für den gewünschten Zeitraum. Der Link zur Wiesmoor Touristik öffnet die Suche mit passenden Daten.',
+              'Here are the Wiesmoor event calendars. The tourist office link opens the listings filtered to the requested dates.')
+          : t('Aktuelle Termine für Wiesmoor findest du bei der Stadt und der Wiesmoor Touristik.',
+              'You can find upcoming Wiesmoor events in the city calendar and the tourist office’s listings.');
+        return response('events',text,{sources});
+      }
       const followUp = route === 'rephrase' || rephrasePhrases.has(query) ? 'rephrase' : followUpKind(cleaned);
       if (followUp) {
         if (followUp === 'rephrase' && lastTopic?.short && !/(?:ausführlich|genauer|detail|elaborate|näher)/iu.test(cleaned)) {
@@ -159,7 +221,8 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         if (!hasContext) return response('clarification', clarification(followUp, language), {social:true});
         return response('unknown', '', {modelMessage:cleaned, followUp:true});
       }
-      const clock = clockKinds.get(route) || clockPhrases.get(query) || clockPhrases.get(withoutGreeting);
+      const clockQuestion = withoutGreeting.replace(/^(?:bitte|please) | (?:bitte|please|snakkie)$/g,'');
+      const clock = clockKinds.get(route) || clockPhrases.get(clockQuestion);
       if (clock) {
         const options = {timeZone:'Europe/Berlin'};
         if (clock !== 'time') options.dateStyle = 'full';

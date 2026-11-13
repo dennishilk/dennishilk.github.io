@@ -146,9 +146,52 @@ test('the clock formats Wiesmoor time locally and leaves other time zones alone'
  const ai=createCompanion(data,{now:()=>now});
  assert.match((await ai.reply('Wie spät ist es in Wiesmoor?')).text,/Wiesmoor.*19:30 Uhr/);
  assert.match((await ai.reply('What is the time in Wiesmoor?','en')).text,/Wiesmoor.*19:30/);
+  assert.match((await ai.reply('weißt du wie spät es ist')).text,/Wiesmoor.*19:30 Uhr/);
+  assert.equal((await ai.reply('ja gerne')).text,'Alles klar.');
+  assert.match((await ai.reply('Do you know what time it is?','en')).text,/Wiesmoor.*19:30/);
+  assert.equal((await ai.reply('yes please','en')).text,'All right.');
+  assert.match((await ai.reply('Moin Snakkie, wieviel Uhr ist es bitte?')).text,/19:30 Uhr/);
  assert.match((await ai.reply('Welches Datum ist heute?')).text,/30. Oktober 2026/);
- assert.equal((await ai.reply('What time is it in Tokyo?','en')).kind,'unknown');
- assert.equal((await ai.reply('Wie spät ist es in Berlin und New York?')).kind,'unknown');
+  for (const question of ['What time is it in Tokyo?', 'Wie spät ist es in Berlin und New York?',
+    'Weißt du, wie spät es ist und ob die Blumenhalle noch offen hat?']) {
+    assert.equal((await ai.reply(question)).kind,'unknown',question);
+  }
+});
+
+test('WoW introductions and Wiesmoor calendar follow-ups stay in the requested language', async () => {
+ const ai=createCompanion(data,{now:()=>Date.parse('2026-11-13T19:20:00Z')});
+ for (const [language,wow,events,followUp] of [
+  ['de','kennst du world of warcraft ?', 'was ist dieses wochenende in wiesmoor los ?', 'ja sag mir bitte was morgen am samstag ist'],
+  ['en','Do you know World of Warcraft?', 'What’s on in Wiesmoor this weekend?', 'And on Saturday?']
+ ]) {
+  const intro=await ai.reply(wow,language);
+  assert.equal(intro.id,'world-of-warcraft');
+  assert.match(intro.text,language==='de'?/Online-Rollenspiel.*Azeroth/:/role-playing game.*Azeroth/);
+  assert.match(intro.sources[0].url,/^https:\/\/worldofwarcraft\.blizzard\.com\//);
+  const calendar=await ai.reply(events,language);
+  assert.equal(calendar.kind,'events');
+  assert.match(calendar.text,language==='de'?/gewünschten Zeitraum/:/requested dates/);
+  assert.match(calendar.sources[1].url,/\?start=2026-11-14&end=2026-11-15$/);
+  const details=await ai.reply(followUp,language,{hasContext:true});
+  assert.equal(details.kind,'events',followUp);
+  assert.deepEqual(details.sources.map(source=>source.url),[
+   'https://www.wiesmoor.de/Veranstaltungen',
+   'https://www.tourismus-wiesmoor.de/veranstaltungen-1?start=2026-11-14&end=2026-11-14'
+  ]);
+  assert.equal((await ai.reply('Was ist DNS?',language)).id,'net-dns');
+  assert.notEqual((await ai.reply(followUp,language,{hasContext:true})).kind,'events');
+  ai.reset();
+  assert.notEqual((await ai.reply(followUp,language)).kind,'events');
+ }
+ for (const question of ['Was ist dieses Wochenende in Aurich los?', 'Was ist heute in Wiesmoor geöffnet?',
+  'What’s the best restaurant in Wiesmoor this weekend?', 'When is the next WoW patch?']) {
+  assert.equal((await ai.reply(question)).kind,'unknown',question);
+ }
+ assert.equal((await ai.reply('Was gibt es morgen in Wiesmoor für Veranstaltungen?')).kind,'events');
+ assert.equal((await ai.reply('Events in Wiesmoor this weekend','en')).kind,'events');
+ const nextDay=createCompanion(data,{now:()=>Date.parse('2026-03-28T23:30:00Z')});
+ assert.match((await nextDay.reply('Veranstaltungen heute in Wiesmoor')).sources[1].url,
+  /\?start=2026-03-29&end=2026-03-29$/);
 });
 
 test('follow-ups use the last topic and reset to a short clarification', async () => {

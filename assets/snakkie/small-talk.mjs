@@ -13,6 +13,7 @@ export const SMALL_TALK = [
   ['correction', ['das stimmt nicht', 'das ist falsch', 'du liegst falsch', 'that’s wrong', 'that’s not right', 'that isn’t correct', 'you’re wrong'], ['Danke für den Hinweis. Welche Stelle soll ich noch mal prüfen?', 'Thanks for flagging it. Which part should I check again?']],
   ['understood', ['jetzt verstehe ich es', 'jetzt verstehe ich das', 'hab ich verstanden', 'i get it now', 'i understand now', 'got it now'], ['Gut, freut mich.', 'Glad that cleared it up.']],
   ['acknowledgment', ['ok', 'okay', 'alles klar', 'verstanden', 'got it', 'all right'], ['Alles klar.', 'All right.']],
+  ['agreement', ['ja gerne', 'ja gern', 'ja bitte', 'jo gerne', 'klar gerne', 'yes please', 'sure thanks', 'sure go ahead'], ['Alles klar.', 'All right.']],
   ['apology', ['sorry', 'tut mir leid', 'entschuldigung', 'i’m sorry', 'my apologies'], ['Alles gut.', 'No worries.']],
   ['no-problem', ['kein problem', 'keine ursache', 'gern geschehen', 'no problem', 'you’re welcome'], ['Alles klar.', 'All right.']],
   ['compliment', ['du bist nett', 'das hast du gut erklärt', 'du bist sympathisch', 'you’re nice', 'that was a good explanation', 'well explained'], ['Danke, das freut mich.', 'Thanks, I appreciate that.']],
