@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { asksAboutPrivateLife, authorQuestionInContext, privateLifeReply } from '../../assets/snakkie/private-questions.mjs';
+import { askGemini } from './gemini.mjs';
 
 const ROUTE = '/api/snakkie/chat';
 const MAX_BODY = 12 * 1024;
@@ -257,8 +258,10 @@ async function answer(chat, key, fetcher, signal, timings) {
   return { text, sources: [...cited.values()], search: searchState };
 }
 
-export function createChatServer({ key, fetcher = fetch, log = console.info }) {
+export function createChatServer({ key, geminiKey, fetcher = fetch, log = console.info }) {
   if (!key?.trim()) throw new Error('Missing model API credential');
+  const cloudKey = geminiKey?.trim();
+  let geminiRetryAt = 0;
   let active = false;
   let accepted = [];
   const byClient = new Map();
@@ -296,6 +299,30 @@ export function createChatServer({ key, fetcher = fetch, log = console.info }) {
       accepted.push(now);
       try {
         const timings = {};
+        const canUseGemini = cloudKey && now >= geminiRetryAt && !chat.history.length &&
+          !SENSITIVE.test(chat.message) && researchQuery(chat.message).state === 'unused';
+        if (canUseGemini) {
+          const started = performance.now();
+          let reply;
+          try {
+            reply = await askGemini({
+              requestJson: upstreamJson, fetcher, signal: controller.signal, apiKey: cloudKey,
+              prompt: chat.message, persona: PERSONA[chat.language], language: chat.language,
+              maxTokens: DETAILED_REQUEST.test(chat.message) ? 512 : 256
+            });
+          } catch (error) {
+            if (controller.signal.aborted) throw error;
+            geminiRetryAt = performance.now() + RATE_WINDOW;
+            log('snakkie gemini=unavailable');
+          }
+          timings.gemini = performance.now() - started;
+          if (reply) {
+            timings.total = performance.now() - now;
+            log('snakkie gemini=ok gemini_ms=' + Math.round(timings.gemini));
+            send(res, 200, reply, undefined, timings);
+            return;
+          }
+        }
         const reply = await answer(chat, key, fetcher, controller.signal, timings);
         timings.total = performance.now() - now;
         const metrics = Object.entries(timings).map(([name, ms]) => name + '_ms=' + Math.round(ms)).join(' ');
@@ -327,5 +354,9 @@ export function createChatServer({ key, fetcher = fetch, log = console.info }) {
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
   const keyFile = process.env.SNAKKIE_KEY_FILE || join(process.env.CREDENTIALS_DIRECTORY || '', 'llama-api-key');
   const key = (await readFile(keyFile, 'utf8')).trim();
-  createChatServer({ key }).listen(8791, '127.0.0.1', () => console.info('Snakkie chat listening on loopback'));
+  const geminiKeyFile = process.env.SNAKKIE_GEMINI_TEST_KEY_FILE;
+  const geminiKey = geminiKeyFile ? (await readFile(geminiKeyFile, 'utf8')).trim() : undefined;
+  if (geminiKeyFile && !geminiKey) throw new Error('Empty Gemini test credential');
+  const port = geminiKey ? 8792 : 8791;
+  createChatServer({ key, geminiKey }).listen(port, '127.0.0.1', () => console.info('Snakkie chat listening on 127.0.0.1:' + port));
 }

@@ -5,8 +5,8 @@ import { createChatServer } from '../server/snakkie/server.mjs';
 
 const model = text => Response.json({ choices: [{ message: { content: text } }] });
 
-async function fixture(t, fetcher = async () => model('Moin from the model.')) {
-  const server = createChatServer({ key: 'fixture-key', fetcher, log: () => {} });
+async function fixture(t, fetcher = async () => model('Moin from the model.'), geminiKey) {
+  const server = createChatServer({ key: 'fixture-key', geminiKey, fetcher, log: () => {} });
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
   t.after(() => { server.closeAllConnections(); server.close(); });
@@ -87,6 +87,88 @@ test('explicitly detailed requests retain the larger answer budget', async t => 
     return model('A detailed answer.');
   });
   assert.equal((await request.post({ language: 'en', message: 'Explain this step by step.' })).status, 200);
+});
+
+test('the optional Gemini test handles standalone everyday questions without llama.cpp', async t => {
+  const calls = [];
+  const request = await fixture(t, async (url, options) => {
+    calls.push(url);
+    assert.equal(url, 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent');
+    assert.equal(options.headers['x-goog-api-key'], 'gemini-fixture-key');
+    assert.equal(options.redirect, 'error');
+    const body = JSON.parse(options.body);
+    assert.match(body.systemInstruction.parts[0].text, /natürliches, freundliches Deutsch/);
+    assert.deepEqual(body.contents, [{ role: 'user', parts: [{ text: 'Warum ist der Himmel blau?' }] }]);
+    assert.equal(body.generationConfig.maxOutputTokens, 256);
+    assert.equal(body.generationConfig.thinkingConfig.thinkingLevel, 'MINIMAL');
+    assert.equal(body.tools, undefined);
+    return Response.json({ candidates: [{ finishReason: 'STOP', content: { parts: [
+      { text: 'Hidden fixture thought', thought: true }, { text: 'Luft streut blaues Licht besonders stark.' }
+    ] } }] });
+  }, 'gemini-fixture-key');
+  const response = await request.post({ language: 'de', message: 'Warum ist der Himmel blau?' });
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('Server-Timing'), /^gemini;dur=\d+, total;dur=\d+$/);
+  assert.deepEqual(await response.json(), { text: 'Luft streut blaues Licht besonders stark.', sources: [], search: 'unused' });
+  assert.equal(calls.length, 1);
+});
+
+test('Gemini failures fall back and pause cloud attempts while local chat stays available', async t => {
+  let cloudCalls = 0;
+  let localCalls = 0;
+  const request = await fixture(t, async url => {
+    if (url.startsWith('https:')) {
+      cloudCalls++;
+      return new Response(null, { status: 429 });
+    }
+    localCalls++;
+    return model('Local reply.');
+  }, 'gemini-fixture-key');
+  const chat = { language: 'en', message: 'Why is the sky blue?' };
+  for (let index = 0; index < 2; index++) {
+    const response = await request.post(chat);
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).text, 'Local reply.');
+  }
+  assert.equal(cloudCalls, 1);
+  assert.equal(localCalls, 2);
+});
+
+test('Gemini never receives search queries, conversation history or recognized sensitive text', async t => {
+  const calls = [];
+  const request = await fixture(t, async url => {
+    calls.push(url);
+    return url.endsWith('/search') ? Response.json({ results: [] }) : model('Local reply.');
+  }, 'gemini-fixture-key');
+  const history = [
+    { role: 'user', content: 'What is DNS?' },
+    { role: 'assistant', content: 'DNS maps names to addresses.' }
+  ];
+  for (const chat of [
+    {language:'en',message:'What is the latest Debian news?'},
+    {language:'en',message:'Can you explain that again?',history},
+    {language:'en',message:'My address is user@example.net'},
+    {language:'en',message:'Who is Dennis Hilk’s wife?'}
+  ]) {
+    assert.equal((await request.post(chat)).status, 200);
+  }
+  assert.deepEqual(calls, [
+    'http://127.0.0.1:8888/search',
+    ...Array(3).fill('http://127.0.0.1:8081/v1/chat/completions')
+  ]);
+});
+
+test('a filtered Gemini answer is handled without asking the local model again', async t => {
+  const calls = [];
+  const request = await fixture(t, async url => {
+    calls.push(url);
+    return Response.json({ promptFeedback: { blockReason: 'SAFETY' } });
+  }, 'gemini-fixture-key');
+  const response = await request.post({ language: 'en', message: 'A fixture prompt.' });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).text, 'I can’t give you an answer to that right now.');
+  assert.equal(calls.length, 1);
+  assert.match(calls[0], /^https:\/\/generativelanguage\.googleapis\.com\//);
 });
 
 test('the model timeout has a distinct response and releases the slot', async t => {

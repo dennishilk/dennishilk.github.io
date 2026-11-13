@@ -35,6 +35,43 @@ Repeat with a short current-information question to verify SearXNG and check the
 returned source links. Check the effective model and search service logging
 before launch. Keep request text, search terms and keys out of the logs.
 
+## Test Gemini on Worldnode
+
+Run this in a separate SSH terminal as `nebu`. Create an API key in
+[Google AI Studio](https://aistudio.google.com/api-keys) and save it as a
+one-line file at `/home/nebu/snakkie-lab/secrets/gemini-api-key` with mode
+`0600`. The key is a server credential. Keep it outside the web root.
+
+```sh
+SNAKKIE_KEY_FILE=/home/nebu/snakkie-lab/secrets/llama-api-key \
+SNAKKIE_GEMINI_TEST_KEY_FILE=/home/nebu/snakkie-lab/secrets/gemini-api-key \
+/srv/www/.tools/node22/bin/node /srv/www/dennishilk.github.io/server/snakkie/server.mjs
+```
+
+With the test credential set, the process listens only on `127.0.0.1:8792`.
+Use the existing production service and nginx mapping for port 8791. In a
+second SSH terminal, send a synthetic everyday question to the test process:
+
+```sh
+curl -fsS -i --max-time 55 http://127.0.0.1:8792/api/snakkie/chat \
+  -H 'Content-Type: application/json' \
+  --data-binary '{"language":"de","message":"Warum ist der Himmel blau? Antworte in zwei Sätzen."}'
+```
+
+`Server-Timing: gemini;dur=..., total;dur=...` identifies a Gemini reply.
+A `model` timing identifies llama.cpp. Standalone everyday questions can go to
+Gemini 3.5 Flash-Lite. Requests with conversation history, requests selected
+for web search, and recognized sensitive phrases use the existing local
+path. If Gemini fails, the test process falls back to llama.cpp and pauses
+cloud requests for one minute. Stop the test process with Ctrl+C.
+
+Before public activation, check
+[Google’s terms](https://ai.google.dev/gemini-api/terms) for age and regional
+requirements and set the account’s billing and quota. Update the chat’s data
+disclosure for the external model. Google Search grounding has separate
+[pricing](https://ai.google.dev/gemini-api/docs/pricing) and
+[display requirements](https://ai.google.dev/gemini-api/docs/google-search).
+
 ## Publish
 
 Copy `nginx-location.conf` to a file outside the document root. Include it in
