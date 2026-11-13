@@ -226,6 +226,29 @@ test('WoW introductions and Wiesmoor calendar follow-ups stay in the requested l
   /\?start=2026-03-29&end=2026-03-29$/);
 });
 
+test('Wiesmoor outings combine reviewed attractions with a date-filtered event calendar', async () => {
+ const ai=createCompanion(data,{now:()=>Date.parse('2026-11-13T19:34:00Z')});
+ for (const [language,question,tip,hours] of [
+  ['de','was ist morgen in wiesmoor los ? sehenswürdigkeiten oder veranstaltungen', /Gartenpark/,/Öffnungszeiten/],
+  ['de','Was kann man morgen in Wiesmoor unternehmen?', /Gartenpark/,/Öffnungszeiten/],
+  ['en','What’s on in Wiesmoor tomorrow? Attractions or events?',/garden park/,/opening hours/],
+  ['en','Any events or places to visit in Wiesmoor tomorrow?',/garden park/,/opening hours/]
+ ]) {
+  const reply=await ai.reply(question,language);
+  assert.equal(reply.kind,'events',question);
+  assert.match(reply.text,tip);
+  assert.match(reply.text,hours);
+  assert.match(reply.sources[1].url,/\?start=2026-11-14&end=2026-11-14$/);
+  assert.ok(reply.sources.some(source=>source.url.endsWith('/sehenswuerdigkeiten')));
+ }
+ assert.equal((await ai.reply('Welche Sehenswürdigkeiten gibt es morgen in Wiesmoor?')).id,'wiesmoor-attractions');
+ assert.equal((await ai.reply('Und am Sonntag?')).kind,'unknown');
+ for (const question of ['Was ist morgen in Aurich und Wiesmoor los?', 'Welche Sehenswürdigkeiten in Wiesmoor haben morgen offen?',
+  'What events are free in Wiesmoor tomorrow?', 'Was ist das Wetter morgen in Wiesmoor?']) {
+  assert.ok(['unknown','weather'].includes((await ai.reply(question)).kind),question);
+ }
+});
+
 test('follow-ups use the last topic and reset to a short clarification', async () => {
  const ai=engine();
  const pair=(user,assistant)=>[{role:'user',content:user},{role:'assistant',content:assistant}];

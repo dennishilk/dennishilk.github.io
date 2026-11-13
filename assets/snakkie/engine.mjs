@@ -82,20 +82,30 @@ const eventSources = [
   {label:'Wiesmoor Touristik · Veranstaltungssuche',url:'https://www.tourismus-wiesmoor.de/veranstaltungen-1'}
 ];
 const eventPeriod = /\b(?:heute|morgen|samstag|sonntag|wochenende|today|tonight|tomorrow|saturday|sunday|weekend)\b/;
-const eventQuestion = /^(?:(?:was (?:ist|geht|passiert|gibt es)|(?:welche|was fur) (?:veranstaltungen|events|termine|konzerte|markte) (?:gibt es|finden|sind)|(?:veranstaltungen|events|termine|konzerte|markte))\b|(?:what(?: s| is) (?:on|happening|going on)|what events (?:are there|are on|are happening)|(?:events|things to do))\b)/;
+const eventTopic = /\b(?:veranstaltungen|events|termine|konzerte|markte)\b/;
+const attractionTopic = /\b(?:sehenswurdigkeiten|ausflugsziele|attraktionen|attractions|sights|places to visit)\b/;
+const activityQuestion = /\b(?:unternehmen|things to do|what can (?:i|we|you|one) do)\b/;
+const outingQuestion = /^(?:was (?:ist|geht|passiert|gibt es|kann)|welche|was fur|gibt es|veranstaltungen|termine|konzerte|markte|sehenswurdigkeiten|ausflugsziele|attraktionen|what|any|are there|events|things to do|attractions|sights|places to visit)\b/;
 const eventFollowUpPrefix = /^(?:ja |yes )?(?:sag mir (?:bitte )?|(?:please )?tell me )?(?:was (?:ist |geht )?|und |what (?:about|is on|s on) |and )?/;
 const eventFollowUp = /^(?:am |on )?(?:heute(?: abend)?|morgen(?: am (?:samstag|sonntag))?|samstag|sonntag|(?:dieses )?wochenende|today|tonight|tomorrow(?: (?:on )?(?:saturday|sunday))?|saturday|sunday|(?:this )?weekend)(?: (?:bitte|please|los|ist|stattfindet))?$/;
-const eventTerms = new Set(
-  'in wiesmoor events veranstaltungen termine konzerte markte los heute morgen abend am samstag sonntag dieses kommenden wochenende was ist geht passiert gibt es welche fur finden statt sind what s is on happening going are there things to do for today tonight tomorrow saturday sunday weekend this coming the'.split(' ')
+const outingTerms = new Set(
+  ('in wiesmoor events veranstaltungen termine konzerte markte los heute morgen abend am samstag sonntag dieses kommenden wochenende was ist geht passiert gibt es welche fur finden statt sind what s is on happening going are there things to do for today tonight tomorrow saturday sunday weekend this coming the ' +
+   'sehenswurdigkeiten ausflugsziele attraktionen attractions sights places visit see and or und oder auch any vielleicht tips tipps bitte please kann man ich wir unternehmen sehen besuchen anschauen can i we you one some').split(' ')
 );
 
-function isWiesmoorEventQuestion(query, followsEvents) {
-  if (followsEvents && eventFollowUp.test(query.replace(eventFollowUpPrefix,''))) return true;
-  if (!/\bwiesmoor\b/.test(query)) return false;
-  if (/^(?:veranstaltungskalender (?:fur |in )?wiesmoor|wiesmoor veranstaltungskalender|wiesmoor events calendar|event calendar (?:for |in )?wiesmoor)$/.test(query)) return true;
-  return eventQuestion.test(query.replace(/^wiesmoor /,'')) && query.split(' ').every(word => eventTerms.has(word)) && (
-    eventPeriod.test(query) || /\b(?:veranstaltungen|events|termine|konzerte|markte|los)\b/.test(query)
-  );
+function wiesmoorOuting(query, followsEvents) {
+  if (followsEvents && eventFollowUp.test(query.replace(eventFollowUpPrefix,''))) return 'events';
+  if (!/\bwiesmoor\b/.test(query)) return null;
+  if (/^(?:veranstaltungskalender (?:fur |in )?wiesmoor|wiesmoor veranstaltungskalender|wiesmoor events calendar|event calendar (?:for |in )?wiesmoor)$/.test(query)) return 'events';
+  if (!outingQuestion.test(query.replace(/^wiesmoor /,'')) || !query.split(' ').every(word=>outingTerms.has(word))) return null;
+
+  const dated = eventPeriod.test(query);
+  const events = eventTopic.test(query);
+  const attractions = attractionTopic.test(query);
+  if ((events && attractions) || (dated && activityQuestion.test(query))) return 'both';
+  if (attractions) return 'attractions';
+  if (events || dated || /\blos\b/.test(query)) return 'events';
+  return null;
 }
 
 function eventCalendarSources(query, now) {
@@ -133,6 +143,7 @@ class Rotation {
 }
 export function createCompanion(data,{random=Math.random,weather=createWeatherReader(),now=Date.now}={}) {
   const records=[...(data.facts||[]),...(data.personality||[])];
+  const wiesmoorAttractions = records.find(record=>record.id==='wiesmoor-attractions');
   const words=(data['platt-words']||[]).map(w=>({id:'word-'+w.id,anchors:[[w.word]],queries:[`was bedeutet ${w.word}`,`what does ${w.word} mean`,`${w.word} auf deutsch englisch`,w.word],de:`${w.word}: ${w.de}. Englisch: ${w.en}.\nBeispiel: ${w.example} — ${w.exampleDe}\n${w.noteDe}`,en:`${w.word}: ${w.en}. German: ${w.de}.\nExample: ${w.example} — ${w.exampleEn}\n${w.noteEn}`,sources:[{label:w.sourceLabel,url:w.source}]}));
   const phrases=(data['platt-phrases']||[]).map(p=>({id:'phrase-'+p.id,anchors:[tokens(p.phrase)],queries:[p.phrase],de:`${p.phrase} — ${p.de}. Englisch: ${p.en}.\n${p.noteDe}`,en:`${p.phrase} — ${p.en}. German: ${p.de}.\n${p.noteEn}`,sources:[{label:p.sourceLabel,url:p.source}]}));
   const index=[...records,...words,...phrases].map(record => record.exactOnly ? record : {
@@ -238,13 +249,25 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         }
         return response('clarification',t('Was soll ich wiederholen?','What would you like me to repeat?'),{social:true});
       }
-      if (isWiesmoorEventQuestion(withoutGreeting,lastIntent === 'events')) {
+      const outing = wiesmoorOuting(withoutGreeting,lastIntent === 'events');
+      const checkHours = t('Schau vor dem Besuch auf die Öffnungszeiten der jeweiligen Ausflugsziele.',
+        'Check each attraction’s listing for opening hours on the day of your visit.');
+      if (outing === 'attractions' && wiesmoorAttractions) {
+        const text = eventPeriod.test(withoutGreeting) ? `${wiesmoorAttractions[language]} ${checkHours}` : wiesmoorAttractions[language];
+        return response('knowledge',text,{id:wiesmoorAttractions.id,sources:wiesmoorAttractions.sources,topic:wiesmoorAttractions});
+      }
+      if (outing === 'events' || outing === 'both') {
         const sources = eventCalendarSources(withoutGreeting,now());
         const text = eventPeriod.test(withoutGreeting)
           ? t('Hier findest du die Wiesmoorer Termine für den gewünschten Zeitraum. Der Link zur Wiesmoor Touristik öffnet die Suche mit passenden Daten.',
               'Here are the Wiesmoor event calendars. The tourist office link opens the listings filtered to the requested dates.')
           : t('Aktuelle Termine für Wiesmoor findest du bei der Stadt und der Wiesmoor Touristik.',
               'You can find upcoming Wiesmoor events in the city calendar and the tourist office’s listings.');
+        if (outing === 'both' && wiesmoorAttractions) {
+          return response('events',`${wiesmoorAttractions.short[language]} ${checkHours}\n\n${text}`,{
+            sources:[...sources,...wiesmoorAttractions.sources]
+          });
+        }
         return response('events',text,{sources});
       }
       const clockQuestion = withoutGreeting.replace(/^(?:bitte|please) | (?:bitte|please|snakkie)$/g,'');
