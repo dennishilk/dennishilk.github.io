@@ -38,6 +38,45 @@ const clockPhrases = new Map(Object.entries({
   'what time is it where you are':'time', 'date and time':'both', 'today s date':'date'
 }).map(([text, kind]) => [normalize(text),kind]));
 
+const relativeDays = new Map([
+  ['vorgestern',-2],['the day before yesterday',-2],
+  ['gestern',-1],['yesterday',-1],
+  ['heute',0],['today',0],
+  ['morgen',1],['tomorrow',1],
+  ['ubermorgen',2],['the day after tomorrow',2]
+]);
+const dayPhrase = [...relativeDays.keys()].join('|');
+const dateQuestions = [
+  new RegExp(`^(?:welcher (?:tag|wochentag) (?:ist|war)|welches datum (?:ist|war|haben wir)|was fur ein (?:tag|wochentag) (?:ist|war)) (${dayPhrase})(?: gewesen)?$`),
+  new RegExp(`^was (?:ist|war) (${dayPhrase}) fur ein (?:tag|wochentag)$`),
+  new RegExp(`^what (?:day|date) (?:is|was|will) (?:it (?:be )?)?(${dayPhrase})$`),
+  new RegExp(`^what(?: is| s) (?:the (?:date|day) (${dayPhrase})|(${dayPhrase}) s date)$`),
+  new RegExp(`^what (?:will the date be|day it will be|day will it be) (${dayPhrase})$`)
+];
+const dateFollowUp = new RegExp(`^(?:und |and |what about |wie sieht es mit )?(${dayPhrase})(?: aus)?$`);
+const plainDateQuestion = /^(?:welcher (?:tag|wochentag) ist es|welchen (?:tag|wochentag) haben wir(?: heute)?|welches datum haben wir|what (?:day|date) is it|what(?: is| s) the date)$/;
+
+function relativeDateOffset(query, followsDate) {
+  const question = query.replace(/^(?:guten morgen|good morning|guten abend|good evening) /,'')
+    .replace(/^(?:weisst du|kannst du mir sagen|do you know|can you tell me) /,'')
+    .replace(/ in wiesmoor$/,'');
+  if (plainDateQuestion.test(question)) return 0;
+  for (const pattern of dateQuestions) {
+    const match = pattern.exec(question);
+    if (match) return relativeDays.get(match[1] ?? match[2]);
+  }
+  if (followsDate) return relativeDays.get(dateFollowUp.exec(question)?.[1]);
+}
+
+// Use UTC to represent a Berlin calendar day, so offsets cross DST safely.
+function wiesmoorCalendarDay(now) {
+  const parts = new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'
+  }).formatToParts(now);
+  const {year,month,day} = Object.fromEntries(parts.map(({type,value})=>[type,Number(value)]));
+  return new Date(Date.UTC(year,month-1,day));
+}
+
 const eventSources = [
   {label:'Stadt Wiesmoor · Veranstaltungen',url:'https://www.wiesmoor.de/Veranstaltungen'},
   {label:'Wiesmoor Touristik · Veranstaltungssuche',url:'https://www.tourismus-wiesmoor.de/veranstaltungen-1'}
@@ -61,11 +100,7 @@ function isWiesmoorEventQuestion(query, followsEvents) {
 
 function eventCalendarSources(query, now) {
   if (!eventPeriod.test(query)) return eventSources;
-  const parts = new Intl.DateTimeFormat('en-GB',{
-    timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'
-  }).formatToParts(now);
-  const dateFields = Object.fromEntries(parts.map(({type,value})=>[type,Number(value)]));
-  const day = new Date(Date.UTC(dateFields.year,dateFields.month-1,dateFields.day));
+  const day = wiesmoorCalendarDay(now);
   const weekday = day.getUTCDay();
   let start = 0;
   let end = 0;
@@ -212,6 +247,17 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
               'You can find upcoming Wiesmoor events in the city calendar and the tourist office’s listings.');
         return response('events',text,{sources});
       }
+      const clockQuestion = withoutGreeting.replace(/^(?:bitte|please) | (?:bitte|please|snakkie)$/g,'');
+      const dateOffset = relativeDateOffset(clockQuestion,lastIntent === 'date');
+      if (dateOffset !== undefined) {
+        const day = wiesmoorCalendarDay(now());
+        day.setUTCDate(day.getUTCDate()+dateOffset);
+        const date = new Intl.DateTimeFormat(t('de-DE','en-GB'),{timeZone:'UTC',dateStyle:'full'}).format(day);
+        const verb = dateOffset < 0 ? t('war','was') : t('ist','is');
+        const labels = t(['Vorgestern','Gestern','Heute','Morgen','Übermorgen'],
+          ['The day before yesterday','Yesterday','Today','Tomorrow','The day after tomorrow']);
+        return response('clock',`${labels[dateOffset+2]} ${verb} ${date}.`,{id:'date',social:true});
+      }
       const followUp = route === 'rephrase' || rephrasePhrases.has(query) ? 'rephrase' : followUpKind(cleaned);
       if (followUp) {
         if (followUp === 'rephrase' && lastTopic?.short && !/(?:ausführlich|genauer|detail|elaborate|näher)/iu.test(cleaned)) {
@@ -221,7 +267,6 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         if (!hasContext) return response('clarification', clarification(followUp, language), {social:true});
         return response('unknown', '', {modelMessage:cleaned, followUp:true});
       }
-      const clockQuestion = withoutGreeting.replace(/^(?:bitte|please) | (?:bitte|please|snakkie)$/g,'');
       const clock = clockKinds.get(route) || clockPhrases.get(clockQuestion);
       if (clock) {
         const options = {timeZone:'Europe/Berlin'};

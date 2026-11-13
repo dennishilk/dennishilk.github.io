@@ -158,6 +158,38 @@ test('the clock formats Wiesmoor time locally and leaves other time zones alone'
   }
 });
 
+test('relative dates use the Wiesmoor calendar and handle short date follow-ups locally', async () => {
+ const ai=createCompanion(data,{now:()=>Date.parse('2026-11-13T19:29:00Z')});
+ for (const [question,language,text] of [
+  ['hey, welcher tag ist morgen','de','Morgen ist Samstag, 14. November 2026.'],
+  ['Und übermorgen?','de','Übermorgen ist Sonntag, 15. November 2026.'],
+  ['Welcher Wochentag war gestern?','de','Gestern war Donnerstag, 12. November 2026.'],
+  ['Was ist heute für ein Tag?','de','Heute ist Freitag, 13. November 2026.'],
+  ['Welches Datum ist vorgestern gewesen?', 'de', 'Vorgestern war Mittwoch, 11. November 2026.'],
+  ['Hey, what day is tomorrow?', 'en', 'Tomorrow is Saturday, 14 November 2026.'],
+  ['What about yesterday?', 'en', 'Yesterday was Thursday, 12 November 2026.'],
+  ['What will the date be in Tokyo tomorrow?', 'en', null],
+  ['What will the date be tomorrow?', 'en', 'Tomorrow is Saturday, 14 November 2026.'],
+  ['Do you know what day it will be tomorrow?', 'en', 'Tomorrow is Saturday, 14 November 2026.'],
+  ['What’s the date the day after tomorrow?', 'en', 'The day after tomorrow is Sunday, 15 November 2026.'],
+ ]) {
+  const reply=await ai.reply(question,language);
+  if (text === null) assert.equal(reply.kind,'unknown',question);
+  else {
+   assert.equal(reply.kind,'clock',question);
+   assert.equal(reply.text,text,question);
+   assert.deepEqual(reply.sources,[],question);
+  }
+ }
+ ai.reset();
+ assert.notEqual((await ai.reply('Und morgen?')).kind,'clock');
+ const yearEnd=createCompanion(data,{now:()=>Date.parse('2026-12-31T23:05:00Z')});
+ assert.equal((await yearEnd.reply('Welcher Tag ist heute?')).text,'Heute ist Freitag, 1. Januar 2027.');
+ assert.equal((await yearEnd.reply('Und gestern?')).text,'Gestern war Donnerstag, 31. Dezember 2026.');
+ const dst=createCompanion(data,{now:()=>Date.parse('2026-03-28T23:30:00Z')});
+ assert.equal((await dst.reply('Welcher Tag ist morgen?')).text,'Morgen ist Montag, 30. März 2026.');
+});
+
 test('WoW introductions and Wiesmoor calendar follow-ups stay in the requested language', async () => {
  const ai=createCompanion(data,{now:()=>Date.parse('2026-11-13T19:20:00Z')});
  for (const [language,wow,events,followUp] of [
