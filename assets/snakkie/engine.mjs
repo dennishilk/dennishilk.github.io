@@ -2,12 +2,13 @@
 import {createWeatherReader} from './weather.mjs?v=3';
 import {SMALL_TALK, TOPICAL_SMALL_TALK} from './small-talk.mjs?v=8';
 import {clarification,followUpKind} from './conversation.mjs';
+import {asksAboutPrivateLife,privateLifeReply} from './private-questions.mjs?v=1';
 export const KNOWLEDGE_FILES=['facts','personality','jokes','fallback-responses','platt-words','platt-phrases','utterances'];
 export async function loadKnowledge(fetcher=fetch) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
   try {
   const responses=await Promise.all(KNOWLEDGE_FILES.map(async name=>{
-    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=8':name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
+    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'?'?v=11':name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
     if (name === 'utterances' && !r.ok) return [name, {}];
     if(!r.ok)throw new Error('KNOWLEDGE_UNAVAILABLE');
     return [name,(await r.json()).entries];
@@ -223,6 +224,10 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
       if(/\b(notfall|emergency|suizid|suicide|selbstmord|umbringen|vergiftet|poisoned|brustschmerz|chest pain|atemnot|sterben|vergewaltigt|missbraucht|traurig|depressed|trauer|tot|stirbt|died|krebs|cancer|dringend|urgent|panik|gestorben|krank|schmerzen|arzt|hilfe hilfe)\b|suizidgedanken|selbstmordgedanken|panikattacke/.test(raw))return response('serious',t('Das klingt ernst. Ich bin ein kleines Wissensangebot und kann dir hier keine verlässliche persönliche Hilfe geben. Bitte wende dich an einen geeigneten Menschen oder Fachdienst; bei unmittelbarer Gefahr an den örtlichen Notruf. Hier mache ich keine Witze.','That sounds serious. I’m a small knowledge companion and cannot provide reliable personal help here. Please contact a suitable person or professional service; in immediate danger, contact local emergency services. No jokes here.'));
       if (!query && languageChanged) return response('small-talk', t('Klar, ich antworte auf Deutsch.', 'Sure, I’ll reply in English.'), {id:'language', social:true});
       const withoutGreeting = query.replace(greetingPrefix, '');
+      const authorInContext = lastTopic?.id === 'dennis-hilk' || lastTopic?.id === 'project-lost-administrator';
+      if (asksAboutPrivateLife(cleaned,authorInContext,lastIntent === 'private-life')) {
+        return response('private-life',privateLifeReply(language),{id:'private-life',social:true});
+      }
       const route = routes.get(query) || routes.get(query.replace(/ snakkie$/, '')) ||
         routes.get(withoutGreeting) || routes.get(withoutGreeting.replace(/ snakkie$/, ''));
       const askedHow = lastIntent === 'how-are-you' || lastIntent === 'doing-well';
@@ -310,8 +315,11 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         const joke = rotation.pick('jokes', data.jokes || []);
         if (joke) return response('joke',joke[language],{id:joke.id});
       }
-      const exact = exactIndex.get(query) || exactIndex.get(withoutGreeting);
-      if (exact) return response('knowledge',exact[language],{id:exact.id,sources:exact.sources,topic:exact.short ? exact : undefined});
+      const authorFollowUp = authorInContext
+        ? withoutGreeting.replace(/^(?:und |and )?/,'').replace(/^(hat|did) (?:er|he) /,'$1 dennis hilk ')
+        : withoutGreeting;
+      const exact = exactIndex.get(query) || exactIndex.get(withoutGreeting) || exactIndex.get(authorFollowUp);
+      if (exact) return response('knowledge',exact[language],{id:exact.id,sources:exact.sources,topic:exact});
       const q=correct(tokens(query));
       if(q.includes('weather')||q.includes('rain')||q.includes('wind')||q.includes('temperature')){
         const allowed=new Set(['weather','rain','wind','temperature','wiesmoor','heute','today','gerade','now','bei','hier','there','like','morgen','tomorrow','forecast','vorhersage','wird','wirds','regnen','raining','rains','es','bei','dir','is','ist','heiss','warm','cold','kalt','viel','stark','windy','it','the','out','outside']);
@@ -325,7 +333,7 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         if(follow || /^(?:noch (?:einen|ein) witz|(?:another|one more) joke)(?: bitte| please)?$/.test(query) || q.every(w=>allowed.has(w))){const j=rotation.pick('jokes',data.jokes||[]);if(j)return response('joke',j[language],{id:j.id});}
       }
       const found=search(q,query);
-      if(found)return response('knowledge',found[language],{id:found.id,sources:found.sources,topic:found.short ? found : undefined});
+      if(found)return response('knowledge',found[language],{id:found.id,sources:found.sources,topic:found});
       const fallback=rotation.pick('unknown',data['fallback-responses']||[]);
       return response('unknown',fallback?.[language]||t('Dazu habe ich keinen passenden geprüften Eintrag.','I don’t have a matching checked entry for that.'), {modelMessage:cleaned||input});
     }

@@ -53,6 +53,32 @@ test('chat uses the protected local model, bounded history and selected language
   assert.deepEqual(await response.json(), { text: 'Debian liefert Linux als Distribution.', sources: [], search: 'unused' });
 });
 
+test('private-life questions about Dennis bypass model and web search', async t => {
+  let upstreamCalls = 0;
+  const request = await fixture(t, async () => {
+    upstreamCalls++;
+    return model('The model should not receive this question.');
+  });
+  const history = [
+    { role: 'user', content: 'Who is Dennis Hilk?' },
+    { role: 'assistant', content: 'Dennis Hilk writes open-source software.' }
+  ];
+  for (const chat of [
+    {language:'de',message:'Wer ist seine Frau?',history},
+    {language:'de',message:'Suche im Web nach Dennis Hilks Familie.'},
+    {language:'en',message:'Who is Dennis Hilk’s wife?'},
+    {language:'en',message:'Is he married?',history},
+  ]) {
+    const response = await request.post(chat);
+    assert.equal(response.status,200);
+    const reply = await response.json();
+    assert.match(reply.text,chat.language==='de'?/keine verlässlichen öffentlichen Informationen/:/reliable public information/);
+    assert.deepEqual(reply.sources,[]);
+    assert.equal(reply.search,'unused');
+  }
+  assert.equal(upstreamCalls,0);
+});
+
 test('explicitly detailed requests retain the larger answer budget', async t => {
   const request = await fixture(t, async (_, options) => {
     const body = JSON.parse(options.body);

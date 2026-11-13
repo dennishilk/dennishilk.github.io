@@ -142,6 +142,33 @@ test('short replies use immediate context and repeat or simplify locally where p
  assert.equal((await ai.reply('mir auch')).kind,'clarification');
 });
 
+test('book questions use the author’s book page and private-life questions stay local', async () => {
+ const ai=engine();
+ assert.equal((await ai.reply('Hat er ein Buch geschrieben?')).kind,'unknown');
+ for (const [language,author,family,book,followUp] of [
+  ['de','Wer ist Dennis Hilk?','Wer ist seine Frau?','hat dennis hilk ein buch geschrieben ?', 'Und hat er einen Roman geschrieben?'],
+  ['en','Who is Dennis Hilk?','Who is his wife?','Did Dennis Hilk write a book?', 'Did he write a book?']
+ ]) {
+  assert.equal((await ai.reply(author,language)).id,'dennis-hilk');
+  const privateReply=await ai.reply(family,language);
+  assert.equal(privateReply.kind,'private-life');
+  assert.deepEqual(privateReply.sources,[]);
+  assert.match(privateReply.text,language==='de'?/keine verlässlichen öffentlichen Informationen/:/reliable public information/);
+  assert.equal((await ai.reply(language==='de'?'Was macht sie beruflich?':'What does she do for a living?',language)).kind,'private-life');
+  for (const question of [followUp,book]) {
+   const reply=await ai.reply(question,language);
+   assert.equal(reply.id,'project-lost-administrator');
+   assert.match(reply.text,/The Lost Administrator.*PDF.*EPUB/);
+   assert.equal(reply.sources[0].url,'/lost-administrator/');
+  }
+  ai.reset();
+ }
+ assert.equal((await ai.reply('Ist Dennis Hilk verheiratet?')).kind,'private-life');
+ assert.equal((await ai.reply('Wer ist Anna Hilk?')).kind,'private-life');
+ assert.equal((await ai.reply('Was macht Dennis Hilk?')).id,'dennis-hilk');
+ assert.equal((await ai.reply('Wie viele Bücher hat Dennis Hilk geschrieben?')).kind,'unknown');
+});
+
 test('the clock formats Wiesmoor time locally and leaves other time zones alone', async () => {
  const ai=createCompanion(data,{now:()=>now});
  assert.match((await ai.reply('Wie spät ist es in Wiesmoor?')).text,/Wiesmoor.*19:30 Uhr/);

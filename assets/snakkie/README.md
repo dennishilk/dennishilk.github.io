@@ -24,6 +24,8 @@ npm run test:seo
   topic more simply, or display the date and time in Wiesmoor. Event questions
   about Wiesmoor and short date follow-ups link to the official calendars.
   The tourist office link uses the calendar's date filter in Wiesmoor time.
+  Questions about Dennis’s family or private life receive a local response
+  without a model or search request. The API applies the same check.
 - `weather.mjs` reads the existing same-origin World Observer export for
   Wiesmoor. It validates timestamps and separates current weather from forecasts.
 - `words.mjs` independently loads the locally rotating Platt word.

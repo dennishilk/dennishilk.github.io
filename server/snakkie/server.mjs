@@ -3,6 +3,7 @@ import { isIP } from 'node:net';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { asksAboutPrivateLife, authorQuestionInContext, privateLifeReply } from '../../assets/snakkie/private-questions.mjs';
 
 const ROUTE = '/api/snakkie/chat';
 const MAX_BODY = 12 * 1024;
@@ -283,6 +284,11 @@ export function createChatServer({ key, fetcher = fetch, log = console.info }) {
       accepted = accepted.filter(at => now - at < RATE_WINDOW);
       if (stamps.length >= 4 || accepted.length >= 10) {
         throw new ChatError(429, 'rate_limit', Math.ceil((RATE_WINDOW - now + (stamps.length >= 4 ? stamps[0] : accepted[0])) / 1000));
+      }
+      const previousQuestion = chat.history.at(-2)?.content;
+      if (asksAboutPrivateLife(chat.message, previousQuestion && authorQuestionInContext(previousQuestion))) {
+        send(res, 200, { text: privateLifeReply(chat.language), sources: [], search: 'unused' });
+        return;
       }
       if (active) throw new ChatError(503, 'busy', 5);
       active = true;
