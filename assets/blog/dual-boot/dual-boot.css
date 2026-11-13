@@ -1,0 +1,32 @@
+/* Dual boot interactive guide, scoped to article */
+.db-article .article-header{max-width:1000px}.db-article .intro{max-width:850px}
+.db-wizard{padding:clamp(18px,3vw,32px);margin:32px 0 46px;border:1px solid #3e7b92;border-radius:15px;background:linear-gradient(120deg,#15293b,#0c1724)}
+.db-wizard h2{font-size:clamp(23px,3vw,31px);margin:0 0 10px}
+.db-wizard p{line-height:1.65;color:#c4d6e5}
+.db-modes{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0}
+.db-modes button,.db-copy{font:inherit;background:#182a3b;color:#eef8ff;border:1px solid #64879f;border-radius:8px;padding:10px 13px;cursor:pointer}
+.db-modes button[aria-pressed=true]{background:#b2e7ff;border-color:#b2e7ff;color:#09202c;font-weight:750}
+.db-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.db-grid label{display:grid;gap:7px;color:#c9dce9;font-size:14px;font-weight:600}
+.db-grid select{color:#fff;background:#0c1722;border:1px solid #64859a;padding:11px;border-radius:7px;font:inherit;width:100%;min-width:0}
+.db-result{margin-top:25px;border-top:1px solid #466176;padding-top:22px}
+.db-result h3{margin:0 0 12px}
+.db-warning{padding:15px 18px;border-left:4px solid #ffb675;background:#39271f;border-radius:5px;margin:14px 0}
+.db-result li{margin:0 0 12px;line-height:1.7}.db-result ul{padding-left:23px}
+.db-article .article-copy section{scroll-margin-top:110px}
+.db-article .article-copy section>h2{margin-top:45px}
+.db-article .article-copy h3{margin-top:25px}
+.db-article .article-copy ol>li{margin-bottom:15px}
+.db-disks{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:24px 0}
+.db-disks>div{display:grid;gap:7px;border:1px solid #33475c;padding:18px;border-radius:12px;background:#141f2b}
+.db-disks span{border-radius:6px;padding:11px 13px;font-weight:700}
+.db-win{background:#245477;color:#f3fbff}.db-linux{background:#235341;color:#f3fff8}
+.db-disks small{color:#b5c4d1;line-height:1.5}
+.db-alert{border-left:4px solid #ffb675;background:#32231d;border-radius:7px;padding:17px 20px;line-height:1.7}
+.db-details details{background:#151f2b;border:1px solid #314759;padding:13px 17px;margin:10px 0;border-radius:8px}
+.db-details summary{cursor:pointer;font-weight:700}
+.db-details p{margin:12px 0 0}
+.db-article code{overflow-wrap:anywhere}.db-article pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.db-wizard button:focus-visible,.db-wizard select:focus-visible{outline:3px solid #a1e6ff;outline-offset:3px}
+@media(max-width:850px){.db-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.db-grid,.db-disks{grid-template-columns:1fr}.db-modes button{flex:1 1 100%}}
