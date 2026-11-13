@@ -193,7 +193,11 @@
           "label": "Linux Kernel Archives",
           "url": "https://www.kernel.org/linux.html"
         }
-      ]
+      ],
+      "short": {
+        "de": "Linux ist der Kern vieler Betriebssysteme. Debian und Arch sind Beispiele dafür.",
+        "en": "Linux is the core of many operating systems. Debian and Arch are examples."
+      }
     },
     {
       "id": "debian-arch",
@@ -312,7 +316,11 @@
       ],
       "queries": [
         "was ist der world observer",
-        "what is the world observer"
+        "what is the world observer",
+        "Wie funktioniert der World Observer?",
+        "Was macht der World Observer?",
+        "How does World Observer work?",
+        "What does World Observer do?"
       ],
       "de": "Der World Observer sammelt öffentliche Daten und zeigt sie mit Quellen und Zeitangaben. Für Wetterfragen lese ich seinen vorhandenen Wiesmoor-JSON-Bericht. Ich betreibe keine eigene Wetterstation.",
       "en": "The World Observer collects public data and displays sources and timestamps. For weather questions I read its existing Wiesmoor JSON report. I do not operate my own weather station.",
@@ -323,7 +331,11 @@
           "label": "World Observer",
           "url": "/world-observer.html"
         }
-      ]
+      ],
+      "short": {
+        "de": "Der World Observer sammelt öffentliche Daten und zeigt, woher sie kommen und wie alt sie sind.",
+        "en": "World Observer collects public data and shows where it came from and how old it is."
+      }
     },
     {
       "id": "dennis-hilk",
@@ -352,7 +364,11 @@
         "What does Dennis Hilk do?",
         "Tell me about Dennis Hilk",
         "Who is Dennis Hilk and what projects does he work on?",
-        "What projects does Dennis Hilk work on?"
+        "What projects does Dennis Hilk work on?",
+        "Wer ist Dennis?",
+        "Was macht Dennis?",
+        "Who is Dennis?",
+        "What does Dennis do?"
       ],
       "de": "Klar. Dennis Hilk entwickelt Open-Source-Projekte und schreibt über Linux. Er betreibt den World Observer, baut am eigenen Betriebssystem BoringOS und hat den Techno-Thriller „The Lost Administrator“ geschrieben.",
       "en": "Sure. Dennis Hilk develops open-source projects and writes about Linux. He runs World Observer, is building his own operating system called BoringOS, and wrote the techno-thriller “The Lost Administrator”.",
@@ -403,7 +419,10 @@
         "What are the sights in Wiesmoor?",
         "What attractions are there in Wiesmoor?",
         "What should I visit in Wiesmoor?",
-        "What can you do in Wiesmoor?"
+        "What can you do in Wiesmoor?",
+        "Was lohnt sich in Wiesmoor?",
+        "Was gibt es in Wiesmoor zu sehen?",
+        "What is worth seeing in Wiesmoor?"
       ],
       "de": "Für Blumen und einen Spaziergang bietet sich das Blumenreich mit Blumenhalle und Gartenpark an. Im Torf- und Siedlungsmuseum erfährst du, wie die Menschen früher im Moor lebten und arbeiteten. Wenn du lieber draußen bleibst, führt ein Rundweg durch den Landschaftspark.",
       "en": "For flowers and a stroll, visit the Blumenreich with its indoor flower hall and garden park. At the Peat and Settlement Museum you can learn how people lived and worked in the moorlands. If you’d rather stay outdoors, there’s a circular walk through the landscape park.",
@@ -418,7 +437,11 @@
           "label": "Wiesmoor Touristik · Landschaftspark",
           "url": "https://www.tourismus-wiesmoor.de/wiesmoor-erleben/aktivitaeten/wandern/wandertour-2"
         }
-      ]
+      ],
+      "short": {
+        "de": "Schau dir die Blumenhalle, den Gartenpark oder das Torfmuseum an. Im Landschaftspark gibt’s einen Rundweg.",
+        "en": "Try the flower hall, garden park or peat museum. There’s a circular walk through the landscape park."
+      }
     },
     {
       "id": "arch-debian",
@@ -452,6 +475,1779 @@
         {
           "label": "Debian · Releases",
           "url": "https://www.debian.org/releases/"
+        }
+      ],
+      "short": {
+        "de": "Arch liefert laufend neue Paketversionen. Debian Stable bündelt größere Änderungen in festen Versionen.",
+        "en": "Arch delivers new package versions continuously. Debian Stable groups major changes into fixed releases."
+      }
+    },
+    {
+      "id": "project-worldnode",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Worldnode?",
+        "Was ist der Worldnode?",
+        "Was läuft auf Worldnode?",
+        "Wofür ist Worldnode da?",
+        "What is Worldnode?",
+        "What runs on Worldnode?",
+        "What is Worldnode used for?"
+      ],
+      "de": "Worldnode ist Dennis’ Debian-Server. Dort laufen die Website, Snakkies Sprachmodell und die eigene Fediverse-Instanz NEBUVERSE.",
+      "en": "Worldnode is Dennis’s Debian server. It hosts the website, Snakkie’s language model and the NEBUVERSE Fediverse instance.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Local ai without gpu snakkie",
+          "url": "/blog/local-ai-without-gpu-snakkie/"
+        },
+        {
+          "label": "Nebuverse self hosting gotosocial",
+          "url": "/blog/nebuverse-self-hosting-gotosocial/"
+        }
+      ]
+    },
+    {
+      "id": "project-boringos",
+      "exactOnly": true,
+      "queries": [
+        "Was ist BoringOS?",
+        "Was ist Boring OS?",
+        "Erzähl mir von BoringOS",
+        "Wer entwickelt BoringOS?",
+        "What is BoringOS?",
+        "What is Boring OS?",
+        "Tell me about BoringOS",
+        "Who develops BoringOS?"
+      ],
+      "de": "BoringOS ist Dennis’ eigenes Betriebssystem-Projekt. Es hat einen selbst geschriebenen x86-64-Kernel und eigene Programme für den Userspace.",
+      "en": "BoringOS is Dennis’s operating system project. It has a custom x86-64 kernel and its own userspace programs.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Boringos",
+          "url": "/boringos/"
+        },
+        {
+          "label": "Build your own os boringos",
+          "url": "/blog/build-your-own-os-boringos/"
+        }
+      ],
+      "short": {
+        "de": "BoringOS ist ein Betriebssystem, das Dennis selbst entwickelt.",
+        "en": "BoringOS is an operating system Dennis is building himself."
+      }
+    },
+    {
+      "id": "project-lost-administrator",
+      "exactOnly": true,
+      "queries": [
+        "Was ist The Lost Administrator?",
+        "Worum geht es in The Lost Administrator?",
+        "Wo kann ich The Lost Administrator lesen?",
+        "Was ist das für ein Buch von Dennis?",
+        "What is The Lost Administrator?",
+        "What is The Lost Administrator about?",
+        "Where can I read The Lost Administrator?",
+        "What book did Dennis write?"
+      ],
+      "de": "The Lost Administrator ist Dennis’ Techno-Thriller über einen verschwundenen Administrator. Auf der Website gibt es die Geschichte und eine interaktive Workstation aus ihrer Welt.",
+      "en": "The Lost Administrator is Dennis’s techno-thriller about a missing administrator. The website has the story and an interactive workstation from its world.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Lost administrator",
+          "url": "/lost-administrator/"
+        }
+      ]
+    },
+    {
+      "id": "project-raymosaic",
+      "exactOnly": true,
+      "queries": [
+        "Was ist RayMosaic?",
+        "Was macht RayMosaic?",
+        "Wo finde ich RayMosaic?",
+        "Wie funktioniert RayMosaic?",
+        "What is RayMosaic?",
+        "What does RayMosaic do?",
+        "Where is RayMosaic?",
+        "How does RayMosaic work?"
+      ],
+      "de": "Mit RayMosaic zeichnest du mit simuliertem Licht. Kleine Spiegel werfen es auf eine Fläche und ergeben daraus dein Motiv.",
+      "en": "RayMosaic lets you draw with simulated light. Tiny mirrors reflect it onto a surface to build up your design.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Raymosaic",
+          "url": "/lab/raymosaic/"
+        },
+        {
+          "label": "Raymosaic reflected light mirror art",
+          "url": "/blog/raymosaic-reflected-light-mirror-art/"
+        }
+      ]
+    },
+    {
+      "id": "project-converter",
+      "exactOnly": true,
+      "queries": [
+        "Wo kann ich Bilder umwandeln?",
+        "Hast du einen Bildkonverter?",
+        "Wie konvertiere ich Bilder auf deiner Seite?",
+        "Werden meine Bilder hochgeladen?",
+        "Where can I convert images?",
+        "Do you have an image converter?",
+        "How do I convert images on this site?",
+        "Does the converter upload my images?"
+      ],
+      "de": "Der Image Converter auf der Website wandelt unterstützte Bildformate direkt im Browser um. Die ausgewählten Dateien werden dafür nicht hochgeladen.",
+      "en": "The website’s Image Converter converts supported image formats right in your browser. The files you select aren’t uploaded for conversion.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Image converter",
+          "url": "/tools/image-converter/"
+        },
+        {
+          "label": "Convert images without upload",
+          "url": "/blog/convert-images-without-upload/"
+        }
+      ]
+    },
+    {
+      "id": "project-fix-lab",
+      "exactOnly": true,
+      "queries": [
+        "Was ist das Linux Fix Lab?",
+        "Wo finde ich Hilfe bei Linux-Problemen?",
+        "Wo ist das Linux Fix Lab?",
+        "What is Linux Fix Lab?",
+        "Where can I troubleshoot Linux?",
+        "Where is the Linux Fix Lab?"
+      ],
+      "de": "Das Linux Fix Lab bündelt Linux-Fehlerbilder und führt dich zu passenden Prüfungen. Es ist ein guter Startpunkt, wenn du eingrenzen willst, wo ein Problem liegt.",
+      "en": "Linux Fix Lab brings together Linux symptoms and points you to checks that fit. It’s a starting point when you need to narrow down a problem.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux fix lab",
+          "url": "/linux-fix-lab/"
+        }
+      ]
+    },
+    {
+      "id": "project-migration",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Linux Migration Companion?",
+        "Wie bereite ich meinen Linux-Umstieg vor?",
+        "Wo ist der Linux Migration Companion?",
+        "What is the Linux Migration Companion?",
+        "How do I prepare to switch to Linux?",
+        "Where is the Linux Migration Companion?"
+      ],
+      "de": "Der Linux Migration Companion hilft dir bei der Planung des Umstiegs. Dazu gehören Fragen nach deinen Programmen, deiner Hardware und dem passenden Einstieg.",
+      "en": "The Linux Migration Companion helps you plan a switch. It walks through questions about your apps, hardware and how to get started.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux migration companion",
+          "url": "/linux-migration-companion/"
+        },
+        {
+          "label": "Windows to linux migration checklist",
+          "url": "/blog/windows-to-linux-migration-checklist/"
+        }
+      ]
+    },
+    {
+      "id": "project-distro",
+      "exactOnly": true,
+      "queries": [
+        "Welche Linux-Distribution passt zu mir?",
+        "Welche Linux-Distro soll ich nehmen?",
+        "Welche Distro ist für Linux-Anfänger geeignet?",
+        "Which Linux distro suits me?",
+        "How do I choose a Linux distro?",
+        "Which Linux distro should a beginner use?"
+      ],
+      "de": "Für einen bequemen Einstieg ist Linux Mint Cinnamon einen Blick wert. Wichtiger als der Name sind deine Hardware und die Programme, die du brauchst. Der Distro-Finder hilft beim Eingrenzen.",
+      "en": "Linux Mint Cinnamon is worth a look for an easy start. Your hardware and the apps you need matter more than the name. The Distro Finder can narrow things down.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux distro finder",
+          "url": "/tools/linux-distro-finder/"
+        },
+        {
+          "label": "Which linux distro 2026",
+          "url": "/blog/which-linux-distro-2026/"
+        }
+      ]
+    },
+    {
+      "id": "project-hardware",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Linux Hardware Explorer?",
+        "Wo kann ich Linux-Hardware nachschlagen?",
+        "Hast du einen Linux Hardware Explorer?",
+        "What is Linux Hardware Explorer?",
+        "Where can I look up Linux hardware?",
+        "Do you have a Linux Hardware Explorer?"
+      ],
+      "de": "Der Linux Hardware Explorer sammelt Informationen zu Geräten und Linux-Unterstützung. Bei einem konkreten Gerät lohnt sich der Blick auf die genaue Modellbezeichnung und die dortigen Quellen.",
+      "en": "Linux Hardware Explorer brings together information about devices and Linux support. For a specific device, check the exact model and the linked sources.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux hardware explorer",
+          "url": "/linux-hardware-explorer/"
+        }
+      ]
+    },
+    {
+      "id": "project-gaming-repair",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Linux Gaming Repair?",
+        "Wo finde ich Hilfe wenn ein Spiel unter Linux nicht startet?",
+        "Wo ist dein Linux Gaming Repair?",
+        "What is Linux Gaming Repair?",
+        "Where can I troubleshoot games that won’t launch on Linux?",
+        "Where is Linux Gaming Repair?"
+      ],
+      "de": "Linux Gaming Repair führt dich bei typischen Spielproblemen durch die Fehlersuche. Bei einem Spiel, das gar nicht startet, sind das genaue Spiel, der Launcher und die Fehlermeldung ein guter Anfang.",
+      "en": "Linux Gaming Repair helps you investigate common gaming problems. For a game that won’t start, the exact game, launcher and error message are a good place to start.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux gaming repair",
+          "url": "/linux-gaming-repair/"
+        }
+      ]
+    },
+    {
+      "id": "project-nebuverse",
+      "exactOnly": true,
+      "queries": [
+        "Was ist NEBUVERSE?",
+        "Was ist die NEBUVERSE-Instanz?",
+        "Wo ist Dennis im Fediverse?",
+        "What is NEBUVERSE?",
+        "What is the NEBUVERSE instance?",
+        "Where is Dennis on the Fediverse?"
+      ],
+      "de": "NEBUVERSE ist Dennis’ eigene Fediverse-Instanz. Sie läuft mit GoToSocial auf Worldnode. Im Artikel erklärt er, wie er sie eingerichtet hat.",
+      "en": "NEBUVERSE is Dennis’s own Fediverse instance. It runs GoToSocial on Worldnode. His article explains how he set it up.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Nebuverse self hosting gotosocial",
+          "url": "/blog/nebuverse-self-hosting-gotosocial/"
+        }
+      ]
+    },
+    {
+      "id": "project-guestbook",
+      "exactOnly": true,
+      "queries": [
+        "Wo ist das Gästebuch?",
+        "Wie hinterlasse ich eine Nachricht?",
+        "Kann ich ins Gästebuch schreiben?",
+        "Where is the guestbook?",
+        "How can I leave a message?",
+        "Can I sign the guestbook?"
+      ],
+      "de": "Du findest das Gästebuch unter „Transmissions“. Dort kannst du eine Nachricht hinterlassen.",
+      "en": "The guestbook is called “Transmissions”. You can leave a message there.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Gästebuch / Guestbook",
+          "url": "/transmissions/"
+        }
+      ]
+    },
+    {
+      "id": "project-github",
+      "exactOnly": true,
+      "queries": [
+        "Wo ist Dennis auf GitHub?",
+        "Wo finde ich Dennis’ GitHub?",
+        "Hat Dennis ein GitHub-Profil?",
+        "Where is Dennis on GitHub?",
+        "Where can I find Dennis’s GitHub?",
+        "What is Dennis’s GitHub profile?"
+      ],
+      "de": "Dennis’ öffentlicher GitHub-Account heißt dennishilk. Dort findest du die Repositories und Projektbeschreibungen.",
+      "en": "Dennis’s public GitHub account is dennishilk. That’s where you’ll find his repositories and project descriptions.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Dennis Hilk · GitHub",
+          "url": "https://github.com/dennishilk"
+        }
+      ]
+    },
+    {
+      "id": "project-blog",
+      "exactOnly": true,
+      "queries": [
+        "Wo ist der Blog?",
+        "Wo finde ich die Artikel?",
+        "Hat Dennis einen Blog?",
+        "Gibt es den Blog auf Deutsch?",
+        "Where is the blog?",
+        "Where can I read the articles?",
+        "Does Dennis have a blog?",
+        "Is there an English blog?"
+      ],
+      "de": "Dennis schreibt im Blog über Linux, eigene Projekte und Retro-Computer. Es gibt eine deutsche und eine englische Übersicht.",
+      "en": "Dennis writes about Linux, his projects and retro computing. The blog has separate German and English indexes.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Blog · Deutsch",
+          "url": "/de/blog/"
+        },
+        {
+          "label": "Blog · English",
+          "url": "/blog/"
+        }
+      ]
+    },
+    {
+      "id": "project-nebu",
+      "exactOnly": true,
+      "queries": [
+        "Warum heißt Dennis nebu?",
+        "Woher kommt der Name nebu?",
+        "Wer war Nebukatneza?",
+        "Why is Dennis called nebu?",
+        "Where does the name nebu come from?",
+        "Who was Nebukatneza?"
+      ],
+      "de": "Der Name nebu geht auf Nebukatneza zurück, Dennis’ Hexenmeister aus World of Warcraft. Die Geschichte steht im Blog.",
+      "en": "The name nebu comes from Nebukatneza, Dennis’s warlock in World of Warcraft. He tells the story in his blog.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Warum ich nebu heisse",
+          "url": "/de/blog/warum-ich-nebu-heisse/"
+        },
+        {
+          "label": "Why im called nebu",
+          "url": "/blog/why-im-called-nebu/"
+        }
+      ]
+    },
+    {
+      "id": "project-wow",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der WoW Observer?",
+        "Wo ist Dennis’ WoW-Charakter?",
+        "Wie heißt sein Charakter in WoW Forever?",
+        "What is the WoW Observer?",
+        "Where can I see Dennis’s WoW character?",
+        "What is his WoW Forever character called?"
+      ],
+      "de": "Dennis spielt in WoW Forever einen untoten Paladin namens Dennis Hilk. Im Artikel steht die Charakterkarte mit den zuletzt veröffentlichten Daten.",
+      "en": "In WoW Forever, Dennis plays an undead paladin named Dennis Hilk. The character card in the article shows the latest published snapshot.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wow forever nebukatneza dennis hilk",
+          "url": "/de/blog/wow-forever-nebukatneza-dennis-hilk/"
+        },
+        {
+          "label": "Wow forever nebukatneza dennis hilk",
+          "url": "/blog/wow-forever-nebukatneza-dennis-hilk/"
+        }
+      ]
+    },
+    {
+      "id": "project-snakkie",
+      "exactOnly": true,
+      "queries": [
+        "Wie funktioniert Snakkie?",
+        "Was ist Snakkie?",
+        "Woher kommen Snakkies Antworten?",
+        "Welches Sprachmodell nutzt Snakkie?",
+        "How does Snakkie work?",
+        "What is Snakkie?",
+        "Where do Snakkie’s answers come from?",
+        "What language model does Snakkie use?"
+      ],
+      "de": "Alltagsfragen kann ich aus einer Sammlung beantworten. Wetter kommt vom World Observer. Für offene Fragen läuft ein kleines Qwen3-Sprachmodell auf Worldnode.",
+      "en": "I answer familiar questions from a collection. Weather comes from World Observer. A small Qwen3 model on Worldnode handles open questions.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Lokale ki ohne gpu snakkie",
+          "url": "/de/blog/lokale-ki-ohne-gpu-snakkie/"
+        },
+        {
+          "label": "Local ai without gpu snakkie",
+          "url": "/blog/local-ai-without-gpu-snakkie/"
+        }
+      ],
+      "short": {
+        "de": "Bekannte Fragen beantworte ich im Browser. Für andere Fragen gibt es ein kleines Sprachmodell auf Worldnode.",
+        "en": "Familiar questions are answered in the browser. Other questions can use a small language model on Worldnode."
+      }
+    },
+    {
+      "id": "project-privacy",
+      "exactOnly": true,
+      "queries": [
+        "Was passiert mit meinen Nachrichten?",
+        "Speichert Snakkie den Chat?",
+        "Schickt Snakkie jede Frage an die KI?",
+        "Wie privat ist Snakkie?",
+        "What happens to my messages?",
+        "Does Snakkie store my chat?",
+        "Does Snakkie send every question to the model?",
+        "How private is Snakkie?"
+      ],
+      "de": "Antworten aus meiner Sammlung entstehen im Browser. Für offene Fragen wird die Nachricht zur Verarbeitung an Worldnode geschickt. Bei Webrecherche kann ein Suchbegriff an Suchanbieter gehen.",
+      "en": "Replies from my collection are handled in the browser. Open questions are sent to Worldnode for processing. Web research may pass a search term to search providers.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Snakkie · Datenschutz / Privacy",
+          "url": "/datenschutzerklaerung.html#snakkie-datenschutz"
+        }
+      ]
+    },
+    {
+      "id": "project-research",
+      "exactOnly": true,
+      "queries": [
+        "Wie suchst du im Internet?",
+        "Welche Websuche benutzt du?",
+        "Was ist SearXNG bei Snakkie?",
+        "How do you search the web?",
+        "Which search engine do you use?",
+        "What is SearXNG in Snakkie?"
+      ],
+      "de": "Für manche offenen Fragen fragt Snakkie die auf Worldnode betriebene Metasuche SearXNG ab. Die angezeigten Quellen stammen aus ausgewählten Suchtreffern.",
+      "en": "For some open questions, Snakkie queries the SearXNG metasearch service running on Worldnode. Displayed sources come from selected search results.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Local ai without gpu snakkie",
+          "url": "/blog/local-ai-without-gpu-snakkie/"
+        }
+      ]
+    },
+    {
+      "id": "project-wiesmoor-observers",
+      "exactOnly": true,
+      "queries": [
+        "Welche Observer gibt es für Wiesmoor?",
+        "Welche Messungen gibt es für Wiesmoor?",
+        "Wo finde ich Daten zu Wiesmoor?",
+        "Which observers cover Wiesmoor?",
+        "What observations are available for Wiesmoor?",
+        "Where can I find data about Wiesmoor?"
+      ],
+      "de": "Die Wiesmoor-Übersicht verlinkt unter anderem Wetter, Himmel, Moor, Grundwasser und Horizont. Auf den einzelnen Seiten findest du die veröffentlichten Werte und ihre Zeitstempel.",
+      "en": "The Wiesmoor overview links to weather, sky, peatland, groundwater and horizon observations, among others. The individual pages show their published values and timestamps.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Hometown",
+          "url": "/world-observer/hometown.html"
+        }
+      ]
+    },
+    {
+      "id": "project-quakes",
+      "exactOnly": true,
+      "queries": [
+        "Was macht der Erdbeben-Observer?",
+        "Wo finde ich den Erdbeben-Observer?",
+        "Zeig mir den Erdbeben-Observer",
+        "What is the earthquake observer?",
+        "Where is the earthquake observer?",
+        "Show me the earthquake observer"
+      ],
+      "de": "Der Erdbeben-Observer zeigt veröffentlichte Erdbebenmeldungen. Auf der Seite kannst du nachsehen, welche Ereignisse im letzten verfügbaren Datenstand enthalten sind.",
+      "en": "The earthquake observer displays published earthquake reports. Its page shows the events included in the latest available snapshot.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Earthquake observer",
+          "url": "/world-observer/earthquake-observer.html"
+        }
+      ]
+    },
+    {
+      "id": "project-peat-observer",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Moor-Observer?",
+        "Was macht der Peatland Observer?",
+        "Wo finde ich den Moor-Observer?",
+        "What is the peatland observer?",
+        "What does the peatland observer do?",
+        "Where is the peatland observer?"
+      ],
+      "de": "Der Wiesmoor Peatland Observer zeigt Daten mit Bezug zu Moor und Umwelt. Die Seite erklärt die einzelnen Indikatoren und was sich aus ihnen ableiten lässt.",
+      "en": "The Wiesmoor Peatland Observer shows data relating to peatlands and their environment. Its page explains the indicators and what they can tell you.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor peatland",
+          "url": "/world-observer/wiesmoor-peatland.html"
+        }
+      ]
+    },
+    {
+      "id": "project-sky-observer",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Sky Observer?",
+        "Wo finde ich den Himmel-Observer?",
+        "Was macht der Wiesmoor Sky Observer?",
+        "What is the Sky Observer?",
+        "Where is the sky observer?",
+        "What does the Wiesmoor Sky Observer do?"
+      ],
+      "de": "Der Wiesmoor Sky Observer bündelt Daten und Hinweise zum Himmel über Wiesmoor. Auf der Seite stehen die Angaben zum letzten verfügbaren Stand.",
+      "en": "The Wiesmoor Sky Observer brings together data and notes about the sky over Wiesmoor. Its page shows the latest available snapshot.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor sky",
+          "url": "/world-observer/wiesmoor-sky.html"
+        }
+      ]
+    },
+    {
+      "id": "project-horizon",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Horizon Observer?",
+        "Wo finde ich den Horizont-Observer?",
+        "Was zeigt der Horizont-Observer?",
+        "What is the Horizon Observer?",
+        "Where is the horizon observer?",
+        "What does the horizon observer show?"
+      ],
+      "de": "Beim Horizon Observer findest du Beobachtungen zum Horizont rund um Wiesmoor. Die Seite erklärt ihre Datengrundlage und die dargestellten Werte.",
+      "en": "The Horizon Observer shows observations relating to the horizon around Wiesmoor. Its page explains the data and how to read it.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Horizon observer",
+          "url": "/world-observer/horizon-observer.html"
+        }
+      ]
+    },
+    {
+      "id": "project-internet",
+      "exactOnly": true,
+      "queries": [
+        "Was macht der Internet Observer?",
+        "Wo ist der Internet Observer?",
+        "Was beobachtet das Internet-Dashboard?",
+        "What is the internet observer?",
+        "Where is the internet observer?",
+        "What does the internet dashboard observe?"
+      ],
+      "de": "Das Internet-Dashboard im World Observer bündelt Messungen zu Erreichbarkeit, Routing und anderen Eigenschaften des öffentlichen Internets.",
+      "en": "The World Observer internet dashboard brings together measurements of reachability, routing and other properties of the public internet.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Internet",
+          "url": "/world-observer/internet.html"
+        }
+      ]
+    },
+    {
+      "id": "museum-overview",
+      "exactOnly": true,
+      "queries": [
+        "Was gibt es im Computermuseum?",
+        "Welche Ausstellungen hat das Computermuseum?",
+        "Zeig mir das Computermuseum",
+        "What is in the computer museum?",
+        "What exhibits are in the computer museum?",
+        "Show me the computer museum"
+      ],
+      "de": "Im interaktiven Computermuseum findest du unter anderem Apollo, den IMSAI 8080, UNIX-Zeitteilung und historische Speichermedien. Einige Stationen kannst du direkt ausprobieren.",
+      "en": "The interactive computer museum includes Apollo, the IMSAI 8080, UNIX time-sharing and historical storage media. Some exhibits can be tried right in the browser.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Museum",
+          "url": "/museum/"
+        }
+      ]
+    },
+    {
+      "id": "museum-apollo",
+      "exactOnly": true,
+      "queries": [
+        "Was ist das Apollo DSKY?",
+        "Was ist ein DSKY?",
+        "Wo kann ich Apollo DSKY ausprobieren?",
+        "What is the Apollo DSKY?",
+        "What is a DSKY?",
+        "Where can I try the Apollo DSKY?"
+      ],
+      "de": "DSKY steht für Display and Keyboard. Darüber gaben die Astronauten Befehle am Apollo Guidance Computer ein und lasen Werte ab. Im Museum kannst du eine interaktive Nachbildung ausprobieren.",
+      "en": "DSKY stands for Display and Keyboard. Astronauts used it to enter commands and read values from the Apollo Guidance Computer. The museum has an interactive recreation.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Apollo dsky",
+          "url": "/museum/apollo-dsky/"
+        },
+        {
+          "label": "Apollo 11 guidance computer moon landing",
+          "url": "/blog/apollo-11-guidance-computer-moon-landing/"
+        }
+      ],
+      "short": {
+        "de": "Das DSKY war die Tastatur mit Anzeige für den Apollo-Bordcomputer.",
+        "en": "The DSKY was the keypad and display for the Apollo computer."
+      }
+    },
+    {
+      "id": "museum-imsai",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der IMSAI 8080?",
+        "Welcher Computer ist in WarGames?",
+        "Wo finde ich den WarGames-Computer?",
+        "What is the IMSAI 8080?",
+        "What computer is in WarGames?",
+        "Where is the WarGames computer exhibit?"
+      ],
+      "de": "Der IMSAI 8080 war ein früher Mikrocomputer mit einer Front voller Schalter und Leuchtdioden. Ein IMSAI ist auch im Film WarGames zu sehen.",
+      "en": "The IMSAI 8080 was an early microcomputer with a front panel full of switches and lights. An IMSAI also appears in the film WarGames.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Imsai 8080",
+          "url": "/museum/imsai-8080/"
+        },
+        {
+          "label": "Imsai 8080 wargames computer",
+          "url": "/blog/imsai-8080-wargames-computer/"
+        }
+      ]
+    },
+    {
+      "id": "museum-sgi",
+      "exactOnly": true,
+      "queries": [
+        "Was ist SGI fsn?",
+        "Welcher Dateimanager war in Jurassic Park?",
+        "War der Jurassic-Park-Computer echt?",
+        "What is SGI fsn?",
+        "What file manager was in Jurassic Park?",
+        "Was the Jurassic Park computer real?"
+      ],
+      "de": "Der 3D-Dateibrowser in Jurassic Park basiert auf fsn für SGIs UNIX-System IRIX. Im Museum gibt es dazu eine interaktive Station.",
+      "en": "The 3D file browser in Jurassic Park was based on fsn for SGI’s IRIX UNIX system. The museum has an interactive exhibit about it.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Jurassic park sgi",
+          "url": "/museum/jurassic-park-sgi/"
+        },
+        {
+          "label": "Jurassic park unix sgi fsn",
+          "url": "/blog/jurassic-park-unix-sgi-fsn/"
+        }
+      ]
+    },
+    {
+      "id": "museum-c64",
+      "exactOnly": true,
+      "queries": [
+        "Was ist ein C64?",
+        "Was ist der Commodore 64?",
+        "Wo ist der C64 im Museum?",
+        "What is a C64?",
+        "What is the Commodore 64?",
+        "Where is the C64 exhibit?"
+      ],
+      "de": "Der Commodore 64 ist ein Heimcomputer aus den 1980ern. Das Museum hat eine eigene C64-Station.",
+      "en": "The Commodore 64 is a home computer from the 1980s. It has its own museum exhibit.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "C64",
+          "url": "/museum/c64/"
+        }
+      ]
+    },
+    {
+      "id": "museum-bbs",
+      "exactOnly": true,
+      "queries": [
+        "Was ist eine Mailbox im Retro-Sinn?",
+        "Was ist ein Bulletin Board System?",
+        "Was ist eine BBS?",
+        "What is a Bulletin Board System?",
+        "What is a BBS?",
+        "What were dial-up bulletin boards?"
+      ],
+      "de": "Bei einer BBS konnte man sich typischerweise per Modem einwählen, Nachrichten lesen, Dateien austauschen oder Spiele spielen. Im Museum gibt es eine Station dazu.",
+      "en": "A BBS typically let people dial in by modem to read messages, exchange files or play games. There’s a museum exhibit about it.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Bbs system",
+          "url": "/museum/bbs-system/"
+        }
+      ]
+    },
+    {
+      "id": "museum-time-sharing",
+      "exactOnly": true,
+      "queries": [
+        "Was ist UNIX-Zeitteilung?",
+        "Was bedeutet Time-Sharing?",
+        "Wo ist das UNIX Time-Sharing Center?",
+        "What is UNIX time-sharing?",
+        "What does time-sharing mean?",
+        "Where is the UNIX Time-Sharing Center?"
+      ],
+      "de": "Bei Time-Sharing teilen sich mehrere Sitzungen die Rechenzeit eines Computers. Das Museum zeigt das an einer UNIX-Station.",
+      "en": "With time-sharing, multiple sessions share a computer’s processing time. The museum demonstrates it with a UNIX exhibit.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Unix time sharing center",
+          "url": "/museum/unix-time-sharing-center/"
+        }
+      ]
+    },
+    {
+      "id": "museum-terminal",
+      "exactOnly": true,
+      "queries": [
+        "Wo kann ich Linux-Befehle üben?",
+        "Was ist die Linux Terminal Academy?",
+        "Gibt es eine Terminal-Übung im Browser?",
+        "Where can I practice Linux commands?",
+        "What is Linux Terminal Academy?",
+        "Is there a browser-based terminal exercise?"
+      ],
+      "de": "In der Linux Terminal Academy kannst du typische Terminal-Aufgaben im Browser üben. Die Übungen sind als geführte Stationen aufgebaut.",
+      "en": "Linux Terminal Academy lets you practice common terminal tasks in the browser. The exercises are arranged as guided labs.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux terminal academy",
+          "url": "/museum/linux-terminal-academy/"
+        }
+      ]
+    },
+    {
+      "id": "museum-bios",
+      "exactOnly": true,
+      "queries": [
+        "Wo ist die BIOS-Übung?",
+        "Gibt es ein BIOS im Museum?",
+        "Wo kann ich ein altes BIOS ausprobieren?",
+        "Where is the BIOS lab?",
+        "Is there a BIOS in the museum?",
+        "Where can I try an old BIOS?"
+      ],
+      "de": "Die BIOS-Station im Computermuseum zeigt ein klassisches Setup im Browser. Dort kannst du dir die Menüs ansehen, ohne Einstellungen an deinem eigenen Rechner zu ändern.",
+      "en": "The museum’s BIOS exhibit shows a classic setup screen in the browser. You can explore its menus without changing your own computer.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Bios setup",
+          "url": "/museum/bios-setup/"
+        }
+      ]
+    },
+    {
+      "id": "museum-floppy",
+      "exactOnly": true,
+      "queries": [
+        "Was ist eine Diskette?",
+        "Wie funktionieren Disketten?",
+        "Wo finde ich die Speichermedien im Museum?",
+        "What is a floppy disk?",
+        "How do floppy disks work?",
+        "Where is the storage exhibit?"
+      ],
+      "de": "Eine Diskette speichert Daten magnetisch auf einer flexiblen Scheibe in einer Hülle. Das Speichermedien-Labor zeigt sie neben späteren Medien wie Zip, CD und USB.",
+      "en": "A floppy disk stores data magnetically on a flexible disk inside a casing. The storage media lab shows it alongside later media such as Zip, CD and USB.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Storage media lab",
+          "url": "/museum/storage-media-lab/"
+        },
+        {
+          "label": "Floppy disk zip cd usb storage history",
+          "url": "/blog/floppy-disk-zip-cd-usb-storage-history/"
+        }
+      ]
+    },
+    {
+      "id": "museum-longbow",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Jane’s Longbow?",
+        "Was ist Jane's AH-64D Longbow?",
+        "Wo ist der Longbow-Artikel?",
+        "What is Jane’s Longbow?",
+        "What is Jane's AH-64D Longbow?",
+        "Where is the Longbow article?"
+      ],
+      "de": "Jane’s AH-64D Longbow ist eine PC-Hubschraubersimulation aus den 1990ern. Dennis zeigt im Blog seine deutsche Big Box und seinen Retro-Rechner dafür.",
+      "en": "Jane’s AH-64D Longbow is a PC helicopter simulation from the 1990s. Dennis shows his German big-box copy and the retro PC he uses for it.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Janes ah64d longbow 1996 big box retro pc",
+          "url": "/de/blog/janes-ah64d-longbow-1996-big-box-retro-pc/"
+        },
+        {
+          "label": "Janes ah64d longbow 1996 retro pc",
+          "url": "/blog/janes-ah64d-longbow-1996-retro-pc/"
+        }
+      ]
+    },
+    {
+      "id": "linux-apt",
+      "exactOnly": true,
+      "queries": [
+        "Was ist APT?",
+        "Wofür steht APT unter Debian?",
+        "Was macht apt unter Linux?",
+        "What is APT on Linux?",
+        "What is APT in Debian?",
+        "What does apt do on Linux?"
+      ],
+      "de": "APT verwaltet unter Debian und verwandten Distributionen Softwarepakete. Es lädt Pakete aus eingerichteten Quellen und berücksichtigt dabei ihre Abhängigkeiten.",
+      "en": "APT manages software packages on Debian and related distributions. It fetches packages from configured sources and handles their dependencies.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux updates explained",
+          "url": "/blog/linux-updates-explained/"
+        }
+      ],
+      "short": {
+        "de": "APT ist das Werkzeug, mit dem Debian Programme als Pakete verwaltet.",
+        "en": "APT is the tool Debian uses to manage software packages."
+      }
+    },
+    {
+      "id": "linux-update-upgrade",
+      "exactOnly": true,
+      "queries": [
+        "Was ist der Unterschied zwischen apt update und apt upgrade?",
+        "Was macht apt update im Vergleich zu apt upgrade?",
+        "What is the difference between apt update and apt upgrade?",
+        "What does apt update do versus apt upgrade?"
+      ],
+      "de": "apt update aktualisiert die Paketlisten. apt upgrade installiert verfügbare Aktualisierungen für installierte Pakete. Die Paketlisten sagen also erst einmal, welche Versionen verfügbar sind.",
+      "en": "apt update refreshes package lists. apt upgrade installs available updates for installed packages. The package lists tell APT which versions are available.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux updates explained",
+          "url": "/blog/linux-updates-explained/"
+        }
+      ],
+      "short": {
+        "de": "update schaut nach neuen Versionen. upgrade installiert die verfügbaren Updates.",
+        "en": "update checks which versions are available. upgrade installs the available updates."
+      }
+    },
+    {
+      "id": "linux-rolling",
+      "exactOnly": true,
+      "queries": [
+        "Was ist ein Rolling Release?",
+        "Was bedeutet Rolling Release?",
+        "Was ist eine Rolling-Release-Distribution?",
+        "What is a rolling release?",
+        "What does rolling release mean?",
+        "What is a rolling-release distro?"
+      ],
+      "de": "Bei einem Rolling Release kommen neue Paketversionen fortlaufend. Du aktualisierst das bestehende System, während bei festen Releases größere Versionswechsel gebündelt erscheinen.",
+      "en": "In a rolling release, new package versions arrive continuously. You update the existing system, while fixed releases group larger version changes together.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "ArchWiki · Arch Linux",
+          "url": "https://wiki.archlinux.org/title/Arch_Linux"
+        },
+        {
+          "label": "Linux updates explained",
+          "url": "/blog/linux-updates-explained/"
+        }
+      ],
+      "short": {
+        "de": "Rolling Release heißt, dass größere Paketupdates laufend kommen.",
+        "en": "A rolling release gets new package versions continuously."
+      }
+    },
+    {
+      "id": "linux-debian",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Debian?",
+        "Wofür ist Debian bekannt?",
+        "Was für eine Linux-Distribution ist Debian?",
+        "What is Debian?",
+        "What is Debian known for?",
+        "What kind of Linux distro is Debian?"
+      ],
+      "de": "Debian ist ein freies Betriebssystem-Projekt. Seine Stable-Ausgabe bündelt Pakete in festen Veröffentlichungen und erhält während ihres Lebenszyklus Aktualisierungen.",
+      "en": "Debian is a free operating system project. Its Stable edition ships a set of packages in fixed releases and receives updates during its support lifecycle.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Debian · Releases",
+          "url": "https://www.debian.org/releases/"
+        }
+      ],
+      "short": {
+        "de": "Debian Stable ist eine Linux-Distribution mit festen Veröffentlichungen und regelmäßiger Pflege.",
+        "en": "Debian Stable is a Linux distribution with fixed releases and ongoing maintenance."
+      }
+    },
+    {
+      "id": "linux-arch",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Arch Linux?",
+        "Wofür ist Arch Linux bekannt?",
+        "Was für eine Distribution ist Arch Linux?",
+        "What is Arch Linux?",
+        "What is Arch Linux known for?",
+        "What kind of distribution is Arch Linux?"
+      ],
+      "de": "Arch Linux ist eine Rolling-Release-Distribution mit einer schlanken Basis. Die Auswahl der weiteren Pakete und der Desktop-Umgebung liegt bei dir.",
+      "en": "Arch Linux is a rolling-release distribution with a minimal base. You choose the extra packages and desktop environment.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "ArchWiki · Arch Linux",
+          "url": "https://wiki.archlinux.org/title/Arch_Linux"
+        }
+      ],
+      "short": {
+        "de": "Arch ist ein schlankes Linux-System, das laufend neue Paketversionen bekommt.",
+        "en": "Arch is a minimal Linux system that receives new package versions continuously."
+      }
+    },
+    {
+      "id": "linux-desktop",
+      "exactOnly": true,
+      "queries": [
+        "Was ist eine Desktop-Umgebung?",
+        "Was macht ein Linux-Desktop?",
+        "Was bedeutet Desktop Environment?",
+        "What is a desktop environment?",
+        "What does a Linux desktop environment do?",
+        "What does desktop environment mean?"
+      ],
+      "de": "Eine Desktop-Umgebung bündelt die grafische Oberfläche und Werkzeuge wie Einstellungen, Leisten und oft einen Dateimanager. Beispiele sind KDE Plasma und Cinnamon.",
+      "en": "A desktop environment brings together the graphical interface and tools such as settings, panels and often a file manager. KDE Plasma and Cinnamon are examples.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Which linux distro 2026",
+          "url": "/blog/which-linux-distro-2026/"
+        },
+        {
+          "label": "Linux window manager config generator",
+          "url": "/blog/linux-window-manager-config-generator/"
+        }
+      ]
+    },
+    {
+      "id": "linux-wm",
+      "exactOnly": true,
+      "queries": [
+        "Was ist ein Window Manager?",
+        "Was ist ein Fenstermanager?",
+        "Was ist der Unterschied zwischen Desktop und Window Manager?",
+        "What is a window manager?",
+        "What does a window manager do?",
+        "What is the difference between a desktop environment and a window manager?"
+      ],
+      "de": "Ein Fenstermanager platziert und verwaltet Fenster. Eine Desktop-Umgebung bringt meist zusätzlich Einstellungen, Leisten und weitere Programme mit.",
+      "en": "A window manager arranges and manages windows. A desktop environment usually also includes settings, panels and other programs.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux window manager config generator",
+          "url": "/blog/linux-window-manager-config-generator/"
+        }
+      ],
+      "short": {
+        "de": "Ein Fenstermanager bestimmt, wo deine Fenster liegen und wie du sie bedienst.",
+        "en": "A window manager determines where windows go and how you control them."
+      }
+    },
+    {
+      "id": "linux-tiling",
+      "exactOnly": true,
+      "queries": [
+        "Was ist ein Tiling Window Manager?",
+        "Was bedeutet Tiling bei Fenstern?",
+        "Was ist ein kachelnder Fenstermanager?",
+        "What is a tiling window manager?",
+        "What does window tiling mean?",
+        "What is a tiling WM?"
+      ],
+      "de": "Ein Tiling Window Manager ordnet Fenster meist automatisch nebeneinander an. So nutzt du den Platz ohne ständiges Ziehen und kannst vieles per Tastatur steuern.",
+      "en": "A tiling window manager usually arranges windows side by side automatically. You can use the screen without constantly dragging windows and control much of it with the keyboard.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux window manager config generator",
+          "url": "/blog/linux-window-manager-config-generator/"
+        },
+        {
+          "label": "Arch linux dwm cthulhu",
+          "url": "/blog/arch-linux-dwm-cthulhu/"
+        }
+      ]
+    },
+    {
+      "id": "linux-dwm",
+      "exactOnly": true,
+      "queries": [
+        "Was ist dwm?",
+        "Was macht dwm?",
+        "Ist dwm ein Window Manager?",
+        "What is dwm?",
+        "What does dwm do?",
+        "Is dwm a window manager?"
+      ],
+      "de": "dwm ist ein schlanker Fenstermanager für X11, der Fenster dynamisch anordnen kann. Dennis zeigt sein Arch-Setup damit im Blog.",
+      "en": "dwm is a lightweight X11 window manager that can arrange windows dynamically. Dennis shows his Arch setup with it in the blog.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Arch linux dwm cthulhu",
+          "url": "/blog/arch-linux-dwm-cthulhu/"
+        }
+      ]
+    },
+    {
+      "id": "linux-sway",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Sway?",
+        "Was ist der Sway Window Manager?",
+        "Nutzt Sway Wayland?",
+        "What is Sway?",
+        "What is the Sway window manager?",
+        "Does Sway use Wayland?"
+      ],
+      "de": "Sway ist ein kachelnder Wayland-Compositor mit einer an i3 angelehnten Konfiguration. Der Blog erklärt die wichtigsten Abschnitte der Konfigurationsdatei.",
+      "en": "Sway is a tiling Wayland compositor with an i3-style configuration. The blog explains the main parts of its configuration file.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Sway configuration explained",
+          "url": "/blog/sway-configuration-explained/"
+        }
+      ]
+    },
+    {
+      "id": "linux-xmonad",
+      "exactOnly": true,
+      "queries": [
+        "Was ist xmonad?",
+        "Womit konfiguriert man xmonad?",
+        "Ist xmonad ein Fenstermanager?",
+        "What is xmonad?",
+        "How is xmonad configured?",
+        "Is xmonad a window manager?"
+      ],
+      "de": "xmonad ist ein kachelnder Fenstermanager für X11. Seine Konfiguration wird in Haskell geschrieben, meist in einer Datei namens xmonad.hs.",
+      "en": "xmonad is a tiling window manager for X11. Its configuration is written in Haskell, usually in a file called xmonad.hs.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Xmonad hs explained",
+          "url": "/blog/xmonad-hs-explained/"
+        }
+      ]
+    },
+    {
+      "id": "linux-wayland",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Wayland?",
+        "Was ist X11?",
+        "Was ist der Unterschied zwischen Wayland und X11?",
+        "What is Wayland?",
+        "What is X11?",
+        "What is the difference between Wayland and X11?"
+      ],
+      "de": "Wayland und X11 sind Protokolle für grafische Sitzungen. Unter Wayland steuert der Compositor Darstellung und Eingabe. Ältere X11-Anwendungen können in vielen Wayland-Sitzungen über Xwayland laufen.",
+      "en": "Wayland and X11 are protocols for graphical sessions. Under Wayland, the compositor handles display and input. Many Wayland sessions can run older X11 applications through Xwayland.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Kde plasma 6 8 wayland x11 xwayland",
+          "url": "/blog/kde-plasma-6-8-wayland-x11-xwayland/"
+        }
+      ]
+    },
+    {
+      "id": "linux-fish",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Fish unter Linux?",
+        "Was ist die Fish Shell?",
+        "Warum ist Fish keine Bash?",
+        "What is the fish shell?",
+        "What is fish on Linux?",
+        "How is fish different from Bash?"
+      ],
+      "de": "Fish ist eine interaktive Shell mit Vorschlägen und Syntaxhervorhebung. Ihre Skriptsyntax unterscheidet sich von Bash, daher läuft ein Bash-Skript am besten mit seinem vorgesehenen Interpreter.",
+      "en": "Fish is an interactive shell with suggestions and syntax highlighting. Its scripting syntax differs from Bash, so run a Bash script with its intended interpreter.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Fish shell beginners",
+          "url": "/blog/fish-shell-beginners/"
+        }
+      ]
+    },
+    {
+      "id": "linux-journal",
+      "exactOnly": true,
+      "queries": [
+        "Was ist journalctl?",
+        "Wie sehe ich Linux-Systemlogs?",
+        "Wo finde ich Logs bei systemd?",
+        "What is journalctl?",
+        "How do I view Linux system logs?",
+        "Where do I find systemd logs?"
+      ],
+      "de": "journalctl liest das systemd-Journal. Mit journalctl -b siehst du Einträge seit dem aktuellen Start und mit -u kannst du nach einer Unit filtern.",
+      "en": "journalctl reads the systemd journal. Use journalctl -b for entries since the current boot and -u to filter by a unit.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Journalctl linux troubleshooting",
+          "url": "/blog/journalctl-linux-troubleshooting/"
+        }
+      ]
+    },
+    {
+      "id": "linux-systemd",
+      "exactOnly": true,
+      "queries": [
+        "Was ist systemd?",
+        "Was macht systemd unter Linux?",
+        "Was ist eine systemd-Unit?",
+        "What is systemd?",
+        "What does systemd do on Linux?",
+        "What is a systemd unit?"
+      ],
+      "de": "systemd startet und überwacht auf vielen Linux-Systemen Dienste. Eine Unit beschreibt etwas, das systemd verwaltet, etwa einen Dienst, einen Timer oder einen Mount.",
+      "en": "systemd starts and supervises services on many Linux systems. A unit describes something it manages, such as a service, timer or mount.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "systemd.unit · freedesktop.org",
+          "url": "https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html"
+        }
+      ]
+    },
+    {
+      "id": "linux-ssh",
+      "exactOnly": true,
+      "queries": [
+        "Was ist SSH?",
+        "Was bedeutet SSH?",
+        "Wofür nutzt man SSH?",
+        "What is SSH?",
+        "What does SSH mean?",
+        "What is SSH used for?"
+      ],
+      "de": "SSH steht für Secure Shell. Es stellt eine verschlüsselte Verbindung zu einem anderen Rechner her, etwa um dort ein Terminal zu öffnen.",
+      "en": "SSH stands for Secure Shell. It opens an encrypted connection to another computer, for example to use a remote terminal.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Ssh keys linux server",
+          "url": "/blog/ssh-keys-linux-server/"
+        }
+      ]
+    },
+    {
+      "id": "linux-ssh-key",
+      "exactOnly": true,
+      "queries": [
+        "Was ist ein SSH-Schlüssel?",
+        "Wie funktioniert ein SSH-Key?",
+        "Wofür brauche ich den öffentlichen SSH-Schlüssel?",
+        "What is an SSH key?",
+        "How does an SSH key work?",
+        "What is the public SSH key for?"
+      ],
+      "de": "Ein SSH-Schlüsselpaar besteht aus einem öffentlichen und einem privaten Schlüssel. Der öffentliche kann auf den Server, während der private bei dir bleibt. So weist der Client nach, dass er den passenden privaten Schlüssel besitzt.",
+      "en": "An SSH key pair has a public key and a private key. The public key can go on the server and the private one stays with you. The client proves it holds the matching private key.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Ssh keys linux server",
+          "url": "/blog/ssh-keys-linux-server/"
+        }
+      ]
+    },
+    {
+      "id": "linux-uuid",
+      "exactOnly": true,
+      "queries": [
+        "Was ist eine UUID bei Linux-Laufwerken?",
+        "Was ist die UUID einer Partition?",
+        "Warum steht UUID in fstab?",
+        "What is a disk UUID on Linux?",
+        "What is a partition UUID?",
+        "Why does fstab use UUIDs?"
+      ],
+      "de": "Eine UUID identifiziert zum Beispiel ein Dateisystem. Damit kann Linux es in der fstab referenzieren, auch wenn sich der Gerätename wie /dev/sda ändert.",
+      "en": "A UUID identifies something such as a file system. Linux can refer to it in fstab even if the device name, such as /dev/sda, changes.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux drives uuid mount permissions",
+          "url": "/blog/linux-drives-uuid-mount-permissions/"
+        }
+      ]
+    },
+    {
+      "id": "linux-mount",
+      "exactOnly": true,
+      "queries": [
+        "Was bedeutet mounten unter Linux?",
+        "Was ist ein Mountpoint?",
+        "Was ist ein Einhängepunkt?",
+        "What does mounting mean on Linux?",
+        "What is a mount point?",
+        "What does mount mean on Linux?"
+      ],
+      "de": "Beim Mounten wird ein Dateisystem an einem Verzeichnis in den vorhandenen Verzeichnisbaum eingebunden. Dieses Verzeichnis heißt Mountpoint oder Einhängepunkt.",
+      "en": "Mounting attaches a file system to a directory in the existing directory tree. That directory is the mount point.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux drives uuid mount permissions",
+          "url": "/blog/linux-drives-uuid-mount-permissions/"
+        }
+      ]
+    },
+    {
+      "id": "linux-dualboot",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Dual Boot?",
+        "Kann Linux neben Windows laufen?",
+        "Kann ich Windows und Linux parallel installieren?",
+        "What is dual boot?",
+        "Can Linux run alongside Windows?",
+        "Can I install Linux alongside Windows?"
+      ],
+      "de": "Bei Dual Boot sind zwei Betriebssysteme installiert. Beim Einschalten wählst du aus, welches startet. Die Anleitung zeigt, wie du den Einstieg mit Windows und Linux planst.",
+      "en": "In a dual-boot setup, two operating systems are installed. When you turn the computer on, you choose which one starts. The guide walks through planning it with Windows and Linux.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux neben windows 11 installieren",
+          "url": "/de/blog/linux-neben-windows-11-installieren/"
+        },
+        {
+          "label": "Linux windows dual boot guide",
+          "url": "/blog/linux-windows-dual-boot-guide/"
+        }
+      ]
+    },
+    {
+      "id": "linux-vm",
+      "exactOnly": true,
+      "queries": [
+        "Was ist eine virtuelle Maschine?",
+        "Was bedeutet VM?",
+        "Wie kann ich Linux in einer VM ausprobieren?",
+        "What is a virtual machine?",
+        "What does VM stand for?",
+        "Can I try Linux in a virtual machine?"
+      ],
+      "de": "Eine virtuelle Maschine stellt einem Gastbetriebssystem virtuelle Hardware bereit. So kannst du Linux ausprobieren, während dein Hauptsystem weiterläuft.",
+      "en": "A virtual machine provides virtual hardware to a guest operating system. You can try Linux while your main system stays running.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux virtual machine kvm virt manager",
+          "url": "/blog/linux-virtual-machine-kvm-virt-manager/"
+        }
+      ]
+    },
+    {
+      "id": "linux-proton",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Proton bei Steam?",
+        "Wie hilft Proton beim Linux-Gaming?",
+        "Was macht Steam Proton?",
+        "What is Steam Proton?",
+        "How does Proton help with Linux gaming?",
+        "What does Steam Proton do?"
+      ],
+      "de": "Proton ist Valves Kompatibilitätsschicht für Windows-Spiele unter Linux. Sie baut unter anderem auf Wine auf. Ob ein Spiel läuft, hängt auch vom jeweiligen Spiel und seinem Anti-Cheat ab.",
+      "en": "Proton is Valve’s compatibility layer for running Windows games on Linux. It builds on Wine, among other projects. Compatibility also depends on the game and its anti-cheat.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux gaming steam proton lutris",
+          "url": "/blog/linux-gaming-steam-proton-lutris/"
+        }
+      ],
+      "short": {
+        "de": "Proton hilft Steam, Windows-Spiele unter Linux zu starten. Ob es klappt, hängt vom Spiel ab.",
+        "en": "Proton helps Steam run Windows games on Linux. Whether it works depends on the game."
+      }
+    },
+    {
+      "id": "linux-wine",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Wine unter Linux?",
+        "Was ist ein Wine Prefix?",
+        "Wofür braucht man einen Wine-Prefix?",
+        "What is Wine on Linux?",
+        "What is a Wine prefix?",
+        "What is a Wine prefix for?"
+      ],
+      "de": "Wine setzt Windows-Schnittstellen für Programme auf anderen Systemen um. Ein Prefix hält die jeweilige Windows-Umgebung mit ihren Einstellungen und Dateien getrennt.",
+      "en": "Wine implements Windows interfaces for applications on other systems. A prefix keeps one Windows-style environment and its settings and files separate.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wine prefix linux games",
+          "url": "/blog/wine-prefix-linux-games/"
+        }
+      ]
+    },
+    {
+      "id": "linux-lutris",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Lutris?",
+        "Wofür ist Lutris?",
+        "Ist Lutris ein Linux-Spielelauncher?",
+        "What is Lutris?",
+        "What is Lutris for?",
+        "Is Lutris a Linux game launcher?"
+      ],
+      "de": "Lutris ist ein Spielemanager für Linux. Er kann unterschiedliche Installationsquellen und Laufzeitumgebungen zusammenführen, zum Beispiel für Spiele, die über Wine laufen.",
+      "en": "Lutris is a game manager for Linux. It can bring different installation sources and runtimes together, for example for games running through Wine.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Linux gaming steam proton lutris",
+          "url": "/blog/linux-gaming-steam-proton-lutris/"
+        }
+      ]
+    },
+    {
+      "id": "linux-dotfiles",
+      "exactOnly": true,
+      "queries": [
+        "Was sind Dotfiles?",
+        "Warum heißen sie Dotfiles?",
+        "Wo finde ich meine Linux-Konfiguration?",
+        "What are dotfiles?",
+        "Why are they called dotfiles?",
+        "Where are Linux configuration files stored?"
+      ],
+      "de": "Dotfiles sind Dateien oder Verzeichnisse mit einem Punkt am Anfang des Namens. Viele Programme legen persönliche Einstellungen etwa im Home-Verzeichnis oder unter ~/.config ab.",
+      "en": "Dotfiles are files or directories whose names begin with a dot. Many programs store personal settings in your home directory or under ~/.config.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Backup linux configuration",
+          "url": "/blog/backup-linux-configuration/"
+        }
+      ]
+    },
+    {
+      "id": "linux-rollback",
+      "exactOnly": true,
+      "queries": [
+        "Was ist ein NixOS-Rollback?",
+        "Was ist eine NixOS-Generation?",
+        "Wozu sind NixOS-Generationen da?",
+        "What is a NixOS rollback?",
+        "What is a NixOS generation?",
+        "What are NixOS generations for?"
+      ],
+      "de": "Beim Umbau der Systemkonfiguration kann NixOS eine neue Generation anlegen. Ist eine frühere Generation noch vorhanden, kannst du sie bei Bedarf wieder auswählen.",
+      "en": "NixOS can create a new generation when you rebuild the system configuration. If an earlier generation is still available, you can select it again.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Nixos generations rollback",
+          "url": "/blog/nixos-generations-rollback/"
+        }
+      ]
+    },
+    {
+      "id": "net-dns",
+      "exactOnly": true,
+      "queries": [
+        "Was ist DNS?",
+        "Was bedeutet DNS?",
+        "Wofür ist DNS da?",
+        "What is DNS?",
+        "What does DNS stand for?",
+        "What is DNS for?"
+      ],
+      "de": "DNS steht für Domain Name System. Es liefert Informationen zu Domainnamen, etwa die IP-Adressen, unter denen ein Dienst erreichbar ist.",
+      "en": "DNS stands for Domain Name System. It returns information about domain names, such as the IP addresses where a service can be reached.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "What happens when you open a website",
+          "url": "/blog/what-happens-when-you-open-a-website/"
+        }
+      ],
+      "short": {
+        "de": "DNS hilft deinem Browser herauszufinden, welche Adresse zu einem Namen wie dennishilk.com gehört.",
+        "en": "DNS helps your browser find the address associated with a name like dennishilk.com."
+      }
+    },
+    {
+      "id": "net-https",
+      "exactOnly": true,
+      "queries": [
+        "Was ist HTTPS?",
+        "Was ist der Unterschied zwischen HTTP und HTTPS?",
+        "Was bedeutet HTTPS?",
+        "What is HTTPS?",
+        "What is the difference between HTTP and HTTPS?",
+        "What does HTTPS mean?"
+      ],
+      "de": "HTTPS ist HTTP über eine mit TLS abgesicherte Verbindung. TLS schützt Daten unterwegs und ermöglicht dem Browser, die Identität des Servers anhand seines Zertifikats zu prüfen.",
+      "en": "HTTPS is HTTP over a TLS-secured connection. TLS protects data in transit and lets the browser check the server’s identity using its certificate.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "What happens when you open a website",
+          "url": "/blog/what-happens-when-you-open-a-website/"
+        }
+      ],
+      "short": {
+        "de": "HTTPS verschlüsselt die Verbindung zwischen deinem Browser und der Website.",
+        "en": "HTTPS encrypts the connection between your browser and the website."
+      }
+    },
+    {
+      "id": "net-ip",
+      "exactOnly": true,
+      "queries": [
+        "Was ist eine IP-Adresse?",
+        "Wozu ist eine IP-Adresse da?",
+        "Was bedeutet IP-Adresse?",
+        "What is an IP address?",
+        "What is an IP address for?",
+        "What does IP address mean?"
+      ],
+      "de": "Eine IP-Adresse dient als Adresse für den Transport von Datenpaketen in IP-Netzen. IPv4 und IPv6 haben unterschiedliche Adressformate und unterschiedlich große Adressräume.",
+      "en": "An IP address is used to deliver packets across IP networks. IPv4 and IPv6 use different address formats and different-sized address spaces.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "What happens when you open a website",
+          "url": "/blog/what-happens-when-you-open-a-website/"
+        }
+      ]
+    },
+    {
+      "id": "net-traceroute",
+      "exactOnly": true,
+      "queries": [
+        "Was ist Traceroute?",
+        "Was zeigt traceroute?",
+        "Wie zeigt Traceroute die Route?",
+        "What is traceroute?",
+        "What does traceroute show?",
+        "How does traceroute show the path?"
+      ],
+      "de": "Traceroute versucht, Zwischenstationen auf einem Netzwerkpfad sichtbar zu machen. Manche Router antworten nicht auf solche Messpakete. Ein fehlender Eintrag allein sagt wenig darüber aus, ob die Verbindung funktioniert.",
+      "en": "Traceroute tries to show intermediate hops along a network path. Some routers do not answer its probes. A missing hop alone tells you little about whether the connection works.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Traceroute to nowhere",
+          "url": "/world-observer/traceroute-to-nowhere.html"
+        }
+      ]
+    },
+    {
+      "id": "net-fediverse",
+      "exactOnly": true,
+      "queries": [
+        "Was ist das Fediverse?",
+        "Was bedeutet Fediverse?",
+        "Wie funktioniert das Fediverse?",
+        "What is the Fediverse?",
+        "What does Fediverse mean?",
+        "How does the Fediverse work?"
+      ],
+      "de": "Das Fediverse verbindet eigenständig betriebene soziale Dienste. Bei kompatiblen Diensten kannst du über Servergrenzen hinweg anderen Accounts folgen und Beiträge sehen.",
+      "en": "The Fediverse links independently operated social services. Compatible services let you follow accounts and see posts across server boundaries.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Nebuverse self hosting gotosocial",
+          "url": "/blog/nebuverse-self-hosting-gotosocial/"
+        }
+      ]
+    },
+    {
+      "id": "net-gotosocial",
+      "exactOnly": true,
+      "queries": [
+        "Was ist GoToSocial?",
+        "Was macht GoToSocial?",
+        "Ist GoToSocial ein Fediverse-Server?",
+        "What is GoToSocial?",
+        "What does GoToSocial do?",
+        "Is GoToSocial a Fediverse server?"
+      ],
+      "de": "GoToSocial ist Serversoftware fürs Fediverse. Dennis nutzt sie für seine eigene NEBUVERSE-Instanz.",
+      "en": "GoToSocial is server software for the Fediverse. Dennis uses it to run his NEBUVERSE instance.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Nebuverse self hosting gotosocial",
+          "url": "/blog/nebuverse-self-hosting-gotosocial/"
+        }
+      ]
+    },
+    {
+      "id": "local-blumenreich",
+      "exactOnly": true,
+      "queries": [
+        "Was ist das Blumenreich?",
+        "Was ist die Blumenhalle in Wiesmoor?",
+        "Gibt es einen Gartenpark in Wiesmoor?",
+        "What is the Blumenreich?",
+        "What is the Wiesmoor flower hall?",
+        "Is there a garden park in Wiesmoor?"
+      ],
+      "de": "Zum Blumenreich in Wiesmoor gehören die Blumenhalle und der Gartenpark. Die Touristik verlinkt dort auch die Besuchsinformationen.",
+      "en": "Wiesmoor’s Blumenreich includes an indoor flower hall and a garden park. The tourism office also links to visitor information.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor Touristik · Sehenswürdigkeiten",
+          "url": "https://www.tourismus-wiesmoor.de/sehenswuerdigkeiten"
+        }
+      ]
+    },
+    {
+      "id": "local-museum",
+      "exactOnly": true,
+      "queries": [
+        "Was ist das Torf- und Siedlungsmuseum?",
+        "Gibt es ein Torfmuseum in Wiesmoor?",
+        "Was zeigt das Torfmuseum Wiesmoor?",
+        "What is the Peat and Settlement Museum?",
+        "Is there a peat museum in Wiesmoor?",
+        "What does the Wiesmoor peat museum show?"
+      ],
+      "de": "Im Torf- und Siedlungsmuseum in Wiesmoor geht es um das frühere Leben und Arbeiten im Moor. Das Museumsdorf liegt im Landschaftspark.",
+      "en": "Wiesmoor’s Peat and Settlement Museum is about earlier life and work in the moorlands. The museum village is in the landscape park.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor Touristik · Torf- und Siedlungsmuseum",
+          "url": "https://www.tourismus-wiesmoor.de/sehenswuerdigkeiten/torf-und-siedlungsmuseum"
+        }
+      ]
+    },
+    {
+      "id": "local-walk",
+      "exactOnly": true,
+      "queries": [
+        "Wo kann man in Wiesmoor spazieren gehen?",
+        "Gibt es einen Rundweg in Wiesmoor?",
+        "Wo ist der Landschaftspark Wiesmoor?",
+        "Where can I go for a walk in Wiesmoor?",
+        "Is there a circular walk in Wiesmoor?",
+        "Where is the Wiesmoor landscape park?"
+      ],
+      "de": "Die Wiesmoor Touristik beschreibt einen rund vier Kilometer langen Rundweg durch den Landschaftspark. Er führt vom Blumenreich in Richtung Torf- und Siedlungsmuseum.",
+      "en": "Wiesmoor’s tourism office describes a circular walk of around four kilometres through the landscape park. It leads from the Blumenreich toward the Peat and Settlement Museum.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor Touristik · Landschaftspark",
+          "url": "https://www.tourismus-wiesmoor.de/wiesmoor-erleben/aktivitaeten/wandern/wandertour-2"
+        }
+      ]
+    },
+    {
+      "id": "local-lorenbahn",
+      "exactOnly": true,
+      "queries": [
+        "Was ist die Lorenbahn in Wiesmoor?",
+        "Gibt es in Wiesmoor eine Lorenbahn?",
+        "Was verbindet die Wiesmoorer Lorenbahn?",
+        "What is the Lorenbahn in Wiesmoor?",
+        "Is there a narrow-gauge train in Wiesmoor?",
+        "What does Wiesmoor’s Lorenbahn connect?"
+      ],
+      "de": "Die historische Lorenbahn verbindet das Blumenreich und das Torf- und Siedlungsmuseum. Informationen zur Fahrt gibt es bei der Wiesmoor Touristik.",
+      "en": "The historic narrow-gauge Lorenbahn connects the Blumenreich and the Peat and Settlement Museum. Wiesmoor’s tourism office has details about the ride.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor Touristik · Torf- und Siedlungsmuseum",
+          "url": "https://www.tourismus-wiesmoor.de/sehenswuerdigkeiten/torf-und-siedlungsmuseum"
+        }
+      ]
+    },
+    {
+      "id": "local-history",
+      "exactOnly": true,
+      "queries": [
+        "Warum heißt Wiesmoor Blumenstadt?",
+        "Warum ist Wiesmoor für Blumen bekannt?",
+        "Was haben Blumen mit Wiesmoor zu tun?",
+        "Why is Wiesmoor called a flower town?",
+        "Why is Wiesmoor known for flowers?",
+        "What do flowers have to do with Wiesmoor?"
+      ],
+      "de": "Der Gartenbau ist Teil von Wiesmoors Geschichte. Heute begegnet man dem Thema unter anderem in der Blumenhalle und im Gartenpark.",
+      "en": "Horticulture is part of Wiesmoor’s history. Today the flower hall and garden park are two places where you can see that connection.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor",
+          "url": "/world-observer/wiesmoor.html"
+        },
+        {
+          "label": "Wiesmoor Touristik · Sehenswürdigkeiten",
+          "url": "https://www.tourismus-wiesmoor.de/sehenswuerdigkeiten"
+        }
+      ]
+    },
+    {
+      "id": "local-timezone",
+      "exactOnly": true,
+      "queries": [
+        "Welche Zeitzone hat Wiesmoor?",
+        "In welcher Zeitzone liegt Ostfriesland?",
+        "Welche Zeitzone nutzt der Wiesmoor Observer?",
+        "What time zone is Wiesmoor in?",
+        "What time zone is East Frisia in?",
+        "What time zone does the Wiesmoor Observer use?"
+      ],
+      "de": "Wiesmoor liegt in der Zeitzone Europe/Berlin. Im Winter gilt MEZ, im Sommer MESZ.",
+      "en": "Wiesmoor is in the Europe/Berlin time zone. It uses CET in winter and CEST in summer.",
+      "checked": "2026-11-13",
+      "status": "editorial-checked",
+      "sources": [
+        {
+          "label": "Wiesmoor weather",
+          "url": "/world-observer/wiesmoor-weather.html"
         }
       ]
     }

@@ -12,13 +12,16 @@ npm run test:seo
 
 ## How replies work
 
-- `knowledge/*.json` holds 100 bilingual original jokes, 20 fallbacks, 15
+- `knowledge/*.json` holds 100 bilingual original jokes, 20 fallbacks, 89
   factual entries, 6 personality entries, two dictionary words and one phrase.
 - `engine.mjs` resolves known topics, including small talk and simple follow-up
   joke requests. Fixed facts can use `exactOnly` so current or more specific
   questions stay eligible for the model and web search. Keep stable IDs,
-  source provenance and both languages. `small-talk.mjs` contains the small
-  DE/EN starter set. `conversation.mjs` selects prior turns for follow-ups.
+  source provenance and both languages. `small-talk.mjs` contains DE/EN
+  dialogue replies across 66 intents. [Utterance sources](knowledge/SOURCES.md) documents the
+  selected corpus inputs. `conversation.mjs` selects prior turns for follow-ups.
+  Supported common requests can also repeat the last reply, explain a curated
+  topic more simply, or display the date and time in Wiesmoor.
 - `weather.mjs` reads the existing same-origin World Observer export for
   Wiesmoor. It validates timestamps and separates current weather from forecasts.
 - `words.mjs` independently loads the locally rotating Platt word.

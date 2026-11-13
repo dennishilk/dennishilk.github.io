@@ -26,9 +26,9 @@ export function followUpKind(text) {
   return null;
 }
 
-export function relevantHistory(text, history) {
+export function relevantHistory(text, history, followUp=false) {
   const refersBack = /\b(?:dazu|davon|darauf|vorherige antwort|letzte antwort|das noch mal|your (?:last|previous) (?:answer|reply)|you just said|an example of (?:that|it)|expand on (?:that|it))\b/iu.test(text);
-  if ((!followUpKind(text) && !refersBack) || !history.length) return [];
+  if ((!followUp && !followUpKind(text) && !refersBack) || !history.length) return [];
   const latest = history.slice(-2);
   if (!followUpKind(latest[0].content)) return latest;
   for (let index = history.length - 4; index >= 0; index -= 2) {

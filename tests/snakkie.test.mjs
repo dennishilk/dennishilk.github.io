@@ -33,7 +33,7 @@ test('content has 100 distinct bilingual original jokes, 20 fallbacks and source
  assert.equal(data['fallback-responses'].length,20);assert.equal(data['platt-words'].length,2);assert.equal(data['platt-phrases'].length,1);
  for(const entry of [...data.jokes,...data['fallback-responses'],...data.facts,...data.personality]){assert.ok(entry.id);assert.ok(entry.de);assert.ok(entry.en);}
  for(const w of [...data['platt-words'],...data['platt-phrases']]){assert.equal(new URL(w.source).hostname,'www.platt-wb.de');assert.ok(w.checked);assert.match(w.status,/Wiesmoor-speaker-review-pending/);}
- for(const fact of data.facts){assert.ok(fact.sources.length);for(const s of fact.sources)if(s.url.startsWith('/'))assert.ok(existsSync(new URL(s.url.slice(1)+(s.url.endsWith('/')?'index.html':''),root)),s.url);}
+ for(const fact of data.facts){assert.ok(fact.sources.length);for(const s of fact.sources)if(s.url.startsWith('/'))assert.ok(existsSync(new URL(s.url.split('#')[0].slice(1)+(s.url.endsWith('/')?'index.html':''),root)),s.url);}
 });
 
 test('all requested German inputs resolve appropriately, including follow-up and honest unknown',async()=>{
@@ -61,14 +61,14 @@ test('small talk and the new local facts resolve with natural bilingual copy', a
  }
  for(const question of ['Was hat Dennis Hilk gestern veröffentlicht?', 'Was macht Dennis Hilk mit Debian?',
   'Welche Sehenswürdigkeiten in Wiesmoor haben heute offen?', 'What is there to see in Leer?',
-  'Wie geht es dir bei der Fehlersuche?', 'Mir geht es nicht gut']){
+  'Wie geht es dir bei der Fehlersuche?']){
   assert.equal((await ai.reply(question)).kind,'unknown',question);
  }
 });
 
-test('alpha small talk uses exact bilingual replies and leaves substantive questions open', async () => {
+test('small talk uses exact bilingual replies and leaves substantive questions open', async () => {
  const ai=engine();
- assert.ok(SMALL_TALK.length>=25&&SMALL_TALK.length<=40);
+ assert.ok(SMALL_TALK.length>=60);
  for (const [id, aliases] of SMALL_TALK) {
   for (const alias of aliases) assert.equal((await ai.reply(alias)).id,id,alias);
  }
@@ -85,6 +85,70 @@ test('alpha small talk uses exact bilingual replies and leaves substantive quest
  assert.equal((await ai.reply('Hello, can you explain how to install Debian?','en')).kind,'unknown');
  assert.equal((await ai.reply('Erkläre mir kurz den Unterschied zwischen Arch Linux und Debian.')).id,'arch-debian');
  assert.equal((await ai.reply('Was ist neu bei Arch Linux und Debian heute?')).kind,'unknown');
+});
+
+test('every reviewed corpus phrase and knowledge alias reaches its intended local response', async () => {
+ const ai=engine();
+ const sources=new Set();
+ const clockReply={'clock-time':'time','clock-date':'date','clock-both':'both'};
+ for(const [route, groups] of Object.entries(data.utterances)){
+  for(const [source, phrases] of Object.entries(groups)){
+   sources.add(source);
+   for(const phrase of phrases){
+    ai.reset();
+    const reply=await ai.reply(phrase);
+    if(route==='joke')assert.equal(reply.kind,'joke',phrase);
+    else if(route.startsWith('weather-'))assert.equal(reply.text,'fixture-'+route.slice(8),phrase);
+    else if(route in clockReply)assert.equal(reply.id,clockReply[route],phrase);
+    else if(['repeat','rephrase'].includes(route))assert.equal(reply.kind,'clarification',phrase);
+    else assert.equal(reply.id,route,phrase);
+   }
+  }
+ }
+ assert.deepEqual([...sources].sort(),['chatterbot','massive','telekom']);
+ for(const entry of [...data.facts,...data.personality]){
+  for(const phrase of entry.queries){
+   ai.reset();
+   assert.equal((await ai.reply(phrase)).id,entry.id,phrase);
+  }
+ }
+});
+
+test('short replies use immediate context and repeat or simplify locally where possible', async () => {
+ const ai=engine();
+ assert.equal((await ai.reply('mir auch')).kind,'clarification');
+ assert.equal((await ai.reply('wie gehts dir')).id,'how-are-you');
+ assert.equal((await ai.reply('mir auch')).id,'doing-well');
+ assert.equal((await ai.reply('Mir geht es nicht gut')).id,'not-good');
+ assert.equal((await ai.reply('How are you?','en')).id,'how-are-you');
+ assert.match((await ai.reply('same here','en')).text,/Glad to hear/);
+ assert.equal((await ai.reply('Gute Nacht')).id,'good-night');
+ assert.equal((await ai.reply('mir auch')).kind,'clarification');
+ const original=await ai.reply('Was ist DNS?');
+ const simpler=await ai.reply('Erklär es einfacher.');
+ assert.equal(simpler.id,original.id);
+ assert.ok(simpler.text.length<original.text.length);
+ assert.deepEqual(simpler.sources,original.sources);
+ assert.equal((await ai.reply('Kurz bitte.')).text,simpler.text);
+ const repeated=await ai.reply('Bitte sagen Sie mir das noch einmal.');
+ assert.equal(repeated.text,simpler.text);
+ assert.deepEqual(repeated.sources,original.sources);
+ assert.equal((await ai.reply('Erklär es ausführlicher.','de',{hasContext:true})).kind,'unknown');
+ ai.rememberModel({text:'Fixture reply.',sources:original.sources},'en');
+ assert.equal((await ai.reply('Say that again.','en')).text,'Fixture reply.');
+ assert.equal((await ai.reply('Anderes Thema.')).clearContext,true);
+ assert.equal((await ai.reply('Wiederhol das.')).kind,'clarification');
+ ai.reset();
+ assert.equal((await ai.reply('mir auch')).kind,'clarification');
+});
+
+test('the clock formats Wiesmoor time locally and leaves other time zones alone', async () => {
+ const ai=createCompanion(data,{now:()=>now});
+ assert.match((await ai.reply('Wie spät ist es in Wiesmoor?')).text,/Wiesmoor.*19:30 Uhr/);
+ assert.match((await ai.reply('What is the time in Wiesmoor?','en')).text,/Wiesmoor.*19:30/);
+ assert.match((await ai.reply('Welches Datum ist heute?')).text,/30. Oktober 2026/);
+ assert.equal((await ai.reply('What time is it in Tokyo?','en')).kind,'unknown');
+ assert.equal((await ai.reply('Wie spät ist es in Berlin und New York?')).kind,'unknown');
 });
 
 test('follow-ups use the last topic and reset to a short clarification', async () => {

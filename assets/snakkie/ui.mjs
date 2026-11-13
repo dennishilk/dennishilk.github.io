@@ -1,5 +1,5 @@
-import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=6';
-import { relevantHistory } from './conversation.mjs';
+import { createCompanion, loadKnowledge, shouldSend } from './engine.mjs?v=7';
+import { relevantHistory } from './conversation.mjs?v=7';
 import { loadWords, wordAt, dailyWordIndex } from './words.mjs?v=3';
 
 const de = document.documentElement.lang === 'de';
@@ -116,11 +116,11 @@ function remember(question, answer) {
   ].slice(-6);
 }
 
-async function aiReply(text, replyLanguage, signal) {
+async function aiReply(text, replyLanguage, signal, followUp) {
   const response = await fetch('/api/snakkie/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ message: text, language: replyLanguage, history: relevantHistory(text, history) }),
+    body: JSON.stringify({ message: text, language: replyLanguage, history: relevantHistory(text, history, followUp) }),
     signal: AbortSignal.any([signal, AbortSignal.timeout(57_000)])
   });
   if (response.status === 429) return { error: 'rate_limit' };
@@ -174,19 +174,23 @@ form.addEventListener('submit', async event => {
     if (local?.language) language.value = local.language;
     if (local && local.kind !== 'unknown') {
       message('assistant', local.text, local.sources);
+      if (local.clearContext) history = [];
       if (!local.social) remember(local.modelMessage || text, local.text);
     } else {
       waitNotice = setTimeout(() => {
         if (request === current) status.textContent = t('Still working on your reply …', 'Ich bin noch dabei …');
       }, 8000);
       const modelMessage = local?.modelMessage || text;
-      const reply = await aiReply(modelMessage, language.value, current.signal);
+      const reply = await aiReply(modelMessage, language.value, current.signal, local?.followUp);
       if (request !== current) return;
       if (reply.error) {
         message('assistant', failureNote(reply.error));
       } else {
         message('assistant', reply.text, reply.sources, searchNote(reply.search));
-        if (!['unverified', 'empty', 'unavailable', 'skipped'].includes(reply.search)) remember(modelMessage, reply.text);
+        if (!['unverified', 'empty', 'unavailable', 'skipped'].includes(reply.search)) {
+          engine?.rememberModel(reply, language.value);
+          remember(modelMessage, reply.text);
+        }
       }
     }
   } catch (error) {

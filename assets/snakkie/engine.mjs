@@ -1,13 +1,14 @@
 // Curated retrieval, not generation. All response text comes from reviewed records.
 import {createWeatherReader} from './weather.mjs?v=3';
-import {SMALL_TALK, TOPICAL_SMALL_TALK} from './small-talk.mjs';
+import {SMALL_TALK, TOPICAL_SMALL_TALK} from './small-talk.mjs?v=7';
 import {clarification,followUpKind} from './conversation.mjs';
-export const KNOWLEDGE_FILES=['facts','personality','jokes','fallback-responses','platt-words','platt-phrases'];
+export const KNOWLEDGE_FILES=['facts','personality','jokes','fallback-responses','platt-words','platt-phrases','utterances'];
 export async function loadKnowledge(fetcher=fetch) {
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
   try {
   const responses=await Promise.all(KNOWLEDGE_FILES.map(async name=>{
-    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'||name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
+    const r=await fetcher(new URL(`./knowledge/${name}.json${name==='facts'||name==='utterances'?'?v=7':name==='personality'?'?v=3':''}`,import.meta.url),{signal:controller.signal});
+    if (name === 'utterances' && !r.ok) return [name, {}];
     if(!r.ok)throw new Error('KNOWLEDGE_UNAVAILABLE');
     return [name,(await r.json()).entries];
   }));
@@ -15,8 +16,19 @@ export async function loadKnowledge(fetcher=fetch) {
   }finally{clearTimeout(timer);controller.abort();}
 }
 export function normalize(text) {return String(text).toLowerCase().replaceAll('ß','ss').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ae/g,'a').replace(/oe/g,'o').replace(/ue/g,'u').replace(/[^a-z0-9]+/g,' ').trim();}
-const smallTalk = new Map(SMALL_TALK.flatMap(([id, aliases, replies]) =>
-  aliases.map(alias => [normalize(alias), {id, replies}])));
+const smallTalk = new Map(SMALL_TALK.map(([id, phrases, replies]) => [id, {phrases, replies}]));
+const contextEcho = new Set(['mir auch','bei mir auch','mir gehts auch','mir geht s auch','jo auch','jo auch gut','me too','same here','same','likewise','i am too','i m too']);
+const rephrasePhrases = new Set(['kurz bitte','fass dich kurz','kurz und knapp','keep it short','short answer please','be brief']);
+const repeatPhrases = new Set(['wiederhol das','wiederhole das','kannst du das wiederholen','sag das nochmal','sag das noch mal','was hast du gerade gesagt','repeat that','can you repeat that','say that again','what did you just say']);
+const clockKinds = new Map([['clock-time','time'],['clock-date','date'],['clock-both','both']]);
+const clockPhrases = new Map(Object.entries({
+  'wie spät ist es in wiesmoor':'time', 'uhrzeit in wiesmoor':'time',
+  'wie spät ist es bei dir':'time', 'was ist die uhrzeit in wiesmoor':'time',
+  'welches datum haben wir heute':'date', 'datum und uhrzeit':'both',
+  'what time is it in wiesmoor':'time', 'what is the time in wiesmoor':'time',
+  'what time is it where you are':'time', 'date and time':'both', 'today s date':'date'
+}).map(([text, kind]) => [normalize(text),kind]));
+const weatherKinds = new Map([['weather-current','current'],['weather-rain','rain'],['weather-tomorrow','tomorrow']]);
 const greetingPrefix = /^(?:moin|hallo|hi|hello|hey)(?: snakkie)? /;
 const languageRequest = /(?:^|[.!?,;:]\s*|\s+(?=(?:bitte|please)\s))(?:bitte\s+|please\s+)?(?:antworte|sprich|answer|reply|switch)(?:\s+(?:bitte|please))?\s+(?:auf|in|to)\s+(englisch|deutsch|english|german)\b\s*[.!?,;:]*/giu;
 
@@ -31,11 +43,13 @@ class Rotation {
   pick(key,items){if(!items.length)return null;let bag=this.bags.get(key);if(!bag?.length){bag=[...items];for(let i=bag.length-1;i>0;i--){const j=Math.floor(this.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]];}if(bag.length>1&&bag.at(-1).id===this.last.get(key))[bag[0],bag[bag.length-1]]=[bag.at(-1),bag[0]];this.bags.set(key,bag);}const item=bag.pop();this.last.set(key,item.id);return item;}
   reset(){this.bags.clear();this.last.clear();}
 }
-export function createCompanion(data,{random=Math.random,weather=createWeatherReader()}={}) {
+export function createCompanion(data,{random=Math.random,weather=createWeatherReader(),now=Date.now}={}) {
   const records=[...(data.facts||[]),...(data.personality||[])];
   const words=(data['platt-words']||[]).map(w=>({id:'word-'+w.id,anchors:[[w.word]],queries:[`was bedeutet ${w.word}`,`what does ${w.word} mean`,`${w.word} auf deutsch englisch`,w.word],de:`${w.word}: ${w.de}. Englisch: ${w.en}.\nBeispiel: ${w.example} — ${w.exampleDe}\n${w.noteDe}`,en:`${w.word}: ${w.en}. German: ${w.de}.\nExample: ${w.example} — ${w.exampleEn}\n${w.noteEn}`,sources:[{label:w.sourceLabel,url:w.source}]}));
   const phrases=(data['platt-phrases']||[]).map(p=>({id:'phrase-'+p.id,anchors:[tokens(p.phrase)],queries:[p.phrase],de:`${p.phrase} — ${p.de}. Englisch: ${p.en}.\n${p.noteDe}`,en:`${p.phrase} — ${p.en}. German: ${p.de}.\n${p.noteEn}`,sources:[{label:p.sourceLabel,url:p.source}]}));
-  const index=[...records,...words,...phrases].map(r=>({...r,queryTokens:r.queries.map(tokens),groups:r.anchors.map(group=>group.flatMap(tokens))}));
+  const index=[...records,...words,...phrases].map(record => record.exactOnly ? record : {
+    ...record, queryTokens:record.queries.map(tokens), groups:record.anchors.map(group=>group.flatMap(tokens))
+  });
   const exactIndex = new Map();
   for (const record of index) {
     for (const alias of record.queries.map(normalize)) {
@@ -44,8 +58,22 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
     }
   }
   const fuzzyIndex=index.filter(record=>!record.exactOnly);
-  const vocabulary=new Set([...index.flatMap(r=>r.queryTokens.flat()),...Object.keys(aliases).map(k=>aliases[k]),'joke','weather','temperature','rain','wind','wiesmoor','morgen','tomorrow','forecast','vorhersage']);
-  const rotation=new Rotation(random);let lastIntent='';
+  const routes = new Map();
+  for (const [id, record] of smallTalk) {
+    for (const phrase of record.phrases) routes.set(normalize(phrase), id);
+  }
+  for (const [id, sources] of Object.entries(data.utterances || {})) {
+    if (!smallTalk.has(id) && !weatherKinds.has(id) && !clockKinds.has(id) && !['joke','repeat','rephrase'].includes(id)) continue;
+    for (const phrase of Object.values(sources).flat()) {
+      const key = normalize(phrase);
+      if (!routes.has(key)) routes.set(key, id);
+    }
+  }
+  const vocabulary=new Set([...index.filter(r=>r.anchors).flatMap(r=>r.queries.flatMap(tokens)),...Object.keys(aliases).map(k=>aliases[k]),'joke','weather','temperature','rain','wind','wiesmoor','morgen','tomorrow','forecast','vorhersage']);
+  const rotation=new Rotation(random);
+  let lastIntent='';
+  let lastReply;
+  let lastTopic;
   function correct(q){return q.map(w=>{if(vocabulary.has(w))return w;const near=[...vocabulary].filter(v=>oneTypo(w,v));return near.length===1?near[0]:w;});}
   function search(q,raw){
     if (exactIndex.has(raw)) return exactIndex.get(raw);
@@ -60,7 +88,11 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
     return ranked[0];
   }
   return {
-    reset(){lastIntent='';rotation.reset();},
+    reset(){lastIntent='';lastReply=undefined;lastTopic=undefined;rotation.reset();},
+    rememberModel(reply, language) {
+      lastReply = {text:reply.text, sources:reply.sources || [], language};
+      lastTopic = undefined;
+    },
     async reply(input,language='de',{hasContext=false}={}){
       if(typeof input!=='string'||!input.trim())return null;
       if(input.length>800)return {kind:'limit',language,text:language==='de'?'Bitte kürze deine Nachricht auf höchstens 800 Zeichen.':'Please shorten your message to at most 800 characters.',sources:[]};
@@ -75,26 +107,80 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
       const languageChanged = cleaned !== input.trim();
       const query = normalize(cleaned);
       const t=(g,e)=>language==='de'?g:e;
-      const response=(kind,text,extra={})=>{lastIntent=extra.social ? extra.id : kind;return {kind,text,language,sources:[],...extra};};
+      const response = (kind, text, extra={}) => {
+        lastIntent = extra.social ? extra.id : kind;
+        const {topic, ...details} = extra;
+        const reply = {kind,text,language,sources:[],...details};
+        if (['unknown','serious','limit'].includes(kind) || extra.clearContext) {
+          lastReply = undefined;
+          lastTopic = undefined;
+        } else if (kind !== 'clarification' && kind !== 'repeat') {
+          lastReply = reply;
+          if (!extra.social) lastTopic = topic;
+        }
+        return reply;
+      };
       // Serious/urgent topics get a neutral boundary before humour, even if a joke is requested.
       if(/\b(notfall|emergency|suizid|suicide|selbstmord|umbringen|vergiftet|poisoned|brustschmerz|chest pain|atemnot|sterben|vergewaltigt|missbraucht|traurig|depressed|trauer|tot|stirbt|died|krebs|cancer|dringend|urgent|panik|gestorben|krank|schmerzen|arzt|hilfe hilfe)\b|suizidgedanken|selbstmordgedanken|panikattacke/.test(raw))return response('serious',t('Das klingt ernst. Ich bin ein kleines Wissensangebot und kann dir hier keine verlässliche persönliche Hilfe geben. Bitte wende dich an einen geeigneten Menschen oder Fachdienst; bei unmittelbarer Gefahr an den örtlichen Notruf. Hier mache ich keine Witze.','That sounds serious. I’m a small knowledge companion and cannot provide reliable personal help here. Please contact a suitable person or professional service; in immediate danger, contact local emergency services. No jokes here.'));
       if (!query && languageChanged) return response('small-talk', t('Klar, ich antworte auf Deutsch.', 'Sure, I’ll reply in English.'), {id:'language', social:true});
       const withoutGreeting = query.replace(greetingPrefix, '');
-      const social = smallTalk.get(query.replace(/ snakkie$/, '')) ||
-        smallTalk.get(withoutGreeting.replace(/ snakkie$/, ''));
-      if (social) {
-        const {id, replies:[german, english]} = social;
-        if (id === 'also-thanks' && lastIntent !== 'how-are-you' && lastIntent !== 'doing-well') {
-          return response('thanks', t('Gern geschehen!', 'You’re welcome!'), {id, social:true});
+      const route = routes.get(query) || routes.get(query.replace(/ snakkie$/, '')) ||
+        routes.get(withoutGreeting) || routes.get(withoutGreeting.replace(/ snakkie$/, ''));
+      const askedHow = lastIntent === 'how-are-you' || lastIntent === 'doing-well';
+      if (contextEcho.has(query)) {
+        if (askedHow) {
+          const [german, english] = smallTalk.get('doing-well').replies;
+          return response('small-talk', t(german,english), {id:'doing-well',social:true});
         }
-        const kind = id === 'greeting' || id === 'thanks' || id === 'bye' ? id : 'small-talk';
-        return response(kind, t(german, english), {id, social:!TOPICAL_SMALL_TALK.has(id)});
+        return response('clarification', clarification('reference',language), {social:true});
       }
-      const followUp = followUpKind(cleaned);
+      if (smallTalk.has(route)) {
+        const {replies:[german, english]} = smallTalk.get(route);
+        if (route === 'also-thanks' && !askedHow) {
+          return response('thanks', t('Gern geschehen!', 'You’re welcome!'), {id:route,social:true});
+        }
+        const kind = ['greeting','thanks','bye'].includes(route) ? route : 'small-talk';
+        return response(kind,t(german,english),{
+          id:route, social:!TOPICAL_SMALL_TALK.has(route), clearContext:route==='new-topic'||route==='no-need'
+        });
+      }
+      if (route === 'repeat' || repeatPhrases.has(query)) {
+        if (lastReply?.language === language) {
+          return response('repeat',lastReply.text,{sources:lastReply.sources,social:true});
+        }
+        return response('clarification',t('Was soll ich wiederholen?','What would you like me to repeat?'),{social:true});
+      }
+      const followUp = route === 'rephrase' || rephrasePhrases.has(query) ? 'rephrase' : followUpKind(cleaned);
       if (followUp) {
+        if (followUp === 'rephrase' && lastTopic?.short && !/(?:ausführlich|genauer|detail|elaborate|näher)/iu.test(cleaned)) {
+          const topic = lastTopic;
+          return response('knowledge',topic.short[language],{id:topic.id,sources:topic.sources,topic});
+        }
         if (!hasContext) return response('clarification', clarification(followUp, language), {social:true});
-        return response('unknown', '', {modelMessage:cleaned});
+        return response('unknown', '', {modelMessage:cleaned, followUp:true});
       }
+      const clock = clockKinds.get(route) || clockPhrases.get(query) || clockPhrases.get(withoutGreeting);
+      if (clock) {
+        const options = {timeZone:'Europe/Berlin'};
+        if (clock !== 'time') options.dateStyle = 'full';
+        if (clock !== 'date') options.timeStyle = 'short';
+        const localTime = new Intl.DateTimeFormat(t('de-DE','en-GB'),options).format(now());
+        const place = /\b(?:berlin|dresden|hamburg|koln|munchen)\b/.test(query) ? t('Deutschland','Germany') : 'Wiesmoor';
+        const clockText = clock === 'date' ? t(`In ${place} ist heute ${localTime}.`,`In ${place}, today is ${localTime}.`)
+          : clock === 'time' ? t(`In ${place} ist es ${localTime} Uhr.`,`In ${place}, it’s ${localTime}.`)
+          : `${place} · ${localTime}`;
+        return response('clock',clockText,{id:clock,social:true});
+      }
+      if (weatherKinds.has(route)) {
+        const answer = await weather({kind:weatherKinds.get(route),language});
+        return response('weather',answer.text,answer);
+      }
+      if (route === 'joke') {
+        const joke = rotation.pick('jokes', data.jokes || []);
+        if (joke) return response('joke',joke[language],{id:joke.id});
+      }
+      const exact = exactIndex.get(query) || exactIndex.get(withoutGreeting);
+      if (exact) return response('knowledge',exact[language],{id:exact.id,sources:exact.sources,topic:exact.short ? exact : undefined});
       const q=correct(tokens(query));
       if(q.includes('weather')||q.includes('rain')||q.includes('wind')||q.includes('temperature')){
         const allowed=new Set(['weather','rain','wind','temperature','wiesmoor','heute','today','gerade','now','bei','hier','there','like','morgen','tomorrow','forecast','vorhersage','wird','wirds','regnen','raining','rains','es','bei','dir','is','ist','heiss','warm','cold','kalt','viel','stark','windy','it','the','out','outside']);
@@ -107,8 +193,8 @@ export function createCompanion(data,{random=Math.random,weather=createWeatherRe
         const allowed=new Set(['joke','erzahl','erzahlst','erzahlen','tell','give','einen','noch','norddeutschen','ostfriesland','ostfriesen','kurzen','kurzer','short','funny','lustigen','northern','eastfrisia','bitte']);
         if(follow || /^(?:noch (?:einen|ein) witz|(?:another|one more) joke)(?: bitte| please)?$/.test(query) || q.every(w=>allowed.has(w))){const j=rotation.pick('jokes',data.jokes||[]);if(j)return response('joke',j[language],{id:j.id});}
       }
-      const found=search(q,query) || exactIndex.get(withoutGreeting);
-      if(found)return response('knowledge',found[language],{id:found.id,sources:found.sources});
+      const found=search(q,query);
+      if(found)return response('knowledge',found[language],{id:found.id,sources:found.sources,topic:found.short ? found : undefined});
       const fallback=rotation.pick('unknown',data['fallback-responses']||[]);
       return response('unknown',fallback?.[language]||t('Dazu habe ich keinen passenden geprüften Eintrag.','I don’t have a matching checked entry for that.'), {modelMessage:cleaned||input});
     }
