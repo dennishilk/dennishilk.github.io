@@ -22,7 +22,8 @@
       if(!pictures.length)return;
       current=(index+pictures.length)%pictures.length;
       var item=pictures[current];
-      photo.src=item.src;
+      photo.onerror=function(){if(photo.getAttribute('src')!==item.src)photo.src=item.src;};
+      photo.src=item.preview||item.src;
       photo.alt=item.alt||item.caption||'WoW Forever screenshot';
       imageLink.href=item.src;
       openLink.href=item.src;
@@ -52,7 +53,8 @@
         button.type='button';
         button.setAttribute('aria-label',(locale==='de'?'Bild ':'Image ')+String(i+1)+': '+(item.caption||''));
         var img=document.createElement('img');
-        img.src=item.src;
+        img.onerror=function(){if(img.getAttribute('src')!==item.src)img.src=item.src;};
+        img.src=item.thumb||item.preview||item.src;
         img.alt='';
         img.loading='lazy';
         img.decoding='async';
