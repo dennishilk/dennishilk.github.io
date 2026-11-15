@@ -1,0 +1,26 @@
+/* WoW Forever screenshot carousel, shared by DE and EN. */
+.wow-screenshots{margin:2.5rem 0 3rem;scroll-margin-top:5rem}
+.wow-screenshots>h2{margin-bottom:.75rem}
+.wow-screenshots>p{margin-bottom:1.25rem}
+.wow-gallery{border:1px solid #304254;background:#0d1520;border-radius:14px;overflow:hidden}
+.wow-gallery-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:250px;aspect-ratio:16/10;background:#070b11}
+.wow-gallery-picture{display:flex;align-items:center;justify-content:center;width:100%;height:100%;position:absolute;inset:0}
+.wow-gallery-picture img{display:block;width:100%;height:100%;max-height:680px;object-fit:contain}
+.wow-gallery-arrow{position:absolute;z-index:2;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:43px;height:54px;border:1px solid #95b6c7a8;border-radius:9px;background:#07111bce;color:#fff;font:700 30px/1 system-ui,sans-serif;cursor:pointer}
+.wow-gallery-arrow:hover,.wow-gallery-arrow:focus-visible{background:#18415e;outline:2px solid #77d5fa;outline-offset:1px}
+.wow-gallery-arrow[disabled]{display:none}
+.wow-gallery-prev{left:12px}.wow-gallery-next{right:12px}
+.wow-gallery-meta{padding:1rem 1.1rem .75rem}
+.wow-gallery-counter{margin:0 0 .25rem;color:#9fc4d8;font-size:.84rem;letter-spacing:.025em}
+.wow-gallery-caption{margin:.2rem 0 .8rem;color:#e8eff6}
+.wow-gallery-actions{display:flex;flex-wrap:wrap;gap:.55rem}
+.wow-gallery-actions a{display:inline-flex;align-items:center;padding:.52rem .8rem;border:1px solid #41627a;border-radius:8px;color:#a4e4fc;text-decoration:none;font-size:.91rem}
+.wow-gallery-actions a:hover,.wow-gallery-actions a:focus-visible{background:#14364a;color:#fff;text-decoration:none}
+.wow-gallery-thumbs{display:flex;gap:.7rem;overflow-x:auto;scroll-snap-type:x proximity;padding:0 1.1rem 1rem;scrollbar-width:thin}
+.wow-gallery-thumbs button{flex:0 0 115px;width:115px;height:76px;scroll-snap-align:start;padding:0;border:2px solid #30465a;border-radius:8px;background:#0b121c;overflow:hidden;cursor:pointer;opacity:.78}
+.wow-gallery-thumbs button:hover,.wow-gallery-thumbs button:focus-visible{opacity:1;border-color:#8fdcff}
+.wow-gallery-thumbs button[aria-current="true"]{border-color:#76d8ff;opacity:1;box-shadow:0 0 0 1px #76d8ff55}
+.wow-gallery-thumbs img{display:block;width:100%;height:100%;object-fit:cover}
+.wow-gallery-noscript{margin:.75rem 0}
+@media(max-width:640px){.wow-gallery-stage{min-height:205px;aspect-ratio:4/3}.wow-gallery-arrow{width:35px;height:45px;font-size:26px}.wow-gallery-prev{left:5px}.wow-gallery-next{right:5px}.wow-gallery-thumbs button{flex-basis:88px;width:88px;height:61px}.wow-gallery-meta{padding:.85rem}.wow-gallery-thumbs{padding:0 .85rem .85rem}}
+@media(prefers-reduced-motion:reduce){.wow-gallery *{scroll-behavior:auto}}
