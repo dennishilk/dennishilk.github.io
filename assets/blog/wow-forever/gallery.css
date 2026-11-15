@@ -24,3 +24,13 @@
 .wow-gallery-noscript{margin:.75rem 0}
 @media(max-width:640px){.wow-gallery-stage{min-height:205px;aspect-ratio:4/3}.wow-gallery-arrow{width:35px;height:45px;font-size:26px}.wow-gallery-prev{left:5px}.wow-gallery-next{right:5px}.wow-gallery-thumbs button{flex-basis:88px;width:88px;height:61px}.wow-gallery-meta{padding:.85rem}.wow-gallery-thumbs{padding:0 .85rem .85rem}}
 @media(prefers-reduced-motion:reduce){.wow-gallery *{scroll-behavior:auto}}
+
+
+/* Optional story images appear only when uploaded, with full-size originals on click. */
+[data-wow-pending-image][hidden]{display:none!important}
+.wow-deadmines-moments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.5rem 0}
+.wow-deadmines-moments>.article-figure{margin:0;min-width:0}
+.wow-deadmines-moments img{width:100%;height:auto;display:block;border-radius:8px}
+.wow-deadmines-moments figcaption{font-size:.9rem;line-height:1.5}
+.wow-deadmines-moments>.wow-moment-wide{grid-column:1/-1}
+@media(max-width:650px){.wow-deadmines-moments{grid-template-columns:1fr}}
