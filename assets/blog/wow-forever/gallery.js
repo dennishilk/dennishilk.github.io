@@ -86,3 +86,27 @@
     document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('[data-wow-gallery]').forEach(init);});
   }else{document.querySelectorAll('[data-wow-gallery]').forEach(init);}
 }());
+
+
+/* Story screenshots are revealed only when their originals exist on the site. */
+(function(){
+  "use strict";
+  function reveal(){
+    document.querySelectorAll('[data-wow-pending-image]').forEach(function(figure){
+      var full=figure.getAttribute('data-wow-full');
+      var preview=figure.getAttribute('data-wow-preview');
+      var img=figure.querySelector('img[data-wow-moment-img]');
+      var link=figure.querySelector('a[data-wow-moment-link]');
+      if(!full||!img||!link)return;
+      fetch(full,{method:'HEAD'}).then(function(res){
+        if(!res.ok)return;
+        link.href=full;
+        img.src=preview||full;
+        img.onerror=function(){if(img.src.indexOf(full)===-1)img.src=full;};
+        figure.hidden=false;
+      }).catch(function(){});
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',reveal);
+  else reveal();
+}());
