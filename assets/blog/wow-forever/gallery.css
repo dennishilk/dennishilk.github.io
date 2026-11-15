@@ -34,3 +34,12 @@
 .wow-deadmines-moments figcaption{font-size:.9rem;line-height:1.5}
 .wow-deadmines-moments>.wow-moment-wide{grid-column:1/-1}
 @media(max-width:650px){.wow-deadmines-moments{grid-template-columns:1fr}}
+
+/* Side-by-side, original-size WoW Forever versus WoW Classic screenshot comparison. */
+.wow-graphics-compare{margin:1.75rem 0 2.5rem}
+.wow-graphics-compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.wow-graphics-compare-grid .article-figure{min-width:0;margin:0}
+.wow-graphics-compare-grid .article-figure img{display:block;width:100%;height:auto;border-radius:8px}
+.wow-graphics-compare-grid .article-figure figcaption{padding:.65rem .15rem;font-size:.9rem;line-height:1.55}
+.wow-graphics-compare-grid .article-figure strong{display:block;margin-bottom:.2rem}
+@media(max-width:680px){.wow-graphics-compare-grid{grid-template-columns:1fr}}
