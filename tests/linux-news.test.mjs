@@ -18,7 +18,7 @@ for(const a of specs){
     assert.equal((html.match(/<h1\b/g)||[]).length,1);
     assert.equal(article.url,url);assert.equal(article.inLanguage,a.lang);
     assert.equal(article.datePublished,a.published);assert.equal(article.dateModified,a.modified);
-    const minimumWords={'worldnode-nginx':1200,'epic-games-launcher-linux':900};
+    const minimumWords={'worldnode-nginx':1200,'epic-games-launcher-linux':900,'gog-galaxy-linux':1050};
     assert.ok(article.wordCount>=(minimumWords[a.topic]??1400));assert.equal(article.articleSection,a.category);
     for(const [key,value] of [['canonical',url],['description',a.description]]){
       const tags=[...html.matchAll(/<(?:link|meta)\b[^>]*>/g)].map(m=>attrs(m[0]));
@@ -83,6 +83,13 @@ for(const a of specs){
         '/home/nebu/.local/share/com.epicgames.eglv2/compat/runtime/GE-Proton10-34/version\n1774238111 GE-Proton10-34'
       ]);
       assert.equal((body.match(/<figure class="article-figure">/g)||[]).length,7);
+      for(const source of a.sourceUrls)assert.ok(body.includes('href="'+source+'"'),source);
+      return;
+    }
+    if(a.topic==='gog-galaxy-linux'){
+      assert.deepEqual(commands,['WINEDLLOVERRIDES="ddraw.dll=n,b;dinput.dll=n,b" %command%']);
+      assert.ok(body.includes('datetime="'+a.checked+'"'));
+      for(const term of ['2027','Heroic','Master Source','Master Upscaled','Original','Enhanced'])assert.ok(body.includes(term),term);
       for(const source of a.sourceUrls)assert.ok(body.includes('href="'+source+'"'),source);
       return;
     }
