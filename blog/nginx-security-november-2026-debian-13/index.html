@@ -124,7 +124,7 @@ sudo systemctl reload nginx</code></pre>
   &lt;/main&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-" loading="lazy" sandbox="" referrerpolicy="no-referrer" style="display:block;width:100%;height:570px;border:0;border-radius:10px;background:#050505;pointer-events:none" aria-label="Dennis Hilk's custom 404 page"></iframe><figcaption>Purpose-built error handling: missing paths return a controlled 404 response without revealing internal structures or administration routes. <a href="/this-page-does-not-exist/">View the 404 page</a>.</figcaption></figure></section>
+" loading="lazy" sandbox="allow-same-origin" referrerpolicy="no-referrer" style="display:block;width:100%;height:570px;border:0;border-radius:10px;background:#050505;pointer-events:none" aria-label="Dennis Hilk's custom 404 page"></iframe><figcaption>Purpose-built error handling: missing paths return a controlled 404 response without revealing internal structures or administration routes. <a href="/this-page-does-not-exist/">View the 404 page</a>.</figcaption></figure></section>
 <section id="php"><h2>What about the PHP security updates on 19 November?</h2>
 <p>Additional PHP security releases were scheduled for 19 November. Check the actual release versions at publication time. nginx and PHP are separate components; running nginx does not imply an installed PHP runtime. WordPress and other PHP users should verify PHP-FPM, package origins and application dependencies separately. Even a URL ending in <code>.php</code> can serve static HTML without executing PHP.</p>
 <figure class="wn-shot wn-embedded-page"><iframe title="WordPress administration – a static-site Easter egg" srcdoc="&lt;!doctype html&gt;
@@ -183,7 +183,7 @@ sudo systemctl reload nginx</code></pre>
   &lt;/main&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-" loading="lazy" sandbox="" referrerpolicy="no-referrer" style="display:block;width:100%;height:640px;border:0;border-radius:10px;background:#050505;pointer-events:none" aria-label="WordPress administration – a static-site Easter egg"></iframe><figcaption>A deliberately playful WordPress response rather than an admin dashboard: static HTML served by nginx, not a WordPress installation. <a href="/wp-admin/">Open the WordPress Easter egg</a>.</figcaption></figure></section>
+" loading="lazy" sandbox="allow-same-origin" referrerpolicy="no-referrer" style="display:block;width:100%;height:640px;border:0;border-radius:10px;background:#050505;pointer-events:none" aria-label="WordPress administration – a static-site Easter egg"></iframe><figcaption>A deliberately playful WordPress response rather than an admin dashboard: static HTML served by nginx, not a WordPress installation. <a href="/wp-admin/">Open the WordPress Easter egg</a>.</figcaption></figure></section>
 <section id="faq"><h2>FAQ: nginx CVEs on Debian 13 in November 2026</h2>
 <h3>Is nginx 1.26.3 automatically unpatched on Debian 13?</h3><p>No. Debian backports fixes; check the full Debian revision and CVE-specific status. On the morning of 19 November the Trixie security revision was still flagged as vulnerable for several newly disclosed issues.</p>
 <h3>Does disabling HTTP/2 fix all ten vulnerabilities?</h3><p>No. It addresses HTTP/2-specific attack paths but not TLS 1.3, HTTP/3, DNS resolver, mail or stream issues.</p>
