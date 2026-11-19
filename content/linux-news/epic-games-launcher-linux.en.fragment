@@ -1,6 +1,17 @@
 <p>I only meant to see whether the new Epic Games Launcher would open on Cthulhu. A few minutes later I was standing outside the castle in <em>Castlevania</em>, with the old NES tune stuck in my head again. Then I downloaded Farming Simulator 22 to try a bigger 3D game. <strong>Both ran in my test on Arch Linux with dwm on X11.</strong></p>
 <p><strong>Updated 13 November 2026:</strong> Epic plans Fortnite on Linux with EAC v2. The <a href="#fortnite">new Fortnite section</a> covers TPM 2.0, Secure Boot and CachyOS preparation.</p>
 
+<section class="news-status" aria-labelledby="launcher-update">
+<h2 id="launcher-update">Launcher update: checked 19 November 2026</h2>
+<p>Epic’s official release notes now list <strong>Preview 0.118.0</strong>, released on 18 November. Since the 0.113.1 build I tested, changes include:</p>
+<ul>
+<li><strong>0.116.2 · <time datetime="2026-11-16">16 November</time>:</strong> Fixed interrupted cloud-save downloads and missing library entries after the first launch.</li>
+<li><strong>0.117.0 · <time datetime="2026-11-17">17 November</time>:</strong> Fixed the Linux tray icon and incorrect signed-out states after delayed browser sign-in.</li>
+<li><strong>0.118.0 · <time datetime="2026-11-18">18 November</time>:</strong> Added a sign-in link when the browser fails to open. Also fixed DLC remaining outdated after its main game was updated.</li>
+</ul>
+<p>This addition summarizes the release notes. The hands-on results below still describe my 10 November test with version 0.113.1.</p>
+</section>
+
 <h2 id="arch-installation">Installing the Epic Games Launcher on Arch Linux</h2>
 <p>On 10 November 2026 I ran <strong>Epic Games Launcher Preview 0.113.1</strong>. I installed version <code>0.113.1-1</code> of <code>epic-games-launcher-bin</code> from the AUR. The community package takes Epic’s Linux download and packages it for Arch. Epic’s official Linux requirements do not list Arch.</p>
 <pre><code>yay -S epic-games-launcher-bin</code></pre>

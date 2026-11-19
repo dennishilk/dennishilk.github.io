@@ -1,6 +1,17 @@
 <p>Ich wollte nur sehen, ob der neue Epic Games Launcher auf Cthulhu überhaupt startet. Ein paar Minuten später stand ich in <em>Castlevania</em> vorm Schloss und hatte sofort wieder den Ohrwurm vom NES. Danach habe ich den Landwirtschafts-Simulator 22 heruntergeladen, um auch ein größeres 3D-Spiel zu testen. <strong>Beide liefen in meinem Test auf Arch Linux mit dwm unter X11.</strong></p>
 <p><strong>Update vom 13. November 2026:</strong> Epic plant Fortnite unter Linux mit EAC v2. Was TPM 2.0, Secure Boot und CachyOS damit zu tun haben, erkläre ich <a href="#fortnite">im neuen Fortnite-Abschnitt</a>.</p>
 
+<section class="news-status" aria-labelledby="launcher-update">
+<h2 id="launcher-update">Launcher-Update: Stand 19. November 2026</h2>
+<p>Laut Epics offiziellen Release Notes ist inzwischen <strong>Preview 0.118.0</strong> vom 18. November verfügbar. Seit meiner getesteten Version 0.113.1 sind unter anderem diese Änderungen hinzugekommen:</p>
+<ul>
+<li><strong>0.116.2 · <time datetime="2026-11-16">16. November</time>:</strong> Fehler bei unterbrochenen Cloudsave-Downloads und fehlenden Bibliothekseinträgen nach dem ersten Start behoben.</li>
+<li><strong>0.117.0 · <time datetime="2026-11-17">17. November</time>:</strong> Linux-Trayicon repariert; verspätet abgeschlossene Browseranmeldungen führen nicht mehr fälschlich zu einer abgemeldeten Sitzung.</li>
+<li><strong>0.118.0 · <time datetime="2026-11-18">18. November</time>:</strong> Ein Anmeldelink hilft, wenn der Browser nicht öffnet. Außerdem wurde ein Fehler behoben, durch den DLC nach einem Spielupdate veraltet bleiben konnte.</li>
+</ul>
+<p>Diese Ergänzung fasst die Release Notes zusammen. Mein unten dokumentierter Praxistest stammt weiterhin vom 10. November mit Version 0.113.1.</p>
+</section>
+
 <h2 id="arch-installation">Epic Games Launcher auf Arch Linux installieren</h2>
 <p>Am 10. November 2026 lief auf meinem Rechner die <strong>Epic Games Launcher Preview 0.113.1</strong>. Ich habe <code>epic-games-launcher-bin</code> in Version <code>0.113.1-1</code> aus dem AUR installiert. Das Community-Paket nimmt Epics Linux-Download und packt ihn für Arch. Epics offizielle Linux-Anforderungen führen Arch nicht auf.</p>
 <pre><code>yay -S epic-games-launcher-bin</code></pre>
