@@ -59,9 +59,131 @@ sudo systemctl reload nginx</code></pre>
 <figure class="wn-shot"><a href="/assets/blog/nginx-november-2026/worldnode-check-04.webp"><img alt="TLS 1.3 test rejected after mitigation" decoding="async" height="286" loading="lazy" src="/assets/blog/nginx-november-2026/worldnode-check-04.webp" width="1120"/></a><figcaption>TLS 1.3 handshake rejected by the tested local nginx endpoint.</figcaption></figure>
 <figure class="wn-shot"><a href="/assets/blog/nginx-november-2026/worldnode-check-05.webp"><img alt="TLS 1.2 still responds with HTTP 200" decoding="async" height="286" loading="lazy" src="/assets/blog/nginx-november-2026/worldnode-check-05.webp" width="1120"/></a><figcaption>The same endpoint remains reachable over TLS 1.2.</figcaption></figure>
 <figure class="wn-shot"><a href="/assets/blog/nginx-november-2026/worldnode-check-06.webp"><img alt="Second HTTPS service returns HTTP 200 over TLS 1.2" decoding="async" height="286" loading="lazy" src="/assets/blog/nginx-november-2026/worldnode-check-06.webp" width="1120"/></a><figcaption>Second HTTPS service remains available over TLS 1.2.</figcaption></figure>
-<p>Only safe terminal excerpts are included here. The public article deliberately omits admin routes, local backend ports, internal mappings and complete virtual-host configuration.</p></section>
+<p>Only safe terminal excerpts are included here. The public article deliberately omits admin routes, local backend ports, internal mappings and complete virtual-host configuration.</p>
+<figure class="wn-shot wn-embedded-page"><iframe title="Dennis Hilk's custom 404 page" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;meta name=&quot;robots&quot; content=&quot;noindex, nofollow&quot;&gt;
+  &lt;title&gt;404 — Page Not Found | Dennis Hilk&lt;/title&gt;
+  &lt;style&gt;
+    :root { color-scheme: dark; --bg: #050505; --panel: rgba(20, 20, 25, .86); --border: #2f2f2f; --text: #e6edf3; --muted: #b9c4ce; --cyan: #00b4ff; }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; overflow-x: hidden; background: radial-gradient(circle at 78% 20%, #092331 0, var(--bg) 42rem), var(--bg); color: var(--text); font-family: &quot;JetBrains Mono&quot;, &quot;SFMono-Regular&quot;, Consolas, &quot;Liberation Mono&quot;, monospace; }
+    main { width: min(1120px, calc(100% - 2rem)); min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .9fr); align-items: center; gap: clamp(2rem, 7vw, 6rem); margin: 0 auto; padding: 3rem 0; }
+    .eyebrow, .status, .photo-caption { color: var(--cyan); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .eyebrow { margin: 0 0 1.1rem; }
+    h1 { margin: 0; font-size: clamp(4.8rem, 14vw, 9rem); line-height: .82; letter-spacing: -.08em; color: var(--cyan); text-shadow: 0 0 24px rgba(0, 180, 255, .34); }
+    h2 { margin: .9rem 0 1.75rem; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: .04em; text-transform: uppercase; }
+    .copy { max-width: 34rem; color: var(--muted); font-size: 1.02rem; line-height: 1.75; }
+    .copy p { margin: 0; }
+    .status { display: flex; align-items: center; gap: .55rem; margin: 1.75rem 0 1.4rem; }
+    .status::before { width: .52rem; height: .52rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); content: &quot;&quot;; }
+    .cursor { display: inline-block; width: .58em; height: 1.05em; margin-left: .2em; vertical-align: -.16em; background: var(--cyan); animation: blink 1s steps(1) infinite; }
+    .actions { display: flex; flex-wrap: wrap; gap: .7rem; }
+    .actions a { border: 1px solid rgba(0, 180, 255, .42); border-radius: .55rem; padding: .75rem 1rem; color: #d8f5ff; font-size: .82rem; font-weight: 700; letter-spacing: .04em; text-decoration: none; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+    .actions a:first-child { background: rgba(0, 180, 255, .16); color: #fff; }
+    .actions a:hover { border-color: var(--cyan); background: rgba(0, 180, 255, .2); transform: translateY(-2px); }
+    a:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+    figure { position: relative; margin: 0; padding: .8rem; border: 1px solid rgba(0, 180, 255, .4); border-radius: .8rem; background: var(--panel); box-shadow: 0 0 32px rgba(0, 180, 255, .12); }
+    figure::before { position: absolute; top: -.6rem; left: 1.1rem; padding: 0 .45rem; background: var(--bg); color: var(--cyan); content: &quot;404 / FIELD NOTE&quot;; font-size: .7rem; letter-spacing: .1em; }
+    figure img { display: block; width: 100%; max-height: 68vh; object-fit: cover; border-radius: .35rem; }
+    figcaption { display: flex; justify-content: space-between; gap: 1rem; padding: .85rem .2rem .1rem; color: var(--muted); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+    .photo-caption { font-size: inherit; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (max-width: 760px) { main { grid-template-columns: 1fr; gap: 2.5rem; padding: 2.5rem 0; } h1 { font-size: clamp(4.6rem, 25vw, 7rem); } figure { width: min(100%, 34rem); margin: 0 auto; } figure img { max-height: none; aspect-ratio: 4 / 5; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  &lt;/style&gt;
+
+&lt;link rel=&quot;stylesheet&quot; href=&quot;/assets/css/language-toggle.css?v=20261006&quot;&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;main&gt;
+    &lt;section aria-labelledby=&quot;page-title&quot;&gt;
+      &lt;p class=&quot;eyebrow&quot;&gt;System response / 404&lt;/p&gt;
+      &lt;h1&gt;404&lt;/h1&gt;
+      &lt;h2 id=&quot;page-title&quot;&gt;Page not found&lt;/h2&gt;
+      &lt;div class=&quot;copy&quot;&gt;
+        &lt;p&gt;Hmm.&lt;/p&gt;
+        &lt;p&gt;I could have sworn there was a page here.&lt;/p&gt;
+        &lt;p&gt;Maybe it moved.&lt;br&gt;Maybe it never existed.&lt;br&gt;Maybe I should stop touching things.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;p class=&quot;status&quot;&gt;Current status: still thinking&lt;span class=&quot;cursor&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+      &lt;nav class=&quot;actions&quot; aria-label=&quot;Helpful destinations&quot;&gt;
+        &lt;a href=&quot;/&quot;&gt;Back to home&lt;/a&gt;
+        &lt;a href=&quot;/museum/&quot;&gt;Computer museum&lt;/a&gt;
+        &lt;a href=&quot;/world-observer.html&quot;&gt;World observer&lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/section&gt;
+    &lt;figure&gt;
+      &lt;img src=&quot;/assets/404-kermit-dennis.jpg&quot; alt=&quot;Dennis Hilk in a Kermit shirt, pausing thoughtfully during error analysis.&quot;&gt;
+      &lt;figcaption&gt;&lt;span class=&quot;photo-caption&quot;&gt;Error analysis in progress&lt;/span&gt;&lt;span&gt;Still thinking&lt;/span&gt;&lt;/figcaption&gt;
+    &lt;/figure&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+" loading="lazy" sandbox="" referrerpolicy="no-referrer" style="display:block;width:100%;height:570px;border:0;border-radius:10px;background:#050505;pointer-events:none" aria-label="Dennis Hilk's custom 404 page"></iframe><figcaption>Purpose-built error handling: missing paths return a controlled 404 response without revealing internal structures or administration routes. <a href="/this-page-does-not-exist/">View the 404 page</a>.</figcaption></figure></section>
 <section id="php"><h2>What about the PHP security updates on 19 November?</h2>
-<p>Additional PHP security releases were scheduled for 19 November. Check the actual release versions at publication time. nginx and PHP are separate components; running nginx does not imply an installed PHP runtime. WordPress and other PHP users should verify PHP-FPM, package origins and application dependencies separately. Even a URL ending in <code>.php</code> can serve static HTML without executing PHP.</p></section>
+<p>Additional PHP security releases were scheduled for 19 November. Check the actual release versions at publication time. nginx and PHP are separate components; running nginx does not imply an installed PHP runtime. WordPress and other PHP users should verify PHP-FPM, package origins and application dependencies separately. Even a URL ending in <code>.php</code> can serve static HTML without executing PHP.</p>
+<figure class="wn-shot wn-embedded-page"><iframe title="WordPress administration – a static-site Easter egg" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;meta name=&quot;robots&quot; content=&quot;noindex, nofollow&quot;&gt;
+  &lt;title&gt;WordPress Administration — Still Searching | Dennis Hilk&lt;/title&gt;
+  &lt;style&gt;
+    :root { color-scheme: dark; --bg: #050505; --panel: rgba(20, 20, 25, .9); --border: #2f2f2f; --text: #e6edf3; --muted: #b9c4ce; --cyan: #00b4ff; }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; overflow-x: hidden; background: radial-gradient(circle at 82% 8%, #092331 0, var(--bg) 44rem), var(--bg); color: var(--text); font-family: &quot;JetBrains Mono&quot;, &quot;SFMono-Regular&quot;, Consolas, &quot;Liberation Mono&quot;, monospace; }
+    main { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; padding: clamp(2rem, 6vw, 5rem) 0; }
+    .terminal { overflow: hidden; border: 1px solid rgba(0, 180, 255, .42); border-radius: .8rem; background: var(--panel); box-shadow: 0 0 34px rgba(0, 180, 255, .11); }
+    header { padding: 1.25rem 1.4rem; border-bottom: 1px solid var(--border); }
+    h1, h2 { margin: 0; color: var(--cyan); letter-spacing: .07em; text-transform: uppercase; }
+    h1 { font-size: clamp(1.2rem, 3vw, 1.75rem); } h2 { font-size: .88rem; }
+    .status { margin: .55rem 0 0; color: #d8f5ff; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; }
+    .status::before { display: inline-block; width: .52rem; height: .52rem; margin-right: .55rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); content: &quot;&quot;; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .92fr); }
+    .diagnostic { padding: clamp(1.4rem, 4vw, 2.4rem); text-align: left; }
+    .diagnostic h2 { margin-bottom: 1.1rem; } .diagnostic dl { margin: 0; } .diagnostic div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; padding: .42rem 0; border-bottom: 1px dashed rgba(185, 196, 206, .22); font-size: clamp(.76rem, 2vw, .92rem); } .diagnostic dt, .diagnostic dd { margin: 0; } .diagnostic dd { color: var(--cyan); font-weight: 700; } .scanner { margin: 1.2rem 0 0; color: var(--muted); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+    figure { display: flex; flex-direction: column; margin: 0; border-left: 1px solid var(--border); background: #0a0c0e; } figure img { display: block; width: 100%; min-height: 0; height: 100%; object-fit: cover; } figcaption { padding: .75rem 1rem; color: var(--muted); font-size: .72rem; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+    .conclusion { max-width: 58rem; margin: clamp(2rem, 5vw, 3.5rem) auto 0; text-align: center; } .conclusion h2 { font-size: clamp(1.2rem, 3vw, 1.75rem); line-height: 1.35; } .conclusion p { color: var(--muted); line-height: 1.7; } .translation { margin: 1.5rem auto; padding: 1rem; border-left: 2px solid var(--cyan); background: rgba(0, 180, 255, .08); color: #d8f5ff; font-size: .9rem; text-align: left; } .translation strong { color: var(--cyan); }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; margin-top: 1.5rem; } nav a { border: 1px solid rgba(0, 180, 255, .42); border-radius: .55rem; padding: .75rem 1rem; color: #d8f5ff; font-size: .82rem; font-weight: 700; letter-spacing: .04em; text-decoration: none; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; } nav a:first-child { background: rgba(0, 180, 255, .16); color: #fff; } nav a:hover { border-color: var(--cyan); background: rgba(0, 180, 255, .2); transform: translateY(-2px); } a:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } figure { border-top: 1px solid var(--border); border-left: 0; } figure img { height: auto; max-height: 75vh; object-fit: contain; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  &lt;/style&gt;
+
+&lt;link rel=&quot;stylesheet&quot; href=&quot;/assets/css/language-toggle.css?v=20261006&quot;&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;main&gt;
+    &lt;article class=&quot;terminal&quot; aria-labelledby=&quot;page-title&quot;&gt;
+      &lt;header&gt;&lt;h1 id=&quot;page-title&quot;&gt;WordPress administration&lt;/h1&gt;&lt;p class=&quot;status&quot;&gt;Still searching…&lt;/p&gt;&lt;/header&gt;
+      &lt;div class=&quot;grid&quot;&gt;
+        &lt;section class=&quot;diagnostic&quot; aria-labelledby=&quot;diagnostic-title&quot;&gt;
+          &lt;h2 id=&quot;diagnostic-title&quot;&gt;Diagnostic output&lt;/h2&gt;
+          &lt;dl&gt;
+            &lt;div&gt;&lt;dt&gt;WordPress&lt;/dt&gt;&lt;dd&gt;NOT FOUND&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;wp-admin&lt;/dt&gt;&lt;dd&gt;NOT FOUND&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Database&lt;/dt&gt;&lt;dd&gt;NOT FOUND&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Plugins&lt;/dt&gt;&lt;dd&gt;0&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Themes&lt;/dt&gt;&lt;dd&gt;0&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Static HTML&lt;/dt&gt;&lt;dd&gt;FOUND&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;nginx&lt;/dt&gt;&lt;dd&gt;FOUND&lt;/dd&gt;&lt;/div&gt;
+          &lt;/dl&gt;
+          &lt;p class=&quot;scanner&quot;&gt;Automated scanner status: confused&lt;/p&gt;
+        &lt;/section&gt;
+        &lt;figure&gt;&lt;img src=&quot;/assets/wordpress-kant-hochkant.jpg&quot; alt=&quot;Dennis Hilk looking suspiciously toward two hallway portraits, the setting for the Kant and Hochkant joke.&quot;&gt;&lt;figcaption&gt;Deeper analysis: Kant / Hochkant&lt;/figcaption&gt;&lt;/figure&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+    &lt;section class=&quot;conclusion&quot; aria-labelledby=&quot;conclusion-title&quot;&gt;
+      &lt;h2 id=&quot;conclusion-title&quot;&gt;Conclusion: this website does not use WordPress.&lt;/h2&gt;
+      &lt;p&gt;Emanuel Kant cannot find WordPress.&lt;br&gt;Emanuel Hochkant also cannot find WordPress.&lt;/p&gt;
+      &lt;p class=&quot;translation&quot;&gt;&lt;strong&gt;“Hochkant”&lt;/strong&gt; means portrait / vertical orientation in German.&lt;br&gt;Yes. This joke has been hanging in the hallway for years.&lt;/p&gt;
+      &lt;p&gt;The joke works only in German.&lt;br&gt;The WordPress installation works in neither language.&lt;/p&gt;
+      &lt;nav aria-label=&quot;Leave this page&quot;&gt;&lt;a href=&quot;/&quot;&gt;Back to dennishilk.com&lt;/a&gt;&lt;a href=&quot;/museum/&quot;&gt;Visit the computer museum&lt;/a&gt;&lt;/nav&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+" loading="lazy" sandbox="" referrerpolicy="no-referrer" style="display:block;width:100%;height:640px;border:0;border-radius:10px;background:#050505;pointer-events:none" aria-label="WordPress administration – a static-site Easter egg"></iframe><figcaption>A deliberately playful WordPress response rather than an admin dashboard: static HTML served by nginx, not a WordPress installation. <a href="/wp-admin/">Open the WordPress Easter egg</a>.</figcaption></figure></section>
 <section id="faq"><h2>FAQ: nginx CVEs on Debian 13 in November 2026</h2>
 <h3>Is nginx 1.26.3 automatically unpatched on Debian 13?</h3><p>No. Debian backports fixes; check the full Debian revision and CVE-specific status. On the morning of 19 November the Trixie security revision was still flagged as vulnerable for several newly disclosed issues.</p>
 <h3>Does disabling HTTP/2 fix all ten vulnerabilities?</h3><p>No. It addresses HTTP/2-specific attack paths but not TLS 1.3, HTTP/3, DNS resolver, mail or stream issues.</p>
