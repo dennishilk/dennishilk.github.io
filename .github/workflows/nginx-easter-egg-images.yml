@@ -1,0 +1,60 @@
+name: Capture nginx Easter-egg screenshots
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/nginx-easter-egg-images.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install screenshot dependencies
+        run: npm install --no-save --no-package-lock --ignore-scripts=false playwright-core@1.56.1 sharp@0.34.5
+      - name: Capture the two original static pages without clipping
+        run: |
+          python3 -m http.server 8197 --bind 127.0.0.1 >/tmp/nginx-easter-server.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright-core';
+          import sharp from 'sharp';
+          import { mkdir } from 'node:fs/promises';
+          const browser = await chromium.launch({channel: 'chrome', headless: true, args: ['--no-sandbox']});
+          const dir = 'assets/blog/nginx-november-2026';
+          await mkdir(dir, {recursive: true});
+          for (const item of [
+            {url: 'wordpress-nope.html', file: 'wordpress-administration-not-found.webp', width: 1587, height: 886},
+            {url: '404.html', file: '404-page-not-found.webp', width: 1664, height: 847}
+          ]) {
+            const page = await browser.newPage({viewport: {width: item.width, height: item.height}, deviceScaleFactor: 1});
+            await page.goto('http://127.0.0.1:8197/' + item.url, {waitUntil: 'networkidle'});
+            await page.evaluate(() => document.fonts.ready);
+            const png = await page.screenshot({type: 'png', fullPage: true, animations: 'disabled'});
+            const image = sharp(png);
+            const {width, height} = await image.metadata();
+            await image.webp({quality: 83, effort: 6}).toFile(dir + '/' + item.file);
+            console.log(item.file + ': ' + width + 'x' + height);
+            await page.close();
+          }
+          await browser.close();
+          NODE
+      - name: Commit screenshots to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/blog/nginx-november-2026/wordpress-administration-not-found.webp assets/blog/nginx-november-2026/404-page-not-found.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "blog: capture complete WordPress and 404 Easter egg screenshots"
+            git push origin HEAD:main
+          fi
