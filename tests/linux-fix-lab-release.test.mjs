@@ -27,8 +27,8 @@ test('the approved public launch is indexable and advertises exactly one complet
 });
 
 test('Fix Lab inbound links stay within approved homepages and its diagnostic ecosystem',()=> {
-  // These two new guides explicitly integrate the shared audio knowledge base.
-  const homepages=new Set(['index.html','de/index.html','blog/linux-audio-troubleshooting/index.html','de/blog/linux-audio-fehler-beheben/index.html'].map(path=>resolve(root,path)));
+  // These guides explicitly integrate the shared audio and Wi-Fi diagnostic knowledge base.
+  const homepages=new Set(['index.html','de/index.html','blog/linux-audio-troubleshooting/index.html','de/blog/linux-audio-fehler-beheben/index.html','blog/mediatek-mt7612u-linux-driver-troubleshooting/index.html','de/blog/mediatek-mt7612u-linux-treiber-probleme/index.html'].map(path=>resolve(root,path)));
   const paths=walk(root).filter(path=>path.endsWith('.html')&&!homepages.has(path)&&!/^\/(?:de\/)?linux-(?:fix-lab|hardware-explorer|gaming-repair)\//.test(path.slice(root.length).replaceAll('\\','/')));
   assert.ok(paths.length>300);
   for(const path of paths)assert.doesNotMatch(readFileSync(path,'utf8'),/\b(?:href|action)\s*=\s*["'](?:https?:\/\/(?:www\.)?dennishilk\.com)?\/(?:de\/)?linux-fix-lab(?:\/|[?#"'])/i,path.slice(root.length+1));

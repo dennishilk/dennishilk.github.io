@@ -964,5 +964,161 @@
       "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/wiki/"
     ],
     "primarySourceUrl": "https://www.gog.com/pressroom/were-celebrating-18-years-with-the-first-gog-showcase-restored-wing-commander-prophecy-gog-galaxy-announcements-and-more/"
+  },
+  {
+    "topic": "mt7612u",
+    "lang": "de",
+    "slug": "mediatek-mt7612u-linux-treiber-probleme",
+    "alternate": "mediatek-mt7612u-linux-driver-troubleshooting",
+    "published": "2026-11-19",
+    "modified": "2026-11-19",
+    "checked": "2026-11-19",
+    "category": "Linux-News & Sicherheit",
+    "topicLabel": "Linux · USB-WLAN & Treiber",
+    "title": "MediaTek MT7612U unter Linux: WLAN-Stick erkennen, Treiber prüfen und Probleme lösen",
+    "seoTitle": "MediaTek MT7612U Linux: Treiber, Firmware & WLAN-Probleme",
+    "description": "MediaTek MT7612U unter Linux einrichten: USB-Erkennung, mt76x2u-Treiber und Firmware prüfen. Hilfe für Debian 13, Ubuntu, Linux Mint und Arch bei WLAN-Problemen.",
+    "summary": "Der WLAN-Stick erscheint am USB-Port, aber kein Netz ist zu sehen? Dieser Ratgeber führt vom ersten Gerätefund bis zur funktionierenden Verbindung – mit lesenden Prüfungen und passenden Firmwarepaketen.",
+    "heroImage": "/assets/blog/mt7612u/diagnosis-de.svg",
+    "heroMobileImage": "/assets/blog/mt7612u/diagnosis-de-mobile.svg",
+    "heroWidth": 1200,
+    "heroHeight": 760,
+    "heroMobileWidth": 620,
+    "heroMobileHeight": 1060,
+    "socialImage": "/assets/blog/mt7612u/social-de.png",
+    "socialAlt": "MT7612U: USB, mt76x2u, Firmware, WLAN-Interface und Verbindung – eigenes Diagnoseschema.",
+    "imageAlt": "Diagnoseweg für MT7612U unter Linux: USB-Erkennung, Treiberbindung, Firmware, WLAN-Schnittstelle und Verbindung einzeln überprüfen.",
+    "imageCaption": "Eigene Erklärgrafik, kein Hardwaretest. Jede Stufe beantwortet eine andere Frage. Anklicken öffnet die vollständige Grafik.",
+    "fullSizeHero": true,
+    "leadFragment": "content/linux-news/mt7612u.de.lead",
+    "extraCss": "/assets/blog/mt7612u/guide.css",
+    "extraJs": "/assets/blog/mt7612u/guide.js",
+    "articleClass": "mt7612u-guide",
+    "primarySourceUrl": "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c",
+    "primarySourceLabel": "Kernelquelle: USB-Gerätezuordnung",
+    "sourceUrls": [
+      "https://github.com/torvalds/linux/blob/v4.19/drivers/net/wireless/mediatek/mt76/Kconfig",
+      "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c",
+      "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/mt76x2.h",
+      "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c",
+      "https://github.com/torvalds/linux/blob/master/drivers/net/wireless/mediatek/mt76/mt76x2/Kconfig",
+      "https://wireless.docs.kernel.org/en/latest/en/users/drivers/mediatek.html",
+      "https://wireless.docs.kernel.org/en/latest/en/users/documentation/iw.html",
+      "https://wireless.docs.kernel.org/en/latest/en/users/documentation/modes.html",
+      "https://docs.alfa.com.tw/Support/Linux/MT7612U/",
+      "https://packages.debian.org/trixie/firmware-mediatek",
+      "https://packages.debian.org/trixie/all/firmware-mediatek/filelist",
+      "https://packages.debian.org/bookworm/all/firmware-misc-nonfree/filelist",
+      "https://packages.ubuntu.com/noble/amd64/linux-firmware/filelist",
+      "https://packages.ubuntu.com/resolute/all/linux-firmware-mediatek/filelist",
+      "https://packages.ubuntu.com/en/stonking/misc/linux-firmware-mediatek",
+      "https://packages.ubuntu.com/firmware-mediatek",
+      "https://archlinux.org/packages/core/any/linux-firmware-mediatek/files/",
+      "https://linuxmint-installation-guide.readthedocs.io/en/latest/drivers.html",
+      "https://networkmanager.dev/docs/api/latest/nmcli.html",
+      "https://man.archlinux.org/man/lsusb.8.en",
+      "https://www.kernel.org/doc/html/latest/driver-api/firmware/fw_search_path.html"
+    ],
+    "keywords": [
+      "MediaTek MT7612U Linux",
+      "mt76x2u firmware",
+      "MT7612U Debian 13",
+      "MT7612U Ubuntu",
+      "MT7612U Linux Mint",
+      "MT7612U Arch Linux",
+      "MT7612U monitor mode"
+    ],
+    "relatedGuides": [
+      {
+        "href": "/de/linux-hardware-explorer/wifi-mediatek-mt7612u/",
+        "label": "MT7612U Hardwareprofil"
+      },
+      {
+        "href": "/de/linux-hardware-explorer/",
+        "label": "Linux Hardware & Driver Explorer"
+      },
+      {
+        "href": "/de/linux-fix-lab/",
+        "label": "Linux Fix Lab"
+      }
+    ]
+  },
+  {
+    "topic": "mt7612u",
+    "lang": "en",
+    "slug": "mediatek-mt7612u-linux-driver-troubleshooting",
+    "alternate": "mediatek-mt7612u-linux-treiber-probleme",
+    "published": "2026-11-19",
+    "modified": "2026-11-19",
+    "checked": "2026-11-19",
+    "category": "Linux News & Security",
+    "topicLabel": "Linux · USB Wi-Fi & drivers",
+    "title": "MediaTek MT7612U on Linux: USB Wi-Fi Driver, Firmware and Troubleshooting Guide",
+    "seoTitle": "MT7612U Linux Driver: USB Wi-Fi & Firmware Fixes",
+    "description": "Fix MT7612U USB Wi-Fi on Linux: check mt76x2u driver binding, firmware, rfkill and NetworkManager on Debian 13, Ubuntu, Linux Mint and Arch. Clear diagnostics.",
+    "summary": "Your USB adapter is detected, but Wi-Fi is missing? Follow the evidence from USB identity to a working connection, with read-only checks and release-specific firmware packages.",
+    "heroImage": "/assets/blog/mt7612u/diagnosis-en.svg",
+    "heroMobileImage": "/assets/blog/mt7612u/diagnosis-en-mobile.svg",
+    "heroWidth": 1200,
+    "heroHeight": 760,
+    "heroMobileWidth": 620,
+    "heroMobileHeight": 1060,
+    "socialImage": "/assets/blog/mt7612u/social-en.png",
+    "socialAlt": "MT7612U: USB detection, mt76x2u, firmware, wireless interface and connection — original diagnostic schematic.",
+    "imageAlt": "MT7612U Linux diagnostic flow: check USB detection, driver binding, firmware, the wireless interface and the connection in order.",
+    "imageCaption": "Original explanatory diagram, not a hardware test. Each stage answers a different question. Click to open the complete graphic.",
+    "fullSizeHero": true,
+    "leadFragment": "content/linux-news/mt7612u.en.lead",
+    "extraCss": "/assets/blog/mt7612u/guide.css",
+    "extraJs": "/assets/blog/mt7612u/guide.js",
+    "articleClass": "mt7612u-guide",
+    "primarySourceUrl": "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c",
+    "primarySourceLabel": "Kernel source: USB device matching",
+    "sourceUrls": [
+      "https://github.com/torvalds/linux/blob/v4.19/drivers/net/wireless/mediatek/mt76/Kconfig",
+      "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c",
+      "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/mt76x2.h",
+      "https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c",
+      "https://github.com/torvalds/linux/blob/master/drivers/net/wireless/mediatek/mt76/mt76x2/Kconfig",
+      "https://wireless.docs.kernel.org/en/latest/en/users/drivers/mediatek.html",
+      "https://wireless.docs.kernel.org/en/latest/en/users/documentation/iw.html",
+      "https://wireless.docs.kernel.org/en/latest/en/users/documentation/modes.html",
+      "https://docs.alfa.com.tw/Support/Linux/MT7612U/",
+      "https://packages.debian.org/trixie/firmware-mediatek",
+      "https://packages.debian.org/trixie/all/firmware-mediatek/filelist",
+      "https://packages.debian.org/bookworm/all/firmware-misc-nonfree/filelist",
+      "https://packages.ubuntu.com/noble/amd64/linux-firmware/filelist",
+      "https://packages.ubuntu.com/resolute/all/linux-firmware-mediatek/filelist",
+      "https://packages.ubuntu.com/en/stonking/misc/linux-firmware-mediatek",
+      "https://packages.ubuntu.com/firmware-mediatek",
+      "https://archlinux.org/packages/core/any/linux-firmware-mediatek/files/",
+      "https://linuxmint-installation-guide.readthedocs.io/en/latest/drivers.html",
+      "https://networkmanager.dev/docs/api/latest/nmcli.html",
+      "https://man.archlinux.org/man/lsusb.8.en",
+      "https://www.kernel.org/doc/html/latest/driver-api/firmware/fw_search_path.html"
+    ],
+    "keywords": [
+      "MediaTek MT7612U Linux",
+      "mt76x2u firmware",
+      "MT7612U Debian 13",
+      "MT7612U Ubuntu",
+      "MT7612U Linux Mint",
+      "MT7612U Arch Linux",
+      "MT7612U monitor mode"
+    ],
+    "relatedGuides": [
+      {
+        "href": "/linux-hardware-explorer/wifi-mediatek-mt7612u/",
+        "label": "MT7612U hardware reference"
+      },
+      {
+        "href": "/linux-hardware-explorer/",
+        "label": "Linux Hardware & Driver Explorer"
+      },
+      {
+        "href": "/linux-fix-lab/",
+        "label": "Linux Fix Lab"
+      }
+    ]
   }
 ]

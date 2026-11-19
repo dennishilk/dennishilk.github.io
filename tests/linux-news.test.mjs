@@ -86,6 +86,23 @@ for(const a of specs){
       for(const source of a.sourceUrls)assert.ok(body.includes('href="'+source+'"'),source);
       return;
     }
+    if(a.topic==='mt7612u'){
+      for(const cmd of ['lsusb','lsusb -t','uname -r','modinfo mt76x2u','iw dev','modinfo -F firmware mt76x2u','rfkill list','iw reg get','nmcli device','sudo pacman -Syu linux-firmware-mediatek'])assert.ok(commands.includes(cmd),cmd);
+      assert.ok(!commands.includes('lsusb -nn'));
+      assert.ok(commands.indexOf('apt-cache policy firmware-mediatek')<commands.indexOf('sudo apt install firmware-mediatek'));
+      assert.ok(commands.indexOf('pacman -Q linux-firmware-mediatek')<commands.indexOf('sudo pacman -Syu linux-firmware-mediatek'));
+      assert.ok(!commands.some(c=>/curl|wget|modprobe -r|pacman -Sy /.test(c)));
+      assert.equal((body.match(/class="mt-example"/g)||[]).length,6);
+      assert.ok((body.match(/<h3>/g)||[]).length>=18);
+      for(const source of a.sourceUrls)assert.ok(body.includes('href="'+source+'"'),source);
+      const lead=read(a.leadFragment),html=read(path);
+      assert.ok(lead.includes('quick-answer'));assert.ok(html.indexOf('id="quick-answer"')<html.indexOf('class="news-hero"'));
+      assert.ok(html.includes('<a href="'+a.heroImage+'"'));
+      const profile=read(prefix+'linux-hardware-explorer/wifi-mediatek-mt7612u/index.html');
+      assert.ok(profile.includes('href="/'+prefix+'blog/'+a.slug+'/"'));
+      assert.ok(html.includes('href="/'+prefix+'linux-hardware-explorer/wifi-mediatek-mt7612u/"'));
+      return;
+    }
     if(a.topic==='gog-galaxy-linux'){
       assert.deepEqual(commands,['WINEDLLOVERRIDES="ddraw.dll=n,b;dinput.dll=n,b" %command%']);
       assert.ok(body.includes('datetime="'+a.checked+'"'));

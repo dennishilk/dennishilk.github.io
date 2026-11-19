@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="1060" viewBox="0 0 620 1060" role="img" aria-labelledby="title desc">
+<title id="title">From USB port to Wi-Fi</title><desc id="desc">USB detected → Driver bound → Firmware loaded → Interface registered → Connection established</desc>
+<rect width="620" height="1060" rx="22" fill="#0d1520"/>
+<g font-family="DejaVu Sans, sans-serif">
+<text x="36" y="49" fill="#76dbea" font-size="18">MT7612U / LINUX / DIAGNOSE</text>
+<text x="36" y="91" fill="#edf5fc" font-size="28" font-weight="bold">From USB port to Wi-Fi</text>
+<rect x="36" y="135" width="548" height="142" rx="12" fill="#152636" stroke="#2b6077"/>
+<text x="58" y="169" fill="#edf5fc" font-size="23" font-weight="bold">USB detected</text>
+<text x="58" y="207" fill="#75deef" font-size="21" font-family="monospace">lsusb</text>
+<text x="58" y="246" fill="#bccddc" font-size="18">Device ID present; Wi-Fi not established.</text>
+<path d="M 310.0 277 v 28" stroke="#60cee2" stroke-width="2"/>
+<rect x="36" y="305" width="548" height="142" rx="12" fill="#152636" stroke="#2b6077"/>
+<text x="58" y="339" fill="#edf5fc" font-size="23" font-weight="bold">Driver bound</text>
+<text x="58" y="377" fill="#75deef" font-size="21" font-family="monospace">lsusb -t</text>
+<text x="58" y="416" fill="#bccddc" font-size="18">Driver=mt76x2u on the correct port.</text>
+<path d="M 310.0 447 v 28" stroke="#60cee2" stroke-width="2"/>
+<rect x="36" y="475" width="548" height="142" rx="12" fill="#152636" stroke="#2b6077"/>
+<text x="58" y="509" fill="#edf5fc" font-size="23" font-weight="bold">Firmware loaded</text>
+<text x="58" y="547" fill="#75deef" font-size="21" font-family="monospace">journalctl -k -b</text>
+<text x="58" y="586" fill="#bccddc" font-size="18">Check requests and initialization.</text>
+<path d="M 310.0 617 v 28" stroke="#60cee2" stroke-width="2"/>
+<rect x="36" y="645" width="548" height="142" rx="12" fill="#152636" stroke="#2b6077"/>
+<text x="58" y="679" fill="#edf5fc" font-size="23" font-weight="bold">Interface registered</text>
+<text x="58" y="717" fill="#75deef" font-size="21" font-family="monospace">iw dev</text>
+<text x="58" y="756" fill="#bccddc" font-size="18">Wireless device exists; link still separate.</text>
+<path d="M 310.0 787 v 28" stroke="#60cee2" stroke-width="2"/>
+<rect x="36" y="815" width="548" height="142" rx="12" fill="#152636" stroke="#2b6077"/>
+<text x="58" y="849" fill="#edf5fc" font-size="23" font-weight="bold">Connection established</text>
+<text x="58" y="887" fill="#75deef" font-size="21" font-family="monospace">iw dev INTERFACE link</text>
+<text x="58" y="926" fill="#bccddc" font-size="18">Then check IP, routing and DNS.</text>
+<text x="36" y="1034" fill="#9cafc0" font-size="17">dennishilk.com · Source-based schematic, not a hardware test</text></g></svg>

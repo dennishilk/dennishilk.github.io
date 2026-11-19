@@ -207,7 +207,13 @@ test("blog sitemap includes every guide in both languages with its actual locali
     const html = readFileSync(publicUrlToPath(pageUrl), "utf8");
     const links = alternateLanguages(entry);
     for (const code of ["en", "de", "x-default"]) {
-      assert.ok(html.includes(`hreflang="${code}" href="${links.get(code)}"`), `${pageUrl} has a different HTML language pair`);
+      // HTML attribute order is insignificant, including on manually authored posts.
+      const alternatives = [...html.matchAll(/<link\b[^>]*>/g)].map(([tag]) => ({
+        rel: tag.match(/\brel="([^"]+)"/)?.[1],
+        lang: tag.match(/\bhreflang="([^"]+)"/)?.[1],
+        href: tag.match(/\bhref="([^"]+)"/)?.[1],
+      }));
+      assert.ok(alternatives.some(link => link.rel === "alternate" && link.lang === code && link.href === links.get(code)), `${pageUrl} has a different HTML language pair`);
       assert.ok(existsSync(publicUrlToPath(links.get(code))), `missing ${code} counterpart for ${pageUrl}`);
     }
   }
