@@ -128,5 +128,107 @@
       "22.04 LTS": "1:8.9p1-3ubuntu0.18"
     },
     "separateFromPurgeRegression": true
+  },
+  "followup": {
+    "checked": "2026-11-21",
+    "method": "Canonical Launchpad API: bug tasks, source publications and separate amd64 client/server binary publications; packaging changelog and postrm read. No local OS reproduction.",
+    "bugTasks": [
+      {
+        "bug_target_name": "openssh (Ubuntu)",
+        "status": "Fix Released",
+        "date_fix_released": "2026-10-23T19:53:12.045231+00:00"
+      },
+      {
+        "bug_target_name": "openssh-gssapi (Ubuntu)",
+        "status": "Fix Released",
+        "date_fix_released": "2026-10-11T17:54:06.158216+00:00"
+      },
+      {
+        "bug_target_name": "openssh (Debian)",
+        "status": "Fix Released",
+        "date_fix_released": null
+      }
+    ],
+    "sourcePublications": [
+      {
+        "source_package_version": "1:10.5p1-1ubuntu3.1",
+        "binary_package_version": null,
+        "pocket": "Updates",
+        "status": "Published",
+        "date_published": "2026-10-21T06:52:19.803814+00:00",
+        "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+sourcepub/18890879"
+      },
+      {
+        "source_package_version": "1:10.5p1-1ubuntu3.1",
+        "binary_package_version": null,
+        "pocket": "Security",
+        "status": "Published",
+        "date_published": "2026-10-19T13:29:18.419563+00:00",
+        "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+sourcepub/18887263"
+      },
+      {
+        "source_package_version": "1:10.5p1-1ubuntu2",
+        "binary_package_version": null,
+        "pocket": "Release",
+        "status": "Published",
+        "date_published": "2026-09-12T09:46:17.892040+00:00",
+        "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+sourcepub/18729183"
+      }
+    ],
+    "binaryPublications": {
+      "client": [
+        {
+          "source_package_version": "1:10.5p1-1ubuntu3.1",
+          "binary_package_version": "1:10.5p1-1ubuntu3.1",
+          "pocket": "Updates",
+          "status": "Published",
+          "date_published": "2026-10-21T06:52:19.803814+00:00",
+          "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/252273219"
+        },
+        {
+          "source_package_version": "1:10.5p1-1ubuntu3.1",
+          "binary_package_version": "1:10.5p1-1ubuntu3.1",
+          "pocket": "Security",
+          "status": "Published",
+          "date_published": "2026-10-19T13:29:18.419563+00:00",
+          "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/252194882"
+        },
+        {
+          "source_package_version": "1:10.5p1-1ubuntu2",
+          "binary_package_version": "1:10.5p1-1ubuntu2",
+          "pocket": "Release",
+          "status": "Published",
+          "date_published": "2026-09-12T09:46:17.892040+00:00",
+          "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/249539750"
+        }
+      ],
+      "server": [
+        {
+          "source_package_version": "1:10.5p1-1ubuntu3.1",
+          "binary_package_version": "1:10.5p1-1ubuntu3.1",
+          "pocket": "Updates",
+          "status": "Published",
+          "date_published": "2026-10-21T06:52:19.803814+00:00",
+          "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/252273221"
+        },
+        {
+          "source_package_version": "1:10.5p1-1ubuntu3.1",
+          "binary_package_version": "1:10.5p1-1ubuntu3.1",
+          "pocket": "Security",
+          "status": "Published",
+          "date_published": "2026-10-19T13:29:18.419563+00:00",
+          "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/252194884"
+        },
+        {
+          "source_package_version": "1:10.5p1-1ubuntu2",
+          "binary_package_version": "1:10.5p1-1ubuntu2",
+          "pocket": "Release",
+          "status": "Published",
+          "date_published": "2026-09-12T09:46:17.892040+00:00",
+          "self_link": "https://api.launchpad.net/1.0/ubuntu/+archive/primary/+binarypub/249539752"
+        }
+      ]
+    },
+    "limits": "An old rc package can retain its previous postrm; updating the installed counterpart does not establish that the retained script is corrected. No automatic recovery of deleted files."
   }
 }

@@ -2,14 +2,19 @@
 <p><strong>Update vom 13. November 2026:</strong> Epic plant Fortnite unter Linux mit EAC v2. Was TPM 2.0, Secure Boot und CachyOS damit zu tun haben, erkläre ich <a href="#fortnite">im neuen Fortnite-Abschnitt</a>.</p>
 
 <section class="news-status" aria-labelledby="launcher-update">
-<h2 id="launcher-update">Launcher-Update: Stand 19. November 2026</h2>
-<p>Laut Epics offiziellen Release Notes ist inzwischen <strong>Preview 0.118.0</strong> vom 18. November verfügbar. Seit meiner getesteten Version 0.113.1 sind unter anderem diese Änderungen hinzugekommen:</p>
+<h2 id="launcher-update">Launcher-Update: Stand 21. November 2026</h2>
+<p>Epic hat <strong>Preview 0.120.0 am 20. November 2026</strong> veröffentlicht. Neu sind die Installation bereits geladener Launcher-Updates im Leerlauf, eine Deinstallationsoption in der Downloadliste und die Möglichkeit, den Ordner vorhandener Spieldateien zu ändern. Dazu kommen Korrekturen für fehlgeschlagene Reparaturen und die Fortschrittsanzeige bei der Dateiprüfung vor dem Download.</p>
+<p><strong>AppImage und Fedora sind zurück:</strong> Auf der offiziellen Downloadseite stehen ein AppImage und ein <code>.deb</code>-Paket. Epic nennt Ubuntu ab 22.04 LTS und Debian ab 12 für das Debian-Paket sowie Fedora ab 43 für das AppImage. Arch bleibt außerhalb der offiziell unterstützten Distributionen. Der Linux-Launcher bedeutet weiterhin keine Fortnite-Freigabe: Epics Fortnite-FAQ meldet am 21. November, dass das Spiel noch nicht für Linux verfügbar ist.</p>
+<p>Die wichtigsten Schritte seit meinem ursprünglichen Test:</p>
 <ul>
+<li><strong>0.113.1 · <time datetime="2026-11-09">9. November</time>:</strong> Version meines Praxistests vom 10. November; Castlevania und LS22 liefen auf Cthulhu.</li>
+<li><strong>0.114.0 / 0.115.0 · <time datetime="2026-11-10">10.</time> / <time datetime="2026-11-11">11. November</time>:</strong> Änderungen an Installation, Bibliothekssuche und sichtbaren Updatehinweisen.</li>
 <li><strong>0.116.2 · <time datetime="2026-11-16">16. November</time>:</strong> Fehler bei unterbrochenen Cloudsave-Downloads und fehlenden Bibliothekseinträgen nach dem ersten Start behoben.</li>
-<li><strong>0.117.0 · <time datetime="2026-11-17">17. November</time>:</strong> Linux-Trayicon repariert; verspätet abgeschlossene Browseranmeldungen führen nicht mehr fälschlich zu einer abgemeldeten Sitzung.</li>
-<li><strong>0.118.0 · <time datetime="2026-11-18">18. November</time>:</strong> Ein Anmeldelink hilft, wenn der Browser nicht öffnet. Außerdem wurde ein Fehler behoben, durch den DLC nach einem Spielupdate veraltet bleiben konnte.</li>
+<li><strong>0.117.0 · <time datetime="2026-11-17">17. November</time>:</strong> Linux-Trayicon und Sitzungsanzeige nach verspäteter Browseranmeldung korrigiert.</li>
+<li><strong>0.118.0 · <time datetime="2026-11-18">18. November</time>:</strong> Zusätzlicher Anmeldelink und Korrektur für nach einem Spielupdate veraltete DLC.</li>
+<li><strong>0.120.0 · <time datetime="2026-11-20">20. November</time>:</strong> Verbesserungen bei Launcher-Updates, Deinstallation, Spieldateiordnern und Reparaturen.</li>
 </ul>
-<p>Diese Ergänzung fasst die Release Notes zusammen. Mein unten dokumentierter Praxistest stammt weiterhin vom 10. November mit Version 0.113.1.</p>
+<p>Diese Ergänzung beruht auf Epics Release Notes, Downloadseite und Fortnite-FAQ. Mein unten dokumentierter Praxistest stammt weiterhin vom 10. November mit Version 0.113.1. Ein neuer Test der Version 0.120.0 auf Cthulhu ist damit nicht behauptet.</p>
 </section>
 
 <h2 id="arch-installation">Epic Games Launcher auf Arch Linux installieren</h2>

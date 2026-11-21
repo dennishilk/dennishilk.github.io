@@ -55,7 +55,7 @@ for (const lang of ['de','en']) {
  const minutes=Math.ceil(words/210);
  const social=origin+photoBase+'social-'+lang+'.png';
  const graph={'@context':'https://schema.org','@graph':[
-  {'@type':'BlogPosting','@id':url+'#article',mainEntityOfPage:url,url,headline:a.title,description:a.description,inLanguage:lang,datePublished:data.date,dateModified:data.date,author:{'@type':'Person',name:'Dennis Hilk',url:origin+'/about/'},publisher:{'@type':'Person',name:'Dennis Hilk',url:origin+'/'},isPartOf:{'@id':origin+prefix+'/blog/#blog'},articleSection:a.category,wordCount:words,image:social,citation:sourceUrls,keywords:['Jane’s AH-64D Longbow','Longbow 1996','big box','retro gaming','Pentium III','Windows 98','MS-DOS','SCSI','Origin Systems','Electronic Arts']},
+  {'@type':'BlogPosting','@id':url+'#article',mainEntityOfPage:url,url,headline:a.title,description:a.description,inLanguage:lang,datePublished:data.date,dateModified:data.modified??data.date,author:{'@type':'Person',name:'Dennis Hilk',url:origin+'/about/'},publisher:{'@type':'Person',name:'Dennis Hilk',url:origin+'/'},isPartOf:{'@id':origin+prefix+'/blog/#blog'},articleSection:a.category,wordCount:words,image:social,citation:sourceUrls,keywords:['Jane’s AH-64D Longbow','Longbow 1996','big box','retro gaming','Pentium III','Windows 98','MS-DOS','SCSI','Origin Systems','Electronic Arts']},
   {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:de?'Startseite':'Home',item:origin+prefix+'/'},{'@type':'ListItem',position:2,name:'Blog',item:origin+prefix+'/blog/'},{'@type':'ListItem',position:3,name:a.title,item:url}]}
  ]};
  const head=`<!doctype html>
@@ -63,7 +63,7 @@ for (const lang of ['de','en']) {
 <title>${esc(a.seoTitle)} · Dennis Hilk</title><meta name="description" content="${esc(a.description)}"><meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="${url}"><link rel="alternate" hreflang="en" href="${en}"><link rel="alternate" hreflang="de" href="${ger}"><link rel="alternate" hreflang="x-default" href="${en}">
 <link rel="alternate" type="application/rss+xml" title="Dennis Hilk — Blog (${de?'Deutsch':'English'})" href="${origin+prefix}/blog/feed.xml">
-<meta property="og:type" content="article"><meta property="og:site_name" content="Dennis Hilk"><meta property="og:title" content="${esc(a.title)}"><meta property="og:description" content="${esc(a.description)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${social}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${esc(a.socialAlt)}"><meta property="og:locale" content="${de?'de_DE':'en_US'}"><meta property="og:locale:alternate" content="${de?'en_US':'de_DE'}"><meta property="article:published_time" content="${data.date}"><meta property="article:modified_time" content="${data.date}"><meta property="article:section" content="${esc(a.category)}">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Dennis Hilk"><meta property="og:title" content="${esc(a.title)}"><meta property="og:description" content="${esc(a.description)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${social}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${esc(a.socialAlt)}"><meta property="og:locale" content="${de?'de_DE':'en_US'}"><meta property="og:locale:alternate" content="${de?'en_US':'de_DE'}"><meta property="article:published_time" content="${data.date}"><meta property="article:modified_time" content="${data.modified??data.date}"><meta property="article:section" content="${esc(a.category)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(a.title)}"><meta name="twitter:description" content="${esc(a.description)}"><meta name="twitter:image" content="${social}"><meta name="twitter:image:alt" content="${esc(a.socialAlt)}">
 <link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials"><link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006"><link rel="stylesheet" href="${photoBase}longbow.css?v=20261103"><script defer src="/assets/js/language-toggle.js?v=20261006"></script><script defer src="/blog/navigation.js?v=20261008"></script>
 <script type="application/ld+json">${JSON.stringify(graph).replaceAll('<','\\u003c')}</script></head>`;
@@ -91,7 +91,7 @@ ${body}
    if(!list?.itemListElement||!blog)throw Error('Blog JSON-LD missing ItemList/Blog');
    list.itemListElement=[{'@type':'ListItem',url,name:a.title},...list.itemListElement.filter(x=>x.url!==url)].map((x,i)=>({...x,position:i+1}));
    list.numberOfItems=list.itemListElement.length;
-   blog.dateModified=[blog.dateModified,data.date].sort().at(-1);
+   blog.dateModified=[blog.dateModified,data.modified??data.date].sort().at(-1);
    changedLd=true;
    return '<script type="application/ld+json">'+JSON.stringify(metadata).replaceAll('<','\\u003c')+'</script>';
  });

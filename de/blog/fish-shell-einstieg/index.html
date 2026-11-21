@@ -18,13 +18,13 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="article:published_time" content="2026-10-08">
-<meta property="article:modified_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-11-21">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="fish für Einsteiger: Vorschläge, Aliase und Konfiguration">
 <meta name="twitter:description" content="Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.">
 <meta name="twitter:image" content="https://www.dennishilk.com/avatar.png">
 <link rel="stylesheet" href="/blog/blog.css?v=20261008-tutorials">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/","url":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/","headline":"fish für Einsteiger: Vorschläge, Aliase und Konfiguration","description":"Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"fish & Shell","wordCount":843},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"fish für Einsteiger: Vorschläge, Aliase und Konfiguration","item":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/#article","mainEntityOfPage":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/","url":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/","headline":"fish für Einsteiger: Vorschläge, Aliase und Konfiguration","description":"Die fish-Shell verstehen: Vorschläge, Tab-Vervollständigung, Aliase, Abkürzungen und config.fish. Mit kleinen Übungen und Bezug zu meinem NixOS-Setup.","inLanguage":"de","datePublished":"2026-10-08","dateModified":"2026-11-21","author":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/about/"},"publisher":{"@type":"Person","name":"Dennis Hilk","url":"https://www.dennishilk.com/de/"},"image":"https://www.dennishilk.com/avatar.png","isPartOf":{"@id":"https://www.dennishilk.com/de/blog/#blog"},"articleSection":"fish & Shell","wordCount":843},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.dennishilk.com/de/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.dennishilk.com/de/blog/"},{"@type":"ListItem","position":3,"name":"fish für Einsteiger: Vorschläge, Aliase und Konfiguration","item":"https://www.dennishilk.com/de/blog/fish-shell-einstieg/"}]}]}</script>
 <link rel="stylesheet" href="/assets/css/language-toggle.css?v=20261006">
 <script defer src="/assets/js/language-toggle.js?v=20261006"></script>
 <script defer src="/blog/navigation.js?v=20261008"></script>
@@ -84,6 +84,12 @@ end
 <pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">funcsave lltutorial
 </code></pre>
 <p>Dieser Schritt ist optional und schreibt eine lokale Funktionsdatei. Eine neu geöffnete fish-Sitzung kann die Funktion anschließend automatisch laden. Halte eigene kleine Funktionen getrennt, damit du später ihre Herkunft leichter erkennst.</p>
+<p><strong>Ergänzung vom 21. November 2026:</strong> Bash-Ausdrücke wie <code>${XDG_DATA_HOME:-$HOME/.local/share}</code> lassen sich nicht direkt in fish übernehmen. Für einen Ersatzwert bei einer fehlenden oder leeren Variablen kannst du den Vorgabepfad zuerst setzen und dann den vorhandenen Wert übernehmen:</p>
+<pre><code>set -l tutorial_data_home "$HOME/.local/share"
+if set -q XDG_DATA_HOME; and test -n "$XDG_DATA_HOME"
+    set tutorial_data_home "$XDG_DATA_HOME"
+end
+printf '%s\n' "$tutorial_data_home"</code></pre><p>Das Beispiel liest nur eine Umgebungsvariable und gibt den gewählten Pfad aus. Ein praktisches Beispiel für einen direkt in fish nutzbaren Befehl findest du bei <a href="/de/blog/epic-games-launcher-linux-fortnite/#wine-proton">der Runtime-Prüfung des Epic Launchers</a>.</p>
 <h2 id="variablen-und-vorhandene-skripte-verstehen">Variablen und vorhandene Skripte verstehen</h2>
 <p>Eine Variable setzt du in fish mit <code>set</code>, etwa in einer Übungsfunktion oder Session:</p>
 <pre tabindex="0" aria-label="Codebeispiel"><code class="language-fish">set -l tutorial_message 'Hallo aus fish'

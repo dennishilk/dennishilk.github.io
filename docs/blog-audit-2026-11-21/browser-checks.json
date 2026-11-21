@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-21",
+  "environment": "Cloud Chrome; public Worldnode pages before deployment",
+  "viewport": {
+    "width": 1363,
+    "height": 936
+  },
+  "articlePageVisits": 134,
+  "articlePairs": 67,
+  "h1CountErrors": 0,
+  "initialViewportLoadedImageErrors": 0,
+  "archiveCardsPerLanguage": 67,
+  "transientHorizontalOverflowRechecked": {
+    "nginx-november": "document.scrollWidth 1348 <= window.innerWidth 1363",
+    "windows-esu": "1348 <= 1363",
+    "nginx-october": "1348 <= 1363"
+  },
+  "interactions": [
+    {
+      "tool": "WM configurator, DE",
+      "result": "Arch+dwm produced configuration/package plan; duplicate binding b produced validation alert"
+    },
+    {
+      "tool": "Dual boot assistant, DE",
+      "result": "two SSDs + BitLocker on + Legacy/CSM produced STOP and UEFI guidance; no disk operation"
+    },
+    {
+      "tool": "Distro quiz, DE",
+      "result": "all 15 questions completed using first answer as synthetic QA data; 11 ranked results displayed; reset returned to question 1"
+    },
+    {
+      "tool": "Gaming archive, DE",
+      "result": "Monkey search 3/99; reset 99/99; illustrated filter 79/99; Mario modal showed full image and attribution; closed afterward"
+    },
+    {
+      "tool": "WoW gallery, DE",
+      "result": "next moved to storm screenshot 2/17; previous returned; observer showed successful latest sync, not real-time combat telemetry"
+    },
+    {
+      "tool": "Image converter, DE",
+      "result": "public existing WebP selected through file chooser; PNG + maximum width 320 produced 320x180 PNG, 38.7 KB, successful download; cleared afterward"
+    }
+  ],
+  "console": "Observed console errors were chrome-extension metadata errors; no website error identified in inspected log windows. No exhaustive all-page console trace.",
+  "limitations": [
+    "No mobile viewport emulation available; no mobile runtime success claimed",
+    "Local Chromium could not launch (sandbox socket restriction); cloud browser could not access workspace localhost",
+    "Final un-deployed edits checked by source, inventory and Node tests; public browser checks apply to current Worldnode baseline",
+    "Lazy images outside the initial viewport were not all forced to load; local paths and dimension headers checked separately",
+    "No genuine hardware/OS reinstall, firmware, driver, game, Nix, GHC or server change executed"
+  ]
+}

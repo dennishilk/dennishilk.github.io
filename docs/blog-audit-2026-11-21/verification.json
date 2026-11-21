@@ -1,0 +1,192 @@
+{
+  "targeted": {
+    "command": "See README.md for explicit test selection",
+    "stats": {
+      "tests": 195,
+      "pass": 195,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  "baseline_mjs": {
+    "command": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "stats": {
+      "tests": 2122,
+      "pass": 2106,
+      "fail": 16,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "location": "tests/apollo-11-integration.test.mjs:13:1",
+        "test": "catalog search finds both native routes and layout/IMSAI runtime remain unchanged"
+      },
+      {
+        "location": "tests/archive-recovery-real-files.test.mjs:77:1",
+        "test": "original PDF and original Zstandard content are independently readable with their supplied passwords"
+      },
+      {
+        "location": "tests/bbs-system.test.mjs:8:1",
+        "test": "route, exact card order, metadata, neighbors and sitemap"
+      },
+      {
+        "location": "tests/chernobyl.test.mjs:37:1",
+        "test": "exhibit and publication rebuilds are deterministic and retain prior publications"
+      },
+      {
+        "location": "tests/gaming-journey.test.mjs:50:2",
+        "test": "de: local image links, captions, dimensions and provenance are complete"
+      },
+      {
+        "location": "tests/gaming-journey.test.mjs:50:2",
+        "test": "en: local image links, captions, dimensions and provenance are complete"
+      },
+      {
+        "location": "tests/jurassic-park-sgi.test.mjs:34:1",
+        "test": "catalog places SGI third after WOPR without adding a runtime to the overview"
+      },
+      {
+        "location": "tests/linux-audio-rescue.test.mjs:22:1",
+        "test": "audio and news builders are deterministic"
+      },
+      {
+        "location": "tests/lost-administrator-novel.test.mjs:12:1",
+        "test": "project metadata presents the ongoing novel and uses its cover image"
+      },
+      {
+        "location": "tests/lost-administrator-novel.test.mjs:34:1",
+        "test": "main landing page uses full-card links for the novel and workstation"
+      },
+      {
+        "location": "tests/lost-administrator-novel.test.mjs:52:1",
+        "test": "landing page centers the download and support button groups"
+      },
+      {
+        "location": "tests/museum-blog.test.mjs:10:2",
+        "test": "en storage: complete article, reciprocal alternates, dates, visible examples and distribution"
+      },
+      {
+        "location": "tests/museum-blog.test.mjs:10:2",
+        "test": "de storage: complete article, reciprocal alternates, dates, visible examples and distribution"
+      },
+      {
+        "location": "tests/museum-blog.test.mjs:36:1",
+        "test": "article rebuilds retain the committed output and localized shell"
+      },
+      {
+        "location": "tests/undersea-cable-dependency-map.test.mjs:95:1",
+        "test": "current export is rendered as raw country profiles without geographic invention"
+      },
+      {
+        "location": "tests/undersea-cable-dependency-map.test.mjs:148:1",
+        "test": "published memory uses the real 105 numeric export-history points"
+      }
+    ],
+    "tested_commit": "6734072908ad1bd0288773b9f66e4094db92e891"
+  },
+  "broad_mjs": {
+    "command": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "stats": {
+      "tests": 2124,
+      "pass": 2114,
+      "fail": 10,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "location": "tests/apollo-11-integration.test.mjs:13:1",
+        "test": "catalog search finds both native routes and layout/IMSAI runtime remain unchanged"
+      },
+      {
+        "location": "tests/archive-recovery-real-files.test.mjs:77:1",
+        "test": "original PDF and original Zstandard content are independently readable with their supplied passwords"
+      },
+      {
+        "location": "tests/bbs-system.test.mjs:8:1",
+        "test": "route, exact card order, metadata, neighbors and sitemap"
+      },
+      {
+        "location": "tests/chernobyl.test.mjs:37:1",
+        "test": "exhibit and publication rebuilds are deterministic and retain prior publications"
+      },
+      {
+        "location": "tests/jurassic-park-sgi.test.mjs:34:1",
+        "test": "catalog places SGI third after WOPR without adding a runtime to the overview"
+      },
+      {
+        "location": "tests/lost-administrator-novel.test.mjs:12:1",
+        "test": "project metadata presents the ongoing novel and uses its cover image"
+      },
+      {
+        "location": "tests/lost-administrator-novel.test.mjs:34:1",
+        "test": "main landing page uses full-card links for the novel and workstation"
+      },
+      {
+        "location": "tests/lost-administrator-novel.test.mjs:52:1",
+        "test": "landing page centers the download and support button groups"
+      },
+      {
+        "location": "tests/undersea-cable-dependency-map.test.mjs:95:1",
+        "test": "current export is rendered as raw country profiles without geographic invention"
+      },
+      {
+        "location": "tests/undersea-cable-dependency-map.test.mjs:148:1",
+        "test": "published memory uses the real 105 numeric export-history points"
+      }
+    ],
+    "tested_commit": "40ab19b3bcd37e426301e06dda2302814d848cfc",
+    "note": "Isolated git-archive copy. One Apollo test requires Git history and failed for that environment; rerun separately in the real checkout: 8/8 pass. Subsequent card-template fixes and image dimensions covered by the targeted final suite."
+  },
+  "apollo_git_context": {
+    "command": "See README.md for explicit test selection",
+    "stats": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  "seo": {
+    "command": "node scripts/audit-seo.mjs",
+    "output": [
+      "total HTML files: 1150",
+      "total indexable pages: 1093",
+      "total excluded/non-indexable pages: 57",
+      "classification indexable localized alternate: 515",
+      "classification intentionally blocked page: 5",
+      "classification interactive child/lab page that should still be indexable: 120",
+      "classification interactive/utility page that should NOT be in search: 50",
+      "classification primary indexable page: 458",
+      "classification technical/internal/template/verification page: 2",
+      "total sitemap URLs: 1093",
+      "unique sitemap URLs: 1093",
+      "duplicate sitemap URLs: 0",
+      "indexable pages missing from all sitemaps: 0",
+      "sitemap URLs with no matching indexable page: 0",
+      "non-www URLs in sitemap/robots/canonical metadata: 0",
+      "broken hreflang pairs: 0",
+      "canonical mismatches: 0",
+      "Open Graph URL mismatches: 0",
+      "unintended duplicate title groups: 0",
+      "indexable pages missing titles: 0",
+      "indexable pages missing descriptions: 0",
+      "indexable pages with language mismatches: 0",
+      "images missing alt attributes: 0",
+      "broken crawlable internal links: 0",
+      "important photographic pages missing image coverage: 0",
+      "validation errors: 0"
+    ]
+  },
+  "inventory": {
+    "command": "python docs/blog-audit-2026-11-21/collect_inventory.py",
+    "articlePairs": 67,
+    "englishCounterparts": 67,
+    "issues": 0
+  }
+}

@@ -70,6 +70,11 @@ Waidmannsheil!</code></pre>
 <pre class="longbow-terminal"><code>FILES=45
 BUFFERS=45</code></pre>
 <p>And sure enough: <strong>Longbow now launched under Windows 98 SE.</strong> That was the big success of the day. No modern community patch, just two old-school DOS configuration lines.</p>
+<section aria-labelledby="restoration-20261121"><h2 id="restoration-20261121">21 November 2026: USB works; a Windows protection error is the next obstacle</h2>
+<p>One small success is confirmed: <strong>an 8 GB FAT32 USB stick works on my Windows 98 SE machine.</strong> This describes the one stick actually tested; I cannot name a specific model or additional successful sticks here yet.</p>
+<p>Right now, a <strong>Windows protection error</strong> is getting in the way. After all the driver and configuration experiments, I plan to <strong>reinstall Windows 98 SE from scratch</strong> to clear out the trial-and-error changes, then <strong>test the onboard sound again</strong>. Both steps are still pending as I write. This does not diagnose the protection error, and working digital sound in Longbow is still unconfirmed.</p>
+<p>The earlier Aztech attempts below remain part of the investigation. There is no confirmed successful UniSound test or new <code>AUTOEXEC.BAT</code>/<code>CONFIG.SYS</code> configuration to report in this update. A clean installation first; then we listen again. 😉</p></section>
+
 <h2 id="sound">The Apache runs. The Aztech is still silent</h2>
 <p><strong>20 November 2026 update:</strong> Longbow launches on my real Windows 98 SE retro PC, but digital sound <em>inside the game</em> still does not work. The Aztech can play audio in Windows, which is not the same as a working DOS sound setup for Longbow. The weekend is here, and getting the Apache to make some noise is high on my list. I will keep testing and document the next attempt.</p>
 <p>Sound was a separate adventure. I temporarily removed the Aztech to try onboard audio, searched for drivers, restarted Windows repeatedly and eventually put the Aztech back where it belonged. My PCI slots were already occupied by S3 graphics and SCSI, while the attic contained more sound cards among <strong>Mellanox 40-gigabit network adapters and an old Hauppauge WinTV card</strong>.</p>

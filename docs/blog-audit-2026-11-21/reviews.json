@@ -1,0 +1,678 @@
+{
+  "date": "2026-11-21",
+  "baseline": "6734072908ad1bd0288773b9f66e4094db92e891",
+  "articlePairs": 67,
+  "updatedPairs": 17,
+  "reviews": [
+    {
+      "slug": "apollo-11-computer-mondlandung",
+      "de": "de/blog/apollo-11-computer-mondlandung/index.html",
+      "en": "blog/apollo-11-guidance-computer-moon-landing/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "AGC/DSKY, 1201/1202 und Quellen gegenüber dem ausdrücklich vereinfachten Museumsmodell abgegrenzt; echte Bildschirmaufnahmen bleiben erhalten.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "apt-cve-2026-109518",
+      "de": "de/blog/apt-cve-2026-109518/index.html",
+      "en": "blog/apt-cve-2026-109518/index.html",
+      "priority": 1,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Debian-Tracker bestätigt Trixie-Fix 3.0.4 und Bookworm-Fix 2.6.2; keine pauschale Entwarnung für andere Paketstände.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "arch-linux-dwm-cthulhu",
+      "de": "de/blog/arch-linux-dwm-cthulhu/index.html",
+      "en": "blog/arch-linux-dwm-cthulhu/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Arch/dwm/X11 entspricht dem belegten aktuellen Setup; benutzerspezifische Installation und Rückweg bleiben beschrieben.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "bilder-ohne-upload-konvertieren",
+      "de": "de/blog/bilder-ohne-upload-konvertieren/index.html",
+      "en": "blog/convert-images-without-upload/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "JPG/PNG/WebP-Ausgabe, AVIF nur als browserabhängige Eingabe; Live-WebP→PNG mit Resize und Download erfolgreich.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "cthulhu-linux-geschichte",
+      "de": "de/blog/cthulhu-linux-geschichte/index.html",
+      "en": "blog/cthulhu-linux-journey/index.html",
+      "priority": 2,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Datierter Hinweis trennt die ursprüngliche NixOS-/Plasma-Etappe vom heutigen Arch/dwm; historische Bilder und Erinnerungen erhalten.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "darknet-tor-onion-services",
+      "de": "de/blog/darknet-tor-onion-services/index.html",
+      "en": "blog/darknet-tor-onion-services/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Guard/Middle/Exit und Onion-Rendezvous getrennt, HTTPS-/Korrelationsgrenzen korrekt; historische Länderberichte werden nicht als Live-Messung ausgegeben. Mehrere Tor-Quellen im HTTP-Checker 403.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "dateien-linux-loeschen-hdd-ssd",
+      "de": "de/blog/dateien-linux-loeschen-hdd-ssd/index.html",
+      "en": "blog/delete-files-linux-hdd-ssd/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "HDD-Überschreiben nur unter passenden Bedingungen, SSD-Wear-Leveling/TRIM ohne Löschgarantie; keine falsche Secure-Erase-Funktion zugesagt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "debian-13-nginx-sicherheitsluecken",
+      "de": "de/blog/debian-13-nginx-sicherheitsluecken/index.html",
+      "en": "blog/debian-13-nginx-security-update/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Oktoberbericht bleibt historisch; sichtbarer Anschluss an November/DSA-6642-1 und bestätigte TLS-Reaktivierung. Nicht abrufbare dyn.manpages-Adresse durch Debian-Handbuch ersetzt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "diskette-zip-cd-usb-speichermedien",
+      "de": "de/blog/diskette-zip-cd-usb-speichermedien/index.html",
+      "en": "blog/floppy-disk-zip-cd-usb-storage-history/index.html",
+      "priority": 3,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Geschichte und notice-facile-Link erhalten; Gegenartikel am 28. November weiterhin nur angekündigt. Wortzählung beim Neubau korrigiert und vorhandenes Änderungsdatum 20. November bewahrt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "dunst-konfigurieren",
+      "de": "de/blog/dunst-konfigurieren/index.html",
+      "en": "blog/configure-dunst/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Dunstrc-Beispiele, Theme, Benachrichtigungstest und Paketweg geprüft; keine bestätigte relevante neue Syntaxänderung.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "eigenes-betriebssystem-boringos",
+      "de": "de/blog/eigenes-betriebssystem-boringos/index.html",
+      "en": "blog/build-your-own-os-boringos/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "README auf main bestätigt 0.0.62-dev/M68, unabhängigen Kernel, USB/HID und physische 1080p-Abnahme; Artikel trennt spätere Optimierungen von physischer Bestätigung.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "epic-games-launcher-linux-fortnite",
+      "de": "de/blog/epic-games-launcher-linux-fortnite/index.html",
+      "en": "blog/epic-games-launcher-linux-fortnite/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Update oben: Preview 0.120.0 vom 20. November, AppImage/.deb und Fedora ≥43; Chronik ergänzt, originaler Arch-Test bleibt datiert. Fortnite weiter nicht Linux-freigegeben.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "fastfetch-konfigurieren",
+      "de": "de/blog/fastfetch-konfigurieren/index.html",
+      "en": "blog/configure-fastfetch/index.html",
+      "priority": 2,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Aktueller Arch-/dwm-Kontext über den Kitty-Screenshot verknüpft; ältere NixOS-Aufnahmen nicht umetikettiert.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "fish-shell-einstieg",
+      "de": "de/blog/fish-shell-einstieg/index.html",
+      "en": "blog/fish-shell-beginners/index.html",
+      "priority": 3,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Konkretes fish-Beispiel für XDG_DATA_HOME ergänzt; Bash-Parameterexpansion ausdrücklich unterschieden und Epic-Runtime-Bezug hergestellt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "git-pull-divergierende-branches",
+      "de": "de/blog/git-pull-divergierende-branches/index.html",
+      "en": "blog/git-pull-diverging-branches/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Status/Commitvergleich vor Rebase, ff-only-Grenzen und Commit-Erhalt geprüft; kein pauschaler Reset oder Force-Push empfohlen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "gog-galaxy-linux-wing-commander-prophecy",
+      "de": "de/blog/gog-galaxy-linux-wing-commander-prophecy/index.html",
+      "en": "blog/gog-galaxy-linux-wing-commander-prophecy/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "GOG-Ankündigung bestätigt Linux-Pläne/2027, ohne exakten Downloadtermin; vorhandenen Wing-Commander-Test erhalten, kein unbestätigtes Galaxy-Paket behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "gruvnode-x1-carbon-xmonad",
+      "de": "de/blog/gruvnode-x1-carbon-xmonad/index.html",
+      "en": "blog/gruvnode-x1-carbon-xmonad/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Historisches X1-Carbon-/XMonad-Setup ist vom X1 Yoga und Cthulhu getrennt; keine nachträgliche Umdeutung des Geräts.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "how-fast-can-your-computer-crack-a-password",
+      "de": "de/blog/how-fast-can-your-computer-crack-a-password/index.html",
+      "en": "blog/how-fast-can-your-computer-crack-a-password/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "SHA-256-Lernhash, Kandidatenzahlen, CPU/GPU/Hybrid und echte Messung gegenüber Argon2/passwortgeschützten Dateien abgegrenzt; keine erfundenen Raten.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "i-built-my-own-cryptocurrency",
+      "de": "de/blog/i-built-my-own-cryptocurrency/index.html",
+      "en": "blog/i-built-my-own-cryptocurrency/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Nebucoin bleibt abgeschaltetes Experiment 2018/19; didaktische Rekonstruktion, unsichere Parameter und Wallet/Node/Pool korrekt getrennt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "ibm-z-arm-dual-isa-prozessor",
+      "de": "de/blog/ibm-z-arm-dual-isa-prozessor/index.html",
+      "en": "blog/ibm-z-arm-dual-isa-processor/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "IBM-Primärmeldung bestätigt Konzept: elf Dual-ISA-Kerne/2 nm, beide ISAs nativ; keine Kaufverfügbarkeit oder eigene Hardwaremessung behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "imsai-8080-wargames-computer",
+      "de": "de/blog/imsai-8080-wargames-computer/index.html",
+      "en": "blog/imsai-8080-wargames-computer/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Intel-8080-Beispiel 3E 2A 32 00 02 76 ausgeführt: schreibt 42 nach 0200 und hält; Filmtechnik vom separaten WarGames-Modell abgegrenzt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "janes-ah64d-longbow-1996-big-box-retro-pc",
+      "de": "de/blog/janes-ah64d-longbow-1996-big-box-retro-pc/index.html",
+      "en": "blog/janes-ah64d-longbow-1996-retro-pc/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Autor bestätigt 8-GB-FAT32-Stick und aktuellen Windows-Schutzfehler; frisches Win98 SE/Onboard-Sound nur geplant. Originalfotos/20.-November-Stand erhalten; UniSound/Digitalton weiterhin unbestätigt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "journalctl-linux-fehler-finden",
+      "de": "de/blog/journalctl-linux-fehler-finden/index.html",
+      "en": "blog/journalctl-linux-troubleshooting/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Boot-/Unit-Filter, vorige Boots, Berechtigungen und flüchtige/persistente Journale nachvollziehbar; Diagnosebeispiele sind keine Garantie einer konkreten Ursache.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "jurassic-park-unix-system-sgi-fsn",
+      "de": "de/blog/jurassic-park-unix-system-sgi-fsn/index.html",
+      "en": "blog/jurassic-park-unix-sgi-fsn/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "fsn/IRIX/SGI-Fakten und echte Museumsaufnahmen erhalten; Rekonstruktion nicht als Filmsoftware ausgegeben. Karten-Generator an bestehenden Standardstil angeglichen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "kde-plasma-6-8-wayland-x11-xwayland",
+      "de": "de/blog/kde-plasma-6-8-wayland-x11-xwayland/index.html",
+      "en": "blog/kde-plasma-6-8-wayland-x11-xwayland/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Update oben: Plasma 6.8.3 vom 10. November mit relevanten Fehlerkorrekturen; X11-Sitzung und XWayland getrennt. Historische Distro-Tabelle bleibt datiert.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "ki-linux-kernel-948-schwachstellen",
+      "de": "de/blog/ki-linux-kernel-948-schwachstellen/index.html",
+      "en": "blog/ai-linux-kernel-948-vulnerabilities/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "OpenAI-Primärbericht bestätigt Forschung und Zählweisen; Kandidaten, dynamisch validierte Fälle und LPEs nicht vermischt. Kein unbelegter vollständiger Patchstatus ergänzt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "ki-prompt-google-search-console",
+      "de": "de/blog/ki-prompt-google-search-console/index.html",
+      "en": "blog/ai-prompt-google-search-console/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Originaler Screenshot, null Klicks und Unterschied zwischen Impression und Besuch erhalten; keine Identität oder Absicht aus Suchanfrage erfunden.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "kitty-konfigurieren",
+      "de": "de/blog/kitty-konfigurieren/index.html",
+      "en": "blog/configure-kitty/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Bereits vorhandenes oberes Update mit Cthulhu-Bild vom 21. November und Fastfetch-Link erhalten; keine unnötige neue Datierung.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-audio-fehler-beheben",
+      "de": "de/blog/linux-audio-fehler-beheben/index.html",
+      "en": "blog/linux-audio-troubleshooting/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "PipeWire/WirePlumber/ALSA und historisches SPDIF-Skript getrennt; Tests prüfen alle 14 Einstiege/496 Pfade. Generator behält Artikelpositionen statt Umordnung.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-framebuffer-cisco-telefon-doom",
+      "de": "de/blog/linux-framebuffer-cisco-telefon-doom/index.html",
+      "en": "blog/linux-framebuffer-cisco-phone-doom/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Firmware-Framebuffer, USB-Stick/Terminal und echte Aufnahme geprüft; kein nativer allgemeiner GPU-Treiber oder frei installierbares Telefon-OS versprochen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-gaming-steam-proton-lutris",
+      "de": "de/blog/linux-gaming-steam-proton-lutris/index.html",
+      "en": "blog/linux-gaming-steam-proton-lutris/index.html",
+      "priority": 2,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Gezielte Verweise auf Epic, GOG und WoW ergänzt; Launcher-Unterstützung, Wine/Proton und Anti-Cheat-Grenzen getrennt. Keine allgemeinen Spieltests aus Einzelberichten abgeleitet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-konfiguration-sichern",
+      "de": "de/blog/linux-konfiguration-sichern/index.html",
+      "en": "blog/backup-linux-configuration/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Archivumfang, Restore-Rückweg und Grenzen des persönlichen Cthulhu-Skripts geprüft; kein vollständiges Systembackup behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-laufwerke-uuid-mount-rechte",
+      "de": "de/blog/linux-laufwerke-uuid-mount-rechte/index.html",
+      "en": "blog/linux-drives-uuid-mount-permissions/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "UUID/fstab/Rechte und Nur-Lesen-Prüfung einschließlich ext4-Journalwiederholung unterschieden; keine erfundenen Gerätekennungen empfohlen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-neben-windows-11-installieren",
+      "de": "de/blog/linux-neben-windows-11-installieren/index.html",
+      "en": "blog/linux-windows-dual-boot-guide/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "UEFI/EFI, BitLocker, Backups und Entfernungsszenarien geprüft; Live-Assistent stoppt bei Legacy/CSM-Konflikt. Keine echten Datenträger verändert.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-updates-verstehen",
+      "de": "de/blog/linux-updates-verstehen/index.html",
+      "en": "blog/linux-updates-explained/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "APT update/upgrade, pacman -Syu, DNF und NixOS-Generationen getrennt; vollständige Rolling-Updates, Sicherheitsupdates und Rückwege passend erklärt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-virtuelle-maschine-kvm-virt-manager",
+      "de": "de/blog/linux-virtuelle-maschine-kvm-virt-manager/index.html",
+      "en": "blog/linux-virtual-machine-kvm-virt-manager/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "KVM/libvirt/virt-manager-Pakete, Benutzerrechte und virtualisierte Umgebung getrennt; Beispiele geprüft, keine komplette Gastinstallation auf dieser Umgebung behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "linux-wm-konfigurator",
+      "de": "de/blog/linux-wm-konfigurator/index.html",
+      "en": "blog/linux-window-manager-config-generator/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Live Arch+dwm erzeugt Paketplan/config.h; doppelte Taste liefert Fehlermeldung. Codebeispiele und grundlegende Startbindungen geprüft; keine lokale Haskell-/WM-Sitzung ausgeführt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "lokale-ki-ohne-gpu-snakkie",
+      "de": "de/blog/lokale-ki-ohne-gpu-snakkie/index.html",
+      "en": "blog/local-ai-without-gpu-snakkie/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "v0.4 und vorhandene Qwen3-0.6B/1.7B-CPU-Messungen bereits enthalten; Modell, Wissensbestand, Websuche und Fallback getrennt. Keine neuen Autorenmessungen geliefert.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "mediatek-mt7612u-linux-treiber-probleme",
+      "de": "de/blog/mediatek-mt7612u-linux-treiber-probleme/index.html",
+      "en": "blog/mediatek-mt7612u-linux-driver-troubleshooting/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "mt76/mt76x2u, Firmware, USB-ID, Distributionen und Diagnosebefehle geprüft; kein pauschaler externer Realtek-Treiber und keine generische Hardware-Erfolgsgarantie.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "meine-spiele-von-damals-bis-heute",
+      "de": "de/blog/meine-spiele-von-damals-bis-heute/index.html",
+      "en": "blog/my-gaming-journey-1984-2026/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": true,
+      "review": "99 Titel pro Sprache, 79 bebildert: 30 Spielaufnahmen, 1 Cover, 1 Motiv, 39 Logos, 8 Referenzbilder; 20 fehlen. Provenienz eines vorhandenen WoW-Originalbilds ergänzt. Suche/Filter/Modal live geprüft.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "nebuverse-gotosocial-selbst-hosten",
+      "de": "de/blog/nebuverse-gotosocial-selbst-hosten/index.html",
+      "en": "blog/nebuverse-self-hosting-gotosocial/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Host-/Account-Domain, nginx, systemd, SQLite und Backup-/Upgrade-Abgrenzung geprüft. Historische Instanzversion nicht durch unbekannten heutigen Runtime-Stand ersetzt; kein neues Backup-Erfolgserlebnis erfunden.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "nginx-sicherheitsluecken-november-2026-debian-13",
+      "de": "de/blog/nginx-sicherheitsluecken-november-2026-debian-13/index.html",
+      "en": "blog/nginx-security-november-2026-debian-13/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "nginx-Advisories und DSA-6642-1 bestätigen Trixie 1.26.3-3+deb13u11; bestätigte lokale Installation, TLS-Reaktivierung und vier HTTP-200-Tests vom 19. November erhalten.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "nixos-configuration-nix-verstehen",
+      "de": "de/blog/nixos-configuration-nix-verstehen/index.html",
+      "en": "blog/nixos-configuration-nix-explained/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Module, Dienste, Pakete und rebuild-Beispiele geprüft; 26.11 am Stichtag nicht als fertige Veröffentlichung behandelt. Nach tatsächlicher Veröffentlichung erneut prüfen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "nixos-generationen-rollback",
+      "de": "de/blog/nixos-generationen-rollback/index.html",
+      "en": "blog/nixos-generations-rollback/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "switch/boot/Rollback und Garbage Collection unterscheiden aktuelle, vorhandene und gelöschte Generationen; keine Wiederherstellung gelöschter Daten versprochen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "nixos-xmonad-kanagawa-dragon",
+      "de": "de/blog/nixos-xmonad-kanagawa-dragon/index.html",
+      "en": "blog/nixos-xmonad-kanagawa-dragon/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Gepinnte Modul-/Dateigrundlage, Abhängigkeiten und Installation geprüft; gezielte Cthulhu-Konfigurationssuite erfolgreich, keine echte NixOS-Neuinstallation ausgeführt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "nvidia-treiber-debian-installieren",
+      "de": "de/blog/nvidia-treiber-debian-installieren/index.html",
+      "en": "blog/install-nvidia-drivers-debian/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Offizielles Trixie-Paket 550.163.01-2, DKMS/Header, GPU-Auswahl und Secure-Boot-Hinweise geprüft. Nicht mit aktueller NVIDIA-Upstream-Version gleichgesetzt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "picom-x11-konfigurieren",
+      "de": "de/blog/picom-x11-konfigurieren/index.html",
+      "en": "blog/configure-picom-x11/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "X11-Kontext, Backend/Regeln, Teststart und Rollback geprüft; nicht als Wayland-Compositor dargestellt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "raymosaic-spiegel-licht-kunst",
+      "de": "de/blog/raymosaic-spiegel-licht-kunst/index.html",
+      "en": "blog/raymosaic-reflected-light-mirror-art/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Reales Projekt/Dateigrundlage, Spiegelprinzip und eigene Illustrationen geprüft; keine neuen Messwerte, Fertigstellung oder Käuferdaten erfunden.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "rofi-konfigurieren",
+      "de": "de/blog/rofi-konfigurieren/index.html",
+      "en": "blog/configure-rofi/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Rasi-Beispiele und X11-Startwege geprüft; Launcher nicht als alleinige Desktopumgebung oder pauschal native Wayland-Lösung dargestellt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "rx-9060-xt-linux-abstuerze",
+      "de": "de/blog/rx-9060-xt-linux-abstuerze/index.html",
+      "en": "blog/rx-9060-xt-linux-crashes/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Autorabschluss: −500 MHz bleibt, ca. 10 h War Thunder maximal/15 h WoW/mehre Kdenlive-Renders ohne Hardlock, OBS funktioniert. Mesa 26.2.6/26.2.7/26.3.1 getrennt eingeordnet; alte Messung bis 3016 MHz und abgelaufener Quelllink korrigiert.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "source2reel-github-erklaervideo-lokal",
+      "de": "de/blog/source2reel-github-erklaervideo-lokal/index.html",
+      "en": "blog/source2reel-github-local-explainer-video/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Aktueller PROJECT_STATE-Abgleich: lokale Pipeline/evidenzbasierte Szenen, CPU-Kokoro und physische Abnahmen gegenüber späterem Planer-Code getrennt; keine unbestätigte neue Abnahme behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "spdif-tonverzoegerung-linux",
+      "de": "de/blog/spdif-tonverzoegerung-linux/index.html",
+      "en": "blog/fix-spdif-audio-delay-linux/index.html",
+      "priority": 2,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Historisches Skript erhalten; gezielter Verweis zum aktuellen Audio-Guide mit getrennten PipeWire-/WirePlumber-Diagnosen und Rückweg ergänzt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "ssh-schluessel-linux-server",
+      "de": "de/blog/ssh-schluessel-linux-server/index.html",
+      "en": "blog/ssh-keys-linux-server/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Ed25519-Schlüssel, öffentliche/private Hälfte, Hostschlüssel, Agent und Zugangserhalt geprüft; keine Passwortanmeldung ohne getesteten Rückweg pauschal abgeschaltet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "sway-konfiguration-verstehen",
+      "de": "de/blog/sway-konfiguration-verstehen/index.html",
+      "en": "blog/sway-configuration-explained/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Config-Grundsyntax, Outputs, Terminal/Launcher/Leiste und Diagnose geprüft; X11-Programme via XWayland getrennt vom nativen Wayland-Sitzungsmodell.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "tschernobyl-rbmk-skala-kontrollraum",
+      "de": "de/blog/tschernobyl-rbmk-skala-kontrollraum/index.html",
+      "en": "blog/chernobyl-rbmk-skala-control-room/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "INSAG-7-Bezug, SKALA/DREG/PRIZMA und spätere Rekonstruktion gegenüber damaliger Anzeige getrennt; keine erfundenen Telemetriekurven oder bedienbare Kraftwerksanlage.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "ubuntu-26-10-openssh-fehler",
+      "de": "de/blog/ubuntu-26-10-openssh-fehler/index.html",
+      "en": "blog/ubuntu-26-10-openssh-bug/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Bug 2169738 Fix Released und Quell-/amd64-Binärpublikationen 1:10.5p1-1ubuntu3.1 in Security/Updates geprüft; postrm-Schutz und alte rc-Skripte erklärt, Lösungsabschnitt oben ergänzt.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "von-windows-zu-linux-wechseln",
+      "de": "de/blog/von-windows-zu-linux-wechseln/index.html",
+      "en": "blog/windows-to-linux-migration-checklist/index.html",
+      "priority": 2,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Konkrete Reihenfolge und Links zu Distro-Finder, Dual Boot und Linux-Updates ergänzt; Live-Test vor Datenträgeränderungen.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "warum-ich-nebu-heisse",
+      "de": "de/blog/warum-ich-nebu-heisse/index.html",
+      "en": "blog/why-im-called-nebu/index.html",
+      "priority": 3,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Datierter Kontext trennt NixOS-/NEBUVERSE-Bericht vom 8. Oktober vom aktuellen Arch/dwm; persönliche Namens-/Motorrad-/WoW-Geschichte bleibt unverändert.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "waybar-konfigurieren",
+      "de": "de/blog/waybar-konfigurieren/index.html",
+      "en": "blog/configure-waybar/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "JSONC/CSS, Module und getrennte Sway-/XMonad-Kontexte geprüft; keine unbelegte aktuelle eigene Konfiguration hineingeschrieben.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "welche-linux-distribution-passt-zu-mir-2026",
+      "de": "de/blog/welche-linux-distribution-passt-zu-mir-2026/index.html",
+      "en": "blog/which-linux-distro-2026/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "15-Fragen-Quiz live abgeschlossen, elf Ergebnisse und Neustart geprüft; 11 Distro-/12 Desktopprofile differenzieren Erfahrung, Sitzung und Wartung. Testergebnisse sind keine neuen Präferenzen des Autors.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "what-happens-when-you-open-a-website",
+      "de": "de/blog/what-happens-when-you-open-a-website/index.html",
+      "en": "blog/what-happens-when-you-open-a-website/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "DNS/Cache, TCP+TLS versus QUIC/UDP/TLS1.3, HTTP2/3 und Browserdarstellung technisch getrennt; reservierte IP und Lernsimulation klar gekennzeichnet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "windows-10-esu-2027",
+      "de": "de/blog/windows-10-esu-2027/index.html",
+      "en": "blog/windows-10-esu-2027/index.html",
+      "priority": 1,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Microsoft-Primärseiten/KB bestätigen Consumer-ESU-Zeitraum, Konto-/EEA-Voraussetzungen und 60-Tage-Regel; keine pauschale kommerzielle oder unbegrenzte Verlängerung behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "windows-netzwerkverkehr-analysieren",
+      "de": "de/blog/windows-netzwerkverkehr-analysieren/index.html",
+      "en": "blog/inspect-windows-network-traffic/index.html",
+      "priority": 3,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Aktuelles Projekt-README bestätigt ETW, Windows11x64/.NET8, passiven Capture und Grenzen von DNS/Task-Korrelation; keine TLS-Entschlüsselung oder Blockierfunktion behauptet.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "wine-prefix-linux-spiele",
+      "de": "de/blog/wine-prefix-linux-spiele/index.html",
+      "en": "blog/wine-prefix-linux-games/index.html",
+      "priority": 2,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Prefix-/Runner-Verantwortung und Verweis auf Launcher-Runtime ergänzt; Versionsdatei identifiziert Runtime, nicht beliebigen Prefixpfad.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "wow-forever-nebukatneza-dennis-hilk",
+      "de": "de/blog/wow-forever-nebukatneza-dennis-hilk/index.html",
+      "en": "blog/wow-forever-nebukatneza-dennis-hilk/index.html",
+      "priority": 1,
+      "status": "updated_both_languages",
+      "media_only_update": false,
+      "review": "Neue bestätigte Chronik: Level34 nach ca.25-min-AoE/OBS-Test, sechs Dungeon-Videos plus Stream; Bibliothek nur geplant. Alte Chronik/Galerie/Observer im Quellgenerator gesichert, dateModified21.November.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "xmonad-hs-verstehen",
+      "de": "de/blog/xmonad-hs-verstehen/index.html",
+      "en": "blog/xmonad-hs-explained/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Haskell-Konfiguration, Terminal/Launcher und Bibliotheks-/Recompile-Anforderungen geprüft; historische Cthulhu-Beispiele nicht als heutiges dwm-Setup ausgegeben.",
+      "local_reference_issues": 0
+    },
+    {
+      "slug": "zip-rar-7z-pdf-passwort-wiederherstellen",
+      "de": "de/blog/zip-rar-7z-pdf-passwort-wiederherstellen/index.html",
+      "en": "blog/recover-zip-rar-7z-pdf-password-without-upload/index.html",
+      "priority": 2,
+      "status": "reviewed_no_article_change",
+      "media_only_update": false,
+      "review": "Implementierungsgrenzen, lokale File-APIs, Formatvarianten und unabhängige Bestätigung mit Quellcode/Tests abgeglichen; echte Cthulhu-Läufe erhalten, kein neuer GPU-Benchmark erfunden.",
+      "local_reference_issues": 0
+    }
+  ]
+}
