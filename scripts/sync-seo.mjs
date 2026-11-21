@@ -470,10 +470,10 @@ function synchronizeSitemaps() {
       .map(([entry]) => [entry.match(/<loc>([^<]+)<\/loc>/)?.[1], entry.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1]])
       .filter(([url, date]) => url && date);
   }));
-  // New blog URLs inherit their actual editorial date, never the generator run date.
-  // Retain existing sitemap dates and leave non-blog publication systems untouched.
+  // BlogPosting metadata owns the editorial date for new and existing articles.
+  // A rebuild must propagate a real edit, without stamping the generator run date.
+  // Preserve recorded dates for pages without article metadata and non-blog systems.
   for (const file of files.filter(file => /^(?:de\/)?blog\//.test(rel(file)))) {
-    if (lastmods.has(publicUrl(file))) continue;
     const source = readFileSync(file, "utf8");
     for (const [, json] of source.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/g)) {
       const data = JSON.parse(json);

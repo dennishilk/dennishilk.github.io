@@ -57,6 +57,20 @@ test("SEO synchronization discovers new translated blog slugs, preserves dates a
   assert.equal(again.status, 0, again.stderr);
   assert.equal(await readFile(join(fixture, "sitemap-blog.xml"), "utf8"), xml);
 
+  // Editing an existing article must advance lastmod from its authored metadata;
+  // a second build must not stamp the execution date onto an unchanged article.
+  const articleFile = join(fixture, "blog/future-note/index.html");
+  for (const modified of ["2026-10-19", "2026-11-21"]) {
+    const source = await readFile(articleFile, "utf8");
+    const withoutSchema = source.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, "");
+    await writeFile(articleFile, withoutSchema.replace("</head>", `<script type="application/ld+json">${JSON.stringify({"@context":"https://schema.org","@type":"BlogPosting",dateModified:modified})}</script></head>`));
+    assert.equal(run().status, 0);
+    const current = await readFile(join(fixture, "sitemap-blog.xml"), "utf8");
+    assert.equal(dates(current).get(en), modified);
+    assert.equal(run().status, 0);
+    assert.equal(await readFile(join(fixture, "sitemap-blog.xml"), "utf8"), current);
+  }
+
   await rm(join(fixture, "blog/future-note/index.html"));
   const missing = run();
   assert.notEqual(missing.status, 0);
