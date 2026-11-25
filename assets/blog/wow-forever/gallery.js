@@ -39,7 +39,7 @@
       next.disabled=pictures.length<2;
     }
     function verify(item){
-      if(!item||typeof item.src!=='string'||!item.src.startsWith('/assets/blog/wow-forever/'))return Promise.resolve(null);
+      if(!item||item.unavailable||typeof item.src!=='string'||!item.src.startsWith('/assets/blog/wow-forever/'))return Promise.resolve(null);
       return fetch(item.src,{method:'HEAD'}).then(function(response){
         return response.ok?item:null;
       }).catch(function(){return null;});

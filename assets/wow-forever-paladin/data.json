@@ -1,0 +1,1769 @@
+{
+  "version": "p1",
+  "checked": "2026-11-25",
+  "generated": "2026-11-10",
+  "source": "Talent trees and every rank's text from the WoW Forever beta client, build 1.60.1.70755. Some Paladin numbers follow Blizzard's development notes of 2 Nov 2026, ahead of any game data. The Paladin trees carry the server's hotfixes of 3 Nov 2026 over that build, read from the beta's hotfix cache and cross-checked with Blizzard's notes or Wowhead's tooltips; those are not in the client's files.",
+  "trees": [
+    {
+      "id": "holy",
+      "name": {
+        "en": "Holy",
+        "de": "Heilig"
+      },
+      "talents": [
+        {
+          "id": "0-1-2",
+          "row": 1,
+          "col": 2,
+          "max": 5,
+          "icon": "spell_arcane_blink",
+          "name": {
+            "en": "Spiritual Focus",
+            "de": "Spiritueller Fokus"
+          },
+          "desc": {
+            "en": [
+              "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 14% chance to not lose casting time when you take damage.",
+              "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 28% chance to not lose casting time when you take damage.",
+              "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 42% chance to not lose casting time when you take damage.",
+              "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 56% chance to not lose casting time when you take damage.",
+              "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 70% chance to not lose casting time when you take damage."
+            ],
+            "de": [
+              "Gewährt Euren Zaubern 'Lichtblitz', 'Heiliges Licht' und 'Lichtwacht' eine Chance von 14%, keine Zauberzeit durch erlittenen Schaden zu verlieren.",
+              "Gewährt Euren Zaubern 'Lichtblitz', 'Heiliges Licht' und 'Lichtwacht' eine Chance von 28%, keine Zauberzeit durch erlittenen Schaden zu verlieren.",
+              "Gewährt Euren Zaubern 'Lichtblitz', 'Heiliges Licht' und 'Lichtwacht' eine Chance von 42%, keine Zauberzeit durch erlittenen Schaden zu verlieren.",
+              "Gewährt Euren Zaubern 'Lichtblitz', 'Heiliges Licht' und 'Lichtwacht' eine Chance von 56%, keine Zauberzeit durch erlittenen Schaden zu verlieren.",
+              "Gewährt Euren Zaubern 'Lichtblitz', 'Heiliges Licht' und 'Lichtwacht' eine Chance von 70%, keine Zauberzeit durch erlittenen Schaden zu verlieren."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "0-1-3",
+          "row": 1,
+          "col": 3,
+          "max": 5,
+          "icon": "ability_golemthunderclap",
+          "name": {
+            "en": "Divine Strength",
+            "de": "Göttliche Stärke"
+          },
+          "desc": {
+            "en": [
+              "Increases your Strength by 2%.",
+              "Increases your Strength by 4%.",
+              "Increases your Strength by 6%.",
+              "Increases your Strength by 8%.",
+              "Increases your Strength by 10%."
+            ],
+            "de": [
+              "Erhöht Eure Stärke um 2%.",
+              "Erhöht Eure Stärke um 4%.",
+              "Erhöht Eure Stärke um 6%.",
+              "Erhöht Eure Stärke um 8%.",
+              "Erhöht Eure Stärke um 10%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "0-2-1",
+          "row": 2,
+          "col": 1,
+          "max": 3,
+          "icon": "spell_holy_holybolt",
+          "name": {
+            "en": "Healing Light",
+            "de": "Heilendes Licht"
+          },
+          "desc": {
+            "en": [
+              "Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 4%.",
+              "Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 8%.",
+              "Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 12%."
+            ],
+            "de": [
+              "Erhöht den von Euren Zaubern 'Heiliges Licht', 'Lichtblitz' und 'Heiliger Schock' geheilten Wert um 4%.",
+              "Erhöht den von Euren Zaubern 'Heiliges Licht', 'Lichtblitz' und 'Heiliger Schock' geheilten Wert um 8%.",
+              "Erhöht den von Euren Zaubern 'Heiliges Licht', 'Lichtblitz' und 'Heiliger Schock' geheilten Wert um 12%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "0-2-2",
+          "row": 2,
+          "col": 2,
+          "max": 2,
+          "icon": "spell_holy_divineillumination",
+          "name": {
+            "en": "Reverence",
+            "de": "Andacht"
+          },
+          "desc": {
+            "en": [
+              "Allows 15% of your Mana regeneration to continue while casting.",
+              "Allows 30% of your Mana regeneration to continue while casting."
+            ],
+            "de": [
+              "Ermöglicht, dass 15% Eurer Manaregeneration während des Zauberwirkens weiterlaufen.",
+              "Ermöglicht, dass 30% Eurer Manaregeneration während des Zauberwirkens weiterlaufen."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "0-2-3",
+          "row": 2,
+          "col": 3,
+          "max": 5,
+          "icon": "ability_thunderbolt",
+          "name": {
+            "en": "Improved Seals",
+            "de": "Verbesserte Siegel"
+          },
+          "desc": {
+            "en": [
+              "Increases the damage done by your Seals and Judgements by 3%.",
+              "Increases the damage done by your Seals and Judgements by 6%.",
+              "Increases the damage done by your Seals and Judgements by 9%.",
+              "Increases the damage done by your Seals and Judgements by 12%.",
+              "Increases the damage done by your Seals and Judgements by 15%."
+            ],
+            "de": [
+              "Erhöht den von Euren Siegeln und Richturteilen verursachten Schaden um 3%.",
+              "Erhöht den von Euren Siegeln und Richturteilen verursachten Schaden um 6%.",
+              "Erhöht den von Euren Siegeln und Richturteilen verursachten Schaden um 9%.",
+              "Erhöht den von Euren Siegeln und Richturteilen verursachten Schaden um 12%.",
+              "Erhöht den von Euren Siegeln und Richturteilen verursachten Schaden um 15%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "0-2-4",
+          "row": 2,
+          "col": 4,
+          "max": 2,
+          "icon": "spell_holy_purifyingpower",
+          "name": {
+            "en": "Purifying Power",
+            "de": "Reinigende Macht"
+          },
+          "desc": {
+            "en": [
+              "Reduces the mana cost of your Cleanse and Purify spells by 10% and reduces the cooldown of your Exorcism and Holy Wrath spells by 17%.",
+              "Reduces the mana cost of your Cleanse and Purify spells by 20% and reduces the cooldown of your Exorcism and Holy Wrath spells by 33%."
+            ],
+            "de": [
+              "Verringert die Manakosten von 'Reinigung des Glaubens' und 'Läutern' um 10% und verringert die Abklingzeit von 'Exorzismus' und 'Heiliger Zorn' um 17%.",
+              "Verringert die Manakosten von 'Reinigung des Glaubens' und 'Läutern' um 20% und verringert die Abklingzeit von 'Exorzismus' und 'Heiliger Zorn' um 33%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "0-3-1",
+          "row": 3,
+          "col": 1,
+          "max": 1,
+          "icon": "spell_holy_heal",
+          "name": {
+            "en": "Divine Favor",
+            "de": "Göttliche Gunst"
+          },
+          "desc": {
+            "en": [
+              "When activated, gives your next Flash of Light, Holy Light, or Holy Shock spell a 100% critical effect chance."
+            ],
+            "de": [
+              "Bei Aktivierung hat Euer nächster Zauber 'Lichtblitz', 'Heiliges Licht' oder 'Heiliger Schock' eine Chance von 100% auf einen kritischen Effekt."
+            ]
+          },
+          "translation": "source",
+          "cost": "4% of base mana | Instant | 2 min cooldown",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "0-3-2",
+          "row": 3,
+          "col": 2,
+          "max": 5,
+          "icon": "spell_holy_greaterheal",
+          "name": {
+            "en": "Illumination",
+            "de": "Illumination"
+          },
+          "desc": {
+            "en": [
+              "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 20% chance to gain Mana equal to 50% of the base cost of the spell.",
+              "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 40% chance to gain Mana equal to 50% of the base cost of the spell.",
+              "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 60% chance to gain Mana equal to 50% of the base cost of the spell.",
+              "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 80% chance to gain Mana equal to 50% of the base cost of the spell.",
+              "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 100% chance to gain Mana equal to 50% of the base cost of the spell."
+            ],
+            "de": [
+              "Nach einem kritischen Effekt Eurer Zauber 'Lichtblitz', 'Heiliges Licht', 'Lichtwacht' oder dem Heileffekt von 'Heiliger Schock' besteht eine Chance von 20%, dass Mana in Höhe von 50% der Grundkosten des Zaubers wiederhergestellt wird.",
+              "Nach einem kritischen Effekt Eurer Zauber 'Lichtblitz', 'Heiliges Licht', 'Lichtwacht' oder dem Heileffekt von 'Heiliger Schock' besteht eine Chance von 40%, dass Mana in Höhe von 50% der Grundkosten des Zaubers wiederhergestellt wird.",
+              "Nach einem kritischen Effekt Eurer Zauber 'Lichtblitz', 'Heiliges Licht', 'Lichtwacht' oder dem Heileffekt von 'Heiliger Schock' besteht eine Chance von 60%, dass Mana in Höhe von 50% der Grundkosten des Zaubers wiederhergestellt wird.",
+              "Nach einem kritischen Effekt Eurer Zauber 'Lichtblitz', 'Heiliges Licht', 'Lichtwacht' oder dem Heileffekt von 'Heiliger Schock' besteht eine Chance von 80%, dass Mana in Höhe von 50% der Grundkosten des Zaubers wiederhergestellt wird.",
+              "Nach einem kritischen Effekt Eurer Zauber 'Lichtblitz', 'Heiliges Licht', 'Lichtwacht' oder dem Heileffekt von 'Heiliger Schock' besteht eine Chance von 100%, dass Mana in Höhe von 50% der Grundkosten des Zaubers wiederhergestellt wird."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": {
+            "id": "0-2-2",
+            "rank": 2
+          }
+        },
+        {
+          "id": "0-3-3",
+          "row": 3,
+          "col": 3,
+          "max": 2,
+          "icon": "spell_holy_devineaegis",
+          "name": {
+            "en": "Holy Conduit",
+            "de": "Heiliges Medium"
+          },
+          "desc": {
+            "en": [
+              "Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 20%.",
+              "Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 40%."
+            ],
+            "de": [
+              "Verringert die Manakosten von 'Weihe', 'Heiliger Zorn', 'Exorzismus' und 'Hammer des Zorns' um 20%.",
+              "Verringert die Manakosten von 'Weihe', 'Heiliger Zorn', 'Exorzismus' und 'Hammer des Zorns' um 40%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "0-4-1",
+          "row": 4,
+          "col": 1,
+          "max": 2,
+          "icon": "spell_holy_mindsooth",
+          "name": {
+            "en": "Divine Precision",
+            "de": "Göttliche Präzision"
+          },
+          "desc": {
+            "en": [
+              "Improves your chance to hit with Holy spells by 4%, and reduces the duration of Silence effects on you by 10%.",
+              "Improves your chance to hit with Holy spells by 8%, and reduces the duration of Silence effects on you by 20%."
+            ],
+            "de": [
+              "Verbessert Eure Chance auf Treffer mit Heiligzaubern um 4% und verringert die Dauer aller auf Euch wirkenden Stilleeffekte um 10%.",
+              "Verbessert Eure Chance auf Treffer mit Heiligzaubern um 8% und verringert die Dauer aller auf Euch wirkenden Stilleeffekte um 20%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "0-4-2",
+          "row": 4,
+          "col": 2,
+          "max": 2,
+          "icon": "ability_paladin_infusionoflight",
+          "name": {
+            "en": "Infusion of Light",
+            "de": "Lichtinfusion"
+          },
+          "desc": {
+            "en": [
+              "Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 0.5 sec.",
+              "Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 1.0 sec."
+            ],
+            "de": [
+              "Eure kritischen Treffer mit 'Heiliger Schock' und 'Lichtblitz' verringern die Zauberzeit Eures nächsten Einsatzes von 'Heiliges Licht' innerhalb von 15 Sek. um 0,5 Sek.",
+              "Eure kritischen Treffer mit 'Heiliger Schock' und 'Lichtblitz' verringern die Zauberzeit Eures nächsten Einsatzes von 'Heiliges Licht' innerhalb von 15 Sek. um 1,0 Sek."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "0-4-3",
+          "row": 4,
+          "col": 3,
+          "max": 1,
+          "icon": "spell_holy_greaterblessingoflight",
+          "name": {
+            "en": "Oath of Light",
+            "de": "Eid des Lichts"
+          },
+          "desc": {
+            "en": [
+              "Swear an Oath to protect target ally for 5 min, increasing the healing of your Holy Light on them by up to 400, your Flash of Light by up to 115, and your Holy Shock by up to 230. Only one Oath of Light may be sworn by the Paladin at any one time."
+            ],
+            "de": [
+              "Schwört, einen Verbündeten 5 Min. lang zu beschützen. Erhöht die Heilung Eures Heiligen Lichts auf diesem Ziel um bis zu 400, Eures Lichtblitzes um bis zu 115 und Eures Heiligen Schocks um bis zu 230. Ein Paladin kann immer nur einen Eid des Lichts gleichzeitig schwören."
+            ]
+          },
+          "translation": "site",
+          "cost": "8% of base mana | 40 yd range | Instant",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "0-5-1",
+          "row": 5,
+          "col": 1,
+          "max": 2,
+          "icon": "spell_holy_innerfire",
+          "name": {
+            "en": "Consecrated Ground",
+            "de": "Geweihter Boden"
+          },
+          "desc": {
+            "en": [
+              "Gives your Holy spells 5% increased damage against the first 4 enemies that enter your Consecration.",
+              "Gives your Holy spells 10% increased damage against the first 4 enemies that enter your Consecration."
+            ],
+            "de": [
+              "Verleiht Euren Heiligzaubern 5% mehr Schaden gegen die ersten 4 Gegner, die Eure 'Weihe' betreten.",
+              "Verleiht Euren Heiligzaubern 10% mehr Schaden gegen die ersten 4 Gegner, die Eure 'Weihe' betreten."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "0-5-2",
+          "row": 5,
+          "col": 2,
+          "max": 1,
+          "icon": "spell_holy_searinglight",
+          "name": {
+            "en": "Holy Shock",
+            "de": "Heiliger Schock"
+          },
+          "desc": {
+            "en": [
+              "Blasts the target with Holy energy, causing 129 to 139 Holy damage to an enemy, or 110 to 118 healing to an ally."
+            ],
+            "de": [
+              "Überzieht das Ziel mit heiliger Energie, die Gegnern 129 bis 139 Heiligschaden zufügt oder Verbündete um 110 bis 118 Gesundheit heilt."
+            ]
+          },
+          "translation": "source",
+          "cost": "160 Mana | Enemy: 20 yd range | Friendly: 40 yd range | Instant | 10 sec cooldown",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "0-5-3",
+          "row": 5,
+          "col": 3,
+          "max": 2,
+          "icon": "ability_paladin_sacredcleansing",
+          "name": {
+            "en": "Boundless Light",
+            "de": "Grenzenloses Licht"
+          },
+          "desc": {
+            "en": [
+              "Increases the critical strike chance of your Holy Shock spell by 15% when cast on allies not affected by your Oath of Light.",
+              "Increases the critical strike chance of your Holy Shock spell by 30% when cast on allies not affected by your Oath of Light."
+            ],
+            "de": [
+              "Erhöht die kritische Trefferchance Eures Zaubers 'Heiliger Schock' um 15%, wenn er auf Verbündete gewirkt wird, die nicht von 'Eid des Lichts' betroffen sind.",
+              "Erhöht die kritische Trefferchance Eures Zaubers 'Heiliger Schock' um 30%, wenn er auf Verbündete gewirkt wird, die nicht von 'Eid des Lichts' betroffen sind."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": {
+            "id": "0-5-2",
+            "rank": 1
+          }
+        },
+        {
+          "id": "0-6-3",
+          "row": 6,
+          "col": 3,
+          "max": 5,
+          "icon": "spell_holy_power",
+          "name": {
+            "en": "Holy Power",
+            "de": "Heilige Kraft"
+          },
+          "desc": {
+            "en": [
+              "Increases the critical strike healing bonus of your Holy spells by 10%.",
+              "Increases the critical strike healing bonus of your Holy spells by 20%.",
+              "Increases the critical strike healing bonus of your Holy spells by 30%.",
+              "Increases the critical strike healing bonus of your Holy spells by 40%.",
+              "Increases the critical strike healing bonus of your Holy spells by 50%."
+            ],
+            "de": [
+              "Erhöht den kritischen Heilungsbonus Eurer Heiligzauber um 10%.",
+              "Erhöht den kritischen Heilungsbonus Eurer Heiligzauber um 20%.",
+              "Erhöht den kritischen Heilungsbonus Eurer Heiligzauber um 30%.",
+              "Erhöht den kritischen Heilungsbonus Eurer Heiligzauber um 40%.",
+              "Erhöht den kritischen Heilungsbonus Eurer Heiligzauber um 50%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "0-7-2",
+          "row": 7,
+          "col": 2,
+          "max": 1,
+          "icon": "ability_paladin_judgementofthepure",
+          "name": {
+            "en": "Light's Vigil",
+            "de": "Lichtwacht"
+          },
+          "desc": {
+            "en": [
+              "Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 325 to 343. Only one Vigil per Paladin may be active in each party."
+            ],
+            "de": [
+              "Belegt ein befreundetes Ziel 30 Sek. lang mit 'Lichtwacht'. Wenn Ihr das nächste Mal 'Heiliger Schock' auf das Ziel wirkt, wird keine Abklingzeit ausgelöst und das Ziel sowie dessen Gruppe um 325 bis 343 geheilt. Pro Paladin und Gruppe kann nur ein Effekt von 'Lichtwacht' aktiv sein."
+            ]
+          },
+          "translation": "source",
+          "cost": "730 Mana | 40 yd range | 1.5 sec cast | 6 sec cooldown",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": {
+            "id": "0-5-2",
+            "rank": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "protection",
+      "name": {
+        "en": "Protection",
+        "de": "Schutz"
+      },
+      "talents": [
+        {
+          "id": "1-1-2",
+          "row": 1,
+          "col": 2,
+          "max": 5,
+          "icon": "spell_nature_sleep",
+          "name": {
+            "en": "Divine Intellect",
+            "de": "Göttliche Weisheit"
+          },
+          "desc": {
+            "en": [
+              "Increases your total Intellect by 2%.",
+              "Increases your total Intellect by 4%.",
+              "Increases your total Intellect by 6%.",
+              "Increases your total Intellect by 8%.",
+              "Increases your total Intellect by 10%."
+            ],
+            "de": [
+              "Erhöht Euren Intelligenzwert um 2%.",
+              "Erhöht Euren Intelligenzwert um 4%.",
+              "Erhöht Euren Intelligenzwert um 6%.",
+              "Erhöht Euren Intelligenzwert um 8%.",
+              "Erhöht Euren Intelligenzwert um 10%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "1-1-3",
+          "row": 1,
+          "col": 3,
+          "max": 5,
+          "icon": "ability_defend",
+          "name": {
+            "en": "Redoubt",
+            "de": "Verschanzen"
+          },
+          "desc": {
+            "en": [
+              "Damaging melee attacks against you have a 10% chance to increase your chance to block by 6%. Lasts 10 sec or 5 blocks.",
+              "Damaging melee attacks against you have a 10% chance to increase your chance to block by 12%. Lasts 10 sec or 5 blocks.",
+              "Damaging melee attacks against you have a 10% chance to increase your chance to block by 18%. Lasts 10 sec or 5 blocks.",
+              "Damaging melee attacks against you have a 10% chance to increase your chance to block by 24%. Lasts 10 sec or 5 blocks.",
+              "Damaging melee attacks against you have a 10% chance to increase your chance to block by 30%. Lasts 10 sec or 5 blocks."
+            ],
+            "de": [
+              "Schaden verursachende Nahkampfangriffe gegen Euch haben eine Chance von 10%, Eure Blockchance um 6% zu erhöhen. Hält 10 Sek. lang an oder bis 5-mal geblockt wurde.",
+              "Schaden verursachende Nahkampfangriffe gegen Euch haben eine Chance von 10%, Eure Blockchance um 12% zu erhöhen. Hält 10 Sek. lang an oder bis 5-mal geblockt wurde.",
+              "Schaden verursachende Nahkampfangriffe gegen Euch haben eine Chance von 10%, Eure Blockchance um 18% zu erhöhen. Hält 10 Sek. lang an oder bis 5-mal geblockt wurde.",
+              "Schaden verursachende Nahkampfangriffe gegen Euch haben eine Chance von 10%, Eure Blockchance um 24% zu erhöhen. Hält 10 Sek. lang an oder bis 5-mal geblockt wurde.",
+              "Schaden verursachende Nahkampfangriffe gegen Euch haben eine Chance von 10%, Eure Blockchance um 30% zu erhöhen. Hält 10 Sek. lang an oder bis 5-mal geblockt wurde."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "1-2-1",
+          "row": 2,
+          "col": 1,
+          "max": 3,
+          "icon": "ability_rogue_ambush",
+          "name": {
+            "en": "Precision",
+            "de": "Präzision"
+          },
+          "desc": {
+            "en": [
+              "Improves your chance to hit by 1%.",
+              "Improves your chance to hit by 2%.",
+              "Improves your chance to hit by 3%."
+            ],
+            "de": [
+              "Verbessert Eure Trefferchance um 1%.",
+              "Verbessert Eure Trefferchance um 2%.",
+              "Verbessert Eure Trefferchance um 3%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "1-2-2",
+          "row": 2,
+          "col": 2,
+          "max": 2,
+          "icon": "spell_holy_sealofprotection",
+          "name": {
+            "en": "Guardian's Favor",
+            "de": "Gunst des Hüters"
+          },
+          "desc": {
+            "en": [
+              "Reduces the cooldown of your Blessing of Protection by 1 min and increases the duration of your Blessing of Freedom by 3 sec.",
+              "Reduces the cooldown of your Blessing of Protection by 2 min and increases the duration of your Blessing of Freedom by 6 sec."
+            ],
+            "de": [
+              "Verringert die Abklingzeit von 'Segen des Schutzes' um 1 Min. und erhöht die Dauer von 'Segen der Freiheit' um 3 Sek.",
+              "Verringert die Abklingzeit von 'Segen des Schutzes' um 2 Min. und erhöht die Dauer von 'Segen der Freiheit' um 6 Sek."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "1-2-4",
+          "row": 2,
+          "col": 4,
+          "max": 2,
+          "icon": "spell_holy_divineintervention",
+          "name": {
+            "en": "Sacred Duty",
+            "de": "Heilige Pflicht"
+          },
+          "desc": {
+            "en": [
+              "Reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 30 sec, and reduces the duration of Forbearance by 5 sec.",
+              "Reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 60 sec, and reduces the duration of Forbearance by 10 sec."
+            ],
+            "de": [
+              "Verringert die Abklingzeit von 'Gottesschild', 'Göttlicher Schutz' und 'Bollwerk des Templers' um 30 Sek. und verringert die Dauer von 'Vorahnung' um 5 Sek.",
+              "Verringert die Abklingzeit von 'Gottesschild', 'Göttlicher Schutz' und 'Bollwerk des Templers' um 60 Sek. und verringert die Dauer von 'Vorahnung' um 10 Sek."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "1-3-1",
+          "row": 3,
+          "col": 1,
+          "max": 1,
+          "icon": "ability_paladin_shieldofthetemplar",
+          "name": {
+            "en": "Templar's Bulwark",
+            "de": "Bollwerk des Templers"
+          },
+          "desc": {
+            "en": [
+              "When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."
+            ],
+            "de": [
+              "Bei Aktivierung gewährt Euch diese Fähigkeit 8 Sek. lang einen Absorptionsschild in Höhe von 100% Eurer maximalen Gesundheit. Ruft den Effekt 'Vorahnung' hervor, der 1 Min. lang anhält. Kann nicht gewirkt werden, während 'Vorahnung' aktiv ist."
+            ]
+          },
+          "translation": "source",
+          "cost": "110 Mana | Instant | 5 min cooldown",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "1-3-2",
+          "row": 3,
+          "col": 2,
+          "max": 3,
+          "icon": "spell_holy_sealofmight",
+          "name": {
+            "en": "Improved Hammer of Justice",
+            "de": "Verbesserter Hammer der Gerechtigkeit"
+          },
+          "desc": {
+            "en": [
+              "Decreases the cooldown of your Hammer of Justice spell by 5 sec.",
+              "Decreases the cooldown of your Hammer of Justice spell by 10 sec.",
+              "Decreases the cooldown of your Hammer of Justice spell by 15 sec."
+            ],
+            "de": [
+              "Verringert die Abklingzeit von 'Hammer der Gerechtigkeit' um 5 Sekunden.",
+              "Verringert die Abklingzeit von 'Hammer der Gerechtigkeit' um 10 Sekunden.",
+              "Verringert die Abklingzeit von 'Hammer der Gerechtigkeit' um 15 Sekunden."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "1-3-3",
+          "row": 3,
+          "col": 3,
+          "max": 2,
+          "icon": "inv_shield_06",
+          "name": {
+            "en": "Shield Specialization",
+            "de": "Schild-Spezialisierung"
+          },
+          "desc": {
+            "en": [
+              "Increases the amount of damage absorbed by your shield by 15%, and gives your blocks a 50% chance to restore 4% of your maximum Mana. May only occur once every 3 sec.",
+              "Increases the amount of damage absorbed by your shield by 30%, and gives your blocks a 100% chance to restore 4% of your maximum Mana. May only occur once every 3 sec."
+            ],
+            "de": [
+              "Erhöht den von Eurem Schild absorbierten Schaden um 15% und verleiht Euren Blocks eine Chance von 50%, 4% Eures maximalen Manas wiederherzustellen. Kann nur einmal alle 3 Sek. auftreten.",
+              "Erhöht den von Eurem Schild absorbierten Schaden um 30% und verleiht Euren Blocks eine Chance von 100%, 4% Eures maximalen Manas wiederherzustellen. Kann nur einmal alle 3 Sek. auftreten."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": {
+            "id": "1-1-3",
+            "rank": 5
+          }
+        },
+        {
+          "id": "1-3-4",
+          "row": 3,
+          "col": 4,
+          "max": 5,
+          "icon": "spell_holy_devotion",
+          "name": {
+            "en": "Toughness",
+            "de": "Zähigkeit"
+          },
+          "desc": {
+            "en": [
+              "Increases your armor value from items by 2%.",
+              "Increases your armor value from items by 4%.",
+              "Increases your armor value from items by 6%.",
+              "Increases your armor value from items by 8%.",
+              "Increases your armor value from items by 10%."
+            ],
+            "de": [
+              "Erhöht Euren durch Gegenstände erzielten Rüstungswert um 2%.",
+              "Erhöht Euren durch Gegenstände erzielten Rüstungswert um 4%.",
+              "Erhöht Euren durch Gegenstände erzielten Rüstungswert um 6%.",
+              "Erhöht Euren durch Gegenstände erzielten Rüstungswert um 8%.",
+              "Erhöht Euren durch Gegenstände erzielten Rüstungswert um 10%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "1-4-1",
+          "row": 4,
+          "col": 1,
+          "max": 1,
+          "icon": "ability_paladin_judgementred",
+          "name": {
+            "en": "Swift Judgement",
+            "de": "Schnelles Richturteil"
+          },
+          "desc": {
+            "en": [
+              "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement ability."
+            ],
+            "de": [
+              "Entfesselt die Energie eines Siegels auf einen Gegner, ohne das Siegel zu verbrauchen. Der Richturteileffekt hängt vom jeweiligen Siegel ab. Teilt keine Abklingzeit mit Eurer Fähigkeit Richturteil."
+            ]
+          },
+          "translation": "site",
+          "cost": "10 yd range | Instant | 1 min cooldown",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": {
+            "id": "1-3-1",
+            "rank": 1
+          }
+        },
+        {
+          "id": "1-4-2",
+          "row": 4,
+          "col": 2,
+          "max": 3,
+          "icon": "spell_holy_sealoffury",
+          "name": {
+            "en": "Improved Righteous Fury",
+            "de": "Verbesserter Zorn der Gerechtigkeit"
+          },
+          "desc": {
+            "en": [
+              "While Righteous Fury is active, all damage taken is reduced by 3%.",
+              "While Righteous Fury is active, all damage taken is reduced by 6%.",
+              "While Righteous Fury is active, all damage taken is reduced by 9%."
+            ],
+            "de": [
+              "Ist 'Zorn der Gerechtigkeit' aktiv, wird jeglicher erlittene Schaden um 3% verringert.",
+              "Ist 'Zorn der Gerechtigkeit' aktiv, wird jeglicher erlittene Schaden um 6% verringert.",
+              "Ist 'Zorn der Gerechtigkeit' aktiv, wird jeglicher erlittene Schaden um 9% verringert."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "1-4-3",
+          "row": 4,
+          "col": 3,
+          "max": 5,
+          "icon": "spell_magic_lesserinvisibilty",
+          "name": {
+            "en": "Anticipation",
+            "de": "Vorahnung"
+          },
+          "desc": {
+            "en": [
+              "Increases your Defense Skill by 4.",
+              "Increases your Defense Skill by 8.",
+              "Increases your Defense Skill by 12.",
+              "Increases your Defense Skill by 16.",
+              "Increases your Defense Skill by 20."
+            ],
+            "de": [
+              "Erhöht Eure Verteidigungsfertigkeit um 4.",
+              "Erhöht Eure Verteidigungsfertigkeit um 8.",
+              "Erhöht Eure Verteidigungsfertigkeit um 12.",
+              "Erhöht Eure Verteidigungsfertigkeit um 16.",
+              "Erhöht Eure Verteidigungsfertigkeit um 20."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "1-5-1",
+          "row": 5,
+          "col": 1,
+          "max": 2,
+          "icon": "spell_holy_stoicism",
+          "name": {
+            "en": "Stoicism",
+            "de": "Stoizismus"
+          },
+          "desc": {
+            "en": [
+              "Reduces the duration of Stun and Charm effects on you by 10%.",
+              "Reduces the duration of Stun and Charm effects on you by 20%."
+            ],
+            "de": [
+              "Verringert die Dauer von Betäubungs- und Bezauberungseffekten, die auf Euch wirken, um 10%.",
+              "Verringert die Dauer von Betäubungs- und Bezauberungseffekten, die auf Euch wirken, um 20%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "1-5-2",
+          "row": 5,
+          "col": 2,
+          "max": 1,
+          "icon": "spell_holy_blessingofprotection",
+          "name": {
+            "en": "Holy Shield",
+            "de": "Heiliger Schild"
+          },
+          "desc": {
+            "en": [
+              "Increases chance to block by 30% for 10 sec, and deals 75 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges."
+            ],
+            "de": [
+              "Erhöht die Blockchance 10 Sek. lang um 30% und verursacht, während der Effekt aktiv ist, mit jedem Blocken 75 Heiligschaden. Durch 'Heiliger Schild' verursachter Schaden erzeugt 20% zusätzliche Bedrohung. Jedes Blocken verbraucht eine Aufladung. 4 Aufladungen."
+            ]
+          },
+          "translation": "source",
+          "cost": "100 Mana | Instant | 10 sec cooldown | Requires Shields",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "1-5-3",
+          "row": 5,
+          "col": 3,
+          "max": 5,
+          "icon": "spell_holy_blessingofstrength",
+          "name": {
+            "en": "Reckoning",
+            "de": "Abrechnung"
+          },
+          "desc": {
+            "en": [
+              "Gives you a 8% chance after Blocking and a 20% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.",
+              "Gives you a 16% chance after Blocking and a 40% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.",
+              "Gives you a 24% chance after Blocking and a 60% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.",
+              "Gives you a 32% chance after Blocking and a 80% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.",
+              "Gives you a 40% chance after Blocking and a 100% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec."
+            ],
+            "de": [
+              "Gewährt Euch nach dem Blocken eine Chance von 8% und nach Erleiden eines nicht regelmäßigen kritischen Treffers eine Chance von 20%, einen zusätzlichen Angriff zu erhalten. Sammelt bis zu 4 zusätzliche Angriffe an. Kann durch Blockieren nicht häufiger als einmal alle 1,5 Sek. auftreten.",
+              "Gewährt Euch nach dem Blocken eine Chance von 16% und nach Erleiden eines nicht regelmäßigen kritischen Treffers eine Chance von 40%, einen zusätzlichen Angriff zu erhalten. Sammelt bis zu 4 zusätzliche Angriffe an. Kann durch Blockieren nicht häufiger als einmal alle 1,5 Sek. auftreten.",
+              "Gewährt Euch nach dem Blocken eine Chance von 24% und nach Erleiden eines nicht regelmäßigen kritischen Treffers eine Chance von 60%, einen zusätzlichen Angriff zu erhalten. Sammelt bis zu 4 zusätzliche Angriffe an. Kann durch Blockieren nicht häufiger als einmal alle 1,5 Sek. auftreten.",
+              "Gewährt Euch nach dem Blocken eine Chance von 32% und nach Erleiden eines nicht regelmäßigen kritischen Treffers eine Chance von 80%, einen zusätzlichen Angriff zu erhalten. Sammelt bis zu 4 zusätzliche Angriffe an. Kann durch Blockieren nicht häufiger als einmal alle 1,5 Sek. auftreten.",
+              "Gewährt Euch nach dem Blocken eine Chance von 40% und nach Erleiden eines nicht regelmäßigen kritischen Treffers eine Chance von 100%, einen zusätzlichen Angriff zu erhalten. Sammelt bis zu 4 zusätzliche Angriffe an. Kann durch Blockieren nicht häufiger als einmal alle 1,5 Sek. auftreten."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "1-6-3",
+          "row": 6,
+          "col": 3,
+          "max": 3,
+          "icon": "spell_holy_improvedresistanceauras",
+          "name": {
+            "en": "Iron Creed",
+            "de": "Eiserner Glaube"
+          },
+          "desc": {
+            "en": [
+              "Increases the threat generated by your Holy Strike ability by 10%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 2% for 6 sec.",
+              "Increases the threat generated by your Holy Strike ability by 20%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 4% for 6 sec.",
+              "Increases the threat generated by your Holy Strike ability by 30%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 6% for 6 sec."
+            ],
+            "de": [
+              "Erhöht die von Eurer Fähigkeit 'Heiliger Stoß' erzeugte Bedrohung um 10%. Während 'Zorn der Gerechtigkeit' aktiv ist, verringert 'Heiliger Stoß' außerdem Euren erlittenen Schaden 6 Sek. lang um 2%.",
+              "Erhöht die von Eurer Fähigkeit 'Heiliger Stoß' erzeugte Bedrohung um 20%. Während 'Zorn der Gerechtigkeit' aktiv ist, verringert 'Heiliger Stoß' außerdem Euren erlittenen Schaden 6 Sek. lang um 4%.",
+              "Erhöht die von Eurer Fähigkeit 'Heiliger Stoß' erzeugte Bedrohung um 30%. Während 'Zorn der Gerechtigkeit' aktiv ist, verringert 'Heiliger Stoß' außerdem Euren erlittenen Schaden 6 Sek. lang um 6%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "1-7-2",
+          "row": 7,
+          "col": 2,
+          "max": 1,
+          "icon": "spell_holy_greaterblessingofsanctuary",
+          "name": {
+            "en": "Shieldsworn",
+            "de": "Schildgeschworen"
+          },
+          "desc": {
+            "en": [
+              "Reduces the cooldown of your Holy Strike ability by 4 sec. Additionally, Holy Strike now strikes with your shield, triggering your active Holy Shield and Shield Specialization talents without consuming their charges or triggering their cooldowns, and allowing you to Block spells for 6 sec."
+            ],
+            "de": [
+              "Verringert die Abklingzeit Eurer Fähigkeit Heiliger Stoß um 4 Sek. Heiliger Stoß schlägt außerdem mit Eurem Schild zu und löst Eure aktiven Talente Heiliger Schild und Schild-Spezialisierung aus, ohne Aufladungen zu verbrauchen oder deren Abklingzeiten auszulösen. Ermöglicht Euch außerdem 6 Sek. lang, Zauber zu blocken."
+            ]
+          },
+          "translation": "site",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": {
+            "id": "1-5-2",
+            "rank": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "retribution",
+      "name": {
+        "en": "Retribution",
+        "de": "Vergeltung"
+      },
+      "talents": [
+        {
+          "id": "2-1-2",
+          "row": 1,
+          "col": 2,
+          "max": 5,
+          "icon": "ability_parry",
+          "name": {
+            "en": "Deflection",
+            "de": "Abwehr"
+          },
+          "desc": {
+            "en": [
+              "Increases your Parry chance by 1%.",
+              "Increases your Parry chance by 2%.",
+              "Increases your Parry chance by 3%.",
+              "Increases your Parry chance by 4%.",
+              "Increases your Parry chance by 5%."
+            ],
+            "de": [
+              "Erhöht Eure Parierchance um 1%.",
+              "Erhöht Eure Parierchance um 2%.",
+              "Erhöht Eure Parierchance um 3%.",
+              "Erhöht Eure Parierchance um 4%.",
+              "Erhöht Eure Parierchance um 5%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "2-1-3",
+          "row": 1,
+          "col": 3,
+          "max": 5,
+          "icon": "spell_frost_windwalkon",
+          "name": {
+            "en": "Benediction",
+            "de": "Segnung"
+          },
+          "desc": {
+            "en": [
+              "Reduces the Mana cost of all instant cast spells and abilities by 2%.",
+              "Reduces the Mana cost of all instant cast spells and abilities by 4%.",
+              "Reduces the Mana cost of all instant cast spells and abilities by 6%.",
+              "Reduces the Mana cost of all instant cast spells and abilities by 8%.",
+              "Reduces the Mana cost of all instant cast spells and abilities by 10%."
+            ],
+            "de": [
+              "Verringert die Manakosten aller Spontanzauber und -fähigkeiten um 2%.",
+              "Verringert die Manakosten aller Spontanzauber und -fähigkeiten um 4%.",
+              "Verringert die Manakosten aller Spontanzauber und -fähigkeiten um 6%.",
+              "Verringert die Manakosten aller Spontanzauber und -fähigkeiten um 8%.",
+              "Verringert die Manakosten aller Spontanzauber und -fähigkeiten um 10%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "2-2-1",
+          "row": 2,
+          "col": 1,
+          "max": 2,
+          "icon": "spell_holy_righteousfury",
+          "name": {
+            "en": "Improved Judgement",
+            "de": "Verbessertes Richturteil"
+          },
+          "desc": {
+            "en": [
+              "Decreases the cooldown of your Judgement ability by 1 sec.",
+              "Decreases the cooldown of your Judgement ability by 2 sec."
+            ],
+            "de": [
+              "Verringert die Abklingzeit Eurer Fähigkeit 'Richturteil' um 1 Sek.",
+              "Verringert die Abklingzeit Eurer Fähigkeit 'Richturteil' um 2 Sek."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "2-2-2",
+          "row": 2,
+          "col": 2,
+          "max": 3,
+          "icon": "spell_holy_retributionaura",
+          "name": {
+            "en": "Conviction",
+            "de": "Überzeugung"
+          },
+          "desc": {
+            "en": [
+              "Improves your chance to get a critical strike with all spells and attacks by 2%.",
+              "Improves your chance to get a critical strike with all spells and attacks by 4%.",
+              "Improves your chance to get a critical strike with all spells and attacks by 6%."
+            ],
+            "de": [
+              "Erhöht die kritische Trefferchance aller Eurer Angriffe und Zauber um 2%.",
+              "Erhöht die kritische Trefferchance aller Eurer Angriffe und Zauber um 4%.",
+              "Erhöht die kritische Trefferchance aller Eurer Angriffe und Zauber um 6%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "2-2-3",
+          "row": 2,
+          "col": 3,
+          "max": 3,
+          "icon": "ability_paladin_judgementblue",
+          "name": {
+            "en": "Sanctified Judgement",
+            "de": "Gesegnetes Richturteil"
+          },
+          "desc": {
+            "en": [
+              "Gives your Judgement ability a 33% chance to return 20% of the Mana cost of the judged seal.",
+              "Gives your Judgement ability a 66% chance to return 40% of the Mana cost of the judged seal.",
+              "Gives your Judgement ability a 100% chance to return 60% of the Mana cost of the judged seal."
+            ],
+            "de": [
+              "Verleiht Eurem 'Richturteil' eine Chance von 33%, 20% der Manakosten des gerichteten Siegels wiederherzustellen.",
+              "Verleiht Eurem 'Richturteil' eine Chance von 66%, 40% der Manakosten des gerichteten Siegels wiederherzustellen.",
+              "Verleiht Eurem 'Richturteil' eine Chance von 100%, 60% der Manakosten des gerichteten Siegels wiederherzustellen."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "2-3-1",
+          "row": 3,
+          "col": 1,
+          "max": 3,
+          "icon": "spell_holy_vindication",
+          "name": {
+            "en": "Vindication",
+            "de": "Rechtschaffene Schwächung"
+          },
+          "desc": {
+            "en": [
+              "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 68 for 30 sec.",
+              "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 136 for 30 sec.",
+              "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 204 for 30 sec."
+            ],
+            "de": [
+              "Verleiht Euren Schaden verursachenden Nahkampfangriffen eine Chance, die Angriffskraft des Ziels um 68 zu verringern. Hält 30 Sek. lang an.",
+              "Verleiht Euren Schaden verursachenden Nahkampfangriffen eine Chance, die Angriffskraft des Ziels um 136 zu verringern. Hält 30 Sek. lang an.",
+              "Verleiht Euren Schaden verursachenden Nahkampfangriffen eine Chance, die Angriffskraft des Ziels um 204 zu verringern. Hält 30 Sek. lang an."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "2-3-2",
+          "row": 3,
+          "col": 2,
+          "max": 2,
+          "icon": "spell_holy_unyieldingfaith",
+          "name": {
+            "en": "Unyielding Faith",
+            "de": "Unumstößlicher Glaube"
+          },
+          "desc": {
+            "en": [
+              "Reduces the duration of Fear and Disorient effects on you by 15%.",
+              "Reduces the duration of Fear and Disorient effects on you by 30%."
+            ],
+            "de": [
+              "Verringert die Dauer von auf Euch wirkenden Furcht- und Desorientierungseffekten um 15%.",
+              "Verringert die Dauer von auf Euch wirkenden Furcht- und Desorientierungseffekten um 30%."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "2-3-3",
+          "row": 3,
+          "col": 3,
+          "max": 1,
+          "icon": "ability_warrior_innerrage",
+          "name": {
+            "en": "Seal of Command",
+            "de": "Siegel des Befehls"
+          },
+          "desc": {
+            "en": [
+              "Gives the Paladin a chance to deal additional Holy damage equal to 70% of normal weapon damage. Only one Seal can be active on the Paladin at any one time. Lasts 30 sec.\n\nUnleashing this Seal's energy will judge an enemy, instantly causing 68 to 73 Holy damage, 137 to 145 if the target is stunned or incapacitated."
+            ],
+            "de": [
+              "Gewährt dem Paladin eine Chance, zusätzlichen Heiligschaden in Höhe von 70% des normalen Waffenschadens zu verursachen. Es kann immer nur jeweils ein Siegel auf dem Paladin aktiv sein. Hält 30 Sek. lang an.\r\n\r\nDie Entfesselung der Energie dieses Siegels richtet einen Gegner und fügt ihm sofort 68 bis 73 Heiligschaden zu. Wird auf 137 bis 145 erhöht, wenn das Ziel betäubt oder handlungsunfähig ist."
+            ]
+          },
+          "translation": "source",
+          "cost": "65 Mana | Instant",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "2-3-4",
+          "row": 3,
+          "col": 4,
+          "max": 2,
+          "icon": "spell_holy_persuitofjustice",
+          "name": {
+            "en": "Pursuit of Justice",
+            "de": "Streben nach Gerechtigkeit"
+          },
+          "desc": {
+            "en": [
+              "Increases movement speed and mounted movement speed by 8%. This does not stack with other movement speed increasing effects.",
+              "Increases movement speed and mounted movement speed by 15%. This does not stack with other movement speed increasing effects."
+            ],
+            "de": [
+              "Erhöht normale Bewegungsgeschwindigkeit und Bewegungsgeschwindigkeit beim Reiten um 8%. Ergänzt sich nicht mit anderen Effekten, die die Bewegungsgeschwindigkeit erhöhen.",
+              "Erhöht normale Bewegungsgeschwindigkeit und Bewegungsgeschwindigkeit beim Reiten um 15%. Ergänzt sich nicht mit anderen Effekten, die die Bewegungsgeschwindigkeit erhöhen."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "2-4-1",
+          "row": 4,
+          "col": 1,
+          "max": 2,
+          "icon": "spell_holy_eyeforaneye",
+          "name": {
+            "en": "Eye for an Eye",
+            "de": "Auge um Auge"
+          },
+          "desc": {
+            "en": [
+              "All critical strikes against you cause 5% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health.",
+              "All critical strikes against you cause 10% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health."
+            ],
+            "de": [
+              "Alle kritischen Treffer gegen Euch lassen den Angreifer 5% des erlittenen Schaden selbst erleiden. Der durch 'Auge um Auge' verursachte Schaden kann 50% der gesamten Gesundheit des Paladins nicht überschreiten.",
+              "Alle kritischen Treffer gegen Euch lassen den Angreifer 10% des erlittenen Schaden selbst erleiden. Der durch 'Auge um Auge' verursachte Schaden kann 50% der gesamten Gesundheit des Paladins nicht überschreiten."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "2-4-2",
+          "row": 4,
+          "col": 2,
+          "max": 1,
+          "icon": "inv_sword_08",
+          "name": {
+            "en": "Sacred Arbiter",
+            "de": "Heiliger Richter"
+          },
+          "desc": {
+            "en": [
+              "Increases the damage of your Holy Strike ability by 20% and causes it to refresh all Judgement effects on the target."
+            ],
+            "de": [
+              "Erhöht den von Eurer Fähigkeit 'Heiliger Stoß' verursachten Schaden um 20% und erneuert die Dauer aller Effekte Eurer Richturteile auf dem Ziel."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "2-4-4",
+          "row": 4,
+          "col": 4,
+          "max": 3,
+          "icon": "inv_hammer_04",
+          "name": {
+            "en": "Two-Handed Weapon Specialization",
+            "de": "Zweihandwaffen-Spezialisierung"
+          },
+          "desc": {
+            "en": [
+              "Increases the Physical and Holy damage you deal by 2%, and reduces all threat you generate by 7% while a two-handed melee weapon is equipped.",
+              "Increases the Physical and Holy damage you deal by 4%, and reduces all threat you generate by 14% while a two-handed melee weapon is equipped.",
+              "Increases the Physical and Holy damage you deal by 6%, and reduces all threat you generate by 20% while a two-handed melee weapon is equipped."
+            ],
+            "de": [
+              "Erhöht Euren verursachten körperlichen Schaden und Heiligschaden um 2% und verringert Eure gesamte erzeugte Bedrohung um 7%, während Ihr eine zweihändige Nahkampfwaffe tragt.",
+              "Erhöht Euren verursachten körperlichen Schaden und Heiligschaden um 4% und verringert Eure gesamte erzeugte Bedrohung um 14%, während Ihr eine zweihändige Nahkampfwaffe tragt.",
+              "Erhöht Euren verursachten körperlichen Schaden und Heiligschaden um 6% und verringert Eure gesamte erzeugte Bedrohung um 20%, während Ihr eine zweihändige Nahkampfwaffe tragt."
+            ]
+          },
+          "translation": "site",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": null
+        },
+        {
+          "id": "2-5-1",
+          "row": 5,
+          "col": 1,
+          "max": 2,
+          "icon": "spell_holy_turnundead",
+          "name": {
+            "en": "Turn Evil",
+            "de": "Böses vertreiben"
+          },
+          "desc": {
+            "en": [
+              "Reduces the cast time of your Turn Undead spell by 0.5 sec, its cooldown by 5 sec, and allows it to affect Demons.",
+              "Reduces the cast time of your Turn Undead spell by 1.0 sec, its cooldown by 10 sec, and allows it to affect Demons."
+            ],
+            "de": [
+              "Verringert die Zauberzeit Eures Zaubers Untote vertreiben um 0,5 Sek. und seine Abklingzeit um 5 Sek. und ermöglicht, dass er auch Dämonen betrifft.",
+              "Verringert die Zauberzeit Eures Zaubers Untote vertreiben um 1,0 Sek. und seine Abklingzeit um 10 Sek. und ermöglicht, dass er auch Dämonen betrifft."
+            ]
+          },
+          "translation": "site",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2
+          ],
+          "req": null
+        },
+        {
+          "id": "2-5-2",
+          "row": 5,
+          "col": 2,
+          "max": 1,
+          "icon": "spell_holy_prayerofhealing",
+          "name": {
+            "en": "Repentance",
+            "de": "Buße"
+          },
+          "desc": {
+            "en": [
+              "Puts the enemy target in a state of meditation, incapacitating them for up to 6 sec. Any damage caused will awaken the target. Only works against Humanoids."
+            ],
+            "de": [
+              "Zwingt den Gegner, zu meditieren, was ihn für 6 Sek. handlungsunfähig macht. Jeglicher verursachte Schaden lässt das Ziel aufwachen. Wirkt nur gegen Humanoide."
+            ]
+          },
+          "translation": "source",
+          "cost": "60 Mana | 20 yd range | Instant | 1 min cooldown",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": null
+        },
+        {
+          "id": "2-5-3",
+          "row": 5,
+          "col": 3,
+          "max": 3,
+          "icon": "ability_racial_avatar",
+          "name": {
+            "en": "Vengeance",
+            "de": "Rache"
+          },
+          "desc": {
+            "en": [
+              "Increases your Physical and Holy damage dealt by 1% for 30 sec after landing a non-periodic critical strike. Stacks up to 5 times.",
+              "Increases your Physical and Holy damage dealt by 2% for 30 sec after landing a non-periodic critical strike. Stacks up to 5 times.",
+              "Increases your Physical and Holy damage dealt by 3% for 30 sec after landing a non-periodic critical strike. Stacks up to 5 times."
+            ],
+            "de": [
+              "Erhöht Euren verursachten körperlichen Schaden und Heiligschaden nach einem nicht regelmäßigen kritischen Treffer 30 Sek. lang um 1%. Bis zu 5-mal stapelbar.",
+              "Erhöht Euren verursachten körperlichen Schaden und Heiligschaden nach einem nicht regelmäßigen kritischen Treffer 30 Sek. lang um 2%. Bis zu 5-mal stapelbar.",
+              "Erhöht Euren verursachten körperlichen Schaden und Heiligschaden nach einem nicht regelmäßigen kritischen Treffer 30 Sek. lang um 3%. Bis zu 5-mal stapelbar."
+            ]
+          },
+          "translation": "site",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3
+          ],
+          "req": {
+            "id": "2-3-3",
+            "rank": 1
+          }
+        },
+        {
+          "id": "2-6-3",
+          "row": 6,
+          "col": 3,
+          "max": 5,
+          "icon": "ability_paladin_enlightenedjudgements",
+          "name": {
+            "en": "Champion of the Light",
+            "de": "Champion des Lichts"
+          },
+          "desc": {
+            "en": [
+              "Increases your spell damage by up to 12% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.2 sec.",
+              "Increases your spell damage by up to 24% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.4 sec.",
+              "Increases your spell damage by up to 36% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.6 sec.",
+              "Increases your spell damage by up to 48% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.8 sec.",
+              "Increases your spell damage by up to 60% of your Intellect, and reduces the cast time of your Hammer of Wrath by 1.0 sec."
+            ],
+            "de": [
+              "Erhöht Euren Zauberschaden um einen Betrag, der bis zu 12% Eurer Intelligenz entspricht, und verringert die Zauberzeit von 'Hammer des Zorns' um 0,2 Sek.",
+              "Erhöht Euren Zauberschaden um einen Betrag, der bis zu 24% Eurer Intelligenz entspricht, und verringert die Zauberzeit von 'Hammer des Zorns' um 0,4 Sek.",
+              "Erhöht Euren Zauberschaden um einen Betrag, der bis zu 36% Eurer Intelligenz entspricht, und verringert die Zauberzeit von 'Hammer des Zorns' um 0,6 Sek.",
+              "Erhöht Euren Zauberschaden um einen Betrag, der bis zu 48% Eurer Intelligenz entspricht, und verringert die Zauberzeit von 'Hammer des Zorns' um 0,8 Sek.",
+              "Erhöht Euren Zauberschaden um einen Betrag, der bis zu 60% Eurer Intelligenz entspricht, und verringert die Zauberzeit von 'Hammer des Zorns' um 1,0 Sek."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "req": null
+        },
+        {
+          "id": "2-7-2",
+          "row": 7,
+          "col": 2,
+          "max": 1,
+          "icon": "spell_holy_blessedresillience",
+          "name": {
+            "en": "Unsealed Wrath",
+            "de": "Entfesselter Zorn"
+          },
+          "desc": {
+            "en": [
+              "Your melee attacks store a copy of your active Seal for 15 sec, stacking up to 3 times. Landing an attack with a different Seal consumes all stacks, giving the stored Seal its normal chance to activate once per stack."
+            ],
+            "de": [
+              "Eure Nahkampfangriffe speichern 15 Sek. lang eine Kopie Eures aktiven Siegels. 3-mal stapelbar. Ein Treffer mit einem anderen Siegel verbraucht alle Stapel und gibt dem gespeicherten Siegel seine normale Chance, einmal pro Stapel aktiviert zu werden."
+            ]
+          },
+          "translation": "source",
+          "cost": "",
+          "source": "beta",
+          "confirmed": [
+            1
+          ],
+          "req": {
+            "id": "2-5-2",
+            "rank": 1
+          }
+        }
+      ]
+    }
+  ],
+  "presets": {
+    "protection": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        3,
+        0,
+        2,
+        1,
+        0,
+        2,
+        3,
+        1,
+        3,
+        5,
+        0,
+        1,
+        5,
+        3,
+        1
+      ],
+      [
+        0,
+        5,
+        2,
+        3,
+        3,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "retribution": [
+      [
+        0,
+        5,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        5,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        2,
+        3,
+        3,
+        0,
+        1,
+        1,
+        2,
+        0,
+        1,
+        3,
+        0,
+        1,
+        3,
+        5,
+        1
+      ]
+    ]
+  }
+}
