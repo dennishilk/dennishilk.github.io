@@ -1,0 +1,10 @@
+/* Always-visible, compact entry points for the growing bilingual diary. */
+.wow-update-links{margin:0 0 26px;padding:16px;border:1px solid #34465b;border-radius:10px;background:#111c29}
+.wow-update-links>p{margin:0 0 12px;font:650 12px/1.5 system-ui,sans-serif;letter-spacing:.04em;color:#c7d8e9}
+.wow-update-links ul{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.wow-update-links li{margin:0;padding:0;max-width:100%}
+.wow-update-links a{display:flex;align-items:center;min-height:44px;max-width:100%;padding:8px 11px;border:1px solid #34485f;border-radius:6px;background:#172536;color:#bfe7fc;font:13px/1.45 system-ui,sans-serif;text-decoration:none;overflow-wrap:anywhere}
+.wow-update-links a:hover{border-color:#76d2fa;background:#203449}
+.wow-update-links a:focus-visible{outline:3px solid #94dcff;outline-offset:3px}
+.wow-update-links .wow-update-calculator{border-color:#8c774b;background:#2a271e;color:#f1d69e;font-weight:650}
+@media(max-width:450px){.wow-update-links{padding:12px}.wow-update-links a{font-size:12px;padding:8px}}
