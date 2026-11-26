@@ -44,7 +44,7 @@ try{
     await page.screenshot({path:out+'/'+lang+'-desktop.png'});
     await page.locator('.diary-jump-nav a[href="#paladin-calculator"]').click();await clearHeader('paladin-calculator');
     assert.ok(await page.locator('#diary-calculator-panel').evaluate(e=>e.open));
-    await page.locator('[data-preset=retribution]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'12 / 8 / 31');
+    await page.locator('[data-preset=holy]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'31 / 5 / 15');
     await page.locator('[data-preset=protection]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'0 / 35 / 16');
     await page.goto(origin+route+'#paladin=p1.05005000200000000.50300000000000000.05233011201301351');await page.waitForSelector('[data-ready=true]',{state:'attached'});assert.ok(await page.locator('#diary-calculator-panel').evaluate(e=>e.open));assert.equal((await page.locator('.pt-total').textContent()).trim(),'12 / 8 / 31');
     await page.goto(origin+route+'#level-22-review');await clearHeader('level-22-review');assert.ok(await page.locator('[data-entry-date="2026-11-11"]').evaluate(e=>e.open));

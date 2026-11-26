@@ -20,16 +20,16 @@ test('Complete Forever dataset: 51 talents, 139 confirmed ranks, both languages 
     }
   }
 });
-test('Preset totals and exact per-talent ranks transcribed from both private screenshots',()=>{
+test('Preset totals and exact per-talent ranks transcribed from the original Tank and November 26 Holy screenshots',()=>{
   const expected={
     protection:{Holy:{},Protection:{Redoubt:5,Precision:3,'Sacred Duty':2,"Templar's Bulwark":1,'Shield Specialization':2,Toughness:3,'Swift Judgement':1,'Improved Righteous Fury':3,Anticipation:5,'Holy Shield':1,Reckoning:5,'Iron Creed':3,Shieldsworn:1},Retribution:{Benediction:5,'Improved Judgement':2,Conviction:3,'Sanctified Judgement':3,'Pursuit of Justice':2,'Sacred Arbiter':1}},
-    retribution:{Holy:{'Divine Strength':5,'Improved Seals':5,'Holy Conduit':2},Protection:{'Divine Intellect':5,Precision:3},Retribution:{Benediction:5,'Improved Judgement':2,Conviction:3,'Sanctified Judgement':3,'Unyielding Faith':1,'Seal of Command':1,'Pursuit of Justice':2,'Sacred Arbiter':1,'Two-Handed Weapon Specialization':3,Repentance:1,Vengeance:3,'Champion of the Light':5,'Unsealed Wrath':1}}
+    holy:{Holy:{'Spiritual Focus':5,'Healing Light':3,Reverence:2,'Divine Favor':1,Illumination:5,'Holy Conduit':2,'Infusion of Light':2,'Oath of Light':1,'Consecrated Ground':1,'Holy Shock':1,'Boundless Light':2,'Holy Power':5,"Light's Vigil":1},Protection:{'Divine Intellect':5},Retribution:{Benediction:5,'Improved Judgement':2,Conviction:3,'Sanctified Judgement':3,'Pursuit of Justice':2}}
   };
   for(const [key,build] of Object.entries(data.presets)){
     assert.ok(validBuild(data,build));assert.equal(spent(build),51);assert.equal(requiredLevel(build),60);
     data.trees.forEach((tree,ti)=>tree.talents.forEach((t,i)=>assert.equal(build[ti][i],expected[key][tree.name.en][t.name.en]||0,key+': '+t.name.en)));
   }
-  assert.deepEqual(totals(data.presets.protection),[0,35,16]);assert.deepEqual(totals(data.presets.retribution),[12,8,31]);
+  assert.deepEqual(totals(data.presets.protection),[0,35,16]);assert.deepEqual(totals(data.presets.holy),[31,5,15]);
 });
 test('Legal preset builds can be constructed one point at a time',()=>{
   for(const desired of Object.values(data.presets)){
@@ -96,4 +96,9 @@ test('Deterministic randomized legal edits stay legal and shareable',()=>{
     assert.ok(validBuild(data,build));assert.ok(spent(build)<=51);assert.deepEqual(decodeBuild(data,encodeBuild(data,build)),build);
     if(n%250===0)build=emptyBuild(data);
   }
+});
+
+test('Earlier Retribution share links remain valid after changing the personal secondary preset',()=>{
+  const old=decodeBuild(data,'p1.05005000200000000.50300000000000000.05233011201301351');
+  assert.ok(old);assert.deepEqual(totals(old),[12,8,31]);assert.equal(data.presets.retribution,undefined);
 });

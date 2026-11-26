@@ -35,7 +35,7 @@ try{
     const pt=page.locator('.pt');
     assert.equal(await pt.locator('[data-talent]').count(),51);
     assert.equal((await pt.locator('.pt-total').textContent()).trim(),'0 / 35 / 16');
-    await pt.locator('[data-preset=retribution]').click();assert.equal((await pt.locator('.pt-total').textContent()).trim(),'12 / 8 / 31');
+    await pt.locator('[data-preset=holy]').click();assert.equal((await pt.locator('.pt-total').textContent()).trim(),'31 / 5 / 15');
     await pt.locator('[data-preset=protection]').click();
     // A maxed parent with an invested dependent cannot be removed.
     await pt.locator('[data-talent="1:1"]').click({button:'right'});assert.equal((await pt.locator('.pt-total').textContent()).trim(),'0 / 35 / 16');
@@ -54,7 +54,7 @@ try{
     await page.goto(shared);await page.waitForSelector('[data-ready=true]',{state:'attached'});assert.equal((await page.locator('.pt-total').textContent()).trim(),'1 / 0 / 0');
     await page.goto(origin+paths[lang]+'#paladin=p1.55555555555555555.55555555555555555.55555555555555555');await page.waitForSelector('[data-ready=true]',{state:'attached'});
     assert.equal((await page.locator('.pt-total').textContent()).trim(),'0 / 35 / 16');assert.ok((await page.locator('.pt-status').textContent()).length>0);
-    await page.locator('[data-preset=retribution]').click();await page.locator('[data-tree-reset="0"]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'0 / 8 / 31');
+    await page.locator('[data-preset=holy]').click();await page.locator('[data-tree-reset="0"]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'0 / 5 / 15');
     await page.locator('[data-preset=protection]').click();
     for(const width of [320,390,768,1024,1440]){
       await page.setViewportSize({width,height:1000});
@@ -67,8 +67,8 @@ try{
       await page.locator('[data-preset=protection]').click();
       await page.locator('.pt').screenshot({path:out+'/protection-build.png',type:'png'});
       await page.locator('.pt-trees').screenshot({path:out+'/social-trees.png'});
-      await page.locator('[data-preset=retribution]').click();
-      await page.locator('.pt').screenshot({path:out+'/retribution-build.png',type:'png'});
+      await page.locator('[data-preset=holy]').click();
+      await page.locator('.pt').screenshot({path:out+'/holy-build.png',type:'png'});
     }
     // Shared implementation embedded in each existing diary.
     await page.goto(origin+(lang==='de'?'/de':'')+'/blog/wow-forever-nebukatneza-dennis-hilk/');await page.waitForSelector('[data-ready=true]',{state:'attached'});
@@ -77,7 +77,7 @@ try{
       await page.setViewportSize({width,height:1000});
       const state=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));if(state.scroll>width){console.log(await page.evaluate(()=>[...document.querySelectorAll('body *')].map(el=>({tag:el.tagName,cls:String(el.className),id:el.id,clipped:(()=>{for(let a=el.parentElement;a&&a!==document.body;a=a.parentElement){if(['hidden','auto','scroll','clip'].includes(getComputedStyle(a).overflowX))return true;}return false;})(),r:el.getBoundingClientRect().right,w:el.getBoundingClientRect().width})).filter(x=>x.r>innerWidth+2&&x.w>0&&!x.clipped).slice(0,30)));await page.screenshot({path:out+'/blog-overflow.png'});}assert.ok(state.scroll<=width,lang+' blog overflow '+width+': '+state.scroll);report.views.push({lang,surface:'blog',...state});
     }
-    await page.locator('[data-preset=retribution]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'12 / 8 / 31');
+    await page.locator('[data-preset=holy]').click();assert.equal((await page.locator('.pt-total').textContent()).trim(),'31 / 5 / 15');
     await page.locator('[data-preset=protection]').click();
     assert.equal(await page.locator('#level-40-20261125').count(),1);
     await page.locator('[data-wow40-lightbox]').first().click();assert.ok(await page.locator('.wow40-lightbox').isVisible());await page.keyboard.press('Escape');assert.ok(await page.locator('.wow40-lightbox').isHidden());

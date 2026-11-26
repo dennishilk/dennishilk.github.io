@@ -1,6 +1,6 @@
 # WoW Forever – Paladin talent calculator: sources and maintenance
 
-Implemented and checked: **2026-11-25**. This is an independent fan calculator for
+Implemented and talent data checked: **2026-11-25**. Personal secondary preset updated: **2026-11-26**. This is an independent fan calculator for
 Dennis Hilk's website. It does not embed or reuse another calculator's interface.
 
 ## Data provenance
@@ -76,7 +76,9 @@ are retained unchanged, with optimized WebP copies alongside them.
 
 ## Preset transcription
 
-The two user-supplied reference screenshots remain **outside the public repository**.
+The user-supplied reference screenshots remain **outside the public repository**.
+The current secondary preset follows the Holy screenshot supplied on November 26, 2026.
+This changes only the personal allocation, not the dated talent effects or the `p1` order.
 They were read by tree, row and column. Unlisted talents have zero points.
 
 **Protection 0/35/16:** Protection: Redoubt 5, Precision 3, Sacred Duty 2,
@@ -85,14 +87,23 @@ Improved Righteous Fury 3, Anticipation 5, Holy Shield 1, Reckoning 5,
 Iron Creed 3, Shieldsworn 1. Retribution: Benediction 5, Improved Judgement 2,
 Conviction 3, Sanctified Judgement 3, Pursuit of Justice 2, Sacred Arbiter 1.
 
-**Retribution 12/8/31:** Holy: Divine Strength 5, Improved Seals 5,
-Holy Conduit 2. Protection: Divine Intellect 5, Precision 3.
+**Holy 31/5/15 (secondary, November 26):** Holy: Spiritual Focus 5,
+Healing Light 3, Reverence 2, Divine Favor 1, Illumination 5, Holy Conduit 2,
+Infusion of Light 2, Oath of Light 1, Consecrated Ground 1, Holy Shock 1,
+Boundless Light 2, Holy Power 5, Light's Vigil 1. Protection: Divine Intellect 5.
 Retribution: Benediction 5, Improved Judgement 2, Conviction 3,
-Sanctified Judgement 3, Unyielding Faith 1, Seal of Command 1,
-Pursuit of Justice 2, Sacred Arbiter 1, Two-Handed Weapon Specialization 3,
-Repentance 1, Vengeance 3, Champion of the Light 5, Unsealed Wrath 1.
+Sanctified Judgement 3, Pursuit of Justice 2. All other ranks are zero.
 
-Both are **planned level-60 builds**, not the character's current level-40 allocation.
+Both are **planned level-60 allocations**, not a claim that the leveling character
+already has 51 talent points. Protection remains the main spec. The Holy preset
+replaces the former personal Retribution 12/8/31 button; the full Retribution tree
+and earlier valid shared URLs remain supported without changing their meaning.
+The earlier Retribution preview file is retained for historical links but is no
+longer used as the current secondary-spec preview.
+
+The new Holy preview is rendered from our own allocation data and the tool's
+existing icons by `scripts/build-paladin-holy-preview.mjs` (Sharp required).
+It is a precise data illustration, not a re-publication of the reference image.
 
 ## Validation and update procedure
 
@@ -119,6 +130,6 @@ Die 51 Talente und 139 Ränge stammen aus dem oben verlinkten Forever-Datensatz;
 die Quelle markiert alle Ränge als bestätigt. Der Datenstand ist datiert und wird
 nicht automatisch mit dem laufenden Spiel synchronisiert. Sechs Beschreibungen
 und der Name „Böses vertreiben“ wurden für die Website übersetzt. Die beiden
-51-Punkte-Vorlagen entsprechen Dennis' privaten Referenzbildern und sind als
+51-Punkte-Vorlagen (Schutz 0/35/16 und seit 26. November Heilig 31/5/15) entsprechen Dennis' privaten Referenzbildern und sind als
 Level-60-Pläne gekennzeichnet. Fremde Referenzbilder wurden nicht veröffentlicht.
 Talentdaten: Talents Forever, CC BY 4.0; Spieltexte und Symbole: Blizzard Entertainment.

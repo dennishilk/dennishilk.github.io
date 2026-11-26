@@ -3,8 +3,8 @@ import {emptyBuild, cloneBuild, totals, spent, requiredLevel, validBuild, change
 const words = {
   de: {
     title:'Dein Weg durch das Licht', kicker:'WoW Forever · Paladin',
-    protection:'Schutz – Meine Hauptskillung', retribution:'Vergeltung – Meine Dual Spec',
-    planned:'Geplante Level-60-Skillungen · Dennis ist aktuell Level 40',
+    protection:'Schutz – Meine Hauptskillung', holy:'Heilig – Meine Zweitskillung',
+    planned:'Geplante Level-60-Verteilungen · Schutz als Hauptspec, Heilig als Zweitspec',
     reset:'Alle Punkte zurücksetzen', own:'Eigene Skillung erstellen', share:'Build-Link kopieren',
     treeReset:'Baum zurücksetzen', remaining:'Punkte übrig', level:'Benötigtes Level',
     rank:'Rang', current:'Aktueller Rang', next:'Nächster Rang', maximum:'Maximaler Rang erreicht.',
@@ -21,8 +21,8 @@ const words = {
   },
   en: {
     title:'Your path through the Light', kicker:'WoW Forever · Paladin',
-    protection:'Protection – My Main Spec', retribution:'Retribution – My Dual Spec',
-    planned:'Planned level-60 builds · Dennis is currently level 40',
+    protection:'Protection – My Main Spec', holy:'Holy – My Secondary Spec',
+    planned:'Planned level-60 allocations · Protection main, Holy secondary',
     reset:'Reset all points', own:'Create your own build', share:'Copy build link',
     treeReset:'Reset tree', remaining:'Points left', level:'Required level',
     rank:'Rank', current:'Current rank', next:'Next rank', maximum:'Maximum rank reached.',
@@ -43,7 +43,7 @@ const roots = [...document.querySelectorAll('[data-paladin-calculator]')];
 let data;
 try {
   if (roots.length) {
-    const response = await fetch(new URL('./data.json', import.meta.url));
+    const response = await fetch(new URL('./data.json?v=20261126-holy', import.meta.url));
     if (!response.ok) throw new Error('Talent data: HTTP ' + response.status);
     data = await response.json();
     for (const root of roots) init(root, data);
@@ -65,7 +65,7 @@ function init(root, data) {
   root.classList.add('pt');
   root.innerHTML = `<div class="pt-heading"><div><p class="pt-kicker">${w.kicker}</p><h3>${w.title}</h3></div><span class="pt-seal" aria-hidden="true">✦</span></div>
     <p class="pt-planned">${w.planned}</p>
-    <div class="pt-presets"><button type="button" data-preset="protection"><span aria-hidden="true">🛡</span><strong>${w.protection}</strong><small>0 / 35 / 16 · Level 60</small></button><button type="button" data-preset="retribution"><span aria-hidden="true">⚔</span><strong>${w.retribution}</strong><small>12 / 8 / 31 · Level 60</small></button></div>
+    <div class="pt-presets"><button type="button" data-preset="protection"><span aria-hidden="true">🛡</span><strong>${w.protection}</strong><small>0 / 35 / 16 · Level 60</small></button><button type="button" data-preset="holy"><span aria-hidden="true">☀</span><strong>${w.holy}</strong><small>31 / 5 / 15 · Level 60</small></button></div>
     <div class="pt-summary" aria-live="polite"><span class="pt-build-name"></span><strong class="pt-total"></strong><span class="pt-left"></span><span class="pt-level"></span></div>
     <div class="pt-toolbar"><button type="button" data-own>${w.own}</button><button type="button" data-reset>${w.reset}</button><button type="button" data-share>${w.share} ↗</button></div>
     <label class="pt-share" hidden>${w.share}<input type="url" readonly spellcheck="false"></label>
@@ -174,7 +174,7 @@ function init(root, data) {
       }
     };
   }
-  for (const button of root.querySelectorAll('[data-preset]')) button.onclick=()=>{hideTip();const key=button.dataset.preset;build=cloneBuild(data.presets[key]);label=w[key];selected=key==='protection'?[1,16]:[2,16];visibleTree=selected[0];status.textContent=w.chosen;changed();};
+  for (const button of root.querySelectorAll('[data-preset]')) button.onclick=()=>{hideTip();const key=button.dataset.preset;build=cloneBuild(data.presets[key]);label=w[key];selected=key==='protection'?[1,16]:[0,16];visibleTree=selected[0];status.textContent=w.chosen;changed();};
   for(const button of root.querySelectorAll('[data-mobile-tree]')) button.onclick=()=>{hideTip();visibleTree=Number(button.dataset.mobileTree);selected=[visibleTree,0];update();};
   function clear() {hideTip();build=emptyBuild(data);label=w.custom;selected=[0,0];visibleTree=0;status.textContent=w.clear;changed();}
   root.querySelector('[data-own]').onclick=clear;
