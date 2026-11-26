@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.dennishilk.com/assets/item-goblin/data/item.schema.json",
+  "title": "The Item Goblin v1 item",
+  "type": "object",
+  "required": [
+    "version",
+    "name",
+    "quality"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "binding": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "slot": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "type": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "durability": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "profession": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "classes": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "cooldown": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "flavor": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "maker": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "itemLevel": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "requiredLevel": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "armor": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "damageMin": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "damageMax": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "speed": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000,
+      "exclusiveMinimum": 0
+    },
+    "gold": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "silver": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "copper": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10000000
+    },
+    "stats": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    },
+    "equip": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    },
+    "use": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    },
+    "hit": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    },
+    "setBonus": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    },
+    "quality": {
+      "enum": [
+        "poor",
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary",
+        "artifact",
+        "heirloom",
+        "goblin"
+      ]
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[a-fA-F0-9]{6}$"
+    },
+    "icon": {
+      "enum": [
+        "sword",
+        "axe",
+        "mace",
+        "shield",
+        "staff",
+        "ring",
+        "boots",
+        "helmet",
+        "potion",
+        "bag",
+        "stone",
+        "tool",
+        "food",
+        "computer",
+        "keyboard",
+        "mount",
+        "scroll"
+      ]
+    },
+    "unique": {
+      "type": "boolean"
+    },
+    "customIcon": {
+      "type": "string",
+      "maxLength": 120000,
+      "pattern": "^(|data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*)$"
+    },
+    "iconPosition": {
+      "enum": [
+        "outside",
+        "inside",
+        "none"
+      ]
+    }
+  }
+}

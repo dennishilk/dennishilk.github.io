@@ -48,6 +48,8 @@
     "test:audio-rescue": "node --test tests/linux-audio-rescue.test.mjs",
     "test:audio-rescue:browser": "node scripts/test-linux-audio-rescue-browser.mjs",
     "build:behind-projects": "node scripts/build-behind-projects.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
-    "build:longbow": "node scripts/build-longbow-retro.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only"
+    "build:longbow": "node scripts/build-longbow-retro.mjs && node scripts/generate-blog-rss.mjs && node scripts/sync-seo.mjs --sitemaps-only",
+    "build:item-goblin": "node scripts/build-item-goblin.mjs",
+    "test:item-goblin": "node --test tests/item-goblin.test.mjs"
   }
 }
